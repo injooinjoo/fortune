@@ -46,7 +46,7 @@ class InAppProducts {
       id: monthlySubscription,
       title: '프리미엄운세 월간',
       description: '광고 제거 + 모든 운세 무제한',
-      price: 1900,
+      price: 2200,
       tokens: -1, // Unlimited
       isSubscription: true,
       subscriptionPeriod: 'monthly'),

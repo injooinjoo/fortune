@@ -36,38 +36,48 @@ class FortuneSwipeHelpers {
     return '새옹지마(塞翁之馬)';
   }
 
-  /// ChatGPT Pulse 스타일 색상 (채도 낮추고 부드럽게)
+  /// 전통 오방색 기반 점수 색상
+  /// 木(목): 청록 - 성장/번영
+  /// 火(화): 진홍 - 열정/주의
+  /// 土(토): 금황 - 균형/안정
+  /// 金(금): 금색 - 가치/결실
+  /// 水(수): 남색 - 지혜/침착
   static Color getPulseScoreColor(int score) {
-    if (score >= 85) return const Color(0xFF10B981); // 차분한 초록
-    if (score >= 70) return const Color(0xFF3B82F6); // 은은한 파랑
-    if (score >= 50) return const Color(0xFF8B5CF6); // 부드러운 보라
-    if (score >= 30) return const Color(0xFFF59E0B); // 따뜻한 노랑
-    return const Color(0xFFEF4444); // 절제된 빨강
+    if (score >= 85) return const Color(0xFF2E8B57); // 木(목) - 최상, 청록
+    if (score >= 70) return const Color(0xFF1E5F3C); // 木(목) 진한 - 양호
+    if (score >= 50) return const Color(0xFFDAA520); // 土(토) - 보통, 금황
+    if (score >= 30) return const Color(0xFFC0A062); // 金(금) - 주의, 금색
+    return const Color(0xFFDC143C); // 火(화) - 경고, 진홍
   }
 
-  /// 띠별 점수 색상
+  /// 띠별 점수 색상 (전통 오방색)
   static Color getZodiacScoreColor(int score) {
-    if (score >= 85) return const Color(0xFF10B981);
-    if (score >= 70) return const Color(0xFF3B82F6);
-    if (score >= 50) return const Color(0xFFF59E0B);
-    return const Color(0xFFEF4444);
+    if (score >= 85) return const Color(0xFF2E8B57); // 木(목) - 최상
+    if (score >= 70) return const Color(0xFF1E3A5F); // 水(수) - 양호
+    if (score >= 50) return const Color(0xFFDAA520); // 土(토) - 보통
+    return const Color(0xFFDC143C); // 火(화) - 주의
   }
 
-  /// 카테고리별 이모지
+  /// 카테고리별 이모지 (전통 스타일)
+  /// 연애: 연꽃 - 아름다움과 순수
+  /// 금전: 동전 - 풍요와 복
+  /// 직장: 두루마리 - 관직과 성공
+  /// 학업: 책 - 학문과 지혜
+  /// 건강: 명상 - 심신의 조화
   static String getCategoryEmoji(String categoryKey) {
     switch (categoryKey) {
       case 'love':
-        return '❤️';
+        return '🪷'; // 연꽃 - 전통 연애운 상징
       case 'money':
-        return '💰';
+        return '🪙'; // 동전 - 전통 재물운 상징
       case 'work':
-        return '💼';
+        return '📜'; // 두루마리 - 관직/성공 상징
       case 'study':
-        return '📚';
+        return '📖'; // 펼쳐진 책 - 학문 상징
       case 'health':
-        return '🏃';
+        return '🧘'; // 명상 - 심신 조화 상징
       default:
-        return '✨';
+        return '☯️'; // 태극 - 균형과 조화
     }
   }
 

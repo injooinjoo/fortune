@@ -12,6 +12,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
@@ -167,7 +168,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         children: [
           Text(
             '가장 궁금한\n가족 운세를 선택해주세요',
-            style: DSTypography.displaySmall.copyWith(
+            style: context.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: colors.textPrimary,
             ),
@@ -175,7 +176,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           const SizedBox(height: DSSpacing.sm),
           Text(
             '가족의 행복과 안녕을 위한 맞춤 운세를 제공해드려요',
-            style: DSTypography.buttonMedium.copyWith(
+            style: context.labelLarge.copyWith(
               color: colors.textSecondary,
             ),
           ),
@@ -223,7 +224,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                           children: [
                             Text(
                               concern.label,
-                              style: DSTypography.labelLarge.copyWith(
+                              style: context.labelLarge.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: colors.textPrimary,
                               ),
@@ -231,7 +232,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                             const SizedBox(height: DSSpacing.xs),
                             Text(
                               concern.description,
-                              style: DSTypography.labelSmall.copyWith(
+                              style: context.labelSmall.copyWith(
                                 color: colors.textSecondary,
                               ),
                             ),
@@ -284,7 +285,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               Expanded(
                 child: Text(
                   '${_selectedConcern!.label}에서\n궁금한 점을 선택해주세요',
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.heading3.copyWith(
                     fontWeight: FontWeight.w700,
                     color: colors.textPrimary,
                   ),
@@ -295,7 +296,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           const SizedBox(height: DSSpacing.sm),
           Text(
             '최대 3개까지 선택할 수 있어요',
-            style: DSTypography.buttonMedium.copyWith(
+            style: context.labelLarge.copyWith(
               color: colors.textSecondary,
             ),
           ),
@@ -356,7 +357,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                       Expanded(
                         child: Text(
                           question['label']!,
-                          style: DSTypography.buttonMedium.copyWith(
+                          style: context.labelLarge.copyWith(
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                             color: canSelect
                                 ? colors.textPrimary
@@ -387,7 +388,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         children: [
           Text(
             '가족 구성원에 대해\n알려주세요',
-            style: DSTypography.displaySmall.copyWith(
+            style: context.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: colors.textPrimary,
             ),
@@ -395,7 +396,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           const SizedBox(height: DSSpacing.sm),
           Text(
             '더 정확한 운세를 위한 정보예요',
-            style: DSTypography.buttonMedium.copyWith(
+            style: context.labelLarge.copyWith(
               color: colors.textSecondary,
             ),
           ),
@@ -409,7 +410,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               children: [
                 Text(
                   '함께 사는 가족 구성원',
-                  style: DSTypography.buttonMedium.copyWith(
+                  style: context.labelLarge.copyWith(
                     fontWeight: FontWeight.w600,
                     color: colors.textPrimary,
                   ),
@@ -432,7 +433,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                       Expanded(
                         child: Text(
                           '$_familyMemberCount명',
-                          style: DSTypography.labelLarge.copyWith(
+                          style: context.labelLarge.copyWith(
                             fontWeight: FontWeight.w600,
                             color: colors.textPrimary,
                           ),
@@ -461,7 +462,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               children: [
                 Text(
                   '운세를 보고 싶은 대상',
-                  style: DSTypography.buttonMedium.copyWith(
+                  style: context.labelLarge.copyWith(
                     fontWeight: FontWeight.w600,
                     color: colors.textPrimary,
                   ),
@@ -541,7 +542,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         children: [
           Text(
             '특별히 궁금한 점이\n있으신가요?',
-            style: DSTypography.displaySmall.copyWith(
+            style: context.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: colors.textPrimary,
             ),
@@ -549,7 +550,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           const SizedBox(height: DSSpacing.sm),
           Text(
             '선택사항이에요. 운세에 반영해드릴게요',
-            style: DSTypography.buttonMedium.copyWith(
+            style: context.labelLarge.copyWith(
               color: colors.textSecondary,
             ),
           ),
@@ -565,7 +566,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               maxLines: 6,
               decoration: InputDecoration(
                 hintText: '예: 올해 가족 여행 가기 좋은 시기는 언제인가요?\n예: 아이 학원을 바꾸려고 하는데 괜찮을까요?',
-                hintStyle: DSTypography.labelSmall.copyWith(
+                hintStyle: context.labelSmall.copyWith(
                   color: colors.textTertiary,
                 ),
                 border: InputBorder.none,
@@ -595,7 +596,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                 Expanded(
                   child: Text(
                     '질문을 남기지 않아도 운세를 볼 수 있어요',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -816,7 +817,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                     children: [
                       Text(
                         _selectedConcern!.label,
-                        style: DSTypography.headingSmall.copyWith(
+                        style: context.heading3.copyWith(
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -824,7 +825,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                       const SizedBox(height: DSSpacing.xs),
                       Text(
                         _selectedConcern!.description,
-                        style: DSTypography.buttonMedium.copyWith(
+                        style: context.labelLarge.copyWith(
                           color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
@@ -852,7 +853,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                       const SizedBox(width: DSSpacing.sm),
                       Text(
                         '오늘의 운세',
-                        style: DSTypography.headingSmall.copyWith(
+                        style: context.heading3.copyWith(
                           fontWeight: FontWeight.w700,
                           color: colors.textPrimary,
                         ),
@@ -862,7 +863,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   const SizedBox(height: DSSpacing.md),
                   Text(
                     _fortuneResult!.data['content'] as String? ?? '',
-                    style: DSTypography.buttonMedium.copyWith(
+                    style: context.labelLarge.copyWith(
                       color: colors.textPrimary,
                       height: 1.6,
                     ),

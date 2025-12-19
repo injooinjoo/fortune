@@ -10,7 +10,7 @@ import '../../domain/models/conditions/ex_lover_fortune_conditions.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
-import '../../../../services/ad_service.dart';
+import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/voice_input_text_field.dart';
@@ -171,7 +171,8 @@ class _ExLoverFortuneSimplePageState
         });
       }
 
-      await AdService.instance.showInterstitialAdWithCallback(
+      await InterstitialAdHelper.showInterstitialAdWithCallback(
+        ref,
         onAdCompleted: () async {
           if (mounted) {
             context.push(

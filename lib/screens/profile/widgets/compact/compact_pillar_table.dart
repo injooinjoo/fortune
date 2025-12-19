@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/saju_colors.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 압축된 사주 4주 테이블
 ///
@@ -37,19 +38,19 @@ class CompactPillarTable extends StatelessWidget {
       child: Column(
         children: [
           // 헤더 행
-          _buildHeaderRow(pillars, isDark),
+          _buildHeaderRow(context, pillars, isDark),
           // 천간 행
-          _buildStemRow(pillars, isDark),
+          _buildStemRow(context, pillars, isDark),
           // 지지 행
-          _buildBranchRow(pillars, isDark),
+          _buildBranchRow(context, pillars, isDark),
           // 십성 행
-          _buildTenshinRow(pillars, isDark),
+          _buildTenshinRow(context, pillars, isDark),
         ],
       ),
     );
   }
 
-  Widget _buildHeaderRow(List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildHeaderRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         color: isDark
@@ -87,8 +88,7 @@ class CompactPillarTable extends StatelessWidget {
                 children: [
                   Text(
                     pillar['hanja']!,
-                    style: TextStyle(
-                      fontSize: 11,
+                    style: context.labelTiny.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isDay
                           ? TossTheme.brandBlue
@@ -99,7 +99,7 @@ class CompactPillarTable extends StatelessWidget {
                   ),
                   Text(
                     pillar['title']!,
-                    style: TextStyle(
+                    style: context.labelTiny.copyWith(
                       fontSize: 9,
                       color: isDay
                           ? TossTheme.brandBlue
@@ -117,7 +117,7 @@ class CompactPillarTable extends StatelessWidget {
     );
   }
 
-  Widget _buildStemRow(List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildStemRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -151,7 +151,7 @@ class CompactPillarTable extends StatelessWidget {
                     ? TossTheme.brandBlue.withValues(alpha: 0.08)
                     : null,
               ),
-              child: _buildStemCell(stemData, isDay, isDark),
+              child: _buildStemCell(context, stemData, isDay, isDark),
             ),
           );
         }).toList(),
@@ -159,7 +159,7 @@ class CompactPillarTable extends StatelessWidget {
     );
   }
 
-  Widget _buildBranchRow(List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildBranchRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -193,7 +193,7 @@ class CompactPillarTable extends StatelessWidget {
                     ? TossTheme.brandBlue.withValues(alpha: 0.08)
                     : null,
               ),
-              child: _buildBranchCell(branchData, isDay, isDark),
+              child: _buildBranchCell(context, branchData, isDay, isDark),
             ),
           );
         }).toList(),
@@ -201,7 +201,7 @@ class CompactPillarTable extends StatelessWidget {
     );
   }
 
-  Widget _buildTenshinRow(List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildTenshinRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     // 십성 데이터 (임시 - 실제로는 sajuData에서 가져와야 함)
     final tenshinMap = _calculateTenshin();
 
@@ -238,8 +238,7 @@ class CompactPillarTable extends StatelessWidget {
               ),
               child: Text(
                 tenshin,
-                style: TextStyle(
-                  fontSize: 10,
+                style: context.labelTiny.copyWith(
                   fontWeight: isDay ? FontWeight.bold : FontWeight.w500,
                   color: isDay
                       ? TossTheme.brandBlue
@@ -255,13 +254,14 @@ class CompactPillarTable extends StatelessWidget {
   }
 
   Widget _buildStemCell(
+    BuildContext context,
     Map<String, dynamic>? stemData,
     bool isDay,
     bool isDark,
   ) {
     if (stemData == null) {
-      return const Center(
-        child: Text('-', style: TextStyle(color: Colors.grey)),
+      return Center(
+        child: Text('-', style: context.bodyMedium.copyWith(color: Colors.grey)),
       );
     }
 
@@ -275,7 +275,7 @@ class CompactPillarTable extends StatelessWidget {
       children: [
         Text(
           hanja,
-          style: TextStyle(
+          style: context.heading3.copyWith(
             fontSize: isDay ? 24 : 20,
             fontWeight: FontWeight.bold,
             color: isDay ? TossTheme.brandBlue : color,
@@ -290,7 +290,7 @@ class CompactPillarTable extends StatelessWidget {
           ),
           child: Text(
             element,
-            style: TextStyle(
+            style: context.labelTiny.copyWith(
               fontSize: 8,
               fontWeight: FontWeight.w600,
               color: color,
@@ -302,13 +302,14 @@ class CompactPillarTable extends StatelessWidget {
   }
 
   Widget _buildBranchCell(
+    BuildContext context,
     Map<String, dynamic>? branchData,
     bool isDay,
     bool isDark,
   ) {
     if (branchData == null) {
-      return const Center(
-        child: Text('-', style: TextStyle(color: Colors.grey)),
+      return Center(
+        child: Text('-', style: context.bodyMedium.copyWith(color: Colors.grey)),
       );
     }
 
@@ -323,7 +324,7 @@ class CompactPillarTable extends StatelessWidget {
       children: [
         Text(
           hanja,
-          style: TextStyle(
+          style: context.heading3.copyWith(
             fontSize: isDay ? 24 : 20,
             fontWeight: FontWeight.bold,
             color: isDay ? TossTheme.brandBlue : color,
@@ -331,7 +332,7 @@ class CompactPillarTable extends StatelessWidget {
         ),
         Text(
           animal,
-          style: TextStyle(
+          style: context.labelTiny.copyWith(
             fontSize: 8,
             color: isDark ? Colors.white60 : Colors.black45,
           ),
@@ -345,7 +346,7 @@ class CompactPillarTable extends StatelessWidget {
           ),
           child: Text(
             element,
-            style: TextStyle(
+            style: context.labelTiny.copyWith(
               fontSize: 8,
               fontWeight: FontWeight.w600,
               color: color,

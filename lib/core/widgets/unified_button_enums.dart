@@ -7,6 +7,7 @@ enum UnifiedButtonStyle {
   secondary, // 회색 배경
   ghost,     // 테두리만
   text,      // 텍스트만
+  danger,    // 빨간색 배경 (위험/특별 액션)
 }
 
 /// 버튼 크기

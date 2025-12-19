@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 압축된 합충형해 배지
 ///
@@ -47,8 +48,7 @@ class CompactRelationsBadges extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '합충형해',
-                style: TextStyle(
-                  fontSize: 11,
+                style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
@@ -56,7 +56,7 @@ class CompactRelationsBadges extends StatelessWidget {
               const Spacer(),
               Text(
                 '合沖刑破害',
-                style: TextStyle(
+                style: context.labelTiny.copyWith(
                   fontSize: 9,
                   color: isDark ? Colors.white38 : Colors.black26,
                 ),
@@ -69,7 +69,7 @@ class CompactRelationsBadges extends StatelessWidget {
             spacing: 6,
             runSpacing: 6,
             children: relations.map((relation) {
-              return _buildRelationBadge(relation, isDark);
+              return _buildRelationBadge(context, relation, isDark);
             }).toList(),
           ),
         ],
@@ -152,7 +152,7 @@ class CompactRelationsBadges extends StatelessWidget {
     return relations;
   }
 
-  Widget _buildRelationBadge(Map<String, dynamic> relation, bool isDark) {
+  Widget _buildRelationBadge(BuildContext context, Map<String, dynamic> relation, bool isDark) {
     final color = relation['color'] as Color;
     final type = relation['type'] as String;
     final hanja = relation['hanja'] as String;
@@ -181,7 +181,7 @@ class CompactRelationsBadges extends StatelessWidget {
             child: Center(
               child: Text(
                 hanja,
-                style: TextStyle(
+                style: context.labelTiny.copyWith(
                   fontSize: 9,
                   fontWeight: FontWeight.bold,
                   color: color,
@@ -193,8 +193,7 @@ class CompactRelationsBadges extends StatelessWidget {
           // 설명
           Text(
             '$type: $description',
-            style: TextStyle(
-              fontSize: 10,
+            style: context.labelTiny.copyWith(
               fontWeight: FontWeight.w500,
               color: isDark ? Colors.white70 : Colors.black54,
             ),

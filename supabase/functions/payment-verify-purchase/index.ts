@@ -7,190 +7,262 @@ const corsHeaders = {
 }
 
 /**
- * 결제 검증 Edge Function
- *
- * POST /payment/verify-purchase
- *
- * Request Body:
- * - platform: 'ios' | 'android'
- * - productId: string
- * - purchaseToken?: string (Android)
- * - receipt?: string (iOS)
- * - orderId?: string (Android)
- * - transactionId?: string (iOS)
- *
- * Response:
- * - { valid: boolean, error?: string }
- *
- * TODO: 실제 스토어 API 검증 구현
- * - iOS: App Store Server API v2
- * - Android: Google Play Developer API
+ * ============================================================
+ * 테이블 참조 (중요!)
+ * ============================================================
+ * - token_balance (단수!): 토큰 잔액 (balance, total_earned, total_spent)
+ * - token_transactions: 토큰 거래 이력 (구매/사용)
+ * - subscription_events: 결제 이벤트 로그
+ * ============================================================
  */
+
+// 상품별 토큰 수량 매핑
+const PRODUCT_TOKENS: Record<string, number> = {
+  'com.beyond.fortune.tokens10': 10,
+  'com.beyond.fortune.tokens50': 50,
+  'com.beyond.fortune.tokens100': 100,
+  'com.beyond.fortune.tokens200': 200,
+}
+
 serve(async (req) => {
-  // Handle CORS preflight requests
+  console.log('========================================')
+  console.log('🚀 payment-verify-purchase v17 시작')
+  console.log('========================================')
+
+  // CORS preflight
   if (req.method === 'OPTIONS') {
+    console.log('📌 OPTIONS preflight 요청')
     return new Response(null, { headers: corsHeaders })
   }
 
-  // POST 요청만 허용
   if (req.method !== 'POST') {
+    console.log(`❌ 잘못된 메소드: ${req.method}`)
     return new Response(
       JSON.stringify({ valid: false, error: 'Method not allowed' }),
-      {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
+      { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
   try {
-    // 요청 바디 파싱
+    console.log('📥 요청 body 파싱 시작...')
     const body = await req.json()
-    const {
-      platform,
-      productId,
-      purchaseToken,  // Android
-      receipt,        // iOS
-      orderId,        // Android
-      transactionId   // iOS
-    } = body
+    console.log('📥 받은 body:', JSON.stringify(body, null, 2))
+
+    const { platform, productId, purchaseToken, receipt, orderId, transactionId } = body
+    console.log(`📦 platform: ${platform}`)
+    console.log(`📦 productId: ${productId}`)
+    console.log(`📦 purchaseToken: ${purchaseToken ? '있음' : '없음'}`)
+    console.log(`📦 receipt: ${receipt ? '있음 (길이:' + String(receipt).length + ')' : '없음'}`)
+    console.log(`📦 orderId: ${orderId}`)
+    console.log(`📦 transactionId: ${transactionId}`)
 
     // 필수 파라미터 검증
     if (!platform || !productId) {
-      console.log('❌ Missing required parameters')
+      console.log('❌ 필수 파라미터 누락!')
       return new Response(
         JSON.stringify({ valid: false, error: 'Missing required parameters' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // 인증 토큰 추출 (선택적 - 로깅용)
-    const authHeader = req.headers.get('Authorization')
+    // Supabase 클라이언트 생성
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    console.log(`🔌 Supabase URL: ${supabaseUrl}`)
+    console.log(`🔌 Service Key 존재: ${supabaseServiceKey ? '예' : '아니오'}`)
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    })
+    console.log('✅ Supabase 클라이언트 생성 완료')
+
+    // 사용자 인증
     let userId: string | null = null
+    const authHeader = req.headers.get('Authorization')
+    console.log(`🔐 Authorization 헤더: ${authHeader ? '있음' : '없음'}`)
 
     if (authHeader) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-
-      const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      })
-
       const token = authHeader.replace('Bearer ', '')
-      const { data: { user } } = await supabase.auth.getUser(token)
+      console.log(`🔐 토큰 길이: ${token.length}`)
+      console.log(`🔐 토큰 앞 50자: ${token.substring(0, 50)}...`)
+
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+
+      if (authError) {
+        console.log(`❌ 인증 에러: ${JSON.stringify(authError)}`)
+      }
+
       userId = user?.id || null
+      console.log(`👤 인증된 userId: ${userId}`)
+      console.log(`👤 user 객체: ${user ? JSON.stringify({ id: user.id, email: user.email }) : 'null'}`)
+    } else {
+      console.log('⚠️ Authorization 헤더 없음 - 익명 요청')
     }
 
-    console.log(`🔍 Verifying purchase`)
-    console.log(`   - Platform: ${platform}`)
-    console.log(`   - Product: ${productId}`)
-    console.log(`   - User: ${userId || 'anonymous'}`)
+    console.log(`🔍 검증 시작: ${platform}/${productId} for user ${userId || 'anonymous'}`)
 
-    // ============================================================
-    // TODO: 실제 스토어 API 검증 구현
-    // ============================================================
-    //
-    // iOS (App Store Server API v2):
-    // 1. Apple 인증서로 JWT 생성
-    // 2. POST https://api.storekit.itunes.apple.com/inApps/v1/transactions/{transactionId}
-    // 3. 응답에서 productId, expiresDate 확인
-    //
-    // Android (Google Play Developer API):
-    // 1. Service Account 인증
-    // 2. GET https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{packageName}/purchases/subscriptions/{subscriptionId}/tokens/{token}
-    // 3. 응답에서 expiryTimeMillis, orderId 확인
-    //
-    // 현재는 개발 단계로 기본 통과 처리
-    // ============================================================
-
+    // 플랫폼별 검증 (현재 개발 모드로 통과)
     let isValid = true
-    let verificationDetails: Record<string, unknown> = {}
 
     if (platform === 'ios') {
-      // iOS 검증 로직
+      console.log('📱 iOS 플랫폼 검증')
       if (!receipt && !transactionId) {
-        console.warn('⚠️ iOS: Missing receipt or transactionId')
-        // 개발 단계에서는 통과
+        console.warn('⚠️ iOS: receipt와 transactionId 모두 없음')
       }
-
-      verificationDetails = {
-        platform: 'ios',
-        transactionId,
-        hasReceipt: !!receipt,
-        verifiedAt: new Date().toISOString(),
-        method: 'development_bypass'  // TODO: 'app_store_api_v2'로 변경
-      }
-
-      console.log(`✅ iOS purchase verification: PASS (development mode)`)
-
     } else if (platform === 'android') {
-      // Android 검증 로직
+      console.log('🤖 Android 플랫폼 검증')
       if (!purchaseToken) {
-        console.warn('⚠️ Android: Missing purchaseToken')
-        // 개발 단계에서는 통과
+        console.warn('⚠️ Android: purchaseToken 없음')
       }
-
-      verificationDetails = {
-        platform: 'android',
-        orderId,
-        hasPurchaseToken: !!purchaseToken,
-        verifiedAt: new Date().toISOString(),
-        method: 'development_bypass'  // TODO: 'google_play_api'로 변경
-      }
-
-      console.log(`✅ Android purchase verification: PASS (development mode)`)
-
     } else {
-      console.warn(`⚠️ Unknown platform: ${platform}`)
+      console.warn(`⚠️ 알 수 없는 플랫폼: ${platform}`)
       isValid = false
     }
+    console.log(`✅ 플랫폼 검증 결과: isValid = ${isValid}`)
 
-    // 검증 이벤트 로깅 (사용자가 있는 경우)
-    if (userId) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    // 검증 성공 시 토큰 추가
+    const tokensToAdd = PRODUCT_TOKENS[productId] || 0
+    console.log(`💰 추가할 토큰 수: ${tokensToAdd} (productId: ${productId})`)
+    console.log(`💰 PRODUCT_TOKENS 매핑: ${JSON.stringify(PRODUCT_TOKENS)}`)
 
-      const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-        auth: { autoRefreshToken: false, persistSession: false }
-      })
+    if (!userId) {
+      console.log('⚠️ userId가 없어서 토큰 추가 건너뜀')
+    }
+    if (!isValid) {
+      console.log('⚠️ isValid=false 라서 토큰 추가 건너뜀')
+    }
+    if (tokensToAdd <= 0) {
+      console.log(`⚠️ tokensToAdd=${tokensToAdd} 라서 토큰 추가 건너뜀`)
+    }
 
-      await supabase.from('subscription_events').insert({
+    if (userId && isValid && tokensToAdd > 0) {
+      console.log('========================================')
+      console.log('💰 토큰 추가 프로세스 시작')
+      console.log('========================================')
+
+      // 현재 잔액 조회 (token_balance - 단수!)
+      console.log('📊 [STEP 1] 현재 잔액 조회 시작...')
+      console.log(`📊 쿼리: SELECT balance, total_earned FROM token_balance WHERE user_id = '${userId}'`)
+
+      const { data: currentBalance, error: selectError } = await supabase
+        .from('token_balance')
+        .select('balance, total_earned')
+        .eq('user_id', userId)
+        .single()
+
+      console.log(`📊 [STEP 1] 조회 결과:`)
+      console.log(`   - data: ${JSON.stringify(currentBalance)}`)
+      console.log(`   - error: ${selectError ? JSON.stringify(selectError) : 'null'}`)
+
+      const oldBalance = currentBalance?.balance || 0
+      const oldTotalEarned = currentBalance?.total_earned || 0
+      const newBalance = oldBalance + tokensToAdd
+
+      console.log(`📊 계산:`)
+      console.log(`   - 기존 balance: ${oldBalance}`)
+      console.log(`   - 기존 total_earned: ${oldTotalEarned}`)
+      console.log(`   - 추가할 토큰: ${tokensToAdd}`)
+      console.log(`   - 새 balance: ${newBalance}`)
+      console.log(`   - 새 total_earned: ${oldTotalEarned + tokensToAdd}`)
+
+      // 잔액 업데이트 (token_balance - 단수!)
+      console.log('📊 [STEP 2] 잔액 업데이트 시작...')
+      const upsertData = {
         user_id: userId,
-        event_type: 'verified',
+        balance: newBalance,
+        total_earned: oldTotalEarned + tokensToAdd,
+        updated_at: new Date().toISOString()
+      }
+      console.log(`📊 UPSERT 데이터: ${JSON.stringify(upsertData, null, 2)}`)
+
+      const { data: upsertResult, error: balanceError } = await supabase
+        .from('token_balance')
+        .upsert(upsertData, { onConflict: 'user_id' })
+        .select()
+
+      console.log(`📊 [STEP 2] UPSERT 결과:`)
+      console.log(`   - data: ${JSON.stringify(upsertResult)}`)
+      console.log(`   - error: ${balanceError ? JSON.stringify(balanceError) : 'null'}`)
+
+      if (balanceError) {
+        console.error('❌ 토큰 잔액 업데이트 실패!')
+        console.error(`❌ 에러 상세: ${JSON.stringify(balanceError, null, 2)}`)
+      } else {
+        console.log(`✅ 토큰 잔액 업데이트 성공: ${oldBalance} → ${newBalance}`)
+
+        // 구매 이력 기록 (token_transactions 사용)
+        console.log('📊 [STEP 3] 거래 이력 기록 시작...')
+        const transactionData = {
+          user_id: userId,
+          transaction_type: 'purchase',
+          amount: tokensToAdd,
+          balance_after: newBalance,
+          description: `복주머니 ${tokensToAdd}개 구매`,
+          reference_type: 'in_app_purchase',
+          reference_id: transactionId || orderId
+        }
+        console.log(`📊 INSERT 데이터: ${JSON.stringify(transactionData, null, 2)}`)
+
+        const { data: txResult, error: txError } = await supabase
+          .from('token_transactions')
+          .insert(transactionData)
+          .select()
+
+        console.log(`📊 [STEP 3] INSERT 결과:`)
+        console.log(`   - data: ${JSON.stringify(txResult)}`)
+        console.log(`   - error: ${txError ? JSON.stringify(txError) : 'null'}`)
+      }
+
+      // 이벤트 로깅
+      console.log('📊 [STEP 4] 이벤트 로깅 시작...')
+      const eventData = {
+        user_id: userId,
+        event_type: 'purchase_verified',
         product_id: productId,
         platform,
         purchase_id: transactionId || orderId,
-        metadata: {
-          valid: isValid,
-          verification: verificationDetails
-        }
-      })
+        metadata: { tokens_added: tokensToAdd, new_balance: newBalance }
+      }
+      console.log(`📊 INSERT 데이터: ${JSON.stringify(eventData, null, 2)}`)
+
+      const { error: eventError } = await supabase
+        .from('subscription_events')
+        .insert(eventData)
+
+      console.log(`📊 [STEP 4] 이벤트 로깅 결과: ${eventError ? JSON.stringify(eventError) : '성공'}`)
+
+      console.log('========================================')
+      console.log('✅ 토큰 추가 프로세스 완료')
+      console.log('========================================')
     }
 
+    const responseData = {
+      valid: isValid,
+      productId,
+      platform,
+      tokensAdded: tokensToAdd,
+      verifiedAt: new Date().toISOString()
+    }
+    console.log('📤 응답 데이터:', JSON.stringify(responseData, null, 2))
+    console.log('========================================')
+    console.log('🏁 payment-verify-purchase 종료')
+    console.log('========================================')
+
     return new Response(
-      JSON.stringify({
-        valid: isValid,
-        productId,
-        platform,
-        verifiedAt: new Date().toISOString()
-      }),
+      JSON.stringify(responseData),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
   } catch (error) {
-    console.error('❌ Purchase verification error:', error)
+    console.error('========================================')
+    console.error('❌ 치명적 오류 발생!')
+    console.error('========================================')
+    console.error('❌ 에러:', error)
+    console.error('❌ 에러 메시지:', error.message)
+    console.error('❌ 에러 스택:', error.stack)
     return new Response(
-      JSON.stringify({ valid: false, error: 'Verification failed' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
+      JSON.stringify({ valid: false, error: 'Verification failed', details: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })

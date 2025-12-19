@@ -1,5 +1,21 @@
 # 🎨 TOSS Design System - Complete Guide
 
+> **⚠️ 보조 참조 문서 (Secondary Reference)**
+>
+> 이 문서는 **보조 참조용**입니다. Fortune App의 기본 디자인 언어는 **한국 전통 미학**입니다.
+>
+> | 우선순위 | 디자인 시스템 | 문서 |
+> |---------|--------------|------|
+> | **PRIMARY** | 한국 전통 미학 | [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) |
+> | SECONDARY | Toss Design | 이 문서 |
+>
+> **충돌 시 규칙**: 한국 전통 미학 요소가 Toss Design 요소보다 우선합니다.
+> - 색상: `ObangseokColors` > `TossColors`
+> - 카드: `HanjiCard` > `TossCard`
+> - 폰트: `GowunBatang` (전통) > 시스템 폰트 (본문)
+
+---
+
 Fortune Flutter 앱의 통합 TOSS 디자인 시스템 완전 가이드
 
 ## 📋 목차

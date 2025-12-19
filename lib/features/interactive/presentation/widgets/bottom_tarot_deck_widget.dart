@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
-import '../../../../services/ad_service.dart';
+import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
-class BottomTarotDeckWidget extends StatefulWidget {
+class BottomTarotDeckWidget extends ConsumerStatefulWidget {
   final Function(int) onCardSelected;
-  
+
   const BottomTarotDeckWidget({
     super.key,
     required this.onCardSelected,
   });
 
   @override
-  State<BottomTarotDeckWidget> createState() => _BottomTarotDeckWidgetState();
+  ConsumerState<BottomTarotDeckWidget> createState() => _BottomTarotDeckWidgetState();
 }
 
-class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
+class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
     with TickerProviderStateMixin {
   late AnimationController _slideUpController;
   late AnimationController _fanController;
@@ -163,9 +164,10 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
               if (isCenter) {
                 HapticFeedback.mediumImpact();
                 // Show ad before selecting card
-                AdService.instance.showInterstitialAdWithCallback(
+                InterstitialAdHelper.showInterstitialAdWithCallback(
+                  ref,
                   onAdCompleted: () async {
-                    // Select card after ad is completed or if ad is not ready
+                    // Select card after ad is completed or skipped
                     widget.onCardSelected(index);
                   },
                   onAdFailed: () async {

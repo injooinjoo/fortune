@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// ⏱️ 시간대별 점수 그래프 카드
 class HourlyScoreGraphCard extends StatelessWidget {
@@ -33,9 +33,8 @@ class HourlyScoreGraphCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '하루 24시간 운세 흐름과 추천 시간대',
-          style: TextStyle(
-            color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 13,
+          style: context.bodySmall.copyWith(
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
           ),
         ),
 
@@ -43,18 +42,40 @@ class HourlyScoreGraphCard extends StatelessWidget {
 
         // 베스트/워스트 시간대 요약
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
-            borderRadius: BorderRadius.circular(10),
+            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.arrow_upward, color: Color(0xFF10B981), size: 18),
-                  const SizedBox(width: 6),
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2E8B57).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Center(
+                      child: Text('吉', style: TextStyle(
+                        color: Color(0xFF2E8B57),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'ZenSerif',
+                      )),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -62,8 +83,8 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     children: [
                       Text(
                         '베스트',
-                        style: DSTypography.labelSmall.copyWith(
-                          color: const Color(0xFF10B981),
+                        style: context.labelSmall.copyWith(
+                          color: const Color(0xFF2E8B57),
                           fontWeight: FontWeight.w600,
                           height: 1.0,
                         ),
@@ -71,7 +92,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         '$bestHour시',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: isDark ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.w700,
                           height: 1.0,
@@ -83,13 +104,28 @@ class HourlyScoreGraphCard extends StatelessWidget {
               ),
               Container(
                 width: 1,
-                height: 32,
+                height: 36,
                 color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
               ),
               Row(
                 children: [
-                  const Icon(Icons.arrow_downward, color: Color(0xFFEF4444), size: 18),
-                  const SizedBox(width: 6),
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDC143C).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Center(
+                      child: Text('凶', style: TextStyle(
+                        color: Color(0xFFDC143C),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'ZenSerif',
+                      )),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -97,8 +133,8 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     children: [
                       Text(
                         '주의',
-                        style: DSTypography.labelSmall.copyWith(
-                          color: const Color(0xFFEF4444),
+                        style: context.labelSmall.copyWith(
+                          color: const Color(0xFFDC143C),
                           fontWeight: FontWeight.w600,
                           height: 1.0,
                         ),
@@ -106,7 +142,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         '$worstHour시',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: isDark ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.w700,
                           height: 1.0,
@@ -126,8 +162,15 @@ class HourlyScoreGraphCard extends StatelessWidget {
           height: 160,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
+            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
             borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: LineChart(
             LineChartData(
@@ -169,8 +212,9 @@ class HourlyScoreGraphCard extends StatelessWidget {
                 LineChartBarData(
                   spots: spots,
                   isCurved: true,
+                  // 전통 오방색 기반 그라데이션 (수→목: 물의 흐름이 나무를 기르듯)
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF3B82F6), Color(0xFF8B5CF6)],
+                    colors: [Color(0xFF1E3A5F), Color(0xFF2E8B57)],
                   ),
                   barWidth: 3,
                   dotData: FlDotData(
@@ -180,9 +224,10 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     },
                     getDotPainter: (spot, percent, barData, index) {
                       final isBest = spot.x.toInt() == bestHour;
+                      // 전통 색상: 吉(녹색) / 凶(적색)
                       return FlDotCirclePainter(
                         radius: 6,
-                        color: isBest ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                        color: isBest ? const Color(0xFF2E8B57) : const Color(0xFFDC143C),
                         strokeWidth: 2,
                         strokeColor: Colors.white,
                       );
@@ -192,8 +237,8 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF3B82F6).withValues(alpha: 0.3),
-                        const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                        const Color(0xFF1E3A5F).withValues(alpha: 0.25),
+                        const Color(0xFF2E8B57).withValues(alpha: 0.05),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,

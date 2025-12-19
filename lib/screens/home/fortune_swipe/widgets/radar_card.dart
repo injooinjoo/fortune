@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/widgets/fortune_infographic_widgets.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
@@ -27,16 +27,13 @@ class RadarCard extends StatelessWidget {
             color: isDark ? Colors.white : Colors.black87,
             fontSize: 22,
             fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '오늘의 각 분야별 운세를 한눈에',
-          style: TextStyle(
+          style: context.bodySmall.copyWith(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
           ),
         ),
 
@@ -58,12 +55,13 @@ class RadarCard extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // 레이더 차트
+              // 레이더 차트 - 전통 목(木) 색상 적용
               SizedBox(
                 height: 180,
                 child: FortuneInfographicWidgets.buildRadarChart(
                   scores: radarData.map((k, v) => MapEntry(k, v.round())),
                   size: 180,
+                  primaryColor: const Color(0xFF2E8B57), // 木(목) - 전통 청록
                 ),
               ).animate()
                 .fadeIn(duration: 600.ms)
@@ -83,7 +81,7 @@ class RadarCard extends StatelessWidget {
                         flex: 2,
                         child: Text(
                           entry.key,
-                          style: DSTypography.bodySmall.copyWith(
+                          style: context.bodySmall.copyWith(
                             color: isDark ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.w500,
                           ),
@@ -97,20 +95,20 @@ class RadarCard extends StatelessWidget {
                           children: [
                             // 배경
                             Container(
-                              height: 6,
+                              height: 4,
                               decoration: BoxDecoration(
                                 color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
-                                borderRadius: BorderRadius.circular(3),
+                                borderRadius: BorderRadius.circular(2),
                               ),
                             ),
                             // 진행
                             FractionallySizedBox(
                               widthFactor: entry.value / 100,
                               child: Container(
-                                height: 6,
+                                height: 4,
                                 decoration: BoxDecoration(
                                   color: areaColor,
-                                  borderRadius: BorderRadius.circular(3),
+                                  borderRadius: BorderRadius.circular(2),
                                 ),
                               ).animate()
                                 .scaleX(
@@ -132,10 +130,9 @@ class RadarCard extends StatelessWidget {
                         width: 36,
                         child: Text(
                           '${entry.value.round()}',
-                          style: TextStyle(
+                          style: context.labelSmall.copyWith(
                             color: areaColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.right,
                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/components/app_card.dart';
 import '../../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../../core/widgets/gpt_style_typing_text.dart';
@@ -239,7 +240,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           // 관상 타입
           Text(
             data['face_type'] ?? '관상 분석 완료',
-            style: DSTypography.headingLarge.copyWith(
+            style: context.heading1.copyWith(
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
@@ -253,7 +254,7 @@ class _ResultWidgetState extends State<ResultWidget> {
             children: [
               Text(
                 '$luckScore',
-                style: DSTypography.displayLarge.copyWith(
+                style: context.displayLarge.copyWith(
                   fontWeight: FontWeight.w800,
                   foreground: Paint()
                     ..shader = LinearGradient(
@@ -264,7 +265,7 @@ class _ResultWidgetState extends State<ResultWidget> {
               const SizedBox(width: 4),
               Text(
                 '점',
-                style: DSTypography.headingMedium.copyWith(
+                style: context.heading2.copyWith(
                   color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                 ),
               ),
@@ -291,7 +292,7 @@ class _ResultWidgetState extends State<ResultWidget> {
             Center(
               child: GptStyleTypingText(
                 text: FortuneTextCleaner.clean(data['overall_fortune']),
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   height: 1.6,
                 ),
@@ -381,7 +382,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     const SizedBox(width: 8),
                     Text(
                       '삼정(三停) 분석',
-                      style: DSTypography.headingMedium.copyWith(
+                      style: context.heading2.copyWith(
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
@@ -391,14 +392,14 @@ class _ResultWidgetState extends State<ResultWidget> {
                 const SizedBox(height: 8),
                 Text(
                   '상정(초년운), 중정(중년운), 하정(말년운)',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 16),
                 GptStyleTypingText(
                   text: FortuneTextCleaner.clean(data['samjeong'].toString()),
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.7,
                   ),
@@ -436,7 +437,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     const SizedBox(width: 8),
                     Text(
                       '십이궁(十二宮) 분석',
-                      style: DSTypography.headingMedium.copyWith(
+                      style: context.heading2.copyWith(
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
@@ -446,14 +447,14 @@ class _ResultWidgetState extends State<ResultWidget> {
                 const SizedBox(height: 8),
                 Text(
                   '얼굴 12개 영역의 상세 분석',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 16),
                 GptStyleTypingText(
                   text: FortuneTextCleaner.clean(data['sibigung'].toString()),
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.7,
                   ),
@@ -521,7 +522,7 @@ class _ResultWidgetState extends State<ResultWidget> {
               const SizedBox(width: 12),
               Text(
                 '당신과 닮은 유명인',
-                style: DSTypography.headingMedium.copyWith(
+                style: context.heading2.copyWith(
                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
@@ -593,7 +594,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   ),
                   child: Text(
                     '1위',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 10,
@@ -612,7 +613,7 @@ class _ResultWidgetState extends State<ResultWidget> {
               children: [
                 Text(
                   name,
-                  style: DSTypography.headingMedium.copyWith(
+                  style: context.heading2.copyWith(
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
@@ -631,7 +632,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                       ),
                       child: Text(
                         feature,
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: DSColors.accent,
                           fontSize: 11,
                         ),
@@ -684,7 +685,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   ),
                   child: Text(
                     '$rank위',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 9,
@@ -698,7 +699,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           Expanded(
             child: Text(
               name,
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
@@ -766,7 +767,7 @@ class _ResultWidgetState extends State<ResultWidget> {
       child: Center(
         child: Text(
           initial,
-          style: DSTypography.headingMedium.copyWith(
+          style: context.heading2.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w700,
             fontSize: size * 0.4,
@@ -815,7 +816,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           Center(
             child: Text(
               '$score%',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 fontWeight: FontWeight.w700,
                 fontSize: size * 0.24,
@@ -868,14 +869,14 @@ class _ResultWidgetState extends State<ResultWidget> {
                     children: [
                       Text(
                         '첫인상 분석',
-                        style: DSTypography.headingMedium.copyWith(
+                        style: context.heading2.copyWith(
                           color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
                         '타인이 당신을 처음 볼 때 느끼는 인상',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                         ),
                       ),
@@ -946,7 +947,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           const SizedBox(height: 8),
           Text(
             label,
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               fontWeight: FontWeight.w600,
             ),
@@ -954,7 +955,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           const SizedBox(height: 4),
           Text(
             '$score점',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.heading2.copyWith(
               color: color,
               fontWeight: FontWeight.w700,
             ),
@@ -1005,14 +1006,14 @@ class _ResultWidgetState extends State<ResultWidget> {
                     children: [
                       Text(
                         '궁합운 - 이상형 관상',
-                        style: DSTypography.headingMedium.copyWith(
+                        style: context.heading2.copyWith(
                           color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
                         '당신과 어울리는 상대의 관상 특징',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                         ),
                       ),
@@ -1030,7 +1031,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   ),
                   child: Text(
                     '$compatibilityScore점',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
@@ -1060,7 +1061,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                         const SizedBox(width: 8),
                         Text(
                           '이상형 관상',
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: Colors.pink,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1070,7 +1071,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     const SizedBox(height: 8),
                     Text(
                       idealPartnerType,
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1085,7 +1086,7 @@ class _ResultWidgetState extends State<ResultWidget> {
             if (idealPartnerDescription.isNotEmpty)
               Text(
                 idealPartnerDescription,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   height: 1.6,
                 ),
@@ -1138,14 +1139,14 @@ class _ResultWidgetState extends State<ResultWidget> {
                     children: [
                       Text(
                         '결혼 적령기 예측',
-                        style: DSTypography.headingMedium.copyWith(
+                        style: context.heading2.copyWith(
                           color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
                         '삼정(三停) 균형 기반 분석',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                         ),
                       ),
@@ -1209,7 +1210,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     Expanded(
                       child: Text(
                         prediction,
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                           height: 1.5,
                         ),
@@ -1257,7 +1258,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           const SizedBox(height: 6),
           Text(
             label,
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               fontSize: 10,
             ),
@@ -1266,7 +1267,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           const SizedBox(height: 4),
           Text(
             age.isNotEmpty ? age : '-',
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: color,
               fontWeight: FontWeight.w700,
               fontSize: isHighlighted ? 13 : 12,
@@ -1304,7 +1305,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     const SizedBox(width: 8),
                     Text(
                       title,
-                      style: DSTypography.headingMedium.copyWith(
+                      style: context.heading2.copyWith(
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1322,7 +1323,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                           const SizedBox(width: 4),
                           Text(
                             '프리미엄',
-                            style: DSTypography.labelSmall.copyWith(
+                            style: context.labelSmall.copyWith(
                               color: color,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1335,7 +1336,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                 const SizedBox(height: 16),
                 Text(
                   FortuneTextCleaner.clean(data[key].toString()),
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.7,
                   ),
@@ -1368,7 +1369,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     const SizedBox(width: 8),
                     Text(
                       '전체 분석',
-                      style: DSTypography.headingMedium.copyWith(
+                      style: context.heading2.copyWith(
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1386,7 +1387,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                           const SizedBox(width: 4),
                           Text(
                             '프리미엄',
-                            style: DSTypography.labelSmall.copyWith(
+                            style: context.labelSmall.copyWith(
                               color: DSColors.textSecondary,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1399,7 +1400,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                 const SizedBox(height: 16),
                 Text(
                   data['full_analysis'].toString(),
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.7,
                   ),
@@ -1428,7 +1429,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   const SizedBox(width: 8),
                   Text(
                     '성격 분석',
-                    style: DSTypography.headingMedium.copyWith(
+                    style: context.heading2.copyWith(
                       color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     ),
                   ),
@@ -1450,7 +1451,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                           ),
                           child: Text(
                             trait.toString(),
-                            style: DSTypography.labelSmall.copyWith(
+                            style: context.labelSmall.copyWith(
                               color: DSColors.warning,
                             ),
                           ),
@@ -1486,7 +1487,7 @@ class _ResultWidgetState extends State<ResultWidget> {
               const SizedBox(width: 8),
               Text(
                 '운세 개선 조언',
-                style: DSTypography.headingMedium.copyWith(
+                style: context.heading2.copyWith(
                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 ),
               ),
@@ -1507,7 +1508,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     Expanded(
                       child: Text(
                         rec,
-                        style: DSTypography.bodyMedium.copyWith(
+                        style: context.bodyMedium.copyWith(
                           color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         ),
                       ),

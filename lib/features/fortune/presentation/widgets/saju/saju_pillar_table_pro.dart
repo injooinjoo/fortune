@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
@@ -56,18 +57,18 @@ class SajuPillarTablePro extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
-            _buildTitle(isDark),
+            _buildTitle(context, isDark),
             const SizedBox(height: DSSpacing.md),
           ],
           _buildProTable(context, isDark),
           const SizedBox(height: DSSpacing.sm),
-          _buildDayMasterInfo(isDark),
+          _buildDayMasterInfo(context, isDark),
         ],
       ),
     );
   }
 
-  Widget _buildTitle(bool isDark) {
+  Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
         Icon(
@@ -80,14 +81,14 @@ class SajuPillarTablePro extends StatelessWidget {
           children: [
             Text(
               '사주명식',
-              style: DSTypography.headingMedium.copyWith(
+              style: context.heading2.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '四柱命式',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: isDark
                     ? DSColors.textTertiary
                     : DSColors.textSecondary,
@@ -130,22 +131,22 @@ class SajuPillarTablePro extends StatelessWidget {
       child: Column(
         children: [
           // 헤더 행 (년주, 월주, 일주, 시주)
-          _buildHeaderRow(pillars, isDark),
+          _buildHeaderRow(context, pillars, isDark),
           // 천간 행
           _buildStemRow(context, pillars, isDark),
           // 지지 행
           _buildBranchRow(context, pillars, gongMangInfo, isDark),
           // 지장간 행 (옵션)
-          if (showJijanggan) _buildJijangganRow(pillars, isDark),
+          if (showJijanggan) _buildJijangganRow(context, pillars, isDark),
           // 12운성 행 (옵션)
           if (showTwelveStages && stages != null)
-            _buildTwelveStagesRow(pillars, stages, isDark),
+            _buildTwelveStagesRow(context, pillars, stages, isDark),
         ],
       ),
     );
   }
 
-  Widget _buildHeaderRow(List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildHeaderRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         color: isDark
@@ -186,8 +187,7 @@ class SajuPillarTablePro extends StatelessWidget {
                 children: [
                   Text(
                     pillar['hanja']!,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: context.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isDay
                           ? DSColors.accent
@@ -198,13 +198,12 @@ class SajuPillarTablePro extends StatelessWidget {
                   ),
                   Text(
                     pillar['title']!,
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelTiny.copyWith(
                       color: isDay
                           ? DSColors.accent
                           : (isDark
                               ? DSColors.textTertiary
                               : DSColors.textSecondary),
-                      fontSize: 10,
                     ),
                   ),
                 ],
@@ -258,7 +257,7 @@ class SajuPillarTablePro extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => _showStemExplanation(context, stemData),
                 behavior: HitTestBehavior.opaque,
-                child: _buildStemCell(stemData, isDay, isDark),
+                child: _buildStemCell(context, stemData, isDay, isDark),
               ),
             ),
           );
@@ -320,7 +319,7 @@ class SajuPillarTablePro extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => _showBranchExplanation(context, branchData),
                 behavior: HitTestBehavior.opaque,
-                child: _buildBranchCell(branchData, isDay, isGongMang, isDark),
+                child: _buildBranchCell(context, branchData, isDay, isGongMang, isDark),
               ),
             ),
           );
@@ -329,7 +328,7 @@ class SajuPillarTablePro extends StatelessWidget {
     );
   }
 
-  Widget _buildJijangganRow(List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildJijangganRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -373,7 +372,7 @@ class SajuPillarTablePro extends StatelessWidget {
                           ? Colors.black.withValues(alpha: 0.1)
                           : Colors.grey.shade50),
                 ),
-                child: _buildJijangganCell(branch, isDark),
+                child: _buildJijangganCell(context, branch, isDark),
               ),
             );
           }).toList(),
@@ -383,6 +382,7 @@ class SajuPillarTablePro extends StatelessWidget {
   }
 
   Widget _buildTwelveStagesRow(
+    BuildContext context,
     List<Map<String, String>> pillars,
     Map<String, TwelveStage> stages,
     bool isDark,
@@ -437,7 +437,7 @@ class SajuPillarTablePro extends StatelessWidget {
                           )
                         : null,
               ),
-              child: _buildTwelveStageCell(stage, isDark),
+              child: _buildTwelveStageCell(context, stage, isDark),
             ),
           );
         }).toList(),
@@ -446,6 +446,7 @@ class SajuPillarTablePro extends StatelessWidget {
   }
 
   Widget _buildStemCell(
+    BuildContext context,
     Map<String, dynamic>? stemData,
     bool isDay,
     bool isDark,
@@ -466,7 +467,7 @@ class SajuPillarTablePro extends StatelessWidget {
         // 한자 크게
         Text(
           hanja,
-          style: TextStyle(
+          style: context.heading2.copyWith(
             fontSize: isDay ? 28 : 24,
             fontWeight: FontWeight.bold,
             color: isDay ? DSColors.accent : color,
@@ -476,10 +477,9 @@ class SajuPillarTablePro extends StatelessWidget {
         // 한글 작게
         Text(
           name,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelTiny.copyWith(
             color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
             fontWeight: FontWeight.w500,
-            fontSize: 10,
           ),
           textAlign: TextAlign.center,
         ),
@@ -493,8 +493,7 @@ class SajuPillarTablePro extends StatelessWidget {
           ),
           child: Text(
             element,
-            style: TextStyle(
-              fontSize: 9,
+            style: context.labelTiny.copyWith(
               fontWeight: FontWeight.w600,
               color: color,
             ),
@@ -505,6 +504,7 @@ class SajuPillarTablePro extends StatelessWidget {
   }
 
   Widget _buildBranchCell(
+    BuildContext context,
     Map<String, dynamic>? branchData,
     bool isDay,
     bool isGongMang,
@@ -530,7 +530,7 @@ class SajuPillarTablePro extends StatelessWidget {
             // 한자 크게
             Text(
               hanja,
-              style: TextStyle(
+              style: context.heading2.copyWith(
                 fontSize: isDay ? 28 : 24,
                 fontWeight: FontWeight.bold,
                 color: isDay ? DSColors.accent : color,
@@ -540,10 +540,9 @@ class SajuPillarTablePro extends StatelessWidget {
             // 한글 + 띠 한줄로
             Text(
               '$name $animal',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelTiny.copyWith(
                 color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
-                fontSize: 9,
               ),
               textAlign: TextAlign.center,
             ),
@@ -557,8 +556,7 @@ class SajuPillarTablePro extends StatelessWidget {
               ),
               child: Text(
                 element,
-                style: TextStyle(
-                  fontSize: 9,
+                style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.w600,
                   color: color,
                 ),
@@ -577,10 +575,9 @@ class SajuPillarTablePro extends StatelessWidget {
                 color: SajuColors.emptinessLight,
                 borderRadius: BorderRadius.circular(3),
               ),
-              child: const Text(
+              child: Text(
                 '空',
-                style: TextStyle(
-                  fontSize: 8,
+                style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -591,7 +588,7 @@ class SajuPillarTablePro extends StatelessWidget {
     );
   }
 
-  Widget _buildJijangganCell(String branch, bool isDark) {
+  Widget _buildJijangganCell(BuildContext context, String branch, bool isDark) {
     if (branch.isEmpty) {
       return const Center(child: Text('-'));
     }
@@ -620,16 +617,14 @@ class SajuPillarTablePro extends StatelessWidget {
             children: [
               Text(
                 stem.stemHanja,
-                style: TextStyle(
-                  fontSize: 14,
+                style: context.bodySmall.copyWith(
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
               ),
               Text(
                 '${stem.ratio}%',
-                style: TextStyle(
-                  fontSize: 9,
+                style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.w500,
                   color: color.withValues(alpha: 0.7),
                 ),
@@ -641,7 +636,7 @@ class SajuPillarTablePro extends StatelessWidget {
     );
   }
 
-  Widget _buildTwelveStageCell(TwelveStage? stage, bool isDark) {
+  Widget _buildTwelveStageCell(BuildContext context, TwelveStage? stage, bool isDark) {
     if (stage == null) {
       return const Center(child: Text('-'));
     }
@@ -652,8 +647,7 @@ class SajuPillarTablePro extends StatelessWidget {
       children: [
         Text(
           stage.hanja,
-          style: TextStyle(
-            fontSize: 14,
+          style: context.bodySmall.copyWith(
             fontWeight: FontWeight.bold,
             color: stage.color,
           ),
@@ -661,9 +655,8 @@ class SajuPillarTablePro extends StatelessWidget {
         ),
         Text(
           stage.korean,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelTiny.copyWith(
             color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
-            fontSize: 9,
           ),
           textAlign: TextAlign.center,
         ),
@@ -671,7 +664,7 @@ class SajuPillarTablePro extends StatelessWidget {
     );
   }
 
-  Widget _buildDayMasterInfo(bool isDark) {
+  Widget _buildDayMasterInfo(BuildContext context, bool isDark) {
     final dayData = sajuData['day'];
     if (dayData == null) return const SizedBox.shrink();
 
@@ -715,8 +708,7 @@ class SajuPillarTablePro extends StatelessWidget {
             child: Center(
               child: Text(
                 stemHanja,
-                style: TextStyle(
-                  fontSize: 18,
+                style: context.heading4.copyWith(
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
@@ -729,17 +721,16 @@ class SajuPillarTablePro extends StatelessWidget {
               children: [
                 Text(
                   '일간 日干',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelTiny.copyWith(
                     color: isDark
                         ? DSColors.textTertiary
                         : DSColors.textSecondary,
-                    fontSize: 10,
                   ),
                 ),
                 const SizedBox(width: 6),
                 Text(
                   '$stemName($stemHanja)',
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: color,
                   ),
@@ -756,8 +747,7 @@ class SajuPillarTablePro extends StatelessWidget {
                   ),
                   child: Text(
                     '$element 오행',
-                    style: TextStyle(
-                      fontSize: 10,
+                    style: context.labelTiny.copyWith(
                       fontWeight: FontWeight.bold,
                       color: color,
                     ),

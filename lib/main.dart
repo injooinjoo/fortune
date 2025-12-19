@@ -25,6 +25,7 @@ import 'core/services/supabase_connection_service.dart';
 import 'core/utils/route_observer_logger.dart';
 import 'core/services/error_reporter_service.dart';
 import 'core/providers/user_settings_provider.dart';
+import 'core/services/fortune_haptic_service.dart';
 
 void main() async {
   debugPrint('🚀 [STARTUP] App main() started');
@@ -65,6 +66,15 @@ void main() async {
   } catch (e) {
     debugPrint('❌ [STARTUP] Hive initialization failed: $e');
     Logger.error('Hive initialization failed', e);
+  }
+
+  // Initialize Haptic Service
+  try {
+    debugPrint('🚀 [STARTUP] Initializing Haptic Service...');
+    await FortuneHapticService.initialize();
+    debugPrint('🚀 [STARTUP] Haptic Service initialized');
+  } catch (e) {
+    debugPrint('⚠️ [STARTUP] Haptic Service initialization failed: $e');
   }
 
   // Initialize Firebase

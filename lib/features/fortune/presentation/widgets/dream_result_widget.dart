@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 
@@ -217,7 +218,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                           if (title != null) ...[
                             Text(
                               title,
-                              style: DSTypography.headingSmall.copyWith(
+                              style: context.heading3.copyWith(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -226,7 +227,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                           ],
                           GptStyleTypingText(
                             text: content,
-                            style: (isTitle ? DSTypography.headingLarge : DSTypography.bodyMedium).copyWith(
+                            style: (isTitle ? context.heading1 : context.bodyMedium).copyWith(
                               color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
                               height: 1.6,
                             ),
@@ -291,7 +292,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                     // 제목은 항상 표시
                     Text(
                       '🔮 상징 분석',
-                      style: DSTypography.headingSmall.copyWith(
+                      style: context.heading3.copyWith(
                         color: isDark ? Colors.indigo.shade300 : Colors.indigo,
                         fontWeight: FontWeight.w600,
                       ),
@@ -305,7 +306,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                             imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                             child: Text(
                               symbolAnalysis.map((s) => '${s['symbol']}: ${s['meaning']}').join('\n'),
-                              style: DSTypography.bodyMedium.copyWith(color: Colors.grey),
+                              style: context.bodyMedium.copyWith(color: Colors.grey),
                             ),
                           ),
                           Positioned.fill(
@@ -344,7 +345,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                                 ),
                                 child: Text(
                                   symbolName,
-                                  style: DSTypography.bodySmall.copyWith(
+                                  style: context.bodySmall.copyWith(
                                     color: DSColors.accent,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -354,7 +355,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                               Expanded(
                                 child: Text(
                                   meaning,
-                                  style: DSTypography.bodyMedium.copyWith(
+                                  style: context.bodyMedium.copyWith(
                                     color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.87),
                                     height: 1.5,
                                   ),
@@ -421,7 +422,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                     // 제목은 항상 표시
                     Text(
                       '✨ 행동 조언',
-                      style: DSTypography.headingSmall.copyWith(
+                      style: context.heading3.copyWith(
                         color: isDark ? Colors.pink.shade300 : Colors.pink,
                         fontWeight: FontWeight.w600,
                       ),
@@ -435,7 +436,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                             imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                             child: Text(
                               actionAdvice.join('\n'),
-                              style: DSTypography.bodyMedium.copyWith(color: Colors.grey),
+                              style: context.bodyMedium.copyWith(color: Colors.grey),
                             ),
                           ),
                           Positioned.fill(
@@ -476,7 +477,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                                 child: Center(
                                   child: Text(
                                     '${index + 1}',
-                                    style: DSTypography.bodySmall.copyWith(
+                                    style: context.bodySmall.copyWith(
                                       color: DSColors.accent,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -487,7 +488,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                               Expanded(
                                 child: Text(
                                   advice,
-                                  style: DSTypography.bodyMedium.copyWith(
+                                  style: context.bodyMedium.copyWith(
                                     color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.87),
                                     height: 1.5,
                                   ),
@@ -521,7 +522,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
         if (title != null) ...[
           Text(
             title,
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               color: title.startsWith('🧠') ? (isDark ? Colors.purple.shade300 : Colors.purple) :
                      title.startsWith('💡') ? (isDark ? Colors.orange.shade300 : Colors.orange) :
                      title.startsWith('🔮') ? (isDark ? Colors.indigo.shade300 : Colors.indigo) :
@@ -540,7 +541,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
               imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Text(
                 content,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: Colors.grey,
                   height: 1.6,
                 ),

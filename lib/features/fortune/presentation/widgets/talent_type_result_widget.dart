@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/talent_type.dart';
 
 // Korean Traditional Design System - Talent Type Result Widget
@@ -61,14 +62,14 @@ class TalentTypeResultWidget extends StatelessWidget {
           // 이모지
           Text(
             talentInfo.emoji,
-            style: DSTypography.displayLarge,
+            style: context.displayLarge,
           ),
           const SizedBox(height: 12),
 
           // 타입명
           Text(
             talentInfo.title,
-            style: DSTypography.headingMedium.copyWith(
+            style: context.heading2.copyWith(
               color: DSColors.accent,
             ),
             textAlign: TextAlign.center,
@@ -78,7 +79,7 @@ class TalentTypeResultWidget extends StatelessWidget {
           // 서브타이틀
           Text(
             talentInfo.subtitle,
-            style: DSTypography.bodyLarge.copyWith(
+            style: context.bodyLarge.copyWith(
 
               fontWeight: FontWeight.w500,
             ),
@@ -113,7 +114,7 @@ class TalentTypeResultWidget extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '재능 점수 $overallScore점',
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: _getScoreColor(overallScore),
                   fontWeight: FontWeight.w600,
                 ),
@@ -135,7 +136,7 @@ class TalentTypeResultWidget extends StatelessWidget {
       ),
       child: Text(
         talentInfo.description,
-        style: DSTypography.bodyMedium.copyWith(
+        style: context.bodyMedium.copyWith(
           height: 1.6,
           color: DSColors.textSecondary,
         ),
@@ -178,7 +179,7 @@ class TalentStrengthCards extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 '핵심 강점 TOP 3',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -226,7 +227,7 @@ class TalentStrengthCards extends StatelessWidget {
             child: Center(
               child: Text(
                 '$rank',
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   color: Colors.white,
 
                 ),
@@ -237,7 +238,7 @@ class TalentStrengthCards extends StatelessWidget {
           Expanded(
             child: Text(
               strength,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               ),
@@ -275,7 +276,7 @@ class RecommendedCareersWidget extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 '추천 직업',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -286,14 +287,14 @@ class RecommendedCareersWidget extends StatelessWidget {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: careers.map((career) => _buildCareerChip(career)).toList(),
+            children: careers.map((career) => _buildCareerChip(context, career)).toList(),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCareerChip(String career) {
+  Widget _buildCareerChip(BuildContext context, String career) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -305,7 +306,7 @@ class RecommendedCareersWidget extends StatelessWidget {
       ),
       child: Text(
         career,
-        style: DSTypography.labelSmall.copyWith(
+        style: context.labelSmall.copyWith(
           color: DSColors.accent,
           fontWeight: FontWeight.w600,
         ),
@@ -340,7 +341,7 @@ class ActionPlanWidget extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 '오늘부터 시작할 수 있는 3가지',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -379,7 +380,7 @@ class ActionPlanWidget extends StatelessWidget {
             child: Center(
               child: Text(
                 '$step',
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                 ),
@@ -390,7 +391,7 @@ class ActionPlanWidget extends StatelessWidget {
           Expanded(
             child: Text(
               plan,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 fontWeight: FontWeight.w500,
                 color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               ),

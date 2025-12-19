@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/components/app_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -171,7 +172,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
         automaticallyImplyLeading: false, // ✅ 뒤로가기 버튼 제거
         title: Text(
           '운세 결과',
-          style: DSTypography.headingSmall.copyWith(
+          style: context.heading3.copyWith(
             color: colors.textPrimary,
           ),
         ),
@@ -275,7 +276,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             child: Center(
               child: Text(
                 '${result.overallScore}',
-                style: DSTypography.headingMedium.copyWith(
+                style: context.heading2.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -287,7 +288,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
 
           Text(
             '오늘의 운세 점수',
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: colors.textSecondary,
             ),
           ),
@@ -306,7 +307,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             ),
             child: Text(
               result.specialMessage,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textPrimary,
                 height: 1.6,
               ),
@@ -343,7 +344,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
               const SizedBox(width: 12),
               Text(
                 '오늘의 감정 처방',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -362,13 +363,13 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 children: [
                   Text(
                     '치유 진행도',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),
                   Text(
                     '${prescription.healingProgress}%',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: DSColors.success,
                       fontWeight: FontWeight.w600,
                     ),
@@ -410,7 +411,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                     const SizedBox(width: 8),
                     Text(
                       '현재 상태',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: colors.textSecondary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -420,7 +421,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 const SizedBox(height: 8),
                 Text(
                   prescription.currentState,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: colors.textSecondary,
                     height: 1.5,
                   ),
@@ -475,7 +476,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 Expanded(
                   child: Text(
                     prescription.healingAdvice,
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -518,7 +519,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
               const SizedBox(width: 12),
               Text(
                 '그 사람과의 인연',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -545,14 +546,14 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 children: [
                   Text(
                     '재회 가능성',
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '${insight.reunionPossibility}%',
-                    style: DSTypography.headingMedium.copyWith(
+                    style: context.heading2.copyWith(
                       color: const Color(0xFFEC4899),
                       fontWeight: FontWeight.bold,
                     ),
@@ -560,7 +561,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                   const SizedBox(height: 8),
                   Text(
                     insight.contactTiming,
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
@@ -592,7 +593,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                       const SizedBox(width: 8),
                       Text(
                         insight.isThinkingOfYou ? '그 사람도 당신을 생각해요' : '그 사람은 새로운 길을 가고 있어요',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: const Color(0xFFEC4899),
                           fontWeight: FontWeight.w600,
                         ),
@@ -602,7 +603,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                   const SizedBox(height: 8),
                   Text(
                     insight.theirCurrentFeelings,
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: colors.textSecondary,
                       height: 1.5,
                     ),
@@ -638,7 +639,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                     children: [
                       Text(
                         '이 관계에서 배울 점',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: colors.accent,
                           fontWeight: FontWeight.w600,
                         ),
@@ -646,7 +647,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                       const SizedBox(height: 4),
                       Text(
                         insight.karmicLesson,
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: colors.textPrimary,
                         ),
                       ),
@@ -686,7 +687,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
               const SizedBox(width: 12),
               Text(
                 '새로운 시작',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -705,7 +706,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                   children: [
                     Text(
                       '새로운 사랑 준비도',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: colors.textSecondary,
                       ),
                     ),
@@ -714,7 +715,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                       children: [
                         Text(
                           '${newBeginning.readinessScore}%',
-                          style: DSTypography.labelLarge.copyWith(
+                          style: context.labelLarge.copyWith(
                             color: DSColors.success,
                             fontWeight: FontWeight.bold,
                           ),
@@ -722,7 +723,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                         const SizedBox(width: 8),
                         Text(
                           _getReadinessText(newBeginning.readinessLevel),
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: DSColors.success,
                           ),
                         ),
@@ -781,14 +782,14 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                     children: [
                       Text(
                         '새로운 인연 시기',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: colors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         newBeginning.expectedTiming,
-                        style: DSTypography.bodySmall.copyWith(
+                        style: context.bodySmall.copyWith(
                           color: colors.textSecondary,
                           fontWeight: FontWeight.w500,
                         ),
@@ -835,7 +836,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 Expanded(
                   child: Text(
                     newBeginning.newLoveAdvice,
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -864,7 +865,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             const SizedBox(width: 8),
             Text(
               title,
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: colors.textSecondary,
                 fontWeight: FontWeight.w600,
               ),
@@ -879,14 +880,14 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             children: [
               Text(
                 '• ',
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   color: color,
                 ),
               ),
               Expanded(
                 child: Text(
                   item,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),

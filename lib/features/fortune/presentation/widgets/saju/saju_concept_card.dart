@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 /// 사주 개념 설명 카드 위젯
 /// 각 탭에서 해당 개념에 대한 설명을 접을 수 있는 형태로 제공합니다.
@@ -94,7 +95,7 @@ class _SajuConceptCardState extends State<SajuConceptCard>
               Expanded(
                 child: Text(
                   widget.title,
-                  style: DSTypography.labelLarge.copyWith(
+                  style: context.labelLarge.copyWith(
                     color: colors.accent,
                     fontWeight: FontWeight.w700,
                   ),
@@ -108,7 +109,7 @@ class _SajuConceptCardState extends State<SajuConceptCard>
           // 짧은 설명
           Text(
             widget.shortDescription,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: colors.textSecondary,
               height: 1.5,
             ),
@@ -134,7 +135,7 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                   ),
                   child: Text(
                     widget.fullDescription,
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: colors.textPrimary,
                       height: 1.6,
                     ),
@@ -154,7 +155,7 @@ class _SajuConceptCardState extends State<SajuConceptCard>
               children: [
                 Text(
                   _isExpanded ? '접기' : '자세히 보기',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: colors.accent,
                     fontWeight: FontWeight.w600,
                   ),
@@ -276,7 +277,7 @@ void showCharacterExplanationSheet({
                     children: [
                       Text(
                         '$hanja ($korean)',
-                        style: DSTypography.headingSmall.copyWith(
+                        style: context.heading3.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
@@ -296,7 +297,7 @@ void showCharacterExplanationSheet({
                             ),
                             child: Text(
                               '$element ($elementKorean)',
-                              style: DSTypography.labelSmall.copyWith(
+                              style: context.labelSmall.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -317,7 +318,7 @@ void showCharacterExplanationSheet({
                               ),
                               child: Text(
                                 animal,
-                                style: DSTypography.labelSmall.copyWith(
+                                style: context.labelSmall.copyWith(
                                   color: colors.textSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -353,7 +354,7 @@ void showCharacterExplanationSheet({
                     const SizedBox(width: DSSpacing.sm),
                     Text(
                       '시간대: $time',
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: colors.textSecondary,
                       ),
                     ),
@@ -379,7 +380,7 @@ void showCharacterExplanationSheet({
                 children: [
                   Text(
                     '의미',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       color: getElementColor(element),
                       fontWeight: FontWeight.w700,
                     ),
@@ -387,7 +388,7 @@ void showCharacterExplanationSheet({
                   const SizedBox(height: 4),
                   Text(
                     meaning,
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -400,7 +401,7 @@ void showCharacterExplanationSheet({
             // 상세 설명
             Text(
               '상세 설명',
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
@@ -408,7 +409,7 @@ void showCharacterExplanationSheet({
             const SizedBox(height: DSSpacing.sm),
             Text(
               description,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),
@@ -520,7 +521,7 @@ void showOhangExplanationSheet({
                     children: [
                       Text(
                         '$element ($hanja)',
-                        style: DSTypography.headingSmall.copyWith(
+                        style: context.heading3.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
@@ -537,7 +538,7 @@ void showOhangExplanationSheet({
                         ),
                         child: Text(
                           personality,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -590,7 +591,7 @@ void showOhangExplanationSheet({
                 children: [
                   Text(
                     '의미',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       color: elementColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -598,7 +599,7 @@ void showOhangExplanationSheet({
                   const SizedBox(height: 4),
                   Text(
                     meaning,
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -611,7 +612,7 @@ void showOhangExplanationSheet({
             // 상세 설명
             Text(
               '상세 설명',
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
@@ -619,7 +620,7 @@ void showOhangExplanationSheet({
             const SizedBox(height: DSSpacing.sm),
             Text(
               description,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),
@@ -641,13 +642,13 @@ Widget _buildInfoChip(
     children: [
       Text(
         '$label: ',
-        style: DSTypography.labelSmall.copyWith(
+        style: context.labelSmall.copyWith(
           color: colors.textTertiary,
         ),
       ),
       Text(
         value,
-        style: DSTypography.labelSmall.copyWith(
+        style: context.labelSmall.copyWith(
           color: color,
           fontWeight: FontWeight.w600,
         ),
@@ -731,7 +732,7 @@ void showTwelveStageExplanationSheet({
                     children: [
                       Text(
                         '$korean ($hanja)',
-                        style: DSTypography.headingSmall.copyWith(
+                        style: context.heading3.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
@@ -748,7 +749,7 @@ void showTwelveStageExplanationSheet({
                         ),
                         child: Text(
                           '12운성',
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -778,7 +779,7 @@ void showTwelveStageExplanationSheet({
                 children: [
                   Text(
                     '의미',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       color: stageColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -786,7 +787,7 @@ void showTwelveStageExplanationSheet({
                   const SizedBox(height: 4),
                   Text(
                     meaning,
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -815,7 +816,7 @@ void showTwelveStageExplanationSheet({
                   Expanded(
                     child: Text(
                       fortune,
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: colors.textSecondary,
                       ),
                     ),
@@ -829,7 +830,7 @@ void showTwelveStageExplanationSheet({
             // 상세 설명
             Text(
               '상세 설명',
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
@@ -837,7 +838,7 @@ void showTwelveStageExplanationSheet({
             const SizedBox(height: DSSpacing.sm),
             Text(
               description,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),
@@ -938,7 +939,7 @@ void showSinsalExplanationSheet({
                     children: [
                       Text(
                         korean,
-                        style: DSTypography.headingSmall.copyWith(
+                        style: context.heading3.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
@@ -966,7 +967,7 @@ void showSinsalExplanationSheet({
                                 const SizedBox(width: 4),
                                 Text(
                                   type,
-                                  style: DSTypography.labelSmall.copyWith(
+                                  style: context.labelSmall.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -977,7 +978,7 @@ void showSinsalExplanationSheet({
                           const SizedBox(width: DSSpacing.sm),
                           Text(
                             hanja,
-                            style: DSTypography.labelSmall.copyWith(
+                            style: context.labelSmall.copyWith(
                               color: colors.textTertiary,
                             ),
                           ),
@@ -1007,7 +1008,7 @@ void showSinsalExplanationSheet({
                 children: [
                   Text(
                     '의미',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       color: sinsalColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -1015,7 +1016,7 @@ void showSinsalExplanationSheet({
                   const SizedBox(height: 4),
                   Text(
                     meaning,
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -1028,7 +1029,7 @@ void showSinsalExplanationSheet({
             // 상세 설명
             Text(
               '상세 설명',
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
@@ -1036,7 +1037,7 @@ void showSinsalExplanationSheet({
             const SizedBox(height: DSSpacing.sm),
             Text(
               description,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),
@@ -1146,7 +1147,7 @@ void showHapchungExplanationSheet({
                     children: [
                       Text(
                         '$korean ($hanja)',
-                        style: DSTypography.headingSmall.copyWith(
+                        style: context.heading3.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
@@ -1172,7 +1173,7 @@ void showHapchungExplanationSheet({
                             const SizedBox(width: 4),
                             Text(
                               '합충형파해',
-                              style: DSTypography.labelSmall.copyWith(
+                              style: context.labelSmall.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1204,7 +1205,7 @@ void showHapchungExplanationSheet({
                 children: [
                   Text(
                     '의미',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       color: relationColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -1212,7 +1213,7 @@ void showHapchungExplanationSheet({
                   const SizedBox(height: 4),
                   Text(
                     meaning,
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -1241,7 +1242,7 @@ void showHapchungExplanationSheet({
                   Expanded(
                     child: Text(
                       effect,
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: colors.textSecondary,
                       ),
                     ),
@@ -1255,7 +1256,7 @@ void showHapchungExplanationSheet({
             // 상세 설명
             Text(
               '상세 설명',
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
@@ -1263,7 +1264,7 @@ void showHapchungExplanationSheet({
             const SizedBox(height: DSSpacing.sm),
             Text(
               description,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),

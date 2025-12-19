@@ -9,7 +9,7 @@ import '../services/debug_premium_service.dart';
 import '../utils/logger.dart';
 import '../../shared/components/toast.dart';
 import '../design_system/design_system.dart';
-import '../../services/ad_service.dart';
+import '../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../utils/haptic_utils.dart';
 import '../constants/soul_rates.dart';
 import '../../presentation/providers/providers.dart';
@@ -251,17 +251,11 @@ class _UnifiedFortuneBaseWidgetState
       // 2-1. 운세 생성 (블러 상태)
       await _generateFortuneBlurred(isPremium: isPremium);
 
-      // 2-2. Premium 사용자는 광고 생략하고 즉시 블러 해제
-      if (isPremium) {
-        Logger.info('[UnifiedFortuneBaseWidget] Premium 사용자 - 광고 생략, 블러 해제');
-        await _unlockBlurredContent();
-        return;
-      }
-
-      // 2-3. 블러된 결과가 표시된 상태에서 광고 표시 시도
-      await AdService.instance.showInterstitialAdWithCallback(
+      // 2-2~2-3. Premium/Frequency 체크 및 광고 표시 (Helper가 처리)
+      await InterstitialAdHelper.showInterstitialAdWithCallback(
+        ref,
         onAdCompleted: () async {
-          Logger.info('[UnifiedFortuneBaseWidget] 광고 시청 완료 - 블러 해제');
+          Logger.info('[UnifiedFortuneBaseWidget] 광고 시청 완료 또는 생략 - 블러 해제');
           await _unlockBlurredContent();
         },
         onAdFailed: () async {

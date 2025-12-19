@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../features/fortune/domain/models/saju/ji_jang_gan_data.dart';
 import '../../../../features/fortune/domain/models/saju/twelve_stage_calculator.dart';
 
@@ -18,6 +19,7 @@ class CompactJijangganRow extends StatelessWidget {
     final jijangganData = _getJijangganData();
 
     return _buildInfoRow(
+      context: context,
       label: '지장간',
       hanja: '支藏干',
       values: jijangganData,
@@ -52,6 +54,7 @@ class CompactJijangganRow extends StatelessWidget {
   }
 
   Widget _buildInfoRow({
+    required BuildContext context,
     required String label,
     required String hanja,
     required List<String> values,
@@ -78,15 +81,14 @@ class CompactJijangganRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 10,
+                  style: context.labelTiny.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white70 : Colors.black54,
                   ),
                 ),
                 Text(
                   hanja,
-                  style: TextStyle(
+                  style: context.labelTiny.copyWith(
                     fontSize: 8,
                     color: isDark ? Colors.white38 : Colors.black26,
                   ),
@@ -116,8 +118,7 @@ class CompactJijangganRow extends StatelessWidget {
                     ),
                     child: Text(
                       value,
-                      style: TextStyle(
-                        fontSize: 11,
+                      style: context.labelTiny.copyWith(
                         fontWeight: FontWeight.w500,
                         color: isDark ? Colors.white : Colors.black87,
                       ),
@@ -149,6 +150,7 @@ class CompactTwelveStagesRow extends StatelessWidget {
     final stagesData = _calculateTwelveStages();
 
     return _buildInfoRow(
+      context: context,
       label: '12운성',
       hanja: '十二運星',
       values: stagesData,
@@ -184,6 +186,7 @@ class CompactTwelveStagesRow extends StatelessWidget {
   }
 
   Widget _buildInfoRow({
+    required BuildContext context,
     required String label,
     required String hanja,
     required List<String> values,
@@ -210,15 +213,14 @@ class CompactTwelveStagesRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 10,
+                  style: context.labelTiny.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white70 : Colors.black54,
                   ),
                 ),
                 Text(
                   hanja,
-                  style: TextStyle(
+                  style: context.labelTiny.copyWith(
                     fontSize: 8,
                     color: isDark ? Colors.white38 : Colors.black26,
                   ),
@@ -248,8 +250,7 @@ class CompactTwelveStagesRow extends StatelessWidget {
                     ),
                     child: Text(
                       value,
-                      style: TextStyle(
-                        fontSize: 11,
+                      style: context.labelTiny.copyWith(
                         fontWeight: FontWeight.w500,
                         color: isDark ? Colors.white : Colors.black87,
                       ),
@@ -281,6 +282,7 @@ class CompactNapeumRow extends StatelessWidget {
     final napeumData = _getNapeumData();
 
     return _buildInfoRow(
+      context: context,
       label: '납음',
       hanja: '納音五行',
       values: napeumData,
@@ -355,6 +357,7 @@ class CompactNapeumRow extends StatelessWidget {
   }
 
   Widget _buildInfoRow({
+    required BuildContext context,
     required String label,
     required String hanja,
     required List<String> values,
@@ -381,15 +384,14 @@ class CompactNapeumRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 10,
+                  style: context.labelTiny.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white70 : Colors.black54,
                   ),
                 ),
                 Text(
                   hanja,
-                  style: TextStyle(
+                  style: context.labelTiny.copyWith(
                     fontSize: 8,
                     color: isDark ? Colors.white38 : Colors.black26,
                   ),
@@ -419,8 +421,7 @@ class CompactNapeumRow extends StatelessWidget {
                     ),
                     child: Text(
                       value,
-                      style: TextStyle(
-                        fontSize: 10,
+                      style: context.labelTiny.copyWith(
                         fontWeight: FontWeight.w500,
                         color: isDark ? Colors.white : Colors.black87,
                       ),
@@ -467,6 +468,7 @@ class CompactSpecialInfoRow extends StatelessWidget {
           // 공망
           Expanded(
             child: _buildInfoItem(
+              context: context,
               label: '공망',
               value: _getGongmangText(),
               isDark: isDark,
@@ -480,6 +482,7 @@ class CompactSpecialInfoRow extends StatelessWidget {
           // 천을귀인
           Expanded(
             child: _buildInfoItem(
+              context: context,
               label: '천을귀인',
               value: _getCheonEulGuiinText(),
               isDark: isDark,
@@ -543,6 +546,7 @@ class CompactSpecialInfoRow extends StatelessWidget {
   }
 
   Widget _buildInfoItem({
+    required BuildContext context,
     required String label,
     required String value,
     required bool isDark,
@@ -554,15 +558,13 @@ class CompactSpecialInfoRow extends StatelessWidget {
         children: [
           Text(
             '$label: ',
-            style: TextStyle(
-              fontSize: 10,
+            style: context.labelTiny.copyWith(
               color: isDark ? Colors.white60 : Colors.black45,
             ),
           ),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 11,
+            style: context.labelTiny.copyWith(
               fontWeight: FontWeight.w600,
               color: isDark ? Colors.white : Colors.black87,
             ),

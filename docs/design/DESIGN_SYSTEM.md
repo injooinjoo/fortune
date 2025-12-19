@@ -1,581 +1,696 @@
-# Fortune App Design System v1.0
+# Fortune App Design System v2.0 - 한국 전통 미학
+
+> **Version**: 2.0.0
+> **Last Updated**: December 2025
+> **Design Language**: Korean Traditional Aesthetics (한국 전통 미학)
+
+---
 
 ## 목차
+
 1. [디자인 철학](#디자인-철학)
 2. [색상 시스템](#색상-시스템)
 3. [타이포그래피](#타이포그래피)
-4. [컴포넌트 가이드](#컴포넌트-가이드)
-5. [레이아웃 시스템](#레이아웃-시스템)
-6. [페이지 구조](#페이지-구조)
+4. [핵심 컴포넌트](#핵심-컴포넌트)
+5. [화면별 가이드](#화면별-가이드)
+6. [민화 에셋 가이드](#민화-에셋-가이드)
 7. [다크모드 가이드](#다크모드-가이드)
 8. [애니메이션 가이드](#애니메이션-가이드)
-9. [데이터 표시 규칙](#데이터-표시-규칙)
-10. [접근성 가이드](#접근성-가이드)
+9. [보조 참조: Toss Design System](#보조-참조-toss-design-system)
 
 ---
 
 ## 디자인 철학
 
-### 핵심 원칙
-Fortune 앱의 디자인은 Toss의 디자인 철학을 기반으로 합니다:
+### 핵심 정체성: 한국 전통 미학의 현대적 재해석
 
-1. **명확성 (Clarity)**: 모든 요소는 명확한 목적을 가져야 합니다
-2. **일관성 (Consistency)**: 전체 앱에서 일관된 경험을 제공합니다
-3. **간결성 (Simplicity)**: 불필요한 요소를 제거하고 핵심에 집중합니다
-4. **신뢰성 (Reliability)**: 사용자가 예측 가능한 경험을 할 수 있도록 합니다
-5. **즐거움 (Delight)**: 미세한 인터랙션으로 사용의 즐거움을 제공합니다
+Fortune 앱은 한국 전통 미학의 정수를 현대 디지털 환경에 재해석합니다. 단순한 복고풍이 아닌, 전통의 깊이와 현대의 편의성을 조화롭게 융합합니다.
 
-### 디자인 목표
-- 운세와 타로를 현대적이고 세련되게 표현
-- 젊은 세대가 친숙하게 느낄 수 있는 인터페이스
-- 빠르고 부드러운 사용자 경험
-- 다크모드에서도 완벽한 가독성
+> *"당신의 사주에 스민 하늘의 뜻을 읽다"*
+
+### 4대 디자인 원칙
+
+#### 1. 질감 (Texture) - 한지와 먹
+
+디지털 화면에 아날로그의 따뜻함을 불어넣습니다.
+
+| 요소 | 설명 | 구현 |
+|------|------|------|
+| **한지 배경** | 순백색의 차가운 디지털 화면 대신, 은은한 한지(닥종이) 질감 사용 | `HanjiBackground`, `HanjiCard` |
+| **발묵 효과** | 먹이 종이에 스며들며 번지는 듯한 효과 | `_HanjiCardPainter` ink bleed |
+| **붓터치 가장자리** | UI 요소의 가장자리에 거친 붓터치 느낌 | Corner decorations |
+
+**질감 표현 예시:**
+```dart
+// 한지 배경
+HanjiCard(
+  style: HanjiCardStyle.standard,
+  child: Content(),
+)
+
+// 한지 전체 배경
+HanjiBackground(
+  child: Scaffold(...),
+)
+```
+
+---
+
+#### 2. 색상 (Color) - 오방색과 쪽빛
+
+전통 오방색을 톤다운하여 현대적으로 재해석합니다.
+
+**기조 색상:**
+- **먹색 (Meok)**: 검정~회색 그라데이션 - 텍스트, 강조
+- **미색 (Misaek)**: 아이보리/베이지 - 배경, 카드
+
+**오방색 (톤다운):**
+
+| 오행 | 이름 | 색상 | Hex | 의미 |
+|------|------|------|-----|------|
+| 목(木) | 청 (Cheong) | 깊은 쪽빛 | `#1E3A5F` | 동, 봄, 성장 |
+| 화(火) | 적 (Jeok) | 톤다운 다홍 | `#B91C1C` | 남, 여름, 열정 |
+| 토(土) | 황 (Hwang) | 황토색/겨자색 | `#B8860B` | 중앙, 환절기, 풍요 |
+| 금(金) | 백 (Baek) | 은은한 소색 | `#F5F5DC` | 서, 가을, 순수 |
+| 수(水) | 흑 (Heuk) | 깊은 현무색 | `#1C1C1C` | 북, 겨울, 지혜 |
+
+**강조 색상:**
+- **인주 (Inju)**: `#DC2626` - 붉은 도장 색상, 중요 버튼 및 CTA에 사용
+
+---
+
+#### 3. 타이포그래피 (Typography) - 서예와 명조
+
+전통 서예의 품격과 현대 가독성의 균형을 추구합니다.
+
+| 용도 | 폰트 | 스타일 | 설명 |
+|------|------|--------|------|
+| **제목** | GowunBatang | Bold/SemiBold | 흘림체와 정자체의 중간, 서예 느낌 |
+| **본문** | ZenSerif / Pretendard | Regular | 가독성 높은 현대적 명조/고딕 |
+| **한자/낙관** | GowunBatang | Bold | 전통 요소 표현 |
+| **숫자** | TossFace / ZenSerif | Tabular | 숫자 정렬 |
+
+**서예적 표현 팁:**
+- 제목에 약간의 기울임 적용 가능 (`rotation: -2deg`)
+- 자간 조정으로 붓글씨 느낌 (`letterSpacing: -0.02em`)
+
+---
+
+#### 4. 공간 (Space) - 여백의 미
+
+수묵화의 여백 원칙을 UI에 적용합니다. 비움으로 채우는 미학.
+
+**원칙:**
+- 요소 간 충분한 여백 확보
+- 정보 밀도보다 호흡 우선
+- 중요한 요소에 시선 집중
+
+**간격 체계:**
+```dart
+// 기본 간격 (8px 그리드)
+DSSpacing.xs   // 4px
+DSSpacing.sm   // 8px
+DSSpacing.md   // 16px
+DSSpacing.lg   // 24px
+DSSpacing.xl   // 32px
+DSSpacing.xxl  // 48px
+```
 
 ---
 
 ## 색상 시스템
 
-### 1. 기본 색상 팔레트
+### 오방색 팔레트 (ObangseokColors)
 
-#### 라이트 모드
-```
-Primary Colors:
-- primary: #000000 (Pure Black)
-- primaryLight: #333333 (Dark Gray)
-- primaryDark: #1A1A1A (Very Dark Gray)
+**파일**: `lib/core/theme/obangseok_colors.dart`
 
-Secondary Colors (Instagram Accent):
-- secondary: #F56040 (Orange)
-- secondaryLight: #FD1D1D (Red)
-- secondaryDark: #E1306C (Magenta)
+#### 기본 색상
 
-Background Colors:
-- background: #FAFAFA (Light Gray)
-- cardBackground: #F6F6F6 (Card Container)
-- cardSurface: #FFFFFF (Card Surface)
-```
-
-#### 다크 모드
-```
-Primary Colors:
-- primary: #FFFFFF (Pure White)
-- primaryLight: #E0E0E0 (Light Gray)
-- primaryDark: #CCCCCC (Lighter Gray)
-
-Secondary Colors: (동일)
-- secondary: #F56040
-- secondaryLight: #FD1D1D
-- secondaryDark: #E1306C
-
-Background Colors:
-- background: #000000 (Pure Black)
-- cardBackground: #0A0A0A (Very Dark)
-- cardSurface: #1C1C1C (Dark Surface)
-```
-
-### 2. 시멘틱 색상
-
-#### 상태 색상
-```
-Success:
-- Light: #28A745
-- Dark: #34D399
-
-Error:
-- Light: #DC3545
-- Dark: #F87171
-
-Warning:
-- Light: #FFC107
-- Dark: #FBBF24
-
-Info:
-- Light: #17A2B8
-- Dark: #60A5FA
-```
-
-### 3. 텍스트 색상
-```
-Light Mode:
-- textPrimary: #262626
-- textSecondary: #8E8E8E
-- textLight: #C7C7C7
-
-Dark Mode:
-- textPrimary: #F5F5F5
-- textSecondary: #B0B0B0
-- textLight: #808080
-```
-
-### 4. 그라데이션
 ```dart
-// 메인 그라데이션
-primaryGradient: [#000000, #333333, #666666]
+// 목(木) - 청색 계열
+ObangseokColors.cheong      // #1E3A5F - 기본
+ObangseokColors.cheongLight // #2D5A87 - 밝은
+ObangseokColors.cheongDark  // #0F1F33 - 어두운
+ObangseokColors.cheongMuted // #3D5A73 - 톤다운
 
-// 배경 그라데이션
-backgroundGradient: [#000000, #2C2C2C, #4A4A4A, #666666]
+// 화(火) - 적색 계열
+ObangseokColors.jeok        // #B91C1C - 기본
+ObangseokColors.jeokLight   // #DC2626 - 밝은
+ObangseokColors.jeokDark    // #7F1D1D - 어두운
+ObangseokColors.jeokMuted   // #9B4D4D - 톤다운
+
+// 토(土) - 황색 계열
+ObangseokColors.hwang       // #B8860B - 기본
+ObangseokColors.hwangLight  // #D4A017 - 밝은
+ObangseokColors.hwangDark   // #8B6914 - 어두운
+ObangseokColors.hwangMuted  // #A39171 - 톤다운
+
+// 금(金) - 백색 계열
+ObangseokColors.baek        // #F5F5DC - 기본
+ObangseokColors.baekLight   // #FFFFF0 - 밝은
+ObangseokColors.baekDark    // #E8E4C9 - 어두운
+ObangseokColors.baekMuted   // #D4D0BB - 톤다운
+
+// 수(水) - 흑색 계열
+ObangseokColors.heuk        // #1C1C1C - 기본
+ObangseokColors.heukLight   // #2D2D2D - 밝은
+ObangseokColors.heukDark    // #0A0A0A - 어두운
+ObangseokColors.heukMuted   // #404040 - 톤다운
 ```
 
-### 5. 운세별 시그니처 색상
-각 운세 타입별로 고유한 색상을 정의하되, 모노톤 테마를 유지:
-- 타로: #333333 (Dark Gray)
-- 사주: #1A1A1A (Very Dark)
-- 별자리: #4A4A4A (Medium Gray)
-- 혈액형: #666666 (Light Gray)
+#### 특수 색상
+
+```dart
+// 인주 (붉은 도장)
+ObangseokColors.inju        // #DC2626 - 기본
+ObangseokColors.injuDark    // #B91C1C
+ObangseokColors.injuLight   // #EF4444
+
+// 먹색 (잉크)
+ObangseokColors.meok        // #1A1A1A - 기본
+ObangseokColors.meokLight   // #333333
+ObangseokColors.meokDark    // #0D0D0D
+ObangseokColors.meokFaded   // #666666 - 옅은 먹
+
+// 미색 (한지 배경)
+ObangseokColors.misaek      // #F7F3E9 - 기본
+ObangseokColors.misaekLight // #FAF8F2
+ObangseokColors.misaekDark  // #EDE8DA
+ObangseokColors.misaekWarm  // #F5F0E1 - 따뜻한
+
+// 한지 배경
+ObangseokColors.hanjiBackground     // #FAF8F5 - 라이트
+ObangseokColors.hanjiBackgroundDark // #1E1E1E - 다크
+```
+
+#### 도메인별 색상 매핑
+
+```dart
+// 운세 카테고리별 자동 색상 매핑
+ObangseokColors.getDomainColor('love')      // 연애 - jeokMuted (적)
+ObangseokColors.getDomainColor('career')    // 직업 - cheongMuted (청)
+ObangseokColors.getDomainColor('money')     // 재물 - hwang (황)
+ObangseokColors.getDomainColor('health')    // 건강 - baekDark (백)
+ObangseokColors.getDomainColor('spiritual') // 운명 - heukMuted (흑)
+
+// 오행별 색상
+ObangseokColors.getElementColor('목')  // cheong
+ObangseokColors.getElementColor('화')  // jeok
+ObangseokColors.getElementColor('토')  // hwang
+ObangseokColors.getElementColor('금')  // baek
+ObangseokColors.getElementColor('수')  // heuk
+```
+
+#### 그라데이션
+
+```dart
+// 수묵 그라데이션 (다크 배경)
+ObangseokColors.inkWashGradient
+
+// 한지 그라데이션 (라이트 배경)
+ObangseokColors.hanjiGradient
+
+// 오방색 원형 배열
+ObangseokColors.fiveElementsColors // [cheong, jeok, hwang, baek, heuk]
+```
 
 ---
 
 ## 타이포그래피
 
-### 1. 폰트 패밀리
-**Toss Product Sans** - 모든 텍스트에 사용
+### 폰트 계층
 
-### 2. 텍스트 스타일 정의
+| 카테고리 | 스타일 | 크기 | 폰트 | 용도 |
+|----------|--------|------|------|------|
+| **Display** | displayLarge | 48pt | GowunBatang | 스플래시, 온보딩 |
+| | displayMedium | 40pt | GowunBatang | 큰 헤드라인 |
+| | displaySmall | 32pt | GowunBatang | 중간 헤드라인 |
+| **Heading** | heading1 | 28pt | GowunBatang | 메인 페이지 제목 |
+| | heading2 | 24pt | GowunBatang | 섹션 제목 |
+| | heading3 | 20pt | Pretendard | 서브 섹션 제목 |
+| | heading4 | 18pt | Pretendard | 작은 섹션 제목 |
+| **Body** | bodyLarge | 17pt | Pretendard | 큰 본문 |
+| | bodyMedium | 15pt | Pretendard | 기본 본문 |
+| | bodySmall | 14pt | Pretendard | 작은 본문 |
+| **Label** | labelMedium | 12pt | Pretendard | 라벨, 캡션 |
+| **한자/낙관** | hanja | Variable | GowunBatang | 전통 요소 |
 
-#### Display (화면 제목)
-```
-display1: 48px, Bold, -0.02em
-display2: 36px, Bold, -0.01em
-display3: 28px, Bold, 0em
-```
+### 사용 예시
 
-#### Headline (섹션 제목)
-```
-headline1: 24px, SemiBold, 0em
-headline2: 20px, SemiBold, 0em
-headline3: 18px, Medium, 0em
-```
+```dart
+// 전통 제목 (GowunBatang)
+Text(
+  '오늘의 운세',
+  style: TextStyle(
+    fontFamily: 'GowunBatang',
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+  ),
+)
 
-#### Body (본문)
-```
-body1: 16px, Regular, 0em, 1.6 line-height
-body2: 15px, Regular, 0em, 1.6 line-height
-body3: 14px, Regular, 0em, 1.6 line-height
-```
+// 현대 본문 (context extension 사용)
+Text('운세 내용...', style: context.bodyMedium)
 
-#### Label (라벨)
-```
-label1: 15px, Medium, 0em
-label2: 14px, Medium, 0em
-label3: 13px, Medium, 0em
-```
-
-#### Caption (캡션)
-```
-caption1: 13px, Regular, 0em
-caption2: 12px, Regular, 0em
-caption3: 11px, Regular, 0em
-```
-
-### 3. 숫자 표기 규칙
-- 모든 숫자는 Tabular Figures 사용
-- 천 단위 구분: 쉼표 사용 (1,000)
-- 소수점: 최대 2자리까지 표시
-- 금액: ₩ 기호 + 숫자
-
----
-
-## 컴포넌트 가이드
-
-### 1. 버튼 시스템
-
-#### Primary Button (주요 액션)
-```
-높이: 56px
-패딩: 좌우 32px
-Border Radius: 16px
-폰트: 16px, SemiBold
-배경색: Primary Color
-텍스트색: 반대 색상
-```
-
-#### Secondary Button (보조 액션)
-```
-높이: 48px
-패딩: 좌우 24px
-Border Radius: 12px
-폰트: 15px, Medium
-배경색: Transparent
-Border: 1px, Primary Color
-```
-
-#### Text Button (텍스트 버튼)
-```
-높이: 40px
-패딩: 좌우 16px
-폰트: 14px, Medium
-배경색: None
-텍스트색: Primary Color
-```
-
-#### Floating Action Button
-```
-크기: 56x56px
-Border Radius: 16px
-Shadow: 0px 4px 12px rgba(0,0,0,0.15)
-아이콘 크기: 24px
-```
-
-### 2. 카드 시스템
-
-#### Base Card
-```
-Border Radius: 16px
-패딩: 16px
-배경색: cardSurface
-Shadow: 0px 2px 8px rgba(0,0,0,0.08)
-```
-
-#### Section Card
-```
-Border Radius: 16px
-헤더 패딩: 20px
-콘텐츠 패딩: 16px
-헤더 배경: Primary Color 5% opacity
-```
-
-#### Glass Card
-```
-Border Radius: 24px
-Backdrop Blur: 20px
-Border: 1px solid rgba(255,255,255,0.1)
-배경: Linear Gradient with opacity
-```
-
-### 3. 입력 필드
-
-#### Text Input
-```
-높이: 48px
-Border Radius: 8px
-Border: 1px solid divider
-패딩: 좌우 12px
-폰트: 14px, Regular
-Focus Border: Primary Color
-```
-
-#### Select/Dropdown
-```
-높이: 48px
-Border Radius: 8px
-화살표 아이콘: 오른쪽 12px
-```
-
-### 4. 네비게이션
-
-#### Bottom Navigation
-```
-높이: 56px + Safe Area
-아이템 개수: 최대 5개
-아이콘 크기: 24px
-라벨 폰트: 12px, Medium
-선택 색상: Primary
-미선택 색상: textSecondary
-```
-
-#### App Bar
-```
-높이: 56px
-제목: 18px, SemiBold
-배경: Transparent
-뒤로가기 아이콘: 24px
-```
-
-### 5. 모달 & 다이얼로그
-
-#### Bottom Sheet
-```
-Border Radius: Top 24px
-핸들바: 4x40px, 상단 12px
-최소 높이: 200px
-최대 높이: 화면의 90%
-```
-
-#### Dialog
-```
-Border Radius: 16px
-패딩: 24px
-최대 너비: 280px
-버튼 높이: 48px
-```
-
-### 6. 토스트 & 스낵바
-
-#### Toast
-```
-Border Radius: 8px
-패딩: 12px 16px
-폰트: 14px, Regular
-배경: rgba(0,0,0,0.9)
-위치: 하단 80px
+// 한자 요소
+Text(
+  '運',
+  style: TextStyle(
+    fontFamily: 'GowunBatang',
+    fontSize: 32,
+    fontWeight: FontWeight.w700,
+    color: ObangseokColors.inju,
+  ),
+)
 ```
 
 ---
 
-## 레이아웃 시스템
+## 핵심 컴포넌트
 
-### 1. 간격 시스템 (8px 그리드)
-```
-spacing-0: 0px
-spacing-1: 4px
-spacing-2: 8px
-spacing-3: 12px
-spacing-4: 16px
-spacing-5: 20px
-spacing-6: 24px
-spacing-8: 32px
-spacing-10: 40px
-spacing-12: 48px
-spacing-16: 64px
+### HanjiCard - 한지 카드
+
+**파일**: `lib/core/design_system/components/traditional/hanji_card.dart`
+
+한지 질감의 카드 컴포넌트. 모든 운세 결과 표시에 사용.
+
+#### 스타일 변형 (HanjiCardStyle)
+
+| 스타일 | 설명 | 용도 |
+|--------|------|------|
+| `standard` | 기본 한지 카드 | 일반 콘텐츠 |
+| `scroll` | 두루마리 스타일, 둥근 모서리 | 사주 명식, 긴 콘텐츠 |
+| `hanging` | 족자 스타일, 직선 모서리 | 총평, 조언 |
+| `elevated` | 먹 그림자 효과 | 강조 카드 |
+| `minimal` | 최소 테두리 | 서브 콘텐츠 |
+
+#### 색상 스킴 (HanjiColorScheme)
+
+| 스킴 | 색상 | 용도 |
+|------|------|------|
+| `fortune` | 자주색 + 금색 | 일반 운세 |
+| `love` | 연지색 + 분홍 | 연애운, 궁합 |
+| `luck` | 황금색 + 적색 | 재물운, 행운 |
+| `biorhythm` | 오방색 | 바이오리듬 |
+| `health` | 청록색 | 건강운 |
+
+#### 사용 예시
+
+```dart
+// 기본 사용
+HanjiCard(
+  child: FortuneContent(),
+)
+
+// 두루마리 스타일 + 낙관
+HanjiCard(
+  style: HanjiCardStyle.scroll,
+  colorScheme: HanjiColorScheme.fortune,
+  showSealStamp: true,
+  sealText: '運',
+  child: SajuResult(),
+)
+
+// 족자 스타일 (총평)
+HanjiCard(
+  style: HanjiCardStyle.hanging,
+  showCornerDecorations: true,
+  child: FortuneAdvice(),
+)
 ```
 
-### 2. 그리드 시스템
-- 기본 컬럼: 12 columns
-- Gutter: 16px
-- Margin: 16px (모바일), 24px (태블릿)
+### SealStamp - 낙관 (도장)
 
-### 3. 반응형 브레이크포인트
-```
-Mobile: 0-599px
-Tablet: 600-1023px
-Desktop: 1024px+
+전통 인장 스타일의 도장 위젯.
+
+```dart
+SealStamp(
+  text: '福',
+  color: ObangseokColors.inju,
+  size: 32,
+)
 ```
 
-### 4. Safe Area
-- 상단: StatusBar + 8px
-- 하단: NavigationBar + 8px
-- 좌우: 16px (기본)
+### HanjiSectionCard - 섹션 카드
+
+제목과 한자 아이콘이 포함된 섹션 카드.
+
+```dart
+HanjiSectionCard(
+  title: '오늘의 조언',
+  subtitle: 'Today\'s Advice',
+  hanja: '言',
+  colorScheme: HanjiColorScheme.fortune,
+  child: AdviceContent(),
+)
+```
 
 ---
 
-## 페이지 구조
+## 화면별 가이드
 
-### 1. 기본 페이지 레이아웃
-```
-AppBar (옵션)
-  └─ ScrollView
-      ├─ Header Section
-      ├─ Content Sections
-      └─ Bottom Padding (80px)
+### 1. 스플래시 및 로그인 화면 - "운명의 문을 열다"
+
+**디자인 컨셉:**
+- 수묵 산수화가 안개 속에 희미하게 펼쳐짐
+- 일월오봉도 모티브 (해와 달이 산봉우리 사이로)
+- 먹물이 퍼지는 애니메이션
+
+**핵심 요소:**
+
+| 요소 | 구현 |
+|------|------|
+| 배경 | 수묵 산수화 + 안개 효과 |
+| 로고 | 붉은색 낙관(도장) 형태, 우측 상단 |
+| 애니메이션 | 먹물 한 방울이 떨어져 화면 전체로 퍼짐 |
+| 카피 | "당신의 사주에 스민 하늘의 뜻을 읽다" |
+| 버튼 | 붓으로 그린 듯한 테두리의 로그인 버튼 |
+
+```dart
+// 스플래시 배경
+Stack(
+  children: [
+    // 수묵화 배경
+    Image.asset('assets/images/splash_sumukwa.png'),
+    // 안개 오버레이
+    Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.transparent,
+            ObangseokColors.misaek.withOpacity(0.3),
+          ],
+        ),
+      ),
+    ),
+    // 낙관 로고
+    Positioned(
+      top: 60,
+      right: 24,
+      child: SealStamp(text: '運', size: 48),
+    ),
+  ],
+)
 ```
 
-### 2. 리스트 페이지
-```
-AppBar with Title
-  └─ ListView
-      ├─ Section Headers (Sticky)
-      ├─ List Items
-      └─ Load More Indicator
+---
+
+### 2. 메인 홈 화면 - "오늘의 화폭 (My Daily Canvas)"
+
+**디자인 컨셉:**
+- 한 폭의 그림처럼 오늘의 운세 표시
+- 여백을 많이 두어 시원한 느낌
+- 민화풍 운세 카드
+
+**핵심 요소:**
+
+| 요소 | 구현 |
+|------|------|
+| 날짜 표시 | 음력/절기와 함께 붓글씨 스타일 |
+| 운세 카드 | 민화풍 그림이 그려진 HanjiCard |
+| 네비게이션 | 붓터치로 그려진 심볼 아이콘 |
+| 여백 | 상하좌우 충분한 여백 |
+
+**민화 카드 매핑:**
+
+| 운세 | 민화 | 의미 |
+|------|------|------|
+| 재물운 좋음 | 모란꽃 + 나비 | 부귀영화 |
+| 애정운 좋음 | 원앙 한 쌍 | 부부화합 |
+| 건강운 좋음 | 학 + 거북 | 장수 |
+| 직장운 좋음 | 잉어 | 입신출세 |
+
+**네비게이션 아이콘 (붓터치 스타일):**
+- 홈: 기와집 형상
+- 만세력: 달과 별
+- 상담: 붓과 벼루
+- 더보기: 매듭 장식
+
+---
+
+### 3. 사주 분석 결과 화면 - "사주팔자도 (The Map of Destiny)"
+
+**디자인 컨셉:**
+- 복잡한 사주 정보를 예술 작품처럼 시각화
+- 두루마리(족자) 형태의 명식 표시
+- 오행을 자연물로 표현
+
+**핵심 요소:**
+
+#### 명식 표시 (만세력)
+- 네 개의 두루마리(족자)로 연주, 월주, 일주, 시주 표현
+- 각 기둥 안에 천간/지지 붓글씨
+- 해당 오행 배경색 은은하게 적용
+
+```dart
+// 사주 명식 카드
+Row(
+  children: [
+    // 연주
+    HanjiCard(
+      style: HanjiCardStyle.scroll,
+      customBackgroundColor: ObangseokColors.getElementColor('목').withOpacity(0.1),
+      child: PillarContent(pillar: yearPillar),
+    ),
+    // 월주, 일주, 시주...
+  ],
+)
 ```
 
-### 3. 상세 페이지
-```
-CustomScrollView
-  ├─ SliverAppBar (Collapsible)
-  ├─ Hero Image/Header
-  ├─ Content Cards
-  └─ Action Buttons (Fixed Bottom)
+#### 오행 분석 그래프
+- 막대그래프 대신 자연물로 표현
+- 목(木) 많음 → 울창한 소나무 숲 크게
+- 수(水) 부족 → 메마른 계곡 작게
+
+#### 총평 (서신 형태)
+- 옛 선비의 서신(편지) 스타일
+- 한지 배경 + 세로쓰기 느낌
+- 중요 키워드 붉은색 붓터치 강조
+
+```dart
+// 총평 카드
+HanjiCard(
+  style: HanjiCardStyle.hanging,
+  showCornerDecorations: true,
+  child: Column(
+    children: [
+      Text(
+        '총평',
+        style: TextStyle(
+          fontFamily: 'GowunBatang',
+          fontSize: 20,
+        ),
+      ),
+      // 세로쓰기 느낌의 본문
+      Text(
+        fortuneSummary,
+        style: context.bodyMedium.copyWith(
+          height: 1.8, // 넓은 줄간격
+        ),
+      ),
+    ],
+  ),
+)
 ```
 
-### 4. 폼 페이지
-```
-AppBar with Close/Save
-  └─ ScrollView
-      ├─ Form Sections
-      ├─ Input Fields
-      ├─ Helper Text
-      └─ Submit Button (Sticky Bottom)
+---
+
+## 민화 에셋 가이드
+
+**경로**: `assets/images/minhwa/`
+
+### 카테고리별 에셋
+
+#### 전체운 (Overall)
+| 파일명 | 상징 | 의미 |
+|--------|------|------|
+| `minhwa_overall_dragon.png` | 용 | 권위, 성공, 출세 |
+| `minhwa_overall_tiger.png` | 호랑이 | 보호, 액막이 |
+| `minhwa_overall_phoenix.png` | 봉황 | 행복, 번영 |
+| `minhwa_overall_turtle.png` | 거북 | 장수, 지혜 |
+| `minhwa_overall_sunrise.png` | 일출 | 새로운 시작 |
+| `minhwa_overall_moon.png` | 달 | 음의 기운, 평화 |
+
+#### 연애운 (Love)
+| 파일명 | 상징 | 의미 |
+|--------|------|------|
+| `minhwa_love_mandarin.png` | 원앙 | 부부화합, 사랑 |
+| `minhwa_love_butterfly.png` | 나비 | 사랑의 기쁨 |
+| `minhwa_love_peony.png` | 모란 | 부귀영화, 아름다움 |
+| `minhwa_love_magpie_bridge.png` | 까치다리 | 만남, 인연 |
+
+#### 재물운 (Money)
+| 파일명 | 상징 | 의미 |
+|--------|------|------|
+| `minhwa_money_carp.png` | 잉어 | 입신출세, 성공 |
+| `minhwa_money_toad.png` | 두꺼비 | 재물, 복 |
+| `minhwa_money_pig.png` | 돼지 | 풍요, 재물 |
+| `minhwa_money_treasure.png` | 보물 | 부귀 |
+
+#### 직장/사업운 (Work)
+| 파일명 | 상징 | 의미 |
+|--------|------|------|
+| `minhwa_work_eagle.png` | 독수리 | 권위, 성취 |
+| `minhwa_work_crane.png` | 학 | 품격, 승진 |
+| `minhwa_work_bamboo.png` | 대나무 | 절개, 성장 |
+| `minhwa_work_waterfall.png` | 폭포 | 돌파, 발전 |
+
+#### 학업운 (Study)
+| 파일명 | 상징 | 의미 |
+|--------|------|------|
+| `minhwa_study_owl.png` | 부엉이 | 지혜 |
+| `minhwa_study_magpie.png` | 까치 | 좋은 소식 |
+| `minhwa_study_brush.png` | 문방사우 | 학문 |
+| `minhwa_study_plum.png` | 매화 | 인내, 합격 |
+
+#### 건강운 (Health)
+| 파일명 | 상징 | 의미 |
+|--------|------|------|
+| `minhwa_health_crane_turtle.png` | 학과 거북 | 장수 |
+| `minhwa_health_deer.png` | 사슴 | 건강, 활력 |
+| `minhwa_health_pine.png` | 소나무 | 불로장생 |
+| `minhwa_health_mountain.png` | 산 | 안정, 건강 |
+
+#### 사주/명리 (Saju)
+| 파일명 | 상징 | 의미 |
+|--------|------|------|
+| `minhwa_saju_yin_yang.png` | 음양 | 균형 |
+| `minhwa_saju_dragon.png` | 청룡 | 동쪽 수호 |
+| `minhwa_saju_tiger_dragon.png` | 용호 | 상생 |
+| `minhwa_saju_fourguardians.png` | 사신도 | 사방 수호 |
+
+### 사용 예시
+
+```dart
+// 민화 배경 카드
+Stack(
+  children: [
+    Opacity(
+      opacity: 0.15,
+      child: Image.asset('assets/images/minhwa/minhwa_love_mandarin.png'),
+    ),
+    HanjiCard(
+      colorScheme: HanjiColorScheme.love,
+      child: LoveFortuneContent(),
+    ),
+  ],
+)
 ```
 
 ---
 
 ## 다크모드 가이드
 
-### 1. 색상 전환 규칙
-- Primary Colors: 반전 (Black ↔ White)
-- Secondary Colors: 동일 유지
-- Background: 명도 반전
-- Text Colors: 대비 유지
+### 색상 전환 규칙
 
-### 2. 이미지 처리
-- 아이콘: 색상 반전 또는 다크모드 전용 아이콘
-- 일러스트: opacity 조정 또는 다크모드 버전
-- 사진: 밝기 80%로 조정
+| 요소 | 라이트 모드 | 다크 모드 |
+|------|-------------|-----------|
+| 배경 | `misaek` (#F7F3E9) | `heukLight` (#2D2D2D) |
+| 한지 배경 | `hanjiBackground` (#FAF8F5) | `hanjiBackgroundDark` (#1E1E1E) |
+| 텍스트 | `meok` (#1A1A1A) | `baekDark` (#E8E4C9) |
+| 강조 | `inju` (#DC2626) | `injuLight` (#EF4444) |
+| 테두리 | `meok` 15% | `baek` 15% |
 
-### 3. 그림자 처리
-- Light Mode: rgba(0,0,0,0.08-0.15)
-- Dark Mode: rgba(0,0,0,0.3-0.5)
+### 테마 헬퍼
+
+```dart
+// 다크모드 인식 색상
+ObangseokColors.getHanjiBackground(context)
+ObangseokColors.getMisaek(context)
+ObangseokColors.getMeok(context)
+ObangseokColors.getInju(context)
+
+// 일반 조건문
+final isDark = Theme.of(context).brightness == Brightness.dark;
+final bgColor = isDark
+    ? ObangseokColors.hanjiBackgroundDark
+    : ObangseokColors.hanjiBackground;
+```
 
 ---
 
 ## 애니메이션 가이드
 
-### 1. 기본 애니메이션 값
-```
-Duration:
-- Micro: 100ms (호버, 탭)
-- Short: 200ms (페이드, 슬라이드)
-- Medium: 300ms (확장, 축소)
-- Long: 500ms (페이지 전환)
+### 전통 미학 애니메이션 원칙
 
-Easing:
-- Standard: cubic-bezier(0.4, 0.0, 0.2, 1)
-- Decelerate: cubic-bezier(0.0, 0.0, 0.2, 1)
-- Accelerate: cubic-bezier(0.4, 0.0, 1, 1)
-```
+| 원칙 | 설명 | 구현 |
+|------|------|------|
+| **수묵화 붓터치** | 부드러운 이징, 먹물이 스미듯 | `Curves.easeOutCubic` |
+| **먹물 퍼짐** | 중앙에서 외곽으로 확산 | Radial reveal animation |
+| **발묵 효과** | 농담의 변화, 번짐 | Opacity + blur transition |
+| **여백의 호흡** | 느린 템포, 정적 | 500-800ms duration |
 
-### 2. 페이지 전환
-- 기본: Slide + Fade
-- 모달: Slide Up
-- 탭: Fade Only
+### 주요 애니메이션
 
-### 3. 마이크로 인터랙션
-- 버튼 탭: Scale 0.95
-- 카드 호버: Elevation 증가
-- 로딩: Skeleton or Shimmer
-
-### 4. 제스처 피드백
-- 탭: Ripple Effect
-- 스와이프: Follow Finger
-- 당겨서 새로고침: Bounce Effect
-
----
-
-## 데이터 표시 규칙
-
-### 1. 날짜/시간 표시
-```
-날짜:
-- 오늘: "오늘"
-- 어제: "어제"
-- 이번주: "월요일"
-- 올해: "1월 15일"
-- 작년: "2023년 1월 15일"
-
-시간:
-- 12시간제: "오후 3:30"
-- 24시간제: "15:30"
-- 상대시간: "3분 전", "1시간 전"
+#### 카드 진입
+```dart
+// 먹물이 스미듯 페이드 인
+AnimatedOpacity(
+  opacity: isVisible ? 1.0 : 0.0,
+  duration: Duration(milliseconds: 600),
+  curve: Curves.easeOutCubic,
+  child: HanjiCard(...),
+)
 ```
 
-### 2. 숫자 표시
+#### 페이지 전환
+```dart
+// 두루마리가 펼쳐지듯
+SlideTransition(
+  position: Tween<Offset>(
+    begin: Offset(0, 0.1),
+    end: Offset.zero,
+  ).animate(CurvedAnimation(
+    parent: animation,
+    curve: Curves.easeOutCubic,
+  )),
+  child: FadeTransition(
+    opacity: animation,
+    child: page,
+  ),
+)
 ```
-일반 숫자:
-- 1,000 (천 단위 구분)
-- 1.5K (1,500 이상)
-- 10.2M (백만 단위)
 
-금액:
-- ₩1,000
-- ₩1.5만 (만원 단위)
-- ₩3.2억 (억원 단위)
-
-백분율:
-- 85%
-- 12.5%
-- 0.1%
-```
-
-### 3. 상태 표시
-```
-로딩: Skeleton / Spinner
-비어있음: 일러스트 + 설명 텍스트
-오류: 아이콘 + 설명 + 재시도 버튼
-성공: 체크 아이콘 + 메시지
+#### 로딩 애니메이션
+```dart
+// 먹물 물방울 + 파문 효과
+CustomPaint(
+  painter: InkDropPainter(
+    progress: animationController.value,
+    color: ObangseokColors.meok,
+  ),
+)
 ```
 
 ---
 
-## 접근성 가이드
+## 보조 참조: Toss Design System
 
-### 1. 색상 대비
-- 일반 텍스트: 4.5:1 이상
-- 큰 텍스트(18px+): 3:1 이상
-- 아이콘: 3:1 이상
+> **Note**: 이 섹션은 보조 참조입니다. Fortune 앱의 기본 디자인 언어는 **한국 전통 미학**입니다.
+> Toss Design System은 현대적 UI 패턴과 상호작용 가이드라인에만 참조합니다.
 
-### 2. 터치 영역
-- 최소 크기: 44x44px
-- 권장 크기: 48x48px
-- 간격: 최소 8px
+### 참조 대상
 
-### 3. 텍스트 가독성
-- 최소 폰트 크기: 12px
-- 줄 높이: 1.5-1.8
-- 단락 간격: 폰트 크기의 1.5배
+| 항목 | Toss 참조 | 전통 미학 적용 |
+|------|-----------|----------------|
+| 버튼 상호작용 | Press animation, haptic | 붓터치 테두리 스타일 적용 |
+| 토스트/스낵바 | 위치, 애니메이션 | 한지 배경 + 먹 텍스트 |
+| 바텀시트 | 드래그 동작, 핸들 | 두루마리 펼침 효과 적용 |
+| 입력 필드 | 포커스 상태, 에러 | 붓터치 테두리 적용 |
 
-### 4. 스크린 리더
-- 모든 이미지에 대체 텍스트
-- 의미있는 버튼 레이블
-- 논리적인 포커스 순서
+### 상세 문서
+
+- [TOSS_DESIGN_SYSTEM.md](./TOSS_DESIGN_SYSTEM.md) - 전체 Toss 디자인 시스템 참조
 
 ---
 
-## 디자인 토큰
+## 관련 문서
 
-### 1. 파일 구조
-```
-/core/theme/
-  ├── app_colors.dart (색상 정의)
-  ├── app_typography.dart (텍스트 스타일)
-  ├── app_spacing.dart (간격 상수)
-  ├── app_animations.dart (애니메이션 값)
-  └── app_dimensions.dart (크기 상수)
-```
-
-### 2. 네이밍 규칙
-- 색상: colorPurpose (예: textPrimary)
-- 간격: spacingSize (예: spacing4)
-- 크기: sizeComponent (예: buttonHeightLarge)
-- 애니메이션: durationPurpose (예: durationPageTransition)
+- [KOREAN_TALISMAN_DESIGN_GUIDE.md](./KOREAN_TALISMAN_DESIGN_GUIDE.md) - 부적 및 민화 상세 가이드
+- [UI_UX_MASTER_POLICY.md](./UI_UX_MASTER_POLICY.md) - UX 정책
+- [UNIFIED_FONT_SYSTEM.md](./UNIFIED_FONT_SYSTEM.md) - 폰트 시스템
 
 ---
 
-## 구현 체크리스트
-
-### Phase 1: 기초 설정 (1개월)
-- [ ] 색상 시스템 통합
-- [ ] 타이포그래피 시스템 구현
-- [ ] 기본 컴포넌트 라이브러리
-- [ ] 다크모드 지원
-
-### Phase 2: 컴포넌트 확장 (2개월)
-- [ ] 모든 버튼 스타일
-- [ ] 카드 시스템 완성
-- [ ] 폼 컴포넌트
-- [ ] 네비게이션 패턴
-
-### Phase 3: 페이지 표준화 (3개월)
-- [ ] 모든 페이지 리팩토링
-- [ ] 애니메이션 통합
-- [ ] 반응형 레이아웃
-- [ ] 성능 최적화
-
-### Phase 4: 고급 기능 (2개월)
-- [ ] 제스처 시스템
-- [ ] 고급 애니메이션
-- [ ] 접근성 개선
-- [ ] 테마 커스터마이징
-
----
-
-## 버전 관리
-
-### v1.0 (Current)
-- 기본 디자인 시스템 정립
-- Toss 스타일 가이드라인
-- 다크모드 지원
-
-### v1.1 (Planned)
-- 컴포넌트 라이브러리 확장
-- 애니메이션 시스템 강화
-- 접근성 개선
-
-### v2.0 (Future)
-- 디자인 토큰 자동화
-- Figma 연동
-- 스토리북 구축
-
----
-
-이 문서는 Fortune 앱의 모든 디자인 결정의 기준이 되며, 지속적으로 업데이트됩니다.
-마지막 업데이트: 2024년 12월
+**Last Updated**: December 2025
+**Version**: 2.0.0
+**Design Language**: Korean Traditional Aesthetics

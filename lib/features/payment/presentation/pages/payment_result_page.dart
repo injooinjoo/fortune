@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/hanji_background.dart';
 import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -158,9 +160,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
 
     return Text(
       widget.isSuccess ? '결제 완료' : '결제 실패',
-      style: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
+      style: context.heading1.copyWith(
         color: textColor,
         letterSpacing: 2,
       ),
@@ -181,8 +181,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
 
     return Text(
       displayMessage,
-      style: TextStyle(
-        fontSize: 16,
+      style: context.bodyMedium.copyWith(
         color: ObangseokColors.meokFaded,
         height: 1.6,
       ),
@@ -227,8 +226,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             children: [
               Text(
                 '충전된 복주머니',
-                style: TextStyle(
-                  fontSize: 14,
+                style: context.bodySmall.copyWith(
                   color: ObangseokColors.hwangDark,
                   letterSpacing: 0.5,
                 ),
@@ -240,8 +238,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
                 children: [
                   Text(
                     '${widget.tokenAmount}',
-                    style: TextStyle(
-                      fontSize: 32,
+                    style: context.displaySmall.copyWith(
                       fontWeight: FontWeight.w700,
                       color: ObangseokColors.hwangDark,
                     ),
@@ -249,8 +246,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
                   const SizedBox(width: 4),
                   Text(
                     '개',
-                    style: TextStyle(
-                      fontSize: 18,
+                    style: context.heading4.copyWith(
                       color: ObangseokColors.hwangDark,
                     ),
                   ),
@@ -278,15 +274,13 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         children: [
           Text(
             '거래번호: ',
-            style: TextStyle(
-              fontSize: 12,
+            style: context.labelMedium.copyWith(
               color: ObangseokColors.meokFaded,
             ),
           ),
           Text(
             widget.transactionId!,
-            style: TextStyle(
-              fontSize: 12,
+            style: context.labelMedium.copyWith(
               fontFamily: 'monospace',
               color: ObangseokColors.meokFaded,
             ),
@@ -392,8 +386,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
           Expanded(
             child: Text(
               helpText,
-              style: TextStyle(
-                fontSize: 13,
+              style: context.labelMedium.copyWith(
                 color: ObangseokColors.cheong,
                 height: 1.4,
               ),
@@ -413,21 +406,15 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
   }
 
   void _navigateToHome() {
-    // Navigator로 들어왔으므로 Navigator로 나가야 함
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/',
-      (route) => false,
-    );
+    context.go('/home');
   }
 
   void _navigateToFortuneList() {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/fortune',
-      (route) => false,
-    );
+    context.go('/fortune');
   }
 
   void _retry() {
-    Navigator.of(context).pop();
+    // 이전 페이지로 돌아가기
+    context.pop();
   }
 }

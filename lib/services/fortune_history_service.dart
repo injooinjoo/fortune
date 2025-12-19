@@ -2,6 +2,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../features/history/domain/models/fortune_history.dart';
 import '../core/utils/logger.dart';
+import 'user_statistics_service.dart';
+import 'storage_service.dart';
 
 /// 운세 히스토리 관리 서비스
 class FortuneHistoryService {
@@ -36,8 +38,42 @@ class FortuneHistoryService {
         return null;
       }
 
-      final fortuneId = _uuid.v4();
       final now = DateTime.now();
+      final todayStart = DateTime(now.year, now.month, now.day);
+      final todayEnd = DateTime(now.year, now.month, now.day + 1);
+
+      // 같은 날 같은 타입의 운세가 이미 있는지 확인
+      final existingFortune = await _supabase
+        .from(_tableName)
+        .select('id')
+        .eq('user_id', userId)
+        .eq('fortune_type', fortuneType)
+        .gte('created_at', todayStart.toIso8601String())
+        .lt('created_at', todayEnd.toIso8601String())
+        .maybeSingle();
+
+      // 이미 오늘 같은 타입의 운세가 있으면 UPDATE
+      if (existingFortune != null) {
+        final existingId = existingFortune['id'] as String;
+        Logger.debug('[FortuneHistoryService] Updating existing $fortuneType fortune for today: $existingId');
+
+        await _supabase.from(_tableName).update({
+          'title': title,
+          'summary': summary,
+          'fortune_data': fortuneData,
+          'score': score ?? summary['score'],
+          'metadata': metadata,
+          'tags': tags ?? _generateTags(fortuneType, summary),
+          'last_viewed_at': now.toIso8601String(),
+          'mood': mood,
+        }).eq('id', existingId);
+
+        Logger.info('[FortuneHistoryService] Fortune updated for today: $fortuneType ($existingId)');
+        return existingId;
+      }
+
+      // 새로운 운세 저장
+      final fortuneId = _uuid.v4();
 
       // 새로운 테이블 구조에 맞게 데이터 구성
       final historyData = {
@@ -62,6 +98,19 @@ class FortuneHistoryService {
         .insert(historyData);
 
       Logger.info('[FortuneHistoryService] Fortune saved to history: $fortuneType ($fortuneId)');
+
+      // 통계 업데이트 (새로운 저장 시에만)
+      try {
+        final statsService = UserStatisticsService(
+          _supabase,
+          StorageService(),
+        );
+        await statsService.incrementFortuneCount(userId, fortuneType);
+        Logger.info('[FortuneHistoryService] Statistics updated for $fortuneType');
+      } catch (e) {
+        Logger.warning('[FortuneHistoryService] 통계 업데이트 실패 (무시): $e');
+      }
+
       return fortuneId;
 
     } catch (error) {
@@ -302,6 +351,19 @@ class FortuneHistoryService {
         .insert(fortuneHistory.toJson());
 
       Logger.info('[FortuneHistoryService] Daily fortune saved: $title ($historyId)');
+
+      // 통계 업데이트 (새로운 운세 저장 시에만)
+      try {
+        final statsService = UserStatisticsService(
+          _supabase,
+          StorageService(),
+        );
+        await statsService.incrementFortuneCount(userId, 'daily');
+        Logger.info('[FortuneHistoryService] Statistics updated for daily fortune');
+      } catch (e) {
+        Logger.warning('[FortuneHistoryService] 통계 업데이트 실패 (무시): $e');
+      }
+
       return historyId;
 
     } catch (error) {

@@ -7,6 +7,8 @@ import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/tokens/ds_fortune_colors.dart';
+import '../../../../core/design_system/components/traditional/traditional_button.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
 import '../providers/fortune_order_provider.dart';
@@ -556,7 +558,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   Widget build(BuildContext context) {
     final orderState = ref.watch(fortuneOrderProvider);
     final colors = context.colors;
-    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // 정렬된 전체 카테고리 리스트 가져오기 (오늘 조회 여부 포함)
     final allCategories = _categories.map((category) {
@@ -576,26 +578,52 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
     final showFavoriteSection = orderState.currentSort == SortOption.favoriteFirst && favoriteCategories.isNotEmpty;
 
+    // 전통 한지 배경색
+    final hanjiBackground = DSFortuneColors.getHanjiBackground(isDark);
+
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: hanjiBackground,
       appBar: AppBar(
-        backgroundColor: colors.background,
+        backgroundColor: hanjiBackground,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text(
-          '운세',
-          style: typography.headingMedium.copyWith(
-            color: colors.textPrimary,
-          ),
+        centerTitle: true,
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '運勢',
+              style: TextStyle(
+                fontFamily: 'GowunBatang',
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: DSFortuneColors.getPrimary(isDark).withValues(alpha: 0.7),
+                letterSpacing: 2,
+              ),
+            ),
+            Text(
+              '운세',
+              style: TextStyle(
+                fontFamily: 'GowunBatang',
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: DSFortuneColors.getInk(isDark),
+                letterSpacing: 1,
+              ),
+            ),
+          ],
         ),
         actions: [
-          // 정렬 버튼
-          IconButton(
-            icon: Icon(
-              Icons.sort_rounded,
-              color: colors.textPrimary,
+          // 전통 스타일 정렬 버튼
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: TraditionalIconButton(
+              icon: Icons.sort_rounded,
+              colorScheme: TraditionalButtonColorScheme.fortune,
+              size: 40,
+              showBorder: false,
+              onPressed: () => _showSortOptions(context),
             ),
-            onPressed: () => _showSortOptions(context),
           ),
         ],
       ),
@@ -659,9 +687,9 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
                   return AnimationConfiguration.staggeredList(
                     position: index,
-                    duration: const Duration(milliseconds: 375),
+                    duration: const Duration(milliseconds: 100),
                     child: SlideAnimation(
-                      verticalOffset: 50.0,
+                      verticalOffset: 20.0,
                       child: FadeInAnimation(
                         child: FortuneListTile(
                           key: ValueKey(category.type),
@@ -687,34 +715,81 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
   // 정렬 옵션 선택 바텀시트 (Korean Traditional style)
   void _showSortOptions(BuildContext context) {
-    final colors = context.colors;
     final currentSort = ref.read(fortuneOrderProvider).currentSort;
-    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hanjiBackground = DSFortuneColors.getHanjiBackground(isDark);
+    final inkColor = DSFortuneColors.getInk(isDark);
+    final primaryColor = DSFortuneColors.getPrimary(isDark);
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: colors.surface,
+      backgroundColor: hanjiBackground,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(DSRadius.lg)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       isScrollControlled: true,
       builder: (context) => Container(
         padding: const EdgeInsets.symmetric(vertical: 24),
+        decoration: BoxDecoration(
+          color: hanjiBackground,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          border: Border(
+            top: BorderSide(
+              color: primaryColor.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 제목 (Calligraphy style)
+              // 제목 (Calligraphy style with Hanja)
+              Column(
+                children: [
+                  Text(
+                    '整列',
+                    style: TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: primaryColor.withValues(alpha: 0.6),
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '정렬 방식',
+                    style: TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: inkColor,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // 구분선 (brush stroke style)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  '정렬 방식',
-                  style: typography.headingSmall.copyWith(
-                    color: colors.textPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        primaryColor.withValues(alpha: 0.4),
+                        primaryColor.withValues(alpha: 0.4),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 0.2, 0.8, 1.0],
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // 정렬 옵션들
               _buildSortOption(
@@ -760,8 +835,10 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     SortOption option,
     bool isSelected,
   ) {
-    final colors = context.colors;
-    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final inkColor = DSFortuneColors.getInk(isDark);
+    final primaryColor = DSFortuneColors.getPrimary(isDark);
+    final sealColor = DSFortuneColors.sealVermilion;
 
     return InkWell(
       onTap: () {
@@ -769,10 +846,21 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
         ref.read(fortuneOrderProvider.notifier).changeSortOption(option);
         Navigator.pop(context);
       },
-      splashColor: colors.accentSecondary.withValues(alpha: 0.1),
-      highlightColor: colors.accentSecondary.withValues(alpha: 0.05),
+      splashColor: primaryColor.withValues(alpha: 0.1),
+      highlightColor: primaryColor.withValues(alpha: 0.05),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: isSelected
+            ? BoxDecoration(
+                color: primaryColor.withValues(alpha: 0.08),
+                border: Border(
+                  left: BorderSide(
+                    color: sealColor,
+                    width: 3,
+                  ),
+                ),
+              )
+            : null,
         child: Row(
           children: [
             Expanded(
@@ -781,26 +869,47 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                 children: [
                   Text(
                     title,
-                    style: typography.labelLarge.copyWith(
-                      color: colors.textPrimary,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    style: TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 16,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      color: isSelected ? primaryColor : inkColor,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: typography.bodySmall.copyWith(
-                      color: colors.textSecondary,
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 13,
+                      color: inkColor.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              Icon(
-                Icons.check_circle_rounded,
-                color: colors.accentSecondary, // Vermilion seal color
-                size: 24,
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: sealColor,
+                    width: 2,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    '✓',
+                    style: TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: sealColor,
+                    ),
+                  ),
+                ),
               ),
           ],
         ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 // import 'package:fortune/core/utils/formatters.dart';
 import 'package:intl/intl.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -46,11 +46,11 @@ class StatisticsDashboard extends StatelessWidget {
             children: [
               Text(
                 '나의 운세 통계',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   fontWeight: FontWeight.bold)),
               Text(
                 DateFormat('yyyy년 MM월').format(DateTime.now()),
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]),
           const SizedBox(height: 20),
           
@@ -112,14 +112,14 @@ class StatisticsDashboard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       '오늘의 인사이트',
-                      style: DSTypography.labelMedium.copyWith(
+                      style: context.labelMedium.copyWith(
                         fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
                   _getPersonalizedInsight(statistics),
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
                 ),
               ],
@@ -156,13 +156,13 @@ class StatisticsDashboard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             title,
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             textAlign: TextAlign.center),
           const SizedBox(height: 4),
           Text(
             value,
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: color),
             textAlign: TextAlign.center)]));

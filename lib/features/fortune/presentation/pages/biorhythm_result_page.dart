@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
 import '../widgets/biorhythm_widgets.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -222,10 +223,8 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
               children: [
                 Text(
                   '바이오리듬 분석',
-                  style: TextStyle(
+                  style: context.heading3.copyWith(
                     fontFamily: 'GowunBatang',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
                     color: textColor,
                   ),
                 ),
@@ -242,9 +241,8 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                   ),
                   child: Text(
                     _formatTraditionalDate(),
-                    style: TextStyle(
+                    style: context.labelMedium.copyWith(
                       fontFamily: 'GowunBatang',
-                      fontSize: 12,
                       color: DSBiorhythmColors.goldAccent,
                     ),
                   ),
@@ -269,9 +267,8 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
               child: Center(
                 child: Text(
                   '閉',
-                  style: TextStyle(
+                  style: context.bodyMedium.copyWith(
                     fontFamily: 'GowunBatang',
-                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: textColor.withValues(alpha: 0.7),
                   ),
@@ -342,9 +339,8 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                     child: Center(
                       child: Text(
                         pageHanja[index],
-                        style: TextStyle(
+                        style: context.labelMedium.copyWith(
                           fontFamily: 'GowunBatang',
-                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: isSelected
                               ? Colors.white
@@ -356,9 +352,8 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                   const SizedBox(width: 6),
                   Text(
                     pageLabels[index],
-                    style: TextStyle(
+                    style: context.labelMedium.copyWith(
                       fontFamily: 'GowunBatang',
-                      fontSize: 13,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                       color: isSelected
                           ? color
@@ -419,12 +414,11 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                 color: Colors.white.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   '解',
-                  style: TextStyle(
+                  style: context.bodySmall.copyWith(
                     fontFamily: 'GowunBatang',
-                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                   ),
@@ -432,11 +426,10 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
               ),
             ),
             const SizedBox(width: 12),
-            const Text(
+            Text(
               '남은 풀이 모두 보기',
-              style: TextStyle(
+              style: context.bodyMedium.copyWith(
                 fontFamily: 'GowunBatang',
-                fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),

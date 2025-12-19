@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'fortune_card.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -118,12 +119,12 @@ class PetFortuneResultCard extends StatelessWidget {
         children: [
           Text(
             emoji,
-            style: DSTypography.displayLarge,
+            style: context.displayLarge,
           ),
           SizedBox(height: 12),
           Text(
             '$petName의 오늘 운세',
-            style: DSTypography.headingLarge.copyWith(
+            style: context.heading1.copyWith(
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
@@ -138,7 +139,7 @@ class PetFortuneResultCard extends StatelessWidget {
             ),
             child: Text(
               '$petSpecies • $petAge살',
-              style: DSTypography.bodySmall.copyWith(
+              style: context.bodySmall.copyWith(
                 color: DSColors.accent,
                 fontWeight: FontWeight.w600,
               ),
@@ -169,14 +170,14 @@ class PetFortuneResultCard extends StatelessWidget {
               children: [
                 Text(
                   '$score',
-                  style: DSTypography.displayMedium.copyWith(
+                  style: context.displayMedium.copyWith(
                     color: scoreColor,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
                   '점',
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
                 ),
@@ -189,7 +190,7 @@ class PetFortuneResultCard extends StatelessWidget {
           SizedBox(height: 20),
           Text(
             compatibilityResult['level'] ?? '좋은 궁합',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.heading2.copyWith(
               color: scoreColor,
               fontWeight: FontWeight.w600,
             ),
@@ -197,7 +198,7 @@ class PetFortuneResultCard extends StatelessWidget {
           SizedBox(height: 12),
           Text(
             compatibilityResult['message'] ?? fortune.content,
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               height: 1.6,
             ),
@@ -223,7 +224,7 @@ class PetFortuneResultCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       compatibilityResult['advice'],
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         color: DSColors.accent,
                         height: 1.5,
                       ),
@@ -247,10 +248,10 @@ class PetFortuneResultCard extends StatelessWidget {
       child: Column(
         children: [
           // 건강 지표
-          _buildHealthIndicator('에너지', scores['energy'] ?? 0, DSColors.success, isDark),
-          _buildHealthIndicator('식욕', scores['appetite'] ?? 0, DSColors.warning, isDark),
-          _buildHealthIndicator('기분', scores['mood'] ?? 0, DSColors.accent, isDark),
-          _buildHealthIndicator('활동성', scores['activity'] ?? 0, DSColors.accentSecondary, isDark),
+          _buildHealthIndicator(context, '에너지', scores['energy'] ?? 0, DSColors.success, isDark),
+          _buildHealthIndicator(context, '식욕', scores['appetite'] ?? 0, DSColors.warning, isDark),
+          _buildHealthIndicator(context, '기분', scores['mood'] ?? 0, DSColors.accent, isDark),
+          _buildHealthIndicator(context, '활동성', scores['activity'] ?? 0, DSColors.accentSecondary, isDark),
           
           const SizedBox(height: 16),
           
@@ -273,7 +274,7 @@ class PetFortuneResultCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     healthFortune['mainAdvice'] ?? '',
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       height: 1.5,
                     ),
@@ -300,7 +301,7 @@ class PetFortuneResultCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       point.toString(),
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                         height: 1.4,
                       ),
@@ -315,7 +316,7 @@ class PetFortuneResultCard extends StatelessWidget {
     );
   }
   
-  Widget _buildHealthIndicator(String label, int score, Color color, bool isDark) {
+  Widget _buildHealthIndicator(BuildContext context, String label, int score, Color color, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -324,7 +325,7 @@ class PetFortuneResultCard extends StatelessWidget {
             width: 60,
             child: Text(
               label,
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
               ),
             ),
@@ -343,7 +344,7 @@ class PetFortuneResultCard extends StatelessWidget {
           SizedBox(width: 12),
           Text(
             '$score',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
             ),
@@ -379,7 +380,7 @@ class PetFortuneResultCard extends StatelessWidget {
                     SizedBox(width: 8),
                     Text(
                       '${activityFortune['bestTime'] ?? '지금'} 추천',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: DSColors.accentSecondary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -389,7 +390,7 @@ class PetFortuneResultCard extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   activityFortune['recommended'] ?? '',
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.5,
                   ),
@@ -423,7 +424,7 @@ class PetFortuneResultCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       activityFortune['special'],
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         height: 1.5,
                       ),
@@ -459,7 +460,7 @@ class PetFortuneResultCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '$moodScore',
-                    style: DSTypography.headingMedium.copyWith(
+                    style: context.heading2.copyWith(
                       color: moodColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -473,7 +474,7 @@ class PetFortuneResultCard extends StatelessWidget {
                   children: [
                     Text(
                       '오늘의 감정: ${emotionalState['primary'] ?? '평온한'}',
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -481,7 +482,7 @@ class PetFortuneResultCard extends StatelessWidget {
                     SizedBox(height: 4),
                     Text(
                       emotionalState['advice'] ?? '',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                         height: 1.4,
                       ),
@@ -503,19 +504,19 @@ class PetFortuneResultCard extends StatelessWidget {
       child: Column(
         children: [
           if (specialEvents['grooming'] != null)
-            _buildEventItem('미용/목욕', specialEvents['grooming'], Icons.shower, isDark),
+            _buildEventItem(context, '미용/목욕', specialEvents['grooming'], Icons.shower, isDark),
           if (specialEvents['vetVisit'] != null)
-            _buildEventItem('병원 방문', specialEvents['vetVisit'], Icons.local_hospital, isDark),
+            _buildEventItem(context, '병원 방문', specialEvents['vetVisit'], Icons.local_hospital, isDark),
           if (specialEvents['training'] != null)
-            _buildEventItem('훈련/교육', specialEvents['training'], Icons.school, isDark),
+            _buildEventItem(context, '훈련/교육', specialEvents['training'], Icons.school, isDark),
           if (specialEvents['socializing'] != null)
-            _buildEventItem('사회화', specialEvents['socializing'], Icons.people, isDark),
+            _buildEventItem(context, '사회화', specialEvents['socializing'], Icons.people, isDark),
         ],
       ),
     );
   }
-  
-  Widget _buildEventItem(String label, Map<String, dynamic> event, IconData icon, bool isDark) {
+
+  Widget _buildEventItem(BuildContext context, String label, Map<String, dynamic> event, IconData icon, bool isDark) {
     final score = event['score'] ?? 0;
     final color = _getScoreColor(score);
     
@@ -545,7 +546,7 @@ class PetFortuneResultCard extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w500,
                       ),
@@ -559,7 +560,7 @@ class PetFortuneResultCard extends StatelessWidget {
                       ),
                       child: Text(
                         '$score점',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: color,
                           fontWeight: FontWeight.w600,
                         ),
@@ -570,7 +571,7 @@ class PetFortuneResultCard extends StatelessWidget {
                 SizedBox(height: 2),
                 Text(
                   event['advice'] ?? '',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
                 ),
@@ -602,7 +603,7 @@ class PetFortuneResultCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   point.toString(),
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.5,
                   ),
@@ -621,22 +622,22 @@ class PetFortuneResultCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Column(
         children: [
-          _buildLuckyItem('색상', luckyItems['color'], Icons.palette, DSColors.accentSecondary, isDark),
-          _buildLuckyItem('아이템', luckyItems['item'], Icons.shopping_bag, DSColors.accent, isDark),
-          _buildLuckyItem('활동', luckyItems['activity'], Icons.directions_run, DSColors.success, isDark),
-          _buildLuckyItem('간식', luckyItems['food'], Icons.restaurant, DSColors.warning, isDark),
+          _buildLuckyItem(context, '색상', luckyItems['color'], Icons.palette, DSColors.accentSecondary, isDark),
+          _buildLuckyItem(context, '아이템', luckyItems['item'], Icons.shopping_bag, DSColors.accent, isDark),
+          _buildLuckyItem(context, '활동', luckyItems['activity'], Icons.directions_run, DSColors.success, isDark),
+          _buildLuckyItem(context, '간식', luckyItems['food'], Icons.restaurant, DSColors.warning, isDark),
           if (luckyItems['toy'] != null)
-            _buildLuckyItem('장난감', luckyItems['toy'], Icons.toys, DSColors.error, isDark),
+            _buildLuckyItem(context, '장난감', luckyItems['toy'], Icons.toys, DSColors.error, isDark),
           if (luckyItems['spot'] != null)
-            _buildLuckyItem('장소', luckyItems['spot'], Icons.place, DSColors.accentSecondary, isDark),
+            _buildLuckyItem(context, '장소', luckyItems['spot'], Icons.place, DSColors.accentSecondary, isDark),
           if (luckyItems['time'] != null)
-            _buildLuckyItem('시간', luckyItems['time'], Icons.schedule, DSColors.accent, isDark),
+            _buildLuckyItem(context, '시간', luckyItems['time'], Icons.schedule, DSColors.accent, isDark),
         ],
       ),
     );
   }
-  
-  Widget _buildLuckyItem(String label, dynamic value, IconData icon, Color color, bool isDark) {
+
+  Widget _buildLuckyItem(BuildContext context, String label, dynamic value, IconData icon, Color color, bool isDark) {
     if (value == null) return const SizedBox.shrink();
     
     return Padding(
@@ -663,14 +664,14 @@ class PetFortuneResultCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
                 ),
                 SizedBox(height: 2),
                 Text(
                   value.toString(),
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),

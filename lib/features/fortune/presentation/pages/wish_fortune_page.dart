@@ -4,12 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/wish_fortune_result.dart';
 import './wish_fortune_result_page.dart';
-import '../../../../services/ad_service.dart';
+import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/widgets/voice_input_text_field.dart';
+import '../widgets/wish_voice_input.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -53,11 +53,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   @override
   void initState() {
     super.initState();
-
-    // 광고 미리 로드
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      AdService.instance.loadInterstitialAd();
-    });
 
     // 텍스트 변경 리스너 (글자수 업데이트 + 아코디언 상태 업데이트)
     _wishController.addListener(_onWishTextChanged);
@@ -134,7 +129,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
   bool _canSubmit() {
     return _selectedCategory != null &&
-        _wishController.text.trim().length >= 10;
+        _wishController.text.trim().isNotEmpty;
   }
 
   /// 소원 빌기 실행
@@ -149,7 +144,8 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
     }
 
     // 광고 표시 후 신의 응답 표시
-    AdService.instance.showInterstitialAdWithCallback(
+    await InterstitialAdHelper.showInterstitialAdWithCallback(
+      ref,
       onAdCompleted: () async {
         if (mounted) {
           _generateDivineResponse();
@@ -339,9 +335,9 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                   onAllCompleted: null,
                   completionButtonText: '✨ 소원 빌기',
                 ),
-                // ✅ 하단 버튼 (UnifiedButton.floating)
+                // ✅ 하단 버튼 (빨간색 Floating 버튼)
                 if (_canSubmit() || _isLoading)
-                  UnifiedButton.floating(
+                  UnifiedButton.floatingDanger(
                     text: _isLoading ? '신의 응답을 받는 중...' : '✨ 소원 빌기',
                     isEnabled: _canSubmit() && !_isLoading,
                     onPressed: _canSubmit() && !_isLoading ? _submitWish : null,
@@ -445,38 +441,18 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   }
 
   Widget _buildWishInput(Function(dynamic) onComplete) {
-    final colors = context.colors;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // ChatGPT 스타일 음성 입력
-        VoiceInputTextField(
-          controller: _wishController,
-          onSubmit: (text) {
-            _updateAccordionSection(
-              'wish',
-              text.isNotEmpty ? text : null,
-              text.length > 30 ? '${text.substring(0, 30)}...' : text,
-            );
-          },
-          hintText: '소원을 말하거나 적어주세요',
-          transcribingText: '듣고 있어요...',
-        ),
-        const SizedBox(height: DSSpacing.sm),
-        // 글자수 표시
-        Padding(
-          padding: const EdgeInsets.only(left: DSSpacing.sm),
-          child: Text(
-            '${_wishController.text.length}/10자',
-            style: DSTypography.labelSmall.copyWith(
-              color: _wishController.text.length >= 10
-                  ? colors.success
-                  : colors.textTertiary,
-            ),
-          ),
-        ),
-      ],
+    return WishVoiceInput(
+      controller: _wishController,
+      onTextChanged: () {
+        final text = _wishController.text;
+        _updateAccordionSection(
+          'wish',
+          text.isNotEmpty ? text : null,
+          text.length > 30 ? '${text.substring(0, 30)}...' : text,
+        );
+      },
+      hintText: '소원을 말하거나 적어주세요',
+      transcribingText: '듣고 있어요...',
     );
   }
 

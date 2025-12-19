@@ -68,6 +68,262 @@ This master document serves as the single source of truth for all UI/UX policies
 
 ---
 
+## 🎎 한국 전통 미학 (Korean Traditional Aesthetics)
+
+> **핵심**: Fortune App의 디자인 언어는 한국 전통 미학을 기반으로 합니다.
+> 모던 UI/UX 원칙과 전통 미학이 조화롭게 융합됩니다.
+
+### 전통 미학 4대 원칙
+
+#### 1. 질감 (Texture) - 한지와 먹
+
+```yaml
+philosophy:
+  concept: 디지털 공간에 아날로그 따뜻함 구현
+  primary: 한지(Hanji) 질감의 자연스러운 배경
+  accent: 먹(Ink) 효과의 발묵 스타일 강조
+
+implementation:
+  background:
+    light: 미색 (#F7F3E9) 한지 질감
+    dark: 현무색 (#1C1C1C) 먹빛 배경
+  cards:
+    component: HanjiCard
+    styles: [standard, scroll, hanging, elevated, minimal]
+  effects:
+    brush_stroke: 붓터치 가장자리
+    ink_bleed: 발묵 효과 장식
+
+usage:
+  primary_surfaces: 한지 배경 필수
+  cards: HanjiCard 우선 사용
+  decorations: 붓터치/먹물 효과 활용
+```
+
+#### 2. 색상 (Color) - 오방색과 쪽빛
+
+```yaml
+philosophy:
+  concept: 음양오행 사상에 기반한 색상 체계
+  base: 먹색 + 미색 기조
+  accent: 오방색을 포인트로 활용
+
+five_colors:
+  목(木):
+    color: 청 (Cheong)
+    hex: "#1E3A5F"
+    domain: 지혜, 성장, 직장
+  화(火):
+    color: 적 (Jeok)
+    hex: "#B91C1C"
+    domain: 열정, 사랑, 연애
+  토(土):
+    color: 황 (Hwang)
+    hex: "#B8860B"
+    domain: 풍요, 재물, 안정
+  금(金):
+    color: 백 (Baek)
+    hex: "#F5F5DC"
+    domain: 순수, 건강, 명예
+  수(水):
+    color: 흑 (Heuk)
+    hex: "#1C1C1C"
+    domain: 신비, 운명, 지혜
+
+special_colors:
+  인주: "#DC2626"  # CTA 버튼, 결과 확인, 낙관
+  먹: "#1A1A1A"    # 본문 텍스트, 다크모드
+  미색: "#F7F3E9" # 배경, 한지
+
+usage:
+  class: ObangseokColors
+  method: getDomainColor(domain)
+  reference: docs/design/DESIGN_SYSTEM.md
+```
+
+#### 3. 타이포그래피 (Typography) - 서예와 명조
+
+```yaml
+philosophy:
+  concept: 전통 서예의 품격을 현대적으로 재해석
+  titles: 붓글씨 스타일 (GowunBatang)
+  body: 명조 계열 가독성 폰트
+
+traditional_elements:
+  primary:
+    font: GowunBatang
+    weights: [400, 500, 700]
+    usage: 운세 제목, 사주 명칭, 한자 표기
+  secondary:
+    font: ZenSerif (또는 시스템 명조)
+    usage: 본문, 설명 텍스트
+
+usage_guide:
+  fortune_titles:
+    font: GowunBatang
+    size: 24-32px
+    weight: 700
+  saju_elements:
+    font: GowunBatang
+    size: 18-24px
+    weight: 500
+  seal_stamps:
+    font: GowunBatang
+    size: 14-18px
+    weight: 700
+```
+
+#### 4. 공간 (Space) - 여백의 미
+
+```yaml
+philosophy:
+  concept: 비움으로 채우는 미학
+  principle: 여백은 콘텐츠만큼 중요
+  goal: 시각적 호흡 공간 확보
+
+implementation:
+  card_padding:
+    standard: 16-24px
+    scroll: 20-28px (두루마리 스타일)
+  section_spacing: 24-32px
+  content_breathing: 최소 12px
+
+balance:
+  text_ratio: 콘텐츠 60% / 여백 40%
+  visual_focus: 핵심 요소 주변 충분한 공간
+  scroll_margin: 상하 여유 확보
+```
+
+### 전통 컴포넌트 통합
+
+#### HanjiCard 사용 정책
+
+```yaml
+mandatory_usage:
+  - 운세 결과 표시
+  - 사주 분석 카드
+  - 프리미엄 콘텐츠
+  - 전통 스타일 필요 영역
+
+card_styles:
+  standard: 기본 한지 카드
+  scroll: 두루마리 스타일 (운세 결과)
+  hanging: 족자 스타일 (명언, 격언)
+  elevated: 그림자 강조 (프리미엄)
+  minimal: 최소화 스타일
+
+color_schemes:
+  fortune: 종합운 (#B8860B 황)
+  love: 연애운 (#B91C1C 적)
+  luck: 행운 (#1E3A5F 청)
+  biorhythm: 바이오리듬
+  health: 건강운 (#F5F5DC 백)
+```
+
+#### SealStamp (낙관) 사용 정책
+
+```yaml
+usage:
+  - 운세 결과 인증
+  - 전통 느낌 강조
+  - 브랜딩 요소
+
+placement:
+  position: 우하단 또는 좌하단
+  size: 48-64px
+  rotation: -5° ~ 5° (자연스러운 기울기)
+
+styles:
+  - 원형 (기본)
+  - 정사각형
+  - 커스텀 텍스트
+```
+
+### 전통 애니메이션 가이드
+
+```yaml
+brush_stroke:
+  type: 붓터치 그리기
+  duration: 800-1200ms
+  easing: easeOutCubic
+  usage: 타이틀 등장, 강조 효과
+
+ink_spread:
+  type: 먹물 퍼짐
+  duration: 600-1000ms
+  easing: easeInOut
+  usage: 화면 전환, 로딩
+
+seal_stamp:
+  type: 도장 찍기
+  duration: 400-600ms
+  easing: easeOutBounce
+  usage: 결과 확인, 완료 상태
+
+scroll_unroll:
+  type: 두루마리 펼침
+  duration: 1000-1500ms
+  easing: easeOutCubic
+  usage: 운세 결과 공개
+```
+
+### 민화 에셋 사용 정책
+
+```yaml
+asset_location: assets/images/minhwa/
+total_count: 30 assets
+
+categories:
+  overall: 전체운 (6개) - dragon, tiger, phoenix...
+  love: 연애운 (4개) - mandarin, butterfly...
+  money: 재물운 (4개) - carp, pig, toad...
+  work: 직장운 (4개) - crane, eagle...
+  study: 학업운 (4개) - magpie, owl...
+  health: 건강운 (4개) - crane_turtle, deer...
+  saju: 사주 (4개) - yin_yang, fourguardians...
+
+usage_guide:
+  background_decoration:
+    opacity: 10-20%
+    purpose: 시각적 맥락 제공
+  card_icons:
+    opacity: 80-100%
+    purpose: 카테고리 식별
+  loading_screens:
+    opacity: 30-50%
+    purpose: 브랜드 경험
+
+dark_mode:
+  opacity_reduction: 50%
+  color_filter: subtle overlay
+```
+
+### Toss Design 통합 (보조 참조)
+
+```yaml
+relationship:
+  primary: 한국 전통 미학
+  secondary: Toss Design System
+
+usage:
+  toss_patterns:
+    - 모던 레이아웃 참조
+    - 마이크로 인터랙션 참조
+    - 접근성 기준 준수
+
+  override_with_traditional:
+    - 색상: 오방색 우선
+    - 배경: 한지 질감 우선
+    - 카드: HanjiCard 우선
+    - 타이포: GowunBatang 우선
+
+conflict_resolution:
+  rule: 전통 미학 > Toss Design
+  exception: 명확한 UX 이점이 있을 때만
+```
+
+---
+
 ## 🎭 Micro-Interactions & Haptic Feedback
 
 ### Button Interactions

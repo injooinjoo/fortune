@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import '../../pages/biorhythm_result_page.dart';
 import 'components/biorhythm_hanji_card.dart';
 import 'components/biorhythm_score_badge.dart';
@@ -47,9 +48,8 @@ class TodayRecommendationCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 '오늘의 지침 (指針)',
-                style: TextStyle(
+                style: context.bodyMedium.copyWith(
                   fontFamily: 'GowunBatang',
-                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
@@ -68,9 +68,8 @@ class TodayRecommendationCard extends StatelessWidget {
                 ),
                 child: Text(
                   '吉',
-                  style: TextStyle(
+                  style: context.labelMedium.copyWith(
                     fontFamily: 'GowunBatang',
-                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: DSBiorhythmColors.goldAccent,
                   ),
@@ -111,9 +110,8 @@ class TodayRecommendationCard extends StatelessWidget {
                     child: Center(
                       child: Text(
                         recommendation['hanja'] as String,
-                        style: TextStyle(
+                        style: context.labelMedium.copyWith(
                           fontFamily: 'GowunBatang',
-                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: color,
                         ),
@@ -126,9 +124,8 @@ class TodayRecommendationCard extends StatelessWidget {
                       children: [
                         Text(
                           recommendation['title'] as String,
-                          style: TextStyle(
+                          style: context.bodySmall.copyWith(
                             fontFamily: 'GowunBatang',
-                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: textColor,
                           ),
@@ -136,9 +133,7 @@ class TodayRecommendationCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           recommendation['text'] as String,
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 13,
+                          style: context.labelMedium.copyWith(
                             color: textColor.withValues(alpha: 0.7),
                             height: 1.5,
                           ),
@@ -272,9 +267,8 @@ class WeeklyActivityGuide extends StatelessWidget {
           // Header
           Text(
             '주간 활동 지침',
-            style: TextStyle(
+            style: context.heading4.copyWith(
               fontFamily: 'GowunBatang',
-              fontSize: 18,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -282,9 +276,7 @@ class WeeklyActivityGuide extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             '삼기(三氣)에 맞춘 활동 안내',
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 13,
+            style: context.labelMedium.copyWith(
               color: textColor.withValues(alpha: 0.5),
             ),
           ),
@@ -319,9 +311,8 @@ class WeeklyActivityGuide extends StatelessWidget {
                       children: [
                         Text(
                           activity['hanja'] as String,
-                          style: TextStyle(
+                          style: context.heading4.copyWith(
                             fontFamily: 'GowunBatang',
-                            fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: color,
                           ),
@@ -337,9 +328,8 @@ class WeeklyActivityGuide extends StatelessWidget {
                       children: [
                         Text(
                           activity['title'] as String,
-                          style: TextStyle(
+                          style: context.bodyMedium.copyWith(
                             fontFamily: 'GowunBatang',
-                            fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: textColor,
                           ),
@@ -347,9 +337,7 @@ class WeeklyActivityGuide extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           activity['description'] as String,
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 13,
+                          style: context.labelMedium.copyWith(
                             color: textColor.withValues(alpha: 0.6),
                             height: 1.5,
                           ),
@@ -365,9 +353,8 @@ class WeeklyActivityGuide extends StatelessWidget {
                           ),
                           child: Text(
                             activity['bestDays'] as String,
-                            style: TextStyle(
+                            style: context.labelTiny.copyWith(
                               fontFamily: 'GowunBatang',
-                              fontSize: 11,
                               color: color,
                             ),
                           ),
@@ -461,9 +448,8 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
             children: [
               Text(
                 '삼기(三氣)의 조화',
-                style: TextStyle(
+                style: context.bodyMedium.copyWith(
                   fontFamily: 'GowunBatang',
-                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
@@ -476,11 +462,11 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildEnergyDot(BiorhythmType.physical, isDark),
+              _buildEnergyDot(context, BiorhythmType.physical, isDark),
               _buildConnectionLine(isDark),
-              _buildEnergyDot(BiorhythmType.emotional, isDark),
+              _buildEnergyDot(context, BiorhythmType.emotional, isDark),
               _buildConnectionLine(isDark),
-              _buildEnergyDot(BiorhythmType.intellectual, isDark),
+              _buildEnergyDot(context, BiorhythmType.intellectual, isDark),
             ],
           ),
           const SizedBox(height: 16),
@@ -501,9 +487,8 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
               children: [
                 Text(
                   balanceStatus['hanja'] as String,
-                  style: TextStyle(
+                  style: context.bodySmall.copyWith(
                     fontFamily: 'GowunBatang',
-                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: balanceStatus['color'],
                   ),
@@ -511,9 +496,8 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   balanceStatus['text'] as String,
-                  style: TextStyle(
+                  style: context.labelMedium.copyWith(
                     fontFamily: 'GowunBatang',
-                    fontSize: 13,
                     color: textColor.withValues(alpha: 0.7),
                   ),
                 ),
@@ -525,7 +509,7 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildEnergyDot(BiorhythmType type, bool isDark) {
+  Widget _buildEnergyDot(BuildContext context, BiorhythmType type, bool isDark) {
     final color = _getTypeColor(type, isDark);
     final score = _getTypeScore(type);
     final hanja = _getTypeHanja(type);
@@ -546,9 +530,8 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
           child: Center(
             child: Text(
               hanja,
-              style: TextStyle(
+              style: context.bodyMedium.copyWith(
                 fontFamily: 'GowunBatang',
-                fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
@@ -558,9 +541,8 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '$score',
-          style: TextStyle(
+          style: context.labelMedium.copyWith(
             fontFamily: 'GowunBatang',
-            fontSize: 12,
             color: color,
           ),
         ),

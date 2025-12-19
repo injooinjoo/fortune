@@ -556,6 +556,210 @@ serve(async (req) => {
 
 ---
 
+## 🎨 민화 (Minhwa) 에셋 시스템
+
+### 개요
+
+Fortune App은 **30개의 민화 에셋**을 통해 한국 전통 미학을 시각적으로 구현합니다.
+모든 민화 에셋은 `assets/images/minhwa/` 디렉토리에 위치합니다.
+
+> **디자인 철학**: 민화는 부적과 함께 한국 전통 시각 문화의 핵심입니다.
+> 각 민화는 오행(五行) 사상과 길상(吉祥) 의미를 담고 있습니다.
+
+---
+
+### 카테고리별 에셋 카탈로그
+
+#### 1. 전체운 (Overall Fortune) - 6개
+
+| 파일명 | 상징 | 의미 | 사용 위치 |
+|--------|------|------|----------|
+| `minhwa_overall_dragon.png` | 용 (龍) | 권위, 성공, 행운 | 메인 운세, 총운 |
+| `minhwa_overall_tiger.png` | 호랑이 (虎) | 액운 방지, 수호 | 오늘의 운세 |
+| `minhwa_overall_phoenix.png` | 봉황 (鳳凰) | 고귀함, 상서로움 | 특별 운세 |
+| `minhwa_overall_turtle.png` | 거북 (龜) | 장수, 지혜 | 주간/월간 운세 |
+| `minhwa_overall_sunrise.png` | 일출 (日出) | 새로운 시작, 희망 | 신년 운세, 아침 |
+| `minhwa_overall_moon.png` | 달 (月) | 음기, 직감, 여성성 | 야간, 명상 |
+
+#### 2. 연애운 (Love Fortune) - 4개
+
+| 파일명 | 상징 | 의미 | 사용 위치 |
+|--------|------|------|----------|
+| `minhwa_love_mandarin.png` | 원앙 (鴛鴦) | 부부 금슬, 영원한 사랑 | 궁합, 연애운 |
+| `minhwa_love_butterfly.png` | 나비 (蝶) | 자유로운 사랑, 변화 | 싱글 운세 |
+| `minhwa_love_magpie_bridge.png` | 까치다리 | 만남, 인연 | 소개팅, 짝운 |
+| `minhwa_love_peony.png` | 모란 (牡丹) | 부귀, 아름다움 | 결혼운, 애정 |
+
+#### 3. 재물운 (Wealth Fortune) - 4개
+
+| 파일명 | 상징 | 의미 | 사용 위치 |
+|--------|------|------|----------|
+| `minhwa_money_carp.png` | 잉어 (鯉) | 출세, 성공, 등용문 | 재물운, 사업 |
+| `minhwa_money_pig.png` | 돼지 (豚) | 복, 재물, 풍요 | 금전운 |
+| `minhwa_money_toad.png` | 두꺼비 (蟾蜍) | 재물 수호, 부 축적 | 저축, 투자 |
+| `minhwa_money_treasure.png` | 보물 (寶物) | 부귀영화 | 복권, 횡재 |
+
+#### 4. 직장운 (Career Fortune) - 4개
+
+| 파일명 | 상징 | 의미 | 사용 위치 |
+|--------|------|------|----------|
+| `minhwa_work_crane.png` | 학 (鶴) | 청렴, 고결, 승진 | 승진운, 직장 |
+| `minhwa_work_eagle.png` | 독수리 (鷲) | 권위, 통찰력 | 리더십, 결단 |
+| `minhwa_work_bamboo.png` | 대나무 (竹) | 절개, 성장 | 성장, 발전 |
+| `minhwa_work_waterfall.png` | 폭포 (瀑布) | 도약, 등용문 | 이직, 도전 |
+
+#### 5. 학업운 (Study Fortune) - 4개
+
+| 파일명 | 상징 | 의미 | 사용 위치 |
+|--------|------|------|----------|
+| `minhwa_study_magpie.png` | 까치 (鵲) | 기쁜 소식, 합격 | 시험운, 합격 |
+| `minhwa_study_owl.png` | 부엉이 (梟) | 지혜, 학문 | 학습, 연구 |
+| `minhwa_study_brush.png` | 붓 (筆) | 문장력, 창작 | 글쓰기, 예술 |
+| `minhwa_study_plum.png` | 매화 (梅) | 선비정신, 인내 | 수험, 공부 |
+
+#### 6. 건강운 (Health Fortune) - 4개
+
+| 파일명 | 상징 | 의미 | 사용 위치 |
+|--------|------|------|----------|
+| `minhwa_health_crane_turtle.png` | 학과 거북 | 십장생, 장수 | 건강운, 장수 |
+| `minhwa_health_deer.png` | 사슴 (鹿) | 장수, 신선 | 활력, 회복 |
+| `minhwa_health_pine.png` | 소나무 (松) | 불변, 장수 | 면역, 강건 |
+| `minhwa_health_mountain.png` | 산 (山) | 안정, 튼튼함 | 체력, 지구력 |
+
+#### 7. 사주운 (Saju Fortune) - 4개
+
+| 파일명 | 상징 | 의미 | 사용 위치 |
+|--------|------|------|----------|
+| `minhwa_saju_dragon.png` | 용 | 양기, 권력 | 사주 분석 |
+| `minhwa_saju_tiger_dragon.png` | 용호상박 | 음양 조화 | 궁합, 상성 |
+| `minhwa_saju_fourguardians.png` | 사신도 (四神圖) | 사방 수호 | 사주 팔자 |
+| `minhwa_saju_yin_yang.png` | 태극 (太極) | 음양 조화 | 오행, 기운 |
+
+---
+
+### 민화 사용 가이드
+
+#### Flutter 코드 예시
+
+```dart
+// 1. 직접 에셋 참조
+Image.asset('assets/images/minhwa/minhwa_overall_dragon.png')
+
+// 2. 카테고리별 랜덤 선택
+String getRandomMinhwa(String category) {
+  final minhwaMap = {
+    'overall': ['dragon', 'tiger', 'phoenix', 'turtle', 'sunrise', 'moon'],
+    'love': ['mandarin', 'butterfly', 'magpie_bridge', 'peony'],
+    'money': ['carp', 'pig', 'toad', 'treasure'],
+    'work': ['crane', 'eagle', 'bamboo', 'waterfall'],
+    'study': ['magpie', 'owl', 'brush', 'plum'],
+    'health': ['crane_turtle', 'deer', 'pine', 'mountain'],
+    'saju': ['dragon', 'tiger_dragon', 'fourguardians', 'yin_yang'],
+  };
+
+  final items = minhwaMap[category] ?? minhwaMap['overall']!;
+  final random = items[Random().nextInt(items.length)];
+  return 'assets/images/minhwa/minhwa_${category}_$random.png';
+}
+
+// 3. HanjiCard와 함께 사용
+HanjiCard(
+  style: HanjiCardStyle.scroll,
+  colorScheme: HanjiColorScheme.fortune,
+  child: Stack(
+    children: [
+      // 민화 배경
+      Positioned.fill(
+        child: Opacity(
+          opacity: 0.15,
+          child: Image.asset(
+            'assets/images/minhwa/minhwa_overall_dragon.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+      // 콘텐츠
+      YourContent(),
+    ],
+  ),
+)
+```
+
+#### 오방색과 민화 매핑
+
+| 오행 | 민화 카테고리 | 대표 에셋 | 색상 |
+|------|-------------|----------|------|
+| 목(木) | work, study | 대나무, 매화 | 청색 (#1E3A5F) |
+| 화(火) | love | 모란, 나비 | 적색 (#B91C1C) |
+| 토(土) | money, overall | 잉어, 보물 | 황색 (#B8860B) |
+| 금(金) | health | 학, 소나무 | 백색 (#F5F5DC) |
+| 수(水) | saju | 태극, 거북 | 흑색 (#1C1C1C) |
+
+---
+
+### 민화 스타일 가이드
+
+#### 시각적 특성
+
+```yaml
+visual_style:
+  색조: 톤다운된 전통색 (muted traditional colors)
+  선: 부드러운 붓터치 (soft brush strokes)
+  구도: 좌우 대칭 또는 자연스러운 배치
+  배경: 투명 또는 한지색 (미색 #F7F3E9)
+
+opacity_guide:
+  배경 장식: 10-20% (콘텐츠 가독성 유지)
+  카드 아이콘: 80-100% (명확한 시각 요소)
+  로딩 화면: 30-50% (시선 집중)
+
+size_recommendations:
+  아이콘: 48-64px
+  카드 배경: 200-400px
+  전체 화면: 원본 크기 유지
+```
+
+#### 다크모드 대응
+
+```dart
+// 민화 오버레이 투명도 조정
+double getMinhwaOpacity(BuildContext context) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  return isDark ? 0.08 : 0.15;  // 다크모드에서 더 투명하게
+}
+
+// 민화 색상 필터 (다크모드용)
+ColorFilter? getMinhwaColorFilter(BuildContext context) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  if (!isDark) return null;
+
+  return ColorFilter.mode(
+    Colors.white.withOpacity(0.1),
+    BlendMode.overlay,
+  );
+}
+```
+
+---
+
+### 민화 에셋 체크리스트
+
+#### 품질 검증
+- [ ] PNG 포맷, 투명 배경 지원
+- [ ] 최소 해상도 1024px 이상
+- [ ] 전통색 팔레트 준수
+- [ ] 문화적 상징성 정확도 확인
+- [ ] 라이트/다크 모드 호환성
+
+#### 사용 검증
+- [ ] HanjiCard와 통합 테스트
+- [ ] 오방색 매핑 일관성
+- [ ] 카테고리별 적절성
+- [ ] 로딩 성능 최적화
+- [ ] 메모리 사용량 확인
+
+---
+
 **작성일**: 2025-01-08
-**버전**: 1.0.0
+**버전**: 2.0.0 (민화 섹션 추가)
 **작성자**: Fortune App Development Team

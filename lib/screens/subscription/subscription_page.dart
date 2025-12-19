@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/theme/obangseok_colors.dart';
+import '../../core/theme/typography_unified.dart';
 import '../../core/services/fortune_haptic_service.dart';
-import '../../core/providers/user_settings_provider.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/constants/in_app_products.dart';
 import '../../services/in_app_purchase_service.dart';
@@ -60,7 +60,6 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final typography = ref.watch(typographyThemeProvider);
     return Scaffold(
       backgroundColor: colors.backgroundSecondary,
       appBar: AppHeader(
@@ -117,7 +116,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                       const SizedBox(width: DSSpacing.md),
                       Text(
                         '프리미엄운세',
-                        style: typography.headingMedium.copyWith(
+                        style: context.heading2.copyWith(
                           color: Colors.white,
                         ),
                       ),
@@ -126,7 +125,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   const SizedBox(height: DSSpacing.md),
                   Text(
                     '무제한 운세와 프리미엄 기능을 경험하세요',
-                    style: typography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
@@ -139,7 +138,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
             // Plan Selection
             Text(
               '구독 플랜 선택',
-              style: typography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: colors.textSecondary,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
@@ -163,7 +162,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
             _buildPlanCard(
               id: 'monthly',
               title: '월간 구독',
-              price: '₩1,900',
+              price: '₩2,200',
               period: '/ 월',
               badge: null,
             ),
@@ -176,8 +175,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               title: '연간 구독',
               price: '₩19,000',
               period: '/ 년',
-              badge: '17% 절약',
-              originalPrice: '₩22,800',
+              badge: '28% 절약',
+              originalPrice: '₩26,400',
             ),
 
             const SizedBox(height: DSSpacing.xl),
@@ -185,7 +184,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
             // Premium Features
             Text(
               '프리미엄운세 혜택',
-              style: typography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: colors.textSecondary,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
@@ -244,7 +243,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               child: Text(
                 '구독은 언제든 해지 가능합니다\n자동 갱신되며 해지 전까지 요금이 청구됩니다',
                 textAlign: TextAlign.center,
-                style: typography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: colors.textSecondary,
                 ),
               ),
@@ -276,7 +275,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                       const SizedBox(width: DSSpacing.sm),
                       Text(
                         '구독 관리 방법',
-                        style: typography.bodySmall.copyWith(
+                        style: context.bodySmall.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
@@ -293,7 +292,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     '5. [구독 취소] 또는 플랜 변경\n\n'
                     '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.\n'
                     '• 무료 체험 기간 중 취소하면 체험 기간 종료와 함께 구독이 해지됩니다.',
-                    style: typography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.textSecondary,
                       height: 1.5,
                     ),
@@ -310,7 +309,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                 onPressed: _isLoading ? null : _restorePurchases,
                 child: Text(
                   '이전 구매 복원',
-                  style: typography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: colors.accent,
                     decoration: TextDecoration.underline,
                   ),
@@ -330,7 +329,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                 : _selectedPlan == 'free'
                     ? '무료 플랜 사용 중'
                     : _selectedPlan == 'monthly'
-                        ? '월간 구독 시작하기 - ₩1,900/월'
+                        ? '월간 구독 시작하기 - ₩2,200/월'
                         : '연간 구독 시작하기 - ₩19,000/년',
             onPressed: _selectedPlan == 'free' || _isLoading ? null : _startSubscription,
             isEnabled: _selectedPlan != 'free' && !_isLoading,
@@ -349,7 +348,6 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     String? originalPrice,
   }) {
     final colors = context.colors;
-    final typography = ref.watch(typographyThemeProvider);
     final isSelected = _selectedPlan == id;
 
     return GestureDetector(
@@ -409,7 +407,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     children: [
                       Text(
                         title,
-                        style: typography.bodyMedium.copyWith(
+                        style: context.bodyMedium.copyWith(
                           color: colors.textPrimary,
                         ),
                       ),
@@ -427,7 +425,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                           ),
                           child: Text(
                             badge,
-                            style: typography.labelSmall.copyWith(
+                            style: context.labelSmall.copyWith(
                               color: ObangseokColors.inju,
                               fontWeight: FontWeight.w600,
                             ),
@@ -441,13 +439,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     children: [
                       Text(
                         price,
-                        style: typography.headingSmall.copyWith(
+                        style: context.heading3.copyWith(
                           color: colors.textPrimary,
                         ),
                       ),
                       Text(
                         period,
-                        style: typography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: colors.textSecondary,
                         ),
                       ),
@@ -455,7 +453,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                         const SizedBox(width: DSSpacing.sm),
                         Text(
                           originalPrice,
-                          style: typography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: colors.textSecondary,
                             decoration: TextDecoration.lineThrough,
                           ),
@@ -479,7 +477,6 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     bool isLast = false,
   }) {
     final colors = context.colors;
-    final typography = ref.watch(typographyThemeProvider);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.pageHorizontal,
@@ -508,14 +505,14 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               children: [
                 Text(
                   title,
-                  style: typography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: typography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),

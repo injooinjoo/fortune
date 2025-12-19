@@ -5,6 +5,7 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../widgets/home_fengshui_input_unified.dart';
 import '../../domain/models/conditions/home_fengshui_fortune_conditions.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -154,7 +155,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                   // 제목
                   Text(
                     title,
-                    style: DSTypography.headingLarge.copyWith(
+                    style: context.heading1.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -381,7 +382,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             children: [
               Text(
                 '$score',
-                style: DSTypography.displayLarge.copyWith(
+                style: context.displayLarge.copyWith(
                   color: scoreColor,
                   fontWeight: FontWeight.w700,
                 ),
@@ -390,7 +391,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 padding: const EdgeInsets.only(bottom: 12, left: 4),
                 child: Text(
                   '/100',
-                  style: DSTypography.headingMedium.copyWith(
+                  style: context.heading2.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),
@@ -406,7 +407,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             ),
             child: Text(
               scoreText,
-              style: DSTypography.bodySmall.copyWith(
+              style: context.bodySmall.copyWith(
                 color: scoreColor,
                 fontWeight: FontWeight.w600,
               ),
@@ -416,7 +417,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(height: 12),
             Text(
               keyword,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,
@@ -449,7 +450,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 title,
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -458,7 +459,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           const SizedBox(height: 16),
           GptStyleTypingText(
             text: content,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: colors.textSecondary,
               height: 1.6,
             ),
@@ -490,7 +491,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '배산임수 분석',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -503,7 +504,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 ),
                 child: Text(
                   '지형점수 $terrainScore점',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: const Color(0xFF8B7355),
                     fontWeight: FontWeight.w600,
                   ),
@@ -541,7 +542,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(height: 12),
             Text(
               terrainAnalysis,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),
@@ -575,7 +576,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               children: [
                 Text(
                   title,
-                  style: DSTypography.labelMedium.copyWith(
+                  style: context.labelMedium.copyWith(
                     color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
@@ -583,7 +584,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 const SizedBox(height: 4),
                 Text(
                   content,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),
@@ -625,7 +626,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '양택풍수 분석',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -638,7 +639,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 ),
                 child: Text(
                   '궁합도 $compatibility점',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: compatColor,
                     fontWeight: FontWeight.w600,
                   ),
@@ -671,7 +672,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(height: 16),
             Text(
               directionAnalysis,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),
@@ -697,14 +698,14 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
         children: [
           Text(
             title,
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: colors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               color: const Color(0xFF8B7355),
             ),
           ),
@@ -734,7 +735,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '내부 공간 배치',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -786,7 +787,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 title,
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -801,7 +802,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                   ),
                   child: Text(
                     status,
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.accent,
                     ),
                   ),
@@ -812,7 +813,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(height: 8),
             Text(
               advice,
-              style: DSTypography.bodySmall.copyWith(
+              style: context.bodySmall.copyWith(
                 color: colors.textSecondary,
               ),
             ),
@@ -841,7 +842,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '기운 흐름',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -851,7 +852,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           if (qiCirculation.isNotEmpty) ...[
             Text(
               qiCirculation,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),
@@ -915,7 +916,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 title,
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   color: color,
                   fontWeight: FontWeight.w600,
                 ),
@@ -932,7 +933,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 Expanded(
                   child: Text(
                     item,
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),
@@ -962,7 +963,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '결함 및 해결책',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -972,7 +973,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           if (majorDefects.isNotEmpty) ...[
             Text(
               '🚨 주요 결함',
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: DSColors.error,
                 fontWeight: FontWeight.w600,
               ),
@@ -984,7 +985,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           if (minorDefects.isNotEmpty) ...[
             Text(
               '⚠️ 경미한 결함',
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: DSColors.warning,
                 fontWeight: FontWeight.w600,
               ),
@@ -1016,7 +1017,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           if (issue.isNotEmpty)
             Text(
               issue,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
@@ -1031,7 +1032,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 Expanded(
                   child: Text(
                     solution,
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: DSColors.success,
                     ),
                   ),
@@ -1062,7 +1063,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '행운 요소',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -1115,7 +1116,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(width: 8),
             Text(
               title,
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
@@ -1142,7 +1143,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 ),
                 child: Text(
                   name,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: colors.textPrimary,
                   ),
                 ),
@@ -1174,7 +1175,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '계절별 조언',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -1209,7 +1210,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                         const SizedBox(width: 4),
                         Text(
                           season['title'] as String,
-                          style: DSTypography.labelMedium.copyWith(
+                          style: context.labelMedium.copyWith(
                             color: colors.textPrimary,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1220,7 +1221,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                     Expanded(
                       child: Text(
                         advice,
-                        style: DSTypography.bodySmall.copyWith(
+                        style: context.bodySmall.copyWith(
                           color: colors.textSecondary,
                         ),
                         maxLines: 3,

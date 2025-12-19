@@ -16,7 +16,7 @@ import '../../../../../core/models/fortune_result.dart';
 import '../../../../../presentation/providers/ad_provider.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../domain/entities/fortune.dart';
-import '../../../../../services/ad_service.dart';
+import '../../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
 import '../../widgets/standard_fortune_page_layout.dart';
 import '../../../../../presentation/providers/subscription_provider.dart';
@@ -242,7 +242,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     return StandardFortunePageLayout(
       buttonText: '운세 분석하기',
       onButtonPressed: () async {
-        await AdService.instance.showInterstitialAdWithCallback(
+        await InterstitialAdHelper.showInterstitialAdWithCallback(
+          ref,
           onAdCompleted: () async {
             _analyzeExam();
           },

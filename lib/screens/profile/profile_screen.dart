@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/storage_service.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/theme/typography_unified.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../presentation/providers/auth_provider.dart';
@@ -17,7 +18,7 @@ import '../../presentation/providers/subscription_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
 import '../../core/providers/user_settings_provider.dart';
-import 'widgets/profile_switcher_card.dart';
+import 'widgets/profile_list_sheet.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -180,15 +181,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           }
         }
 
+        // 오늘의 일일 운세 점수 조회 (UTC 기준)
+        Map<String, dynamic>? todayFortuneResponse;
+        try {
+          final now = DateTime.now();
+          final todayStart = DateTime(now.year, now.month, now.day).toUtc();
+          final todayEnd = todayStart.add(const Duration(days: 1));
+          todayFortuneResponse = await supabase
+              .from('fortune_history')
+              .select('score')
+              .eq('user_id', userId)
+              .eq('fortune_type', 'daily')
+              .gte('created_at', todayStart.toIso8601String())
+              .lt('created_at', todayEnd.toIso8601String())
+              .order('created_at', ascending: false)
+              .limit(1)
+              .maybeSingle();
+        } catch (e) {
+          debugPrint('오늘 운세 점수 조회 실패: $e');
+        }
+
         if (mounted) {
           setState(() {
             userProfile = response;
             userStats = statsResponse ?? {
-              'total_fortunes': 0,
+              'total_fortunes_viewed': 0,
               'consecutive_days': 0,
               'last_login': DateTime.now().toIso8601String(),
               'favorite_fortune_type': null,
-              'total_fortunes_viewed': 0,
               'login_count': 0,
               'streak_days': 0,
               'total_tokens_earned': 0,
@@ -196,6 +216,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               'profile_completion_percentage': 0,
               'achievements': [],
             };
+            // 오늘 운세 점수가 있으면 추가
+            if (todayFortuneResponse != null && todayFortuneResponse['score'] != null) {
+              userStats!['today_score'] = todayFortuneResponse['score'];
+            }
             isLoading = false;
           });
         }
@@ -208,7 +232,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           setState(() {
             userProfile = localProfile;
             userStats = {
-              'total_fortunes': 0,
+              'total_fortunes_viewed': 0,
               'consecutive_days': 1,
             };
             isLoading = false;
@@ -261,7 +285,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final isDarkMode = themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
          MediaQuery.of(context).platformBrightness == Brightness.dark);
-    final typography = ref.watch(typographyThemeProvider);
 
     if (isLoading) {
       return Scaffold(
@@ -283,7 +306,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         automaticallyImplyLeading: false,
         title: Text(
           '내 프로필',
-          style: typography.headingMedium.copyWith(
+          style: context.heading2.copyWith(
             color: context.colors.textPrimary,
           ),
         ),
@@ -317,13 +340,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: DSSpacing.md),
-
-              // 프로필 스위처 (다른 사람 프로필 전환)
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                child: ProfileSwitcherCard(),
-              ),
               const SizedBox(height: DSSpacing.md),
 
               // 프로필 요약 카드
@@ -367,8 +383,30 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                 ),
 
+              // 다른 프로필 보기 텍스트 링크
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => _showProfileList(context),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      '다른 프로필 보기',
+                      style: context.bodySmall.copyWith(
+                        color: context.colors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
               // 프리미엄 & 복주머니 홍보 배너
-              _buildPremiumBanner(context, ref, isDarkMode, typography),
+              _buildPremiumBanner(context, ref, isDarkMode),
 
               // 테스트 계정 섹션 (간소화)
               FutureBuilder<UserProfile?>(
@@ -417,7 +455,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       ),
                                       child: Text(
                                         '활성화',
-                                        style: typography.labelSmall.copyWith(
+                                        style: context.labelSmall.copyWith(
                                           color: context.colors.success,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -480,21 +518,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           if (userStats?['today_score'] != null) ...[
                             Text(
                               '${userStats!['today_score']}',
-                              style: typography.headingSmall.copyWith(
+                              style: context.heading3.copyWith(
                                 color: _getTextColor(context),
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                             Text(
                               '점',
-                              style: typography.bodyMedium.copyWith(
+                              style: context.bodyMedium.copyWith(
                                 color: _getSecondaryTextColor(context),
                               ),
                             ),
                           ] else
                             Text(
                               '미확인',
-                              style: typography.bodyMedium.copyWith(
+                              style: context.bodyMedium.copyWith(
                                 color: _getSecondaryTextColor(context),
                               ),
                             ),
@@ -506,7 +544,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       title: '연속 접속일',
                       trailing: Text(
                         '${userStats?['consecutive_days'] ?? 0}일',
-                        style: typography.bodyMedium.copyWith(
+                        style: context.bodyMedium.copyWith(
                           color: _getSecondaryTextColor(context),
                         ),
                       ),
@@ -515,8 +553,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       icon: Icons.visibility_outlined,
                       title: '총 운세 본 수',
                       trailing: Text(
-                        '${userStats?['total_fortunes'] ?? 0}회',
-                        style: typography.bodyMedium.copyWith(
+                        '${userStats?['total_fortunes_viewed'] ?? 0}회',
+                        style: context.bodyMedium.copyWith(
                           color: _getSecondaryTextColor(context),
                         ),
                       ),
@@ -553,7 +591,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: '생년월일',
                         trailing: Text(
                           _formatBirthDate((userProfile ?? localProfile)?['birth_date']),
-                          style: typography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -564,7 +602,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: '출생시간',
                         trailing: Text(
                           (userProfile ?? localProfile)?['birth_time'] ?? '미입력',
-                          style: typography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -575,7 +613,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: '띠',
                         trailing: Text(
                           (userProfile ?? localProfile)?['chinese_zodiac'] ?? '미입력',
-                          style: typography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -585,7 +623,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: '별자리',
                         trailing: Text(
                           (userProfile ?? localProfile)?['zodiac_sign'] ?? '미입력',
-                          style: typography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -597,7 +635,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           (userProfile ?? localProfile)?['blood_type'] != null
                               ? '${(userProfile ?? localProfile)!['blood_type']}형'
                               : '미입력',
-                          style: typography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -608,7 +646,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: 'MBTI',
                         trailing: Text(
                           (userProfile ?? localProfile)?['mbti']?.toUpperCase() ?? '미입력',
-                          style: typography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -764,7 +802,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Widget _buildPremiumBanner(BuildContext context, WidgetRef ref, bool isDarkMode, dynamic typography) {
+  void _showProfileList(BuildContext context) {
+    ref.read(fortuneHapticServiceProvider).buttonTap();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const ProfileListSheet(),
+    );
+  }
+
+  Widget _buildPremiumBanner(BuildContext context, WidgetRef ref, bool isDarkMode) {
     final tokenBalance = ref.watch(tokenBalanceProvider);
     final isPremium = ref.watch(isPremiumProvider);
     final remainingTokens = tokenBalance?.remainingTokens ?? 0;
@@ -821,7 +869,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         children: [
                           Text(
                             '보유 복주머니',
-                            style: typography.labelSmall.copyWith(
+                            style: context.labelSmall.copyWith(
                               color: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
@@ -830,7 +878,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             children: [
                               Text(
                                 hasUnlimited ? '무제한' : '$remainingTokens개',
-                                style: typography.headingSmall.copyWith(
+                                style: context.heading3.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -845,7 +893,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   ),
                                   child: Text(
                                     '충전하기',
-                                    style: typography.labelSmall.copyWith(
+                                    style: context.labelSmall.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -898,7 +946,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       Expanded(
                         child: Text(
                           '프리미엄 구독으로 무제한 이용하기',
-                          style: typography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: context.colors.textPrimary,
                             fontWeight: FontWeight.w500,
                           ),

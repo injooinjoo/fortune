@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
 /// 🐉 띠별 운세 카드
@@ -29,9 +29,8 @@ class ZodiacFortuneCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '나와 주변 사람들의 오늘 운세',
-          style: TextStyle(
-            color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 13,
+          style: context.bodySmall.copyWith(
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
           ),
         ),
 
@@ -44,14 +43,15 @@ class ZodiacFortuneCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
               borderRadius: BorderRadius.circular(12),
+              // 전통 금색 테두리 (내 띠 강조)
               border: fortune['isUser'] == true
-                  ? Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.5), width: 2)
+                  ? Border.all(color: const Color(0xFFDAA520).withValues(alpha: 0.5), width: 2)
                   : null,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                  blurRadius: 15,
-                  offset: const Offset(0, 3),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -80,7 +80,7 @@ class ZodiacFortuneCard extends StatelessWidget {
                             children: [
                               Text(
                                 '${fortune['year']}년생 ${fortune['name']}띠',
-                                style: DSTypography.bodySmall.copyWith(
+                                style: context.bodySmall.copyWith(
                                   color: isDark ? Colors.white : Colors.black87,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -90,7 +90,8 @@ class ZodiacFortuneCard extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF3B82F6),
+                                    // 전통 금색 (귀한 것을 상징)
+                                    color: const Color(0xFFDAA520),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: const Text(
@@ -128,7 +129,7 @@ class ZodiacFortuneCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   fortune['description'] as String,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
                     height: 1.5,
                     fontSize: 12,

@@ -4,7 +4,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../domain/models/fortune_history.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TimelineView extends StatelessWidget {
   final List<FortuneHistory> history;
@@ -36,14 +36,14 @@ class TimelineView extends StatelessWidget {
       return const SizedBox.shrink();
     }
     
-    return Container(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '운세 타임라인',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           ...sortedMonths.map((monthKey) {
@@ -82,7 +82,7 @@ class TimelineView extends StatelessWidget {
                       children: [
                         Text(
                           DateFormat('yyyy년 MM월').format(monthDate),
-                          style: DSTypography.labelMedium.copyWith(
+                          style: context.labelMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: theme.colorScheme.primary)),
                         Row(
@@ -94,7 +94,7 @@ class TimelineView extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8)),
                               child: Text(
                                 '평균 $avgScore점',
-                                style: DSTypography.labelMedium.copyWith(
+                                style: context.labelMedium.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: _getScoreColor(avgScore),
                                 ),
@@ -103,7 +103,7 @@ class TimelineView extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '${monthData.length}회',
-                              style: DSTypography.labelMedium.copyWith(
+                              style: context.labelMedium.copyWith(
                                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
@@ -128,7 +128,7 @@ class TimelineView extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20)),
                         child: Text(
                           '${entry.key} ${entry.value}회',
-                          style: DSTypography.labelMedium.copyWith(
+                          style: context.labelMedium.copyWith(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.7))));
                     }).toList()),
                   const SizedBox(height: 16),
@@ -155,11 +155,11 @@ class TimelineView extends StatelessWidget {
                                     children: [
                                       Text(
                                         DateFormat('dd').format(item.createdAt),
-                                        style: DSTypography.headingSmall.copyWith(
+                                        style: context.heading3.copyWith(
                                           fontWeight: FontWeight.bold)),
                                       Text(
                                         DateFormat('E', 'ko').format(item.createdAt),
-                                        style: DSTypography.labelMedium.copyWith(
+                                        style: context.labelMedium.copyWith(
                                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                         ),
                                       ),
@@ -172,7 +172,7 @@ class TimelineView extends StatelessWidget {
                                         ),
                                         child: Text(
                                           '$score점',
-                                          style: DSTypography.labelMedium.copyWith(
+                                          style: context.labelMedium.copyWith(
                                             fontWeight: FontWeight.bold,
                                             color: _getScoreColor(score),
                                           ),
@@ -191,13 +191,16 @@ class TimelineView extends StatelessWidget {
                                         children: [
                                           Text(
                                             _getFortuneIcon(item.fortuneType),
-                                            style: DSTypography.labelMedium,
+                                            style: context.labelMedium,
                                           ),
                                           const SizedBox(width: 8),
-                                          Text(
-                                            item.title,
-                                            style: DSTypography.labelMedium.copyWith(
-                                              fontWeight: FontWeight.bold,
+                                          Expanded(
+                                            child: Text(
+                                              item.title,
+                                              style: context.labelMedium.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                         ],
@@ -205,7 +208,7 @@ class TimelineView extends StatelessWidget {
                                       const SizedBox(height: 4),
                                       Text(
                                         content,
-                                        style: DSTypography.bodySmall.copyWith(
+                                        style: context.bodySmall.copyWith(
                                           color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                         ),
                                         maxLines: 2,

@@ -22,6 +22,7 @@ import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/toast.dart';
+import '../../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../../../../../services/ad_service.dart';
 import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../services/vision_api_service.dart';
@@ -174,7 +175,8 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
                 text: '운세 보기',
                 isEnabled: true,
                 onPressed: () async {
-                  await AdService.instance.showInterstitialAdWithCallback(
+                  await InterstitialAdHelper.showInterstitialAdWithCallback(
+                    ref,
                     onAdCompleted: () async => await _generateFortune(),
                     onAdFailed: () async => await _generateFortune(),
                   );

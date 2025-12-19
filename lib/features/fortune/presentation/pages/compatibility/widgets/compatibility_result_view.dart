@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fortune/core/widgets/unified_button.dart';
+import 'package:fortune/core/design_system/components/traditional/traditional_button.dart';
 import 'package:fortune/domain/entities/fortune.dart';
 import 'package:fortune/presentation/providers/subscription_provider.dart';
 import 'overall_score_card.dart';
@@ -147,10 +147,19 @@ class _CompatibilityResultViewState extends ConsumerState<CompatibilityResultVie
 
         // ✅ 블러 해제 버튼 (블러 상태일 때만, 구독자 제외)
         if (widget.isBlurred && !ref.watch(isPremiumProvider))
-          UnifiedButton.floating(
-            text: '🎁 광고 보고 전체 내용 보기',
-            onPressed: widget.onShowAdAndUnblur,
-            isEnabled: true,
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 32,
+            child: TraditionalButton(
+              text: '광고 보고 전체 내용 보기',
+              hanja: '解禁',
+              style: TraditionalButtonStyle.filled,
+              colorScheme: TraditionalButtonColorScheme.love,
+              isExpanded: true,
+              height: 56,
+              onPressed: widget.onShowAdAndUnblur,
+            ),
           ),
 
         // ✅ 프로필 추가 프롬프트 (블러 해제 후 + 직접 입력이었을 때)

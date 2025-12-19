@@ -5,6 +5,7 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../widgets/moving_input_unified.dart';
 import '../../domain/models/conditions/moving_fortune_conditions.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -187,7 +188,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   // 제목
                   Text(
                     title,
-                    style: DSTypography.headingMedium.copyWith(
+                    style: context.heading2.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -454,7 +455,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             children: [
               Text(
                 '$score',
-                style: DSTypography.displayLarge.copyWith(
+                style: context.displayLarge.copyWith(
                   color: scoreColor,
                   fontWeight: FontWeight.w700,
                 ),
@@ -463,7 +464,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 padding: const EdgeInsets.only(bottom: 12, left: 4),
                 child: Text(
                   '/100',
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.heading3.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),
@@ -474,7 +475,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
           // 점수 텍스트
           Text(
             scoreText,
-            style: DSTypography.bodyLarge.copyWith(
+            style: context.bodyLarge.copyWith(
               color: scoreColor,
               fontWeight: FontWeight.w600,
             ),
@@ -489,7 +490,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               ),
               child: Text(
                 keyword,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -532,7 +533,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: DSTypography.labelLarge.copyWith(
+                style: context.labelLarge.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -543,7 +544,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
           sectionIndex != null
               ? GptStyleTypingText(
                   text: content,
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: colors.textPrimary,
                     height: 1.6,
                   ),
@@ -553,7 +554,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 )
               : Text(
                   content,
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: colors.textPrimary,
                     height: 1.6,
                   ),
@@ -593,7 +594,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: DSTypography.labelLarge.copyWith(
+                style: context.labelLarge.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -621,7 +622,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   Expanded(
                     child: Text(
                       item,
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: colors.textPrimary,
                         height: 1.6,
                       ),
@@ -668,7 +669,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               const SizedBox(width: 12),
               Text(
                 '행운의 날',
-                style: DSTypography.labelLarge.copyWith(
+                style: context.labelLarge.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -691,7 +692,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 ),
                 child: Text(
                   date,
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: DSColors.accent,
                     fontWeight: FontWeight.w600,
                   ),
@@ -743,7 +744,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               const SizedBox(width: 12),
               Text(
                 '공간별 풍수 조언',
-                style: DSTypography.labelLarge.copyWith(
+                style: context.labelLarge.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -767,7 +768,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                       const SizedBox(width: 8),
                       Text(
                         tip['title'] as String,
-                        style: DSTypography.bodyLarge.copyWith(
+                        style: context.bodyLarge.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
@@ -777,7 +778,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   const SizedBox(height: 8),
                   Text(
                     tip['content'] as String,
-                    style: DSTypography.bodyLarge.copyWith(
+                    style: context.bodyLarge.copyWith(
                       color: colors.textSecondary,
                       height: 1.6,
                     ),
@@ -828,7 +829,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               const SizedBox(width: 12),
               Text(
                 '행운 아이템',
-                style: DSTypography.labelLarge.copyWith(
+                style: context.labelLarge.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -840,7 +841,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             const SizedBox(height: 20),
             Text(
               '🎁 행운의 물건',
-              style: DSTypography.bodyLarge.copyWith(
+              style: context.bodyLarge.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
@@ -864,7 +865,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   Expanded(
                     child: Text(
                       item,
-                      style: DSTypography.bodyLarge.copyWith(
+                      style: context.bodyLarge.copyWith(
                         color: colors.textPrimary,
                         height: 1.6,
                       ),
@@ -880,7 +881,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             const SizedBox(height: 16),
             Text(
               '🎨 행운의 색상',
-              style: DSTypography.bodyLarge.copyWith(
+              style: context.bodyLarge.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
@@ -901,7 +902,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 ),
                 child: Text(
                   color,
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: DSColors.warning,
                     fontWeight: FontWeight.w600,
                   ),
@@ -915,7 +916,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             const SizedBox(height: 16),
             Text(
               '🌿 행운의 식물',
-              style: DSTypography.bodyLarge.copyWith(
+              style: context.bodyLarge.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
@@ -936,7 +937,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 ),
                 child: Text(
                   plant,
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: DSColors.success,
                     fontWeight: FontWeight.w600,
                   ),
@@ -995,7 +996,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               const SizedBox(width: 12),
               Text(
                 '지형 풍수 분석',
-                style: DSTypography.labelLarge.copyWith(
+                style: context.labelLarge.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -1019,7 +1020,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                     Expanded(
                       child: Text(
                         terrainType,
-                        style: DSTypography.labelLarge.copyWith(
+                        style: context.labelLarge.copyWith(
                           color: qualityColor,
                           fontWeight: FontWeight.w700,
                         ),
@@ -1027,7 +1028,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                     ),
                     Text(
                       '$quality점',
-                      style: DSTypography.headingSmall.copyWith(
+                      style: context.heading3.copyWith(
                         color: qualityColor,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1038,7 +1039,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   const SizedBox(height: 12),
                   Text(
                     qualityDescription,
-                    style: DSTypography.bodyLarge.copyWith(
+                    style: context.bodyLarge.copyWith(
                       color: colors.textPrimary,
                       height: 1.6,
                     ),
@@ -1053,7 +1054,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             const SizedBox(height: 20),
             Text(
               '🐉 사신사(四神砂)',
-              style: DSTypography.bodyLarge.copyWith(
+              style: context.bodyLarge.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
@@ -1081,7 +1082,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             const SizedBox(height: 20),
             Text(
               '✨ 지형 보완 방법',
-              style: DSTypography.bodyLarge.copyWith(
+              style: context.bodyLarge.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
@@ -1105,7 +1106,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   Expanded(
                     child: Text(
                       rec,
-                      style: DSTypography.bodyLarge.copyWith(
+                      style: context.bodyLarge.copyWith(
                         color: colors.textPrimary,
                         height: 1.6,
                       ),
@@ -1147,7 +1148,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 children: [
                   Text(
                     title,
-                    style: DSTypography.bodyLarge.copyWith(
+                    style: context.bodyLarge.copyWith(
                       color: color,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1155,7 +1156,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: colors.textSecondary,
                       height: 1.5,
                     ),
@@ -1190,7 +1191,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 children: [
                   Text(
                     title,
-                    style: DSTypography.bodyLarge.copyWith(
+                    style: context.bodyLarge.copyWith(
                       color: color,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1198,7 +1199,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   const SizedBox(height: 6),
                   Text(
                     content,
-                    style: DSTypography.bodyLarge.copyWith(
+                    style: context.bodyLarge.copyWith(
                       color: colors.textSecondary,
                       height: 1.6,
                     ),

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../domain/models/fortune_result.dart';
@@ -215,7 +215,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                               const SizedBox(height: 8),
                               Text(
                                 '관상 맵',
-                                style: DSTypography.labelSmall.copyWith(
+                                style: context.labelSmall.copyWith(
                                   color: textSecondary,
                                 ),
                               ),
@@ -241,7 +241,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                   children: [
                     Text(
                       faceType,
-                      style: DSTypography.headingMedium.copyWith(
+                      style: context.heading2.copyWith(
                         color: textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
@@ -249,7 +249,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                     const SizedBox(height: 4),
                     Text(
                       '관상 분석 결과',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: textSecondary,
                       ),
                     ),
@@ -264,7 +264,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                 ),
                 child: Text(
                   '$luckScore점',
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.heading3.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.w700,
                   ),
@@ -317,7 +317,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
               const SizedBox(width: 8),
               Text(
                 '총평',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -327,7 +327,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
           const SizedBox(height: 12),
           Text(
             FortuneTextCleaner.clean(content),
-            style: DSTypography.bodyLarge.copyWith(
+            style: context.bodyLarge.copyWith(
               color: textPrimary,
               height: 1.7,
             ),
@@ -386,7 +386,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
               const SizedBox(width: 8),
               Text(
                 '닮은꼴 상(相) 분류',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -464,7 +464,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                       children: [
                         Text(
                           primary,
-                          style: DSTypography.headingMedium.copyWith(
+                          style: context.heading2.copyWith(
                             color: textPrimary,
                             fontWeight: FontWeight.bold,
                           ),
@@ -472,13 +472,13 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                         if (secondary != null && secondary.isNotEmpty) ...[
                           Text(
                             ' + ',
-                            style: DSTypography.bodyMedium.copyWith(
+                            style: context.bodyMedium.copyWith(
                               color: textSecondary,
                             ),
                           ),
                           Text(
                             secondary,
-                            style: DSTypography.bodyMedium.copyWith(
+                            style: context.bodyMedium.copyWith(
                               color: textPrimary,
                             ),
                           ),
@@ -488,7 +488,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                     const SizedBox(height: 2),
                     Text(
                       '매칭 점수 $matchScore점',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: accentColor,
                         fontWeight: FontWeight.w600,
                       ),
@@ -504,7 +504,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
           if (description.isNotEmpty)
             Text(
               description,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: textPrimary,
                 height: 1.5,
               ),
@@ -525,7 +525,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                   ),
                   child: Text(
                     '#$trait',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: accentColor,
                       fontWeight: FontWeight.w500,
                     ),
@@ -576,7 +576,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                   children: [
                     Text(
                       type,
-                      style: DSTypography.bodyLarge.copyWith(
+                      style: context.bodyLarge.copyWith(
                         color: textPrimary,
                         fontWeight: FontWeight.bold,
                       ),
@@ -584,7 +584,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                     const SizedBox(width: 8),
                     Text(
                       '$matchScore점',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: accentColor,
                         fontWeight: FontWeight.w600,
                       ),
@@ -595,7 +595,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: textSecondary,
                       height: 1.4,
                     ),
@@ -690,7 +690,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
           children: [
             Text(
               '오관(五官)',
-              style: DSTypography.headingMedium.copyWith(
+              style: context.heading2.copyWith(
                 color: textPrimary,
                 fontWeight: FontWeight.w700,
               ),
@@ -698,7 +698,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
             const SizedBox(height: 4),
             Text(
               '5가지 감각 기관으로 보는 관상',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: textSecondary,
               ),
             ),
@@ -754,7 +754,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
           children: [
             Text(
               '십이궁(十二宮)',
-              style: DSTypography.headingMedium.copyWith(
+              style: context.heading2.copyWith(
                 color: textPrimary,
                 fontWeight: FontWeight.w700,
               ),
@@ -762,7 +762,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
             const SizedBox(height: 4),
             Text(
               '12가지 운세 영역으로 보는 관상',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: textSecondary,
               ),
             ),
@@ -847,7 +847,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                     child: Center(
                       child: Text(
                         hanja,
-                        style: DSTypography.bodyMedium.copyWith(
+                        style: context.bodyMedium.copyWith(
                           color: accentColor,
                           fontWeight: FontWeight.w700,
                         ),
@@ -861,14 +861,14 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                       children: [
                         Text(
                           '$name ($hanja)',
-                          style: DSTypography.headingSmall.copyWith(
+                          style: context.heading3.copyWith(
                             color: textPrimary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
                           desc,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: textSecondary,
                           ),
                         ),
@@ -887,7 +887,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                       ),
                       child: Text(
                         '$score',
-                        style: DSTypography.bodyMedium.copyWith(
+                        style: context.bodyMedium.copyWith(
                           color: accentColor,
                           fontWeight: FontWeight.w600,
                         ),
@@ -916,7 +916,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                 const SizedBox(height: 16),
                 Text(
                   observation,
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: textPrimary,
                     height: 1.6,
                   ),
@@ -928,7 +928,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                 const SizedBox(height: 12),
                 Text(
                   interpretation,
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: textSecondary,
                     height: 1.6,
                   ),
@@ -959,7 +959,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                       Expanded(
                         child: Text(
                           advice,
-                          style: DSTypography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: textPrimary,
                             height: 1.5,
                           ),
@@ -1080,7 +1080,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                     const SizedBox(width: 8),
                     Text(
                       section['title'] as String,
-                      style: DSTypography.bodyLarge.copyWith(
+                      style: context.bodyLarge.copyWith(
                         color: textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1108,7 +1108,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                 else
                   Text(
                     FortuneTextCleaner.clean(content is String ? content : content.toString()),
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: textPrimary,
                       height: 1.7,
                     ),
@@ -1185,7 +1185,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
         if (children.isNotEmpty) children.add(const SizedBox(height: 12));
         children.add(Text(
           FortuneTextCleaner.clean(value),
-          style: DSTypography.bodyMedium.copyWith(
+          style: context.bodyMedium.copyWith(
             color: textPrimary,
             height: 1.7,
           ),
@@ -1217,7 +1217,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
       children: [
         Text(
           label,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelSmall.copyWith(
             color: textSecondary,
             fontWeight: FontWeight.w600,
           ),
@@ -1237,7 +1237,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
             ),
             child: Text(
               item,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: color,
                 fontWeight: FontWeight.w500,
               ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 💫 주간 트렌드 카드
 class WeeklyTrendCard extends StatelessWidget {
@@ -11,6 +11,19 @@ class WeeklyTrendCard extends StatelessWidget {
     required this.weeklyScores,
     required this.isDark,
   });
+
+  /// 주간 트렌드 레이블 계산 (상승세/평탄/하락세)
+  String _getTrendLabel() {
+    if (weeklyScores.length < 2) return '평탄';
+
+    final firstHalf = weeklyScores.take(3).fold<int>(0, (a, b) => a + b) / 3;
+    final secondHalf = weeklyScores.skip(4).fold<int>(0, (a, b) => a + b) / 3;
+    final diff = secondHalf - firstHalf;
+
+    if (diff > 5) return '상승세';
+    if (diff < -5) return '하락세';
+    return '평탄';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +41,8 @@ class WeeklyTrendCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '이번 주 당신의 운세 흐름',
-          style: TextStyle(
-            color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 13,
+          style: context.bodySmall.copyWith(
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
           ),
         ),
 
@@ -39,26 +51,27 @@ class WeeklyTrendCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
+            // 전통 목(木) 색상 그라데이션 (성장과 상승을 상징)
             gradient: LinearGradient(
               colors: [
-                isDark ? const Color(0xFF10B981) : const Color(0xFF34D399),
-                isDark ? const Color(0xFF059669) : const Color(0xFF10B981),
+                isDark ? const Color(0xFF2E8B57) : const Color(0xFF3D9970),
+                isDark ? const Color(0xFF1E5F3C) : const Color(0xFF2E8B57),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.trending_up, color: Colors.white, size: 32),
-                  SizedBox(width: 10),
+                  const Text('📈', style: TextStyle(fontSize: 28)),
+                  const SizedBox(width: 10),
                   Text(
-                    '상승세',
-                    style: TextStyle(
+                    _getTrendLabel(),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -75,7 +88,7 @@ class WeeklyTrendCard extends StatelessWidget {
                 ),
                 child: Text(
                   '이번 주는 전반적으로 상승세를 타고 있습니다. 특히 수요일부터 금요일까지가 가장 좋은 시기입니다. 새로운 도전이나 중요한 결정을 내리기에 최적의 타이밍입니다.',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: Colors.white,
                     height: 1.5,
                     fontSize: 12,
@@ -104,12 +117,13 @@ class WeeklyTrendCard extends StatelessWidget {
                   width: itemWidth,
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
+                    // 전통 목(木) 색상 (좋은 날 강조)
                     color: score >= 80
-                        ? const Color(0xFF10B981).withValues(alpha: 0.2)
+                        ? const Color(0xFF2E8B57).withValues(alpha: 0.2)
                         : (isDark ? Colors.white10 : Colors.black12),
                     borderRadius: BorderRadius.circular(6),
                     border: score >= 80
-                        ? Border.all(color: const Color(0xFF10B981), width: 1)
+                        ? Border.all(color: const Color(0xFF2E8B57), width: 1)
                         : null,
                   ),
                   child: Column(
@@ -127,7 +141,7 @@ class WeeklyTrendCard extends StatelessWidget {
                         '$score',
                         style: TextStyle(
                           color: score >= 80
-                              ? const Color(0xFF10B981)
+                              ? const Color(0xFF2E8B57)
                               : (isDark ? Colors.white60 : Colors.black54),
                           fontSize: 11,
                         ),

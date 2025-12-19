@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/saju_colors.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 압축된 대운 타임라인
 ///
@@ -49,8 +50,7 @@ class CompactDaeunTimeline extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '대운 흐름',
-                style: TextStyle(
-                  fontSize: 11,
+                style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
@@ -58,7 +58,7 @@ class CompactDaeunTimeline extends StatelessWidget {
               const Spacer(),
               Text(
                 '大運 · 10년 주기',
-                style: TextStyle(
+                style: context.labelTiny.copyWith(
                   fontSize: 9,
                   color: isDark ? Colors.white38 : Colors.black26,
                 ),
@@ -80,6 +80,7 @@ class CompactDaeunTimeline extends StatelessWidget {
                   final isPast = index < currentIndex;
 
                   return _buildDaeunItem(
+                    context: context,
                     daeun: daeun,
                     isCurrent: isCurrent,
                     isPast: isPast,
@@ -157,6 +158,7 @@ class CompactDaeunTimeline extends StatelessWidget {
   }
 
   Widget _buildDaeunItem({
+    required BuildContext context,
     required Map<String, dynamic> daeun,
     required bool isCurrent,
     required bool isPast,
@@ -216,7 +218,7 @@ class CompactDaeunTimeline extends StatelessWidget {
                 ),
                 child: Text(
                   '$startAge-$endAge세',
-                  style: TextStyle(
+                  style: context.labelTiny.copyWith(
                     fontSize: 8,
                     fontWeight: FontWeight.bold,
                     color: isCurrent
@@ -231,8 +233,7 @@ class CompactDaeunTimeline extends StatelessWidget {
               // 천간
               Text(
                 stemHanja.isNotEmpty ? stemHanja : stem,
-                style: TextStyle(
-                  fontSize: 16,
+                style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isPast
                       ? stemColor.withValues(alpha: 0.4)
@@ -242,8 +243,7 @@ class CompactDaeunTimeline extends StatelessWidget {
               // 지지
               Text(
                 branchHanja.isNotEmpty ? branchHanja : branch,
-                style: TextStyle(
-                  fontSize: 16,
+                style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isPast
                       ? branchColor.withValues(alpha: 0.4)

@@ -103,13 +103,25 @@ class Environment {
   // Kakao API 설정
   static String get kakaoRestApiKey => dotenv.env['KAKAO_REST_API_KEY'] ?? '';
   
+  // 테스트 계정 도메인 (쉼표로 구분)
+  static List<String> get testEmailDomains {
+    final domains = dotenv.env['TEST_EMAIL_DOMAINS'] ?? '@test.fortune.com';
+    return domains.split(',').map((d) => d.trim().toLowerCase()).toList();
+  }
+
   // 기능 플래그
-  static bool get enableAnalytics => 
+  static bool get enableAnalytics =>
       dotenv.env['ENABLE_ANALYTICS']?.toLowerCase() == 'true';
   static bool get enableCrashReporting => 
       dotenv.env['ENABLE_CRASH_REPORTING']?.toLowerCase() == 'true';
-  static bool get enableAds => 
-      dotenv.env['ENABLE_ADS']?.toLowerCase() == 'true';
+  static bool get enableAds {
+    final value = dotenv.env['ENABLE_ADS']?.toLowerCase();
+    // .env 값이 없으면: release=true, debug=false (기본값)
+    if (value == null) {
+      return kReleaseMode;
+    }
+    return value == 'true';
+  }
   static bool get enablePayment => 
       dotenv.env['ENABLE_PAYMENT']?.toLowerCase() == 'true';
   

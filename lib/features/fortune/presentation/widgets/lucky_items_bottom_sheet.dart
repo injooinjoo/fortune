@@ -4,7 +4,7 @@ import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../services/ad_service.dart';
+import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../../../../presentation/providers/providers.dart';
 
 // Design System migration: TossDesignSystem → DSColors/DSTypography
@@ -113,7 +113,8 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
       });
 
       // AdService를 사용하여 실제 광고 표시
-      await AdService.instance.showInterstitialAdWithCallback(
+      await InterstitialAdHelper.showInterstitialAdWithCallback(
+        ref,
         onAdCompleted: () async {
           if (mounted) {
             setState(() {

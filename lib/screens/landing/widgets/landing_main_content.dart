@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/theme/typography_unified.dart';
 
 /// Main content area of landing page with logo, title, and start button
 class LandingMainContent extends StatelessWidget {
@@ -18,13 +19,13 @@ class LandingMainContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // App Logo
+          // App Logo - '相' (관상) Korean Calligraphy
           Image.asset(
             Theme.of(context).brightness == Brightness.dark
-                ? 'assets/images/flower_transparent_white.png'
-                : 'assets/images/flower_transparent.png',
-            width: 100,
-            height: 100,
+                ? 'assets/images/sang_dark.png'
+                : 'assets/images/sang_light.png',
+            width: 120,
+            height: 120,
           ).animate().fadeIn(duration: 800.ms).scale(
               begin: Offset(0.8, 0.8),
               end: Offset(1.0, 1.0),
@@ -36,7 +37,7 @@ class LandingMainContent extends StatelessWidget {
           // App Name
           Text(
             '관상은 과학',
-            style: DSTypography.displaySmall.copyWith(
+            style: context.displaySmall.copyWith(
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: -1),
@@ -47,39 +48,17 @@ class LandingMainContent extends StatelessWidget {
           // Subtitle
           Text(
             '매일 새로운 운세를 만나보세요',
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
                 fontWeight: FontWeight.w400,
                 color: context.colors.textSecondary),
           ).animate().fadeIn(delay: 400.ms, duration: 600.ms),
 
           const SizedBox(height: 80),
 
-          // Start Button with Hero Animation
-          Hero(
-            tag: 'start-button-hero',
-            child: Material(
-              color: Colors.transparent,
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: onStartPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.ctaBackground,
-                    foregroundColor: context.colors.ctaForeground,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                  ),
-                  child: Text(
-                    '시작하기',
-                    style:
-                        DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
-            ),
+          // Start Button - Traditional Seal (인장) Style
+          // Custom button to avoid AnimatedDefaultTextStyle lerp issues
+          _TraditionalSealButton(
+            onPressed: onStartPressed,
           )
               .animate()
               .fadeIn(delay: 600.ms, duration: 600.ms)
@@ -88,6 +67,55 @@ class LandingMainContent extends StatelessWidget {
                   end: Offset(1.0, 1.0),
                   duration: 400.ms),
         ],
+      ),
+    );
+  }
+}
+
+/// Traditional Korean Seal (인장/주색) Style Button
+/// Custom implementation to avoid AnimatedDefaultTextStyle lerp issues
+class _TraditionalSealButton extends StatefulWidget {
+  final VoidCallback? onPressed;
+
+  const _TraditionalSealButton({
+    required this.onPressed,
+  });
+
+  @override
+  State<_TraditionalSealButton> createState() => _TraditionalSealButtonState();
+}
+
+class _TraditionalSealButtonState extends State<_TraditionalSealButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onPressed?.call();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 100),
+        width: double.infinity,
+        height: 56,
+        decoration: BoxDecoration(
+          color: _isPressed
+              ? colors.ctaBackground.withValues(alpha: 0.85)
+              : colors.ctaBackground,
+          borderRadius: BorderRadius.circular(28),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          '시작하기',
+          style: context.heading4.copyWith(
+            color: colors.ctaForeground,
+          ),
+        ),
       ),
     );
   }

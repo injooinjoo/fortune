@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 가족 화합도 측정기 - 토스 디자인 시스템
 class FamilyHarmonyMeter extends StatelessWidget {
@@ -46,7 +47,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
           // Title
           Text(
             '오늘의 가족 화합도',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               
               fontWeight: FontWeight.w700,
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
@@ -66,7 +67,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
               children: [
                 Text(
                   '$score',
-                  style: DSTypography.displayLarge.copyWith(
+                  style: context.displayLarge.copyWith(
                     color: scoreColor,
                     fontWeight: FontWeight.w800,
                     
@@ -74,7 +75,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
                 ),
                 Text(
                   '%',
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: scoreColor,
                     fontWeight: FontWeight.w600,
                   ),
@@ -97,7 +98,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
             ),
             child: Text(
               level,
-              style: DSTypography.headingSmall.copyWith(
+              style: context.heading3.copyWith(
                 color: scoreColor,
                 fontWeight: FontWeight.w700,
                 
@@ -110,7 +111,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
           // Description
           Text(
             description,
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               height: 1.5,
             ),
@@ -122,7 +123,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
           // Family emojis
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: _buildFamilyEmojis(),
+            children: _buildFamilyEmojis(context),
           ),
         ],
       ),
@@ -131,13 +132,13 @@ class FamilyHarmonyMeter extends StatelessWidget {
         .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
   }
   
-  List<Widget> _buildFamilyEmojis() {
+  List<Widget> _buildFamilyEmojis(BuildContext context) {
     final emojis = ['👨', '👩', '👦', '👧', '👶'];
     return emojis.map((emoji) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Text(
         emoji,
-        style: DSTypography.displaySmall,
+        style: context.displaySmall,
       ).animate()
           .fadeIn(delay: Duration(milliseconds: emojis.indexOf(emoji) * 100))
           .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
@@ -180,7 +181,7 @@ class FamilyCategoryChart extends StatelessWidget {
         children: [
           Text(
             '카테고리별 점수',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               
               fontWeight: FontWeight.w700,
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
@@ -211,7 +212,7 @@ class FamilyCategoryChart extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         label,
-                        style: DSTypography.bodySmall.copyWith(
+                        style: context.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
                           color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         ),
@@ -219,7 +220,7 @@ class FamilyCategoryChart extends StatelessWidget {
                       const Spacer(),
                       Text(
                         '$score점',
-                        style: DSTypography.bodySmall.copyWith(
+                        style: context.bodySmall.copyWith(
                           fontWeight: FontWeight.w700,
                           color: color,
                         ),
@@ -240,7 +241,7 @@ class FamilyCategoryChart extends StatelessWidget {
                   SizedBox(height: 4),
                   Text(
                     advice,
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: isDark ? DSColors.textTertiary : DSColors.textTertiary,
                     ),
                   ),
@@ -314,7 +315,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
         children: [
           Text(
             '이번 주 가족 운세',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               
               fontWeight: FontWeight.w700,
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
@@ -344,7 +345,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                       ),
                       child: Text(
                         day,
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
                           color: isToday 
                               ? color
@@ -379,7 +380,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                     SizedBox(height: 8),
                     Text(
                       '$score',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: color,
                       ),
@@ -387,7 +388,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                     SizedBox(height: 4),
                     Text(
                       keyword,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: isDark ? DSColors.textTertiary : DSColors.textTertiary,
                       ),
                       overflow: TextOverflow.ellipsis,

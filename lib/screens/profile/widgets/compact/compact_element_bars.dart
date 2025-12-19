@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/saju_colors.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 압축된 오행 바 차트
 ///
@@ -45,8 +46,7 @@ class CompactElementBars extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '오행 균형',
-                style: TextStyle(
-                  fontSize: 11,
+                style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
@@ -58,6 +58,7 @@ class CompactElementBars extends StatelessWidget {
           ...['목', '화', '토', '금', '수'].map((element) {
             final count = elements[element] ?? 0;
             return _buildElementBar(
+              context: context,
               element: element,
               count: count,
               maxCount: maxCount > 0 ? maxCount : 1,
@@ -83,6 +84,7 @@ class CompactElementBars extends StatelessWidget {
   }
 
   Widget _buildElementBar({
+    required BuildContext context,
     required String element,
     required int count,
     required int maxCount,
@@ -114,7 +116,7 @@ class CompactElementBars extends StatelessWidget {
                   child: Center(
                     child: Text(
                       hanjaMap[element] ?? element,
-                      style: TextStyle(
+                      style: context.labelTiny.copyWith(
                         fontSize: 9,
                         fontWeight: FontWeight.bold,
                         color: color,
@@ -156,8 +158,7 @@ class CompactElementBars extends StatelessWidget {
             width: 24,
             child: Text(
               '$count',
-              style: TextStyle(
-                fontSize: 11,
+              style: context.labelTiny.copyWith(
                 fontWeight: FontWeight.bold,
                 color: count == 0
                     ? (isDark ? Colors.white30 : Colors.black26)

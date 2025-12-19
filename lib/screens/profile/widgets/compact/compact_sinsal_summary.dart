@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 압축된 신살 요약
 ///
@@ -47,8 +48,7 @@ class CompactSinsalSummary extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '신살',
-                style: TextStyle(
-                  fontSize: 11,
+                style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
@@ -56,7 +56,7 @@ class CompactSinsalSummary extends StatelessWidget {
               const Spacer(),
               Text(
                 '神煞 · 길흉성',
-                style: TextStyle(
+                style: context.labelTiny.copyWith(
                   fontSize: 9,
                   color: isDark ? Colors.white38 : Colors.black26,
                 ),
@@ -68,6 +68,7 @@ class CompactSinsalSummary extends StatelessWidget {
           // 길신 섹션
           if (sinsalData['gilsin']!.isNotEmpty) ...[
             _buildSinsalSection(
+              context: context,
               title: '길신',
               hanja: '吉神',
               sinsals: sinsalData['gilsin']!,
@@ -80,6 +81,7 @@ class CompactSinsalSummary extends StatelessWidget {
           // 흉신 섹션
           if (sinsalData['hyungsin']!.isNotEmpty)
             _buildSinsalSection(
+              context: context,
               title: '흉신',
               hanja: '凶神',
               sinsals: sinsalData['hyungsin']!,
@@ -178,6 +180,7 @@ class CompactSinsalSummary extends StatelessWidget {
   }
 
   Widget _buildSinsalSection({
+    required BuildContext context,
     required String title,
     required String hanja,
     required List<Map<String, String>> sinsals,
@@ -201,7 +204,7 @@ class CompactSinsalSummary extends StatelessWidget {
                 children: [
                   Text(
                     hanja,
-                    style: TextStyle(
+                    style: context.labelTiny.copyWith(
                       fontSize: 9,
                       fontWeight: FontWeight.bold,
                       color: color,
@@ -210,8 +213,7 @@ class CompactSinsalSummary extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 10,
+                    style: context.labelTiny.copyWith(
                       fontWeight: FontWeight.w600,
                       color: color,
                     ),
@@ -222,7 +224,7 @@ class CompactSinsalSummary extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               '${sinsals.length}개',
-              style: TextStyle(
+              style: context.labelTiny.copyWith(
                 fontSize: 9,
                 color: isDark ? Colors.white38 : Colors.black26,
               ),
@@ -235,7 +237,7 @@ class CompactSinsalSummary extends StatelessWidget {
           spacing: 4,
           runSpacing: 4,
           children: sinsals.map((sinsal) {
-            return _buildSinsalBadge(sinsal, color, isDark);
+            return _buildSinsalBadge(context, sinsal, color, isDark);
           }).toList(),
         ),
       ],
@@ -243,6 +245,7 @@ class CompactSinsalSummary extends StatelessWidget {
   }
 
   Widget _buildSinsalBadge(
+    BuildContext context,
     Map<String, String> sinsal,
     Color color,
     bool isDark,
@@ -270,7 +273,7 @@ class CompactSinsalSummary extends StatelessWidget {
             if (hanja.isNotEmpty) ...[
               Text(
                 hanja.length > 2 ? hanja.substring(0, 2) : hanja,
-                style: TextStyle(
+                style: context.labelTiny.copyWith(
                   fontSize: 8,
                   fontWeight: FontWeight.bold,
                   color: color.withValues(alpha: 0.7),
@@ -280,8 +283,7 @@ class CompactSinsalSummary extends StatelessWidget {
             ],
             Text(
               name,
-              style: TextStyle(
-                fontSize: 10,
+              style: context.labelTiny.copyWith(
                 fontWeight: FontWeight.w500,
                 color: isDark ? Colors.white70 : Colors.black54,
               ),

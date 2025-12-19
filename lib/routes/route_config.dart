@@ -29,6 +29,7 @@ import '../features/support/presentation/pages/help_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
 import '../features/payment/presentation/pages/token_purchase_page.dart';
+import '../features/payment/presentation/pages/payment_result_page.dart';
 import '../features/settings/presentation/pages/font_settings_page.dart';
 
 // Import pages that need to hide navigation bar
@@ -434,6 +435,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/token-purchase',
         name: 'token-purchase',
         builder: (context, state) => const TokenPurchasePage(),
+      ),
+      GoRoute(
+        path: '/payment-result',
+        name: 'payment-result',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return PaymentResultPage(
+            isSuccess: extra?['isSuccess'] ?? false,
+            message: extra?['message'],
+            productName: extra?['productName'],
+            amount: extra?['amount'],
+            transactionId: extra?['transactionId'],
+            tokenAmount: extra?['tokenAmount'],
+            errorCode: extra?['errorCode'],
+          );
+        },
       ),
       GoRoute(
         path: '/help',

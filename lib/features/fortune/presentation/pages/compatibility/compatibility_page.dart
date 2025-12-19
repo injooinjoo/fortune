@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fortune/core/theme/typography_unified.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/design_system/tokens/ds_love_colors.dart';
+import 'package:fortune/core/design_system/components/traditional/traditional_button.dart';
 import 'package:fortune/domain/entities/fortune.dart';
 import 'package:fortune/presentation/providers/auth_provider.dart';
 import 'package:fortune/presentation/providers/token_provider.dart';
@@ -235,41 +238,67 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final isResultView = _compatibilityData != null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // 전통 연애/궁합 색상
+    final hanjiBackground = DSLoveColors.getHanjiBackground(isDark);
+    final inkColor = isDark ? const Color(0xFFD4D0C8) : const Color(0xFF2C2C2C);
+    final primaryColor = DSLoveColors.getPrimary(isDark);
 
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: hanjiBackground,
       appBar: AppBar(
-        backgroundColor: colors.background,
+        backgroundColor: hanjiBackground,
         elevation: 0,
         scrolledUnderElevation: 0,
         // 결과 페이지에서는 뒤로가기 버튼 숨김
         leading: isResultView
             ? const SizedBox.shrink()
-            : IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: colors.textPrimary,
+            : Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: TraditionalIconButton(
+                  icon: Icons.arrow_back_ios_new_rounded,
+                  colorScheme: TraditionalButtonColorScheme.love,
+                  size: 40,
+                  showBorder: false,
+                  onPressed: () => context.pop(),
                 ),
-                onPressed: () => context.pop(),
               ),
-        title: Text(
-          '궁합 분석',
-          style: DSTypography.headingSmall.copyWith(
-            color: colors.textPrimary,
-          ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '宮合',
+              style: context.labelMedium.copyWith(
+                fontFamily: 'GowunBatang',
+                color: primaryColor.withValues(alpha: 0.7),
+                letterSpacing: 2,
+              ),
+            ),
+            Text(
+              '궁합 분석',
+              style: context.heading3.copyWith(
+                fontFamily: 'GowunBatang',
+                color: inkColor,
+                letterSpacing: 1,
+              ),
+            ),
+          ],
         ),
         centerTitle: true,
         // 결과 페이지에서만 X 버튼 표시
         actions: isResultView
             ? [
-                IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: colors.textPrimary,
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: TraditionalIconButton(
+                    icon: Icons.close_rounded,
+                    colorScheme: TraditionalButtonColorScheme.love,
+                    size: 40,
+                    showBorder: false,
+                    onPressed: () => context.pop(),
                   ),
-                  onPressed: () => context.pop(),
                 ),
               ]
             : null,

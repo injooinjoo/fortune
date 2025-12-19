@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 🎁 공유 카드
 class ShareCard extends StatelessWidget {
@@ -46,33 +47,30 @@ class ShareCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '친구들과 함께 운세를 나눠보세요',
-          style: TextStyle(
-            color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 13,
+          style: context.bodySmall.copyWith(
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
           ),
         ),
 
         const SizedBox(height: 16),
 
-        // 공유 미리보기 카드
+        // 공유 미리보기 카드 - 전통 오방색 그라데이션
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
-                  ? [const Color(0xFF2563EB), const Color(0xFF7C3AED)]
-                  : [const Color(0xFF3B82F6), const Color(0xFF8B5CF6)],
+                  ? [const Color(0xFF1E5F3C), const Color(0xFF2E8B57)]  // 목(木) - 성장과 번영
+                  : [const Color(0xFF2E8B57), const Color(0xFF3D9970)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.4)
-                    : const Color(0xFF3B82F6).withValues(alpha: 0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 6),
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -128,12 +126,12 @@ class ShareCard extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        // 공유 버튼
+        // 공유 버튼 - 전통 색상
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: _shareContent,
-            icon: const Icon(Icons.share, color: Colors.white, size: 20),
+            icon: const Text('📤', style: TextStyle(fontSize: 18)),
             label: const Text(
               '공유하기',
               style: TextStyle(
@@ -144,11 +142,11 @@ class ShareCard extends StatelessWidget {
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: isDark
-                  ? const Color(0xFF2563EB)
-                  : const Color(0xFF3B82F6),
+                  ? const Color(0xFF2E8B57)  // 목(木) - 전통 청록
+                  : const Color(0xFF2E8B57),
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
               ),
               elevation: 0,
             ),

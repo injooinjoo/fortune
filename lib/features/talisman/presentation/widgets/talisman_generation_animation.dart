@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TalismanGenerationAnimation extends StatefulWidget {
   final TalismanCategory category;
@@ -138,7 +138,7 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
                       child: Center(
                         child: Text(
                           widget.category.emoji,
-                          style: DSTypography.displayLarge,
+                          style: context.displayLarge,
                         ),
                       ),
                     ),

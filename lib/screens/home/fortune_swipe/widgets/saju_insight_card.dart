@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/utils/hanja_utils.dart';
 import '../../../../core/theme/saju_colors.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 
 /// 🔮 사주 인사이트 카드
 class SajuInsightCard extends StatelessWidget {
@@ -15,38 +16,102 @@ class SajuInsightCard extends StatelessWidget {
     required this.isDark,
   });
 
+  /// 사주 민화 이미지 목록 (4개)
+  static const List<Map<String, String>> _sajuImages = [
+    {'image': 'assets/images/minhwa/minhwa_saju_dragon.png', 'emoji': '🐉', 'label': '용 민화'},
+    {'image': 'assets/images/minhwa/minhwa_saju_fourguardians.png', 'emoji': '🏯', 'label': '사신도 민화'},
+    {'image': 'assets/images/minhwa/minhwa_saju_tiger_dragon.png', 'emoji': '🐅', 'label': '용호상박 민화'},
+    {'image': 'assets/images/minhwa/minhwa_saju_yin_yang.png', 'emoji': '☯️', 'label': '음양 민화'},
+  ];
+
+  /// 오늘 날짜 기반 이미지 선택 (하루 동안 일관성 유지)
+  Map<String, String> _getTodayImage() {
+    final today = DateTime.now();
+    final dayOfYear = today.difference(DateTime(today.year, 1, 1)).inDays;
+    final index = dayOfYear % _sajuImages.length;
+    return _sajuImages[index];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final minhwaInfo = _getTodayImage();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '사주 인사이트',
-          style: TextStyle(
+          style: context.heading3.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '당신의 사주가 말하는 오늘',
-          style: TextStyle(
+          style: context.labelLarge.copyWith(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 13,
           ),
         ),
 
         const SizedBox(height: 16),
 
-        // 사주 기둥 표시
+        // 민화 이미지 (날짜별 랜덤)
+        Container(
+          height: 140,
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF5F0E6),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(
+              minhwaInfo['image']!,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isDark
+                        ? [const Color(0xFF2C2C2E), const Color(0xFF1C1C1E)]
+                        : [const Color(0xFFF5F0E6), const Color(0xFFEDE8DC)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          minhwaInfo['emoji']!,
+                          style: const TextStyle(fontSize: 40),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          minhwaInfo['label']!,
+                          style: context.labelSmall.copyWith(
+                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+
+        // 사주 기둥 표시 - 청색(목/木) 계열: 지혜와 성장 상징
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                isDark ? const Color(0xFF7C3AED) : const Color(0xFF9333EA),
-                isDark ? const Color(0xFF6D28D9) : const Color(0xFF7C3AED),
+                isDark ? ObangseokColors.cheongMuted : ObangseokColors.cheong,
+                isDark ? ObangseokColors.cheongDark : ObangseokColors.cheongMuted,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -74,10 +139,9 @@ class SajuInsightCard extends StatelessWidget {
                 child: Text(
                   FortuneTextCleaner.clean(sajuData['insight']?.toString() ??
                   '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.'),
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.labelLarge.copyWith(
                     color: Colors.white,
                     height: 1.5,
-                    fontSize: 13,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -121,17 +185,16 @@ class _SajuPillar extends StatelessWidget {
           children: [
             Text(
               hanjaLabel,
-              style: TextStyle(
+              style: context.labelMedium.copyWith(
                 color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               koreanLabel,
-              style: TextStyle(
+              style: context.labelTiny.copyWith(
                 color: Colors.white.withValues(alpha: 0.6),
-                fontSize: 9,
+                fontSize: 9, // 예외: 초소형 텍스트
               ),
             ),
           ],
@@ -155,9 +218,8 @@ class _SajuPillar extends StatelessWidget {
               if (hasHanja) ...[
                 Text(
                   hanja,
-                  style: TextStyle(
+                  style: context.heading3.copyWith(
                     color: elementColor,
-                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -166,9 +228,8 @@ class _SajuPillar extends StatelessWidget {
               // 한글 작게 (보조)
               Text(
                 value,
-                style: TextStyle(
+                style: context.labelTiny.copyWith(
                   color: Colors.white.withValues(alpha: 0.8),
-                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -183,9 +244,9 @@ class _SajuPillar extends StatelessWidget {
                   ),
                   child: Text(
                     element,
-                    style: TextStyle(
+                    style: context.labelTiny.copyWith(
                       color: elementColor,
-                      fontSize: 9,
+                      fontSize: 9, // 예외: 초소형 태그
                       fontWeight: FontWeight.w600,
                     ),
                   ),

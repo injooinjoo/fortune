@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class ZodiacElementChart extends StatefulWidget {
   final String selectedZodiac;
@@ -146,7 +147,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
         SizedBox(width: 8),
         Text(
           '오행 분석',
-          style: DSTypography.headingSmall.copyWith(
+          style: context.heading3.copyWith(
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -297,13 +298,13 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
         children: [
           Text(
             widget.selectedZodiac,
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               fontWeight: FontWeight.bold,
               color: Colors.white)),
           SizedBox(height: 4),
           Text(
             _selectedElement!,
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               color: data.color,
               fontWeight: FontWeight.bold)),
           if (isMyElement) ...[
@@ -316,7 +317,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
               ),
               child: Text(
                 '나의 오행',
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: Colors.white,
                 ),
               ),
@@ -347,14 +348,14 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   children: [
                     Text(
                       _selectedElement!,
-                      style: DSTypography.headingSmall.copyWith(
+                      style: context.heading3.copyWith(
                         fontWeight: FontWeight.bold,
                         color: data.color,
                       ),
                     ),
                     Text(
                       '${data.season} · ${data.direction}',
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         color: Colors.white.withValues(alpha:0.8),
                       ),
                     ),
@@ -366,7 +367,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           SizedBox(height: 16),
           Text(
             data.description,
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               color: Colors.white,
               height: 1.5,
             ),
@@ -388,7 +389,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 ),
                 child: Text(
                   trait,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: Colors.white,
                   ),
                 ),
@@ -416,7 +417,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 SizedBox(width: 8),
                 Text(
                   '띠: ',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: Colors.white.withValues(alpha:0.8),
                   ),
                 ),
@@ -426,7 +427,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                     padding: const EdgeInsets.only(left: 4),
                     child: Text(
                       zodiac,
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         fontWeight: isCurrentZodiac ? FontWeight.bold : FontWeight.normal,
                         color: isCurrentZodiac ? data.color : Colors.white,
                       ),
@@ -457,7 +458,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
               SizedBox(width: 8),
               Text(
                 '오행 상생상극',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -501,14 +502,14 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             children: [
               Text(
                 title,
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
               ),
               Text(
                 relation,
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   color: Colors.white.withValues(alpha:0.8),
                 ),
               ),

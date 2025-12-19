@@ -68,7 +68,7 @@ class CelebritySaju {
       birthTime: json['birth_time'] ?? '',
       gender: json['gender'] ?? '',
       birthPlace: json['birth_place'] ?? '',
-      category: json['category'] ?? '',
+      category: json['celebrity_type'] ?? json['category'] ?? '',
       agency: json['agency'] ?? '',
       yearPillar: json['year_pillar'] ?? '',
       monthPillar: json['month_pillar'] ?? '',
@@ -126,6 +126,21 @@ class CelebritySaju {
       age--;
     }
     return age;
+  }
+
+  /// 카테고리 한글 변환
+  String get categoryKorean {
+    const categoryMap = {
+      'idol_member': '아이돌',
+      'politician': '정치인',
+      'athlete': '운동선수',
+      'streamer': '스트리머',
+      'business': '기업인',
+      'actor': '배우',
+      'solo_singer': '솔로가수',
+      'pro_gamer': '프로게이머',
+    };
+    return categoryMap[category] ?? category;
   }
 
   /// 주요 오행 (가장 많은 오행)

@@ -4,6 +4,141 @@
 
 Fortune 앱의 모든 텍스트는 이제 **하나의 소스**에서 관리됩니다.
 
+---
+
+## 🎎 전통 타이포그래피 시스템 (Korean Traditional Typography)
+
+Fortune App은 한국 전통 미학에 기반한 타이포그래피 체계를 사용합니다.
+
+### 폰트 계층 구조
+
+| 용도 | 폰트 | 사용 위치 | 우선순위 |
+|------|------|----------|----------|
+| 전통 제목 | **GowunBatang Bold** | 운세 제목, 사주 명칭, 한자 | **PRIMARY** |
+| 전통 본문 | **GowunBatang Regular** | 낙관, 오행 표기, 전통 요소 | PRIMARY |
+| 현대 본문 | ZenSerif / 시스템 명조 | 일반 텍스트, 설명 | SECONDARY |
+| 숫자/데이터 | Pretendard | 수치, 날짜, 통계 | SECONDARY |
+
+### GowunBatang 사용 가이드
+
+```dart
+// 1. 전통 제목 스타일
+Text(
+  '오늘의 사주',
+  style: TextStyle(
+    fontFamily: 'GowunBatang',
+    fontSize: 28,
+    fontWeight: FontWeight.w700,
+    color: ObangseokColors.getMeok(context),
+  ),
+)
+
+// 2. 한자 표기
+Text(
+  '木 火 土 金 水',
+  style: TextStyle(
+    fontFamily: 'GowunBatang',
+    fontSize: 20,
+    fontWeight: FontWeight.w500,
+  ),
+)
+
+// 3. 낙관(도장) 텍스트
+SealStamp(
+  text: '福',  // GowunBatang 자동 적용
+  size: 48,
+)
+```
+
+### 전통 타이포그래피 스케일
+
+```yaml
+fortune_display:
+  font: GowunBatang
+  size: 32-40px
+  weight: 700
+  usage: 운세 메인 타이틀, 사주 이름
+
+fortune_headline:
+  font: GowunBatang
+  size: 24-28px
+  weight: 700
+  usage: 섹션 제목, 운세 카테고리
+
+fortune_title:
+  font: GowunBatang
+  size: 18-22px
+  weight: 500
+  usage: 카드 제목, 오행 명칭
+
+fortune_body:
+  font: GowunBatang
+  size: 14-16px
+  weight: 400
+  usage: 전통 설명, 한자 해석
+
+seal_text:
+  font: GowunBatang
+  size: 14-18px
+  weight: 700
+  usage: 낙관, 도장 텍스트
+```
+
+### HanjiCard와 통합
+
+```dart
+// HanjiCard 내부에서 자동으로 전통 폰트 적용
+HanjiCard(
+  style: HanjiCardStyle.scroll,
+  colorScheme: HanjiColorScheme.fortune,
+  child: Column(
+    children: [
+      // 자동으로 GowunBatang 적용 (showTraditionalFont: true 기본값)
+      Text('사주팔자', style: context.heading1),
+
+      // 또는 명시적으로 적용
+      Text(
+        '甲子年 乙丑月',
+        style: TextStyle(
+          fontFamily: 'GowunBatang',
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ],
+  ),
+)
+```
+
+### 다크모드 대응
+
+```dart
+// 전통 폰트 색상 (테마 인식)
+Text(
+  '운세 제목',
+  style: TextStyle(
+    fontFamily: 'GowunBatang',
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    color: ObangseokColors.getMeok(context),  // 라이트: 먹색, 다크: 미색
+  ),
+)
+```
+
+### 폰트 로딩 (pubspec.yaml)
+
+```yaml
+fonts:
+  - family: GowunBatang
+    fonts:
+      - asset: assets/fonts/GowunBatang-Regular.ttf
+        weight: 400
+      - asset: assets/fonts/GowunBatang-Bold.ttf
+        weight: 700
+```
+
+---
+
 ## ✅ 완성된 시스템
 
 ### 📍 **단일 제어 지점**

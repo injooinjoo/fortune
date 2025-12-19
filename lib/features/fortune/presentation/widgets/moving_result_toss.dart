@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/components/app_card.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 토스 스타일 이사운 결과 페이지
 class MovingResultToss extends StatefulWidget {
@@ -126,7 +127,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           // 인사말
           Text(
             '${widget.name}님의\n이사운을 확인해 보세요',
-            style: DSTypography.displayLarge.copyWith(
+            style: context.displayLarge.copyWith(
               
               fontWeight: FontWeight.w800,
               height: 1.1,
@@ -212,7 +213,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
         children: [
           Text(
             '종합 이사운',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               fontWeight: FontWeight.w700,
               color: DSColors.textPrimary,
             ),
@@ -244,7 +245,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                   children: [
                     Text(
                       '$_overallScore',
-                      style: DSTypography.displayLarge.copyWith(
+                      style: context.displayLarge.copyWith(
                         
                         fontWeight: FontWeight.w800,
                         color: _getScoreColor(),
@@ -253,7 +254,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                     ),
                     Text(
                       '점',
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         
                         fontWeight: FontWeight.w600,
                         color: _getScoreColor(),
@@ -269,7 +270,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           
           Text(
             _scoreDescription,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               
               fontWeight: FontWeight.w700,
               color: _getScoreColor(),
@@ -289,11 +290,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
         children: [
           Row(
             children: [
-              Text('💡', style: DSTypography.displaySmall),
+              Text('💡', style: context.displaySmall),
               SizedBox(width: DSSpacing.sm),
               Text(
                 '핵심 조언',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   
                   fontWeight: FontWeight.w700,
                   color: DSColors.textPrimary,
@@ -306,7 +307,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           
           Text(
             _mainAdvice,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               
               fontWeight: FontWeight.w400,
               color: DSColors.textSecondary,
@@ -326,11 +327,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
         children: [
           Row(
             children: [
-              Text('📅', style: DSTypography.displaySmall),
+              Text('📅', style: context.displaySmall),
               SizedBox(width: DSSpacing.sm),
               Text(
                 '추천 이사 날짜',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   
                   fontWeight: FontWeight.w700,
                   color: DSColors.textPrimary,
@@ -365,7 +366,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                     ),
                     child: Text(
                       rank,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: index == 0 ? Colors.white : DSColors.textSecondary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -374,7 +375,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                   const SizedBox(width: DSSpacing.sm),
                   Text(
                     '${date.month}월 ${date.day}일 (${_getWeekdayName(date.weekday)})',
-                    style: DSTypography.bodyMedium,
+                    style: context.bodyMedium,
                   ),
                 ],
               ),
@@ -392,11 +393,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
         children: [
           Row(
             children: [
-              Text('🧭', style: DSTypography.displaySmall),
+              Text('🧭', style: context.displaySmall),
               SizedBox(width: DSSpacing.sm),
               Text(
                 '길방향',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   
                   fontWeight: FontWeight.w700,
                   color: DSColors.textPrimary,
@@ -417,14 +418,14 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
               children: [
                 Text(
                   _luckyDirection,
-                  style: DSTypography.headingMedium.copyWith(
+                  style: context.heading2.copyWith(
                     color: DSColors.accent,
                   ),
                 ),
                 const SizedBox(height: DSSpacing.xs),
                 Text(
                   '${widget.currentArea}에서 $_luckyDirection 방향으로',
-                  style: DSTypography.labelSmall,
+                  style: context.labelSmall,
                 ),
               ],
             ),
@@ -442,7 +443,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
         children: [
           Text(
             '이사 정보',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               
               fontWeight: FontWeight.w700,
               color: DSColors.textPrimary,
@@ -470,13 +471,13 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
             width: 50,
             child: Text(
               label,
-              style: DSTypography.labelSmall,
+              style: context.labelSmall,
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: DSTypography.bodyMedium,
+              style: context.bodyMedium,
             ),
           ),
         ],

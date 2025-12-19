@@ -7,6 +7,33 @@ import 'landing_page_state.dart';
 import 'landing_page_handlers.dart';
 import 'widgets/index.dart';
 
+/// Hanji texture overlay for landing page
+class _LandingHanjiTexture extends StatelessWidget {
+  const _LandingHanjiTexture();
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final texturePath = isDark
+        ? 'assets/textures/hanji_dark.png'
+        : 'assets/textures/hanji_light.png';
+
+    return Positioned.fill(
+      child: Opacity(
+        opacity: isDark ? 0.08 : 0.12,
+        child: Image.asset(
+          texturePath,
+          fit: BoxFit.cover,
+          repeat: ImageRepeat.repeat,
+          errorBuilder: (context, error, stackTrace) {
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+  }
+}
+
 class LandingPage extends ConsumerStatefulWidget {
   const LandingPage({super.key});
 
@@ -30,10 +57,13 @@ class _LandingPageState extends ConsumerState<LandingPage>
     return Scaffold(
       body: Stack(
         children: [
-          // GPT-5 style gradient background
+          // Korean traditional hanji paper gradient background
           const LandingGradientBackground(),
 
-          // Animated blur effects
+          // Hanji paper texture overlay
+          const _LandingHanjiTexture(),
+
+          // Ink-wash animated effects (수묵 효과)
           const LandingAnimatedBlurEffects(),
 
           SafeArea(

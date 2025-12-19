@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 🎯 오늘의 액션 플랜 카드
 class ActionPlanCard extends StatelessWidget {
@@ -27,9 +28,8 @@ class ActionPlanCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '오늘 꼭 실천할 것들',
-          style: TextStyle(
-            color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 13,
+          style: context.bodySmall.copyWith(
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
           ),
         ),
 
@@ -62,14 +62,15 @@ class _ActionItem extends StatelessWidget {
     required this.isDark,
   });
 
+  /// 전통 오방색 기반 우선순위 색상
   Color get _priorityColor {
     switch (priority) {
       case 'high':
-        return const Color(0xFF3B82F6);
+        return const Color(0xFFDC143C); // 화(火) - 긴급함
       case 'medium':
-        return const Color(0xFF10B981);
+        return const Color(0xFFDAA520); // 토(土) - 균형
       case 'low':
-        return const Color(0xFF6B7280);
+        return const Color(0xFF2E8B57); // 목(木) - 여유
       default:
         return const Color(0xFF6B7280);
     }
@@ -81,16 +82,16 @@ class _ActionItem extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _priorityColor.withValues(alpha: 0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),

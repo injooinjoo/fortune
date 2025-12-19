@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import '../../pages/biorhythm_result_page.dart';
 import 'components/biorhythm_hanji_card.dart';
 
@@ -54,10 +55,8 @@ class PersonalAnalysisCard extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 '당신의 기운 분석 (氣運分析)',
-                style: TextStyle(
+                style: context.heading4.copyWith(
                   fontFamily: 'GowunBatang',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
               ),
@@ -78,9 +77,8 @@ class PersonalAnalysisCard extends StatelessWidget {
             ),
             child: Text(
               '$age세의 당신은 지금까지 ${biorhythmData.totalDays}일의 세월을 살아오셨습니다.',
-              style: TextStyle(
+              style: context.bodyMedium.copyWith(
                 fontFamily: 'GowunBatang',
-                fontSize: 15,
                 color: textColor,
                 height: 1.6,
               ),
@@ -91,9 +89,7 @@ class PersonalAnalysisCard extends StatelessWidget {
           // Detailed analysis
           Text(
             _getPersonalAnalysis(),
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 14,
+            style: context.bodySmall.copyWith(
               color: textColor.withValues(alpha: 0.8),
               height: 1.7,
             ),
@@ -102,13 +98,13 @@ class PersonalAnalysisCard extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Cycle progress indicators
-          _buildCycleIndicators(isDark, textColor),
+          _buildCycleIndicators(context, isDark, textColor),
         ],
       ),
     );
   }
 
-  Widget _buildCycleIndicators(bool isDark, Color textColor) {
+  Widget _buildCycleIndicators(BuildContext context, bool isDark, Color textColor) {
     final physicalCycle = biorhythmData.totalDays % 23;
     final emotionalCycle = biorhythmData.totalDays % 28;
     final intellectualCycle = biorhythmData.totalDays % 33;
@@ -117,6 +113,7 @@ class PersonalAnalysisCard extends StatelessWidget {
       children: [
         Expanded(
           child: _buildCycleProgress(
+            context,
             '火',
             physicalCycle + 1,
             23,
@@ -127,6 +124,7 @@ class PersonalAnalysisCard extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _buildCycleProgress(
+            context,
             '木',
             emotionalCycle + 1,
             28,
@@ -137,6 +135,7 @@ class PersonalAnalysisCard extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _buildCycleProgress(
+            context,
             '水',
             intellectualCycle + 1,
             33,
@@ -149,6 +148,7 @@ class PersonalAnalysisCard extends StatelessWidget {
   }
 
   Widget _buildCycleProgress(
+    BuildContext context,
     String hanja,
     int current,
     int total,
@@ -171,9 +171,8 @@ class PersonalAnalysisCard extends StatelessWidget {
           child: Center(
             child: Text(
               hanja,
-              style: TextStyle(
+              style: context.bodySmall.copyWith(
                 fontFamily: 'GowunBatang',
-                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
@@ -183,9 +182,8 @@ class PersonalAnalysisCard extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           '$current / $total일',
-          style: TextStyle(
+          style: context.labelTiny.copyWith(
             fontFamily: 'GowunBatang',
-            fontSize: 11,
             color: textColor.withValues(alpha: 0.6),
           ),
         ),
@@ -257,9 +255,8 @@ class LifestyleAdviceCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 '생활 지침 (生活指針)',
-                style: TextStyle(
+                style: context.bodyLarge.copyWith(
                   fontFamily: 'GowunBatang',
-                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
@@ -295,9 +292,8 @@ class LifestyleAdviceCard extends StatelessWidget {
                     child: Center(
                       child: Text(
                         advice['hanja'] as String,
-                        style: TextStyle(
+                        style: context.bodyLarge.copyWith(
                           fontFamily: 'GowunBatang',
-                          fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: color,
                         ),
@@ -312,9 +308,8 @@ class LifestyleAdviceCard extends StatelessWidget {
                       children: [
                         Text(
                           advice['title'] as String,
-                          style: TextStyle(
+                          style: context.bodySmall.copyWith(
                             fontFamily: 'GowunBatang',
-                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: textColor,
                           ),
@@ -322,9 +317,7 @@ class LifestyleAdviceCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           advice['description'] as String,
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 13,
+                          style: context.labelMedium.copyWith(
                             color: textColor.withValues(alpha: 0.7),
                             height: 1.5,
                           ),
@@ -447,9 +440,8 @@ class HealthTipsCard extends StatelessWidget {
           // Header
           Text(
             '양생 지침 (養生指針)',
-            style: TextStyle(
+            style: context.bodyLarge.copyWith(
               fontFamily: 'GowunBatang',
-              fontSize: 17,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -457,9 +449,7 @@ class HealthTipsCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             '오행에 따른 건강 관리',
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 12,
+            style: context.labelMedium.copyWith(
               color: textColor.withValues(alpha: 0.5),
             ),
           ),
@@ -524,9 +514,8 @@ class HealthTipsCard extends StatelessWidget {
           child: Center(
             child: Text(
               hanja,
-              style: TextStyle(
+              style: context.heading4.copyWith(
                 fontFamily: 'GowunBatang',
-                fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
@@ -541,9 +530,8 @@ class HealthTipsCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
+                style: context.bodySmall.copyWith(
                   fontFamily: 'GowunBatang',
-                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
@@ -551,9 +539,7 @@ class HealthTipsCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 tip,
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 13,
+                style: context.labelMedium.copyWith(
                   color: textColor.withValues(alpha: 0.7),
                   height: 1.5,
                 ),
@@ -630,10 +616,8 @@ class NextAnalysisCard extends StatelessWidget {
             child: Center(
               child: Text(
                 '運',
-                style: TextStyle(
+                style: context.heading2.copyWith(
                   fontFamily: 'GowunBatang',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
                   color: Colors.white,
                 ),
               ),
@@ -647,9 +631,8 @@ class NextAnalysisCard extends StatelessWidget {
               children: [
                 Text(
                   '일주일 후 다시 운세를 살펴보소서',
-                  style: TextStyle(
+                  style: context.bodyMedium.copyWith(
                     fontFamily: 'GowunBatang',
-                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   ),
@@ -657,9 +640,7 @@ class NextAnalysisCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '삼기(三氣)의 흐름은 날마다 변화합니다',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 13,
+                  style: context.labelMedium.copyWith(
                     color: textColor.withValues(alpha: 0.6),
                   ),
                 ),
@@ -703,10 +684,8 @@ class TraditionalWisdomCard extends StatelessWidget {
           // Wisdom title
           Text(
             wisdom['title'] as String,
-            style: TextStyle(
+            style: context.heading4.copyWith(
               fontFamily: 'GowunBatang',
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
               color: textColor,
             ),
             textAlign: TextAlign.center,
@@ -722,10 +701,8 @@ class TraditionalWisdomCard extends StatelessWidget {
             ),
             child: Text(
               wisdom['hanja'] as String,
-              style: TextStyle(
+              style: context.heading3.copyWith(
                 fontFamily: 'GowunBatang',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
                 color: textColor.withValues(alpha: 0.8),
                 letterSpacing: 4,
               ),
@@ -737,9 +714,7 @@ class TraditionalWisdomCard extends StatelessWidget {
           // Interpretation
           Text(
             wisdom['interpretation'] as String,
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 14,
+            style: context.bodySmall.copyWith(
               color: textColor.withValues(alpha: 0.7),
               height: 1.6,
             ),

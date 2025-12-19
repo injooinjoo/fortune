@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import '../../pages/biorhythm_result_page.dart';
 import 'components/biorhythm_hanji_card.dart';
 import 'painters/ink_wave_chart_painter.dart';
@@ -35,9 +36,8 @@ class WeeklyForecastHeader extends StatelessWidget {
         children: [
           Text(
             '주간 운세 전망',
-            style: TextStyle(
+            style: context.heading3.copyWith(
               fontFamily: 'GowunBatang',
-              fontSize: 20,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -45,15 +45,14 @@ class WeeklyForecastHeader extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             _formatDateRange(startDate, endDate),
-            style: TextStyle(
+            style: context.bodySmall.copyWith(
               fontFamily: 'GowunBatang',
-              fontSize: 14,
               color: textColor.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 16),
           // Legend row
-          _buildLegendRow(isDark),
+          _buildLegendRow(context, isDark),
         ],
       ),
     );
@@ -63,25 +62,28 @@ class WeeklyForecastHeader extends StatelessWidget {
     return '${start.month}월 ${start.day}일 ~ ${end.month}월 ${end.day}일';
   }
 
-  Widget _buildLegendRow(bool isDark) {
+  Widget _buildLegendRow(BuildContext context, bool isDark) {
     final textColor = DSBiorhythmColors.getInkBleed(isDark);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildLegendItem(
+          context,
           '신체(火)',
           DSBiorhythmColors.getPhysical(isDark),
           textColor,
         ),
         const SizedBox(width: 20),
         _buildLegendItem(
+          context,
           '감정(木)',
           DSBiorhythmColors.getEmotional(isDark),
           textColor,
         ),
         const SizedBox(width: 20),
         _buildLegendItem(
+          context,
           '지적(水)',
           DSBiorhythmColors.getIntellectual(isDark),
           textColor,
@@ -90,7 +92,7 @@ class WeeklyForecastHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildLegendItem(String label, Color color, Color textColor) {
+  Widget _buildLegendItem(BuildContext context, String label, Color color, Color textColor) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -105,9 +107,8 @@ class WeeklyForecastHeader extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           label,
-          style: TextStyle(
+          style: context.labelMedium.copyWith(
             fontFamily: 'GowunBatang',
-            fontSize: 12,
             color: textColor.withValues(alpha: 0.6),
           ),
         ),
@@ -243,9 +244,8 @@ class ImportantDatesCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 '이번 주 길흉일',
-                style: TextStyle(
+                style: context.bodyMedium.copyWith(
                   fontFamily: 'GowunBatang',
-                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
@@ -310,9 +310,8 @@ class ImportantDatesCard extends StatelessWidget {
           child: Center(
             child: Text(
               hanja,
-              style: TextStyle(
+              style: context.heading3.copyWith(
                 fontFamily: 'GowunBatang',
-                fontSize: 20,
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
@@ -329,9 +328,8 @@ class ImportantDatesCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: context.bodySmall.copyWith(
                       fontFamily: 'GowunBatang',
-                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
@@ -345,9 +343,8 @@ class ImportantDatesCard extends StatelessWidget {
                     ),
                     child: Text(
                       date,
-                      style: TextStyle(
+                      style: context.labelMedium.copyWith(
                         fontFamily: 'GowunBatang',
-                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: color,
                       ),
@@ -358,9 +355,8 @@ class ImportantDatesCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 description,
-                style: TextStyle(
+                style: context.labelMedium.copyWith(
                   fontFamily: 'Pretendard',
-                  fontSize: 13,
                   color: textColor.withValues(alpha: 0.6),
                 ),
               ),
@@ -451,9 +447,8 @@ class RhythmCycleInfoCard extends StatelessWidget {
         children: [
           Text(
             '바이오리듬 주기',
-            style: TextStyle(
+            style: context.bodyMedium.copyWith(
               fontFamily: 'GowunBatang',
-              fontSize: 15,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -512,9 +507,8 @@ class RhythmCycleInfoCard extends StatelessWidget {
           child: Center(
             child: Text(
               '$days',
-              style: TextStyle(
+              style: context.heading4.copyWith(
                 fontFamily: 'GowunBatang',
-                fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
@@ -524,17 +518,15 @@ class RhythmCycleInfoCard extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(
+          style: context.labelMedium.copyWith(
             fontFamily: 'GowunBatang',
-            fontSize: 12,
             color: textColor.withValues(alpha: 0.6),
           ),
         ),
         Text(
           '일 주기',
-          style: TextStyle(
+          style: context.labelTiny.copyWith(
             fontFamily: 'Pretendard',
-            fontSize: 11,
             color: textColor.withValues(alpha: 0.4),
           ),
         ),

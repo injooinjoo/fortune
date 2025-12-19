@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -82,7 +83,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           automaticallyImplyLeading: false,
           title: Text(
             '재물운 결과',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               color: colors.textPrimary,
             ),
           ),
@@ -179,15 +180,15 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           const SizedBox(height: 16),
           Text(
             '재물운 점수',
-            style: DSTypography.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.9)),
+            style: context.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.9)),
           ),
           const SizedBox(height: 8),
           Text(
             '$score점',
-            style: DSTypography.displayLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+            style: context.displayLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
-          Text(_getScoreEmoji(score), style: DSTypography.bodyLarge.copyWith(color: Colors.white)),
+          Text(_getScoreEmoji(score), style: context.bodyLarge.copyWith(color: Colors.white)),
           if (_fortuneResult.percentile != null && _fortuneResult.isPercentileValid) ...[
             const SizedBox(height: 8),
             Container(
@@ -198,7 +199,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               ),
               child: Text(
                 '상위 ${_fortuneResult.percentile}%',
-                style: DSTypography.bodySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                style: context.bodySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -233,7 +234,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             child: Center(
               child: Text(
                 tickerSymbol.isNotEmpty ? tickerSymbol.substring(0, tickerSymbol.length > 2 ? 2 : tickerSymbol.length) : '📈',
-                style: DSTypography.labelLarge.copyWith(color: colors.accent),
+                style: context.labelLarge.copyWith(color: colors.accent),
               ),
             ),
           ),
@@ -242,9 +243,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tickerName, style: DSTypography.labelLarge.copyWith(color: colors.textPrimary)),
+                Text(tickerName, style: context.labelLarge.copyWith(color: colors.textPrimary)),
                 const SizedBox(height: 4),
-                Text('${_getCategoryLabel(category)} • $tickerSymbol', style: DSTypography.bodySmall.copyWith(color: colors.textSecondary)),
+                Text('${_getCategoryLabel(category)} • $tickerSymbol', style: context.bodySmall.copyWith(color: colors.textSecondary)),
               ],
             ),
           ),
@@ -264,7 +265,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       color: colors.accent,
       child: GptStyleTypingText(
         text: content,
-        style: DSTypography.bodyMedium.copyWith(
+        style: context.bodyMedium.copyWith(
           color: colors.textSecondary,
           height: 1.6,
         ),
@@ -313,7 +314,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         children: [
           Text(emoji, style: const TextStyle(fontSize: 16)),
           const SizedBox(width: 6),
-          Text(value, style: DSTypography.bodySmall.copyWith(fontWeight: FontWeight.w600, color: colors.textPrimary)),
+          Text(value, style: context.bodySmall.copyWith(fontWeight: FontWeight.w600, color: colors.textPrimary)),
         ],
       ),
     );
@@ -339,7 +340,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           const SizedBox(height: 12),
           Text(
             timing['buySignalText'] as String? ?? '매수 타이밍을 분석 중입니다.',
-            style: DSTypography.bodyMedium.copyWith(color: colors.textSecondary, height: 1.5),
+            style: context.bodyMedium.copyWith(color: colors.textSecondary, height: 1.5),
           ),
           const SizedBox(height: 16),
 
@@ -351,7 +352,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               Expanded(
                 child: Text(
                   '최적 시간: ${timing['bestTimeSlotText'] ?? '오후 시간대'}',
-                  style: DSTypography.bodySmall.copyWith(color: colors.textSecondary),
+                  style: context.bodySmall.copyWith(color: colors.textSecondary),
                 ),
               ),
             ],
@@ -366,7 +367,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               Expanded(
                 child: Text(
                   timing['holdAdvice'] as String? ?? '상황을 지켜보세요.',
-                  style: DSTypography.bodySmall.copyWith(color: colors.textSecondary),
+                  style: context.bodySmall.copyWith(color: colors.textSecondary),
                 ),
               ),
             ],
@@ -396,7 +397,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         children: [
           Icon(c['icon'] as IconData, color: c['color'] as Color, size: 20),
           const SizedBox(width: 8),
-          Text(c['label'] as String, style: DSTypography.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
+          Text(c['label'] as String, style: context.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
         ],
       ),
     );
@@ -436,18 +437,18 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       children: [
         SizedBox(
           width: 60,
-          child: Text(label, style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, fontWeight: FontWeight.w600)),
+          child: Text(label, style: context.bodySmall.copyWith(color: colors.textSecondary, fontWeight: FontWeight.w600)),
         ),
         Icon(trendIcon, size: 18, color: trendColor),
         const SizedBox(width: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(color: trendColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-          child: Text('$score점', style: DSTypography.bodySmall.copyWith(color: trendColor, fontWeight: FontWeight.w600)),
+          child: Text('$score점', style: context.bodySmall.copyWith(color: trendColor, fontWeight: FontWeight.w600)),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(text, style: DSTypography.bodySmall.copyWith(color: colors.textSecondary), overflow: TextOverflow.ellipsis),
+          child: Text(text, style: context.bodySmall.copyWith(color: colors.textSecondary), overflow: TextOverflow.ellipsis),
         ),
       ],
     );
@@ -476,7 +477,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
 
           // 주의사항
           if (warnings.isNotEmpty) ...[
-            Text('주의사항', style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, fontWeight: FontWeight.w600)),
+            Text('주의사항', style: context.bodySmall.copyWith(color: colors.textSecondary, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             ...warnings.map((w) => Padding(
               padding: const EdgeInsets.only(bottom: 6),
@@ -484,7 +485,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('• ', style: TextStyle(color: Color(0xFFF44336))),
-                  Expanded(child: Text(w.toString(), style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, height: 1.4))),
+                  Expanded(child: Text(w.toString(), style: context.bodySmall.copyWith(color: colors.textSecondary, height: 1.4))),
                 ],
               ),
             )),
@@ -493,7 +494,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           // 피해야 할 행동
           if (avoidActions.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Text('피해야 할 행동', style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, fontWeight: FontWeight.w600)),
+            Text('피해야 할 행동', style: context.bodySmall.copyWith(color: colors.textSecondary, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             ...avoidActions.map((a) => Padding(
               padding: const EdgeInsets.only(bottom: 6),
@@ -501,7 +502,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('❌ '),
-                  Expanded(child: Text(a.toString(), style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, height: 1.4))),
+                  Expanded(child: Text(a.toString(), style: context.bodySmall.copyWith(color: colors.textSecondary, height: 1.4))),
                 ],
               ),
             )),
@@ -530,13 +531,13 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             children: [
               const Icon(Icons.show_chart_rounded, size: 16, color: Color(0xFFF44336)),
               const SizedBox(width: 6),
-              Text('변동성 ${c['label']}', style: DSTypography.bodySmall.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w600)),
+              Text('변동성 ${c['label']}', style: context.bodySmall.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w600)),
             ],
           ),
         ),
         if (text.isNotEmpty) ...[
           const SizedBox(width: 12),
-          Expanded(child: Text(text, style: DSTypography.bodySmall.copyWith(color: colors.textSecondary))),
+          Expanded(child: Text(text, style: context.bodySmall.copyWith(color: colors.textSecondary))),
         ],
       ],
     );
@@ -561,14 +562,14 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           _buildMoodBadge(categoryMood),
           const SizedBox(height: 12),
           if (categoryMoodText.isNotEmpty)
-            Text(categoryMoodText, style: DSTypography.bodyMedium.copyWith(color: colors.textSecondary, height: 1.5)),
+            Text(categoryMoodText, style: context.bodyMedium.copyWith(color: colors.textSecondary, height: 1.5)),
           if (investorSentiment.isNotEmpty) ...[
             const SizedBox(height: 12),
             Row(
               children: [
                 const Icon(Icons.people_outline_rounded, size: 18, color: Color(0xFF3F51B5)),
                 const SizedBox(width: 8),
-                Expanded(child: Text(investorSentiment, style: DSTypography.bodySmall.copyWith(color: colors.textSecondary))),
+                Expanded(child: Text(investorSentiment, style: context.bodySmall.copyWith(color: colors.textSecondary))),
               ],
             ),
           ],
@@ -588,7 +589,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(color: (c['color'] as Color).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
-      child: Text(c['label'] as String, style: DSTypography.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
+      child: Text(c['label'] as String, style: context.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
     );
   }
 
@@ -609,7 +610,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (advice.isNotEmpty) ...[
-            Text(FortuneTextCleaner.clean(advice), style: DSTypography.bodyMedium.copyWith(color: colors.textSecondary, height: 1.6)),
+            Text(FortuneTextCleaner.clean(advice), style: context.bodyMedium.copyWith(color: colors.textSecondary, height: 1.6)),
           ],
           if (psychologyTip.isNotEmpty) ...[
             const SizedBox(height: 16),
@@ -621,7 +622,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   const Icon(Icons.psychology_rounded, size: 20, color: Color(0xFF9C27B0)),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Text(FortuneTextCleaner.clean(psychologyTip), style: DSTypography.bodySmall.copyWith(color: colors.textSecondary)),
+                    child: Text(FortuneTextCleaner.clean(psychologyTip), style: context.bodySmall.copyWith(color: colors.textSecondary)),
                   ),
                 ],
               ),
@@ -656,7 +657,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(width: 12),
-              Text(title, style: DSTypography.labelLarge.copyWith(color: colors.textPrimary)),
+              Text(title, style: context.labelLarge.copyWith(color: colors.textPrimary)),
             ],
           ),
           const SizedBox(height: 16),
@@ -688,7 +689,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(width: 12),
-              Text(title, style: DSTypography.labelLarge.copyWith(color: colors.textPrimary)),
+              Text(title, style: context.labelLarge.copyWith(color: colors.textPrimary)),
             ],
           ),
           const SizedBox(height: 16),

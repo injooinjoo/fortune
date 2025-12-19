@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
-import '../../../../services/ad_service.dart';
+import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 
 class TalentFortuneBottomSheet extends ConsumerStatefulWidget {
   const TalentFortuneBottomSheet({super.key});
@@ -261,7 +261,8 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
     navigator.pop();
 
     // 광고 표시 후 재능 발견 페이지로 이동
-    await AdService.instance.showInterstitialAdWithCallback(
+    await InterstitialAdHelper.showInterstitialAdWithCallback(
+      ref,
       onAdCompleted: () async {
         routerContext.push('/talent', extra: params);
       },

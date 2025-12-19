@@ -248,6 +248,35 @@ class UnifiedButton extends StatefulWidget {
     );
   }
 
+  /// 빨간색 Floating 버튼 (소원빌기 등 특별한 액션용)
+  factory UnifiedButton.floatingDanger({
+    required String text,
+    VoidCallback? onPressed,
+    UnifiedButtonSize size = UnifiedButtonSize.large,
+    bool isLoading = false,
+    bool isEnabled = true,
+    Widget? icon,
+    EdgeInsetsGeometry? padding,
+    bool hideWhenDisabled = false,
+    double height = 58.0,
+    double bottom = 0.0,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: onPressed,
+      style: UnifiedButtonStyle.danger,
+      size: size,
+      isLoading: isLoading,
+      isEnabled: isEnabled,
+      icon: icon,
+      isFloating: true,
+      floatingBottom: bottom,
+      floatingHeight: height,
+      floatingPadding: padding,
+      hideWhenDisabled: hideWhenDisabled,
+    );
+  }
+
   /// TossFloatingProgressButton 호환
   factory UnifiedButton.progress({
     required String text,
@@ -562,7 +591,13 @@ class _UnifiedButtonState extends State<UnifiedButton> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (widget.icon != null) ...[
-                widget.icon!,
+                IconTheme(
+                  data: IconThemeData(
+                    color: _getTextColor(colors, isDark, effectiveEnabled),
+                    size: 20,
+                  ),
+                  child: widget.icon!,
+                ),
                 if (widget.text.isNotEmpty)
                   const SizedBox(width: DSSpacing.xs),
               ],
@@ -570,7 +605,9 @@ class _UnifiedButtonState extends State<UnifiedButton> {
                 Flexible(
                   child: Text(
                     widget.text,
-                    style: _getTextStyle(colors, isDark, effectiveEnabled),
+                    style: _getTextStyle(colors, isDark, effectiveEnabled).copyWith(
+                      inherit: false, // CRITICAL: Prevent TextStyle lerp error
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -578,41 +615,32 @@ class _UnifiedButtonState extends State<UnifiedButton> {
             ],
           );
 
-    Widget button;
+    // Use Material + InkWell instead of ElevatedButton/OutlinedButton/TextButton
+    // to avoid AnimatedDefaultTextStyle lerp issues during theme transitions
+    final buttonConfig = _getButtonConfig(colors, effectiveEnabled);
 
-    switch (widget.style) {
-      case UnifiedButtonStyle.primary:
-        button = ElevatedButton(
-          onPressed: effectiveEnabled ? _handleTap : null,
-          style: _getPrimaryButtonStyle(colors, effectiveEnabled),
+    Widget button = Material(
+      color: buttonConfig.backgroundColor,
+      borderRadius: BorderRadius.circular(DSRadius.md),
+      child: InkWell(
+        onTap: effectiveEnabled ? _handleTap : null,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        splashColor: buttonConfig.splashColor,
+        highlightColor: buttonConfig.highlightColor,
+        child: Container(
+          height: _getHeight(),
+          padding: _getPadding(),
+          decoration: buttonConfig.border != null
+              ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                  border: buttonConfig.border,
+                )
+              : null,
+          alignment: Alignment.center,
           child: child,
-        );
-        break;
-
-      case UnifiedButtonStyle.secondary:
-        button = ElevatedButton(
-          onPressed: effectiveEnabled ? _handleTap : null,
-          style: _getSecondaryButtonStyle(colors, effectiveEnabled),
-          child: child,
-        );
-        break;
-
-      case UnifiedButtonStyle.ghost:
-        button = OutlinedButton(
-          onPressed: effectiveEnabled ? _handleTap : null,
-          style: _getGhostButtonStyle(colors, effectiveEnabled),
-          child: child,
-        );
-        break;
-
-      case UnifiedButtonStyle.text:
-        button = TextButton(
-          onPressed: effectiveEnabled ? _handleTap : null,
-          style: _getTextButtonStyle(colors, effectiveEnabled),
-          child: child,
-        );
-        break;
-    }
+        ),
+      ),
+    );
 
     if (widget.width != null) {
       button = SizedBox(
@@ -622,6 +650,54 @@ class _UnifiedButtonState extends State<UnifiedButton> {
     }
 
     return button;
+  }
+
+  /// Button configuration based on style
+  _ButtonConfig _getButtonConfig(DSColorScheme colors, bool enabled) {
+    switch (widget.style) {
+      case UnifiedButtonStyle.primary:
+        return _ButtonConfig(
+          backgroundColor: enabled
+              ? colors.ctaBackground
+              : colors.ctaBackground.withValues(alpha: 0.5),
+          splashColor: colors.ctaForeground.withValues(alpha: 0.1),
+          highlightColor: colors.ctaForeground.withValues(alpha: 0.05),
+          border: null,
+        );
+      case UnifiedButtonStyle.secondary:
+        return _ButtonConfig(
+          backgroundColor: colors.backgroundTertiary,
+          splashColor: colors.textPrimary.withValues(alpha: 0.1),
+          highlightColor: colors.textPrimary.withValues(alpha: 0.05),
+          border: null,
+        );
+      case UnifiedButtonStyle.ghost:
+        return _ButtonConfig(
+          backgroundColor: Colors.transparent,
+          splashColor: colors.accent.withValues(alpha: 0.1),
+          highlightColor: colors.accent.withValues(alpha: 0.05),
+          border: Border.all(
+            color: enabled ? colors.accent : colors.border,
+            width: 1,
+          ),
+        );
+      case UnifiedButtonStyle.text:
+        return _ButtonConfig(
+          backgroundColor: Colors.transparent,
+          splashColor: colors.accent.withValues(alpha: 0.1),
+          highlightColor: colors.accent.withValues(alpha: 0.05),
+          border: null,
+        );
+      case UnifiedButtonStyle.danger:
+        return _ButtonConfig(
+          backgroundColor: enabled
+              ? DSColors.error
+              : DSColors.error.withValues(alpha: 0.5),
+          splashColor: Colors.white.withValues(alpha: 0.1),
+          highlightColor: Colors.white.withValues(alpha: 0.05),
+          border: null,
+        );
+    }
   }
 
   Widget _buildFloatingWrapper(BuildContext context, Widget button) {
@@ -735,75 +811,12 @@ class _UnifiedButtonState extends State<UnifiedButton> {
         return colors.accent;
       case UnifiedButtonStyle.text:
         return colors.accent;
+      case UnifiedButtonStyle.danger:
+        return Colors.white;
     }
   }
 
-  ButtonStyle _getPrimaryButtonStyle(DSColorScheme colors, bool enabled) {
-    return ElevatedButton.styleFrom(
-      backgroundColor: enabled
-          ? colors.ctaBackground
-          : colors.ctaBackground.withValues(alpha: 0.5),
-      foregroundColor: colors.ctaForeground,
-      disabledBackgroundColor: colors.backgroundTertiary,
-      disabledForegroundColor: colors.textDisabled,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      shadowColor: Colors.transparent,
-      minimumSize: Size(0, _getHeight()),
-      padding: _getPadding(),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(DSRadius.md),
-      ),
-    );
-  }
-
-  ButtonStyle _getSecondaryButtonStyle(DSColorScheme colors, bool enabled) {
-    return ElevatedButton.styleFrom(
-      backgroundColor: colors.backgroundTertiary,
-      foregroundColor: enabled ? colors.textPrimary : colors.textDisabled,
-      disabledBackgroundColor: colors.backgroundTertiary,
-      disabledForegroundColor: colors.textDisabled,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      shadowColor: Colors.transparent,
-      minimumSize: Size(0, _getHeight()),
-      padding: _getPadding(),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(DSRadius.md),
-      ),
-    );
-  }
-
-  ButtonStyle _getGhostButtonStyle(DSColorScheme colors, bool enabled) {
-    return OutlinedButton.styleFrom(
-      foregroundColor: enabled ? colors.accent : colors.textDisabled,
-      backgroundColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      disabledForegroundColor: colors.textDisabled,
-      minimumSize: Size(0, _getHeight()),
-      padding: _getPadding(),
-      side: BorderSide(
-        color: enabled ? colors.accent : colors.border,
-        width: 1,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(DSRadius.md),
-      ),
-    );
-  }
-
-  ButtonStyle _getTextButtonStyle(DSColorScheme colors, bool enabled) {
-    return TextButton.styleFrom(
-      foregroundColor: enabled ? colors.accent : colors.textDisabled,
-      backgroundColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      disabledForegroundColor: colors.textDisabled,
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(DSRadius.sm),
-      ),
-    );
-  }
+  // Old ButtonStyle methods removed - using _ButtonConfig with Material + InkWell instead
 }
 
 /// 점 3개 로딩 애니메이션
@@ -889,4 +902,20 @@ class BottomButtonSpacing extends StatelessWidget {
       height: 58 + 16 + bottomPadding + additionalSpacing,
     );
   }
+}
+
+/// Button configuration for custom Material + InkWell implementation
+/// Used to avoid AnimatedDefaultTextStyle lerp issues during theme transitions
+class _ButtonConfig {
+  final Color backgroundColor;
+  final Color splashColor;
+  final Color highlightColor;
+  final Border? border;
+
+  const _ButtonConfig({
+    required this.backgroundColor,
+    required this.splashColor,
+    required this.highlightColor,
+    this.border,
+  });
 }

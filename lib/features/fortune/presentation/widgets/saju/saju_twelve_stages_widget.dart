@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/twelve_stage_calculator.dart';
@@ -45,23 +46,23 @@ class SajuTwelveStagesWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
-            _buildTitle(isDark),
+            _buildTitle(context, isDark),
             const SizedBox(height: DSSpacing.md),
           ],
           // 12운성 테이블
           _buildStagesTable(context, stages, isDark),
           const SizedBox(height: DSSpacing.md),
           // 신강/신약 판단
-          _buildStrengthIndicator(totalStrength, strengthLevel, isDark),
+          _buildStrengthIndicator(context, totalStrength, strengthLevel, isDark),
           const SizedBox(height: DSSpacing.sm),
           // 각 운성 설명
-          _buildStageDescriptions(stages, isDark),
+          _buildStageDescriptions(context, stages, isDark),
         ],
       ),
     );
   }
 
-  Widget _buildTitle(bool isDark) {
+  Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
         Icon(
@@ -79,14 +80,14 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                 children: [
                   Text(
                     '12운성',
-                    style: DSTypography.headingMedium.copyWith(
+                    style: context.heading2.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '十二運星',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: isDark
                           ? DSColors.textTertiary
                           : DSColors.textSecondary,
@@ -97,8 +98,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
               ),
               Text(
                 '일간의 생명력 주기를 나타내는 12단계',
-                style: DSTypography.labelSmall.copyWith(
-                  fontSize: 11,
+                style: context.labelTiny.copyWith(
                   color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 ),
               ),
@@ -172,16 +172,15 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                       children: [
                         Text(
                           pillar['hanja']!,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelTiny.copyWith(
                             color: isDark
                                 ? DSColors.textTertiary
                                 : DSColors.textSecondary,
-                            fontSize: 9,
                           ),
                         ),
                         Text(
                           pillar['title']!,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
                             color: isDay ? DSColors.accent : null,
                           ),
@@ -270,11 +269,15 @@ class SajuTwelveStagesWidget extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               stage.hanja,
-              style: TextStyle(
-                fontSize: isDay ? 22 : 18,
-                fontWeight: FontWeight.bold,
-                color: isDay ? DSColors.accent : color,
-              ),
+              style: isDay
+                  ? context.heading2.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: DSColors.accent,
+                    )
+                  : context.heading4.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -283,8 +286,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               stage.korean,
-              style: DSTypography.labelSmall.copyWith(
-                fontSize: 10,
+              style: context.labelTiny.copyWith(
                 color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
@@ -327,6 +329,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
   }
 
   Widget _buildStrengthIndicator(
+    BuildContext context,
     int totalStrength,
     String strengthLevel,
     bool isDark,
@@ -388,8 +391,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                 ),
                 Text(
                   '$totalStrength',
-                  style: TextStyle(
-                    fontSize: 9,
+                  style: context.labelTiny.copyWith(
                     fontWeight: FontWeight.bold,
                     color: levelColor,
                   ),
@@ -407,7 +409,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                   children: [
                     Text(
                       strengthLevel,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         fontWeight: FontWeight.bold,
                         color: levelColor,
                       ),
@@ -419,8 +421,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                           : strengthLevel == '신약'
                               ? '身弱'
                               : '中和',
-                      style: DSTypography.labelSmall.copyWith(
-                        fontSize: 10,
+                      style: context.labelTiny.copyWith(
                         color: isDark
                             ? DSColors.textTertiary
                             : DSColors.textSecondary,
@@ -431,8 +432,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   levelDescription,
-                  style: DSTypography.labelSmall.copyWith(
-                    fontSize: 10,
+                  style: context.labelTiny.copyWith(
                     color:
                         isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
@@ -448,6 +448,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
   }
 
   Widget _buildStageDescriptions(
+    BuildContext context,
     Map<String, TwelveStage> stages,
     bool isDark,
   ) {
@@ -460,7 +461,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
       children: [
         Text(
           '운성별 의미',
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelSmall.copyWith(
             fontWeight: FontWeight.bold,
             color: isDark ? DSColors.textSecondary : DSColors.textPrimary,
           ),
@@ -500,10 +501,9 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                     ),
                     child: Text(
                       pillarNames[key]!,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelTiny.copyWith(
                         fontWeight: FontWeight.bold,
                         color: stage.color,
-                        fontSize: 9,
                       ),
                     ),
                   ),
@@ -517,8 +517,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                           children: [
                             Text(
                               stage.korean,
-                              style: DSTypography.labelSmall.copyWith(
-                                fontSize: 10,
+                              style: context.labelTiny.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: isDark
                                     ? DSColors.textSecondary
@@ -537,7 +536,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                               ),
                               child: Text(
                                 stage.fortune,
-                                style: TextStyle(
+                                style: context.labelTiny.copyWith(
                                   fontSize: 8,
                                   fontWeight: FontWeight.bold,
                                   color: stage.color,
@@ -548,11 +547,10 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                         ),
                         Text(
                           stage.meaning,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelTiny.copyWith(
                             color: isDark
                                 ? DSColors.textTertiary
                                 : DSColors.textSecondary,
-                            fontSize: 9,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
 /// 📊 총운 카드 - ChatGPT Pulse 스타일
-class OverallCard extends StatelessWidget {
+class OverallCard extends StatefulWidget {
   final int score;
   final bool isDark;
   final String message;
@@ -21,19 +21,181 @@ class OverallCard extends StatelessWidget {
   });
 
   @override
+  State<OverallCard> createState() => _OverallCardState();
+}
+
+class _OverallCardState extends State<OverallCard> {
+  /// 총운 민화 이미지 목록 (6개)
+  static const List<Map<String, String>> _overallImages = [
+    {'image': 'assets/images/minhwa/minhwa_overall_tiger.png', 'emoji': '🐅', 'label': '호랑이 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_dragon.png', 'emoji': '🐉', 'label': '용 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_moon.png', 'emoji': '🌕', 'label': '보름달 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_phoenix.png', 'emoji': '🦅', 'label': '봉황 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_sunrise.png', 'emoji': '🌅', 'label': '일출 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_turtle.png', 'emoji': '🐢', 'label': '거북이 민화'},
+  ];
+
+  /// 오늘 날짜 기반 이미지 선택 (하루 동안 일관성 유지)
+  Map<String, String> _getTodayImage() {
+    final today = DateTime.now();
+    final dayOfYear = today.difference(DateTime(today.year, 1, 1)).inDays;
+    final index = dayOfYear % _overallImages.length;
+    return _overallImages[index];
+  }
+
+  /// 텍스트 확장 모달 표시
+  void _showExpandedModal(BuildContext context, Color scoreColor) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '닫기',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 300),
+      transitionBuilder: (ctx, a1, a2, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(parent: a1, curve: Curves.easeOutBack),
+          child: FadeTransition(opacity: a1, child: child),
+        );
+      },
+      pageBuilder: (ctx, a1, a2) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: MediaQuery.of(ctx).size.width * 0.9,
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(ctx).size.height * 0.7,
+            ),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: widget.isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 헤더 (사자성어 + 닫기 버튼)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.message,
+                        style: ctx.bodyLarge.copyWith(
+                          color: widget.isDark ? Colors.white : Colors.black87,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      icon: Icon(
+                        Icons.close,
+                        color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Divider(
+                  color: scoreColor.withValues(alpha: 0.2),
+                  height: 1,
+                ),
+                const SizedBox(height: 16),
+                // 스크롤 가능한 전체 텍스트
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Text(
+                      widget.fullDescription,
+                      style: ctx.bodySmall.copyWith(
+                        color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
+                        fontWeight: FontWeight.w400,
+                        height: 1.6,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final scoreColor = FortuneSwipeHelpers.getPulseScoreColor(score);
+    final scoreColor = FortuneSwipeHelpers.getPulseScoreColor(widget.score);
+    final minhwaInfo = _getTodayImage();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // 민화 이미지 (날짜별 랜덤)
+        Container(
+          height: 180,
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: widget.isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF5F0E6),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(
+              minhwaInfo['image']!,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: widget.isDark
+                        ? [const Color(0xFF2C2C2E), const Color(0xFF1C1C1E)]
+                        : [const Color(0xFFF5F0E6), const Color(0xFFEDE8DC)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          minhwaInfo['emoji']!,
+                          style: const TextStyle(fontSize: 48),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          minhwaInfo['label']!,
+                          style: context.labelMedium.copyWith(
+                            color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ).animate()
+          .fadeIn(duration: 600.ms)
+          .scale(begin: const Offset(0.95, 0.95), duration: 600.ms, curve: Curves.easeOut),
+
         // 헤더 (카드 제목만 표시 - 이름은 상단 헤더에 있음)
         Text(
           '오늘의 총운',
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
+          style: context.heading3.copyWith(
+            color: widget.isDark ? Colors.white : Colors.black87,
             letterSpacing: -0.5,
           ),
         ),
@@ -44,11 +206,11 @@ class OverallCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            color: widget.isDark ? const Color(0xFF1C1C1E) : Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+                color: Colors.black.withValues(alpha: widget.isDark ? 0.3 : 0.06),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -58,9 +220,9 @@ class OverallCard extends StatelessWidget {
             children: [
               // 점수 - 크고 임팩트 있는 숫자
               Text(
-                '$score',
-                style: TextStyle(
-                  fontSize: 72,
+                '${widget.score}',
+                style: context.displayLarge.copyWith(
+                  fontSize: 72, // 예외: 초대형 숫자
                   color: scoreColor,
                   fontWeight: FontWeight.w200,
                   letterSpacing: -4,
@@ -79,13 +241,13 @@ class OverallCard extends StatelessWidget {
                   Container(
                     height: 3,
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+                      color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(1.5),
                     ),
                   ),
                   // 진행 바 (단색)
                   FractionallySizedBox(
-                    widthFactor: score / 100,
+                    widthFactor: widget.score / 100,
                     child: Container(
                       height: 3,
                       decoration: BoxDecoration(
@@ -123,10 +285,9 @@ class OverallCard extends StatelessWidget {
           ),
           child: Center(
             child: Text(
-              message,
-              style: TextStyle(
-                color: isDark ? Colors.white : Colors.black87,
-                fontSize: 17,
+              widget.message,
+              style: context.bodyLarge.copyWith(
+                color: widget.isDark ? Colors.white : Colors.black87,
                 fontWeight: FontWeight.w700,
                 height: 1.4,
               ),
@@ -138,27 +299,45 @@ class OverallCard extends StatelessWidget {
 
         const SizedBox(height: 10),
 
-        // 300자 상세 설명 카드
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Text(
-            fullDescription,
-            style: DSTypography.bodySmall.copyWith(
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
-              fontWeight: FontWeight.w400,
-              height: 1.5,
-              letterSpacing: -0.2,
+        // 300자 상세 설명 카드 (탭하면 중앙 모달로 확장)
+        GestureDetector(
+          onTap: () => _showExpandedModal(context, scoreColor),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: widget.isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: widget.isDark ? 0.3 : 0.06),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.fullDescription,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.bodySmall.copyWith(
+                    color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
+                    fontWeight: FontWeight.w400,
+                    height: 1.5,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: scoreColor.withValues(alpha: 0.5),
+                    size: 20,
+                  ),
+                ),
+              ],
             ),
           ),
         ).animate()

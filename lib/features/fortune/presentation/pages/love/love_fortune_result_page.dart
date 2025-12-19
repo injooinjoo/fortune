@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/models/fortune_result.dart';
 import '../../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../../core/design_system/design_system.dart';
@@ -93,7 +94,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
           automaticallyImplyLeading: false, // 백버튼 제거
           title: Text(
             '연애운세 결과',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.heading2.copyWith(
               color: colors.textPrimary,
             ),
           ),
@@ -227,7 +228,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
           const SizedBox(height: 16),
           Text(
             '오늘의 연애운',
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
@@ -240,7 +241,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
             children: [
               Text(
                 '❤️ $loveScore',
-                style: DSTypography.displayLarge.copyWith(
+                style: context.displayLarge.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                 ),
@@ -248,7 +249,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
               const SizedBox(width: 4),
               Text(
                 '/ 100',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: Colors.white.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w500,
                 ),
@@ -269,7 +270,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
           const SizedBox(height: 16),
           Text(
             mainMessage,
-            style: DSTypography.bodyLarge.copyWith(
+            style: context.bodyLarge.copyWith(
               color: Colors.white,
               height: 1.5,
             ),
@@ -306,7 +307,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
       ),
       child: Text(
         '$label $score',
-        style: DSTypography.labelSmall.copyWith(
+        style: context.labelSmall.copyWith(
           color: Colors.white,
           fontWeight: FontWeight.w600,
         ),
@@ -349,7 +350,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
               const SizedBox(width: 12),
               Text(
                 '연애 성향',
-                style: DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w700),
+                style: context.heading3.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -359,7 +360,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
           const SizedBox(height: 12),
           Text(
             description,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: colors.textSecondary,
               height: 1.6,
             ),
@@ -395,7 +396,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
           const SizedBox(width: 6),
           Text(
             type,
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
@@ -458,7 +459,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
               const SizedBox(width: 12),
               Text(
                 '매력 포인트',
-                style: DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w700),
+                style: context.heading3.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -469,7 +470,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
             const SizedBox(height: 12),
             Text(
               primary,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),
@@ -507,7 +508,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
             const SizedBox(width: 4),
             Text(
               charm,
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: const Color(0xFFFF6B9D),
                 fontWeight: FontWeight.w600,
               ),
@@ -616,7 +617,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w700),
+                style: context.heading3.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -656,7 +657,7 @@ ${tips.isNotEmpty ? '• ${tips.join('\n• ')}' : '서로를 존중하고 이�
 
     return Text(
       content,
-      style: DSTypography.bodyMedium.copyWith(
+      style: context.bodyMedium.copyWith(
         color: colors.textSecondary,
         height: 1.6,
       ),
@@ -681,7 +682,7 @@ ${tips.isNotEmpty ? '• ${tips.join('\n• ')}' : '서로를 존중하고 이�
 
     return Text(
       content,
-      style: DSTypography.bodyMedium.copyWith(
+      style: context.bodyMedium.copyWith(
         color: colors.textSecondary,
         height: 1.6,
       ),
@@ -709,7 +710,7 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
 
     return Text(
       content,
-      style: DSTypography.bodyMedium.copyWith(
+      style: context.bodyMedium.copyWith(
         color: colors.textSecondary,
         height: 1.6,
       ),
@@ -723,7 +724,7 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
 
     return Text(
       warningArea,
-      style: DSTypography.bodyMedium.copyWith(
+      style: context.bodyMedium.copyWith(
         color: colors.textSecondary,
         height: 1.6,
       ),
@@ -766,14 +767,14 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
               const SizedBox(width: 12),
               Text(
                 title,
-                style: DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w700),
+                style: context.heading3.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
           const SizedBox(height: 16),
           Text(
             content,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: colors.textSecondary,
               height: 1.6,
             ),

@@ -15,7 +15,7 @@ import '../../../../../../core/widgets/unified_button.dart';
 import '../../../../../../core/services/fortune_haptic_service.dart';
 import '../../../domain/models/talent_input_model.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
-import '../../../../../../services/ad_service.dart';
+import '../../../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../../../../../../core/widgets/accordion_input_section.dart';
 import '../../../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../../../core/services/unified_fortune_service.dart';
@@ -616,9 +616,10 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
 
       // 5. 광고 표시
       Logger.info('[TalentFortune] 📺 광고 표시 시작');
-      await AdService.instance.showInterstitialAdWithCallback(
+      await InterstitialAdHelper.showInterstitialAdWithCallback(
+        ref,
         onAdCompleted: () async {
-          Logger.info('[TalentFortune] ✅ 광고 완료 → 결과 페이지로 이동');
+          Logger.info('[TalentFortune] ✅ 광고 완료 또는 생략 → 결과 페이지로 이동');
           if (mounted) {
             context.push('/talent-fortune-results', extra: {
               'inputData': inputData,

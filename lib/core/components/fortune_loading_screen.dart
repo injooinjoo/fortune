@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/toss_design_system.dart';
+import 'loading_video_player.dart';
 
 class FortuneLoadingScreen extends StatefulWidget {
   final String fortuneType;
@@ -19,8 +20,7 @@ class FortuneLoadingScreen extends StatefulWidget {
 }
 
 class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _rotationController;
+    with SingleTickerProviderStateMixin {
   late AnimationController _messageController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -94,13 +94,7 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
     
     // 메시지 초기화
     _messages = _fortuneMessages[widget.fortuneType] ?? _fortuneMessages['default']!;
-    
-    // 로고 회전 애니메이션
-    _rotationController = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this,
-    )..repeat();
-    
+
     // 메시지 전환 애니메이션
     _messageController = AnimationController(
       duration: const Duration(milliseconds: 600),
@@ -168,7 +162,6 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
 
   @override
   void dispose() {
-    _rotationController.dispose();
     _messageController.dispose();
     super.dispose();
   }
@@ -178,7 +171,6 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.white;
     final textColor = isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
-    final logoColor = TossDesignSystem.tossBlue;
     
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -190,42 +182,12 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
               // 상단 여백
               const Spacer(flex: 2),
               
-              // 로고 (회전 애니메이션)
-              AnimatedBuilder(
-                animation: _rotationController,
-                builder: (context, child) {
-                  return Transform.rotate(
-                    angle: _rotationController.value * 2 * 3.14159,
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: backgroundColor,
-                        boxShadow: [
-                          BoxShadow(
-                            color: logoColor.withValues(alpha: 0.2),
-                            blurRadius: 20,
-                            spreadRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.auto_awesome,
-                        size: 32,
-                        color: logoColor,
-                      ),
-                    ),
-                  );
-                },
-              ).animate()
-                .fadeIn(duration: 600.ms)
-                .scale(
-                  begin: const Offset(0.8, 0.8),
-                  end: const Offset(1, 1),
-                  duration: 600.ms,
-                  curve: Curves.easeOutBack,
-                ),
+              // 로딩 비디오
+              const LoadingVideoPlayer(
+                width: 150,
+                height: 150,
+                loop: true,
+              ),
               
               SizedBox(height: TossDesignSystem.spacing4XL),
               
@@ -276,10 +238,10 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
 }
 
 // 간단한 로딩 위젯 (인라인용)
-class TossFortuneLoadingWidget extends StatefulWidget {
+class TossFortuneLoadingWidget extends StatelessWidget {
   final String? message;
   final double size;
-  
+
   const TossFortuneLoadingWidget({
     super.key,
     this.message,
@@ -287,53 +249,22 @@ class TossFortuneLoadingWidget extends StatefulWidget {
   });
 
   @override
-  State<TossFortuneLoadingWidget> createState() => _TossFortuneLoadingWidgetState();
-}
-
-class _TossFortuneLoadingWidgetState extends State<TossFortuneLoadingWidget>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Transform.rotate(
-              angle: _controller.value * 2 * 3.14159,
-              child: Icon(
-                Icons.auto_awesome,
-                size: widget.size,
-                color: TossDesignSystem.tossBlue,
-              ),
-            );
-          },
+        LoadingVideoPlayer(
+          width: size,
+          height: size,
+          loop: true,
         ),
-        if (widget.message != null) ...[
+        if (message != null) ...[
           SizedBox(height: TossDesignSystem.spacingM),
           Text(
-            widget.message!,
+            message!,
             style: TossDesignSystem.caption.copyWith(
               color: textColor.withValues(alpha: 0.6),
             ),

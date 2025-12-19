@@ -21,6 +21,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _premiumOverride = false;
   bool _overrideEnabled = false;
 
+  String? get _userEmail => supabase.auth.currentUser?.email;
+  bool get _isTestAccount => DebugPremiumService.isTestAccount(_userEmail);
+
   @override
   void initState() {
     super.initState();
@@ -28,8 +31,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _loadPremiumOverride() async {
-    final override = await DebugPremiumService.getOverrideValue();
-    final enabled = await DebugPremiumService.isOverrideEnabled();
+    final override = await DebugPremiumService.getOverrideValue(email: _userEmail);
+    final enabled = await DebugPremiumService.isOverrideEnabled(email: _userEmail);
     setState(() {
       _premiumOverride = override ?? false;
       _overrideEnabled = enabled;
@@ -37,8 +40,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _togglePremiumOverride() async {
-    final newValue = await DebugPremiumService.togglePremium();
-    final enabled = await DebugPremiumService.isOverrideEnabled();
+    final newValue = await DebugPremiumService.togglePremium(email: _userEmail);
+    final enabled = await DebugPremiumService.isOverrideEnabled(email: _userEmail);
 
     if (!mounted) return;
 
@@ -53,7 +56,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     } else {
       DSToast.info(
         context,
-        newValue ? '디버그: 프리미엄 활성화' : '디버그: 일반 사용자 모드',
+        newValue ? '프리미엄 활성화' : '일반 사용자 모드',
       );
     }
   }
@@ -239,8 +242,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ],
               ),
 
-              // 개발자 도구 (개발 환경에서만 표시)
-              if (kDebugMode)
+              // 개발자 도구 (개발 환경 또는 테스트 계정에서 표시)
+              if (kDebugMode || _isTestAccount)
                 DSGroupedCard(
                   header: '개발자 도구',
                   children: [

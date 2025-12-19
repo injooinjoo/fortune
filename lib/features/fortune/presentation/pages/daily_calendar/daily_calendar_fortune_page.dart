@@ -18,7 +18,6 @@ import '../../../../../core/models/holiday_models.dart';
 import '../../../domain/models/conditions/daily_fortune_conditions.dart';
 import '../../../../../services/fortune_history_service.dart';
 import '../../../../../services/storage_service.dart';
-import '../../../../../services/user_statistics_service.dart';
 import '../../../../../services/ad_service.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/utils/subscription_snackbar.dart';
@@ -425,7 +424,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         debugPrint('5️⃣ UI 상태 업데이트 완료');
 
         await _saveToHistory(fortuneResult);
-        await _updateStatistics();
+        // 통계 업데이트는 FortuneHistoryService.saveFortuneResult()에서 자동 처리됨
 
         debugPrint('');
         debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -468,24 +467,6 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
       );
     } catch (e) {
       debugPrint('히스토리 저장 실패: $e');
-    }
-  }
-
-  Future<void> _updateStatistics() async {
-    try {
-      final user = ref.read(userProvider).value;
-      if (user == null) return;
-
-      final statsService = UserStatisticsService(
-        Supabase.instance.client,
-        StorageService(),
-      );
-      await statsService.incrementFortuneCount(
-        user.id,
-        'daily_calendar',
-      );
-    } catch (e) {
-      debugPrint('통계 업데이트 실패: $e');
     }
   }
 

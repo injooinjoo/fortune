@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/toss_theme.dart';
+import '../../../core/theme/typography_unified.dart';
 import '../../../core/components/app_card.dart';
 import 'compact/compact_pillar_table.dart';
 import 'compact/compact_element_bars.dart';
@@ -32,7 +33,7 @@ class SajuSummaryCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showHeader) ...[
-            _buildHeader(isDark),
+            _buildHeader(context, isDark),
             const SizedBox(height: TossTheme.spacingM),
           ],
           // 1. 사주 팔자 + 십성
@@ -74,7 +75,7 @@ class SajuSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(bool isDark) {
+  Widget _buildHeader(BuildContext context, bool isDark) {
     return Row(
       children: [
         Container(
@@ -103,16 +104,15 @@ class SajuSummaryCard extends StatelessWidget {
             children: [
               Text(
                 '사주 종합',
-                style: TossTheme.heading3.copyWith(
+                style: context.heading3.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
               Text(
                 '四柱綜合 · 나의 사주 팔자',
-                style: TossTheme.caption.copyWith(
+                style: context.labelTiny.copyWith(
                   color: isDark ? Colors.white60 : Colors.black54,
-                  fontSize: 11,
                 ),
               ),
             ],

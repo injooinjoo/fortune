@@ -64,18 +64,12 @@ class TokenBalanceWidget extends ConsumerWidget {
                 ),
               )
             else
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    balance?.toString() ?? '0',
-                    style: context.typography.labelSmall.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                ],
+              Text(
+                balance?.remainingTokens.toString() ?? '0',
+                style: context.typography.labelSmall.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colors.textPrimary,
+                ),
               ),
           ],
         ),

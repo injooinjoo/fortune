@@ -8,6 +8,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/components/app_card.dart';
 import '../../domain/models/sipseong_talent.dart';
 
@@ -46,7 +47,7 @@ class GrowthTimelineWidget extends StatelessWidget {
           // 제목
           Text(
             '평생 성장 가이드',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.heading2.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
@@ -54,7 +55,7 @@ class GrowthTimelineWidget extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             '대운(大運)으로 보는 당신의 생애 주기와 성장 방향',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               height: 1.5,
               color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
@@ -62,19 +63,19 @@ class GrowthTimelineWidget extends StatelessWidget {
           const SizedBox(height: 24),
 
           // 행운의 요소
-          _buildLuckyElementsSection(isDark)
+          _buildLuckyElementsSection(context, isDark)
               .animate()
               .fadeIn(delay: 0.ms, duration: 400.ms),
           const SizedBox(height: 24),
 
           // 성장 조언
-          _buildGrowthAdviceSection(isDark)
+          _buildGrowthAdviceSection(context, isDark)
               .animate()
               .fadeIn(delay: 100.ms, duration: 400.ms),
           const SizedBox(height: 24),
 
           // 대운 타임라인
-          _buildDaeunTimeline(isDark)
+          _buildDaeunTimeline(context, isDark)
               .animate()
               .fadeIn(delay: 200.ms, duration: 400.ms),
         ],
@@ -82,7 +83,7 @@ class GrowthTimelineWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildLuckyElementsSection(bool isDark) {
+  Widget _buildLuckyElementsSection(BuildContext context, bool isDark) {
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,12 +92,12 @@ class GrowthTimelineWidget extends StatelessWidget {
             children: [
               Text(
                 '🍀',
-                style: DSTypography.displaySmall,
+                style: context.displaySmall,
               ),
               SizedBox(width: 12),
               Text(
                 '성장을 도와줄 행운의 요소',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 ),
@@ -136,7 +137,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                     SizedBox(width: 6),
                     Text(
                       element,
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       ),
@@ -151,7 +152,7 @@ class GrowthTimelineWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildGrowthAdviceSection(bool isDark) {
+  Widget _buildGrowthAdviceSection(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -174,7 +175,7 @@ class GrowthTimelineWidget extends StatelessWidget {
         children: [
           Text(
             '💡',
-            style: DSTypography.displaySmall,
+            style: context.displaySmall,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -183,7 +184,7 @@ class GrowthTimelineWidget extends StatelessWidget {
               children: [
                 Text(
                   '성장 조언',
-                  style: DSTypography.labelMedium.copyWith(
+                  style: context.labelMedium.copyWith(
                     fontWeight: FontWeight.w700,
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   ),
@@ -191,7 +192,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   primaryTalent.growthAdvice,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     height: 1.6,
                     color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
@@ -204,7 +205,7 @@ class GrowthTimelineWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDaeunTimeline(bool isDark) {
+  Widget _buildDaeunTimeline(BuildContext context, bool isDark) {
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,12 +214,12 @@ class GrowthTimelineWidget extends StatelessWidget {
             children: [
               Text(
                 '📅',
-                style: DSTypography.displaySmall,
+                style: context.displaySmall,
               ),
               SizedBox(width: 12),
               Text(
                 '대운(大運) 타임라인',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 ),
@@ -228,7 +229,7 @@ class GrowthTimelineWidget extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             '10년 주기로 변화하는 인생의 흐름',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
           ),
@@ -246,7 +247,7 @@ class GrowthTimelineWidget extends StatelessWidget {
 
             return Padding(
               padding: EdgeInsets.only(bottom: index < daeunList.length - 1 ? 12 : 0),
-              child: _buildDaeunCard(
+              child: _buildDaeunCard(context,
                 isDark: isDark,
                 age: age,
                 isActive: isActive,
@@ -261,7 +262,7 @@ class GrowthTimelineWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDaeunCard({
+  Widget _buildDaeunCard(BuildContext context, {
     required bool isDark,
     required int age,
     required bool isActive,
@@ -298,7 +299,7 @@ class GrowthTimelineWidget extends StatelessWidget {
               children: [
                 Text(
                   '$age세',
-                  style: DSTypography.labelMedium.copyWith(
+                  style: context.labelMedium.copyWith(
                     fontWeight: FontWeight.w700,
                     color: isActive ? wuxingColor : DSColors.textSecondary,
                   ),
@@ -313,7 +314,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                     ),
                     child: Text(
                       '현재',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
@@ -339,7 +340,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                       ),
                       child: Text(
                         '$wuxing 운',
-                        style: DSTypography.labelMedium.copyWith(
+                        style: context.labelMedium.copyWith(
                           fontWeight: FontWeight.w700,
                           color: wuxingColor,
                         ),
@@ -348,7 +349,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                     SizedBox(width: 8),
                     Text(
                       '$gan$zhi',
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       ),
@@ -358,7 +359,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                 SizedBox(height: 6),
                 Text(
                   _getDaeunDescription(wuxing, isActive),
-                  style: DSTypography.labelMedium.copyWith(
+                  style: context.labelMedium.copyWith(
                     height: 1.4,
                     color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
@@ -481,7 +482,7 @@ class DaeunSummaryWidget extends StatelessWidget {
         children: [
           Text(
             '📅',
-            style: DSTypography.displayMedium,
+            style: context.displayMedium,
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -490,7 +491,7 @@ class DaeunSummaryWidget extends StatelessWidget {
               children: [
                 Text(
                   '현재 대운',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
@@ -498,7 +499,7 @@ class DaeunSummaryWidget extends StatelessWidget {
                 SizedBox(height: 4),
                 Text(
                   '$age세 · $gan$zhi ($wuxing 운)',
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.heading3.copyWith(
                     fontWeight: FontWeight.w700,
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   ),

@@ -4,7 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_design.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
@@ -109,12 +109,12 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                     children: [
                       Text(
                         widget.talismanDesign.category.emoji,
-                        style: DSTypography.labelMedium,
+                        style: context.labelMedium,
                       ),
                       SizedBox(width: 6),
                       Text(
                         widget.talismanDesign.category.displayName,
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: _categoryColor,
                           fontWeight: FontWeight.w600,
                         ),
@@ -191,7 +191,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                   ),
                   child: GptStyleTypingText(
                     text: widget.talismanDesign.mantraText,
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: TossDesignSystem.textPrimaryLight,
                       fontWeight: FontWeight.w500,
                       height: 1.4,
@@ -216,7 +216,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
           if (widget.talismanDesign.blessings.isNotEmpty) ...[
             Text(
               '부적의 축복',
-              style: DSTypography.headingSmall.copyWith(
+              style: context.heading3.copyWith(
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
@@ -248,7 +248,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                     Expanded(
                       child: GptStyleTypingText(
                         text: blessing,
-                        style: DSTypography.bodyMedium.copyWith(
+                        style: context.bodyMedium.copyWith(
                           height: 1.5,
                           color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         ),
@@ -356,12 +356,12 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
           const SizedBox(height: 12),
           Text(
             widget.talismanDesign.category.emoji,
-            style: DSTypography.displayLarge,
+            style: context.displayLarge,
           ),
           SizedBox(height: 8),
           Text(
             widget.talismanDesign.category.displayName,
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: _categoryColor,
               fontWeight: FontWeight.w600,
             ),

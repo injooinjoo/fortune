@@ -4,11 +4,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/core/widgets/app_widgets.dart';
 import 'package:fortune/core/widgets/unified_date_picker.dart';
-import 'package:fortune/core/widgets/unified_button.dart';
 import 'package:fortune/features/fortune/presentation/widgets/fortune_loading_skeleton.dart';
 import 'package:fortune/presentation/providers/secondary_profiles_provider.dart';
 import 'package:fortune/data/models/secondary_profile.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/design_system/components/traditional/traditional_button.dart';
 
 class CompatibilityInputView extends ConsumerStatefulWidget {
   final GlobalKey<FormState> formKey;
@@ -123,12 +123,21 @@ class _CompatibilityInputViewState
           ),
         ),
 
-        // Floating 버튼 - 조건 미달성 시 숨김
+        // Floating 버튼 - 조건 미달성 시 숨김 (전통 스타일)
         if (widget.canAnalyze)
-          UnifiedButton.floating(
-            text: '궁합 분석하기',
-            onPressed: widget.canAnalyze ? widget.onAnalyze : null,
-            isEnabled: widget.canAnalyze,
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 32,
+            child: TraditionalButton(
+              text: '궁합 분석하기',
+              hanja: '宮合',
+              style: TraditionalButtonStyle.filled,
+              colorScheme: TraditionalButtonColorScheme.love,
+              isExpanded: true,
+              height: 56,
+              onPressed: widget.canAnalyze ? widget.onAnalyze : null,
+            ),
           ),
       ],
     );

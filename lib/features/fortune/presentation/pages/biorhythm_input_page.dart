@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -273,10 +274,8 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                                   // 타이틀 - 붓글씨 스타일
                                   Text(
                                     '생체 리듬의 흐름을\n읽어드립니다',
-                                    style: TextStyle(
+                                    style: context.heading3.copyWith(
                                       fontFamily: 'GowunBatang',
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
                                       color: textColor,
                                       height: 1.5,
                                     ),
@@ -287,9 +286,7 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                                   // 설명 - 전통 스타일
                                   Text(
                                     '신체(火) · 감정(木) · 지적(水)\n세 가지 기운의 주기를 분석하여\n오늘의 운세를 알려드립니다',
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 14,
+                                    style: context.bodySmall.copyWith(
                                       color: textColor.withValues(alpha: 0.7),
                                       height: 1.6,
                                     ),
@@ -338,9 +335,8 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                                       const SizedBox(width: 8),
                                       Text(
                                         '생년월일',
-                                        style: TextStyle(
+                                        style: context.bodyMedium.copyWith(
                                           fontFamily: 'GowunBatang',
-                                          fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                           color: textColor,
                                         ),
@@ -366,9 +362,8 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                           // 안내 문구 - 전통 스타일
                           Text(
                             '※ 분석 결과는 참고용으로만 활용해 주세요',
-                            style: TextStyle(
+                            style: context.labelMedium.copyWith(
                               fontFamily: 'GowunBatang',
-                              fontSize: 12,
                               color: textColor.withValues(alpha: 0.5),
                             ),
                             textAlign: TextAlign.center,

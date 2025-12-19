@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/tokens/ds_fortune_colors.dart';
+import '../../../../core/design_system/components/traditional/traditional_button.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/services/debug_premium_service.dart';
@@ -15,7 +16,6 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../providers/saju_provider.dart';
 import '../widgets/saju_element_chart.dart';
-import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 // 전문가 사주 위젯들
 import '../widgets/saju/saju_widgets.dart';
@@ -99,30 +99,46 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hanjiBackground = DSFortuneColors.getHanjiBackground(isDark);
+    final inkColor = isDark ? const Color(0xFFD4D0C8) : const Color(0xFF2C2C2C);
     final sajuState = ref.watch(sajuProvider);
 
     return Scaffold(
-      backgroundColor: colors.background,
-      appBar: StandardFortuneAppBar(
-        title: '전통',
-        showBackButton: !_showResults,
-        onBackPressed: () {
-          Navigator.pop(context);
-        },
-        actions: _showResults
-            ? [
-                IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: colors.textPrimary,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ]
-            : null,
+      backgroundColor: hanjiBackground,
+      appBar: AppBar(
+        backgroundColor: hanjiBackground,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            _showResults ? Icons.close : Icons.arrow_back_ios_new,
+            color: inkColor,
+            size: 20,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '四柱命理',
+              style: context.labelMedium.copyWith(
+                fontFamily: 'GowunBatang',
+                color: inkColor.withValues(alpha: 0.6),
+                letterSpacing: 2,
+              ),
+            ),
+            Text(
+              '사주 명리',
+              style: context.heading3.copyWith(
+                fontFamily: 'GowunBatang',
+                color: inkColor,
+              ),
+            ),
+          ],
+        ),
       ),
       body: _buildBody(sajuState),
     );
@@ -153,17 +169,19 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             Text(
               sajuState.error!,
               textAlign: TextAlign.center,
-              style: DSTypography.bodyLarge.copyWith(
+              style: context.bodyLarge.copyWith(
                 color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: DSSpacing.lg),
-            UnifiedButton(
+            TraditionalButton(
               text: '다시 시도',
+              hanja: '再試',
+              style: TraditionalButtonStyle.filled,
+              colorScheme: TraditionalButtonColorScheme.fortune,
               onPressed: () {
                 ref.read(sajuProvider.notifier).fetchUserSaju();
               },
-              style: UnifiedButtonStyle.primary,
             ),
           ],
         ),
@@ -206,19 +224,21 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
               Text(
                 '생년월일 정보가 필요해요.\n프로필에서 생년월일을 입력해주세요.',
                 textAlign: TextAlign.center,
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: DSSpacing.lg),
-              UnifiedButton(
+              TraditionalButton(
                 text: '프로필 편집하기',
+                hanja: '編輯',
+                style: TraditionalButtonStyle.filled,
+                colorScheme: TraditionalButtonColorScheme.fortune,
                 onPressed: () {
                   Navigator.pop(context);
                   // 프로필 편집 페이지로 이동
                   Navigator.pushNamed(context, '/profile-edit');
                 },
-                style: UnifiedButtonStyle.primary,
               ),
             ],
           ),
@@ -289,12 +309,20 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           ],
         ),
         if (hasQuestion)
-          UnifiedButton.floating(
-            text: _isFortuneLoading ? '운세를 보고 있어요' : '📿 하늘이 정한 나의 운명',
-            onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
-            isEnabled: hasQuestion && !_isFortuneLoading,
-            showProgress: false,
-            isLoading: _isFortuneLoading,
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 32,
+            child: TraditionalButton(
+              text: _isFortuneLoading ? '운세를 보고 있어요' : '하늘이 정한 나의 운명',
+              hanja: '運命',
+              style: TraditionalButtonStyle.filled,
+              colorScheme: TraditionalButtonColorScheme.fortune,
+              isExpanded: true,
+              height: 56,
+              isLoading: _isFortuneLoading,
+              onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
+            ),
           ),
       ],
     );
@@ -309,14 +337,18 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     );
   }
 
-  /// 탭바
+  /// 탭바 (전통 스타일)
   Widget _buildTabBar(DSColorScheme colors) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hanjiBackground = DSFortuneColors.getHanjiBackground(isDark);
+    final sealColor = DSFortuneColors.getSealColor(isDark);
+
     return Container(
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: hanjiBackground,
         border: Border(
           bottom: BorderSide(
-            color: colors.border,
+            color: colors.border.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -325,19 +357,17 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
         controller: _tabController,
         isScrollable: true,
         tabAlignment: TabAlignment.start,
-        labelColor: colors.accent,
+        labelColor: sealColor,
         unselectedLabelColor: colors.textSecondary,
-        labelStyle: const TextStyle(
-          fontSize: 13,
+        labelStyle: context.bodySmall.copyWith(
           fontWeight: FontWeight.bold,
-          fontFamily: 'ZenSerif',
+          fontFamily: 'GowunBatang',
         ),
-        unselectedLabelStyle: const TextStyle(
-          fontSize: 13,
+        unselectedLabelStyle: context.bodySmall.copyWith(
           fontWeight: FontWeight.w500,
-          fontFamily: 'ZenSerif',
+          fontFamily: 'GowunBatang',
         ),
-        indicatorColor: colors.accent,
+        indicatorColor: sealColor,
         indicatorWeight: 2,
         dividerColor: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
@@ -359,18 +389,25 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
               _buildFortuneResult(sajuData),
               const SizedBox(height: DSSpacing.lg),
 
-              const BottomButtonSpacing(),
+              const SizedBox(height: 100), // 버튼 공간 확보
             ],
           ),
         ),
         // 블러 상태일 때만 광고 버튼 표시 (구독자 제외)
         if (_isBlurred && !ref.watch(isPremiumProvider))
-          UnifiedButton.floating(
-            text: '🎁 광고 보고 전체 운세 보기',
-            onPressed: _showAdAndUnblur,
-            isEnabled: true,
-            showProgress: false,
-            isLoading: false,
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 32,
+            child: TraditionalButton(
+              text: '광고 보고 전체 운세 보기',
+              hanja: '解禁',
+              style: TraditionalButtonStyle.filled,
+              colorScheme: TraditionalButtonColorScheme.fortune,
+              isExpanded: true,
+              height: 56,
+              onPressed: _showAdAndUnblur,
+            ),
           ),
       ],
     );
@@ -438,7 +475,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
         children: [
           Text(
             '궁금한 질문을 선택하세요',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               color: colors.textPrimary,
             ),
           ),
@@ -449,17 +486,19 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             Container(
               width: double.infinity,
               margin: const EdgeInsets.only(bottom: DSSpacing.sm),
-              child: UnifiedButton(
+              child: TraditionalButton(
                 text: question,
+                style: _selectedQuestion == question
+                    ? TraditionalButtonStyle.filled
+                    : TraditionalButtonStyle.outlined,
+                colorScheme: TraditionalButtonColorScheme.fortune,
+                isExpanded: true,
                 onPressed: () {
                   setState(() {
                     _selectedQuestion = question;
                     _customQuestionController.clear();
                   });
                 },
-                style: _selectedQuestion == question
-                    ? UnifiedButtonStyle.primary
-                    : UnifiedButtonStyle.secondary,
               ),
             ),
           ),
@@ -469,7 +508,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           // 직접 질문 입력
           Text(
             '또는 직접 질문을 작성해주세요',
-            style: DSTypography.bodyLarge.copyWith(
+            style: context.bodyLarge.copyWith(
               fontWeight: FontWeight.w600,
               color: colors.textPrimary,
             ),
@@ -489,7 +528,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             },
             decoration: InputDecoration(
               hintText: '예: 언제 직장을 옮겨야 할까요?',
-              hintStyle: DSTypography.labelSmall.copyWith(
+              hintStyle: context.labelSmall.copyWith(
                 color: colors.textTertiary,
               ),
               fillColor: colors.backgroundSecondary,
@@ -512,7 +551,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
               ),
               contentPadding: const EdgeInsets.all(DSSpacing.md),
             ),
-            style: DSTypography.bodyLarge.copyWith(
+            style: context.bodyLarge.copyWith(
               color: colors.textPrimary,
             ),
             maxLines: 2,
@@ -617,7 +656,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
                   const SizedBox(width: DSSpacing.sm),
                   Text(
                     '질문',
-                    style: DSTypography.headingSmall.copyWith(
+                    style: context.heading3.copyWith(
                       color: colors.textPrimary,
                     ),
                   ),
@@ -634,7 +673,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
                 ),
                 child: Text(
                   question,
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     fontWeight: FontWeight.w600,
                     color: colors.textPrimary,
                   ),
@@ -717,7 +756,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           // 제목은 항상 표시 (블러 없음)
           Text(
             title,
-            style: DSTypography.labelLarge.copyWith(
+            style: context.labelLarge.copyWith(
               color: colors.textPrimary,
             ),
           ),
@@ -730,7 +769,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             sectionKey: sectionKey,
             child: GptStyleTypingText(
               text: content,
-              style: DSTypography.bodyLarge.copyWith(
+              style: context.bodyLarge.copyWith(
                 height: 1.6,
                 color: colors.textPrimary,
               ),

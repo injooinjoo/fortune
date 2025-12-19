@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/design_system/tokens/ds_love_colors.dart';
+import '../../../../../core/design_system/components/traditional/traditional_button.dart';
 import '../../../../../core/widgets/accordion_input_section.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/services/debug_premium_service.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
-import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../../services/storage_service.dart';
 import '../../../../fortune/domain/models/conditions/love_fortune_conditions.dart';
-import '../../widgets/standard_fortune_app_bar.dart';
 import '../love/love_fortune_result_page.dart';
 import 'widgets/index.dart';
 import 'love_fortune_input_helpers.dart';
@@ -659,12 +658,45 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hanjiBackground = DSLoveColors.getHanjiBackground(isDark);
+    final inkColor = isDark ? const Color(0xFFD4D0C8) : const Color(0xFF2C2C2C);
 
     return Scaffold(
-      backgroundColor: colors.background,
-      appBar: const StandardFortuneAppBar(
-        title: '연애운',
+      backgroundColor: hanjiBackground,
+      appBar: AppBar(
+        backgroundColor: hanjiBackground,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new, color: inkColor, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '戀愛運勢',
+              style: TextStyle(
+                fontFamily: 'GowunBatang',
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: inkColor.withValues(alpha: 0.6),
+                letterSpacing: 2,
+              ),
+            ),
+            Text(
+              '연애운세',
+              style: TextStyle(
+                fontFamily: 'GowunBatang',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: inkColor,
+              ),
+            ),
+          ],
+        ),
       ),
       body: SafeArea(
         child: Stack(
@@ -678,11 +710,20 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
                     completionButtonText: '연애운세 보기',
                   ),
             if (_canGenerate())
-              UnifiedButton.floating(
-                text: '🔮 연애운세 보기',
-                onPressed: _canGenerate() ? () => _analyzeAndShowResult() : null,
-                isEnabled: _canGenerate() && !_isLoading,
-                isLoading: _isLoading,
+              Positioned(
+                left: 20,
+                right: 20,
+                bottom: 32,
+                child: TraditionalButton(
+                  text: '연애운세 보기',
+                  hanja: '戀愛',
+                  style: TraditionalButtonStyle.filled,
+                  colorScheme: TraditionalButtonColorScheme.love,
+                  isExpanded: true,
+                  height: 56,
+                  isLoading: _isLoading,
+                  onPressed: _canGenerate() && !_isLoading ? () => _analyzeAndShowResult() : null,
+                ),
               ),
           ],
         ),
@@ -691,23 +732,30 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
   }
 
   Widget _buildTitleSection(BuildContext context) {
-    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final inkColor = isDark ? const Color(0xFFD4D0C8) : const Color(0xFF2C2C2C);
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '연애운세',
-            style: DSTypography.displayLarge.copyWith(
-              color: colors.textPrimary,
+            '나의 연애 이야기',
+            style: TextStyle(
+              fontFamily: 'GowunBatang',
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: inkColor,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '솔직하게 답할수록 정확한 조언을 드려요',
-            style: DSTypography.bodyMedium.copyWith(
-              color: colors.textSecondary,
+            style: TextStyle(
+              fontFamily: 'GowunBatang',
+              fontSize: 15,
+              color: inkColor.withValues(alpha: 0.7),
             ),
           ),
         ],

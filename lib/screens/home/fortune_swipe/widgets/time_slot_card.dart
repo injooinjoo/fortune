@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// ⏰ 시간대별 조언 카드 - ChatGPT Pulse 스타일
 class TimeSlotCard extends StatelessWidget {
@@ -36,16 +36,13 @@ class TimeSlotCard extends StatelessWidget {
             color: isDark ? Colors.white : Colors.black87,
             fontSize: 22,
             fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '오늘 하루를 시간대별로 준비하세요',
-          style: TextStyle(
+          style: context.bodySmall.copyWith(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
           ),
         ),
 
@@ -54,11 +51,12 @@ class TimeSlotCard extends StatelessWidget {
         // 오전
         if (timeSlots['morning']?.isNotEmpty == true)
           _TimeSlotItem(
-            icon: Icons.wb_sunny_rounded,
+            emoji: '🌅',
             title: '오전 (6시-12시)',
             advice: timeSlots['morning']!,
             isActive: currentTimeSlot == 'morning',
             isDark: isDark,
+            accentColor: const Color(0xFFDAA520), // 황금색 (아침 햇살)
           ),
 
         if (timeSlots['morning']?.isNotEmpty == true &&
@@ -68,11 +66,12 @@ class TimeSlotCard extends StatelessWidget {
         // 오후
         if (timeSlots['afternoon']?.isNotEmpty == true)
           _TimeSlotItem(
-            icon: Icons.wb_cloudy_rounded,
+            emoji: '☀️',
             title: '오후 (12시-18시)',
             advice: timeSlots['afternoon']!,
             isActive: currentTimeSlot == 'afternoon',
             isDark: isDark,
+            accentColor: const Color(0xFFDC143C), // 진홍색 (화기)
           ),
 
         if (timeSlots['afternoon']?.isNotEmpty == true &&
@@ -82,11 +81,12 @@ class TimeSlotCard extends StatelessWidget {
         // 저녁
         if (timeSlots['evening']?.isNotEmpty == true)
           _TimeSlotItem(
-            icon: Icons.nightlight_round,
+            emoji: '🌕',
             title: '저녁 (18시-자정)',
             advice: timeSlots['evening']!,
             isActive: currentTimeSlot == 'evening',
             isDark: isDark,
+            accentColor: const Color(0xFF1E3A5F), // 남색 (수기)
           ),
       ],
     );
@@ -94,31 +94,31 @@ class TimeSlotCard extends StatelessWidget {
 }
 
 class _TimeSlotItem extends StatelessWidget {
-  final IconData icon;
+  final String emoji;
   final String title;
   final String advice;
   final bool isActive;
   final bool isDark;
+  final Color accentColor;
 
   const _TimeSlotItem({
-    required this.icon,
+    required this.emoji,
     required this.title,
     required this.advice,
     required this.isActive,
     required this.isDark,
+    required this.accentColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    const accentColor = Color(0xFF3B82F6);
-
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: isActive
-            ? Border.all(color: accentColor.withValues(alpha: 0.3), width: 1.5)
+            ? Border.all(color: accentColor.withValues(alpha: 0.4), width: 1.5)
             : Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08), width: 1),
         boxShadow: [
           BoxShadow(
@@ -131,25 +131,27 @@ class _TimeSlotItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 아이콘 (Pulse 스타일)
+          // 이모지 아이콘 (전통 스타일)
           Container(
-            padding: const EdgeInsets.all(8),
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: isActive
-                  ? accentColor.withValues(alpha: 0.1)
+                  ? accentColor.withValues(alpha: 0.15)
                   : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: isActive
-                    ? accentColor.withValues(alpha: 0.2)
+                    ? accentColor.withValues(alpha: 0.3)
                     : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
                 width: 1,
               ),
             ),
-            child: Icon(
-              icon,
-              color: isActive ? accentColor : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-              size: 20,
+            child: Center(
+              child: Text(
+                emoji,
+                style: const TextStyle(fontSize: 22),
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -161,7 +163,7 @@ class _TimeSlotItem extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         color: isDark ? Colors.white : Colors.black87,
                         fontWeight: FontWeight.w600,
                       ),
@@ -171,14 +173,10 @@ class _TimeSlotItem extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: accentColor.withValues(alpha: 0.1),
+                          color: accentColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: accentColor.withValues(alpha: 0.2),
-                            width: 1,
-                          ),
                         ),
-                        child: const Text(
+                        child: Text(
                           '지금',
                           style: TextStyle(
                             color: accentColor,
@@ -193,10 +191,9 @@ class _TimeSlotItem extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   advice,
-                  style: TextStyle(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                    fontSize: 13,
-                    height: 1.4,
+                  style: context.bodySmall.copyWith(
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
+                    height: 1.5,
                   ),
                 ),
               ],

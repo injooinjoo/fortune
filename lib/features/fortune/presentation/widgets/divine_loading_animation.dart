@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/components/loading_video_player.dart';
 
 /// 신의 응답을 기다리는 신비로운 로딩 애니메이션
 class DivineLoadingAnimation extends ConsumerStatefulWidget {
@@ -168,38 +169,12 @@ class _DivineLoadingAnimationState extends ConsumerState<DivineLoadingAnimation>
                   },
                 ),
 
-                // 중심 아이콘
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        DSColors.accent,
-                        DSColors.accent.withValues(alpha: 0.7),
-                      ],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: DSColors.accent.withValues(alpha: 0.4),
-                        blurRadius: 30,
-                        spreadRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.auto_awesome,
-                    color: Colors.white,
-                    size: 40,
-                  ),
-                ).animate(onPlay: (controller) => controller.repeat())
-                  .shimmer(
-                    duration: 2000.ms,
-                    color: Colors.white.withValues(alpha: 0.3),
-                  ),
+                // 중심 비디오
+                const LoadingVideoPlayer(
+                  width: 100,
+                  height: 100,
+                  loop: true,
+                ),
               ],
             ),
 

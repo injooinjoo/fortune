@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
+import '../../../../data/models/celebrity_saju.dart';
 import '../../../../presentation/providers/celebrity_saju_provider.dart';
 
 /// 🎭 유사 사주 연예인 카드 - ChatGPT Pulse 스타일
@@ -14,7 +15,8 @@ class CelebrityCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final celebrities = ref.watch(randomCelebritiesProvider);
+    // 오늘 일주 기반 궁합도가 포함된 연예인 리스트
+    final celebritiesAsync = ref.watch(celebritiesWithCompatibilityProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -22,56 +24,36 @@ class CelebrityCard extends ConsumerWidget {
         // 헤더
         Text(
           '나와 비슷한 사주',
-          style: TextStyle(
+          style: context.heading3.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 4),
         Text(
-          '유명인과의 사주 궁합',
-          style: TextStyle(
+          '오늘의 일주(日柱) 기준 유명인 궁합',
+          style: context.bodySmall.copyWith(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
           ),
         ),
 
         const SizedBox(height: 16),
 
-        celebrities.when(
-          data: (celebList) {
-            if (celebList.isEmpty) {
-              return _buildFallbackCelebrityCards();
+        celebritiesAsync.when(
+          data: (celebDataList) {
+            if (celebDataList.isEmpty) {
+              return _buildEmptyState();
             }
             return Column(
-              children: celebList.take(3).map((celeb) {
-                // 설명 생성 (그룹명 또는 카테고리)
-                final description = celeb.category.isNotEmpty
-                    ? celeb.category
+              children: celebDataList.take(3).map((data) {
+                final celeb = data['celebrity'] as CelebritySaju;
+                final compatibility = data['compatibility'] as int;
+
+                // 설명 생성 (한글 카테고리 또는 출생년도)
+                final description = celeb.categoryKorean.isNotEmpty
+                    ? celeb.categoryKorean
                     : (celeb.birthDate.isNotEmpty ? '${celeb.birthDate.substring(0, 4)}년생' : '');
 
-                // 생년월일 기반 궁합도 계산 (오행 데이터 없을 때)
-                int compatibility = 50;
-                if (celeb.birthDate.isNotEmpty) {
-                  try {
-                    final birthYear = int.parse(celeb.birthDate.substring(0, 4));
-                    final monthDay = celeb.birthDate.length >= 10
-                        ? int.parse(celeb.birthDate.substring(5, 7)) + int.parse(celeb.birthDate.substring(8, 10))
-                        : 15;
-                    // 생년 + 월일 조합으로 55-95% 범위의 궁합도 생성
-                    compatibility = ((birthYear % 40) + monthDay).clamp(55, 95);
-                  } catch (e) {
-                    compatibility = 65 + (celeb.name.hashCode % 30); // fallback
-                  }
-                } else {
-                  compatibility = 60 + (celeb.name.hashCode.abs() % 35); // 이름 기반 fallback
-                }
-                compatibility = compatibility.clamp(55, 95);
-
-                debugPrint('🎭 [CELEBRITY_CARD] ${celeb.name}: birthDate=${celeb.birthDate} → compatibility=$compatibility%');
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: _CelebrityCardItem(
@@ -91,32 +73,28 @@ class CelebrityCard extends ConsumerWidget {
               child: CircularProgressIndicator(),
             ),
           ),
-          error: (_, __) => _buildFallbackCelebrityCards(),
+          error: (_, __) => _buildEmptyState(),
         ),
       ],
     );
   }
 
-  Widget _buildFallbackCelebrityCards() {
-    final fallbackData = [
-      {'name': '이순신', 'desc': '강한 리더십과 결단력', 'compatibility': 85},
-      {'name': '세종대왕', 'desc': '지혜와 창의성의 조화', 'compatibility': 78},
-      {'name': '신사임당', 'desc': '예술적 감각과 지성', 'compatibility': 72},
-    ];
-
-    return Column(
-      children: fallbackData.map((data) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: _CelebrityCardItem(
-            name: data['name'] as String,
-            description: data['desc'] as String,
-            imageUrl: null,
-            compatibility: data['compatibility'] as int,
-            isDark: isDark,
+  /// 데이터 없을 때 표시할 위젯
+  Widget _buildEmptyState() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Center(
+        child: Text(
+          '유명인 데이터를 불러오는 중...',
+          style: TypographyUnified.bodySmall.copyWith(
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
           ),
-        );
-      }).toList(),
+        ),
+      ),
     );
   }
 }
@@ -136,23 +114,22 @@ class _CelebrityCardItem extends StatelessWidget {
     required this.isDark,
   });
 
+  /// 전통 오방색 기반 궁합 색상
   Color get _compatibilityColor {
-    if (compatibility >= 80) return const Color(0xFF10B981);
-    if (compatibility >= 60) return const Color(0xFF3B82F6);
-    if (compatibility >= 40) return const Color(0xFFF59E0B);
-    return const Color(0xFFEF4444);
+    if (compatibility >= 80) return const Color(0xFF2E8B57); // 목(木) - 최상
+    if (compatibility >= 60) return const Color(0xFFDAA520); // 토(土) - 양호
+    if (compatibility >= 40) return const Color(0xFF1E3A5F); // 수(水) - 보통
+    return const Color(0xFFDC143C); // 화(火) - 주의
   }
 
-  /// 이름 첫 글자로 아바타 배경색 결정
+  /// 이름 첫 글자로 아바타 배경색 결정 (전통 오방색)
   Color get _avatarColor {
     final colors = [
-      const Color(0xFF9333EA), // 보라
-      const Color(0xFF3B82F6), // 파랑
-      const Color(0xFF10B981), // 초록
-      const Color(0xFFF59E0B), // 주황
-      const Color(0xFFEF4444), // 빨강
-      const Color(0xFF6366F1), // 인디고
-      const Color(0xFFEC4899), // 핑크
+      const Color(0xFF2E8B57), // 목(木) - 청록
+      const Color(0xFFDC143C), // 화(火) - 진홍
+      const Color(0xFFDAA520), // 토(土) - 금황
+      const Color(0xFFC0A062), // 금(金) - 금색
+      const Color(0xFF1E3A5F), // 수(水) - 남색
     ];
     return colors[name.hashCode.abs() % colors.length];
   }
@@ -188,9 +165,8 @@ class _CelebrityCardItem extends StatelessWidget {
     return Center(
       child: Text(
         initial,
-        style: TextStyle(
+        style: TypographyUnified.heading4.copyWith(
           color: _avatarColor,
-          fontSize: 18,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -207,8 +183,8 @@ class _CelebrityCardItem extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -223,18 +199,16 @@ class _CelebrityCardItem extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: isDark ? Colors.white : Colors.black87,
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.labelMedium.copyWith(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                    fontSize: 12,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -252,9 +226,8 @@ class _CelebrityCardItem extends StatelessWidget {
             ),
             child: Text(
               '$compatibility%',
-              style: TextStyle(
+              style: context.labelLarge.copyWith(
                 color: _compatibilityColor,
-                fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
             ),

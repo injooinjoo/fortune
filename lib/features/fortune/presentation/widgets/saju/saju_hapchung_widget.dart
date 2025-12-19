@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
@@ -53,7 +54,7 @@ class SajuHapchungWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
-            _buildTitle(isDark),
+            _buildTitle(context, isDark),
             const SizedBox(height: DSSpacing.sm),
           ],
           // 관계 요약 시각화
@@ -61,14 +62,14 @@ class SajuHapchungWidget extends StatelessWidget {
           const SizedBox(height: DSSpacing.sm),
           // 합(合) 섹션
           if (combinationRelations.isNotEmpty) ...[
-            _buildSectionHeader(RelationType.combination, isDark),
+            _buildSectionHeader(context, RelationType.combination, isDark),
             const SizedBox(height: DSSpacing.sm),
             ...combinationRelations.map((r) => _buildRelationItem(context, r, isDark)),
             const SizedBox(height: DSSpacing.md),
           ],
           // 충/형/파/해 섹션
           if (inauspiciousRelations.isNotEmpty) ...[
-            _buildSectionHeader(null, isDark, isInauspicious: true),
+            _buildSectionHeader(context, null, isDark, isInauspicious: true),
             const SizedBox(height: DSSpacing.sm),
             ...inauspiciousRelations.map((r) => _buildRelationItem(context, r, isDark)),
           ],
@@ -76,6 +77,7 @@ class SajuHapchungWidget extends StatelessWidget {
           if (relations.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.sm),
             _buildSummary(
+              context,
               combinationRelations.length,
               inauspiciousRelations.length,
               isDark,
@@ -86,7 +88,7 @@ class SajuHapchungWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(bool isDark) {
+  Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
         Icon(
@@ -99,14 +101,14 @@ class SajuHapchungWidget extends StatelessWidget {
           children: [
             Text(
               '합충형파해',
-              style: DSTypography.headingMedium.copyWith(
+              style: context.heading2.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '合沖刑破害',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: isDark
                     ? DSColors.textTertiary
                     : DSColors.textSecondary,
@@ -164,8 +166,7 @@ class SajuHapchungWidget extends StatelessWidget {
                 // 한자
                 Text(
                   type.hanja,
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: context.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: count > 0 ? color : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
                   ),
@@ -176,12 +177,11 @@ class SajuHapchungWidget extends StatelessWidget {
                   children: [
                     Text(
                       type.korean,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelTiny.copyWith(
                         color: count > 0
                             ? (isDark ? DSColors.textTertiary : DSColors.textSecondary)
                             : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
                         fontWeight: FontWeight.w500,
-                        fontSize: 10,
                       ),
                     ),
                     const SizedBox(width: 2),
@@ -197,8 +197,7 @@ class SajuHapchungWidget extends StatelessWidget {
                       child: Center(
                         child: Text(
                           '$count',
-                          style: TextStyle(
-                            fontSize: 10,
+                          style: context.labelTiny.copyWith(
                             fontWeight: FontWeight.bold,
                             color: count > 0
                                 ? color
@@ -218,6 +217,7 @@ class SajuHapchungWidget extends StatelessWidget {
   }
 
   Widget _buildSectionHeader(
+    BuildContext context,
     RelationType? type,
     bool isDark, {
     bool isInauspicious = false,
@@ -263,7 +263,7 @@ class SajuHapchungWidget extends StatelessWidget {
           const SizedBox(width: DSSpacing.xs),
           Text(
             title,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -271,7 +271,7 @@ class SajuHapchungWidget extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             hanja,
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: color.withValues(alpha: 0.8),
               fontWeight: FontWeight.w500,
             ),
@@ -335,8 +335,7 @@ class SajuHapchungWidget extends StatelessWidget {
                     ...relation.hanjaCharacters.map((char) {
                       return Text(
                         char,
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: context.bodyMedium.copyWith(
                           fontWeight: FontWeight.bold,
                           color: color,
                         ),
@@ -354,7 +353,7 @@ class SajuHapchungWidget extends StatelessWidget {
                       children: [
                         Text(
                           relation.name,
-                          style: DSTypography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: color,
                           ),
@@ -371,7 +370,7 @@ class SajuHapchungWidget extends StatelessWidget {
                           ),
                           child: Text(
                             relation.type.hanja,
-                            style: TextStyle(
+                            style: context.labelTiny.copyWith(
                               fontSize: 9,
                               fontWeight: FontWeight.bold,
                               color: color,
@@ -384,12 +383,11 @@ class SajuHapchungWidget extends StatelessWidget {
                         relation.positions!.isNotEmpty)
                       Text(
                         relation.positions!.join(' - '),
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelTiny.copyWith(
                           color: isDark
                               ? DSColors.textTertiary
                               : DSColors.textSecondary,
                           fontWeight: FontWeight.w500,
-                          fontSize: 10,
                         ),
                       ),
                   ],
@@ -430,8 +428,7 @@ class SajuHapchungWidget extends StatelessWidget {
                       const SizedBox(width: 2),
                       Text(
                         relation.resultWuxing!,
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: context.labelMedium.copyWith(
                           fontWeight: FontWeight.bold,
                           color: SajuColors.getWuxingColor(
                             relation.resultWuxing!,
@@ -459,9 +456,8 @@ class SajuHapchungWidget extends StatelessWidget {
             ),
             child: Text(
               relation.description,
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelTiny.copyWith(
                 color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
-                fontSize: 11,
               ),
             ),
           ),
@@ -472,6 +468,7 @@ class SajuHapchungWidget extends StatelessWidget {
   }
 
   Widget _buildSummary(
+    BuildContext context,
     int combinationCount,
     int inauspiciousCount,
     bool isDark,
@@ -525,10 +522,9 @@ class SajuHapchungWidget extends StatelessWidget {
           Expanded(
             child: Text(
               summaryText,
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelTiny.copyWith(
                 color:
                     isDark ? DSColors.textTertiary : DSColors.textSecondary,
-                fontSize: 11,
               ),
             ),
           ),

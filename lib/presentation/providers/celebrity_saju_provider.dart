@@ -43,6 +43,30 @@ final randomCelebritiesProvider = FutureProvider<List<CelebritySaju>>((ref) asyn
   return await service.getRandomCelebrities(5);
 });
 
+/// 오늘 일주 기반 궁합도가 포함된 연예인 리스트 프로바이더
+///
+/// 매일 새로운 궁합도 계산, 궁합도 높은 순으로 정렬
+final celebritiesWithCompatibilityProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final celebrities = await ref.watch(randomCelebritiesProvider.future);
+  final today = DateTime.now();
+
+  final result = celebrities.map((celeb) {
+    final compatibility = CelebritySajuService.calculateDailyCompatibility(
+      today,
+      celeb.birthDate,
+    );
+    return {
+      'celebrity': celeb,
+      'compatibility': compatibility,
+    };
+  }).toList();
+
+  // 궁합도 높은 순으로 정렬
+  result.sort((a, b) => (b['compatibility'] as int).compareTo(a['compatibility'] as int));
+
+  return result;
+});
+
 // 검색어 상태 관리 프로바이더
 final searchQueryProvider = StateProvider<String>((ref) => '');
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 가족 관계도 차트 - 토스 디자인 시스템
 class FamilyRelationshipChart extends StatelessWidget {
@@ -40,7 +41,7 @@ class FamilyRelationshipChart extends StatelessWidget {
               SizedBox(width: 12),
               Text(
                 '우리 가족 관계도',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   
                   fontWeight: FontWeight.w700,
                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
@@ -52,29 +53,29 @@ class FamilyRelationshipChart extends StatelessWidget {
           
           // Family tree visualization
           Center(
-            child: _buildFamilyTree(isDark),
+            child: _buildFamilyTree(context, isDark),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Relationship connections
           if (members.length > 1)
-            _buildRelationshipConnections(isDark),
+            _buildRelationshipConnections(context, isDark),
         ],
       ),
     ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1));
   }
   
-  Widget _buildFamilyTree(bool isDark) {
+  Widget _buildFamilyTree(BuildContext context, bool isDark) {
     if (members.isEmpty) {
       return Text(
         '가족 구성원을 추가해주세요',
-        style: DSTypography.bodySmall.copyWith(
+        style: context.bodySmall.copyWith(
           color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
         ),
       );
     }
-    
+
     // Simple family tree layout
     return Wrap(
       spacing: 20,
@@ -84,8 +85,9 @@ class FamilyRelationshipChart extends StatelessWidget {
         final fortune = memberFortunes?[member.name] ?? {};
         final mood = fortune['mood'] ?? '평온한';
         final energy = fortune['energy'] ?? 70;
-        
+
         return _buildMemberNode(
+          context: context,
           member: member,
           mood: mood,
           energy: energy,
@@ -96,6 +98,7 @@ class FamilyRelationshipChart extends StatelessWidget {
   }
   
   Widget _buildMemberNode({
+    required BuildContext context,
     required FamilyMember member,
     required String mood,
     required int energy,
@@ -126,7 +129,7 @@ class FamilyRelationshipChart extends StatelessWidget {
           child: Center(
             child: Text(
               member.emoji,
-              style: DSTypography.displayMedium,
+              style: context.displayMedium,
             ),
           ),
         ).animate()
@@ -140,7 +143,7 @@ class FamilyRelationshipChart extends StatelessWidget {
         
         Text(
           member.name,
-          style: DSTypography.bodySmall.copyWith(
+          style: context.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
           ),
@@ -156,7 +159,7 @@ class FamilyRelationshipChart extends StatelessWidget {
           ),
           child: Text(
             member.role,
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
             ),
@@ -190,19 +193,19 @@ class FamilyRelationshipChart extends StatelessWidget {
     );
   }
   
-  Widget _buildRelationshipConnections(bool isDark) {
+  Widget _buildRelationshipConnections(BuildContext context, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '관계 연결고리',
-          style: DSTypography.bodyMedium.copyWith(
+          style: context.bodyMedium.copyWith(
             fontWeight: FontWeight.w700,
             color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
           ),
         ),
         const SizedBox(height: 12),
-        
+
         // Generate relationship pairs
         ...members.asMap().entries.map((entry) {
           final index = entry.key;
@@ -210,8 +213,9 @@ class FamilyRelationshipChart extends StatelessWidget {
             final member1 = members[index];
             final member2 = members[index + 1];
             final compatibility = 70 + (index * 5); // Sample compatibility
-            
+
             return _buildRelationshipLine(
+              context: context,
               member1: member1,
               member2: member2,
               compatibility: compatibility,
@@ -225,6 +229,7 @@ class FamilyRelationshipChart extends StatelessWidget {
   }
   
   Widget _buildRelationshipLine({
+    required BuildContext context,
     required FamilyMember member1,
     required FamilyMember member2,
     required int compatibility,
@@ -245,7 +250,7 @@ class FamilyRelationshipChart extends StatelessWidget {
             ),
             child: Text(
               member1.emoji,
-              style: DSTypography.headingMedium,
+              style: context.heading2,
             ),
           ),
           
@@ -272,7 +277,7 @@ class FamilyRelationshipChart extends StatelessWidget {
                   ),
                   child: Text(
                     '$compatibility%',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: color,
                       fontWeight: FontWeight.w700,
                     ),
@@ -291,7 +296,7 @@ class FamilyRelationshipChart extends StatelessWidget {
             ),
             child: Text(
               member2.emoji,
-              style: DSTypography.headingMedium,
+              style: context.heading2,
             ),
           ),
         ],
@@ -368,7 +373,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
         child: Center(
           child: Text(
             '가족 구성원이 2명 이상일 때 관계 매트릭스를 확인할 수 있습니다',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
             ),
             textAlign: TextAlign.center,
@@ -392,7 +397,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
         children: [
           Text(
             '관계 궁합 매트릭스',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               
               fontWeight: FontWeight.w700,
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
@@ -419,7 +424,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                       padding: const EdgeInsets.all(8),
                       child: Text(
                         member.emoji,
-                        style: DSTypography.headingMedium,
+                        style: context.heading2,
                       ),
                     ),
                   )),
@@ -436,7 +441,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                       child: Center(
                         child: Text(
                           member1.emoji,
-                          style: DSTypography.headingMedium,
+                          style: context.heading2,
                         ),
                       ),
                     ),
@@ -460,7 +465,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                         child: Center(
                           child: Text(
                             '$compatibility',
-                            style: DSTypography.bodySmall.copyWith(
+                            style: context.bodySmall.copyWith(
                               fontWeight: FontWeight.w700,
                               color: color,
                             ),
@@ -480,13 +485,13 @@ class FamilyRelationshipMatrix extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLegendItem('매우 좋음', DSColors.success),
+              _buildLegendItem(context, '매우 좋음', DSColors.success),
               const SizedBox(width: 16),
-              _buildLegendItem('좋음', DSColors.accent),
+              _buildLegendItem(context, '좋음', DSColors.accent),
               const SizedBox(width: 16),
-              _buildLegendItem('보통', DSColors.warning),
+              _buildLegendItem(context, '보통', DSColors.warning),
               const SizedBox(width: 16),
-              _buildLegendItem('노력 필요', DSColors.error),
+              _buildLegendItem(context, '노력 필요', DSColors.error),
             ],
           ),
         ],
@@ -494,7 +499,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
     );
   }
   
-  Widget _buildLegendItem(String label, Color color) {
+  Widget _buildLegendItem(BuildContext context, String label, Color color) {
     return Row(
       children: [
         Container(
@@ -508,7 +513,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
         SizedBox(width: 4),
         Text(
           label,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelSmall.copyWith(
             color: DSColors.textSecondary,
           ),
         ),

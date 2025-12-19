@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/components/app_card.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../../core/widgets/gpt_style_typing_text.dart';
@@ -45,7 +46,7 @@ class FortuneSectionCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: isWarning
                     ? DSColors.error
                     : (colors.textPrimary),
@@ -65,7 +66,7 @@ class FortuneSectionCard extends StatelessWidget {
               padding: EdgeInsets.only(bottom: isLastSentence ? 0 : 16),
               child: Text(
                 sentence + (sentence.endsWith('.') ? '' : '.'),
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: colors.textPrimary,
                   height: 1.8,
                   letterSpacing: -0.3,
@@ -108,7 +109,7 @@ class CategoriesSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
             '카테고리별 운세',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               color: colors.textPrimary,
             ),
           ),
@@ -134,7 +135,7 @@ class CategoriesSection extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         cat['title'] as String,
-                        style: DSTypography.labelLarge.copyWith(
+                        style: context.labelLarge.copyWith(
                           fontWeight: FontWeight.w600,
                           color: colors.textPrimary,
                         ),
@@ -148,7 +149,7 @@ class CategoriesSection extends StatelessWidget {
                         ),
                         child: Text(
                           '${categoryInfo['score']}점',
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: cat['color'] as Color,
                             fontWeight: FontWeight.w700,
                           ),
@@ -160,7 +161,7 @@ class CategoriesSection extends StatelessWidget {
                   if (categoryInfo['title'] != null)
                     Text(
                       FortuneTextCleaner.clean(categoryInfo['title'] as String),
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: colors.textPrimary,
                       ),
@@ -169,7 +170,7 @@ class CategoriesSection extends StatelessWidget {
                   if (categoryInfo['advice'] != null)
                     Text(
                       FortuneTextCleaner.cleanAndTruncate(categoryInfo['advice'] as String),
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         color: colors.textSecondary,
                         height: 1.5,
                       ),
@@ -219,7 +220,7 @@ class CategoriesSection extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   '전체 운세',
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.heading3.copyWith(
                     color: AppTheme.primaryColor,
                   ),
                 ),
@@ -232,7 +233,7 @@ class CategoriesSection extends StatelessWidget {
                   ),
                   child: Text(
                     '${categories['total']['score']}점',
-                    style: DSTypography.labelLarge.copyWith(
+                    style: context.labelLarge.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
@@ -245,7 +246,7 @@ class CategoriesSection extends StatelessWidget {
               // advice가 Map 구조인 경우 (idiom + description)
               Text(
                 FortuneTextCleaner.clean((categories['total']['advice'] as Map)['idiom'] as String? ?? ''),
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppTheme.primaryColor,
                 ),
@@ -253,7 +254,7 @@ class CategoriesSection extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 FortuneTextCleaner.cleanAndTruncate((categories['total']['advice'] as Map)['description'] as String? ?? ''),
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: colors.textSecondary,
                   height: 1.6,
                 ),
@@ -262,7 +263,7 @@ class CategoriesSection extends StatelessWidget {
               // advice가 String인 경우 (하위 호환)
               Text(
                 FortuneTextCleaner.cleanAndTruncate(categories['total']['advice'] as String? ?? ''),
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: colors.textSecondary,
                   height: 1.6,
                 ),
@@ -304,7 +305,7 @@ class AITipsList extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'AI 팁',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -329,7 +330,7 @@ class AITipsList extends StatelessWidget {
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.w700,
                         ),
@@ -340,7 +341,7 @@ class AITipsList extends StatelessWidget {
                   Expanded(
                     child: Text(
                       FortuneTextCleaner.cleanAndTruncate(tip, maxLength: 80),
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: colors.textSecondary,
                         height: 1.5,
                       ),
@@ -413,7 +414,7 @@ class _TypingFortuneSectionCardState extends State<TypingFortuneSectionCard> {
               const SizedBox(width: 8),
               Text(
                 widget.title,
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: widget.isWarning
                     ? DSColors.error
                     : colors.textPrimary,
@@ -430,7 +431,7 @@ class _TypingFortuneSectionCardState extends State<TypingFortuneSectionCard> {
             showCursor: true,
             startTyping: widget.startTyping,
             onComplete: widget.onTypingComplete,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: colors.textPrimary,
               height: 1.8,
               letterSpacing: -0.3,
@@ -499,7 +500,7 @@ class _TypingTotalFortuneSectionState extends State<TypingTotalFortuneSection> {
                     _idiomComplete = true;
                   });
                 },
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppTheme.primaryColor,
                 ),
@@ -511,7 +512,7 @@ class _TypingTotalFortuneSectionState extends State<TypingTotalFortuneSection> {
                 showGhostText: false,
                 showCursor: true,
                 onComplete: widget.onTypingComplete,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: colors.textSecondary,
                   height: 1.6,
                 ),
@@ -523,7 +524,7 @@ class _TypingTotalFortuneSectionState extends State<TypingTotalFortuneSection> {
                 showGhostText: false,
                 showCursor: true,
                 onComplete: widget.onTypingComplete,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: colors.textSecondary,
                   height: 1.6,
                 ),
@@ -600,7 +601,7 @@ class _TypingCategoriesSectionState extends State<TypingCategoriesSection> {
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
             '카테고리별 운세',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.heading3.copyWith(
               color: colors.textPrimary,
             ),
           ),
@@ -677,7 +678,7 @@ class _TypingCategoryCardState extends State<_TypingCategoryCard> {
               const SizedBox(width: 8),
               Text(
                 widget.cat['title'] as String,
-                style: DSTypography.labelLarge.copyWith(
+                style: context.labelLarge.copyWith(
                   fontWeight: FontWeight.w600,
                   color: colors.textPrimary,
                 ),
@@ -691,7 +692,7 @@ class _TypingCategoryCardState extends State<_TypingCategoryCard> {
                 ),
                 child: Text(
                   '${widget.categoryInfo['score']}점',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: widget.cat['color'] as Color,
                     fontWeight: FontWeight.w700,
                   ),
@@ -707,7 +708,7 @@ class _TypingCategoryCardState extends State<_TypingCategoryCard> {
               showGhostText: false,
               showCursor: true,
               onComplete: widget.onTypingComplete,
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
                 height: 1.6,
               ),
@@ -772,7 +773,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                 const SizedBox(width: 8),
                 Text(
                   '전체 운세',
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.heading3.copyWith(
                     color: AppTheme.primaryColor,
                   ),
                 ),
@@ -785,7 +786,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                   ),
                   child: Text(
                     '${widget.total['score']}점',
-                    style: DSTypography.labelLarge.copyWith(
+                    style: context.labelLarge.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
@@ -805,7 +806,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                     _idiomComplete = true;
                   });
                 },
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppTheme.primaryColor,
                 ),
@@ -817,7 +818,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                 showGhostText: false,
                 showCursor: true,
                 onComplete: widget.onTypingComplete,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: colors.textSecondary,
                   height: 1.6,
                 ),
@@ -829,7 +830,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                 showGhostText: false,
                 showCursor: true,
                 onComplete: widget.onTypingComplete,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: colors.textSecondary,
                   height: 1.6,
                 ),
@@ -882,7 +883,7 @@ class _TypingAITipsListState extends State<TypingAITipsList> {
               const SizedBox(width: 8),
               Text(
                 'AI 팁',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -909,7 +910,7 @@ class _TypingAITipsListState extends State<TypingAITipsList> {
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.w700,
                         ),
@@ -932,7 +933,7 @@ class _TypingAITipsListState extends State<TypingAITipsList> {
                           widget.onTypingComplete?.call();
                         }
                       },
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: colors.textSecondary,
                         height: 1.5,
                       ),

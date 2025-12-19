@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../presentation/providers/auth_provider.dart';
 import 'package:fortune/core/theme/app_animations.dart';
-import '../../services/ad_service.dart';
+import 'ads/interstitial_ad_helper.dart';
 import '../../core/utils/logger.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/design_system/design_system.dart';
@@ -583,46 +583,18 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
 
                     final fortuneRoute = _getFortuneRoute(widget.fortuneType);
 
-                    try {
-                      // Check if ad is ready
-                      if (!AdService.instance.isInterstitialAdReady) {
-                        Logger.debug('📺 [FortuneExplanationBottomSheet] Interstitial ad not ready, loading...');
-                        // Try to load ad with a timeout
-                        await Future.any([
-                          AdService.instance.loadInterstitialAd(),
-                          Future.delayed(const Duration(seconds: 2)), // 2 second timeout for loading
-                        ]);
-                      }
-
-                      if (!context.mounted) return;
-
-                      // Show ad if ready
-                      if (AdService.instance.isInterstitialAdReady) {
-                        Logger.debug('📺 [FortuneExplanationBottomSheet] Showing interstitial ad');
-                        await AdService.instance.showInterstitialAdWithCallback(
-                          onAdCompleted: () async {
-                            Logger.debug('📺 [FortuneExplanationBottomSheet] Ad completed, navigating to fortune page');
-                            // Navigate to fortune route after ad completes
-                            if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
-                          },
-                          onAdFailed: () async {
-                            Logger.debug('📺 [FortuneExplanationBottomSheet] Ad failed, navigating to fortune page anyway');
-                            // Navigate even if ad fails
-                            if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
-                          },
-                        );
-                      } else {
-                        Logger.debug('📺 [FortuneExplanationBottomSheet] Ad not ready after timeout, proceeding without ad');
-                        // Navigate without ad if not ready
-                        // ignore: use_build_context_synchronously
+                    // Premium/Frequency 체크 및 광고 표시 (Helper가 처리)
+                    await InterstitialAdHelper.showInterstitialAdWithCallback(
+                      ref,
+                      onAdCompleted: () async {
+                        Logger.debug('📺 [FortuneExplanationBottomSheet] Ad completed or skipped, navigating');
                         if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
-                      }
-                    } catch (e) {
-                      Logger.error('❌ [FortuneExplanationBottomSheet] Error showing ad: $e');
-                      // Navigate even if error occurs
-                      // ignore: use_build_context_synchronously
-                      if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
-                    }
+                      },
+                      onAdFailed: () async {
+                        Logger.debug('📺 [FortuneExplanationBottomSheet] Ad failed, navigating anyway');
+                        if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
+                      },
+                    );
                   }
                 : null,
             style: ElevatedButton.styleFrom(

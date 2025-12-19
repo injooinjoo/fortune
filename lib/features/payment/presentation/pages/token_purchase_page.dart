@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/theme/typography_unified.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -9,11 +11,10 @@ import '../../../../services/in_app_purchase_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../presentation/widgets/common/custom_card.dart';
 import '../../../../core/constants/in_app_products.dart';
 import '../../../../presentation/providers/token_provider.dart';
-import 'payment_result_page.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 
 class TokenPurchasePage extends ConsumerStatefulWidget {
   const TokenPurchasePage({super.key});
@@ -39,21 +40,50 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   void _setupPurchaseCallbacks() {
     _purchaseService.setCallbacks(
-      onPurchaseCompleted: (productId, productName, tokenAmount) {
-        // 실제 결제 완료 시 결과 페이지로 이동
-        ref.invalidate(tokenBalanceProvider);
+      onPurchaseCompleted: (productId, productName, tokenAmount) async {
+        // 실제 결제 완료 시 토큰 잔액 새로고침 후 결과 페이지로 이동
+        Logger.info('========== 💰 결제 완료 콜백 ==========');
+        Logger.info('productId: $productId');
+        Logger.info('productName: $productName');
+        Logger.info('tokenAmount: $tokenAmount');
+
+        // 토큰 잔액 새로고침 (서버에서 다시 가져오기)
+        try {
+          Logger.info('🔄 토큰 잔액 새로고침 시작...');
+          await ref.read(tokenProvider.notifier).refreshBalance();
+          // 구독 정보 포함 전체 데이터 새로고침
+          await ref.read(tokenProvider.notifier).loadTokenData();
+          Logger.info('✅ 토큰 잔액 새로고침 완료');
+        } catch (e) {
+          Logger.error('❌ 토큰 잔액 새로고침 실패: $e');
+        }
+
+        Logger.info('==========================================');
+
         if (mounted) {
           setState(() => _isProcessing = false);
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (_) => PaymentResultPage(
-                isSuccess: true,
-                productName: productName,
-                tokenAmount: tokenAmount,
-              ),
-            ),
-          );
+          context.go('/payment-result', extra: {
+            'isSuccess': true,
+            'productName': productName,
+            'tokenAmount': tokenAmount,
+          });
         }
+      },
+      onSubscriptionActivated: (productId, isSubscription) {
+        // 구독 활성화 시 상태 업데이트
+        Logger.info('========== 🎫 구독 활성화 콜백 ==========');
+        Logger.info('productId: $productId');
+        Logger.info('isSubscription: $isSubscription');
+
+        if (isSubscription) {
+          // 구독 상태 즉시 업데이트
+          ref.read(subscriptionProvider.notifier).setActive(true);
+          // 토큰 데이터 전체 새로고침 (구독 정보 포함)
+          ref.read(tokenProvider.notifier).loadTokenData();
+          Logger.info('✅ 구독 상태 활성화 완료');
+        }
+
+        Logger.info('==========================================');
       },
       onPurchaseError: (error) {
         if (mounted) {
@@ -147,7 +177,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           child: Text(
             '인앱결제를 사용할 수 없습니다.\\n앱스토어 설정을 확인해주세요.',
             textAlign: TextAlign.center,
-            style: DSTypography.bodyLarge.copyWith(
+            style: context.bodyLarge.copyWith(
               color: context.colors.textPrimary,
             ),
           ),
@@ -186,28 +216,9 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   }
 
   Widget _buildFloatingButtons() {
-    final colors = context.colors;
-
-    return Container(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-      decoration: BoxDecoration(
-        color: colors.background,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildPurchaseButton(),
-          const SizedBox(height: 12),
-          _buildRestoreButton(),
-        ],
-      ),
+      child: _buildPurchaseButton(),
     );
   }
 
@@ -240,14 +251,14 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 children: [
                   Text(
                     '현재 보유 복주머니',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '무제한',
-                    style: DSTypography.headingMedium.copyWith(
+                    style: context.heading2.copyWith(
                       // 황색(Hwang) - 복/풍요를 상징
                       color: ObangseokColors.hwang,
                       fontWeight: FontWeight.bold,
@@ -278,7 +289,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               children: [
                 Text(
                   '현재 보유 복주머니',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),
@@ -287,7 +298,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                   children: [
                     Text(
                       '0',
-                      style: DSTypography.headingMedium.copyWith(
+                      style: context.heading2.copyWith(
                         // 황색(Hwang) - 복/풍요를 상징
                         color: ObangseokColors.hwang,
                         fontWeight: FontWeight.bold,
@@ -296,7 +307,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                     const SizedBox(width: 4),
                     Text(
                       '개',
-                      style: DSTypography.bodyLarge.copyWith(
+                      style: context.bodyLarge.copyWith(
                         color: colors.textSecondary,
                       ),
                     ),
@@ -326,7 +337,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             children: [
               Text(
                 '현재 보유 복주머니',
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: colors.textSecondary,
                 ),
               ),
@@ -337,7 +348,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                     tokenBalance.hasUnlimitedAccess
                       ? '무제한'
                       : '${tokenBalance.remainingTokens}',
-                    style: DSTypography.headingMedium.copyWith(
+                    style: context.heading2.copyWith(
                       // 황색(Hwang) - 복/풍요를 상징
                       color: ObangseokColors.hwang,
                       fontWeight: FontWeight.bold,
@@ -347,7 +358,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                     const SizedBox(width: 4),
                     Text(
                       '개',
-                      style: DSTypography.bodyLarge.copyWith(
+                      style: context.bodyLarge.copyWith(
                         color: colors.textSecondary,
                       ),
                     ),
@@ -385,7 +396,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       children: [
         Text(
           '복주머니 패키지 선택',
-          style: DSTypography.headingSmall.copyWith(
+          style: context.heading3.copyWith(
             fontWeight: FontWeight.bold,
             color: colors.textPrimary,
           ),
@@ -400,7 +411,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             ),
             child: Text(
               '미리보기 모드 (App Store 검토 대기 중)',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: colors.accent,
               ),
             ),
@@ -520,7 +531,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 children: [
                   Text(
                     title,
-                    style: DSTypography.bodyLarge.copyWith(
+                    style: context.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
                       color: colors.textPrimary,
                     ),
@@ -528,7 +539,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),
@@ -540,7 +551,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               children: [
                 Text(
                   price,
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.heading3.copyWith(
                     fontWeight: FontWeight.bold,
                     // 황색(Hwang) - 선택 시 풍요를 상징
                     color: isSelected ? ObangseokColors.hwangDark : colors.textPrimary,
@@ -549,7 +560,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 if (isSubscription) ...[
                   Text(
                     '/월',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),
@@ -573,15 +584,6 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     );
   }
 
-  Widget _buildRestoreButton() {
-    return UnifiedButton(
-      text: '구매 복원',
-      onPressed: _isProcessing ? null : _handleRestore,
-      style: UnifiedButtonStyle.secondary,
-      width: double.infinity,
-    );
-  }
-
   Widget _buildDescription() {
     final colors = context.colors;
 
@@ -590,7 +592,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       children: [
         Text(
           '구매 안내',
-          style: DSTypography.bodyMedium.copyWith(
+          style: context.bodyMedium.copyWith(
             fontWeight: FontWeight.bold,
             color: colors.textPrimary,
           ),
@@ -606,7 +608,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
             text,
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: colors.textSecondary,
             ),
           ),
@@ -617,6 +619,19 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   Future<void> _handlePurchase() async {
     if (_selectedPackageIndex == null) return;
+
+    // Mock 모드에서는 구매 불가 안내
+    if (_products.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('현재 구매할 수 없습니다. App Store 검토 대기 중입니다.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
 
     setState(() => _isProcessing = true);
     ref.read(fortuneHapticServiceProvider).jackpot();
@@ -641,34 +656,5 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     }
     // finally에서 isProcessing을 false로 설정하지 않음
     // 콜백에서 결제 완료/취소/에러 시 처리
-  }
-
-  Future<void> _handleRestore() async {
-    setState(() => _isProcessing = true);
-    ref.read(fortuneHapticServiceProvider).selection();
-
-    try {
-      await _purchaseService.restorePurchases();
-
-      // 복원 후 토큰 잔액 새로고침
-      ref.invalidate(tokenBalanceProvider);
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('구매가 복원되었습니다')),
-        );
-      }
-    } catch (e) {
-      Logger.error('복원 실패', e);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('구매 복원에 실패했습니다')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isProcessing = false);
-      }
-    }
   }
 }

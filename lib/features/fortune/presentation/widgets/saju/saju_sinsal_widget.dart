@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/saju_colors.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../domain/models/saju/sinsal_data.dart';
 import 'saju_concept_card.dart';
@@ -53,40 +54,40 @@ class SajuSinsalWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
-            _buildTitle(isDark),
+            _buildTitle(context, isDark),
             const SizedBox(height: DSSpacing.sm),
           ],
           // 길신 섹션
           if (luckySinsals.isNotEmpty) ...[
-            _buildSectionHeader('길신', '吉神', SinsalCategory.lucky, isDark),
+            _buildSectionHeader(context, '길신', '吉神', SinsalCategory.lucky, isDark),
             const SizedBox(height: DSSpacing.sm),
             ...luckySinsals.map((s) => _buildSinsalItem(context, s, isDark)),
             const SizedBox(height: DSSpacing.md),
           ],
           // 중립 섹션 (도화살 등)
           if (neutralSinsals.isNotEmpty) ...[
-            _buildSectionHeader('중립', '中立', SinsalCategory.neutral, isDark),
+            _buildSectionHeader(context, '중립', '中立', SinsalCategory.neutral, isDark),
             const SizedBox(height: DSSpacing.sm),
             ...neutralSinsals.map((s) => _buildSinsalItem(context, s, isDark)),
             const SizedBox(height: DSSpacing.md),
           ],
           // 흉신 섹션
           if (unluckySinsals.isNotEmpty) ...[
-            _buildSectionHeader('흉신', '凶神', SinsalCategory.unlucky, isDark),
+            _buildSectionHeader(context, '흉신', '凶神', SinsalCategory.unlucky, isDark),
             const SizedBox(height: DSSpacing.sm),
             ...unluckySinsals.map((s) => _buildSinsalItem(context, s, isDark)),
           ],
           // 종합 해석
           if (sinsals.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.sm),
-            _buildSummary(luckySinsals.length, unluckySinsals.length, isDark),
+            _buildSummary(context, luckySinsals.length, unluckySinsals.length, isDark),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildTitle(bool isDark) {
+  Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
         Icon(
@@ -99,14 +100,14 @@ class SajuSinsalWidget extends StatelessWidget {
           children: [
             Text(
               '신살',
-              style: DSTypography.headingMedium.copyWith(
+              style: context.heading2.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '神殺',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: isDark
                     ? DSColors.textTertiary
                     : DSColors.textSecondary,
@@ -120,6 +121,7 @@ class SajuSinsalWidget extends StatelessWidget {
   }
 
   Widget _buildSectionHeader(
+    BuildContext context,
     String title,
     String hanja,
     SinsalCategory category,
@@ -155,7 +157,7 @@ class SajuSinsalWidget extends StatelessWidget {
           const SizedBox(width: DSSpacing.xs),
           Text(
             title,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -163,7 +165,7 @@ class SajuSinsalWidget extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             hanja,
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: color.withValues(alpha: 0.8),
               fontWeight: FontWeight.w500,
             ),
@@ -233,8 +235,7 @@ class SajuSinsalWidget extends StatelessWidget {
                     sinsal.hanja.length > 2
                         ? sinsal.hanja.substring(0, 2)
                         : sinsal.hanja,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: context.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: color,
                     ),
@@ -250,7 +251,7 @@ class SajuSinsalWidget extends StatelessWidget {
                       children: [
                         Text(
                           sinsal.name,
-                          style: DSTypography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: color,
                           ),
@@ -258,18 +259,17 @@ class SajuSinsalWidget extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           sinsal.hanja,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelTiny.copyWith(
                             color: isDark
                                 ? DSColors.textTertiary
                                 : DSColors.textSecondary,
-                            fontSize: 10,
                           ),
                         ),
                       ],
                     ),
                     Text(
                       sinsal.meaning,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelTiny.copyWith(
                         color: isDark
                             ? DSColors.textTertiary
                             : DSColors.textSecondary,
@@ -293,10 +293,9 @@ class SajuSinsalWidget extends StatelessWidget {
                   ),
                   child: Text(
                     sinsal.position!,
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelTiny.copyWith(
                       color: color,
                       fontWeight: FontWeight.bold,
-                      fontSize: 10,
                     ),
                   ),
                 ),
@@ -307,7 +306,7 @@ class SajuSinsalWidget extends StatelessWidget {
             // 상세 설명
             Text(
               sinsal.description,
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelTiny.copyWith(
                 color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontSize: 11,
               ),
@@ -337,11 +336,10 @@ class SajuSinsalWidget extends StatelessWidget {
                   Expanded(
                     child: Text(
                       sinsal.remedy,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelTiny.copyWith(
                         color: isDark
                             ? DSColors.textTertiary
                             : DSColors.textSecondary,
-                        fontSize: 10,
                       ),
                     ),
                   ),
@@ -355,7 +353,7 @@ class SajuSinsalWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSummary(int luckyCount, int unluckyCount, bool isDark) {
+  Widget _buildSummary(BuildContext context, int luckyCount, int unluckyCount, bool isDark) {
     String summaryText;
     Color summaryColor;
     IconData summaryIcon;
@@ -409,7 +407,7 @@ class SajuSinsalWidget extends StatelessWidget {
           Expanded(
             child: Text(
               summaryText,
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelTiny.copyWith(
                 color:
                     isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontSize: 11,

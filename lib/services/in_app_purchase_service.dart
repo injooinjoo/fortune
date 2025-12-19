@@ -39,6 +39,8 @@ class InAppPurchaseService {
   /// 결제 완료 시 상품 정보와 함께 호출되는 콜백
   /// productId: 상품 ID, productName: 상품명, tokenAmount: 토큰 수량
   void Function(String productId, String productName, int tokenAmount)? onPurchaseCompleted;
+  /// 구독 활성화 완료 시 호출되는 콜백
+  void Function(String productId, bool isSubscription)? onSubscriptionActivated;
   void Function(String error)? onPurchaseError;
   void Function()? onPurchaseCanceled;
   
@@ -52,12 +54,14 @@ class InAppPurchaseService {
     void Function()? onPurchaseStarted,
     void Function(String message)? onPurchaseSuccess,
     void Function(String productId, String productName, int tokenAmount)? onPurchaseCompleted,
+    void Function(String productId, bool isSubscription)? onSubscriptionActivated,
     void Function(String error)? onPurchaseError,
     void Function()? onPurchaseCanceled,
   }) {
     this.onPurchaseStarted = onPurchaseStarted;
     this.onPurchaseSuccess = onPurchaseSuccess;
     this.onPurchaseCompleted = onPurchaseCompleted;
+    this.onSubscriptionActivated = onSubscriptionActivated;
     this.onPurchaseError = onPurchaseError;
     this.onPurchaseCanceled = onPurchaseCanceled;
   }
@@ -176,7 +180,15 @@ class InAppPurchaseService {
   // 개별 구매 처리
   Future<void> _handlePurchaseUpdate(PurchaseDetails purchaseDetails) async {
     final purchaseId = purchaseDetails.purchaseID;
-    Logger.info('업데이트: ${purchaseDetails.status} (ID: $purchaseId)');
+    Logger.info('========== 🛒 구매 업데이트 수신 ==========');
+    Logger.info('status: ${purchaseDetails.status}');
+    Logger.info('purchaseID: $purchaseId');
+    Logger.info('productID: ${purchaseDetails.productID}');
+    Logger.info('pendingCompletePurchase: ${purchaseDetails.pendingCompletePurchase}');
+    Logger.info('verificationData.source: ${purchaseDetails.verificationData.source}');
+    Logger.info('verificationData.localVerificationData 길이: ${purchaseDetails.verificationData.localVerificationData.length}');
+    Logger.info('verificationData.serverVerificationData 길이: ${purchaseDetails.verificationData.serverVerificationData.length}');
+    Logger.info('============================================');
 
     switch (purchaseDetails.status) {
       case PurchaseStatus.pending:
@@ -224,19 +236,32 @@ class InAppPurchaseService {
       Logger.info('======================================');
 
       // 서버에 구매 검증 요청
+      Logger.info('🔍 서버 구매 검증 시작...');
       final isValid = await _verifyPurchase(purchaseDetails);
-      
+      Logger.info('🔍 서버 구매 검증 결과: isValid = $isValid');
+
       if (!isValid) {
-        Logger.error('구매 검증 실패');
+        Logger.error('❌ 구매 검증 실패! isValid=false');
         _purchasePending = false;
         return;
       }
-      
+
+      Logger.info('✅ 구매 검증 성공! 토큰 추가 처리 시작...');
+
       // 토큰 상품인 경우 토큰 추가
       final productInfo = InAppProducts.productDetails[purchaseDetails.productID];
+      Logger.info('📦 productInfo 조회 결과:');
+      Logger.info('   - productID: ${purchaseDetails.productID}');
+      Logger.info('   - productInfo 존재: ${productInfo != null}');
+      if (productInfo != null) {
+        Logger.info('   - isSubscription: ${productInfo.isSubscription}');
+        Logger.info('   - tokens: ${productInfo.tokens}');
+      }
+
       if (productInfo != null && !productInfo.isSubscription && productInfo.tokens > 0) {
-        // await _tokenService.addTokens(productInfo.tokens);
-        Logger.info('${productInfo.tokens} 복주머니가 추가되었습니다.');
+        Logger.info('✅ 토큰 상품 확인! ${productInfo.tokens}개 복주머니 추가 완료 (서버에서 처리됨)');
+      } else {
+        Logger.info('⚠️ 토큰 상품 아님 또는 조건 미충족');
       }
       
       // 구독 상품인 경우 구독 활성화
@@ -272,16 +297,33 @@ class InAppPurchaseService {
         verificationData['productId'] = purchaseDetails.productID;
         verificationData['transactionId'] = purchaseDetails.purchaseID;
       }
-      
+
+      Logger.info('========== 🔍 구매 검증 요청 ==========');
+      Logger.info('platform: ${verificationData['platform']}');
+      Logger.info('productId: ${verificationData['productId']}');
+      Logger.info('transactionId/orderId: ${verificationData['transactionId'] ?? verificationData['orderId']}');
+      Logger.info('receipt 길이: ${(verificationData['receipt'] ?? verificationData['purchaseToken'] ?? '').toString().length}');
+      Logger.info('=========================================');
+
       // 서버에 검증 요청
       final response = await _apiClient.post<Map<String, dynamic>>(
         '/payment-verify-purchase',
         data: verificationData);
-      
+
+      Logger.info('========== ✅ 구매 검증 응답 ==========');
+      Logger.info('전체 응답: $response');
+      Logger.info('valid: ${response['valid']}');
+      Logger.info('tokensAdded: ${response['tokensAdded']}');
+      Logger.info('error: ${response['error']}');
+      Logger.info('=========================================');
+
       return response['valid'] ?? false;
-      
-    } catch (e) {
-      Logger.error('구매 검증 오류', e);
+
+    } catch (e, stackTrace) {
+      Logger.error('========== ❌ 구매 검증 오류 ==========');
+      Logger.error('오류: $e');
+      Logger.error('스택트레이스: $stackTrace');
+      Logger.error('=========================================');
       return false;
     }
   }
@@ -295,8 +337,11 @@ class InAppPurchaseService {
           'productId': purchaseDetails.productID,
           'purchaseId': purchaseDetails.purchaseID,
           'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android')});
-      
-      Logger.info('활성화되었습니다: ${purchaseDetails.productID}');
+
+      Logger.info('구독 활성화되었습니다: ${purchaseDetails.productID}');
+
+      // 구독 활성화 콜백 호출
+      onSubscriptionActivated?.call(purchaseDetails.productID, true);
     } catch (e) {
       Logger.error('구독 활성화 실패', e);
     }

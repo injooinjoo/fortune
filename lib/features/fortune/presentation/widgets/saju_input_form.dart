@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
@@ -181,14 +182,14 @@ class _SajuInputFormState extends State<SajuInputForm>
       children: [
         Text(
           '정보 입력',
-          style: DSTypography.displaySmall.copyWith(
+          style: context.displaySmall.copyWith(
             color: DSColors.textPrimary,
           ),
         ),
         const SizedBox(height: DSSpacing.sm),
         Text(
           '정확한 사주팔자 분석을 위해\n기본 정보를 입력해주세요',
-          style: DSTypography.bodyLarge.copyWith(
+          style: context.bodyLarge.copyWith(
             color: DSColors.textSecondary,
             height: 1.5,
           ),
@@ -213,13 +214,13 @@ class _SajuInputFormState extends State<SajuInputForm>
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '이름',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 ' *',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: DSColors.error,
                 ),
               ),
@@ -258,13 +259,13 @@ class _SajuInputFormState extends State<SajuInputForm>
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '생년월일',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 ' *',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: DSColors.error,
                 ),
               ),
@@ -299,7 +300,7 @@ class _SajuInputFormState extends State<SajuInputForm>
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '출생 시간',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -308,7 +309,7 @@ class _SajuInputFormState extends State<SajuInputForm>
           const SizedBox(height: DSSpacing.sm),
           Text(
             '정확한 분석을 위해 출생 시간을 선택해주세요',
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: DSColors.textSecondary,
             ),
           ),
@@ -325,7 +326,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                 value: _unknownTime ? '모름' : _selectedTime,
                 hint: Text(
                   '출생 시간을 선택하세요',
-                  style: DSTypography.bodyLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: DSColors.textTertiary,
                   ),
                 ),
@@ -333,7 +334,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                   Icons.arrow_drop_down,
                   color: DSColors.textTertiary,
                 ),
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: DSColors.textPrimary,
                 ),
                 dropdownColor: DSColors.background,
@@ -366,7 +367,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                   Expanded(
                     child: Text(
                       '시간을 모르는 경우 정오(12시) 기준으로 분석됩니다',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: DSColors.warning,
                       ),
                     ),
@@ -396,13 +397,13 @@ class _SajuInputFormState extends State<SajuInputForm>
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '성별',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 ' *',
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: DSColors.error,
                 ),
               ),
@@ -439,7 +440,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                         const SizedBox(width: DSSpacing.sm),
                         Text(
                           '남성',
-                          style: DSTypography.bodyLarge.copyWith(
+                          style: context.bodyLarge.copyWith(
                             color: _selectedGender == '남'
                                 ? DSColors.accent
                                 : DSColors.textSecondary,
@@ -482,7 +483,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                         const SizedBox(width: DSSpacing.sm),
                         Text(
                           '여성',
-                          style: DSTypography.bodyLarge.copyWith(
+                          style: context.bodyLarge.copyWith(
                             color: _selectedGender == '여'
                                 ? DSColors.accent
                                 : DSColors.textSecondary,
@@ -528,7 +529,7 @@ class _SajuInputFormState extends State<SajuInputForm>
               children: [
                 Text(
                   '개인정보 보호',
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: DSColors.accent,
                   ),
@@ -536,7 +537,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                 const SizedBox(height: DSSpacing.xs),
                 Text(
                   '입력하신 정보는 사주 분석 목적으로만 사용되며, 서버에 저장되지 않습니다.',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: DSColors.textSecondary,
                     height: 1.4,
                   ),

@@ -9,6 +9,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/components/app_card.dart';
 import '../../domain/models/sipseong_talent.dart';
 
@@ -45,7 +46,7 @@ class CareerRoadmapWidget extends StatelessWidget {
           // 제목
           Text(
             '커리어 로드맵',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.heading2.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
@@ -53,7 +54,7 @@ class CareerRoadmapWidget extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             '당신의 재능에 맞는 직업과 환경을 추천합니다',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               height: 1.5,
               color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
@@ -61,7 +62,7 @@ class CareerRoadmapWidget extends StatelessWidget {
           const SizedBox(height: 24),
 
           // 1순위 직업군
-          _buildCareerSection(
+          _buildCareerSection(context,
             isDark: isDark,
             rank: 1,
             careers: primaryTalent.primaryCareers,
@@ -70,7 +71,7 @@ class CareerRoadmapWidget extends StatelessWidget {
           const SizedBox(height: 16),
 
           // 2순위 직업군
-          _buildCareerSection(
+          _buildCareerSection(context,
             isDark: isDark,
             rank: 2,
             careers: primaryTalent.secondaryCareers,
@@ -79,13 +80,13 @@ class CareerRoadmapWidget extends StatelessWidget {
           const SizedBox(height: 24),
 
           // 추천 업무 환경
-          _buildEnvironmentSection(isDark)
+          _buildEnvironmentSection(context, isDark)
               .animate()
               .fadeIn(delay: 200.ms, duration: 400.ms),
           const SizedBox(height: 24),
 
           // 주의사항 & 보완점
-          _buildCautionSection(isDark)
+          _buildCautionSection(context, isDark)
               .animate()
               .fadeIn(delay: 300.ms, duration: 400.ms),
         ],
@@ -93,7 +94,7 @@ class CareerRoadmapWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCareerSection({
+  Widget _buildCareerSection(BuildContext context, {
     required bool isDark,
     required int rank,
     required List<String> careers,
@@ -120,7 +121,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                 ),
                 child: Text(
                   '$rank순위 직업군',
-                  style: DSTypography.labelMedium.copyWith(
+                  style: context.labelMedium.copyWith(
                     fontWeight: FontWeight.w700,
                     color: rank == 1 ? DSColors.accent : DSColors.textSecondary,
                   ),
@@ -129,7 +130,7 @@ class CareerRoadmapWidget extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 rank == 1 ? '🎯' : '✨',
-                style: DSTypography.headingMedium,
+                style: context.heading2,
               ),
             ],
           ),
@@ -154,7 +155,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                 ),
                 child: Text(
                   career,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     fontWeight: FontWeight.w500,
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   ),
@@ -178,13 +179,13 @@ class CareerRoadmapWidget extends StatelessWidget {
               children: [
                 Text(
                   '💡',
-                  style: DSTypography.labelMedium,
+                  style: context.labelMedium,
                 ),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     reason,
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       height: 1.5,
                       color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                     ),
@@ -198,7 +199,7 @@ class CareerRoadmapWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEnvironmentSection(bool isDark) {
+  Widget _buildEnvironmentSection(BuildContext context, bool isDark) {
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,12 +208,12 @@ class CareerRoadmapWidget extends StatelessWidget {
             children: [
               Text(
                 '🏢',
-                style: DSTypography.displaySmall,
+                style: context.displaySmall,
               ),
               SizedBox(width: 12),
               Text(
                 '추천 업무 환경',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 ),
@@ -254,7 +255,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                           SizedBox(width: 4),
                           Text(
                             'Best',
-                            style: DSTypography.labelMedium.copyWith(
+                            style: context.labelMedium.copyWith(
                               fontWeight: FontWeight.w700,
                               color: Colors.green[700],
                             ),
@@ -267,7 +268,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                 SizedBox(height: 12),
                 Text(
                   primaryTalent.bestEnvironment,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     height: 1.6,
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   ),
@@ -310,7 +311,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                           SizedBox(width: 4),
                           Text(
                             'Worst',
-                            style: DSTypography.labelMedium.copyWith(
+                            style: context.labelMedium.copyWith(
                               fontWeight: FontWeight.w700,
                               color: Colors.red[700],
                             ),
@@ -323,7 +324,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                 SizedBox(height: 12),
                 Text(
                   primaryTalent.worstEnvironment,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     height: 1.6,
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   ),
@@ -336,7 +337,7 @@ class CareerRoadmapWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCautionSection(bool isDark) {
+  Widget _buildCautionSection(BuildContext context, bool isDark) {
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,12 +346,12 @@ class CareerRoadmapWidget extends StatelessWidget {
             children: [
               Text(
                 '⚠️',
-                style: DSTypography.displaySmall,
+                style: context.displaySmall,
               ),
               SizedBox(width: 12),
               Text(
                 '주의사항 & 보완점',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.heading3.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 ),
@@ -375,7 +376,7 @@ class CareerRoadmapWidget extends StatelessWidget {
               children: [
                 Text(
                   '주의해야 할 함정',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: DSColors.warning,
                   ),
@@ -388,7 +389,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                         children: [
                           Text(
                             '•',
-                            style: DSTypography.labelMedium.copyWith(
+                            style: context.labelMedium.copyWith(
                               fontWeight: FontWeight.w700,
                               color: DSColors.warning,
                             ),
@@ -397,7 +398,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                           Expanded(
                             child: Text(
                               pitfall,
-                              style: DSTypography.bodySmall.copyWith(
+                              style: context.bodySmall.copyWith(
                                 height: 1.5,
                                 color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                               ),
@@ -427,7 +428,7 @@ class CareerRoadmapWidget extends StatelessWidget {
               children: [
                 Text(
                   '보완할 점',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: DSColors.accent,
                   ),
@@ -440,7 +441,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                         children: [
                           Text(
                             '✓',
-                            style: DSTypography.labelMedium.copyWith(
+                            style: context.labelMedium.copyWith(
                               fontWeight: FontWeight.w700,
                               color: DSColors.accent,
                             ),
@@ -449,7 +450,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                           Expanded(
                             child: Text(
                               complement,
-                              style: DSTypography.bodySmall.copyWith(
+                              style: context.bodySmall.copyWith(
                                 height: 1.5,
                                 color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                               ),

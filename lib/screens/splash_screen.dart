@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/theme/obangseok_colors.dart';
+import '../core/components/loading_video_player.dart';
 import '../services/app_version_service.dart';
 import '../presentation/widgets/app_update_dialog.dart';
 
@@ -191,22 +191,13 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
             ),
-            // 로고 콘텐츠
-            Center(
-              child: Image.asset(
-                isDark
-                    ? 'assets/images/flower_transparent_white.png'
-                    : 'assets/images/flower_transparent.png',
-                width: 120,
-                height: 120,
-              ).animate()
-                  .fadeIn(duration: 600.ms)
-                  .scale(
-                    begin: const Offset(0.8, 0.8),
-                    end: const Offset(1, 1),
-                    duration: 600.ms,
-                    curve: Curves.easeOutBack,
-                  ),
+            // 로딩 비디오
+            const Center(
+              child: LoadingVideoPlayer(
+                width: 200,
+                height: 200,
+                loop: true,
+              ),
             ),
           ],
         ),

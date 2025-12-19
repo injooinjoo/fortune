@@ -13,6 +13,7 @@ import 'package:fortune/presentation/providers/token_provider.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/presentation/providers/auth_provider.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/theme/typography_unified.dart';
 import 'widgets/dna_header_widget.dart';
 import 'widgets/daily_fortune_section.dart';
 import 'widgets/love_style_section.dart';
@@ -23,6 +24,8 @@ import 'widgets/celebrity_section.dart';
 import 'widgets/toss_section_widget.dart';
 import 'widgets/input_widgets.dart';
 import 'package:fortune/core/widgets/unified_blur_wrapper.dart';
+import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
+import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
 import 'package:fortune/presentation/providers/subscription_provider.dart';
 import 'package:fortune/core/services/fortune_haptic_service.dart';
 
@@ -427,14 +430,14 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
           child: Column(
             children: [
               DnaHeaderWidget(dna: _currentDNA!),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               if (_currentDNA!.dailyFortune != null) ...[
                 DailyFortuneSection(dailyFortune: _currentDNA!.dailyFortune!),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
               ],
               if (_currentDNA!.todayHighlight != null) ...[
                 _buildTodayHighlight(),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
               ],
               if (_currentDNA!.loveStyle != null) ...[
                 UnifiedBlurWrapper(
@@ -443,7 +446,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                   sectionKey: 'loveStyle',
                   child: LoveStyleSection(loveStyle: _currentDNA!.loveStyle!),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
               ],
               if (_currentDNA!.workStyle != null) ...[
                 UnifiedBlurWrapper(
@@ -452,7 +455,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                   sectionKey: 'workStyle',
                   child: WorkStyleSection(workStyle: _currentDNA!.workStyle!),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
               ],
               if (_currentDNA!.dailyMatching != null) ...[
                 UnifiedBlurWrapper(
@@ -461,7 +464,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                   sectionKey: 'dailyMatching',
                   child: DailyMatchingSection(dailyMatching: _currentDNA!.dailyMatching!),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
               ],
               if (_currentDNA!.compatibility != null) ...[
                 UnifiedBlurWrapper(
@@ -470,7 +473,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                   sectionKey: 'compatibility',
                   child: CompatibilitySection(compatibility: _currentDNA!.compatibility!),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
               ],
               if (_currentDNA!.celebrity != null) ...[
                 UnifiedBlurWrapper(
@@ -479,7 +482,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                   sectionKey: 'celebrity',
                   child: CelebritySection(celebrity: _currentDNA!.celebrity!),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
               ],
               if (_currentDNA!.funnyFact != null) ...[
                 UnifiedBlurWrapper(
@@ -488,7 +491,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                   sectionKey: 'funnyFact',
                   child: _buildFunnyFactSection(),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
               ],
               const SizedBox(height: 32),
             ],
@@ -506,15 +509,15 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
   }
 
   Widget _buildTodayHighlight() {
-    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TossSectionWidget(
       title: '오늘의 하이라이트',
-      icon: Icons.star,
+      hanja: '光',
+      colorScheme: HanjiColorScheme.fortune,
       child: Text(
         _currentDNA!.todayHighlight!,
-        style: DSTypography.bodyMedium.copyWith(
-          fontWeight: FontWeight.w400,
-          color: colors.textPrimary,
+        style: context.bodyMedium.copyWith(
+          color: DSFortuneColors.getInk(isDark),
           height: 1.5,
         ),
       ),
@@ -522,15 +525,15 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
   }
 
   Widget _buildFunnyFactSection() {
-    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TossSectionWidget(
       title: '재미있는 사실',
-      icon: Icons.lightbulb_outline,
+      hanja: '趣',
+      colorScheme: HanjiColorScheme.fortune,
       child: Text(
         _currentDNA!.funnyFact!,
-        style: DSTypography.bodyMedium.copyWith(
-          fontWeight: FontWeight.w400,
-          color: colors.textPrimary,
+        style: context.bodyMedium.copyWith(
+          color: DSFortuneColors.getInk(isDark),
           height: 1.5,
         ),
       ),

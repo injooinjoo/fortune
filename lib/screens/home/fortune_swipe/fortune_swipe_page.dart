@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/design_system/design_system.dart';
+import '../../../core/theme/typography_unified.dart';
 import '../../../core/services/fortune_haptic_service.dart';
 import '../../../core/services/page_turn_sound_service.dart';
 import '../../../core/utils/fortune_text_cleaner.dart';
@@ -190,7 +191,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
         children: [
           Text(
             displayUserName,
-            style: TextStyle(
+            style: context.bodyMedium.copyWith(
               color: colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
@@ -206,7 +207,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
                       children: [
                         Text(
                           cityName,
-                          style: TextStyle(
+                          style: context.bodyMedium.copyWith(
                             color: colors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
@@ -220,7 +221,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
               ),
               Text(
                 '${DateTime.now().year}.${DateTime.now().month.toString().padLeft(2, '0')}.${DateTime.now().day.toString().padLeft(2, '0')}',
-                style: TextStyle(
+                style: context.bodyMedium.copyWith(
                   color: colors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
@@ -229,12 +230,12 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
                 const SizedBox(width: 12),
                 Text(
                   FortuneSwipeHelpers.getWeatherEmoji(widget.currentWeather!.condition),
-                  style: DSTypography.labelMedium,
+                  style: context.labelMedium,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '${widget.currentWeather!.temperature.round()}°',
-                  style: TextStyle(
+                  style: context.bodyMedium.copyWith(
                     color: colors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
@@ -264,16 +265,10 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(32),
-                physics: const ClampingScrollPhysics(),
-                child: _buildCardContent(context, index, score, isDark, displayUserName),
-              ),
-            ),
-          ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(32),
+          physics: const NeverScrollableScrollPhysics(),
+          child: _buildCardContent(context, index, score, isDark, displayUserName),
         ),
       ),
     );

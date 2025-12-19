@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
-import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
+import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
 
+/// 오늘의 운세 섹션 - 한국 전통 스타일
+///
+/// HanjiCard elevated 스타일과 오방색을 사용합니다.
 class DailyFortuneSection extends StatelessWidget {
   final DailyFortune dailyFortune;
 
@@ -12,164 +16,127 @@ class DailyFortuneSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
+    return HanjiCard(
+      style: HanjiCardStyle.elevated,
+      colorScheme: HanjiColorScheme.fortune,
+      showSealStamp: true,
+      sealText: '運',
+      sealSize: 32,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colors.accent,
-            colors.accent.withValues(alpha: 0.8),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.wb_sunny_outlined,
-                color: Colors.white,
-                size: 24,
-              ),
-              SizedBox(width: 8),
-              Text(
-                '오늘의 운세',
-                style: DSTypography.headingMedium.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // 행운 색상
+          // 헤더
           Row(
             children: [
               Container(
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: _parseColor(dailyFortune.luckyColor),
+                  color: DSFortuneColors.getGold(isDark).withValues(alpha: 0.2),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
                 ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '행운의 색',
-                      style: DSTypography.labelSmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
-                    ),
-                    Text(
-                      dailyFortune.luckyColor,
-                      style: DSTypography.bodyMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // 행운 숫자
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      '행운 번호',
-                      style: DSTypography.labelSmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      '${dailyFortune.luckyNumber}',
-                      style: DSTypography.headingMedium.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // 에너지 레벨 프로그레스 바
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '오늘의 에너지',
-                    style: DSTypography.labelSmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
-                    ),
-                  ),
-                  Text(
-                    '${dailyFortune.energyLevel}%',
-                    style: DSTypography.headingSmall.copyWith(
+                child: Center(
+                  child: Text(
+                    '今',
+                    style: TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: DSFortuneColors.getGold(isDark),
                     ),
                   ),
-                ],
+                ),
               ),
-              SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: LinearProgressIndicator(
-                  value: dailyFortune.energyLevel / 100,
-                  minHeight: 8,
-                  backgroundColor: Colors.white.withValues(alpha: 0.3),
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              const SizedBox(width: 10),
+              Text(
+                '오늘의 운세',
+                style: TextStyle(
+                  fontFamily: 'GowunBatang',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: DSFortuneColors.getInk(isDark),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
 
+          // 행운 색상 + 행운 숫자
+          Row(
+            children: [
+              // 행운 색상
+              Expanded(
+                child: _FortuneInfoCard(
+                  title: '행운의 색',
+                  content: dailyFortune.luckyColor,
+                  leading: Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: _parseColor(dailyFortune.luckyColor),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: DSFortuneColors.getGold(isDark).withValues(alpha: 0.5),
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: 12),
+              // 행운 숫자
+              Expanded(
+                child: _FortuneInfoCard(
+                  title: '행운 번호',
+                  content: '${dailyFortune.luckyNumber}',
+                  leading: const Text(
+                    '🎯',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  isDark: isDark,
+                  isHighlight: true,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 에너지 레벨
+          _EnergyLevelBar(
+            energyLevel: dailyFortune.energyLevel,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 20),
+
           // 추천 활동
-          _FortuneItem(
-            icon: Icons.lightbulb_outline,
+          _FortuneDetailRow(
+            icon: '💡',
             title: '추천 활동',
             content: dailyFortune.recommendedActivity,
+            isDark: isDark,
           ),
           const SizedBox(height: 12),
 
           // 주의사항
-          _FortuneItem(
-            icon: Icons.warning_amber_outlined,
+          _FortuneDetailRow(
+            icon: '⚠️',
             title: '주의사항',
             content: dailyFortune.caution,
+            isDark: isDark,
           ),
           const SizedBox(height: 12),
 
-          // 오늘의 베스트 매치
-          _FortuneItem(
-            icon: Icons.favorite_outline,
+          // 베스트 매치
+          _FortuneDetailRow(
+            icon: '💕',
             title: '오늘의 베스트 매치',
             content: dailyFortune.bestMatchToday,
+            isDark: isDark,
           ),
         ],
       ),
@@ -177,34 +144,169 @@ class DailyFortuneSection extends StatelessWidget {
   }
 
   Color _parseColor(String colorName) {
-    // 색상 이름을 Color로 변환하는 간단한 매핑
     final colorMap = {
-      '로즈 골드': Color(0xFFB76E79),
-      '코랄 핑크': Color(0xFFFF6F61),
-      '민트 그린': Color(0xFF98D8C8),
-      '라벤더': Color(0xFFE6E6FA),
-      '스카이 블루': Color(0xFF87CEEB),
-      '페일 옐로우': Color(0xFFFFFACD),
-      '피치': Color(0xFFFFDAB9),
-      '라일락': Color(0xFFC8A2C8),
-      '베이비 블루': Color(0xFF89CFF0),
-      '아이보리': Color(0xFFFFFFF0),
-      '세이지 그린': Color(0xFF9DC183),
-      '샴페인': Color(0xFFF7E7CE),
+      '로즈 골드': const Color(0xFFB76E79),
+      '코랄 핑크': const Color(0xFFFF6F61),
+      '민트 그린': const Color(0xFF98D8C8),
+      '라벤더': const Color(0xFFE6E6FA),
+      '스카이 블루': const Color(0xFF87CEEB),
+      '페일 옐로우': const Color(0xFFFFFACD),
+      '피치': const Color(0xFFFFDAB9),
+      '라일락': const Color(0xFFC8A2C8),
+      '베이비 블루': const Color(0xFF89CFF0),
+      '아이보리': const Color(0xFFFFFFF0),
+      '세이지 그린': const Color(0xFF9DC183),
+      '샴페인': const Color(0xFFF7E7CE),
     };
-    return colorMap[colorName] ?? Colors.white;
+    return colorMap[colorName] ?? const Color(0xFFD4AF37);
   }
 }
 
-class _FortuneItem extends StatelessWidget {
-  final IconData icon;
+/// 운세 정보 카드
+class _FortuneInfoCard extends StatelessWidget {
   final String title;
   final String content;
+  final Widget leading;
+  final bool isDark;
+  final bool isHighlight;
 
-  const _FortuneItem({
+  const _FortuneInfoCard({
+    required this.title,
+    required this.content,
+    required this.leading,
+    required this.isDark,
+    this.isHighlight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isHighlight
+            ? DSFortuneColors.getGold(isDark).withValues(alpha: isDark ? 0.15 : 0.1)
+            : DSFortuneColors.getInk(isDark).withValues(alpha: isDark ? 0.08 : 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isHighlight
+              ? DSFortuneColors.getGold(isDark).withValues(alpha: 0.3)
+              : DSFortuneColors.getInk(isDark).withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          leading,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 12,
+                    color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.6),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  content,
+                  style: TextStyle(
+                    fontFamily: 'GowunBatang',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: isHighlight
+                        ? DSFortuneColors.getGold(isDark)
+                        : DSFortuneColors.getInk(isDark),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 에너지 레벨 바
+class _EnergyLevelBar extends StatelessWidget {
+  final int energyLevel;
+  final bool isDark;
+
+  const _EnergyLevelBar({
+    required this.energyLevel,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: DSFortuneColors.getInk(isDark).withValues(alpha: isDark ? 0.08 : 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '오늘의 에너지',
+                style: TextStyle(
+                  fontFamily: 'GowunBatang',
+                  fontSize: 14,
+                  color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.7),
+                ),
+              ),
+              Text(
+                '$energyLevel%',
+                style: TextStyle(
+                  fontFamily: 'GowunBatang',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: DSFortuneColors.getGold(isDark),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: energyLevel / 100,
+              minHeight: 8,
+              backgroundColor: DSFortuneColors.getInk(isDark).withValues(alpha: 0.15),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                DSFortuneColors.getGold(isDark),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 운세 상세 행
+class _FortuneDetailRow extends StatelessWidget {
+  final String icon;
+  final String title;
+  final String content;
+  final bool isDark;
+
+  const _FortuneDetailRow({
     required this.icon,
     required this.title,
     required this.content,
+    required this.isDark,
   });
 
   @override
@@ -212,29 +314,30 @@ class _FortuneItem extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          color: Colors.white,
-          size: 20,
-        ),
-        SizedBox(width: 8),
+        Text(icon, style: const TextStyle(fontSize: 18)),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: DSTypography.labelSmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.8),
+                style: TextStyle(
+                  fontFamily: 'GowunBatang',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.6),
                 ),
               ),
-              SizedBox(height: 2),
+              const SizedBox(height: 4),
               Text(
                 content,
-                style: DSTypography.bodyMedium.copyWith(
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 15,
                   fontWeight: FontWeight.w400,
-                  color: Colors.white,
-                  height: 1.4,
+                  color: DSFortuneColors.getInk(isDark),
+                  height: 1.5,
                 ),
               ),
             ],

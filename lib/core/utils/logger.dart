@@ -24,6 +24,10 @@ class Logger {
   
   // 현재 로그 레벨 (프로덕션에서는 WARNING 이상만)
   static int get _currentLevel {
+    // 디버그 모드에서는 항상 모든 로그 출력
+    if (kDebugMode) {
+      return _levelDebug;
+    }
     if (Environment.current == Environment.production) {
       return _levelWarning;
     }

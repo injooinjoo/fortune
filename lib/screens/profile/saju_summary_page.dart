@@ -7,8 +7,14 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import '../../core/theme/toss_theme.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/theme/typography_unified.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
-import 'widgets/saju_summary_card.dart';
+// 전통사주 페이지의 상세 위젯들
+import '../../features/fortune/presentation/widgets/saju/saju_widgets.dart';
+import '../../features/fortune/presentation/widgets/saju_element_chart.dart';
+import '../../data/saju_explanations.dart';
+// 대운 타임라인 (compact 버전 유지)
+import 'widgets/compact/compact_daeun_timeline.dart';
 
 /// 사주 종합 페이지
 ///
@@ -26,17 +32,35 @@ class SajuSummaryPage extends ConsumerStatefulWidget {
   ConsumerState<SajuSummaryPage> createState() => _SajuSummaryPageState();
 }
 
-class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
+class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
+    with TickerProviderStateMixin {
   final ScreenshotController _screenshotController = ScreenshotController();
   bool _isCapturing = false;
+
+  // 오행 차트 애니메이션 컨트롤러
+  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
+
+    // 애니메이션 컨트롤러 초기화
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
     // 사주 데이터 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(sajuProvider.notifier).fetchUserSaju();
+      _animationController.forward();
     });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -82,18 +106,218 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
   }
 
   Widget _buildContent(Map<String, dynamic> sajuData, bool isDark) {
+    // 오행 균형 데이터 준비
+    final sajuState = ref.watch(sajuProvider);
+    final providerElements =
+        sajuState.sajuData?['elements'] as Map<String, dynamic>?;
+    final elementBalance = {
+      '목': providerElements?['목'] ?? sajuData['elementBalance']?['목'] ?? 0,
+      '화': providerElements?['화'] ?? sajuData['elementBalance']?['화'] ?? 0,
+      '토': providerElements?['토'] ?? sajuData['elementBalance']?['토'] ?? 0,
+      '금': providerElements?['금'] ?? sajuData['elementBalance']?['금'] ?? 0,
+      '수': providerElements?['수'] ?? sajuData['elementBalance']?['수'] ?? 0,
+    };
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(TossTheme.spacingM),
       child: Screenshot(
         controller: _screenshotController,
         child: Container(
           color: context.colors.background,
-          child: SajuSummaryCard(
-            sajuData: sajuData,
-            showHeader: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 헤더
+              _buildHeader(isDark),
+              const SizedBox(height: DSSpacing.lg),
+
+              // 1. 명식 섹션
+              _buildSectionWithConcept(
+                concept: SajuExplanations.tabConcepts['myungsik']!,
+                icon: Icons.grid_view_rounded,
+                isDark: isDark,
+                child: SajuPillarTablePro(
+                  sajuData: sajuData,
+                  showTitle: false,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+
+              // 2. 오행 섹션
+              _buildSectionWithConcept(
+                concept: SajuExplanations.tabConcepts['ohang']!,
+                icon: Icons.donut_large_rounded,
+                isDark: isDark,
+                child: SajuElementChart(
+                  elementBalance: elementBalance,
+                  animationController: _animationController,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+
+              // 3. 지장간 섹션
+              _buildSectionWithConcept(
+                concept: SajuExplanations.tabConcepts['jijanggan']!,
+                icon: Icons.layers_rounded,
+                isDark: isDark,
+                child: SajuJijangganWidget(
+                  sajuData: sajuData,
+                  showTitle: false,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+
+              // 4. 12운성 섹션
+              _buildSectionWithConcept(
+                concept: SajuExplanations.tabConcepts['twelve_fortune']!,
+                icon: Icons.loop_rounded,
+                isDark: isDark,
+                child: SajuTwelveStagesWidget(
+                  sajuData: sajuData,
+                  showTitle: false,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+
+              // 5. 신살 섹션
+              _buildSectionWithConcept(
+                concept: SajuExplanations.tabConcepts['sinsal']!,
+                icon: Icons.stars_rounded,
+                isDark: isDark,
+                child: SajuSinsalWidget(
+                  sajuData: sajuData,
+                  showTitle: false,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+
+              // 6. 합충 섹션
+              _buildSectionWithConcept(
+                concept: SajuExplanations.tabConcepts['hapchung']!,
+                icon: Icons.compare_arrows_rounded,
+                isDark: isDark,
+                child: SajuHapchungWidget(
+                  sajuData: sajuData,
+                  showTitle: false,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+
+              // 7. 대운 타임라인 (compact 버전 유지)
+              _buildDaeunSection(sajuData, isDark),
+
+              // 하단 여백
+              const SizedBox(height: DSSpacing.xl),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  /// 개념 설명 카드와 함께 섹션 빌드
+  Widget _buildSectionWithConcept({
+    required Map<String, String> concept,
+    required IconData icon,
+    required bool isDark,
+    required Widget child,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SajuConceptCard(
+          title: concept['title']!,
+          shortDescription: concept['short']!,
+          fullDescription: concept['full']!,
+          icon: icon,
+        ),
+        const SizedBox(height: DSSpacing.md),
+        child,
+      ],
+    );
+  }
+
+  /// 대운 섹션 빌드
+  Widget _buildDaeunSection(Map<String, dynamic> sajuData, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 대운 제목
+        Row(
+          children: [
+            Icon(
+              Icons.timeline_rounded,
+              color: isDark ? Colors.white70 : Colors.black54,
+              size: 20,
+            ),
+            const SizedBox(width: TossTheme.spacingS),
+            Text(
+              '대운 흐름',
+              style: context.heading3.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: TossTheme.spacingXS),
+        Text(
+          '10년 단위로 변화하는 인생의 큰 흐름입니다',
+          style: context.labelMedium.copyWith(
+            color: isDark ? Colors.white60 : Colors.black54,
+          ),
+        ),
+        const SizedBox(height: DSSpacing.md),
+        CompactDaeunTimeline(sajuData: sajuData),
+      ],
+    );
+  }
+
+  /// 헤더 빌드
+  Widget _buildHeader(bool isDark) {
+    return Row(
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [const Color(0xFF7C3AED), const Color(0xFF2563EB)]
+                  : [const Color(0xFF8B5CF6), const Color(0xFF3B82F6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Icon(
+            Icons.auto_awesome,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: TossTheme.spacingS),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '사주 종합',
+                style: context.heading3.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+              Text(
+                '四柱綜合 · 나의 사주 팔자',
+                style: context.labelSmall.copyWith(
+                  color: isDark ? Colors.white60 : Colors.black54,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -112,7 +336,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
             const SizedBox(height: TossTheme.spacingM),
             Text(
               '사주 정보를 불러올 수 없습니다',
-              style: TossTheme.heading3.copyWith(
+              style: context.heading3.copyWith(
                 color: isDark ? Colors.white : Colors.black87,
               ),
               textAlign: TextAlign.center,
@@ -120,7 +344,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
             const SizedBox(height: TossTheme.spacingS),
             Text(
               error,
-              style: TossTheme.body2.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: isDark ? Colors.white60 : Colors.black54,
               ),
               textAlign: TextAlign.center,
@@ -153,7 +377,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
             const SizedBox(height: TossTheme.spacingM),
             Text(
               '사주 정보가 없습니다',
-              style: TossTheme.heading3.copyWith(
+              style: context.heading3.copyWith(
                 color: isDark ? Colors.white : Colors.black87,
               ),
               textAlign: TextAlign.center,
@@ -161,7 +385,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
             const SizedBox(height: TossTheme.spacingS),
             Text(
               '프로필에서 생년월일을 입력하면\n사주를 계산해 드립니다',
-              style: TossTheme.body2.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: isDark ? Colors.white60 : Colors.black54,
               ),
               textAlign: TextAlign.center,
@@ -200,7 +424,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
               // 제목
               Text(
                 '사주 카드 저장/공유',
-                style: TossTheme.heading3.copyWith(
+                style: context.heading3.copyWith(
                   color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
@@ -252,7 +476,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
       ),
       title: Text(
         label,
-        style: TossTheme.body1.copyWith(
+        style: context.bodyLarge.copyWith(
           color: isDark ? Colors.white : Colors.black87,
         ),
       ),

@@ -31,6 +31,16 @@
 # Keep AdMob classes
 -keep class com.google.android.gms.ads.** { *; }
 
+# Keep In-App Purchase / Billing classes
+-keep class com.android.vending.billing.** { *; }
+-keep class com.google.android.gms.internal.play_billing.** { *; }
+-keep class com.android.billingclient.** { *; }
+-dontwarn com.android.billingclient.**
+
+# Keep Flutter In-App Purchase Plugin
+-keep class io.flutter.plugins.inapppurchase.** { *; }
+-dontwarn io.flutter.plugins.inapppurchase.**
+
 # Keep all annotations
 -keepattributes *Annotation*
 

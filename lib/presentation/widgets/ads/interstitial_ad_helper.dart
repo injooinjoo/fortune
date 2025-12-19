@@ -54,6 +54,60 @@ class InterstitialAdHelper {
     await showInterstitialAd(ref);
   }
   
+  /// Show interstitial ad with callback support
+  /// Premium users skip ad and callback is called immediately
+  /// Returns false if ad wasn't shown (premium user, frequency cap, or ad not ready)
+  static Future<bool> showInterstitialAdWithCallback(
+    WidgetRef ref, {
+    Future<void> Function()? onAdCompleted,
+    Future<void> Function()? onAdFailed,
+  }) async {
+    // Premium subscribers don't see ads - execute callback immediately
+    final isPremium = ref.read(isPremiumProvider);
+    if (isPremium) {
+      Logger.info('Premium user - skipping interstitial ad, executing callback');
+      await onAdCompleted?.call();
+      return false;
+    }
+
+    final adService = ref.read(adServiceProvider);
+    final frequencyCap = ref.read(adFrequencyCapProvider);
+
+    // Check frequency cap
+    if (!frequencyCap.canShowInterstitial()) {
+      Logger.info('Interstitial ad frequency cap reached, executing callback');
+      await onAdCompleted?.call();
+      return false;
+    }
+
+    // Check if ad is ready
+    if (!adService.isInterstitialAdReady) {
+      Logger.info('Interstitial ad not ready, executing callback');
+      await adService.loadInterstitialAd();
+      await onAdCompleted?.call();
+      return false;
+    }
+
+    try {
+      // Show the ad with callback
+      await adService.showInterstitialAdWithCallback(
+        onAdCompleted: () async {
+          // Record that we showed an ad
+          ref.read(adFrequencyCapProvider.notifier).recordInterstitialShown();
+          ref.read(adRevenueProvider.notifier).recordInterstitialImpression();
+          await onAdCompleted?.call();
+        },
+        onAdFailed: onAdFailed,
+      );
+
+      return true;
+    } catch (e) {
+      Logger.error('Failed to show interstitial ad', e);
+      await onAdFailed?.call();
+      return false;
+    }
+  }
+
   /// Preload an interstitial ad for later use
   /// Premium subscribers don't need ads preloaded
   static Future<void> preloadInterstitialAd(WidgetRef ref) async {

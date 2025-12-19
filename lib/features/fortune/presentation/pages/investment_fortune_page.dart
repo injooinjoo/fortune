@@ -11,7 +11,7 @@ import '../../../../core/models/fortune_result.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/investment_category_grid.dart';
 import '../widgets/ticker_search_widget.dart';
-import '../../../../services/ad_service.dart';
+import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../../data/models/investment_ticker.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 
@@ -223,7 +223,8 @@ class _InvestmentFortunePageState
   void _generateFortune() async {
     final data = ref.read(investmentDataProvider);
 
-    await AdService.instance.showInterstitialAdWithCallback(
+    await InterstitialAdHelper.showInterstitialAdWithCallback(
+      ref,
       onAdCompleted: () async {
         _proceedWithFortune(data);
       },
