@@ -59,10 +59,12 @@ platform :ios do
     # Upload to TestFlight
     upload_to_testflight(
       skip_waiting_for_build_processing: true,
-      distribute_external: true,
-      groups: ["Beta Testers"],
+      distribute_external: false,
       changelog: "Bug fixes and performance improvements"
     )
+
+    # Note: External testers can be added manually in App Store Connect
+    # after the build is processed
     
     # Commit version bump
     commit_version_bump(
