@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,8 +21,8 @@ import 'widgets/widgets.dart';
 
 /// 행운 아이템 페이지
 ///
-/// 로또 번호, 오늘의 색상, 쇼핑, 게임, 음식, 여행, 건강, 패션, 라이프스타일 등
-/// 9개 카테고리의 행운 정보를 제공합니다.
+/// 오늘의 색상, 쇼핑, 게임, 음식, 여행, 건강, 패션, 라이프스타일 등
+/// 8개 카테고리의 행운 정보를 제공합니다.
 class LuckyItemsPage extends ConsumerStatefulWidget {
   const LuckyItemsPage({super.key});
 
@@ -52,14 +51,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
     _loadUserProfile();
   }
 
-  // 9개 메인 카테고리 - ChatGPT 미니멀 스타일 (Material Icons)
+  // 8개 메인 카테고리 - ChatGPT 미니멀 스타일 (Material Icons)
   static const List<CategoryModel> _categories = [
-    CategoryModel(
-      id: 'lotto',
-      title: '로또/복권',
-      icon: Icons.casino_outlined,
-      description: '행운의 번호와 구매 장소',
-    ),
     CategoryModel(
       id: 'shopping',
       title: '쇼핑/구매',
@@ -115,7 +108,7 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
     return UnifiedFortuneBaseWidget(
       fortuneType: 'lucky_items',
       title: '행운아이템',
-      description: '로또번호부터 오늘의 색상까지',
+      description: '오늘의 색상부터 라이프스타일까지',
       inputBuilder: _buildInput,
       conditionsBuilder: _buildConditions,
       resultBuilder: _buildResult,
@@ -237,7 +230,7 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    '로또번호부터 오늘의 색상까지\n당신의 행운을 찾아보세요',
+                    '오늘의 색상부터 라이프스타일까지\n당신의 행운을 찾아보세요',
                     style: DSTypography.bodyMedium.copyWith(
                       color: Colors.white.withValues(alpha: 0.9),
                       height: 1.5,
@@ -382,36 +375,103 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
     );
   }
 
-  /// 관심사 선택기 (다중 선택)
+  /// 관심사 선택기 (다중 선택) - 전체 행 클릭 가능한 개선된 UI
   Widget _buildInterestsSelect(Function(dynamic) onValueChanged) {
-    final interests = ['로또/복권', '쇼핑/구매', '게임/엔터', '음식/맛집', '여행/장소', '운동/건강', '패션/뷰티', '라이프스타일'];
+    final colors = context.colors;
+    final interests = [
+      ('쇼핑/구매', Icons.shopping_bag_outlined),
+      ('게임/엔터', Icons.videogame_asset_outlined),
+      ('음식/맛집', Icons.restaurant_outlined),
+      ('여행/장소', Icons.flight_outlined),
+      ('운동/건강', Icons.fitness_center_outlined),
+      ('패션/뷰티', Icons.checkroom_outlined),
+      ('라이프스타일', Icons.auto_awesome_outlined),
+    ];
 
     return Column(
-      children: interests.map((interest) {
-        return CheckboxListTile(
-          title: Text(interest),
-          value: _selectedInterests.contains(interest),
-          onChanged: (checked) {
-            setState(() {
-              if (checked == true) {
-                _selectedInterests.add(interest);
-              } else {
-                _selectedInterests.remove(interest);
-              }
+      children: interests.map((item) {
+        final interest = item.$1;
+        final icon = item.$2;
+        final isSelected = _selectedInterests.contains(interest);
 
-              final index = _sections.indexWhere((s) => s.id == 'interests');
-              if (index != -1) {
-                _sections[index] = _sections[index].copyWith(
-                  isCompleted: _selectedInterests.isNotEmpty,
-                  value: _selectedInterests,
-                  displayValue: _selectedInterests.isEmpty
-                      ? '관심사'
-                      : '관심사: ${_selectedInterests.join(", ")}',
-                );
-              }
-            });
-            onValueChanged(_selectedInterests);
-          },
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                ref.read(fortuneHapticServiceProvider).selection();
+                setState(() {
+                  if (isSelected) {
+                    _selectedInterests.remove(interest);
+                  } else {
+                    _selectedInterests.add(interest);
+                  }
+
+                  final index = _sections.indexWhere((s) => s.id == 'interests');
+                  if (index != -1) {
+                    _sections[index] = _sections[index].copyWith(
+                      isCompleted: _selectedInterests.isNotEmpty,
+                      value: _selectedInterests,
+                      displayValue: _selectedInterests.isEmpty
+                          ? '관심사'
+                          : '관심사: ${_selectedInterests.join(", ")}',
+                    );
+                  }
+                });
+                onValueChanged(_selectedInterests);
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? colors.accent.withValues(alpha: 0.1)
+                      : colors.surfaceSecondary,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected ? colors.accent : colors.border,
+                    width: isSelected ? 2 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      icon,
+                      size: 20,
+                      color: isSelected ? colors.accent : colors.textSecondary,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        interest,
+                        style: DSTypography.bodyMedium.copyWith(
+                          color: isSelected ? colors.accent : colors.textPrimary,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: isSelected ? colors.accent : Colors.transparent,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: isSelected ? colors.accent : colors.border,
+                          width: 2,
+                        ),
+                      ),
+                      child: isSelected
+                          ? const Icon(Icons.check, size: 16, color: Colors.white)
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         );
       }).toList(),
     );
@@ -444,8 +504,6 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
       Logger.debug('[LuckyItems] 🔒 블러 섹션: $_blurredSections');
     }
 
-    final lottoNumbers = _generateLottoNumbers();
-
     // ✅ fit: StackFit.expand 추가 - 전체 화면을 채워서 버튼이 하단에 고정되도록 함
     return Stack(
       fit: StackFit.expand,
@@ -458,7 +516,7 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
             children: [
               // 전체 섹션을 세로로 나열
               for (var category in _categories) ...[
-                _buildCategorySection(category, lottoNumbers),
+                _buildCategorySection(category),
                 const SizedBox(height: 32),
               ],
             ],
@@ -476,30 +534,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
     );
   }
 
-  /// 로또 번호 생성 (사주 기반)
-  List<int> _generateLottoNumbers() {
-    final now = DateTime.now();
-    final birthDate = _selectedBirthDate ?? DateTime.now();
-
-    // 사주 기반 시드 (생년월일 + 오늘 날짜)
-    final seed = birthDate.day +
-                 birthDate.month * 10 +
-                 birthDate.year % 100 * 100 +
-                 now.day +
-                 now.month * 100;
-
-    final random = Random(seed);
-    final numbers = <int>{};
-
-    while (numbers.length < 6) {
-      numbers.add(random.nextInt(45) + 1);
-    }
-
-    return numbers.toList()..sort();
-  }
-
   /// 카테고리 섹션 (헤더 + 컨텐츠)
-  Widget _buildCategorySection(CategoryModel category, List<int> lottoNumbers) {
+  Widget _buildCategorySection(CategoryModel category) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -508,7 +544,7 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
         const SizedBox(height: 16),
 
         // 카테고리별 상세 정보 (블러 처리 포함)
-        _buildCategoryDetails(category.id, lottoNumbers),
+        _buildCategoryDetails(category.id),
       ],
     );
   }
@@ -605,14 +641,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
   }
 
   /// 카테고리별 상세 정보
-  Widget _buildCategoryDetails(String categoryId, List<int> lottoNumbers) {
+  Widget _buildCategoryDetails(String categoryId) {
     switch (categoryId) {
-      case 'lotto':
-        // ✅ 로또는 마지막 번호만 블러 처리 (프리미엄 제외)
-        return LottoContent(
-          numbers: lottoNumbers,
-          isBlurred: _isBlurred && _blurredSections.contains('lotto') && !ref.watch(isPremiumProvider),
-        );
       case 'shopping':
         return UnifiedBlurWrapper(
           isBlurred: _isBlurred,

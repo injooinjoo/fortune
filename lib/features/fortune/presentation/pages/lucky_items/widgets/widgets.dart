@@ -2,7 +2,6 @@
 export 'category_model.dart';
 export 'category_header.dart';
 export 'info_item.dart';
-export 'lotto_content.dart';
 export 'shopping_content.dart';
 export 'game_content.dart';
 export 'food_content.dart';
