@@ -178,7 +178,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
           ),
           // 다른 페이지와 동일한 위치의 floating button
           UnifiedButton.floating(
-            text: _isGeneratingAI ? 'AI가 부적을 만들고 있어요...' : '🎨 AI 맞춤 부적 만들기',
+            text: _isGeneratingAI ? '신령이 부적을 만들고 있어요...' : '🎨 맞춤 신령 부적 만들기',
             onPressed: _isValid && !_isGeneratingAI
                 ? () {
                     _wishInputKey.currentState?.handleAISubmit();

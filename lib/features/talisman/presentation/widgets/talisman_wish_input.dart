@@ -225,7 +225,7 @@ class TalismanWishInputState extends State<TalismanWishInput> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('AI 부적 생성 중 오류가 발생했습니다: $e'),
+            content: Text('신령 부적 생성 중 오류가 발생했습니다: $e'),
             backgroundColor: TossDesignSystem.errorRed,
           ),
         );

@@ -174,27 +174,279 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
     // 블러 상태일 때 버튼 공간 확보 (버튼 높이 56 + 여유 20)
     final bottomMargin = _isBlurred ? bottomPadding + 120 : bottomPadding + 60;
 
+    return GestureDetector(
+      onTap: () => _showExpandedCard(context, index, colors),
+      child: Container(
+        height: double.infinity,
+        margin: EdgeInsets.fromLTRB(20, topPadding + 40, 20, bottomMargin),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: colors.textPrimary.withValues(alpha: 0.08),
+              blurRadius: 32,
+              offset: const Offset(0, 12),
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: _buildCardContent(context, index, colors),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 카드 전체화면 확장 다이얼로그
+  void _showExpandedCard(BuildContext context, int index, DSColorScheme colors) {
+    ref.read(fortuneHapticServiceProvider).selection();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            children: [
+              // 드래그 핸들
+              Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colors.textTertiary.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // 닫기 버튼
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: IconButton(
+                    icon: Icon(Icons.close, color: colors.textSecondary),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+              ),
+              // 확장된 카드 내용
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(24),
+                  child: _buildExpandedCardContent(index, colors),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 확장된 카드 내용 (스크롤 가능, 텍스트 짤림 없음)
+  Widget _buildExpandedCardContent(int index, DSColorScheme colors) {
+    switch (index) {
+      case 0:
+        return _buildExpandedEmpathyCard(colors);
+      case 1:
+        return _buildExpandedHopeCard(colors);
+      case 2:
+        return _buildExpandedAdviceCard(colors);
+      case 3:
+        return _buildExpandedEncouragementCard(colors);
+      case 4:
+        return _buildExpandedSpecialWordsCard(colors);
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildExpandedEmpathyCard(DSColorScheme colors) {
+    return Column(
+      children: [
+        const Text('💝', style: TextStyle(fontSize: 64)),
+        const SizedBox(height: 24),
+        Text(
+          '당신의 마음이 느껴져요',
+          style: DSTypography.headingMedium.copyWith(
+            color: colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          widget.result.empathyMessage,
+          textAlign: TextAlign.center,
+          style: DSTypography.bodyLarge.copyWith(
+            color: colors.textSecondary,
+            height: 1.8,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExpandedHopeCard(DSColorScheme colors) {
+    return Column(
+      children: [
+        const Text('✨', style: TextStyle(fontSize: 64)),
+        const SizedBox(height: 24),
+        Text(
+          '당신은 할 수 있어요',
+          style: DSTypography.headingMedium.copyWith(
+            color: colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          widget.result.hopeMessage,
+          textAlign: TextAlign.center,
+          style: DSTypography.bodyLarge.copyWith(
+            color: colors.textSecondary,
+            height: 1.8,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExpandedAdviceCard(DSColorScheme colors) {
+    return Column(
+      children: [
+        const Text('💡', style: TextStyle(fontSize: 64)),
+        const SizedBox(height: 24),
+        Text(
+          '이렇게 해보세요',
+          style: DSTypography.headingMedium.copyWith(
+            color: colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 24),
+        ...widget.result.advice.asMap().entries.map((entry) {
+          final index = entry.key;
+          final advice = entry.value;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: colors.accent.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: colors.accent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${index + 1}',
+                      style: DSTypography.labelMedium.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    advice,
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.6,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildExpandedEncouragementCard(DSColorScheme colors) {
+    return Column(
+      children: [
+        const Text('🙌', style: TextStyle(fontSize: 64)),
+        const SizedBox(height: 24),
+        Text(
+          '힘내세요!',
+          style: DSTypography.headingMedium.copyWith(
+            color: colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          widget.result.encouragement,
+          textAlign: TextAlign.center,
+          style: DSTypography.bodyLarge.copyWith(
+            color: colors.textSecondary,
+            height: 1.8,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExpandedSpecialWordsCard(DSColorScheme colors) {
     return Container(
-      height: double.infinity,
-      margin: EdgeInsets.fromLTRB(20, topPadding + 40, 20, bottomMargin),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.08),
-            blurRadius: 32,
-            offset: const Offset(0, 12),
-            spreadRadius: 0,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colors.accent,
+            colors.accent.withValues(alpha: 0.7),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        children: [
+          const Text('🔮', style: TextStyle(fontSize: 64)),
+          const SizedBox(height: 24),
+          Text(
+            '신이 전하는 한마디',
+            style: DSTypography.headingMedium.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            '"${widget.result.specialWords}"',
+            textAlign: TextAlign.center,
+            style: DSTypography.headingSmall.copyWith(
+              color: Colors.white,
+              height: 1.6,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: _buildCardContent(context, index, colors),
-        ),
       ),
     );
   }

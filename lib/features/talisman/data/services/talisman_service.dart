@@ -53,7 +53,7 @@ class TalismanService {
 
       // AI 이미지 URL 필수
       if (aiImageUrl == null || aiImageUrl.isEmpty) {
-        throw Exception('AI 부적 이미지 생성에 실패했습니다. 다시 시도해주세요.');
+        throw Exception('신령 부적 이미지 생성에 실패했습니다. 다시 시도해주세요.');
       }
 
       Logger.info('Using AI generated image: $aiImageUrl');
