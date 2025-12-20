@@ -251,70 +251,45 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
             const SizedBox(height: DSSpacing.lg),
 
-            // Subscription Management Guide (Apple 심사 필수)
-            Container(
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(
-                  color: colors.border,
-                  width: 1,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        size: 18,
-                        color: colors.accent,
-                      ),
-                      const SizedBox(width: DSSpacing.sm),
-                      Text(
-                        '구독 관리 방법',
-                        style: context.bodySmall.copyWith(
-                          color: colors.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+            // Subscription Management & Restore Buttons (Apple 심사 필수)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton.icon(
+                  onPressed: () => _showSubscriptionManagementGuide(context),
+                  icon: Icon(
+                    Icons.settings_outlined,
+                    size: 16,
+                    color: colors.textSecondary,
                   ),
-                  const SizedBox(height: DSSpacing.md),
-                  Text(
-                    '구독 취소 및 관리는 Apple ID 설정에서 가능합니다:\n\n'
-                    '1. 설정 앱 열기\n'
-                    '2. 상단의 [내 이름] 탭\n'
-                    '3. [구독] 선택\n'
-                    '4. Fortune 앱 선택\n'
-                    '5. [구독 취소] 또는 플랜 변경\n\n'
-                    '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.\n'
-                    '• 무료 체험 기간 중 취소하면 체험 기간 종료와 함께 구독이 해지됩니다.',
-                    style: context.labelSmall.copyWith(
+                  label: Text(
+                    '구독 관리',
+                    style: context.bodySmall.copyWith(
                       color: colors.textSecondary,
-                      height: 1.5,
                     ),
                   ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.md),
-
-            // Restore Purchases Button (Apple 심사 필수)
-            Center(
-              child: TextButton(
-                onPressed: _isLoading ? null : _restorePurchases,
-                child: Text(
-                  '이전 구매 복원',
-                  style: context.bodySmall.copyWith(
+                ),
+                Container(
+                  width: 1,
+                  height: 16,
+                  color: colors.border,
+                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
+                ),
+                TextButton.icon(
+                  onPressed: _isLoading ? null : _restorePurchases,
+                  icon: Icon(
+                    Icons.refresh,
+                    size: 16,
                     color: colors.accent,
-                    decoration: TextDecoration.underline,
+                  ),
+                  label: Text(
+                    '구매 복원',
+                    style: context.bodySmall.copyWith(
+                      color: colors.accent,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
 
             const SizedBox(height: 100), // FloatingBottomButton 공간 확보
@@ -546,6 +521,74 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
         Toast.show(context, message: e.toString(), type: ToastType.error);
       }
     }
+  }
+
+  void _showSubscriptionManagementGuide(BuildContext context) {
+    final colors = context.colors;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: colors.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(DSRadius.lg)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(DSSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.settings_outlined,
+                    size: 20,
+                    color: colors.accent,
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Text(
+                    '구독 관리 방법',
+                    style: context.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: DSSpacing.lg),
+              Text(
+                '구독 취소 및 관리는 Apple ID 설정에서 가능합니다:\n\n'
+                '1. 설정 앱 열기\n'
+                '2. 상단의 [내 이름] 탭\n'
+                '3. [구독] 선택\n'
+                '4. Fortune 앱 선택\n'
+                '5. [구독 취소] 또는 플랜 변경\n\n'
+                '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.\n'
+                '• 무료 체험 기간 중 취소하면 체험 기간 종료와 함께 구독이 해지됩니다.',
+                style: context.bodySmall.copyWith(
+                  color: colors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.lg),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    '확인',
+                    style: context.bodyMedium.copyWith(
+                      color: colors.accent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _restorePurchases() async {
