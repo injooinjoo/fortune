@@ -393,7 +393,7 @@ class _DreamInterpretationPageState
           ),
           const SizedBox(height: 16),
           Text(
-            'AI가 꿈을 분석하고 있어요',
+            '신령이 꿈을 풀이하고 있어요',
             style: DSTypography.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark

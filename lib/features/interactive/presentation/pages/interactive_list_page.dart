@@ -62,7 +62,7 @@ class InteractiveListPage extends ConsumerWidget {
       ),
       _InteractiveFeature(
         title: '꿈 일기',
-        subtitle: '꿈을 기록하고 AI가 해석해드려요',
+        subtitle: '꿈을 기록하고 영험한 해몽을 받아보세요',
         icon: Icons.nights_stay_outlined,
         route: '/interactive/dream-journal',
         isAvailable: true,

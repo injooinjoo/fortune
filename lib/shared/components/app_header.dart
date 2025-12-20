@@ -96,7 +96,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       final currentUrl = GoRouterState.of(context).uri.toString();
       try {
         await Share.share(
-          '포춘 - AI 운세 서비스\n$currentUrl',
+          '포춘 - 신점 운세 서비스\n$currentUrl',
         subject: '포춘에서 나의 운세를 확인해보세요!');
       } catch (e) {
         await Clipboard.setData(ClipboardData(text: currentUrl));

@@ -24,7 +24,13 @@ class OverviewSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final content = FortuneTextCleaner.cleanNullable(fortuneResult?.data['content'] as String?);
-    final score = fortuneResult?.score ?? 0;
+    // ✅ score 우선순위: 1) fortuneResult.score 2) data['overallScore'] 3) data['overall_score'] 4) summary
+    final score = fortuneResult?.score ??
+        (fortuneResult?.data['overallScore'] as int?) ??
+        (fortuneResult?.data['overall_score'] as int?) ??
+        (fortuneResult?.summary['score'] as int?) ??
+        (fortuneResult?.data['score'] as int?) ??
+        50; // 기본값 50점 (0점 대신 중간값)
     final luckyItems = fortuneResult?.data['luckyItems'] as Map<String, dynamic>?;
 
     return Container(
@@ -118,7 +124,7 @@ class OverviewSection extends StatelessWidget {
                         ),
                         SizedBox(width: 8),
                         Text(
-                          'AI 재능 브리핑',
+                          '신령의 재능 풀이',
                           style: DSTypography.headingMedium.copyWith(
                             fontWeight: FontWeight.w700,
                             color: colors.textPrimary,

@@ -564,6 +564,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
 
+              // 복주머니 획득 안내
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.pageHorizontal + 4,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 14,
+                      color: context.colors.textTertiary,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        '오늘의 운세 10개 이상 보면 복주머니 1개를 받아요!',
+                        style: context.bodySmall.copyWith(
+                          color: context.colors.textTertiary,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
               // 정보 섹션
               if (userProfile != null || localProfile != null) ...[
                 const SectionHeader(title: '정보'),

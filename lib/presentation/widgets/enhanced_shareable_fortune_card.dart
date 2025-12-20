@@ -210,12 +210,12 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Fortune AI',
+                    'Fortune 신점',
                     style: Theme.of(context).textTheme.bodyMedium),
                   Text(
                     date != null 
                         ? '${date!.year}.${date!.month}.${date!.day}'
-                        : 'AI가 알려주는 나만의 운세',
+                        : '신이 전하는 나만의 운세',
                     style: Theme.of(context).textTheme.bodyMedium)])])]));
   }
 
@@ -312,7 +312,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                             size: AppDimensions.iconSizeSmall),
                           SizedBox(width: AppSpacing.spacing2),
                           Text(
-                            'Fortune AI',
+                            'Fortune 신점',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
@@ -427,10 +427,10 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Fortune AI',
+                  'Fortune 신점',
                   style: Theme.of(context).textTheme.bodyMedium),
                 Text(
-                  'AI가 알려주는 나만의 운세',
+                  '신이 전하는 나만의 운세',
                   style: TextStyle(
                     color: TossDesignSystem.white.withValues(alpha: 0.8),
                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])]),
@@ -466,7 +466,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
               color: const Color(0xFFBCAAA4))]),
         SizedBox(height: AppSpacing.spacing3),
         Text(
-          'Fortune AI · 행운이 가득하길',
+          'Fortune 신점 · 행운이 가득하길',
           style: Theme.of(context).textTheme.bodyMedium)]);
   }
 

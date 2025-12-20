@@ -52,6 +52,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
   final FocusNode _focusNode = FocusNode();
 
   String _rawInput = ''; // 숫자만 (예: "20001121")
+  String _prevDisplayText = ''; // 백스페이스 감지용
   String? _errorMessage;
 
   @override
@@ -63,6 +64,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
       final date = widget.selectedDate!;
       _rawInput = '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
       _controller.text = _formatDisplay(_rawInput);
+      _prevDisplayText = _controller.text;
     }
   }
 
@@ -82,6 +84,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
       final date = widget.selectedDate!;
       _rawInput = '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
       _controller.text = _formatDisplay(_rawInput);
+      _prevDisplayText = _controller.text;
     }
   }
 
@@ -165,14 +168,15 @@ class _NumericDateInputState extends State<NumericDateInput> {
     // 숫자만 추출
     final numbers = value.replaceAll(RegExp(r'[^0-9]'), '');
 
-    // 백스페이스 감지: 입력 텍스트가 줄었는데 숫자 개수가 같거나 더 많은 경우
+    // 백스페이스 감지: 이전 텍스트보다 짧아졌고 숫자 개수가 같거나 더 많은 경우
     // (한글 "년/월/일"만 삭제된 경우) → 마지막 숫자 수동 삭제
-    if (value.length < _controller.text.length &&
+    if (value.length < _prevDisplayText.length &&
         numbers.length >= _rawInput.length &&
         _rawInput.isNotEmpty) {
       setState(() {
         _rawInput = _rawInput.substring(0, _rawInput.length - 1);
         _controller.text = _formatDisplay(_rawInput);
+        _prevDisplayText = _controller.text;
         _controller.selection = TextSelection.fromPosition(
           TextPosition(offset: _controller.text.length),
         );
@@ -188,6 +192,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
     setState(() {
       _rawInput = numbers;
       _controller.text = _formatDisplay(_rawInput);
+      _prevDisplayText = _controller.text;
       _controller.selection = TextSelection.fromPosition(
         TextPosition(offset: _controller.text.length),
       );

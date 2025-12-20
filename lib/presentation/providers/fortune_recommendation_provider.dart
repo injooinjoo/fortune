@@ -6,7 +6,7 @@ import '../../core/constants/edge_functions_endpoints.dart';
 import '../../core/utils/logger.dart';
 import '../../services/analytics_service.dart';
 import 'user_profile_notifier.dart' as profile_notifier;
-import '../../features/fortune/presentation/pages/fortune_list_page.dart';
+import '../../features/fortune/domain/entities/fortune_category.dart';
 import 'providers.dart';
 import 'auth_provider.dart';
 

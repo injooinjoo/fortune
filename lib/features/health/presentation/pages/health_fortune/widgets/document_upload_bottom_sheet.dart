@@ -126,7 +126,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
               ),
               const SizedBox(height: 2),
               Text(
-                'AI가 검진 결과를 분석해드려요',
+                '신령이 검진 결과를 분석해드려요',
                 style: TossTheme.caption.copyWith(
                   color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                 ),
@@ -382,7 +382,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '업로드된 문서는 AI 분석에만 사용되며, 분석 후 즉시 삭제됩니다. 의사의 전문적 진단을 대체하지 않습니다.',
+              '업로드된 문서는 분석에만 사용되며, 분석 후 즉시 삭제됩니다. 의사의 전문적 진단을 대체하지 않습니다.',
               style: TossTheme.caption.copyWith(
                 color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
                 height: 1.4,

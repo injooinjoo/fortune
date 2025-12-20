@@ -43,13 +43,14 @@ class ExamDetailsCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 시험 예정일
+              // 시험 예정일 (오늘 이후만 선택 가능)
               NumericDateInput(
                 label: '시험 예정일',
                 selectedDate: selectedExamDate,
                 onDateChanged: onDateChanged,
-                minDate: DateTime(1900),
-                maxDate: DateTime(2300),
+                minDate: DateTime.now(),
+                maxDate: DateTime(2100),
+                hintText: '미래 날짜만 입력 가능',
               ),
 
               const SizedBox(height: 20),

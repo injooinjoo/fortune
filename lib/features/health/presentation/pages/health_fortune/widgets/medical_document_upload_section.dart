@@ -77,7 +77,7 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'AI 분석',
+                          '신령 분석',
                           style: TossTheme.caption.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,

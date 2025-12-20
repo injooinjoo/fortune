@@ -93,6 +93,7 @@ class EdgeFunctionsEndpoints {
 
   // 특별 운세
   static const String avoidPeopleFortune = '/fortune-avoid-people';
+  static const String celebrityFortune = '/fortune-celebrity';
 
   // 반려동물
   static const String petCompatibilityFortune = '/fortune-pet-compatibility';
@@ -137,7 +138,7 @@ class EdgeFunctionsEndpoints {
       'lucky-items': luckyItemsFortune,
       // 특별 운세
       'avoid-people': avoidPeopleFortune,
-      'celebrity': '/fortune-celebrity',
+      'celebrity': celebrityFortune,
       // 반려동물
       'pet-compatibility': petCompatibilityFortune,
     };

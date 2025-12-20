@@ -419,7 +419,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              '사진을 추가하면 AI가 분석하여 운세를 알려드립니다',
+              '사진을 추가하면 신령이 기운을 읽어 운세를 전해드립니다',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: TossDesignSystem.gray600,
               ),

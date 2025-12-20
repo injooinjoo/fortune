@@ -117,7 +117,7 @@ class BlindDatePhotoAnalysis extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: UnifiedButton(
-              text: isAnalyzingPhotos ? 'AI가 분석 중...' : 'AI 사진 분석 시작',
+              text: isAnalyzingPhotos ? '신령이 분석 중...' : '신령 사진 분석 시작',
               onPressed: isAnalyzingPhotos ? null : onAnalyzePressed,
               style: UnifiedButtonStyle.primary,
               size: UnifiedButtonSize.large,
@@ -165,7 +165,7 @@ class BlindDatePhotoAnalysisResult extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'AI 사진 분석 결과',
+                    '신령의 사진 분석 결과',
                     style: theme.textTheme.headlineSmall,
                   ),
                 ],
@@ -250,7 +250,7 @@ class BlindDatePhotoAnalysisResult extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'AI 추천 포인트',
+                          '신령의 추천 포인트',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: colors.accent,

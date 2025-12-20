@@ -176,7 +176,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
       showHeader: true,
       loadingMessages: const [
         '꿈을 해몽하고 있어요...',
-        'AI가 꿈의 의미를 분석하고 있어요',
+        '신령이 꿈의 의미를 풀이하고 있어요',
         '심층적인 해석을 준비하고 있어요...',
       ],
     );

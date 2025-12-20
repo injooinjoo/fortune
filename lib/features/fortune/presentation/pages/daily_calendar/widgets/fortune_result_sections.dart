@@ -304,7 +304,7 @@ class AITipsList extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'AI 팁',
+                '신의 조언',
                 style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),
@@ -882,7 +882,7 @@ class _TypingAITipsListState extends State<TypingAITipsList> {
               ),
               const SizedBox(width: 8),
               Text(
-                'AI 팁',
+                '신의 조언',
                 style: context.heading3.copyWith(
                   color: colors.textPrimary,
                 ),

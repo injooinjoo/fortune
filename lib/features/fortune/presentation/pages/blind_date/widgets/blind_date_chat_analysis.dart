@@ -44,7 +44,7 @@ class BlindDateChatAnalysis extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '상대방과 나눈 대화 내용을 붙여넣으면 AI가 호감도, 대화 스타일, 개선점을 분석해드립니다.',
+              '상대방과 나눈 대화 내용을 붙여넣으면 신령이 호감도, 대화 스타일, 개선점을 읽어드립니다.',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
@@ -131,7 +131,7 @@ class BlindDateChatAnalysis extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '대화 내용은 AI 분석 후 안전하게 삭제되며, 저장되지 않습니다.',
+                      '대화 내용은 분석 후 안전하게 삭제되며, 저장되지 않습니다.',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color:
                             theme.colorScheme.onSurface.withValues(alpha: 0.8),

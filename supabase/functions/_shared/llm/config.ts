@@ -28,6 +28,7 @@ export const FORTUNE_SPECIFIC_MODELS: Record<string, string | undefined> = {
   'ex-lover': 'gemini-2.0-flash-lite',
   'lucky-series': 'gemini-2.0-flash-lite',
   'fortune-celebrity': 'gemini-2.0-flash-lite',
+  'fortune-pet': 'gemini-2.0-flash-lite',
 }
 
 export function getModelConfig(fortuneType: string) {

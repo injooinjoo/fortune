@@ -420,7 +420,7 @@ class CategoryWidgets {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'AI 인사이트',
+                    '신의 통찰',
                     style: TextStyle(
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
                       fontWeight: FontWeight.w600,
@@ -495,7 +495,7 @@ class CategoryWidgets {
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Text(
-                      'AI 인사이트 준비 중...',
+                      '신의 통찰 준비 중...',
                       style: TextStyle(
                         color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                       ),

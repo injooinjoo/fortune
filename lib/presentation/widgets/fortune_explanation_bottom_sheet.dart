@@ -521,7 +521,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                   ),
                   SizedBox(width: 8),
                   Text(
-                    'AI가 분석하는 개인 맞춤 운세',
+                    '신령이 점지하는 개인 맞춤 운세',
                     style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).brightness == Brightness.dark

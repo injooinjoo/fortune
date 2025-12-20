@@ -291,7 +291,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
             ),
             const SizedBox(height: 24),
             Text(
-              'AI 꿈 해석',
+              '신령의 꿈 해석',
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontSize: fontSize + 4,
                 fontWeight: FontWeight.bold,
@@ -299,7 +299,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
             ),
             const SizedBox(height: 16),
             Text(
-              '기록한 꿈을 선택하면\nAI가 상세하게 해석해드립니다',
+              '기록한 꿈을 선택하면\n신령이 상세하게 해석해드립니다',
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontSize: fontSize,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
@@ -606,7 +606,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                   color: theme.colorScheme.primary),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'AI 꿈 해석',
+                                  '신령의 꿈 해석',
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontSize: baseFontSize + 2,
                                     fontWeight: FontWeight.bold))]),

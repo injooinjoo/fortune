@@ -767,7 +767,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         if (fortuneData['ai_insight'] != null) ...[
           TypingFortuneSectionCard(
             icon: Icons.lightbulb_outline,
-            title: 'AI 인사이트',
+            title: '신의 통찰',
             content: FortuneTextCleaner.clean(fortuneData['ai_insight'] as String),
             isDark: isDark,
             startTyping: _currentTypingSection >= 1,

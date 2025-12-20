@@ -31,11 +31,17 @@ class InkWaveChartPainter extends CustomPainter {
     // Ensure minimum size to prevent negative chart area
     if (size.width < 100 || size.height < 100) return;
 
+    // 명확한 마진 설정 (점수/라벨 겹침 방지)
+    const leftMargin = 36.0;  // Y축 라벨용
+    const topMargin = 10.0;   // 상단 여백
+    const rightMargin = 20.0; // 우측 라벨 공간
+    const bottomMargin = 36.0; // X축 라벨용 (legend는 WeeklyForecastHeader에 있음)
+
     final chartArea = Rect.fromLTWH(
-      40, // left margin for Y axis
-      20, // top margin
-      size.width - 50, // right margin
-      size.height - 50, // bottom margin for X axis labels
+      leftMargin,
+      topMargin,
+      size.width - leftMargin - rightMargin,
+      size.height - topMargin - bottomMargin,
     );
 
     // Additional safety check
@@ -76,8 +82,7 @@ class InkWaveChartPainter extends CustomPainter {
     // 5. Draw day labels (X axis)
     _drawDayLabels(canvas, chartArea);
 
-    // 6. Draw legend
-    _drawLegend(canvas, Size(size.width, 20), Offset(40, size.height - 20));
+    // Legend는 WeeklyForecastHeader에서 표시하므로 여기서는 생략
   }
 
   void _drawGuideLines(Canvas canvas, Rect chartArea) {
@@ -367,48 +372,6 @@ class InkWaveChartPainter extends CustomPainter {
         canvas,
         Offset(x - textPainter.width / 2, chartArea.bottom + 8),
       );
-    }
-  }
-
-  void _drawLegend(Canvas canvas, Size size, Offset offset) {
-    final items = [
-      ('신체', DSBiorhythmColors.getPhysical(isDark)),
-      ('감정', DSBiorhythmColors.getEmotional(isDark)),
-      ('지적', DSBiorhythmColors.getIntellectual(isDark)),
-    ];
-
-    var xOffset = offset.dx;
-    final spacing = 70.0;
-
-    for (final item in items) {
-      // Draw color indicator (small brush stroke)
-      canvas.drawLine(
-        Offset(xOffset, offset.dy + 8),
-        Offset(xOffset + 16, offset.dy + 8),
-        Paint()
-          ..color = item.$2
-          ..strokeWidth = 3
-          ..strokeCap = StrokeCap.round,
-      );
-
-      // Draw label
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: item.$1,
-          style: TextStyle(
-            color: isDark
-                ? DSBiorhythmColors.hanjiCream.withValues(alpha: 0.7)
-                : DSBiorhythmColors.inkBleed.withValues(alpha: 0.6),
-            fontSize: 11,
-            fontFamily: 'GowunBatang',
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-      textPainter.layout();
-      textPainter.paint(canvas, Offset(xOffset + 22, offset.dy + 2));
-
-      xOffset += spacing;
     }
   }
 

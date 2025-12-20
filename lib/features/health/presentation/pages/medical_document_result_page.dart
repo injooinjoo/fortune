@@ -148,7 +148,7 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           ),
           const SizedBox(height: 8),
           Text(
-            'AI가 검진 결과를 꼼꼼히 읽고 있습니다...',
+            '신령이 검진 결과를 꼼꼼히 살피고 있습니다...',
             style: TossTheme.body2.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
@@ -836,7 +836,7 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              '이 분석 결과는 AI 기반 참고 자료이며, 의사의 전문적 진단을 대체하지 않습니다. 정확한 건강 상담은 의료 전문가와 상담하세요.',
+              '이 분석 결과는 참고 자료이며, 의사의 전문적 진단을 대체하지 않습니다. 정확한 건강 상담은 의료 전문가와 상담하세요.',
               style: TossTheme.caption.copyWith(
                 color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
                 height: 1.4,

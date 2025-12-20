@@ -101,7 +101,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               color: TossDesignSystem.white)).animate().fadeIn(delay: 200.ms),
           SizedBox(height: 8),
           Text(
-            'AI가 읽어주는 나만의 운세',
+            '신이 전하는 나만의 운세',
             style: DSTypography.headingSmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.9))).animate().fadeIn(delay: 400.ms),
           SizedBox(height: 16),
@@ -117,8 +117,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     final features = [
       {
         'icon': Icons.psychology_rounded,
-        'title': 'AI 기반 운세',
-        'description': '최신 AI 기술로 생성되는\n개인 맞춤형 운세',
+        'title': '영험한 신점',
+        'description': '신비로운 기운으로 점지되는\n개인 맞춤형 운세',
         'color': TossDesignSystem.purple},
       {
         'icon': Icons.calendar_today_rounded,
@@ -227,7 +227,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               color: TossDesignSystem.white)),
           const SizedBox(height: 16),
           Text(
-            'Fortune은 AI 기술과 전통적인 운세를 결합하여\n'
+            'Fortune은 신비로운 기운과 전통적인 운세를 결합하여\n'
             '사용자들에게 긍정적인 에너지와 희망을 전달합니다.\n\n'
             '매일 아침 운세를 확인하며 하루를 시작하는 것이\n'
             '일상의 작은 행복이 되기를 바랍니다.',
