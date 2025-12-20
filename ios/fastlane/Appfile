@@ -1,16 +1,8 @@
 # Appfile for iOS
 
-# Your Apple Developer Account email
-app_identifier("com.beyond.fortune") # The bundle identifier of your app
-apple_id("your-apple-id@example.com") # Your Apple Developer email
+app_identifier("com.beyond.fortune")
+apple_id("ink595@g.harvard.edu")
 
-# Team ID for Apple Developer Account
-# You can find this in Apple Developer Portal > Membership > Team ID
-team_id("YOUR_TEAM_ID") # Your Apple Developer Team ID
-
-# iTunes Connect Team ID (might be different from developer portal team ID)
-itc_team_id("YOUR_ITC_TEAM_ID") # Your App Store Connect Team ID
-
-# For automatically uploading builds to TestFlight/App Store
-# Uncomment and fill in when ready for deployment
-# team_name("Your Company Name")
+# Team ID - uncomment and fill if needed
+# team_id("YOUR_TEAM_ID")
+# itc_team_id("YOUR_ITC_TEAM_ID")
