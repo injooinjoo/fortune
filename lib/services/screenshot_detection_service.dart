@@ -285,11 +285,11 @@ class ScreenshotDetectionService extends ResilientService {
           if (imagePath != null) {
             await Share.shareXFiles(
               [XFile(imagePath)],
-              text: '$fortuneTitle\n\nFortune AI 운세 앱에서 확인하세요!'
+              text: '$fortuneTitle\n\nFortune 신점 앱에서 확인하세요!'
             );
           } else {
             // On web, just share text
-            await Share.share('$fortuneTitle\n\nFortune AI 운세 앱에서 확인하세요!');
+            await Share.share('$fortuneTitle\n\nFortune 신점 앱에서 확인하세요!');
           }
       }
 
@@ -319,7 +319,7 @@ class ScreenshotDetectionService extends ResilientService {
         // For now, use system share with pre-filled text
         await Share.shareXFiles(
           [XFile(imagePath)],
-          text: '🌟 $title\n\n$content\n\n#운세 #FortuneAI #오늘의운세'
+          text: '🌟 $title\n\n$content\n\n#운세 #Fortune신점 #오늘의운세'
         );
       },
       '카카오톡 공유: $title',
@@ -348,7 +348,7 @@ class ScreenshotDetectionService extends ResilientService {
       () async {
         await Share.shareXFiles(
           [XFile(imagePath)],
-          text: '🌟 $title - Fortune AI에서 확인한 오늘의 운세'
+          text: '🌟 $title - Fortune 신점에서 확인한 오늘의 운세'
         );
       },
       '페이스북 공유: $title',
@@ -362,7 +362,7 @@ class ScreenshotDetectionService extends ResilientService {
       () async {
         await Share.shareXFiles(
           [XFile(imagePath)],
-          text: '🌟 $title\n\n#운세 #FortuneAI #오늘의운세 #AI운세'
+          text: '🌟 $title\n\n#운세 #Fortune신점 #오늘의운세 #신점운세'
         );
       },
       '트위터 공유: $title',
@@ -376,7 +376,7 @@ class ScreenshotDetectionService extends ResilientService {
       () async {
         await Share.shareXFiles(
           [XFile(imagePath)],
-          text: '🌟 $title\n\nFortune AI에서 확인한 오늘의 운세입니다!'
+          text: '🌟 $title\n\nFortune 신점에서 확인한 오늘의 운세입니다!'
         );
       },
       'WhatsApp 공유: $title',

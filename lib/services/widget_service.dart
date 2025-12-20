@@ -367,4 +367,56 @@ class WidgetService {
       return 'love';
     }
   }
+
+  // ============================================
+  // 구 API 호환성 (WidgetDataManager 지원)
+  // ============================================
+
+  /// [Deprecated] 일일 운세 위젯 업데이트 (구 API)
+  /// 새 코드에서는 updateOverallWidget 사용 권장
+  static Future<void> updateDailyFortuneWidget({
+    required String score,
+    required String message,
+    required String detailedFortune,
+    Map<String, dynamic>? additionalData,
+  }) async {
+    try {
+      final scoreInt = int.tryParse(score) ?? 50;
+      final grade = scoreInt >= 80 ? '상' : (scoreInt >= 50 ? '중' : '하');
+
+      await updateOverallWidget(
+        score: scoreInt,
+        grade: grade,
+        message: message,
+        description: detailedFortune,
+      );
+      Logger.info('[WidgetService] 구 API - 일일 운세 위젯 업데이트 완료');
+    } catch (e) {
+      Logger.warning('[WidgetService] 구 API - 일일 운세 위젯 업데이트 실패: $e');
+    }
+  }
+
+  /// [Deprecated] 사랑 운세 위젯 업데이트 (구 API)
+  /// 새 코드에서는 updateCategoryWidget 사용 권장
+  static Future<void> updateLoveFortuneWidget({
+    required String compatibilityScore,
+    required String partnerName,
+    required String message,
+    Map<String, dynamic>? additionalData,
+  }) async {
+    try {
+      final scoreInt = int.tryParse(compatibilityScore) ?? 50;
+
+      await updateCategoryWidget(
+        category: 'love',
+        name: '연애운',
+        score: scoreInt,
+        message: '$partnerName: $message',
+        icon: '💕',
+      );
+      Logger.info('[WidgetService] 구 API - 사랑 운세 위젯 업데이트 완료');
+    } catch (e) {
+      Logger.warning('[WidgetService] 구 API - 사랑 운세 위젯 업데이트 실패: $e');
+    }
+  }
 }

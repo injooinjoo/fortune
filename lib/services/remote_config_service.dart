@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/utils/logger.dart';
+import '../features/fortune/domain/entities/fortune_category.dart';
 
 /// Firebase Remote Config 서비스
 /// A/B 테스트를 위한 동적 설정 관리
@@ -38,6 +39,14 @@ class RemoteConfigService {
   static const String dailyFreeTokensKey = 'daily_free_tokens';
   static const String referralBonusTokensKey = 'referral_bonus_tokens';
   static const String newUserBonusTokensKey = 'new_user_bonus_tokens';
+
+  // 운세 카테고리 동적 관리 (OTA 업데이트)
+  static const String fortuneCategoriesKey = 'fortune_categories_v1';
+  static const String fortuneCategoriesVersionKey = 'fortune_categories_version';
+
+  // 이미지 CDN (OTA 업데이트)
+  static const String imageCdnBaseUrlKey = 'image_cdn_base_url';
+  static const String useImageCdnKey = 'use_image_cdn';
   
   /// Remote Config 초기화
   Future<void> initialize() async {
@@ -116,6 +125,14 @@ class RemoteConfigService {
       dailyFreeTokensKey: 1,
       referralBonusTokensKey: 10,
       newUserBonusTokensKey: 5,
+
+      // 운세 카테고리 (빈 배열 = 기본값 사용)
+      fortuneCategoriesKey: '[]',
+      fortuneCategoriesVersionKey: 1,
+
+      // 이미지 CDN (비활성화 = 로컬 에셋 사용)
+      imageCdnBaseUrlKey: '',
+      useImageCdnKey: false,
     });
   }
   
@@ -276,6 +293,67 @@ class RemoteConfigService {
       Logger.warning('[RemoteConfigService] Remote Config 새로고침 실패 (이전 값 유지): $e');
       return false;
     }
+  }
+
+  /// 운세 카테고리 목록 가져오기 (OTA 업데이트 지원)
+  /// Remote Config에서 동적으로 로드하며, 실패 시 기본값 사용
+  List<FortuneCategory> getFortuneCategories() {
+    if (!_isInitialized) {
+      Logger.info('[RemoteConfigService] 초기화 안됨, 기본 카테고리 사용');
+      return FortuneCategory.defaults;
+    }
+
+    try {
+      final categoriesJson = _remoteConfig.getString(fortuneCategoriesKey);
+
+      // 빈 배열이면 기본값 사용
+      if (categoriesJson.isEmpty || categoriesJson == '[]') {
+        return FortuneCategory.defaults;
+      }
+
+      final List<dynamic> categoriesList = json.decode(categoriesJson);
+      final categories = categoriesList
+          .map((e) => FortuneCategory.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      Logger.info('[RemoteConfigService] Remote Config에서 ${categories.length}개 카테고리 로드');
+      return categories;
+    } catch (e) {
+      Logger.warning('[RemoteConfigService] 카테고리 파싱 실패 (기본값 사용): $e');
+      return FortuneCategory.defaults;
+    }
+  }
+
+  /// 운세 카테고리 버전 가져오기
+  int getFortuneCategoriesVersion() {
+    if (!_isInitialized) return 1;
+    return _remoteConfig.getInt(fortuneCategoriesVersionKey);
+  }
+
+  /// 이미지 CDN 사용 여부
+  bool useImageCdn() {
+    if (!_isInitialized) return false;
+    return _remoteConfig.getBool(useImageCdnKey);
+  }
+
+  /// 이미지 CDN Base URL
+  String getImageCdnBaseUrl() {
+    if (!_isInitialized) return '';
+    return _remoteConfig.getString(imageCdnBaseUrlKey);
+  }
+
+  /// 에셋 경로를 CDN URL로 변환
+  /// CDN 비활성화 시 원본 경로 반환
+  /// 예: assets/icons/fortune/daily.png → https://cdn.../fortune/daily.png
+  String resolveImagePath(String assetPath) {
+    if (!useImageCdn()) return assetPath;
+
+    final baseUrl = getImageCdnBaseUrl();
+    if (baseUrl.isEmpty) return assetPath;
+
+    // assets/ 제거하고 CDN URL로 변환
+    final relativePath = assetPath.replaceFirst('assets/', '');
+    return '$baseUrl/$relativePath';
   }
 }
 

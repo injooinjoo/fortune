@@ -332,6 +332,8 @@ class CelebritySajuService {
   }
 
   /// F04: 유사 사주 유명인 찾기 (1~3명, 유사도 50점 이상만)
+  ///
+  /// birth_date를 기반으로 사주를 동적 계산하여 유사도 비교
   Future<List<Map<String, dynamic>>> findSimilarCelebrities({
     required Map<String, int> userElements,
     required String userDayPillar,
@@ -339,35 +341,38 @@ class CelebritySajuService {
     int maxResults = 3,
   }) async {
     try {
-      // 충분한 후보를 가져옴
+      // birth_date가 있는 연예인만 가져옴 (충분한 후보)
       final response = await _supabase
           .from('celebrities')
           .select()
           .not('birth_date', 'is', null)
-          .not('day_pillar', 'is', null)
           .limit(100);
 
       if ((response as List).isEmpty) {
         return [];
       }
 
-      final celebrities = response
-          .map((data) => CelebritySaju.fromJson(data))
-          .toList();
-
       // 유사도 계산
       final results = <Map<String, dynamic>>[];
-      for (final celeb in celebrities) {
-        final similarity = calculateSajuSimilarity(
+      for (final data in response) {
+        final celeb = CelebritySaju.fromJson(data);
+
+        // birth_date 기반으로 사주 동적 계산
+        final calculatedSaju = _calculateCelebritySaju(celeb.birthDate, celeb.birthTime);
+        if (calculatedSaju == null) continue;
+
+        final similarity = _calculateDynamicSimilarity(
           userElements: userElements,
           userDayPillar: userDayPillar,
-          celebrity: celeb,
+          celebDayPillar: calculatedSaju['dayPillar'] as String,
+          celebElements: calculatedSaju['elements'] as Map<String, int>,
         );
 
         if (similarity >= minSimilarity) {
           results.add({
             'celebrity': celeb,
             'similarity': similarity,
+            'calculatedDayPillar': calculatedSaju['dayPillar'],
           });
         }
       }
@@ -383,5 +388,135 @@ class CelebritySajuService {
       debugPrint('🎭 [SIMILARITY] 검색 실패: $e');
       return [];
     }
+  }
+
+  /// birth_date 기반으로 유명인 사주 계산
+  Map<String, dynamic>? _calculateCelebritySaju(String birthDateStr, String birthTimeStr) {
+    try {
+      if (birthDateStr.isEmpty) return null;
+
+      final birthDate = DateTime.parse(birthDateStr);
+      final birthLunar = Lunar.fromDate(birthDate);
+
+      // 일주 계산 (한글 변환)
+      final dayGan = _hanjaToKoreanStem(birthLunar.getDayGan());
+      final dayZhi = _hanjaToKoreanBranch(birthLunar.getDayZhi());
+      final dayPillar = '$dayGan$dayZhi';
+
+      // 년주, 월주 계산
+      final yearGan = _hanjaToKoreanStem(birthLunar.getYearGan());
+      final yearZhi = _hanjaToKoreanBranch(birthLunar.getYearZhi());
+      final monthGan = _hanjaToKoreanStem(birthLunar.getMonthGan());
+      final monthZhi = _hanjaToKoreanBranch(birthLunar.getMonthZhi());
+
+      // 오행 계산 (천간/지지에서 추출)
+      final elements = _calculateElements([
+        yearGan, yearZhi, monthGan, monthZhi, dayGan, dayZhi
+      ]);
+
+      return {
+        'dayPillar': dayPillar,
+        'elements': elements,
+      };
+    } catch (e) {
+      debugPrint('🎭 [SAJU] 사주 계산 실패: $e');
+      return null;
+    }
+  }
+
+  /// 천간/지지에서 오행 카운트 계산
+  Map<String, int> _calculateElements(List<String> stems) {
+    final elements = {'목': 0, '화': 0, '토': 0, '금': 0, '수': 0};
+
+    // 천간 → 오행
+    const stemElements = {
+      '갑': '목', '을': '목',
+      '병': '화', '정': '화',
+      '무': '토', '기': '토',
+      '경': '금', '신': '금',
+      '임': '수', '계': '수',
+    };
+
+    // 지지 → 오행
+    const branchElements = {
+      '인': '목', '묘': '목',
+      '사': '화', '오': '화',
+      '진': '토', '술': '토', '축': '토', '미': '토',
+      '신': '금', '유': '금',
+      '해': '수', '자': '수',
+    };
+
+    for (final stem in stems) {
+      final element = stemElements[stem] ?? branchElements[stem];
+      if (element != null) {
+        elements[element] = (elements[element] ?? 0) + 1;
+      }
+    }
+
+    return elements;
+  }
+
+  /// 동적 계산된 사주로 유사도 계산
+  int _calculateDynamicSimilarity({
+    required Map<String, int> userElements,
+    required String userDayPillar,
+    required String celebDayPillar,
+    required Map<String, int> celebElements,
+  }) {
+    int score = 0;
+
+    // 1. 오행 분포 유사도 (최대 50점)
+    final userTotal = userElements.values.fold(0, (a, b) => a + b);
+    final celebTotal = celebElements.values.fold(0, (a, b) => a + b);
+
+    if (userTotal > 0 && celebTotal > 0) {
+      double similarity = 0;
+      for (final element in ['목', '화', '토', '금', '수']) {
+        final userRatio = (userElements[element] ?? 0) / userTotal;
+        final celebRatio = (celebElements[element] ?? 0) / celebTotal;
+        similarity += 1 - (userRatio - celebRatio).abs();
+      }
+      score += (similarity * 10).round();
+    }
+
+    // 2. 일주(日柱) 유사도 (최대 30점)
+    if (userDayPillar.length >= 2 && celebDayPillar.length >= 2) {
+      final userGan = userDayPillar[0];
+      final userZhi = userDayPillar[1];
+      final celebGan = celebDayPillar[0];
+      final celebZhi = celebDayPillar[1];
+
+      // 천간 일치 (+15점) 또는 합 (+10점)
+      if (userGan == celebGan) {
+        score += 15;
+      } else {
+        final stemRelation = StemBranchRelations.analyzeStemRelation(userGan, celebGan);
+        if (stemRelation?.type == RelationType.combination) {
+          score += 10;
+        }
+      }
+
+      // 지지 일치 (+15점) 또는 합 (+10점)
+      if (userZhi == celebZhi) {
+        score += 15;
+      } else {
+        final branchRelations = StemBranchRelations.analyzeBranchRelation(userZhi, celebZhi);
+        for (final relation in branchRelations) {
+          if (relation.type == RelationType.combination) {
+            score += 10;
+            break;
+          }
+        }
+      }
+    }
+
+    // 3. 주요 오행 일치 (최대 20점)
+    final userDominant = _getDominantElement(userElements);
+    final celebDominant = _getDominantElement(celebElements);
+    if (userDominant.isNotEmpty && userDominant == celebDominant) {
+      score += 20;
+    }
+
+    return score.clamp(0, 100);
   }
 }
