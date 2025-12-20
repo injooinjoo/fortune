@@ -1,0 +1,40 @@
+UNIQUE VALUE PROPOSITION - Why This App is Different
+
+Fortune is NOT a generic fortune-telling app. It is an AI-powered personalized fortune platform with unique features unavailable in any other app:
+
+[1] KOREAN TRADITIONAL SAJU SYSTEM
+- Authentic Korean Four Pillars of Destiny (사주팔자) calculation
+- Uses official Korean calendar (만세력) for accuracy
+- Professional-grade analysis: 오행 (Five Elements), 십신 (Ten Gods), 십이운성 (Twelve Life Stages)
+- This is complex Korean astrological system, NOT simple horoscope
+
+[2] AI-POWERED PERSONALIZATION (40+ Edge Functions)
+- GPT-4 and Gemini AI integration for natural language generation
+- Each fortune uniquely generated based on user's birth data
+- Real-time AI analysis, not pre-written templates
+
+[3] UNIQUE FEATURES NOT FOUND IN OTHER APPS
+- Voice Dream Interpretation: Record dream via voice, AI analyzes
+- AI Talisman Generator: Generate personalized digital talismans (부적)
+- Celebrity Face Comparison: Compare your face fortune with celebrities
+- Investment Fortune: Real stock ticker integration
+- Personality DNA: Deep analysis beyond simple MBTI
+- Pet Compatibility: Fortune compatibility with pets
+- Home Feng Shui: Analyze living space fortune
+- Moving Fortune: Best timing for relocation
+- Family Fortune Suite (6 categories): Harmony, Children, Health, Relationship, Wealth, Change
+
+[4] COMPREHENSIVE CONTENT (50+ Fortune Categories)
+Daily/Weekly/Monthly | Tarot | Love & Compatibility | Career Coaching | Biorhythm | Lucky Items | Exam Fortune
+
+HOW TO TEST:
+1. Launch app -> Sign in with Apple (name step is automatically skipped per Apple guidelines)
+2. Enter birth date and time
+3. View personalized daily fortune
+4. Try unique features: Traditional Saju, Tarot, Personality DNA, Voice Dream
+
+IAP TESTING (Sandbox):
+- Tokens: 10/50/100/200
+- Subscriptions: Monthly/Yearly
+
+DISCLAIMER: Entertainment content only. AI-generated fortunes for entertainment purposes.
