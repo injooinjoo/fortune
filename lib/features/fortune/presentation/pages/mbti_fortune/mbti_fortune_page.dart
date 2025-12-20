@@ -459,11 +459,16 @@ class _MbtiFortunePageState
     }
 
     final data = result.data as Map<String, dynamic>? ?? {};
+    final score = result.score ?? (data['score'] as int?) ?? 50;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
+          // 0. 오늘의 점수 카드 (무료)
+          _buildScoreCard(score),
+          const SizedBox(height: 16),
+
           // 1. Main Fortune Card - todayFortune (무료)
           MainFortuneCard(
             fortuneResult: result,
@@ -527,6 +532,118 @@ class _MbtiFortunePageState
 
           // Bottom spacing for navigation
           const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  /// 오늘의 점수 카드
+  Widget _buildScoreCard(int score) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = _mbtiColors[_selectedMbti!]!;
+
+    // 점수에 따른 등급과 메시지
+    String grade;
+    String message;
+    if (score >= 90) {
+      grade = '최고';
+      message = '오늘은 당신의 날이에요!';
+    } else if (score >= 75) {
+      grade = '좋음';
+      message = '긍정적인 에너지가 넘쳐요';
+    } else if (score >= 50) {
+      grade = '보통';
+      message = '안정적인 하루가 될 거예요';
+    } else if (score >= 25) {
+      grade = '주의';
+      message = '신중하게 행동하세요';
+    } else {
+      grade = '휴식';
+      message = '오늘은 충전이 필요해요';
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colors[0].withValues(alpha: 0.15),
+            colors[1].withValues(alpha: 0.15),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colors[0].withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            '오늘의 $_selectedMbti 운세',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white70 : Colors.black54,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: colors,
+                ).createShader(bounds),
+                child: Text(
+                  '$score',
+                  style: const TextStyle(
+                    fontSize: 56,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    height: 1,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '점',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: colors[0],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: colors[0].withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              grade,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: colors[0],
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white60 : Colors.black45,
+            ),
+          ),
         ],
       ),
     );
