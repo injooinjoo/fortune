@@ -350,25 +350,94 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
   Widget _buildTitleSection(DSColorScheme colors) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        // 동양풍 달과 별 일러스트
+        _buildMoonAndStars(colors),
+        const SizedBox(height: DSSpacing.lg),
         Text(
-          '🌟 소원을 빌어보세요',
+          '소원을 빌어보세요',
           style: DSTypography.headingLarge.copyWith(
             fontWeight: FontWeight.w700,
             color: colors.textPrimary,
             height: 1.3,
           ),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: DSSpacing.sm),
         Text(
-          '간절한 마음으로 소원을 작성하면\n신의 특별한 응답을 받을 수 있어요',
+          '간절한 마음으로 소원을 빌면 신의 특별한 응답을 받을 수 있어요',
           style: DSTypography.labelSmall.copyWith(
             color: colors.textSecondary,
-            height: 1.4,
           ),
+          textAlign: TextAlign.center,
         ),
       ],
+    );
+  }
+
+  /// 동양풍 달과 별 일러스트
+  Widget _buildMoonAndStars(DSColorScheme colors) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final moonColor = isDark
+        ? const Color(0xFFFFF8E1)
+        : const Color(0xFFFFE082);
+    final starColor = isDark
+        ? const Color(0xFFFFD54F)
+        : const Color(0xFFFFB300);
+
+    return SizedBox(
+      height: 80,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // 달 (초승달)
+          Positioned(
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  center: const Alignment(-0.3, -0.3),
+                  colors: [
+                    moonColor,
+                    moonColor.withValues(alpha: 0.8),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: moonColor.withValues(alpha: 0.4),
+                    blurRadius: 20,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // 별들
+          Positioned(
+            left: 20,
+            top: 10,
+            child: Icon(Icons.star, size: 14, color: starColor.withValues(alpha: 0.8)),
+          ),
+          Positioned(
+            right: 30,
+            top: 5,
+            child: Icon(Icons.star, size: 10, color: starColor.withValues(alpha: 0.6)),
+          ),
+          Positioned(
+            right: 50,
+            bottom: 15,
+            child: Icon(Icons.star, size: 12, color: starColor.withValues(alpha: 0.7)),
+          ),
+          Positioned(
+            left: 40,
+            bottom: 10,
+            child: Icon(Icons.star, size: 8, color: starColor.withValues(alpha: 0.5)),
+          ),
+        ],
+      ),
     );
   }
 

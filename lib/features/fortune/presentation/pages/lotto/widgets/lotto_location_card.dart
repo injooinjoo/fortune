@@ -65,7 +65,9 @@ class LottoLocationCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '행운의 구매 장소',
+                currentLocationName != null
+                    ? '$currentLocationName 행운의 구매 장소'
+                    : '행운의 구매 장소',
                 style: TypographyUnified.heading4.copyWith(
                   fontFamily: 'GowunBatang',
                   fontWeight: FontWeight.w700,
@@ -73,18 +75,9 @@ class LottoLocationCard extends StatelessWidget {
                       ? ObangseokColors.baekDark
                       : ObangseokColors.meok,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              if (currentLocationName != null) ...[
-                const SizedBox(height: 2),
-                Text(
-                  '$currentLocationName 기준',
-                  style: TypographyUnified.labelSmall.copyWith(
-                    color: isDark
-                        ? ObangseokColors.baekDark.withValues(alpha: 0.6)
-                        : ObangseokColors.meok.withValues(alpha: 0.5),
-                  ),
-                ),
-              ],
             ],
           ),
         ),
@@ -190,42 +183,6 @@ class LottoLocationCard extends StatelessWidget {
   }
 
   Widget _buildInfoGrid(bool isDark) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildInfoItem(
-                isDark,
-                icon: Icons.store_rounded,
-                title: '추천 판매점',
-                value: luckyLocation.shopType,
-                subtitle: luckyLocation.shopReason,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildInfoItem(
-                isDark,
-                icon: Icons.palette_rounded,
-                title: '행운의 간판색',
-                value: luckyLocation.luckySignColor,
-                subtitle: '이 색상의 간판이 있는 곳',
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoItem(
-    bool isDark, {
-    required IconData icon,
-    required String title,
-    required String value,
-    required String subtitle,
-  }) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -239,50 +196,38 @@ class LottoLocationCard extends StatelessWidget {
               : ObangseokColors.meok.withValues(alpha: 0.08),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                size: 16,
-                color: isDark
-                    ? ObangseokColors.baekDark.withValues(alpha: 0.6)
-                    : ObangseokColors.meok.withValues(alpha: 0.5),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                title,
-                style: TypographyUnified.labelSmall.copyWith(
-                  color: isDark
-                      ? ObangseokColors.baekDark.withValues(alpha: 0.6)
-                      : ObangseokColors.meok.withValues(alpha: 0.5),
+          const Icon(
+            Icons.palette_rounded,
+            size: 20,
+            color: ObangseokColors.cheong,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '행운의 간판색',
+                  style: TypographyUnified.labelSmall.copyWith(
+                    color: isDark
+                        ? ObangseokColors.baekDark.withValues(alpha: 0.6)
+                        : ObangseokColors.meok.withValues(alpha: 0.5),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TypographyUnified.bodyMedium.copyWith(
-              fontWeight: FontWeight.w700,
-              color: isDark
-                  ? ObangseokColors.baekDark
-                  : ObangseokColors.meok,
+                const SizedBox(height: 4),
+                Text(
+                  '${luckyLocation.luckySignColor} 간판이 있는 곳을 찾아보세요',
+                  style: TypographyUnified.bodySmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isDark
+                        ? ObangseokColors.baekDark
+                        : ObangseokColors.meok,
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: TypographyUnified.labelSmall.copyWith(
-              color: isDark
-                  ? ObangseokColors.baekDark.withValues(alpha: 0.5)
-                  : ObangseokColors.meok.withValues(alpha: 0.4),
-              height: 1.3,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

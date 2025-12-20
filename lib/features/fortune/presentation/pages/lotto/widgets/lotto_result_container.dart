@@ -131,14 +131,6 @@ class LottoResultContainer extends StatelessWidget {
             _buildTipItem(
               context,
               isDark,
-              icon: Icons.pie_chart_outline,
-              title: '당첨 확률',
-              description: '로또 1등 당첨 확률은 약 1/8,145,060 입니다',
-            ),
-            const SizedBox(height: 10),
-            _buildTipItem(
-              context,
-              isDark,
               icon: Icons.casino_outlined,
               title: '로또 추첨일',
               description: '매주 토요일 오후 8시 45분 MBC에서 생방송 추첨',

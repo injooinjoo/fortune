@@ -280,8 +280,10 @@ class LottoNumbersCard extends StatelessWidget {
             : ObangseokColors.baek.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Wrap(
+        alignment: WrapAlignment.spaceAround,
+        spacing: 8,
+        runSpacing: 6,
         children: colorGuides.map((guide) {
           return Row(
             mainAxisSize: MainAxisSize.min,

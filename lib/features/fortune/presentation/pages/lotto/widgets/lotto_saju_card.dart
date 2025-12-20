@@ -357,8 +357,6 @@ class LottoSajuCard extends StatelessWidget {
                   : ObangseokColors.meok,
               height: 1.3,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
