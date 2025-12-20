@@ -13,6 +13,30 @@ class LuckyItemsCard extends StatelessWidget {
     required this.isDark,
   });
 
+  /// U07: 시간 포맷 변경 ("저녁6시에서8시" → "저녁6~8시")
+  String _formatTimeRange(String time) {
+    // "저녁6시에서8시" 또는 "오전10시에서12시" 패턴을 "저녁6~8시"로 변환
+    final regex = RegExp(r'^(.+?)(\d+)시에서(\d+)시$');
+    final match = regex.firstMatch(time);
+    if (match != null) {
+      final prefix = match.group(1) ?? ''; // 저녁, 오전, 오후 등
+      final startHour = match.group(2) ?? '';
+      final endHour = match.group(3) ?? '';
+      return '$prefix$startHour~$endHour시';
+    }
+    // 매칭되지 않으면 원본 반환
+    return time;
+  }
+
+  /// 시간 키인지 확인하고 포맷 적용
+  String _formatValue(String key, String value) {
+    final lowerKey = key.toLowerCase();
+    if (lowerKey.contains('시간') || lowerKey == 'time') {
+      return _formatTimeRange(value);
+    }
+    return value;
+  }
+
   /// 값에 맞는 구체적 이모지 반환
   String _getValueEmoji(String key, String value) {
     final lowerKey = key.toLowerCase();
@@ -197,9 +221,9 @@ class LuckyItemsCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      // 값 (중간)
+                      // 값 (중간) - 시간 포맷 적용
                       Text(
-                        entry.value,
+                        _formatValue(entry.key, entry.value),
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
                           fontSize: 14,

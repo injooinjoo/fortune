@@ -105,7 +105,7 @@ class ZodiacFortuneCard extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                '${fortune['year']}년생 ${fortune['name']}띠',
+                                '${FortuneSwipeHelpers.getRepresentativeYears(fortune['name'] as String)}년생 ${fortune['name']}띠',
                                 style: context.bodySmall.copyWith(
                                   color: isDark ? Colors.white : Colors.black87,
                                   fontWeight: FontWeight.w600,
@@ -152,7 +152,10 @@ class ZodiacFortuneCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
+                // U08: 점수 시각화 바 추가 - 가독성 개선
+                _buildScoreBar(fortune['score'] as int),
+                const SizedBox(height: 10),
                 Text(
                   fortune['description'] as String,
                   style: context.bodySmall.copyWith(
@@ -170,6 +173,41 @@ class ZodiacFortuneCard extends StatelessWidget {
         const SizedBox(height: 12),
         _buildAddProfileButton(context),
       ],
+    );
+  }
+
+  /// U08: 점수 시각화 바 - 가독성 개선
+  Widget _buildScoreBar(int score) {
+    final scoreColor = FortuneSwipeHelpers.getZodiacScoreColor(score);
+    final percentage = score / 100.0;
+
+    return Container(
+      height: 6,
+      decoration: BoxDecoration(
+        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(3),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              // 채워진 부분
+              Container(
+                width: constraints.maxWidth * percentage,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      scoreColor.withValues(alpha: 0.7),
+                      scoreColor,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 

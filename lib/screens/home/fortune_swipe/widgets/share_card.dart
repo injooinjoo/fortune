@@ -258,9 +258,9 @@ class _TraditionalShareCardContent extends StatelessWidget {
           // 헤더
           _buildHeader(),
 
-          // 콘텐츠 (U06: 컴팩트한 패딩으로 짤림 방지)
+          // 콘텐츠 (U06: 컴팩트한 패딩, 하단 여유 추가)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            padding: const EdgeInsets.only(left: 14, right: 14, top: 12, bottom: 16),
             child: Column(
               children: [
                 // 날짜 & 사용자
@@ -581,7 +581,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         const Text(
-          'Fortune AI · 행운이 가득하길',
+          'Fortune 신점 · 행운이 가득하길',
           style: TextStyle(
             color: _lightBrown,
             fontSize: 10,

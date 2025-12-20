@@ -129,7 +129,8 @@ class _TimeSlotItem extends StatelessWidget {
             width: MediaQuery.of(ctx).size.width * 0.85,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              // 다크모드에서 더 밝은 배경으로 가독성 개선
+              color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(

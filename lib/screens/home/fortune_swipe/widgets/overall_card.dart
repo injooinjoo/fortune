@@ -67,7 +67,8 @@ class _OverallCardState extends State<OverallCard> {
             ),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: widget.isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              // 다크모드에서 더 밝은 배경으로 가독성 개선
+              color: widget.isDark ? const Color(0xFF2C2C2E) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(

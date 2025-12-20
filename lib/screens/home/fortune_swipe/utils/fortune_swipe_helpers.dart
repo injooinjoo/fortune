@@ -87,6 +87,26 @@ class FortuneSwipeHelpers {
     return zodiacs[year % 12];
   }
 
+  /// 띠별 대표 연도 반환 (예: 쥐띠 → "84·96·08·20")
+  static String getRepresentativeYears(String zodiac) {
+    // 각 띠별 기준 연도 (1980년대 시작)
+    const baseYears = {
+      '쥐': 1984, '소': 1985, '호랑이': 1986, '토끼': 1987,
+      '용': 1988, '뱀': 1989, '말': 1990, '양': 1991,
+      '원숭이': 1980, '닭': 1981, '개': 1982, '돼지': 1983,
+    };
+
+    final baseYear = baseYears[zodiac] ?? 1984;
+    final years = <String>[];
+
+    for (int i = 0; i < 4; i++) {
+      final year = baseYear + (i * 12);
+      years.add((year % 100).toString().padLeft(2, '0'));
+    }
+
+    return years.join('·');
+  }
+
   /// 띠 정보 반환
   static Map<String, String> getZodiacInfo(String zodiac) {
     final zodiacData = {
