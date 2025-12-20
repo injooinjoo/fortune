@@ -101,3 +101,8 @@ playwright.live.config.js
 
 # Node modules (for Playwright)
 node_modules/
+# Fastlane build artifacts
+ios/Runner.ipa
+ios/Runner.app.dSYM.zip
+ios/*.ipa
+ios/*.dSYM.zip
