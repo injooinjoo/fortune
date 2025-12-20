@@ -4,6 +4,7 @@ import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/design_system/components/traditional/hanji_card.dart';
 import '../../../../domain/services/lotto_number_generator.dart';
 import 'lotto_numbers_card.dart';
+import 'lotto_pension_card.dart';
 import 'lotto_location_card.dart';
 import 'lotto_timing_card.dart';
 import 'lotto_saju_card.dart';
@@ -11,11 +12,12 @@ import 'lotto_saju_card.dart';
 /// 로또 결과 전체 컨테이너
 ///
 /// 모든 로또 운세 결과 섹션을 표시합니다:
-/// 1. 행운 번호 (5+1)
-/// 2. 행운의 구매 장소
-/// 3. 최적 구매 타이밍
-/// 4. 사주 기반 조언
-/// 5. 행운의 팁
+/// 1. 로또 6/45 행운 번호 (5+1)
+/// 2. 연금복권 720+ (조 블러)
+/// 3. 행운의 구매 장소
+/// 4. 최적 구매 타이밍
+/// 5. 사주 기반 조언
+/// 6. 행운의 팁
 class LottoResultContainer extends StatelessWidget {
   final LottoFortuneResult result;
   final bool isPremiumUnlocked;
@@ -37,7 +39,7 @@ class LottoResultContainer extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. 행운 번호 카드 (메인)
+        // 1. 로또 6/45 행운 번호 카드 (메인)
         LottoNumbersCard(
           lottoResult: result.lottoResult,
           isPremiumUnlocked: isPremiumUnlocked,
@@ -45,30 +47,38 @@ class LottoResultContainer extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        // 2. 행운의 구매 장소
+        // 2. 연금복권 720+ 카드
+        LottoPensionCard(
+          pensionResult: result.pensionResult,
+          isGroupUnlocked: isPremiumUnlocked,
+          onUnlockPressed: onUnlockPressed,
+        ),
+        const SizedBox(height: 16),
+
+        // 3. 행운의 구매 장소
         LottoLocationCard(
           luckyLocation: result.luckyLocation,
           currentLocationName: currentLocationName,
         ),
         const SizedBox(height: 16),
 
-        // 3. 최적 구매 타이밍
+        // 4. 최적 구매 타이밍
         LottoTimingCard(
           luckyTiming: result.luckyTiming,
         ),
         const SizedBox(height: 16),
 
-        // 4. 사주 기반 조언
+        // 5. 사주 기반 조언
         LottoSajuCard(
           sajuAdvice: result.sajuAdvice,
         ),
         const SizedBox(height: 16),
 
-        // 5. 행운의 팁
+        // 6. 행운의 팁
         _buildLuckyTips(context, isDark),
         const SizedBox(height: 16),
 
-        // 6. 면책 조항
+        // 7. 면책 조항
         _buildDisclaimer(isDark),
       ],
     );

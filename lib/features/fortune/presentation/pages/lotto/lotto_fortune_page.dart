@@ -242,57 +242,79 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
     return HanjiCard(
       colorScheme: HanjiColorScheme.luck,
       style: HanjiCardStyle.elevated,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    ObangseokColors.hwang,
-                    ObangseokColors.hwangLight,
-                  ],
+            // 배경 용 민화 이미지 (우하단)
+            Positioned(
+              right: -20,
+              bottom: -20,
+              child: Opacity(
+                opacity: isDark ? 0.06 : 0.10,
+                child: Image.asset(
+                  'assets/images/minhwa/minhwa_overall_dragon.png',
+                  width: 160,
+                  height: 160,
+                  fit: BoxFit.contain,
                 ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: ObangseokColors.hwang.withValues(alpha: 0.4),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
+              ),
+            ),
+            // 메인 콘텐츠
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          ObangseokColors.hwang,
+                          ObangseokColors.hwangLight,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ObangseokColors.hwang.withValues(alpha: 0.4),
+                          blurRadius: 16,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.casino_rounded,
+                      size: 48,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    '로또 운세',
+                    style: TypographyUnified.heading2.copyWith(
+                      fontFamily: 'GowunBatang',
+                      fontWeight: FontWeight.w700,
+                      color: isDark
+                          ? ObangseokColors.baekDark
+                          : ObangseokColors.meok,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '사주를 기반으로 오늘의 행운 번호와\n구매 장소, 최적 타이밍을 추천해드립니다',
+                    style: TypographyUnified.bodyMedium.copyWith(
+                      color: isDark
+                          ? ObangseokColors.baekDark.withValues(alpha: 0.7)
+                          : ObangseokColors.meok.withValues(alpha: 0.6),
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.casino_rounded,
-                size: 48,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              '로또 운세',
-              style: TypographyUnified.heading2.copyWith(
-                fontFamily: 'GowunBatang',
-                fontWeight: FontWeight.w700,
-                color: isDark
-                    ? ObangseokColors.baekDark
-                    : ObangseokColors.meok,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '사주를 기반으로 오늘의 행운 번호와\n구매 장소, 최적 타이밍을 추천해드립니다',
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: isDark
-                    ? ObangseokColors.baekDark.withValues(alpha: 0.7)
-                    : ObangseokColors.meok.withValues(alpha: 0.6),
-                height: 1.5,
-              ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

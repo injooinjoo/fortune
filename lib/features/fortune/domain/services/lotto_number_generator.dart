@@ -124,15 +124,44 @@ class SajuAdvice {
   });
 }
 
+/// 연금복권 720+ 결과 모델
+///
+/// 조 번호(1~5)는 블러 처리, 6자리 번호는 바로 공개
+class PensionLotteryResult {
+  /// 조 번호 (1-5) - 광고 후 공개
+  final int groupNumber;
+
+  /// 6자리 번호 (각 자리 0-9)
+  final List<int> numbers;
+
+  /// 연금복권 운세 메시지
+  final String fortuneMessage;
+
+  /// 생성 시간
+  final DateTime generatedAt;
+
+  const PensionLotteryResult({
+    required this.groupNumber,
+    required this.numbers,
+    required this.fortuneMessage,
+    required this.generatedAt,
+  });
+
+  /// 6자리 번호를 문자열로 변환
+  String get numbersString => numbers.join('');
+}
+
 /// 전체 로또 운세 결과
 class LottoFortuneResult {
   final LottoResult lottoResult;
+  final PensionLotteryResult pensionResult;
   final LuckyLocation luckyLocation;
   final LuckyTiming luckyTiming;
   final SajuAdvice sajuAdvice;
 
   const LottoFortuneResult({
     required this.lottoResult,
+    required this.pensionResult,
     required this.luckyLocation,
     required this.luckyTiming,
     required this.sajuAdvice,
@@ -189,6 +218,15 @@ class LottoNumberGenerator {
     {'type': '길가 판매점', 'reason': '유동적인 기운이 도움됩니다'},
   ];
 
+  // 연금복권 운세 메시지
+  static const List<String> _pensionMessages = [
+    '매월 700만원의 연금이 당신을 기다리고 있습니다.',
+    '안정적인 미래를 위한 행운의 번호입니다.',
+    '꾸준한 행복을 가져다 줄 번호입니다.',
+    '20년간의 풍요로운 삶이 기다립니다.',
+    '사주의 기운이 연금복권에 유리합니다.',
+  ];
+
   /// 사주 기반 로또 운세 전체 생성
   static LottoFortuneResult generate({
     required DateTime birthDate,
@@ -225,8 +263,12 @@ class LottoNumberGenerator {
     // 사주 조언 생성
     final sajuAdvice = _generateSajuAdvice(dominantElement, seed);
 
+    // 연금복권 생성
+    final pensionResult = _generatePensionLottery(seed, now);
+
     return LottoFortuneResult(
       lottoResult: lottoResult,
+      pensionResult: pensionResult,
       luckyLocation: luckyLocation,
       luckyTiming: luckyTiming,
       sajuAdvice: sajuAdvice,
@@ -529,6 +571,28 @@ class LottoNumberGenerator {
       avoidNumberRange: avoidRange,
       adviceMessage: adviceMessage,
       wealthScore: wealthScore,
+    );
+  }
+
+  /// 연금복권 720+ 번호 생성
+  static PensionLotteryResult _generatePensionLottery(int seed, DateTime now) {
+    final random = Random(seed + 720);
+
+    // 조 번호 (1-5)
+    final groupNumber = random.nextInt(5) + 1;
+
+    // 6자리 번호 (각 자리 0-9)
+    final numbers = List.generate(6, (_) => random.nextInt(10));
+
+    // 운세 메시지
+    final messageIndex = random.nextInt(_pensionMessages.length);
+    final fortuneMessage = _pensionMessages[messageIndex];
+
+    return PensionLotteryResult(
+      groupNumber: groupNumber,
+      numbers: numbers,
+      fortuneMessage: fortuneMessage,
+      generatedAt: now,
     );
   }
 

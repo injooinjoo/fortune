@@ -1,4 +1,5 @@
 export 'lotto_numbers_card.dart';
+export 'lotto_pension_card.dart';
 export 'lotto_result_container.dart';
 export 'lotto_location_card.dart';
 export 'lotto_timing_card.dart';
