@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/domain/entities/fortune.dart' show Fortune;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../pages/fortune_list_page.dart';
+import '../../domain/entities/fortune_category.dart';
 
 /// 정렬 옵션 Enum
 enum SortOption {

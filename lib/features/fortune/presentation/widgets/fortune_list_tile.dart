@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../../core/constants/fortune_card_images.dart';
-import '../pages/fortune_list_page.dart';
+import '../../../../shared/widgets/smart_image.dart';
+import '../../domain/entities/fortune_category.dart';
 import '../providers/fortune_order_provider.dart';
 import '../../../../core/design_system/design_system.dart';
 
@@ -67,19 +68,11 @@ class FortuneListTile extends ConsumerWidget {
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      // 커스텀 아이콘이 있으면 수묵화 스타일 이미지 표시
+                      // 커스텀 아이콘이 있으면 수묵화 스타일 이미지 표시 (CDN 지원)
                       if (category.iconAsset != null)
-                        SizedBox(
-                          width: 44,
-                          height: 44,
-                          child: ClipOval(
-                            child: Image.asset(
-                              category.iconAsset!,
-                              width: 44,
-                              height: 44,
-                              fit: BoxFit.cover, // 원형에 꽉 차게
-                            ),
-                          ),
+                        CircularSmartImage(
+                          path: category.iconAsset!,
+                          size: 44,
                         )
                       else
                         // 커스텀 아이콘이 없으면 기존 Material Icon (그라데이션 배경)

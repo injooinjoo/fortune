@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/fortune_card_images.dart';
-import '../pages/fortune_list_page.dart';
+import '../../domain/entities/fortune_category.dart';
 import '../../../../core/design_system/design_system.dart';
 
 class FortuneListCard extends ConsumerStatefulWidget {

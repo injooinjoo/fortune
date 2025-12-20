@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
@@ -87,109 +86,13 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 margin: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: AppCard(
-                        onTap: () {
-                          ref.read(fortuneHapticServiceProvider).selection();
-                          setState(() => _tabController.index = 0);
-                        },
-                        style: _tabController.index == 0
-                          ? AppCardStyle.filled
-                          : AppCardStyle.outlined,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: TossTheme.spacingS, 
-                          horizontal: TossTheme.spacingM,
-                        ),
-                        child: Text(
-                          '타임라인',
-                          style: TossTheme.body2.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: _tabController.index == 0
-                              ? TossDesignSystem.white
-                              : TossTheme.textGray600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: TossTheme.spacingS),
-                    Expanded(
-                      child: AppCard(
-                        onTap: () {
-                          ref.read(fortuneHapticServiceProvider).selection();
-                          setState(() => _tabController.index = 1);
-                        },
-                        style: _tabController.index == 1
-                          ? AppCardStyle.filled
-                          : AppCardStyle.outlined,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: TossTheme.spacingS, 
-                          horizontal: TossTheme.spacingM,
-                        ),
-                        child: Text(
-                          '통계',
-                          style: TossTheme.body2.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: _tabController.index == 1
-                              ? TossDesignSystem.white
-                              : TossTheme.textGray600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: TossTheme.spacingS),
-                    Expanded(
-                      child: AppCard(
-                        onTap: () {
-                          ref.read(fortuneHapticServiceProvider).selection();
-                          setState(() => _tabController.index = 2);
-                        },
-                        style: _tabController.index == 2
-                          ? AppCardStyle.filled
-                          : AppCardStyle.outlined,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: TossTheme.spacingS, 
-                          horizontal: TossTheme.spacingM,
-                        ),
-                        child: Text(
-                          '차트',
-                          style: TossTheme.body2.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: _tabController.index == 2
-                              ? TossDesignSystem.white
-                              : TossTheme.textGray600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: TossTheme.spacingS),
-                    Expanded(
-                      child: AppCard(
-                        onTap: () {
-                          ref.read(fortuneHapticServiceProvider).selection();
-                          setState(() => _tabController.index = 3);
-                        },
-                        style: _tabController.index == 3
-                          ? AppCardStyle.filled
-                          : AppCardStyle.outlined,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: TossTheme.spacingM,
-                          vertical: TossTheme.spacingS,
-                        ),
-                        child: Text(
-                          '일일운세',
-                          style: TossTheme.body2.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: _tabController.index == 3
-                              ? TossDesignSystem.white
-                              : TossTheme.textGray600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
+                    _buildTabButton(0, '타임라인'),
+                    const SizedBox(width: DSSpacing.sm),
+                    _buildTabButton(1, '통계'),
+                    const SizedBox(width: DSSpacing.sm),
+                    _buildTabButton(2, '차트'),
+                    const SizedBox(width: DSSpacing.sm),
+                    _buildTabButton(3, '일일운세'),
                   ],
                 ),
               ),
@@ -317,6 +220,34 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
             '운세 기록을 불러올 수 없습니다',
             style: DSTypography.labelMedium,
           ),
+        ),
+      ),
+    );
+  }
+
+  /// 통일된 탭 버튼 빌더
+  Widget _buildTabButton(int index, String label) {
+    final isSelected = _tabController.index == index;
+    final colors = context.colors;
+
+    return Expanded(
+      child: AppCard(
+        onTap: () {
+          ref.read(fortuneHapticServiceProvider).selection();
+          setState(() => _tabController.index = index);
+        },
+        style: isSelected ? AppCardStyle.filled : AppCardStyle.outlined,
+        padding: const EdgeInsets.symmetric(
+          vertical: DSSpacing.sm,
+          horizontal: DSSpacing.md,
+        ),
+        child: Text(
+          label,
+          style: DSTypography.labelMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: isSelected ? Colors.white : colors.textSecondary,
+          ),
+          textAlign: TextAlign.center,
         ),
       ),
     );

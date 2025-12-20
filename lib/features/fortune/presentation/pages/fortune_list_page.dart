@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../../../presentation/providers/providers.dart';
-import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
 import '../../../../core/design_system/design_system.dart';
@@ -12,74 +11,9 @@ import '../../../../core/design_system/components/traditional/traditional_button
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
 import '../providers/fortune_order_provider.dart';
+import '../providers/fortune_categories_provider.dart';
 import '../widgets/fortune_list_tile.dart';
-
-class FortuneCategory {
-  final String title;
-  final String route;
-  final String type; // Fortune type for image mapping
-  final IconData icon;
-  final String? iconAsset; // 커스텀 아이콘 에셋 경로 (한국 전통 수묵화 스타일)
-  final List<Color> gradientColors;
-  final String description;
-  final String category;
-  final bool isNew;
-  final bool isPremium;
-  final bool hasViewedToday; // 오늘 조회 여부
-
-  const FortuneCategory({
-    required this.title,
-    required this.route,
-    required this.type,
-    required this.icon,
-    this.iconAsset,
-    required this.gradientColors,
-    required this.description,
-    required this.category,
-    this.isNew = false,
-    this.isPremium = false,
-    this.hasViewedToday = false,
-  });
-
-  // 영혼 정보 가져오기
-  int get soulAmount => SoulRates.getSoulAmount(type);
-  bool get isFreeFortune => soulAmount > 0;
-  bool get isPremiumFortune => soulAmount < 0;
-  String get soulDescription => SoulRates.getActionDescription(type);
-  int get soulCost => soulAmount.abs(); // Convert to positive cost value
-
-  // 빨간 dot 표시 여부 (오늘 안 본 운세만 표시, 조회하면 제거)
-  bool get shouldShowRedDot => !hasViewedToday;
-
-  // copyWith 메서드 추가 (hasViewedToday 업데이트용)
-  FortuneCategory copyWith({
-    String? title,
-    String? route,
-    String? type,
-    IconData? icon,
-    String? iconAsset,
-    List<Color>? gradientColors,
-    String? description,
-    String? category,
-    bool? isNew,
-    bool? isPremium,
-    bool? hasViewedToday,
-  }) {
-    return FortuneCategory(
-      title: title ?? this.title,
-      route: route ?? this.route,
-      type: type ?? this.type,
-      icon: icon ?? this.icon,
-      iconAsset: iconAsset ?? this.iconAsset,
-      gradientColors: gradientColors ?? this.gradientColors,
-      description: description ?? this.description,
-      category: category ?? this.category,
-      isNew: isNew ?? this.isNew,
-      isPremium: isPremium ?? this.isPremium,
-      hasViewedToday: hasViewedToday ?? this.hasViewedToday,
-    );
-  }
-}
+import '../../domain/entities/fortune_category.dart';
 
 enum FortuneCategoryType {
   
@@ -121,7 +55,7 @@ class FortuneListPage extends ConsumerStatefulWidget {
 }
 
 class _FortuneListPageState extends ConsumerState<FortuneListPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   OverlayEntry? _overlayEntry;
   late AnimationController _animationController;
 
@@ -136,6 +70,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this
@@ -199,11 +134,21 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.removeListener(_handleScroll);
     _scrollController.dispose();
     _animationController.dispose();
     _removeOverlay();
     super.dispose();
+  }
+
+  /// 앱 생명주기 변화 감지 - 앱 복귀 시 빨간점 상태 새로고침
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _loadViewedTodayTypes();
+    }
   }
   
   void _handleScroll() {
@@ -252,326 +197,17 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     _overlayEntry = null;
   }
 
-
-
-  static const List<FortuneCategory> _categories = [
-    // ==================== Time-based Fortunes (통합) ====================
-    FortuneCategory(
-      title: '달력',
-      route: '/time',
-      type: 'daily_calendar',  // DB 저장 값과 일치
-      icon: Icons.schedule_rounded,
-      iconAsset: 'assets/icons/fortune/daily.png',
-      gradientColors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
-      description: '오늘/내일/주간/월간/연간 운세',
-      category: 'lifestyle',
-      isNew: true),
-
-
-    // ==================== Traditional Fortunes (통합) ====================
-    FortuneCategory(
-      title: '전통',
-      route: '/traditional',
-      type: 'traditional_saju',  // DB 저장 값과 일치
-      icon: Icons.auto_awesome_rounded,
-      iconAsset: 'assets/icons/fortune/traditional.png',
-      gradientColors: [Color(0xFFEF4444), Color(0xFFEC4899)],
-      description: '사주/토정비결',
-      category: 'traditional'),
-
-    // ==================== Tarot Fortune ====================
-    FortuneCategory(
-      title: '타로',
-      route: '/tarot',
-      type: 'tarot',
-      icon: Icons.style_rounded,
-      iconAsset: 'assets/icons/fortune/tarot.png',
-      gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
-      description: '카드가 전하는 오늘의 메시지',
-      category: 'traditional',
-      isNew: true),
-
-    // ==================== Dream Interpretation ====================
-    FortuneCategory(
-      title: '해몽',
-      route: '/dream',
-      type: 'dream',
-      icon: Icons.bedtime_rounded,
-      iconAsset: 'assets/icons/fortune/dream.png',
-      gradientColors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-      description: '꿈이 전하는 숨겨진 의미',
-      category: 'traditional',
-      isNew: true),
-
-    // ==================== Physiognomy ====================
-    FortuneCategory(
-      title: '관상',
-      route: '/face-reading',
-      type: 'face-reading',
-      icon: Icons.face_rounded,
-      iconAsset: 'assets/icons/fortune/face_reading.png',
-      gradientColors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-      description: '얼굴에 나타난 운명의 징표',
-      category: 'traditional'),
-
-    // ==================== Talisman ====================
-    FortuneCategory(
-      title: '부적',
-      route: '/lucky-talisman',
-      type: 'talisman',
-      icon: Icons.shield_rounded,
-      iconAsset: 'assets/icons/fortune/talisman.png',
-      gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-      description: '액운을 막고 행운을 부르는 부적',
-      category: 'traditional'),
-
-    // ==================== Personal/Character-based Fortunes (통합) ====================
-    FortuneCategory(
-      title: '나의 성격 탐구',
-      route: '/personality-dna',
-      type: 'personality-dna',
-      icon: Icons.biotech_rounded,
-      iconAsset: 'assets/icons/fortune/personality_dna.png',
-      gradientColors: [Color(0xFF8B5CF6), Color(0xFFEC4899)],
-      description: 'MBTI × 혈액형 × 별자리 × 띠 조합 분석',
-      category: 'lifestyle',
-      isNew: true),
-    FortuneCategory(
-      title: 'MBTI',
-      route: '/mbti',
-      type: 'mbti',
-      icon: Icons.psychology_rounded,
-      iconAsset: 'assets/icons/fortune/mbti.png',
-      gradientColors: [Color(0xFF7C3AED), Color(0xFF5B21B6)],
-      description: 'MBTI 성격별 오늘의 운세',
-      category: 'lifestyle',
-      isNew: true),
-    FortuneCategory(
-      title: '바이오리듬',
-      route: '/biorhythm',
-      type: 'biorhythm',
-      icon: Icons.timeline_rounded,
-      iconAsset: 'assets/icons/fortune/biorhythm.png',
-      gradientColors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-      description: '신체, 감정, 지성 리듬 분석',
-      category: 'health',
-      isNew: true),
-
-    // ==================== Relationship/Love Fortunes ====================
-    FortuneCategory(
-      title: '연애',
-      route: '/love',
-      type: 'love',
-      icon: Icons.favorite_rounded,
-      iconAsset: 'assets/icons/fortune/love.png',
-      gradientColors: [Color(0xFFEC4899), Color(0xFFDB2777)],
-      description: '사랑과 연애의 운세',
-      category: 'love'),
-    FortuneCategory(
-      title: '궁합',
-      route: '/compatibility',
-      type: 'compatibility',
-      icon: Icons.people_rounded,
-      iconAsset: 'assets/icons/fortune/compatibility.png',
-      gradientColors: [Color(0xFFBE185D), Color(0xFF9333EA)],
-      description: '두 사람의 궁합 보기',
-      category: 'love'),
-    FortuneCategory(
-      title: '경계대상',
-      route: '/avoid-people',
-      type: 'avoid-people',  // DB 저장 값과 일치
-      icon: Icons.person_off_rounded,
-      iconAsset: 'assets/icons/fortune/avoid_people.png',
-      gradientColors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
-      description: '오늘 피해야 할 사람의 특징',
-      category: 'love',
-      isNew: true),
-    FortuneCategory(
-      title: '재회',
-      route: '/ex-lover-simple',
-      type: 'ex_lover',  // DB 저장 값과 일치
-      icon: Icons.heart_broken_rounded,
-      iconAsset: 'assets/icons/fortune/ex_lover.png',
-      gradientColors: [Color(0xFF6B7280), Color(0xFF374151)],
-      description: '헤어진 연인과의 재회 가능성',
-      category: 'love',
-      isNew: true),
-    FortuneCategory(
-      title: '소개팅',
-      route: '/blind-date',
-      type: 'blind_date',  // DB 저장 값과 일치
-      icon: Icons.waving_hand_rounded,
-      iconAsset: 'assets/icons/fortune/blind_date.png',
-      gradientColors: [Color(0xFFFF6B9D), Color(0xFFE91E63)],
-      description: '오늘의 소개팅 성공 가능성',
-      category: 'love',
-      isNew: true),
-
-    // ==================== Career/Work Fortunes (통합) ====================
-    FortuneCategory(
-      title: '직업',
-      route: '/career',
-      type: 'career',
-      icon: Icons.work_rounded,
-      iconAsset: 'assets/icons/fortune/career.png',
-      gradientColors: [Color(0xFF2563EB), Color(0xFF1D4ED8)],
-      description: '취업/직업/사업/창업 종합',
-      category: 'career',
-      isNew: true),
-    FortuneCategory(
-      title: '시험',
-      route: '/lucky-exam',
-      type: 'exam',  // DB 저장 값과 일치
-      icon: Icons.school_rounded,
-      iconAsset: 'assets/icons/fortune/study.png',
-      gradientColors: [Color(0xFF03A9F4), Color(0xFF0288D1)],
-      description: '시험과 자격증 합격 운세',
-      category: 'career'),
-
-    // ==================== Investment/Money Fortunes (통합) ====================
-    FortuneCategory(
-      title: '재물',
-      route: '/investment',
-      type: 'investment',
-      icon: Icons.trending_up_rounded,
-      iconAsset: 'assets/icons/fortune/investment.png',
-      gradientColors: [Color(0xFF16A34A), Color(0xFF15803D)],
-      description: '주식/부동산/코인/경매 등 10개 섹터',
-      category: 'money',
-      isPremium: true,
-      isNew: true),
-
-    // ==================== Lifestyle/Lucky Items (통합) ====================
-    FortuneCategory(
-      title: '행운아이템',
-      route: '/lucky-items',
-      type: 'lucky_items',
-      icon: Icons.auto_awesome_rounded,
-      iconAsset: 'assets/icons/fortune/lucky_items.png',
-      gradientColors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
-      description: '색깔/숫자/음식/아이템',
-      category: 'lifestyle'),
-    FortuneCategory(
-      title: '로또',
-      route: '/lotto',
-      type: 'lucky-lottery',
-      icon: Icons.casino_rounded,
-      iconAsset: 'assets/icons/fortune/lotto.png',
-      gradientColors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-      description: '오늘의 행운 번호',
-      category: 'lifestyle',
-      isNew: true),
-    FortuneCategory(
-      title: '재능',
-      route: '/talent-fortune-input',
-      type: 'talent',
-      icon: Icons.stars_rounded,
-      iconAsset: 'assets/icons/fortune/talent.png',
-      gradientColors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
-      description: '사주팔자 기반 재능 분석',
-      category: 'lifestyle'),
-    FortuneCategory(
-      title: '소원',
-      route: '/wish',
-      type: 'wish',
-      icon: Icons.star_rounded,
-      iconAsset: 'assets/icons/fortune/wish.png',
-      gradientColors: [Color(0xFFFF4081), Color(0xFFF50057)],
-      description: '신에게 소원을 빌어보세요',
-      category: 'lifestyle'),
-
-    // ==================== Health & Sports Fortunes (분리) ====================
-    FortuneCategory(
-      title: '건강',
-      route: '/health-toss',
-      type: 'health',
-      icon: Icons.favorite_rounded,
-      iconAsset: 'assets/icons/fortune/health.png',
-      gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
-      description: '오늘의 건강 상태와 신체 부위별 운세',
-      category: 'health',
-      isNew: true),
-    FortuneCategory(
-      title: '운동',
-      route: '/exercise',
-      type: 'exercise',
-      icon: Icons.fitness_center_rounded,
-      iconAsset: 'assets/icons/fortune/exercise.png',
-      gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-      description: '피트니스, 요가, 런닝 운세',
-      category: 'health'),
-    FortuneCategory(
-      title: '스포츠경기',
-      route: '/sports-game',
-      type: 'sports_game',
-      icon: Icons.sports_rounded,
-      iconAsset: 'assets/icons/fortune/sports_game.png',
-      gradientColors: [Color(0xFFEA580C), Color(0xFFDC2626)],
-      description: '골프, 야구, 테니스 등 경기 운세',
-      category: 'health'),
-    FortuneCategory(
-      title: '이사',
-      route: '/moving',
-      type: 'moving',
-      icon: Icons.home_work_rounded,
-      iconAsset: 'assets/icons/fortune/moving.png',
-      gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
-      description: '이사 길일과 방향, 손없는날 분석',
-      category: 'lifestyle'),
-
-    // ==================== Interactive Fortunes ====================
-    FortuneCategory(
-      title: '포춘쿠키',
-      route: '/fortune-cookie',
-      type: 'fortune-cookie',
-      icon: Icons.cookie_rounded,
-      iconAsset: 'assets/icons/fortune/fortune_cookie.png',
-      gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
-      description: '오늘의 행운 메시지',
-      category: 'interactive',
-      isNew: true),
-    FortuneCategory(
-      title: '유명인',
-      route: '/celebrity',
-      type: 'celebrity',
-      icon: Icons.star_rounded,
-      iconAsset: 'assets/icons/fortune/celebrity.png',
-      gradientColors: [Color(0xFFFF1744), Color(0xFFE91E63)],
-      description: '좋아하는 유명인과 나의 오늘 운세',
-      category: 'interactive',
-      isNew: true),
-
-    // ==================== Pet Fortunes (통합) ====================
-    FortuneCategory(
-      title: '반려동물',
-      route: '/pet',
-      type: 'pet',
-      icon: Icons.pets_rounded,
-      iconAsset: 'assets/icons/fortune/pet.png',
-      gradientColors: [Color(0xFFE11D48), Color(0xFFBE123C)],
-      description: '반려동물/반려견/반려묘/궁합',
-      category: 'petFamily',
-      isNew: true),
-    // ==================== Family Fortunes (통합) ====================
-    FortuneCategory(
-      title: '가족',
-      route: '/family',
-      type: 'family',
-      icon: Icons.family_restroom_rounded,
-      iconAsset: 'assets/icons/fortune/family.png',
-      gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-      description: '자녀/육아/태교/가족화합',
-      category: 'petFamily',
-      isNew: true)];
-
   @override
   Widget build(BuildContext context) {
     final orderState = ref.watch(fortuneOrderProvider);
     final colors = context.colors;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // Remote Config에서 카테고리 로드 (OTA 업데이트 지원)
+    final categories = ref.watch(fortuneCategoriesProvider);
+
     // 정렬된 전체 카테고리 리스트 가져오기 (오늘 조회 여부 포함)
-    final allCategories = _categories.map((category) {
+    final allCategories = categories.map((category) {
       return category.copyWith(
         hasViewedToday: _viewedTodayTypes.contains(category.type),
       );
@@ -942,7 +578,12 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     ref.read(fortuneOrderProvider.notifier).recordView(fortuneType);
 
     // 모든 운세를 직접 페이지로 라우팅 (bottomsheet 제거)
-    context.push(category.route);
+    // 복귀 시 빨간점 상태 새로고침
+    context.push(category.route).then((_) {
+      if (mounted) {
+        _loadViewedTodayTypes();
+      }
+    });
   }
 
 
