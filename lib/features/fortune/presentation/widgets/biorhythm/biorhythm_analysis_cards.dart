@@ -211,7 +211,7 @@ class PersonalAnalysisCard extends StatelessWidget {
 
 $dominantAdvice
 
-삼기(三氣)의 흐름을 살피며 자신만의 최적의 타이밍을 찾아가소서.''';
+삼기(三氣)의 흐름을 살피며 자신만의 최적의 타이밍을 찾아보세요.''';
   }
 }
 
@@ -348,7 +348,7 @@ class LifestyleAdviceCard extends StatelessWidget {
     } else if (biorhythmData.physicalScore <= 30) {
       advices.add({
         'title': '휴식 권장',
-        'description': '화기(火氣)가 약하니 충분한 휴식으로 기력을 회복하소서',
+        'description': '화기(火氣)가 약하니 충분한 휴식으로 기력을 회복하세요',
         'hanja': '休',
         'color': DSBiorhythmColors.getPhysical(isDark),
       });
@@ -365,7 +365,7 @@ class LifestyleAdviceCard extends StatelessWidget {
     } else if (biorhythmData.emotionalScore <= 30) {
       advices.add({
         'title': '심신 안정',
-        'description': '목기(木氣)가 약하니 명상이나 산책으로 마음의 평화를 찾으소서',
+        'description': '목기(木氣)가 약하니 명상이나 산책으로 마음의 평화를 찾아보세요',
         'hanja': '靜',
         'color': DSBiorhythmColors.getEmotional(isDark),
       });
@@ -382,7 +382,7 @@ class LifestyleAdviceCard extends StatelessWidget {
     } else if (biorhythmData.intellectualScore <= 30) {
       advices.add({
         'title': '단순 업무 집중',
-        'description': '수기(水氣)가 약하니 복잡한 일은 피하고 간단한 업무에 집중하소서',
+        'description': '수기(水氣)가 약하니 복잡한 일은 피하고 간단한 업무에 집중하세요',
         'hanja': '簡',
         'color': DSBiorhythmColors.getIntellectual(isDark),
       });
@@ -393,13 +393,13 @@ class LifestyleAdviceCard extends StatelessWidget {
       advices.addAll([
         {
           'title': '균형 잡힌 생활',
-          'description': '삼기(三氣)가 조화롭게 흐르니 규칙적인 생활로 균형을 유지하소서',
+          'description': '삼기(三氣)가 조화롭게 흐르니 규칙적인 생활로 균형을 유지하세요',
           'hanja': '和',
           'color': DSBiorhythmColors.goldAccent,
         },
         {
           'title': '자기 관찰',
-          'description': '자신의 컨디션 변화를 살펴보며 지혜롭게 행동하소서',
+          'description': '자신의 컨디션 변화를 살펴보며 지혜롭게 행동하세요',
           'hanja': '觀',
           'color': DSBiorhythmColors.goldAccent,
         },
@@ -553,20 +553,20 @@ class HealthTipsCard extends StatelessWidget {
 
   String _getSleepTip() {
     if (biorhythmData.physicalScore <= 30) {
-      return '화기(火氣)가 약하니 평소보다 일찍 취침하여 기력을 보충하소서';
+      return '화기(火氣)가 약하니 평소보다 일찍 취침하여 기력을 보충하세요';
     } else if (biorhythmData.physicalScore >= 70) {
-      return '화기(火氣)가 왕성하니 취침 전 이완 운동으로 기운을 가라앉히소서';
+      return '화기(火氣)가 왕성하니 취침 전 이완 운동으로 기운을 가라앉히세요';
     }
-    return '자시(子時)에 취침하여 하루 7-8시간 숙면으로 기운을 기르소서';
+    return '자시(子時)에 취침하여 하루 7-8시간 숙면으로 기운을 길러보세요';
   }
 
   String _getNutritionTip() {
     if (biorhythmData.physicalScore <= 30) {
-      return '인삼, 대추 등 보기(補氣) 음식으로 기력을 보충하소서';
+      return '인삼, 대추 등 보기(補氣) 음식으로 기력을 보충하세요';
     } else if (biorhythmData.emotionalScore <= 30) {
-      return '견과류, 녹색 채소 등 안심(安心) 음식으로 심신을 달래소서';
+      return '견과류, 녹색 채소 등 안심(安心) 음식으로 심신을 달래보세요';
     }
-    return '오곡(五穀)과 채소로 균형 잡힌 식단을 유지하소서';
+    return '오곡(五穀)과 채소로 균형 잡힌 식단을 유지하세요';
   }
 
   String _getExerciseTip() {
@@ -575,7 +575,7 @@ class HealthTipsCard extends StatelessWidget {
     } else if (biorhythmData.physicalScore <= 30) {
       return '화기(火氣)가 약하니 산책이나 기체조 등 가벼운 운동을 권합니다';
     }
-    return '태극권이나 요가 등 기를 순환시키는 운동으로 몸을 관리하소서';
+    return '태극권이나 요가 등 기를 순환시키는 운동으로 몸을 관리하세요';
   }
 }
 
@@ -630,7 +630,7 @@ class NextAnalysisCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '일주일 후 다시 운세를 살펴보소서',
+                  '일주일 후 다시 운세를 살펴보세요',
                   style: context.bodyMedium.copyWith(
                     fontFamily: 'GowunBatang',
                     fontWeight: FontWeight.w600,
@@ -735,19 +735,19 @@ class TraditionalWisdomCard extends StatelessWidget {
       return {
         'title': '오늘의 가르침',
         'hanja': '天時不如地利 地利不如人和',
-        'interpretation': '하늘의 때가 좋아도 사람의 화합만 못하니, 좋은 기운을 나누어 인연을 돈독히 하소서.',
+        'interpretation': '하늘의 때가 좋아도 사람의 화합만 못하니, 좋은 기운을 나누어 인연을 돈독히 하세요.',
       };
     } else if (avgScore >= 50) {
       return {
         'title': '오늘의 가르침',
         'hanja': '守靜能制動 心正則身正',
-        'interpretation': '고요함을 지키면 움직임을 다스리고, 마음이 바르면 몸도 바르니 중심을 잡으소서.',
+        'interpretation': '고요함을 지키면 움직임을 다스리고, 마음이 바르면 몸도 바르니 중심을 잡으세요.',
       };
     } else {
       return {
         'title': '오늘의 가르침',
         'hanja': '塞翁之馬 福禍無門',
-        'interpretation': '새옹지마라 하였으니, 화와 복은 한 끗 차이입니다. 어려운 때일수록 긍정의 마음을 품으소서.',
+        'interpretation': '새옹지마라 하였으니, 화와 복은 한 끗 차이입니다. 어려운 때일수록 긍정의 마음을 품으세요.',
       };
     }
   }

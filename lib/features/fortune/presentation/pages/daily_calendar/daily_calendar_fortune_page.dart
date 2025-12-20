@@ -27,6 +27,7 @@ import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
+import '../../../../../core/utils/fortune_completion_helper.dart';
 
 // 모듈화된 위젯들
 import 'widgets/calendar_sync_banner.dart';
@@ -511,6 +512,11 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         onUserEarnedReward: (ad, reward) async {
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'daily-calendar');
+          }
 
           if (mounted) {
             setState(() {

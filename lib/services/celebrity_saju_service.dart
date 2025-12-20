@@ -228,4 +228,160 @@ class CelebritySajuService {
     };
     return map[hanja] ?? hanja;
   }
+
+  /// F04: 사용자 사주와 유명인 사주의 유사도 계산
+  ///
+  /// 계산 로직:
+  /// 1. 오행 분포 유사도 (최대 50점)
+  /// 2. 일주(日柱) 유사도 (최대 30점)
+  /// 3. 주요 오행 일치 (최대 20점)
+  static int calculateSajuSimilarity({
+    required Map<String, int> userElements,
+    required String userDayPillar,
+    required CelebritySaju celebrity,
+  }) {
+    int score = 0;
+
+    // 1. 오행 분포 유사도 (최대 50점)
+    final userTotal = userElements.values.fold(0, (a, b) => a + b);
+    if (userTotal > 0) {
+      final celebElements = {
+        '목': celebrity.woodCount,
+        '화': celebrity.fireCount,
+        '토': celebrity.earthCount,
+        '금': celebrity.metalCount,
+        '수': celebrity.waterCount,
+      };
+      final celebTotal = celebElements.values.fold(0, (a, b) => a + b);
+
+      if (celebTotal > 0) {
+        double similarity = 0;
+        for (final element in ['목', '화', '토', '금', '수']) {
+          final userRatio = (userElements[element] ?? 0) / userTotal;
+          final celebRatio = celebElements[element]! / celebTotal;
+          // 비율 차이가 작을수록 유사 (1 - 차이)
+          similarity += 1 - (userRatio - celebRatio).abs();
+        }
+        // similarity ranges 0-5, normalize to 0-50
+        score += (similarity * 10).round();
+      }
+    }
+
+    // 2. 일주(日柱) 유사도 (최대 30점)
+    if (userDayPillar.length >= 2 && celebrity.dayPillar.isNotEmpty) {
+      final userGan = userDayPillar[0];
+      final userZhi = userDayPillar[1];
+
+      // 연예인 일주 파싱 (한글 또는 한자 형태)
+      String celebGan = '';
+      String celebZhi = '';
+      if (celebrity.dayPillar.length >= 2) {
+        celebGan = celebrity.dayPillar[0];
+        celebZhi = celebrity.dayPillar[1];
+      }
+
+      // 천간 일치 여부 (+15점)
+      if (userGan == celebGan) {
+        score += 15;
+      } else {
+        // 천간합 관계 (+10점)
+        final stemRelation = StemBranchRelations.analyzeStemRelation(userGan, celebGan);
+        if (stemRelation?.type == RelationType.combination) {
+          score += 10;
+        }
+      }
+
+      // 지지 일치 여부 (+15점)
+      if (userZhi == celebZhi) {
+        score += 15;
+      } else {
+        // 지지육합 관계 (+10점)
+        final branchRelations = StemBranchRelations.analyzeBranchRelation(userZhi, celebZhi);
+        for (final relation in branchRelations) {
+          if (relation.type == RelationType.combination) {
+            score += 10;
+            break;
+          }
+        }
+      }
+    }
+
+    // 3. 주요 오행 일치 (최대 20점)
+    final userDominant = _getDominantElement(userElements);
+    if (userDominant == celebrity.dominantElement) {
+      score += 20;
+    }
+
+    debugPrint('🎭 [SIMILARITY] ${celebrity.name}: 오행=$score, 일주분석, 주오행=${celebrity.dominantElement} → 최종 $score점');
+
+    return score.clamp(0, 100);
+  }
+
+  /// 주요 오행 찾기
+  static String _getDominantElement(Map<String, int> elements) {
+    if (elements.isEmpty) return '';
+    String dominant = '';
+    int maxCount = -1;
+    for (final entry in elements.entries) {
+      if (entry.value > maxCount) {
+        maxCount = entry.value;
+        dominant = entry.key;
+      }
+    }
+    return dominant;
+  }
+
+  /// F04: 유사 사주 유명인 찾기 (1~3명, 유사도 50점 이상만)
+  Future<List<Map<String, dynamic>>> findSimilarCelebrities({
+    required Map<String, int> userElements,
+    required String userDayPillar,
+    int minSimilarity = 50,
+    int maxResults = 3,
+  }) async {
+    try {
+      // 충분한 후보를 가져옴
+      final response = await _supabase
+          .from('celebrities')
+          .select()
+          .not('birth_date', 'is', null)
+          .not('day_pillar', 'is', null)
+          .limit(100);
+
+      if ((response as List).isEmpty) {
+        return [];
+      }
+
+      final celebrities = response
+          .map((data) => CelebritySaju.fromJson(data))
+          .toList();
+
+      // 유사도 계산
+      final results = <Map<String, dynamic>>[];
+      for (final celeb in celebrities) {
+        final similarity = calculateSajuSimilarity(
+          userElements: userElements,
+          userDayPillar: userDayPillar,
+          celebrity: celeb,
+        );
+
+        if (similarity >= minSimilarity) {
+          results.add({
+            'celebrity': celeb,
+            'similarity': similarity,
+          });
+        }
+      }
+
+      // 유사도 높은 순 정렬
+      results.sort((a, b) => (b['similarity'] as int).compareTo(a['similarity'] as int));
+
+      debugPrint('🎭 [SIMILARITY] 유사도 $minSimilarity점 이상: ${results.length}명, 반환: ${results.take(maxResults).length}명');
+
+      // 최대 maxResults명 반환 (1~3명)
+      return results.take(maxResults).toList();
+    } catch (e) {
+      debugPrint('🎭 [SIMILARITY] 검색 실패: $e');
+      return [];
+    }
+  }
 }

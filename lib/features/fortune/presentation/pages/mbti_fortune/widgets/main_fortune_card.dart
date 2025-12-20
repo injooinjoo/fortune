@@ -29,7 +29,7 @@ class MainFortuneCard extends StatelessWidget {
     // 폴백: todayFortune → summary['message'] → 기본 메시지
     final rawFortune = data['todayFortune'] as String? ??
                        fortuneResult.summary['message'] as String? ??
-                       '오늘의 운세를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+                       '$selectedMbti 유형의 오늘 운세를 준비하고 있습니다. 페이지를 새로고침 해주세요.';
     final todayFortune = FortuneTextCleaner.clean(rawFortune);
     final luckyItems = {
       if (data['luckyColor'] != null) '색상': data['luckyColor'],

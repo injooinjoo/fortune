@@ -49,7 +49,7 @@ import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts"
-import { encodeHex } from "https://deno.land/std@0.168.0/encoding/hex.ts"
+// B04: encodeHex import 제거 - 직접 hex 변환 사용
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -121,14 +121,14 @@ interface PetFortuneResponse {
   greeting: string;              // 인사말
 }
 
-// 캐시 키 생성
+// 캐시 키 생성 (B04: encodeHex 대신 직접 변환)
 async function generateCacheKey(petName: string, petSpecies: string, petAge: number, petGender: string, ownerName: string): Promise<string> {
   const today = new Date().toISOString().split('T')[0]
   const data = `${today}_${petName}_${petSpecies}_${petAge}_${petGender}_${ownerName}`
   const encoder = new TextEncoder()
   const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(data))
   const hashArray = new Uint8Array(hashBuffer)
-  const hashHex = encodeHex(hashArray)
+  const hashHex = Array.from(hashArray).map(b => b.toString(16).padStart(2, '0')).join('')
   return `pet_fortune_${hashHex.substring(0, 16)}`
 }
 
@@ -340,15 +340,22 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
       fortuneData = generateFallbackFortune(pet_name, pet_species, pet_age, name, season)
     }
 
-    // 토큰 사용량 로깅
-    const usageLogger = new UsageLogger(supabaseClient)
-    await usageLogger.log({
+    // 토큰 사용량 로깅 (B04: static 메서드로 호출)
+    await UsageLogger.log({
+      fortuneType: 'pet-compatibility',
       userId,
-      functionName: 'fortune-pet-compatibility',
+      provider: 'openai',
       model: response.model || 'gpt-4o-mini',
-      promptTokens: response.usage?.prompt_tokens || 0,
-      completionTokens: response.usage?.completion_tokens || 0,
-      totalTokens: response.usage?.total_tokens || 0
+      response: {
+        content: response.content,
+        usage: {
+          promptTokens: response.usage?.prompt_tokens || 0,
+          completionTokens: response.usage?.completion_tokens || 0,
+          totalTokens: response.usage?.total_tokens || 0,
+        },
+        latency: endTime - startTime,
+        finishReason: 'stop',
+      },
     })
 
     // 반려동물 이모지

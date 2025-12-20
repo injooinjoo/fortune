@@ -12,6 +12,7 @@ import '../../../../../../presentation/providers/token_provider.dart';
 import '../../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../../core/services/fortune_haptic_service.dart';
+import '../../../../../../core/utils/fortune_completion_helper.dart';
 
 class CelebrityResultScreen extends ConsumerStatefulWidget {
   final Fortune fortune;
@@ -67,6 +68,11 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
       onUserEarnedReward: (ad, reward) async {
         // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
         await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+        // NEW: 게이지 증가 호출
+        if (mounted) {
+          FortuneCompletionHelper.onFortuneViewed(context, ref, 'celebrity');
+        }
 
         setState(() {
           _isBlurred = false;

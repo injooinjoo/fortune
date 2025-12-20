@@ -22,6 +22,7 @@ import '../../widgets/standard_fortune_page_layout.dart';
 import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../domain/models/conditions/lucky_exam_fortune_conditions.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
+import '../../../../../core/utils/fortune_completion_helper.dart';
 
 import 'widgets/exam_header_card.dart';
 import 'widgets/exam_category_selection.dart';
@@ -331,6 +332,11 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
       onUserEarnedReward: () async {
         // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
         await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+        // NEW: 게이지 증가 호출
+        if (mounted) {
+          FortuneCompletionHelper.onFortuneViewed(context, ref, 'exam');
+        }
 
         setState(() {
           _isBlurred = false;

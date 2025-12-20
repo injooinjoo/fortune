@@ -13,6 +13,7 @@ import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 
 /// 투자운세 결과 페이지 v2 (리서치 기반 새 구조)
 ///
@@ -763,6 +764,11 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'investment');
+          }
 
           if (mounted) {
             setState(() {

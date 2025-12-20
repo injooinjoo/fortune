@@ -29,55 +29,38 @@ class BootReceiver : BroadcastReceiver() {
     private fun refreshAllWidgets(context: Context) {
         val appWidgetManager = AppWidgetManager.getInstance(context)
 
-        // Refresh Daily Fortune Widgets
-        try {
-            val dailyWidgetProvider = ComponentName(context, FortuneDailyWidget::class.java)
-            val dailyWidgetIds = appWidgetManager.getAppWidgetIds(dailyWidgetProvider)
+        // Legacy widgets
+        refreshWidget(context, appWidgetManager, FortuneDailyWidget::class.java, "daily")
+        refreshWidget(context, appWidgetManager, FortuneLoveWidget::class.java, "love")
+        refreshWidget(context, appWidgetManager, FavoritesAppWidget::class.java, "favorites")
 
-            if (dailyWidgetIds.isNotEmpty()) {
-                val updateIntent = Intent(context, FortuneDailyWidget::class.java).apply {
+        // New unified widgets (4 types based on fortune-daily data)
+        refreshWidget(context, appWidgetManager, OverallAppWidget::class.java, "overall")
+        refreshWidget(context, appWidgetManager, CategoryAppWidget::class.java, "category")
+        refreshWidget(context, appWidgetManager, TimeSlotAppWidget::class.java, "timeslot")
+        refreshWidget(context, appWidgetManager, LottoAppWidget::class.java, "lotto")
+    }
+
+    private fun <T> refreshWidget(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        widgetClass: Class<T>,
+        name: String
+    ) {
+        try {
+            val provider = ComponentName(context, widgetClass)
+            val widgetIds = appWidgetManager.getAppWidgetIds(provider)
+
+            if (widgetIds.isNotEmpty()) {
+                val updateIntent = Intent(context, widgetClass).apply {
                     action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, dailyWidgetIds)
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
                 }
                 context.sendBroadcast(updateIntent)
-                Log.d(TAG, "Refreshed ${dailyWidgetIds.size} daily widgets")
+                Log.d(TAG, "Refreshed ${widgetIds.size} $name widgets")
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to refresh daily widgets: ${e.message}")
-        }
-
-        // Refresh Love Fortune Widgets
-        try {
-            val loveWidgetProvider = ComponentName(context, FortuneLoveWidget::class.java)
-            val loveWidgetIds = appWidgetManager.getAppWidgetIds(loveWidgetProvider)
-
-            if (loveWidgetIds.isNotEmpty()) {
-                val updateIntent = Intent(context, FortuneLoveWidget::class.java).apply {
-                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, loveWidgetIds)
-                }
-                context.sendBroadcast(updateIntent)
-                Log.d(TAG, "Refreshed ${loveWidgetIds.size} love widgets")
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to refresh love widgets: ${e.message}")
-        }
-
-        // Refresh Favorites Fortune Widgets
-        try {
-            val favoritesWidgetProvider = ComponentName(context, FavoritesAppWidget::class.java)
-            val favoritesWidgetIds = appWidgetManager.getAppWidgetIds(favoritesWidgetProvider)
-
-            if (favoritesWidgetIds.isNotEmpty()) {
-                val updateIntent = Intent(context, FavoritesAppWidget::class.java).apply {
-                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, favoritesWidgetIds)
-                }
-                context.sendBroadcast(updateIntent)
-                Log.d(TAG, "Refreshed ${favoritesWidgetIds.size} favorites widgets")
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to refresh favorites widgets: ${e.message}")
+            Log.e(TAG, "Failed to refresh $name widgets: ${e.message}")
         }
     }
 }

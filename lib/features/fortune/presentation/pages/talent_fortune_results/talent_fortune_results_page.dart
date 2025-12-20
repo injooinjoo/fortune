@@ -22,6 +22,7 @@ import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../core/utils/logger.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/models/fortune_result.dart';
+import '../../../../../core/utils/fortune_completion_helper.dart';
 import '../../widgets/fortune_loading_skeleton.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
 
@@ -222,6 +223,11 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'talent');
+          }
+
           if (mounted) {
             setState(() {
               _isBlurred = false;
@@ -264,7 +270,9 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     required Widget Function() contentBuilder,
     required DSColorScheme colors,
   }) {
-    final shouldBlur = _isBlurred && _blurredSections.contains(sectionKey);
+    // ✅ 프리미엄 사용자는 블러 제외
+    final isPremium = ref.watch(isPremiumProvider);
+    final shouldBlur = _isBlurred && _blurredSections.contains(sectionKey) && !isPremium;
 
     return AppCard(
       child: Column(

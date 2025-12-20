@@ -436,8 +436,6 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                     color:
                         isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -478,89 +476,112 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                 final stage = stages[key];
                 if (stage == null) return const SizedBox.shrink();
 
-                return Container(
-                  width: itemWidth,
-                  padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? DSColors.surface
-                    : Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 2,
-                    ),
+                final stageData = SajuExplanations.twelveStages[stage.korean];
+
+                return GestureDetector(
+                  onTap: () {
+                    showTwelveStageExplanationSheet(
+                      context: context,
+                      hanja: stage.hanja,
+                      korean: stage.korean,
+                      meaning: stage.meaning,
+                      description: stageData?['description'] ?? stage.meaning,
+                      fortune: stage.fortune,
+                      stageColor: stage.color,
+                    );
+                  },
+                  child: Container(
+                    width: itemWidth,
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: stage.color.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(4),
+                      color: isDark
+                          ? DSColors.surface
+                          : Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
                     ),
-                    child: Text(
-                      pillarNames[key]!,
-                      style: context.labelTiny.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: stage.color,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Column(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              stage.korean,
-                              style: context.labelTiny.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: isDark
-                                    ? DSColors.textSecondary
-                                    : DSColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(width: 2),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 3,
-                                vertical: 1,
-                              ),
-                              decoration: BoxDecoration(
-                                color: stage.color.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                              child: Text(
-                                stage.fortune,
-                                style: context.labelTiny.copyWith(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
-                                  color: stage.color,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          stage.meaning,
-                          style: context.labelTiny.copyWith(
-                            color: isDark
-                                ? DSColors.textTertiary
-                                : DSColors.textSecondary,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 2,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          decoration: BoxDecoration(
+                            color: stage.color.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            pillarNames[key]!,
+                            style: context.labelTiny.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: stage.color,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    stage.korean,
+                                    style: context.labelTiny.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: isDark
+                                          ? DSColors.textSecondary
+                                          : DSColors.textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 3,
+                                      vertical: 1,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: stage.color.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                    child: Text(
+                                      stage.fortune,
+                                      style: context.labelTiny.copyWith(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: stage.color,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Icon(
+                                    Icons.touch_app,
+                                    size: 10,
+                                    color: isDark
+                                        ? DSColors.textTertiary
+                                        : DSColors.textSecondary.withValues(alpha: 0.5),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                stage.meaning,
+                                style: context.labelTiny.copyWith(
+                                  color: isDark
+                                      ? DSColors.textTertiary
+                                      : DSColors.textSecondary,
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            );
+                );
               }).toList(),
             );
           },

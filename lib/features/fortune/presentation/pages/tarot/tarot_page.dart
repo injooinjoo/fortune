@@ -11,6 +11,7 @@ import '../../widgets/tarot/tarot_multi_card_result.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/utils/logger.dart';
+import '../../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../../services/ad_service.dart';
 import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../presentation/providers/subscription_provider.dart';
@@ -199,6 +200,8 @@ class _TarotPageState extends ConsumerState<TarotPage>
               _selectedDeck = deck;
             });
           },
+          // F12: 오늘의 타로 (서버 랜덤 선택)
+          onDailyTarot: _handleDailyTarot,
           fadeAnimation: _fadeAnimation,
           slideAnimation: _slideAnimation,
         );
@@ -271,12 +274,57 @@ class _TarotPageState extends ConsumerState<TarotPage>
     }
   }
 
+  // F12: 오늘의 타로 (서버가 덱을 랜덤으로 선택) 핸들러
+  void _handleDailyTarot() {
+    Logger.info('[TarotPage] 오늘의 타로 시작 - 서버가 덱 랜덤 선택');
+
+    // 오늘 날짜 기반 시드로 덱 랜덤 선택 (하루 동안 고정)
+    final today = DateTime.now();
+    final seed = today.year * 10000 + today.month * 100 + today.day;
+    final randomDeckIndex = seed % TarotDeckType.values.length;
+    final randomDeck = TarotDeckType.values[randomDeckIndex];
+
+    Logger.info('[TarotPage] 오늘의 덱: ${randomDeck.name}');
+
+    // 덱 설정 후 바로 질문 선택으로 이동
+    setState(() {
+      _selectedDeck = randomDeck;
+      _selectedQuestion = null;
+      _customQuestion = null;
+      _currentState = TarotFlowState.questioning;
+    });
+  }
+
   Future<void> _handleSpreadSelected(TarotSpreadType spread) async {
     setState(() {
       _selectedSpread = spread;
     });
 
-    // ✅ InterstitialAd 제거: 바로 타로 운세 생성
+    // F09: 5장 이상 스프레드는 선광고 (entry ad) 필요
+    final tokenState = ref.read(tokenProvider);
+    final isPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+
+    if (spread.cardCount >= 5 && !isPremium) {
+      // 5,10장: 선광고 표시 후 진행
+      final adWatched = await _showEntryAdForLargeSpread();
+      if (!adWatched) {
+        // 광고 시청 취소/실패 시 스프레드 선택으로 복귀
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 시청해야 5장 이상 스프레드를 이용할 수 있습니다.'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+          setState(() {
+            _selectedSpread = null;
+          });
+        }
+        return;
+      }
+    }
+
+    // 1,3장 또는 프리미엄 사용자: 바로 타로 운세 생성
     final result = await _generateTarotResultAsync();
     if (!mounted) return;
 
@@ -447,6 +495,11 @@ class _TarotPageState extends ConsumerState<TarotPage>
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
+          // ✅ 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'tarot');
+          }
+
           // ✅ 블러 해제 - copyWith로 isBlurred를 false로 변경
           if (mounted) {
             setState(() {
@@ -474,6 +527,63 @@ class _TarotPageState extends ConsumerState<TarotPage>
           ),
         );
       }
+    }
+  }
+
+  // F09: 5장 이상 스프레드 선광고 (entry ad)
+  Future<bool> _showEntryAdForLargeSpread() async {
+    Logger.info('[TarotPage] 5장 이상 스프레드 선광고 시작');
+
+    try {
+      final adService = AdService();
+
+      // 광고가 준비 안됐으면 로드
+      if (!adService.isRewardedAdReady) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중입니다...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+        // 광고 로드 시작
+        await adService.loadRewardedAd();
+
+        // 로딩 완료 대기 (최대 5초)
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        // 타임아웃 처리
+        if (!adService.isRewardedAdReady) {
+          Logger.warning('[TarotPage] 선광고 로드 타임아웃');
+          return false;
+        }
+      }
+
+      // 광고 시청 완료 여부 추적
+      bool rewardEarned = false;
+
+      // 광고 표시
+      Logger.info('[TarotPage] 선광고 표시');
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          Logger.info('[TarotPage] 선광고 보상 획득');
+          rewardEarned = true;
+        },
+      );
+
+      // 광고 완료 후 약간의 딜레이 (광고 닫힘 애니메이션)
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      return rewardEarned;
+    } catch (e, stackTrace) {
+      Logger.error('[TarotPage] 선광고 표시 실패', e, stackTrace);
+      return false;
     }
   }
 

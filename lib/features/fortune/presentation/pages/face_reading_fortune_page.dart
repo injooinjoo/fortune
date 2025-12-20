@@ -15,6 +15,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 
 // Import modular widgets
@@ -320,6 +321,11 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'face-reading');
+          }
 
           if (mounted) {
             setState(() {

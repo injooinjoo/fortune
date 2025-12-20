@@ -10,6 +10,8 @@ class StorageService {
   static const String _userStatisticsKey = 'userStatistics';
   static const String _dailyFortuneRefreshKey = 'dailyFortuneRefresh';
   static const String _loveFortuneInputKey = 'loveFortuneInput';
+  static const String _dreamResultKey = 'dreamInterpretationResult';
+  static const String _fortuneGaugeKey = 'fortune_gauge_progress';
 
   Future<Map<String, dynamic>?> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -304,5 +306,81 @@ class StorageService {
   Future<void> clearLoveFortuneInput() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_loveFortuneInputKey);
+  }
+
+  // Dream interpretation result persistence (F15: 결과 저장, 다음날까지 표시)
+  Future<Map<String, dynamic>?> getDreamResult() async {
+    final prefs = await SharedPreferences.getInstance();
+    final resultString = prefs.getString(_dreamResultKey);
+
+    if (resultString != null) {
+      try {
+        final data = json.decode(resultString) as Map<String, dynamic>;
+        final savedDate = data['savedDate'] as String?;
+
+        // 날짜가 오늘이 아니면 null 반환 (다음날에는 새로 해몽 가능)
+        final today = DateTime.now().toIso8601String().split('T')[0];
+        if (savedDate != today) {
+          debugPrint('[StorageService] Dream result expired (saved: $savedDate, today: $today)');
+          await clearDreamResult();
+          return null;
+        }
+
+        debugPrint('[StorageService] Dream result loaded for today');
+        return data;
+      } catch (e) {
+        debugPrint('[StorageService] Failed to parse dream result: $e');
+        return null;
+      }
+    }
+    return null;
+  }
+
+  Future<void> saveDreamResult(Map<String, dynamic> result) async {
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now().toIso8601String().split('T')[0];
+
+    // 저장 날짜와 함께 결과 저장
+    final dataToSave = {
+      ...result,
+      'savedDate': today,
+    };
+
+    await prefs.setString(_dreamResultKey, json.encode(dataToSave));
+    debugPrint('[StorageService] Dream result saved for $today');
+  }
+
+  Future<void> clearDreamResult() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_dreamResultKey);
+    debugPrint('[StorageService] Dream result cleared');
+  }
+
+  // Fortune gauge data management
+  Future<Map<String, dynamic>?> getFortuneGaugeData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final gaugeString = prefs.getString(_fortuneGaugeKey);
+
+    if (gaugeString != null) {
+      try {
+        return json.decode(gaugeString) as Map<String, dynamic>;
+      } catch (e) {
+        debugPrint('[StorageService] Failed to parse fortune gauge data: $e');
+        return null;
+      }
+    }
+    return null;
+  }
+
+  Future<void> saveFortuneGaugeData(Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_fortuneGaugeKey, json.encode(data));
+    debugPrint('[StorageService] Fortune gauge data saved');
+  }
+
+  Future<void> clearFortuneGaugeData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_fortuneGaugeKey);
+    debugPrint('[StorageService] Fortune gauge data cleared');
   }
 }

@@ -11,6 +11,7 @@ import 'package:fortune/presentation/providers/auth_provider.dart';
 import 'package:fortune/presentation/providers/token_provider.dart';
 import 'package:fortune/core/services/unified_fortune_service.dart';
 import 'package:fortune/core/services/fortune_haptic_service.dart';
+import 'package:fortune/core/utils/fortune_completion_helper.dart';
 import 'package:fortune/core/models/fortune_result.dart';
 import 'package:fortune/features/fortune/domain/models/conditions/compatibility_fortune_conditions.dart';
 import 'package:fortune/services/ad_service.dart';
@@ -421,6 +422,11 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'compatibility');
+          }
 
           // 광고 시청 완료 시 블러만 해제 (로컬 상태 변경)
           if (mounted) {

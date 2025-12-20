@@ -120,6 +120,10 @@
 		<array>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneLiveActivity</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneOverallWidget</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneCategoryWidget</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneTimeSlotWidget</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneLottoWidget</string>
 		</array>
 		<!-- SKAdNetwork: Essential networks for Google AdMob (12 identifiers) -->
 		<key>SKAdNetworkItems</key>

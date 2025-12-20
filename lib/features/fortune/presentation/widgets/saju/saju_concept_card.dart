@@ -9,6 +9,8 @@ class SajuConceptCard extends StatefulWidget {
   final String shortDescription;
   final String fullDescription;
   final IconData icon;
+  final String? realLife; // 실생활 적용
+  final String? tips; // 실용적 조언
 
   const SajuConceptCard({
     super.key,
@@ -16,6 +18,8 @@ class SajuConceptCard extends StatefulWidget {
     required this.shortDescription,
     required this.fullDescription,
     this.icon = Icons.info_outline,
+    this.realLife,
+    this.tips,
   });
 
   @override
@@ -122,6 +126,7 @@ class _SajuConceptCardState extends State<SajuConceptCard>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: DSSpacing.md),
+                // 기본 설명
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(DSSpacing.md),
@@ -141,6 +146,98 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                     ),
                   ),
                 ),
+                // 실생활 적용
+                if (widget.realLife != null && widget.realLife!.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.sm),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(DSSpacing.md),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                      border: Border.all(
+                        color: const Color(0xFF3B82F6).withValues(alpha: 0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.lightbulb_outline,
+                              color: const Color(0xFF3B82F6),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '실생활에서는?',
+                              style: context.labelMedium.copyWith(
+                                color: const Color(0xFF3B82F6),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          widget.realLife!,
+                          style: context.bodySmall.copyWith(
+                            color: colors.textPrimary,
+                            height: 1.6,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                // 실용적 조언
+                if (widget.tips != null && widget.tips!.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.sm),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(DSSpacing.md),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981).withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                      border: Border.all(
+                        color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.tips_and_updates_outlined,
+                              color: const Color(0xFF10B981),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '이렇게 활용하세요!',
+                              style: context.labelMedium.copyWith(
+                                color: const Color(0xFF10B981),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          widget.tips!,
+                          style: context.bodySmall.copyWith(
+                            color: colors.textPrimary,
+                            height: 1.6,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -190,6 +287,12 @@ void showCharacterExplanationSheet({
   required String description,
   String? animal, // 지지의 경우 띠 동물
   String? time, // 지지의 경우 시간대
+  String? realLife, // 실생활 해석
+  String? love, // 연애/인간관계
+  String? career, // 직업/재물운
+  String? health, // 건강 관련
+  String? tips, // 실용적 조언
+  String? compatibility, // 궁합/상성
 }) {
   final colors = context.colors;
 
@@ -211,212 +314,298 @@ void showCharacterExplanationSheet({
     }
   }
 
+  final elementColor = getElementColor(element);
+
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    builder: (context) => Container(
-      padding: const EdgeInsets.all(DSSpacing.lg),
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(DSRadius.xl),
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.85,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        decoration: BoxDecoration(
+          color: colors.background,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(DSRadius.xl),
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 핸들
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: DSSpacing.lg),
-
-            // 헤더: 한자 + 한글 + 오행 배지
-            Row(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 한자
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: getElementColor(element).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    border: Border.all(
-                      color: getElementColor(element).withValues(alpha: 0.3),
-                      width: 2,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      hanja,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: getElementColor(element),
-                        fontFamily: 'ZenSerif',
-                      ),
+                // 핸들
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.border,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
-                const SizedBox(width: DSSpacing.md),
+                const SizedBox(height: DSSpacing.lg),
 
-                // 한글 이름 + 오행
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '$hanja ($korean)',
-                        style: context.heading3.copyWith(
-                          color: colors.textPrimary,
-                          fontWeight: FontWeight.w700,
+                // 헤더: 한자 + 한글 + 오행 배지
+                Row(
+                  children: [
+                    // 한자
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: elementColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
+                        border: Border.all(
+                          color: elementColor.withValues(alpha: 0.3),
+                          width: 2,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Row(
+                      child: Center(
+                        child: Text(
+                          hanja,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: elementColor,
+                            fontFamily: 'ZenSerif',
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: DSSpacing.md),
+
+                    // 한글 이름 + 오행
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 오행 배지
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: DSSpacing.sm,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: getElementColor(element),
-                              borderRadius: BorderRadius.circular(DSRadius.sm),
-                            ),
-                            child: Text(
-                              '$element ($elementKorean)',
-                              style: context.labelSmall.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          Text(
+                            '$hanja ($korean)',
+                            style: context.heading3.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-
-                          // 띠 동물 (지지인 경우)
-                          if (animal != null) ...[
-                            const SizedBox(width: DSSpacing.sm),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: DSSpacing.sm,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: colors.textTertiary.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(DSRadius.sm),
-                              ),
-                              child: Text(
-                                animal,
-                                style: context.labelSmall.copyWith(
-                                  color: colors.textSecondary,
-                                  fontWeight: FontWeight.w600,
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              // 오행 배지
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: DSSpacing.sm,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: elementColor,
+                                  borderRadius:
+                                      BorderRadius.circular(DSRadius.sm),
+                                ),
+                                child: Text(
+                                  '$element ($elementKorean)',
+                                  style: context.labelSmall.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+
+                              // 띠 동물 (지지인 경우)
+                              if (animal != null) ...[
+                                const SizedBox(width: DSSpacing.sm),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: DSSpacing.sm,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: colors.textTertiary
+                                        .withValues(alpha: 0.2),
+                                    borderRadius:
+                                        BorderRadius.circular(DSRadius.sm),
+                                  ),
+                                  child: Text(
+                                    animal,
+                                    style: context.labelSmall.copyWith(
+                                      color: colors.textSecondary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
                         ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: DSSpacing.lg),
-
-            // 시간대 (지지인 경우)
-            if (time != null) ...[
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(DSSpacing.md),
-                decoration: BoxDecoration(
-                  color: colors.backgroundSecondary,
-                  borderRadius: BorderRadius.circular(DSRadius.sm),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 18,
-                      color: colors.textTertiary,
-                    ),
-                    const SizedBox(width: DSSpacing.sm),
-                    Text(
-                      '시간대: $time',
-                      style: context.bodyMedium.copyWith(
-                        color: colors.textSecondary,
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: DSSpacing.md),
-            ],
 
-            // 의미
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: getElementColor(element).withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-                border: Border.all(
-                  color: getElementColor(element).withValues(alpha: 0.2),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '의미',
-                    style: context.labelMedium.copyWith(
-                      color: getElementColor(element),
-                      fontWeight: FontWeight.w700,
+                const SizedBox(height: DSSpacing.lg),
+
+                // 시간대 (지지인 경우)
+                if (time != null) ...[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(DSSpacing.md),
+                    decoration: BoxDecoration(
+                      color: colors.backgroundSecondary,
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 18,
+                          color: colors.textTertiary,
+                        ),
+                        const SizedBox(width: DSSpacing.sm),
+                        Text(
+                          '시간대: $time',
+                          style: context.bodyMedium.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    meaning,
-                    style: context.bodyMedium.copyWith(
-                      color: colors.textPrimary,
+                  const SizedBox(height: DSSpacing.md),
+                ],
+
+                // 의미
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(DSSpacing.md),
+                  decoration: BoxDecoration(
+                    color: elementColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                    border: Border.all(
+                      color: elementColor.withValues(alpha: 0.2),
                     ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '의미',
+                        style: context.labelMedium.copyWith(
+                          color: elementColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        meaning,
+                        style: context.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: DSSpacing.md),
+
+                // 상세 설명
+                Text(
+                  '상세 설명',
+                  style: context.labelMedium.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                Text(
+                  description,
+                  style: context.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.6,
+                  ),
+                ),
+
+                // 실생활 해석
+                if (realLife != null && realLife.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '현대인의 모습으로 보면',
+                    content: realLife,
+                    icon: Icons.lightbulb_outline,
+                    color: const Color(0xFF3B82F6),
                   ),
                 ],
-              ),
-            ),
 
-            const SizedBox(height: DSSpacing.md),
+                // 연애/인간관계
+                if (love != null && love.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '연애 & 인간관계',
+                    content: love,
+                    icon: Icons.favorite_outline,
+                    color: const Color(0xFFEC4899),
+                  ),
+                ],
 
-            // 상세 설명
-            Text(
-              '상세 설명',
-              style: context.labelMedium.copyWith(
-                color: colors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: DSSpacing.sm),
-            Text(
-              description,
-              style: context.bodyMedium.copyWith(
-                color: colors.textSecondary,
-                height: 1.6,
-              ),
-            ),
+                // 직업/재물운
+                if (career != null && career.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '직업 & 재물운',
+                    content: career,
+                    icon: Icons.work_outline,
+                    color: const Color(0xFFF59E0B),
+                  ),
+                ],
 
-            const SizedBox(height: DSSpacing.xl),
-          ],
+                // 건강
+                if (health != null && health.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '건강 포인트',
+                    content: health,
+                    icon: Icons.health_and_safety_outlined,
+                    color: const Color(0xFF10B981),
+                  ),
+                ],
+
+                // 실용적 조언
+                if (tips != null && tips.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '이렇게 활용하세요!',
+                    content: tips,
+                    icon: Icons.tips_and_updates_outlined,
+                    color: const Color(0xFF8B5CF6),
+                  ),
+                ],
+
+                // 궁합/상성
+                if (compatibility != null && compatibility.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '궁합 & 상성',
+                    content: compatibility,
+                    icon: Icons.people_outline,
+                    color: const Color(0xFF06B6D4),
+                  ),
+                ],
+
+                const SizedBox(height: DSSpacing.xl),
+              ],
+            ),
+          ),
         ),
       ),
     ),
@@ -436,6 +625,11 @@ void showOhangExplanationSheet({
   required String organ,
   required String colorName,
   required String number,
+  String? realLife, // 현대인 유형
+  String? loveStyle, // 연애 스타일
+  String? workStyle, // 일하는 스타일
+  String? stressSign, // 스트레스 신호
+  String? rechargeWay, // 에너지 충전법
 }) {
   final colors = context.colors;
 
@@ -462,172 +656,241 @@ void showOhangExplanationSheet({
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    builder: (context) => Container(
-      padding: const EdgeInsets.all(DSSpacing.lg),
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(DSRadius.xl),
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.85,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        decoration: BoxDecoration(
+          color: colors.background,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(DSRadius.xl),
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 핸들
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: DSSpacing.lg),
-
-            // 헤더: 한자 + 한글
-            Row(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: elementColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    border: Border.all(
-                      color: elementColor.withValues(alpha: 0.3),
-                      width: 2,
+                // 핸들
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.border,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: Center(
-                    child: Text(
-                      hanja,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: elementColor,
-                        fontFamily: 'ZenSerif',
+                ),
+                const SizedBox(height: DSSpacing.lg),
+
+                // 헤더: 한자 + 한글
+                Row(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: elementColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
+                        border: Border.all(
+                          color: elementColor.withValues(alpha: 0.3),
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          hanja,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: elementColor,
+                            fontFamily: 'ZenSerif',
+                          ),
+                        ),
                       ),
                     ),
+                    const SizedBox(width: DSSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '$element ($hanja)',
+                            style: context.heading3.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: DSSpacing.sm,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: elementColor,
+                              borderRadius: BorderRadius.circular(DSRadius.sm),
+                            ),
+                            child: Text(
+                              personality,
+                              style: context.labelSmall.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: DSSpacing.lg),
+
+                // 기본 정보
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(DSSpacing.md),
+                  decoration: BoxDecoration(
+                    color: colors.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                  ),
+                  child: Wrap(
+                    spacing: DSSpacing.lg,
+                    runSpacing: DSSpacing.sm,
+                    children: [
+                      _buildInfoChip(context, '계절', season, elementColor),
+                      _buildInfoChip(context, '방위', direction, elementColor),
+                      _buildInfoChip(context, '장부', organ, elementColor),
+                      _buildInfoChip(context, '색상', colorName, elementColor),
+                      _buildInfoChip(context, '수리', number, elementColor),
+                    ],
                   ),
                 ),
-                const SizedBox(width: DSSpacing.md),
-                Expanded(
+
+                const SizedBox(height: DSSpacing.md),
+
+                // 의미
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(DSSpacing.md),
+                  decoration: BoxDecoration(
+                    color: elementColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                    border: Border.all(
+                      color: elementColor.withValues(alpha: 0.2),
+                    ),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$element ($hanja)',
-                        style: context.heading3.copyWith(
-                          color: colors.textPrimary,
+                        '의미',
+                        style: context.labelMedium.copyWith(
+                          color: elementColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: DSSpacing.sm,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: elementColor,
-                          borderRadius: BorderRadius.circular(DSRadius.sm),
-                        ),
-                        child: Text(
-                          personality,
-                          style: context.labelSmall.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      Text(
+                        meaning,
+                        style: context.bodyMedium.copyWith(
+                          color: colors.textPrimary,
                         ),
                       ),
                     ],
                   ),
                 ),
+
+                const SizedBox(height: DSSpacing.md),
+
+                // 상세 설명
+                Text(
+                  '상세 설명',
+                  style: context.labelMedium.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                Text(
+                  description,
+                  style: context.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.6,
+                  ),
+                ),
+
+                // 현대인 유형
+                if (realLife != null && realLife.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '현대인 유형으로 보면',
+                    content: realLife,
+                    icon: Icons.lightbulb_outline,
+                    color: const Color(0xFF3B82F6),
+                  ),
+                ],
+
+                // 연애 스타일
+                if (loveStyle != null && loveStyle.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '연애 스타일',
+                    content: loveStyle,
+                    icon: Icons.favorite_outline,
+                    color: const Color(0xFFEC4899),
+                  ),
+                ],
+
+                // 일하는 스타일
+                if (workStyle != null && workStyle.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '일하는 스타일',
+                    content: workStyle,
+                    icon: Icons.work_outline,
+                    color: const Color(0xFFF59E0B),
+                  ),
+                ],
+
+                // 스트레스 신호
+                if (stressSign != null && stressSign.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '스트레스 받으면?',
+                    content: stressSign,
+                    icon: Icons.warning_amber_outlined,
+                    color: const Color(0xFFEF4444),
+                  ),
+                ],
+
+                // 에너지 충전법
+                if (rechargeWay != null && rechargeWay.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '에너지 충전법',
+                    content: rechargeWay,
+                    icon: Icons.battery_charging_full_outlined,
+                    color: const Color(0xFF10B981),
+                  ),
+                ],
+
+                const SizedBox(height: DSSpacing.xl),
               ],
             ),
-
-            const SizedBox(height: DSSpacing.lg),
-
-            // 기본 정보
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: colors.backgroundSecondary,
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-              ),
-              child: Wrap(
-                spacing: DSSpacing.lg,
-                runSpacing: DSSpacing.sm,
-                children: [
-                  _buildInfoChip(context, '계절', season, elementColor),
-                  _buildInfoChip(context, '방위', direction, elementColor),
-                  _buildInfoChip(context, '장부', organ, elementColor),
-                  _buildInfoChip(context, '색상', colorName, elementColor),
-                  _buildInfoChip(context, '수리', number, elementColor),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.md),
-
-            // 의미
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: elementColor.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-                border: Border.all(
-                  color: elementColor.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '의미',
-                    style: context.labelMedium.copyWith(
-                      color: elementColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    meaning,
-                    style: context.bodyMedium.copyWith(
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.md),
-
-            // 상세 설명
-            Text(
-              '상세 설명',
-              style: context.labelMedium.copyWith(
-                color: colors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: DSSpacing.sm),
-            Text(
-              description,
-              style: context.bodyMedium.copyWith(
-                color: colors.textSecondary,
-                height: 1.6,
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.xl),
-          ],
+          ),
         ),
       ),
     ),
@@ -657,6 +920,54 @@ Widget _buildInfoChip(
   );
 }
 
+/// 확장 가능한 섹션을 빌드하는 헬퍼 위젯
+Widget _buildExpandedSection({
+  required BuildContext context,
+  required String title,
+  required String content,
+  required IconData icon,
+  required Color color,
+}) {
+  final colors = context.colors;
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(DSSpacing.md),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(DSRadius.sm),
+      border: Border.all(
+        color: color.withValues(alpha: 0.2),
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 6),
+            Text(
+              title,
+              style: context.labelMedium.copyWith(
+                color: color,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          content,
+          style: context.bodyMedium.copyWith(
+            color: colors.textPrimary,
+            height: 1.6,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 /// 12운성 터치 해설 바텀시트를 표시하는 함수
 void showTwelveStageExplanationSheet({
   required BuildContext context,
@@ -666,6 +977,12 @@ void showTwelveStageExplanationSheet({
   required String description,
   required String fortune,
   required Color stageColor,
+  String? realLife, // 현대 생활 에너지 해석
+  String? when, // 이 운성이 올 때
+  String? career, // 직장/사업 의미
+  String? love, // 연애/결혼 의미
+  String? tips, // 이 시기를 잘 보내는 방법
+  String? warning, // 주의할 점
 }) {
   final colors = context.colors;
 
@@ -673,179 +990,260 @@ void showTwelveStageExplanationSheet({
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    builder: (context) => Container(
-      padding: const EdgeInsets.all(DSSpacing.lg),
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(DSRadius.xl),
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.85,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        decoration: BoxDecoration(
+          color: colors.background,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(DSRadius.xl),
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 핸들
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: DSSpacing.lg),
-
-            // 헤더
-            Row(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: stageColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    border: Border.all(
-                      color: stageColor.withValues(alpha: 0.3),
-                      width: 2,
+                // 핸들
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.border,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: Center(
-                    child: Text(
-                      hanja,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: stageColor,
-                        fontFamily: 'ZenSerif',
+                ),
+                const SizedBox(height: DSSpacing.lg),
+
+                // 헤더
+                Row(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: stageColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
+                        border: Border.all(
+                          color: stageColor.withValues(alpha: 0.3),
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          hanja,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: stageColor,
+                            fontFamily: 'ZenSerif',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: DSSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '$korean ($hanja)',
+                            style: context.heading3.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: DSSpacing.sm,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: stageColor,
+                              borderRadius: BorderRadius.circular(DSRadius.sm),
+                            ),
+                            child: Text(
+                              '12운성',
+                              style: context.labelSmall.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: DSSpacing.md),
-                Expanded(
+
+                const SizedBox(height: DSSpacing.lg),
+
+                // 의미
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(DSSpacing.md),
+                  decoration: BoxDecoration(
+                    color: stageColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                    border: Border.all(
+                      color: stageColor.withValues(alpha: 0.2),
+                    ),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$korean ($hanja)',
-                        style: context.heading3.copyWith(
-                          color: colors.textPrimary,
+                        '의미',
+                        style: context.labelMedium.copyWith(
+                          color: stageColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: DSSpacing.sm,
-                          vertical: 2,
+                      Text(
+                        meaning,
+                        style: context.bodyMedium.copyWith(
+                          color: colors.textPrimary,
                         ),
-                        decoration: BoxDecoration(
-                          color: stageColor,
-                          borderRadius: BorderRadius.circular(DSRadius.sm),
-                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: DSSpacing.md),
+
+                // 운세
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(DSSpacing.md),
+                  decoration: BoxDecoration(
+                    color: colors.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.auto_awesome,
+                        size: 18,
+                        color: stageColor,
+                      ),
+                      const SizedBox(width: DSSpacing.sm),
+                      Expanded(
                         child: Text(
-                          '12운성',
-                          style: context.labelSmall.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                          fortune,
+                          style: context.bodyMedium.copyWith(
+                            color: colors.textSecondary,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
+
+                const SizedBox(height: DSSpacing.md),
+
+                // 상세 설명
+                Text(
+                  '상세 설명',
+                  style: context.labelMedium.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                Text(
+                  description,
+                  style: context.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.6,
+                  ),
+                ),
+
+                // 현대 생활 에너지 해석
+                if (realLife != null && realLife.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '현대인의 에너지로 보면',
+                    content: realLife,
+                    icon: Icons.lightbulb_outline,
+                    color: const Color(0xFF3B82F6),
+                  ),
+                ],
+
+                // 이 운성이 올 때
+                if (when != null && when.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '이 시기가 오면',
+                    content: when,
+                    icon: Icons.schedule_outlined,
+                    color: const Color(0xFF8B5CF6),
+                  ),
+                ],
+
+                // 직장/사업
+                if (career != null && career.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '직장 & 사업운',
+                    content: career,
+                    icon: Icons.work_outline,
+                    color: const Color(0xFFF59E0B),
+                  ),
+                ],
+
+                // 연애/결혼
+                if (love != null && love.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '연애 & 결혼운',
+                    content: love,
+                    icon: Icons.favorite_outline,
+                    color: const Color(0xFFEC4899),
+                  ),
+                ],
+
+                // 이 시기를 잘 보내는 방법
+                if (tips != null && tips.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '이 시기를 잘 보내려면',
+                    content: tips,
+                    icon: Icons.tips_and_updates_outlined,
+                    color: const Color(0xFF10B981),
+                  ),
+                ],
+
+                // 주의할 점
+                if (warning != null && warning.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '주의할 점',
+                    content: warning,
+                    icon: Icons.warning_amber_outlined,
+                    color: const Color(0xFFEF4444),
+                  ),
+                ],
+
+                const SizedBox(height: DSSpacing.xl),
               ],
             ),
-
-            const SizedBox(height: DSSpacing.lg),
-
-            // 의미
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: stageColor.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-                border: Border.all(
-                  color: stageColor.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '의미',
-                    style: context.labelMedium.copyWith(
-                      color: stageColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    meaning,
-                    style: context.bodyMedium.copyWith(
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.md),
-
-            // 운세
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: colors.backgroundSecondary,
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    size: 18,
-                    color: stageColor,
-                  ),
-                  const SizedBox(width: DSSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      fortune,
-                      style: context.bodyMedium.copyWith(
-                        color: colors.textSecondary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.md),
-
-            // 상세 설명
-            Text(
-              '상세 설명',
-              style: context.labelMedium.copyWith(
-                color: colors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: DSSpacing.sm),
-            Text(
-              description,
-              style: context.bodyMedium.copyWith(
-                color: colors.textSecondary,
-                height: 1.6,
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.xl),
-          ],
+          ),
         ),
       ),
     ),
@@ -861,6 +1259,12 @@ void showSinsalExplanationSheet({
   required String meaning,
   required String description,
   required Color sinsalColor,
+  String? realLife, // 현대 생활에서 나타나는 양상
+  String? goodSide, // 긍정적 활용법
+  String? badSide, // 주의해야 할 점
+  String? career, // 직업/재물 영향
+  String? love, // 연애/인간관계 영향
+  String? tips, // 실용적 조언
 }) {
   final colors = context.colors;
 
@@ -880,171 +1284,253 @@ void showSinsalExplanationSheet({
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    builder: (context) => Container(
-      padding: const EdgeInsets.all(DSSpacing.lg),
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(DSRadius.xl),
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.85,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        decoration: BoxDecoration(
+          color: colors.background,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(DSRadius.xl),
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 핸들
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: DSSpacing.lg),
-
-            // 헤더
-            Row(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: sinsalColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    border: Border.all(
-                      color: sinsalColor.withValues(alpha: 0.3),
-                      width: 2,
+                // 핸들
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.border,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: Center(
-                    child: Text(
-                      hanja.length > 2 ? hanja.substring(0, 2) : hanja,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: sinsalColor,
-                        fontFamily: 'ZenSerif',
+                ),
+                const SizedBox(height: DSSpacing.lg),
+
+                // 헤더
+                Row(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: sinsalColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
+                        border: Border.all(
+                          color: sinsalColor.withValues(alpha: 0.3),
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          hanja.length > 2 ? hanja.substring(0, 2) : hanja,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: sinsalColor,
+                            fontFamily: 'ZenSerif',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: DSSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            korean,
+                            style: context.heading3.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: DSSpacing.sm,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: sinsalColor,
+                                  borderRadius:
+                                      BorderRadius.circular(DSRadius.sm),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      typeIcon,
+                                      size: 12,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      type,
+                                      style: context.labelSmall.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: DSSpacing.sm),
+                              Text(
+                                hanja,
+                                style: context.labelSmall.copyWith(
+                                  color: colors.textTertiary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: DSSpacing.md),
-                Expanded(
+
+                const SizedBox(height: DSSpacing.lg),
+
+                // 의미
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(DSSpacing.md),
+                  decoration: BoxDecoration(
+                    color: sinsalColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                    border: Border.all(
+                      color: sinsalColor.withValues(alpha: 0.2),
+                    ),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        korean,
-                        style: context.heading3.copyWith(
-                          color: colors.textPrimary,
+                        '의미',
+                        style: context.labelMedium.copyWith(
+                          color: sinsalColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: DSSpacing.sm,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: sinsalColor,
-                              borderRadius: BorderRadius.circular(DSRadius.sm),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  typeIcon,
-                                  size: 12,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  type,
-                                  style: context.labelSmall.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: DSSpacing.sm),
-                          Text(
-                            hanja,
-                            style: context.labelSmall.copyWith(
-                              color: colors.textTertiary,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        meaning,
+                        style: context.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
 
-            const SizedBox(height: DSSpacing.lg),
+                const SizedBox(height: DSSpacing.md),
 
-            // 의미
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: sinsalColor.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-                border: Border.all(
-                  color: sinsalColor.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '의미',
-                    style: context.labelMedium.copyWith(
-                      color: sinsalColor,
-                      fontWeight: FontWeight.w700,
-                    ),
+                // 상세 설명
+                Text(
+                  '상세 설명',
+                  style: context.labelMedium.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w700,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    meaning,
-                    style: context.bodyMedium.copyWith(
-                      color: colors.textPrimary,
-                    ),
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                Text(
+                  description,
+                  style: context.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.6,
+                  ),
+                ),
+
+                // 현대 생활에서의 양상
+                if (realLife != null && realLife.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '현대 사회에서 나타나는 모습',
+                    content: realLife,
+                    icon: Icons.lightbulb_outline,
+                    color: const Color(0xFF3B82F6),
                   ),
                 ],
-              ),
-            ),
 
-            const SizedBox(height: DSSpacing.md),
+                // 긍정적 활용법
+                if (goodSide != null && goodSide.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '좋은 점 & 활용법',
+                    content: goodSide,
+                    icon: Icons.thumb_up_outlined,
+                    color: const Color(0xFF10B981),
+                  ),
+                ],
 
-            // 상세 설명
-            Text(
-              '상세 설명',
-              style: context.labelMedium.copyWith(
-                color: colors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: DSSpacing.sm),
-            Text(
-              description,
-              style: context.bodyMedium.copyWith(
-                color: colors.textSecondary,
-                height: 1.6,
-              ),
-            ),
+                // 주의해야 할 점
+                if (badSide != null && badSide.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '주의할 점',
+                    content: badSide,
+                    icon: Icons.warning_amber_outlined,
+                    color: const Color(0xFFEF4444),
+                  ),
+                ],
 
-            const SizedBox(height: DSSpacing.xl),
-          ],
+                // 직업/재물 영향
+                if (career != null && career.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '직업 & 재물운',
+                    content: career,
+                    icon: Icons.work_outline,
+                    color: const Color(0xFFF59E0B),
+                  ),
+                ],
+
+                // 연애/인간관계 영향
+                if (love != null && love.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '연애 & 인간관계',
+                    content: love,
+                    icon: Icons.favorite_outline,
+                    color: const Color(0xFFEC4899),
+                  ),
+                ],
+
+                // 실용적 조언
+                if (tips != null && tips.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  _buildExpandedSection(
+                    context: context,
+                    title: '이렇게 활용하세요!',
+                    content: tips,
+                    icon: Icons.tips_and_updates_outlined,
+                    color: const Color(0xFF8B5CF6),
+                  ),
+                ],
+
+                const SizedBox(height: DSSpacing.xl),
+              ],
+            ),
+          ),
         ),
       ),
     ),
@@ -1060,6 +1546,8 @@ void showHapchungExplanationSheet({
   required String description,
   required String effect,
   required Color relationColor,
+  String? realLife,
+  String? advice,
 }) {
   final colors = context.colors;
 
@@ -1088,190 +1576,291 @@ void showHapchungExplanationSheet({
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    builder: (context) => Container(
-      padding: const EdgeInsets.all(DSSpacing.lg),
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(DSRadius.xl),
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.5,
+      maxChildSize: 0.9,
+      expand: false,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        decoration: BoxDecoration(
+          color: colors.background,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(DSRadius.xl),
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 핸들
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: DSSpacing.lg),
-
-            // 헤더
-            Row(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: relationColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    border: Border.all(
-                      color: relationColor.withValues(alpha: 0.3),
-                      width: 2,
+                // 핸들
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.border,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: Center(
-                    child: Text(
-                      hanja,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: relationColor,
-                        fontFamily: 'ZenSerif',
+                ),
+                const SizedBox(height: DSSpacing.lg),
+
+                // 헤더
+                Row(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: relationColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
+                        border: Border.all(
+                          color: relationColor.withValues(alpha: 0.3),
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          hanja,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: relationColor,
+                            fontFamily: 'ZenSerif',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: DSSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '$korean ($hanja)',
+                            style: context.heading3.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: DSSpacing.sm,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: relationColor,
+                              borderRadius: BorderRadius.circular(DSRadius.sm),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  relationIcon,
+                                  size: 12,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '합충형파해',
+                                  style: context.labelSmall.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: DSSpacing.md),
-                Expanded(
+
+                const SizedBox(height: DSSpacing.lg),
+
+                // 의미
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(DSSpacing.md),
+                  decoration: BoxDecoration(
+                    color: relationColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                    border: Border.all(
+                      color: relationColor.withValues(alpha: 0.2),
+                    ),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$korean ($hanja)',
-                        style: context.heading3.copyWith(
-                          color: colors.textPrimary,
+                        '의미',
+                        style: context.labelMedium.copyWith(
+                          color: relationColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: DSSpacing.sm,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: relationColor,
-                          borderRadius: BorderRadius.circular(DSRadius.sm),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              relationIcon,
-                              size: 12,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '합충형파해',
-                              style: context.labelSmall.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
+                      Text(
+                        meaning,
+                        style: context.bodyMedium.copyWith(
+                          color: colors.textPrimary,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
 
-            const SizedBox(height: DSSpacing.lg),
+                const SizedBox(height: DSSpacing.md),
 
-            // 의미
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: relationColor.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-                border: Border.all(
-                  color: relationColor.withValues(alpha: 0.2),
+                // 효과
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(DSSpacing.md),
+                  decoration: BoxDecoration(
+                    color: colors.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.auto_awesome,
+                        size: 18,
+                        color: relationColor,
+                      ),
+                      const SizedBox(width: DSSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          effect,
+                          style: context.bodyMedium.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '의미',
-                    style: context.labelMedium.copyWith(
-                      color: relationColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    meaning,
-                    style: context.bodyMedium.copyWith(
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
-            const SizedBox(height: DSSpacing.md),
+                const SizedBox(height: DSSpacing.md),
 
-            // 효과
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: colors.backgroundSecondary,
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    size: 18,
-                    color: relationColor,
+                // 상세 설명
+                Text(
+                  '상세 설명',
+                  style: context.labelMedium.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w700,
                   ),
-                  const SizedBox(width: DSSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      effect,
-                      style: context.bodyMedium.copyWith(
-                        color: colors.textSecondary,
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                Text(
+                  description,
+                  style: context.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.6,
+                  ),
+                ),
+
+                // 실생활 예시 (새로 추가)
+                if (realLife != null && realLife.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.lg),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(DSSpacing.md),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                      border: Border.all(
+                        color: Colors.blue.withValues(alpha: 0.2),
                       ),
                     ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.lightbulb_outline,
+                              size: 18,
+                              color: Colors.blue,
+                            ),
+                            const SizedBox(width: DSSpacing.xs),
+                            Text(
+                              '실생활에서는?',
+                              style: context.labelMedium.copyWith(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: DSSpacing.sm),
+                        Text(
+                          realLife,
+                          style: context.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                            height: 1.6,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
-              ),
-            ),
 
-            const SizedBox(height: DSSpacing.md),
+                // 조언 (새로 추가)
+                if (advice != null && advice.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.md),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(DSSpacing.md),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                      border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.tips_and_updates_outlined,
+                              size: 18,
+                              color: Colors.green,
+                            ),
+                            const SizedBox(width: DSSpacing.xs),
+                            Text(
+                              '이럴 때 이렇게!',
+                              style: context.labelMedium.copyWith(
+                                color: Colors.green,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: DSSpacing.sm),
+                        Text(
+                          advice,
+                          style: context.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                            height: 1.6,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
 
-            // 상세 설명
-            Text(
-              '상세 설명',
-              style: context.labelMedium.copyWith(
-                color: colors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
+                const SizedBox(height: DSSpacing.xl),
+              ],
             ),
-            const SizedBox(height: DSSpacing.sm),
-            Text(
-              description,
-              style: context.bodyMedium.copyWith(
-                color: colors.textSecondary,
-                height: 1.6,
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.xl),
-          ],
+          ),
         ),
       ),
     ),

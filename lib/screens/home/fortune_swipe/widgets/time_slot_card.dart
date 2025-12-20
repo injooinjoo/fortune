@@ -32,10 +32,8 @@ class TimeSlotCard extends StatelessWidget {
         // 헤더
         Text(
           '시간대별 조언',
-          style: TextStyle(
+          style: context.calligraphyTitle.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 4),
@@ -110,9 +108,103 @@ class _TimeSlotItem extends StatelessWidget {
     required this.accentColor,
   });
 
+  /// 시간대별 조언 상세 팝업 표시
+  void _showDetailPopup(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '닫기',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 300),
+      transitionBuilder: (ctx, a1, a2, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(parent: a1, curve: Curves.easeOutBack),
+          child: FadeTransition(opacity: a1, child: child),
+        );
+      },
+      pageBuilder: (ctx, a1, a2) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: MediaQuery.of(ctx).size.width * 0.85,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 헤더 (이모지 + 제목 + 닫기)
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: accentColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(emoji, style: const TextStyle(fontSize: 28)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: ctx.calligraphySubtitle.copyWith(
+                          color: isDark ? Colors.white : Colors.black87,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      icon: Icon(
+                        Icons.close,
+                        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Divider(
+                  color: accentColor.withValues(alpha: 0.2),
+                  height: 1,
+                ),
+                const SizedBox(height: 20),
+                // 전체 조언 텍스트
+                Text(
+                  advice,
+                  style: ctx.calligraphyBody.copyWith(
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
+                    fontSize: 15,
+                    height: 1.8,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: () => _showDetailPopup(context),
+      child: Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
@@ -191,15 +283,40 @@ class _TimeSlotItem extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   advice,
-                  style: context.bodySmall.copyWith(
+                  style: context.calligraphyBody.copyWith(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
-                    height: 1.5,
+                    fontSize: 13,
+                    height: 1.6,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 6),
+                // 확장 힌트
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '탭하여 자세히 보기',
+                      style: context.labelSmall.copyWith(
+                        color: accentColor.withValues(alpha: 0.6),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      color: accentColor.withValues(alpha: 0.6),
+                      size: 12,
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ],
+      ),
       ),
     );
   }

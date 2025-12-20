@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:video_player/video_player.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/utils/logger.dart';
@@ -14,16 +15,26 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 
-/// 포춘쿠키 타입
+/// F22: veo3 쿠키 부서지는 영상 경로
+/// 사용자가 veo3로 생성한 영상을 아래 경로에 추가해주세요.
+/// 권장 사양:
+/// - 해상도: 1080x1080 (1:1 정사각형)
+/// - 길이: 2-3초
+/// - 포맷: MP4 (H.264)
+/// - 내용: 포춘쿠키가 부서지면서 종이가 나오는 애니메이션
+const String _kCookieCrackVideoPath = 'assets/videos/cookie_crack.mp4';
+
+/// 포춘쿠키 타입 (U11: 오방색 적용)
+/// 오방색: 청(靑), 적(赤), 황(黃), 백(白), 흑(黑)
 enum CookieType {
-  love('사랑', '💕', Color(0xFFFF6B9D), '연애와 인연에 관한 메시지'),
-  wealth('재물', '💰', Color(0xFFFFC107), '금전과 재물에 관한 메시지'),
-  health('건강', '🌿', Color(0xFF66BB6A), '건강과 활력에 관한 메시지'),
-  wisdom('지혜', '🔮', Color(0xFF7E57C2), '지혜와 깨달음의 메시지'),
-  luck('행운', '🍀', Color(0xFF29B6F6), '오늘의 행운 메시지');
+  love('사랑', '💕', Color(0xFFDC143C), '연애와 인연에 관한 메시지'),     // 적색 (화/火)
+  wealth('재물', '💰', Color(0xFFDAA520), '금전과 재물에 관한 메시지'),   // 황색 (토/土)
+  health('건강', '🌿', Color(0xFF2E8B57), '건강과 활력에 관한 메시지'),   // 청색 (목/木)
+  wisdom('지혜', '🔮', Color(0xFF1E3A5F), '지혜와 깨달음의 메시지'),     // 흑색 (수/水)
+  luck('행운', '🍀', Color(0xFFC9A962), '오늘의 행운 메시지');           // 금색 (금/金)
 
   const CookieType(this.title, this.emoji, this.color, this.description);
-  
+
   final String title;
   final String emoji;
   final Color color;
@@ -58,6 +69,10 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   bool _showPaper = false;
   bool _isProcessing = false; // 애니메이션 중복 방지
 
+  // F22: veo3 영상 플레이어
+  VideoPlayerController? _videoController;
+  bool _useVideoAnimation = false; // 영상 파일 존재 여부
+
   // Fortune content
   String _mainMessage = '';
   String _chineseProverb = '';
@@ -71,6 +86,21 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   void initState() {
     super.initState();
     _initializeAnimations();
+    _initializeVideoPlayer(); // F22: 영상 초기화
+  }
+
+  /// F22: veo3 영상 플레이어 초기화
+  Future<void> _initializeVideoPlayer() async {
+    try {
+      _videoController = VideoPlayerController.asset(_kCookieCrackVideoPath);
+      await _videoController!.initialize();
+      _useVideoAnimation = true;
+      Logger.info('F22: Cookie crack video loaded successfully');
+    } catch (e) {
+      // 영상 파일이 없으면 기존 애니메이션 사용
+      _useVideoAnimation = false;
+      Logger.debug('F22: Video not available, using default animation');
+    }
   }
 
   void _initializeAnimations() {
@@ -133,6 +163,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     _crackController.dispose();
     _paperController.dispose();
     _floatController.dispose();
+    _videoController?.dispose(); // F22: 영상 해제
     super.dispose();
   }
 
@@ -233,55 +264,74 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     }
   }
 
+  /// U11: 한국 전통 스타일 헤더 (한지/붓글씨)
   Widget _buildHeader() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // 한지 배경색
+    final hanjiColor = isDark
+        ? const Color(0xFF2A2622)  // 어두운 한지
+        : const Color(0xFFF5F0E8);  // 밝은 한지
+
     return Column(
       children: [
-        // 큰 쿠키 이모지 아이콘
+        // 전통 스타일 쿠키 아이콘 (금박 테두리)
         Container(
-          width: 100,
-          height: 100,
+          width: 110,
+          height: 110,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: RadialGradient(
               colors: [
-                const Color(0xFFFFF3E0).withValues(alpha: 0.8),
-                const Color(0xFFFFE0B2).withValues(alpha: 0.8),
+                hanjiColor,
+                hanjiColor.withValues(alpha: 0.8),
               ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
             ),
             shape: BoxShape.circle,
+            border: Border.all(
+              color: const Color(0xFFC9A962), // 금색 테두리
+              width: 2,
+            ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFFB74D).withValues(alpha: 0.3),
+                color: const Color(0xFFC9A962).withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
           child: const Center(
-            child: Text('🥠', style: TextStyle(fontSize: 50)),
+            child: Text('🥠', style: TextStyle(fontSize: 55)),
           ),
         ).animate()
           .scale(begin: const Offset(0.5, 0.5), duration: 600.ms, curve: Curves.elasticOut)
           .fadeIn(),
-        const SizedBox(height: 24),
+        const SizedBox(height: 28),
+        // 붓글씨 스타일 제목 (GowunBatang)
         Text(
           '오늘의 운세를\n확인해보세요',
-          style: TossDesignSystem.heading2.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
-            height: 1.3,
+          style: TextStyle(
+            fontFamily: 'GowunBatang',
+            fontSize: 26,
+            fontWeight: FontWeight.w700,
+            color: isDark ? const Color(0xFFF5F0E8) : const Color(0xFF2C2C2C),
+            height: 1.4,
+            letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
         ).animate()
           .fadeIn(duration: 500.ms, delay: 200.ms)
           .slideY(begin: 0.2, end: 0),
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
+        // 부제목
         Text(
           '마음이 끌리는 쿠키를 선택하세요',
-          style: TossDesignSystem.body2.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray500,
+          style: TextStyle(
+            fontFamily: 'GowunBatang',
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: isDark
+                ? const Color(0xFFF5F0E8).withValues(alpha: 0.7)
+                : const Color(0xFF5C5C5C),
           ),
           textAlign: TextAlign.center,
         ).animate()
@@ -290,6 +340,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     );
   }
 
+  /// U11: 쿠키 터치 화면 헤더 (한국 전통 스타일)
   Widget _buildCookieHeader() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -299,18 +350,25 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           _isCracking
             ? '쿠키가 열리고 있어요!'
             : '쿠키를 탭해서 깨뜨리세요',
-          style: TossDesignSystem.heading3.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
+          style: TextStyle(
+            fontFamily: 'GowunBatang',
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: isDark ? const Color(0xFFF5F0E8) : const Color(0xFF2C2C2C),
           ),
           textAlign: TextAlign.center,
         ).animate()
           .fadeIn(duration: 500.ms)
           .slideY(begin: -0.2, end: 0),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           '특별한 메시지가 당신을 기다리고 있어요',
-          style: TossDesignSystem.body2.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
+          style: TextStyle(
+            fontFamily: 'GowunBatang',
+            fontSize: 14,
+            color: isDark
+                ? const Color(0xFFF5F0E8).withValues(alpha: 0.7)
+                : const Color(0xFF5C5C5C),
           ),
           textAlign: TextAlign.center,
         ).animate()
@@ -320,35 +378,95 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     );
   }
 
+  /// U11: 한국 전통 스타일 쿠키 선택 그리드
   Widget _buildCookieSelection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // 오방색 안내 헤더
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: isDark
+                ? const Color(0xFF2A2622).withValues(alpha: 0.5)
+                : const Color(0xFFF5F0E8).withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: const Color(0xFFC9A962).withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                '五方色',
+                style: TextStyle(
+                  fontFamily: 'GowunBatang',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFC9A962),
+                  letterSpacing: 2,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '오방색으로 운세를 선택하세요',
+                style: TextStyle(
+                  fontFamily: 'GowunBatang',
+                  fontSize: 12,
+                  color: isDark
+                      ? const Color(0xFFF5F0E8).withValues(alpha: 0.6)
+                      : const Color(0xFF5C5C5C),
+                ),
+              ),
+            ],
+          ),
+        ).animate().fadeIn(duration: 400.ms),
+        const SizedBox(height: 20),
+
         // 2x3 그리드 레이아웃
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.1,
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 14,
+            childAspectRatio: 1.05,
           ),
           itemCount: CookieType.values.length,
           itemBuilder: (context, index) {
             final cookie = CookieType.values[index];
             return _buildCookieTypeCard(cookie)
                 .animate()
-                .fadeIn(delay: Duration(milliseconds: 80 * index))
-                .scale(begin: const Offset(0.9, 0.9), delay: Duration(milliseconds: 80 * index));
+                .fadeIn(delay: Duration(milliseconds: 100 * index))
+                .scale(begin: const Offset(0.92, 0.92), delay: Duration(milliseconds: 100 * index));
           },
         ),
       ],
     );
   }
 
+  /// U11: 한지 스타일 쿠키 타입 카드 (오방색 적용)
   Widget _buildCookieTypeCard(CookieType cookie) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // 한지 배경색
+    final hanjiColor = isDark
+        ? const Color(0xFF2A2622)
+        : const Color(0xFFF5F0E8);
+
+    // 오행 라벨 매핑
+    final elementLabel = switch (cookie) {
+      CookieType.love => '火',
+      CookieType.wealth => '土',
+      CookieType.health => '木',
+      CookieType.wisdom => '水',
+      CookieType.luck => '金',
+    };
 
     return GestureDetector(
       onTap: () {
@@ -359,67 +477,102 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       },
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-          borderRadius: BorderRadius.circular(20),
+          // 한지 텍스처 배경
+          gradient: LinearGradient(
+            colors: [
+              hanjiColor,
+              hanjiColor.withValues(alpha: 0.9),
+              hanjiColor,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
-            width: 1,
+            color: cookie.color.withValues(alpha: 0.5),
+            width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: cookie.color.withValues(alpha: 0.08),
-              blurRadius: 16,
+              color: cookie.color.withValues(alpha: 0.15),
+              blurRadius: 12,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            // 이모지 아이콘
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    cookie.color.withValues(alpha: 0.15),
-                    cookie.color.withValues(alpha: 0.05),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  cookie.emoji,
-                  style: const TextStyle(fontSize: 32),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            // 타이틀
-            Text(
-              cookie.title,
-              style: TossDesignSystem.body1.copyWith(
-                fontWeight: FontWeight.w600,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
-              ),
-            ),
-            const SizedBox(height: 4),
-            // 설명
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+            // 오행 한자 워터마크 (우측 상단)
+            Positioned(
+              top: 8,
+              right: 10,
               child: Text(
-                cookie.description,
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray500,
-                  height: 1.3,
+                elementLabel,
+                style: TextStyle(
+                  fontFamily: 'GowunBatang',
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: cookie.color.withValues(alpha: 0.2),
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            // 메인 콘텐츠
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 이모지 아이콘 (한지 원형 배경)
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: cookie.color.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: cookie.color.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        cookie.emoji,
+                        style: const TextStyle(fontSize: 28),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // 타이틀 (GowunBatang 폰트)
+                  Text(
+                    cookie.title,
+                    style: TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: isDark
+                          ? const Color(0xFFF5F0E8)
+                          : const Color(0xFF2C2C2C),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  // 설명
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      cookie.description,
+                      style: TextStyle(
+                        fontFamily: 'GowunBatang',
+                        fontSize: 11,
+                        color: isDark
+                            ? const Color(0xFFF5F0E8).withValues(alpha: 0.6)
+                            : const Color(0xFF5C5C5C),
+                        height: 1.3,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -517,23 +670,34 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                   ),
                                 ),
                               ),
-                              // Crack effect
+                              // F22: Crack effect (영상 또는 기본 애니메이션)
                               if (_isCracking)
-                                Opacity(
-                                  opacity: _crackAnimation.value.clamp(0.0, 1.0),
-                                  child: Container(
-                                    width: 220,
-                                    height: 160,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(80),
-                                    ),
-                                    child: CustomPaint(
-                                      painter: ImprovedCrackPainter(
-                                        progress: _crackAnimation.value,
+                                _useVideoAnimation && _videoController != null
+                                    ? // veo3 영상 사용
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(80),
+                                        child: SizedBox(
+                                          width: 220,
+                                          height: 160,
+                                          child: VideoPlayer(_videoController!),
+                                        ),
+                                      )
+                                    : // 기본 애니메이션
+                                      Opacity(
+                                        opacity: _crackAnimation.value.clamp(0.0, 1.0),
+                                        child: Container(
+                                          width: 220,
+                                          height: 160,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(80),
+                                          ),
+                                          child: CustomPaint(
+                                            painter: ImprovedCrackPainter(
+                                              progress: _crackAnimation.value,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
                               // Cookie emoji
                               Text(
                                 _selectedCookie!.emoji,
@@ -868,6 +1032,11 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       _isShaking = false;
       _isCracking = true;
     });
+
+    // F22: veo3 영상 재생 (있는 경우)
+    if (_useVideoAnimation && _videoController != null) {
+      _videoController!.play();
+    }
 
     // Get fortune
     await _getFortune();

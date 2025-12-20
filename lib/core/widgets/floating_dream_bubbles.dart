@@ -15,10 +15,15 @@ class FloatingDreamBubbles extends StatefulWidget {
   /// 표시할 버블 개수 (기본 15개)
   final int bubbleCount;
 
+  /// F14: 미리 로드된 토픽 목록 (성능 최적화)
+  /// null이면 initState에서 랜덤 선택
+  final List<DreamTopic>? preloadedTopics;
+
   const FloatingDreamBubbles({
     super.key,
     required this.onTopicSelected,
     this.bubbleCount = 15,
+    this.preloadedTopics,
   });
 
   @override
@@ -32,7 +37,9 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
   @override
   void initState() {
     super.initState();
-    _displayedTopics = PopularDreamTopics.getRandomTopics(widget.bubbleCount);
+    // F14: 미리 로드된 토픽이 있으면 사용, 없으면 새로 생성
+    _displayedTopics = widget.preloadedTopics ??
+        PopularDreamTopics.getRandomTopics(widget.bubbleCount);
   }
 
   /// 버블 새로고침 (다른 15개 랜덤 선택)

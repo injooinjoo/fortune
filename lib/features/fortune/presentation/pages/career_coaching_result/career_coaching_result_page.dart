@@ -15,6 +15,7 @@ import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../widgets/fortune_loading_skeleton.dart';
 import 'widgets/index.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
+import '../../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../../presentation/providers/subscription_provider.dart';
 
 class CareerCoachingResultPage extends ConsumerStatefulWidget {
@@ -164,6 +165,11 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'career-coaching');
+          }
 
           if (mounted) {
             setState(() {

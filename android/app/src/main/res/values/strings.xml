@@ -15,6 +15,10 @@
     <string name="widget_daily_description">오늘의 운세를 홈 화면에서 바로 확인하세요</string>
     <string name="widget_love_description">연애운과 궁합을 홈 화면에서 확인하세요</string>
     <string name="widget_favorites_description">즐겨찾기한 운세를 1분마다 롤링하여 보여줍니다</string>
+    <string name="widget_overall_description">오늘의 총운 점수와 등급을 확인하세요</string>
+    <string name="widget_category_description">카테고리별 운세를 확인하세요 (연애/금전/직장/학업/건강)</string>
+    <string name="widget_timeslot_description">시간대별 운세를 확인하세요 (아침/오후/저녁)</string>
+    <string name="widget_lotto_description">오늘의 행운의 숫자 5개를 확인하세요</string>
     
     <!-- App Shortcuts -->
     <string name="shortcut_daily_fortune_short">오늘의 운세</string>

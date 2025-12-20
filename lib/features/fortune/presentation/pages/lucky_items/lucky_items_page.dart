@@ -17,6 +17,7 @@ import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
+import '../../../../../core/utils/fortune_completion_helper.dart';
 import 'widgets/widgets.dart';
 
 /// 행운 아이템 페이지
@@ -563,6 +564,11 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'lucky-items');
+          }
+
           if (mounted) {
             setState(() {
               _hasUserUnlockedBlur = true; // 사용자가 블러를 해제했음을 표시
@@ -602,10 +608,10 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
   Widget _buildCategoryDetails(String categoryId, List<int> lottoNumbers) {
     switch (categoryId) {
       case 'lotto':
-        // ✅ 로또는 마지막 번호만 블러 처리
+        // ✅ 로또는 마지막 번호만 블러 처리 (프리미엄 제외)
         return LottoContent(
           numbers: lottoNumbers,
-          isBlurred: _isBlurred && _blurredSections.contains('lotto'),
+          isBlurred: _isBlurred && _blurredSections.contains('lotto') && !ref.watch(isPremiumProvider),
         );
       case 'shopping':
         return UnifiedBlurWrapper(

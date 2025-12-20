@@ -6,6 +6,7 @@ import '../../../../domain/models/tarot_card_model.dart';
 class DeckSelectionScreen extends StatelessWidget {
   final TarotDeckType selectedDeck;
   final Function(TarotDeckType) onDeckSelected;
+  final VoidCallback? onDailyTarot; // F12: 오늘의 타로 콜백
   final Animation<double> fadeAnimation;
   final Animation<Offset> slideAnimation;
 
@@ -13,6 +14,7 @@ class DeckSelectionScreen extends StatelessWidget {
     super.key,
     required this.selectedDeck,
     required this.onDeckSelected,
+    this.onDailyTarot,
     required this.fadeAnimation,
     required this.slideAnimation,
   });
@@ -75,6 +77,32 @@ class DeckSelectionScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
+
+              // F12: 오늘의 타로 퀵 액션
+              if (onDailyTarot != null) ...[
+                _DailyTarotCard(
+                  onTap: onDailyTarot!,
+                  colors: colors,
+                ),
+                const SizedBox(height: 16),
+                // 구분선
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: colors.border)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        '또는 덱 선택',
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: colors.border)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // 덱 리스트
               ...allDecks.map((deck) => _DeckCard(
@@ -291,6 +319,115 @@ class _DeckTag extends StatelessWidget {
         style: DSTypography.labelSmall.copyWith(
           color: color,
           fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+}
+
+/// F12: 오늘의 타로 퀵 액션 카드
+class _DailyTarotCard extends StatelessWidget {
+  final VoidCallback onTap;
+  final DSColorScheme colors;
+
+  const _DailyTarotCard({
+    required this.onTap,
+    required this.colors,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF7C3AED),
+              Color(0xFF3B82F6),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // 카드 아이콘
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.auto_awesome,
+                color: Colors.white,
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 16),
+            // 텍스트
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        '오늘의 타로',
+                        style: DSTypography.labelLarge.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'QUICK',
+                          style: DSTypography.labelSmall.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '오늘의 덱으로 타로를 시작해보세요',
+                    style: DSTypography.bodySmall.copyWith(
+                      color: Colors.white.withValues(alpha: 0.85),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 화살표
+            Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.white.withValues(alpha: 0.7),
+              size: 18,
+            ),
+          ],
         ),
       ),
     );

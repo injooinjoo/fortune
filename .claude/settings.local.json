@@ -262,7 +262,10 @@
       "Bash(flutter doctor:*)",
       "Bash(mdfind:*)",
       "Bash(flutter pub run:*)",
-      "Bash(md5:*)"
+      "Bash(md5:*)",
+      "Bash(dart run build_runner build:*)",
+      "Bash(sips:*)",
+      "Bash(pngquant:*)"
     ],
     "deny": [],
     "ask": [],

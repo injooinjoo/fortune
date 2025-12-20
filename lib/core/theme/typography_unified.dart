@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/font_size_system.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// 통합 타이포그래피 시스템
 ///
@@ -33,6 +34,59 @@ class TypographyUnified {
 
   /// 기본 폰트 (ZenSerif)
   static const String fontFamilyDefault = fontFamilyKorean;
+
+  // ==========================================
+  // CALLIGRAPHY STYLES (동양화/서예 스타일)
+  // ==========================================
+  //
+  // 홈 운세 페이지, 운세 결과 제목 등 전통적인 느낌이 필요한 곳에 사용
+  // 나눔명조 (NanumMyeongjo) 폰트 사용
+
+  /// Calligraphy Display - 운세 메인 제목 (32pt)
+  /// 홈 운세 카드의 대제목에 사용
+  static TextStyle get calligraphyDisplay => GoogleFonts.nanumMyeongjo(
+        fontSize: FontSizeSystem.displaySmallScaled,
+        height: 1.4,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.5,
+      );
+
+  /// Calligraphy Title - 운세 섹션 제목 (24pt)
+  /// 운세 결과의 섹션 헤더에 사용
+  static TextStyle get calligraphyTitle => GoogleFonts.nanumMyeongjo(
+        fontSize: FontSizeSystem.heading2Scaled,
+        height: 1.5,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.3,
+      );
+
+  /// Calligraphy Subtitle - 운세 부제목 (20pt)
+  /// 운세 카드의 서브타이틀에 사용
+  static TextStyle get calligraphySubtitle => GoogleFonts.nanumMyeongjo(
+        fontSize: FontSizeSystem.heading3Scaled,
+        height: 1.5,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.2,
+      );
+
+  /// Calligraphy Body - 운세 본문 (17pt)
+  /// 운세 내용의 주요 텍스트에 사용
+  static TextStyle get calligraphyBody => GoogleFonts.nanumMyeongjo(
+        fontSize: FontSizeSystem.bodyLargeScaled,
+        height: 1.8,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.1,
+      );
+
+  /// Calligraphy Quote - 운세 인용구/조언 (15pt)
+  /// 운세의 핵심 조언이나 격언에 사용
+  static TextStyle get calligraphyQuote => GoogleFonts.nanumMyeongjo(
+        fontSize: FontSizeSystem.bodyMediumScaled,
+        height: 1.8,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.1,
+        fontStyle: FontStyle.italic,
+      );
 
   // ==========================================
   // DISPLAY STYLES (대형 헤드라인)
@@ -359,6 +413,13 @@ class TypographyUnified {
 extension TypographyUnifiedExtension on BuildContext {
   /// TypographyUnified 인스턴스 접근
   TypographyUnified get typo => TypographyUnified();
+
+  // Calligraphy Styles (나눔명조 - 동양화/서예 스타일)
+  TextStyle get calligraphyDisplay => TypographyUnified.calligraphyDisplay;
+  TextStyle get calligraphyTitle => TypographyUnified.calligraphyTitle;
+  TextStyle get calligraphySubtitle => TypographyUnified.calligraphySubtitle;
+  TextStyle get calligraphyBody => TypographyUnified.calligraphyBody;
+  TextStyle get calligraphyQuote => TypographyUnified.calligraphyQuote;
 
   // Display Styles
   TextStyle get displayLarge => TypographyUnified.displayLarge;

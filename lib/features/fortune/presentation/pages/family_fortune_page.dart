@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -20,6 +21,7 @@ import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 import '../../domain/models/conditions/family_fortune_conditions.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 
 // 5가지 가족 운세 관심사
 enum FamilyConcern {
@@ -100,15 +102,70 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   // Step 4: 특별히 궁금한 점 (선택)
   final TextEditingController _questionController = TextEditingController();
 
+  // F23: 음성 인식 기능
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
+  bool _speechAvailable = false;
+
   // ✅ 화면 상태 관리
   bool _showResult = false;  // 결과 화면 전환 여부
   bool _isLoading = false;   // 스켈레톤 표시 여부
   FortuneResult? _fortuneResult;  // Fortune → FortuneResult
 
   @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  /// F23: 음성 인식 초기화
+  Future<void> _initSpeech() async {
+    _speechAvailable = await _speech.initialize(
+      onStatus: (status) {
+        if (status == 'done' || status == 'notListening') {
+          if (mounted) setState(() => _isListening = false);
+        }
+      },
+      onError: (error) {
+        Logger.error('음성 인식 에러: ${error.errorMsg}');
+        if (mounted) setState(() => _isListening = false);
+      },
+    );
+    if (mounted) setState(() {});
+  }
+
+  /// F23: 음성 인식 시작/중지
+  Future<void> _toggleListening() async {
+    if (_isListening) {
+      await _speech.stop();
+      setState(() => _isListening = false);
+    } else {
+      if (_speechAvailable) {
+        setState(() => _isListening = true);
+        await _speech.listen(
+          onResult: (result) {
+            setState(() {
+              _questionController.text = result.recognizedWords;
+            });
+          },
+          localeId: 'ko_KR',
+          listenOptions: stt.SpeechListenOptions(
+            listenMode: stt.ListenMode.dictation,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('음성 인식을 사용할 수 없습니다')),
+        );
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     _questionController.dispose();
+    _speech.stop();
     super.dispose();
   }
 
@@ -556,21 +613,86 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           ),
           const SizedBox(height: DSSpacing.xxl),
 
+          // F23: 마이크 기능 텍스트박스
           AppCard(
             padding: const EdgeInsets.all(DSSpacing.lg),
-            child: TextField(
-              controller: _questionController,
-              style: TextStyle(
-                color: colors.textPrimary,
-              ),
-              maxLines: 6,
-              decoration: InputDecoration(
-                hintText: '예: 올해 가족 여행 가기 좋은 시기는 언제인가요?\n예: 아이 학원을 바꾸려고 하는데 괜찮을까요?',
-                hintStyle: context.labelSmall.copyWith(
-                  color: colors.textTertiary,
+            child: Column(
+              children: [
+                TextField(
+                  controller: _questionController,
+                  style: TextStyle(
+                    color: colors.textPrimary,
+                  ),
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: '예: 올해 가족 여행 가기 좋은 시기는 언제인가요?\n예: 아이 학원을 바꾸려고 하는데 괜찮을까요?',
+                    hintStyle: context.labelSmall.copyWith(
+                      color: colors.textTertiary,
+                    ),
+                    border: InputBorder.none,
+                  ),
                 ),
-                border: InputBorder.none,
-              ),
+                const Divider(height: 1),
+                const SizedBox(height: DSSpacing.sm),
+                // 마이크 버튼
+                GestureDetector(
+                  onTap: _toggleListening,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.md,
+                      vertical: DSSpacing.sm,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _isListening
+                          ? colors.accent.withValues(alpha: 0.1)
+                          : colors.surface,
+                      borderRadius: BorderRadius.circular(DSRadius.full),
+                      border: Border.all(
+                        color: _isListening
+                            ? colors.accent
+                            : colors.border,
+                        width: _isListening ? 2 : 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _isListening ? Icons.mic : Icons.mic_none,
+                          color: _isListening
+                              ? colors.accent
+                              : colors.textSecondary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: DSSpacing.xs),
+                        Text(
+                          _isListening ? '듣고 있어요...' : '음성으로 질문하기',
+                          style: context.labelMedium.copyWith(
+                            color: _isListening
+                                ? colors.accent
+                                : colors.textSecondary,
+                            fontWeight: _isListening
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                          ),
+                        ),
+                        if (_isListening) ...[
+                          const SizedBox(width: DSSpacing.xs),
+                          SizedBox(
+                            width: 12,
+                            height: 12,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: colors.accent,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -746,6 +868,11 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
         await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
+        // NEW: 게이지 증가 호출
+        if (mounted) {
+          FortuneCompletionHelper.onFortuneViewed(context, ref, 'family');
+        }
+
         setState(() {
           // FortuneResult의 블러 상태 해제
           _fortuneResult = _fortuneResult?.copyWith(
@@ -765,161 +892,271 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
 
+  /// U12: 결과 UI 리뉴얼 (레이아웃 재구성, 버튼 위치 수정)
   Widget _buildResultScreen() {
     if (_fortuneResult == null || _selectedConcern == null) return const SizedBox.shrink();
     final colors = context.colors;
     final concernColor = _selectedConcern!.gradientColors[0];
+    final isBlurred = _fortuneResult!.isBlurred && !ref.watch(isPremiumProvider);
 
     return Stack(
       children: [
         SingleChildScrollView(
-          padding: const EdgeInsets.all(DSSpacing.lg),
+          padding: EdgeInsets.fromLTRB(
+            DSSpacing.lg,
+            DSSpacing.lg,
+            DSSpacing.lg,
+            isBlurred ? 140 : DSSpacing.xxl, // 플로팅 버튼 공간 확보
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-          // Concern header
-          Container(
-            padding: const EdgeInsets.all(DSSpacing.lg),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: _selectedConcern!.gradientColors,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(DSRadius.lg),
-              boxShadow: [
-                BoxShadow(
-                  color: concernColor.withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(DSRadius.lg),
+              // U12: 개선된 헤더 (올바른 아이콘 사용)
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.lg),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: _selectedConcern!.gradientColors,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  child: const Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                    size: 32,
-                  ),
+                  borderRadius: BorderRadius.circular(DSRadius.lg),
+                  boxShadow: [
+                    BoxShadow(
+                      color: concernColor.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: DSSpacing.md),
-                Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
+                      ),
+                      child: Icon(
+                        _selectedConcern!.icon, // 올바른 아이콘 사용
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(width: DSSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _selectedConcern!.label,
+                            style: context.heading4.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: DSSpacing.xs),
+                          Text(
+                            _selectedConcern!.description,
+                            style: context.labelMedium.copyWith(
+                              color: Colors.white.withValues(alpha: 0.9),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1),
+              const SizedBox(height: DSSpacing.lg),
+
+              // U12: 선택한 관심사 요약
+              AppCard(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.checklist,
+                      color: concernColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        '선택: ${_selectedQuestions.map((q) {
+                          final questions = concernQuestions[_selectedConcern]!;
+                          return questions.firstWhere(
+                            (item) => item['id'] == q,
+                            orElse: () => {'label': q},
+                          )['label'];
+                        }).join(', ')}',
+                        style: context.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ).animate().fadeIn(duration: 500.ms, delay: 100.ms),
+              const SizedBox(height: DSSpacing.md),
+
+              // Fortune content
+              UnifiedBlurWrapper(
+                isBlurred: _fortuneResult!.isBlurred,
+                blurredSections: _fortuneResult!.blurredSections,
+                sectionKey: 'fortune_content',
+                child: AppCard(
+                  padding: const EdgeInsets.all(DSSpacing.lg),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        _selectedConcern!.label,
-                        style: context.heading3.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: concernColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.auto_awesome,
+                              color: concernColor,
+                              size: 18,
+                            ),
+                          ),
+                          const SizedBox(width: DSSpacing.sm),
+                          Text(
+                            '오늘의 가족 운세',
+                            style: context.heading4.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: DSSpacing.xs),
+                      const SizedBox(height: DSSpacing.md),
                       Text(
-                        _selectedConcern!.description,
-                        style: context.labelLarge.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                        _fortuneResult!.data['content'] as String? ?? '',
+                        style: context.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                          height: 1.7,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: DSSpacing.lg),
+              ).animate().fadeIn(duration: 500.ms, delay: 200.ms),
+              const SizedBox(height: DSSpacing.md),
 
-          // Fortune content
-          UnifiedBlurWrapper(
-            isBlurred: _fortuneResult!.isBlurred,
-            blurredSections: _fortuneResult!.blurredSections,
-            sectionKey: 'fortune_content',
-            child: AppCard(
-              padding: const EdgeInsets.all(DSSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.auto_awesome, color: concernColor, size: 24),
-                      const SizedBox(width: DSSpacing.sm),
-                      Text(
-                        '오늘의 운세',
-                        style: context.heading3.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: colors.textPrimary,
+              // U12: 조언 섹션 (있는 경우)
+              if (_fortuneResult!.data['advice'] != null)
+                UnifiedBlurWrapper(
+                  isBlurred: _fortuneResult!.isBlurred,
+                  blurredSections: _fortuneResult!.blurredSections,
+                  sectionKey: 'advice',
+                  child: AppCard(
+                    padding: const EdgeInsets.all(DSSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(
+                                Icons.lightbulb_outline,
+                                color: Colors.amber,
+                                size: 18,
+                              ),
+                            ),
+                            const SizedBox(width: DSSpacing.sm),
+                            Text(
+                              '오늘의 조언',
+                              style: context.heading4.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colors.textPrimary,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: DSSpacing.md),
+                        Text(
+                          _fortuneResult!.data['advice'] as String? ?? '',
+                          style: context.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                            height: 1.7,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: DSSpacing.md),
-                  Text(
-                    _fortuneResult!.data['content'] as String? ?? '',
-                    style: context.labelLarge.copyWith(
-                      color: colors.textPrimary,
-                      height: 1.6,
+                ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
+              if (_fortuneResult!.data['advice'] != null)
+                const SizedBox(height: DSSpacing.lg),
+
+              // U12: 개선된 버튼 레이아웃
+              Row(
+                children: [
+                  Expanded(
+                    child: UnifiedButton(
+                      text: '다시 해보기',
+                      style: UnifiedButtonStyle.secondary,
+                      size: UnifiedButtonSize.medium,
+                      onPressed: _resetForm,
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.md),
+                  Expanded(
+                    child: UnifiedButton(
+                      text: '공유하기',
+                      size: UnifiedButtonSize.medium,
+                      icon: const Icon(Icons.share_outlined, size: 18),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('공유 기능이 곧 추가될 예정입니다')),
+                        );
+                      },
                     ),
                   ),
                 ],
-              ),
-            ),
-          ),
-          const SizedBox(height: DSSpacing.lg),
-
-          // Action buttons
-          Row(
-            children: [
-              Expanded(
-                child: UnifiedButton(
-                  text: '다시 해보기',
-                  style: UnifiedButtonStyle.secondary,
-                  onPressed: () => setState(() {
-                    _fortuneResult = null;
-                    _showResult = false;
-                    _currentStep = 0;
-                    _selectedConcern = null;
-                    _selectedQuestions.clear();
-                    _familyMemberCount = 1;
-                    _relationship = 'self';
-                    _questionController.clear();
-                    _pageController.jumpToPage(0);
-                  }),
-                ),
-              ),
-              const SizedBox(width: DSSpacing.md),
-              Expanded(
-                child: UnifiedButton(
-                  text: '공유하기',
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('공유 기능이 곧 추가될 예정입니다')),
-                    );
-                  },
-                ),
-              ),
+              ).animate().fadeIn(duration: 500.ms, delay: 400.ms),
             ],
           ),
-            ],
-          ),
-        ).animate().fadeIn(duration: 600.ms),
+        ),
 
         // ✅ FloatingBottomButton (구독자 제외)
-        if (_fortuneResult!.isBlurred && !ref.watch(isPremiumProvider))
+        if (isBlurred)
           UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
           ),
       ],
     );
+  }
+
+  /// U12: 폼 초기화
+  void _resetForm() {
+    setState(() {
+      _fortuneResult = null;
+      _showResult = false;
+      _currentStep = 0;
+      _selectedConcern = null;
+      _selectedQuestions.clear();
+      _familyMemberCount = 1;
+      _relationship = 'self';
+      _questionController.clear();
+      _pageController.jumpToPage(0);
+    });
   }
 }

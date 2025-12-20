@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/typography_unified.dart';
 import '../../../core/theme/app_theme/fortune_theme_extension.dart';
+import '../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../presentation/providers/secondary_profiles_provider.dart';
 
 /// 프로필 추가 바텀시트
@@ -35,7 +36,7 @@ class AddProfileSheet extends ConsumerStatefulWidget {
 
 class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
   final _nameController = TextEditingController();
-  String? _birthDate;
+  DateTime? _birthDate;
   String? _birthTime;
   String _gender = 'male';
   bool _isLunar = false;
@@ -50,11 +51,11 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
       _nameController.text = widget.initialName!;
     }
     if (widget.initialBirthDate != null) {
-      _birthDate = _formatDate(widget.initialBirthDate!);
+      _birthDate = widget.initialBirthDate;
     }
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDateString(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
@@ -98,8 +99,24 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
               ),
               const SizedBox(height: 20),
 
-              // 타이틀
-              Text(widget.title ?? '프로필 추가', style: context.heading2),
+              // 타이틀 + 닫기 버튼
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(widget.title ?? '프로필 추가', style: context.heading2),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(
+                      Icons.close,
+                      color: fortuneTheme.secondaryText,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
               const SizedBox(height: 8),
               Text(
                 widget.subtitle ?? '가족이나 친구의 운세를 확인할 수 있어요',
@@ -179,37 +196,16 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
               // 생년월일 선택
               _buildSectionTitle('생년월일'),
               const SizedBox(height: 8),
-              GestureDetector(
-                onTap: _selectBirthDate,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                  decoration: BoxDecoration(
-                    color: fortuneTheme.cardSurface,
-                    border: Border.all(color: fortuneTheme.dividerColor),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _birthDate ?? '생년월일을 선택해주세요',
-                        style: context.bodyLarge.copyWith(
-                          color: _birthDate != null
-                              ? fortuneTheme.primaryText
-                              : fortuneTheme.secondaryText,
-                        ),
-                      ),
-                      Icon(
-                        Icons.calendar_today_outlined,
-                        color: fortuneTheme.secondaryText,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
+              NumericDateInput(
+                selectedDate: _birthDate,
+                onDateChanged: (date) {
+                  setState(() {
+                    _birthDate = date;
+                  });
+                },
+                minDate: DateTime(1900),
+                maxDate: DateTime.now(),
+                showAge: true,
               ),
               const SizedBox(height: 8),
 
@@ -351,32 +347,6 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     );
   }
 
-  Future<void> _selectBirthDate() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: DateTime(1990, 1, 1),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      locale: const Locale('ko', 'KR'),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: Theme.of(context).colorScheme.primary,
-                ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (date != null) {
-      setState(() {
-        _birthDate =
-            '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-      });
-    }
-  }
-
   Future<void> _selectBirthTime() async {
     final time = await showTimePicker(
       context: context,
@@ -408,7 +378,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     try {
       await ref.read(secondaryProfilesProvider.notifier).addProfile(
             name: _nameController.text.trim(),
-            birthDate: _birthDate!,
+            birthDate: _formatDateString(_birthDate!),
             birthTime: _birthTime,
             gender: _gender,
             isLunar: _isLunar,

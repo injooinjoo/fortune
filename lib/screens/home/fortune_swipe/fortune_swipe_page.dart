@@ -267,7 +267,8 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
         borderRadius: BorderRadius.circular(28),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
-          physics: const NeverScrollableScrollPhysics(),
+          // U06: ShareCard 등 긴 콘텐츠 스크롤 허용
+          physics: const ClampingScrollPhysics(),
           child: _buildCardContent(context, index, score, isDark, displayUserName),
         ),
       ),

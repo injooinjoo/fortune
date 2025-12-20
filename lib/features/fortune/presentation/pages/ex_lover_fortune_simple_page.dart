@@ -450,6 +450,10 @@ class _ExLoverFortuneSimplePageState
                       VoiceInputTextField(
                         hintText: '이별하게 된 이유를 말씀해주세요...',
                         transcribingText: '듣고 있어요...',
+                        // B07: 실시간 텍스트 변경 시 버튼 활성화
+                        onChanged: (text) {
+                          setState(() => _breakupDetail = text.isNotEmpty ? text : null);
+                        },
                         onSubmit: (text) {
                           setState(() => _breakupDetail = text);
                           _scrollToNextSection(6);

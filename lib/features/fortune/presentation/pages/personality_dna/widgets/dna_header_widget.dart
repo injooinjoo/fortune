@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
 import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
 import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
@@ -8,10 +9,12 @@ import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
 /// HanjiCard scroll 스타일과 민화 배경을 사용합니다.
 class DnaHeaderWidget extends StatelessWidget {
   final PersonalityDNA dna;
+  final VoidCallback? onPopularityTapped;
 
   const DnaHeaderWidget({
     super.key,
     required this.dna,
+    this.onPopularityTapped,
   });
 
   @override
@@ -95,9 +98,16 @@ class DnaHeaderWidget extends StatelessWidget {
     );
   }
 
-  /// 인기도 배지 (전통 스타일)
+  /// 인기도 배지 (전통 스타일) - 탭하면 랭킹 상세 표시
   Widget _buildPopularityBadge(bool isDark) {
-    return Container(
+    return GestureDetector(
+      onTap: onPopularityTapped != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onPopularityTapped!();
+            }
+          : null,
+      child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -138,6 +148,7 @@ class DnaHeaderWidget extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

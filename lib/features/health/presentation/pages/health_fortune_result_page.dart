@@ -14,6 +14,7 @@ import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 
 /// 건강운세 결과 페이지 (프리미엄/블러 시스템 적용)
 ///
@@ -272,7 +273,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
               const SizedBox(width: 12),
               Text(
                 '전반적인 건강운',
-                style: DSTypography.headingSmall.copyWith(
+                style: DSTypography.headingMedium.copyWith(
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                 ),
               ),
@@ -337,7 +338,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
               const SizedBox(width: 12),
               Text(
                 title,
-                style: DSTypography.headingSmall.copyWith(
+                style: DSTypography.headingMedium.copyWith(
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                 ),
               ),
@@ -529,7 +530,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
           const SizedBox(width: 12),
           Text(
             healthKeyword,
-            style: DSTypography.headingSmall.copyWith(
+            style: DSTypography.headingMedium.copyWith(
               color: TossDesignSystem.white,
               fontWeight: FontWeight.w700,
             ),
@@ -602,6 +603,11 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'health');
+          }
 
           if (mounted) {
             setState(() {

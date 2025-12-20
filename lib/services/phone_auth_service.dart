@@ -147,24 +147,50 @@ class PhoneAuthService {
   /// Handle authentication errors
   Exception _handleAuthError(dynamic error) {
     if (error is AuthException) {
+      // Check error code first (more specific)
+      final errorCode = error.code;
+      if (errorCode != null) {
+        switch (errorCode) {
+          case 'otp_expired':
+            return Exception('인증번호가 만료되었습니다. 인증번호 다시 받기를 눌러주세요');
+          case 'otp_disabled':
+            return Exception('OTP 인증이 비활성화되어 있습니다');
+          case 'invalid_otp':
+            return Exception('인증번호가 올바르지 않습니다');
+        }
+      }
+
+      // Fallback to status code
       switch (error.statusCode) {
         case '400':
           if (error.message.contains('Phone number')) {
             return Exception('잘못된 전화번호 형식입니다');
           }
-          if (error.message.contains('OTP')) {
+          if (error.message.contains('OTP') || error.message.contains('Token')) {
             return Exception('인증번호가 올바르지 않습니다');
           }
           break;
         case '401':
-          return Exception('인증번호가 만료되었습니다');
+          return Exception('인증번호가 만료되었습니다. 인증번호 다시 받기를 눌러주세요');
+        case '403':
+          // OTP expired or invalid token
+          if (error.message.contains('expired') || error.message.contains('invalid')) {
+            return Exception('인증번호가 만료되었습니다. 인증번호 다시 받기를 눌러주세요');
+          }
+          return Exception('인증에 실패했습니다. 다시 시도해주세요');
         case '422':
           return Exception('이미 등록된 전화번호입니다');
         case '429':
           return Exception('너무 많은 요청입니다. 잠시 후 다시 시도해주세요');
       }
     }
-    
-    return Exception('발생했습니다: ${error.toString()}');
+
+    // Generic error fallback
+    final errorString = error.toString();
+    if (errorString.contains('expired') || errorString.contains('otp_expired')) {
+      return Exception('인증번호가 만료되었습니다. 인증번호 다시 받기를 눌러주세요');
+    }
+
+    return Exception('인증 중 오류가 발생했습니다. 다시 시도해주세요');
   }
 }

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@drawable/widget_background"
+    android:gravity="center">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🍀"
+            android:textSize="18sp"
+            android:layout_marginEnd="6dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="행운의 숫자"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_title_color" />
+    </LinearLayout>
+
+    <!-- Lucky Numbers Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/lotto_num_1"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:text="7"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/lotto_ball_background"
+            android:gravity="center"
+            android:layout_marginEnd="4dp" />
+
+        <TextView
+            android:id="@+id/lotto_num_2"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:text="14"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/lotto_ball_background"
+            android:gravity="center"
+            android:layout_marginEnd="4dp" />
+
+        <TextView
+            android:id="@+id/lotto_num_3"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:text="23"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/lotto_ball_background"
+            android:gravity="center"
+            android:layout_marginEnd="4dp" />
+
+        <TextView
+            android:id="@+id/lotto_num_4"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:text="31"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/lotto_ball_background"
+            android:gravity="center"
+            android:layout_marginEnd="4dp" />
+
+        <TextView
+            android:id="@+id/lotto_num_5"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:text="42"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/lotto_ball_background"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/lotto_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="오늘의 행운 번호"
+        android:textSize="11sp"
+        android:textColor="@color/widget_subtitle_color" />
+
+</LinearLayout>

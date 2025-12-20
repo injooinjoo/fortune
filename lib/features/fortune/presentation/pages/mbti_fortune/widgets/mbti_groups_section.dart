@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import 'mbti_card.dart';
 
+// MBTI 별칭을 MbtiCard에서 가져옴
+const _mbtiNicknames = MbtiCard.mbtiNicknames;
+
 class MbtiGroupsSection extends StatelessWidget {
   final bool showAllGroups;
   final String? selectedMbti;
@@ -65,7 +68,9 @@ class MbtiGroupsSection extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    selectedMbti ?? 'MBTI 성격 유형 선택',
+                    selectedMbti != null
+                        ? '$selectedMbti (${_mbtiNicknames[selectedMbti] ?? ''})'
+                        : 'MBTI 성격 유형 선택',
                     style: DSTypography.labelLarge.copyWith(
                       fontWeight: FontWeight.w600,
                       color: colors.textPrimary,

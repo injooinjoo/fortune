@@ -32,11 +32,18 @@ class DailyFortuneConditions extends FortuneConditions {
 
   @override
   String generateHash() {
+    // 🚀 질문 제외 → 125 조합 (5×5×5)으로 API 비용 절감
+    // 기존: ∞ 조합 (질문마다 새 해시) → API 호출 무한
+    // 개선: 125 조합 → 37,500회 API 후 완전 캐시 (125 × 300)
+    //
+    // 품질 트레이드오프: 같은 period/category/emotion이면 다른 질문도 같은 결과
+    // 하지만 개인 캐시(1단계)에서 오늘 조회 여부는 여전히 체크됨
     final parts = <String>[
       'period:${period.name}',
       if (category != null) 'category:${category!.name}',
       if (emotion != null) 'emotion:${emotion!.name}',
-      if (question != null && question!.isNotEmpty) 'q:${question!.hashCode}',
+      // 질문은 해시에서 제외 (API 비용 최적화)
+      // if (question != null && question!.isNotEmpty) 'q:${question!.hashCode}',
     ];
     return parts.join('|');
   }

@@ -15,8 +15,8 @@ class CelebrityCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 오늘 일주 기반 궁합도가 포함된 연예인 리스트
-    final celebritiesAsync = ref.watch(celebritiesWithCompatibilityProvider);
+    // F04: 사용자 사주 기반 유사 유명인 (1~3명, 유사도 50점 이상)
+    final celebritiesAsync = ref.watch(similarCelebritiesProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +31,7 @@ class CelebrityCard extends ConsumerWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          '오늘의 일주(日柱) 기준 유명인 궁합',
+          '내 사주와 비슷한 유명인',
           style: context.bodySmall.copyWith(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
           ),
@@ -44,10 +44,12 @@ class CelebrityCard extends ConsumerWidget {
             if (celebDataList.isEmpty) {
               return _buildEmptyState();
             }
+            // F04: 이미 1~3명으로 필터링되어 있으므로 take(3) 불필요
             return Column(
-              children: celebDataList.take(3).map((data) {
+              children: celebDataList.map((data) {
                 final celeb = data['celebrity'] as CelebritySaju;
-                final compatibility = data['compatibility'] as int;
+                // F04: similarity 또는 compatibility 둘 다 지원 (폴백 대응)
+                final similarity = (data['similarity'] ?? data['compatibility']) as int;
 
                 // 설명 생성 (한글 카테고리 또는 출생년도)
                 final description = celeb.categoryKorean.isNotEmpty
@@ -60,7 +62,7 @@ class CelebrityCard extends ConsumerWidget {
                     name: celeb.name,
                     description: description,
                     imageUrl: celeb.characterImageUrl,
-                    compatibility: compatibility,
+                    compatibility: similarity,
                     isDark: isDark,
                   ),
                 );

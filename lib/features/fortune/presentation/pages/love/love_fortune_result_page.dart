@@ -13,6 +13,7 @@ import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../../core/services/fortune_haptic_service.dart';
+import '../../../../../core/utils/fortune_completion_helper.dart';
 
 /// 연애운 결과 페이지 (프리미엄/블러 시스템 적용)
 ///
@@ -826,6 +827,11 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'love');
+          }
 
           if (mounted) {
             setState(() {

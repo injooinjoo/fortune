@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/toss_design_system.dart';
 import '../services/fortune_haptic_service.dart';
+import '../utils/fortune_completion_helper.dart';
 import 'unified_button.dart';
 import 'unified_button_enums.dart';
 import '../../presentation/providers/subscription_provider.dart';
@@ -18,6 +19,7 @@ import '../../presentation/providers/subscription_provider.dart';
 ///   isBlurred: fortuneResult.isBlurred,
 ///   blurredSections: fortuneResult.blurredSections,
 ///   sectionKey: 'advice',
+///   fortuneType: 'tarot', // 게이지 증가를 위한 운세 타입
 ///   child: MyContentWidget(),
 /// )
 /// ```
@@ -43,6 +45,9 @@ class UnifiedBlurWrapper extends ConsumerStatefulWidget {
   /// 블러 처리할 자식 위젯
   final Widget child;
 
+  /// 운세 타입 (게이지 증가용) - 예: 'tarot', 'mbti', 'saju'
+  final String? fortuneType;
+
   /// 가로 블러 강도 (기본값: 10.0)
   final double sigmaX;
 
@@ -55,6 +60,7 @@ class UnifiedBlurWrapper extends ConsumerStatefulWidget {
     required this.blurredSections,
     required this.sectionKey,
     required this.child,
+    this.fortuneType,
     this.sigmaX = 10.0,
     this.sigmaY = 10.0,
   });
@@ -78,9 +84,18 @@ class _UnifiedBlurWrapperState extends ConsumerState<UnifiedBlurWrapper> {
 
     final newShouldBlur = widget.isBlurred && widget.blurredSections.contains(widget.sectionKey);
 
-    // 블러 상태가 true → false로 전환되면 premiumUnlock 햅틱 트리거
+    // 블러 상태가 true → false로 전환되면 premiumUnlock 햅틱 트리거 + 게이지 증가
     if (_wasBlurred && !newShouldBlur) {
       ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+      // 게이지 증가 (fortuneType이 있을 때만)
+      if (widget.fortuneType != null) {
+        FortuneCompletionHelper.onFortuneViewed(
+          context,
+          ref,
+          widget.fortuneType!,
+        );
+      }
     }
 
     _wasBlurred = newShouldBlur;

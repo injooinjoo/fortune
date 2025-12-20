@@ -103,12 +103,20 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
                           child: child,
                           builder: (context, child) {
                             final angle = rotate.value * 3.14159; // π radians
+                            // U13: 플립 후 콘텐츠 미러링 방지 (180° 회전 후 다시 180° 보정)
+                            final isShowingBack = rotate.value >= 0.5;
                             return Transform(
                               transform: Matrix4.identity()
                                 ..setEntry(3, 2, 0.001)
                                 ..rotateY(angle),
                               alignment: Alignment.center,
-                              child: child,
+                              child: isShowingBack
+                                  ? Transform(
+                                      alignment: Alignment.center,
+                                      transform: Matrix4.identity()..rotateY(3.14159),
+                                      child: child,
+                                    )
+                                  : child,
                             );
                           },
                         );

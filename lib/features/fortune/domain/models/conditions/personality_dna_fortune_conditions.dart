@@ -18,15 +18,13 @@ class PersonalityDnaFortuneConditions extends FortuneConditions {
 
   @override
   String generateHash() {
-    // 날짜 제거로 DB 풀 누적 가능 → API 비용 절감
-    // 개인 캐시는 date 컬럼에서 오늘 날짜 체크
-    final parts = <String>[
-      if (mbti != null) 'mbti:${mbti!.hashCode}',
-      if (bloodType != null) 'blood:${bloodType!.hashCode}',
-      if (zodiac != null) 'zodiac:${zodiac!.hashCode}',
-      if (animal != null) 'animal:${animal!.hashCode}',
-    ];
-    return parts.join('|');
+    // 🚀 전체 통합 해시 → 300개 후 DB 풀 재사용 (API 비용 99.99% 절감)
+    // 기존: 9,216 조합 (16×4×12×12) → 2,764,800회 API 필요
+    // 개선: 1 조합 → 300회 API 후 완전 캐시
+    //
+    // 품질 트레이드오프: 다른 MBTI/혈액형 조합의 결과를 받을 수 있음
+    // 하지만 모든 결과가 "성격 DNA" 맥락에서 생성되므로 일관성 유지
+    return 'personality_dna';
   }
 
   @override

@@ -1,14 +1,18 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/toss_design_system.dart';
 import '../models/fortune_result.dart';
+import '../../presentation/providers/subscription_provider.dart';
 
 /// 블러 처리된 운세 콘텐츠 위젯 (단순 블러만 적용)
 ///
 /// FortuneResult.isBlurred가 true일 때만 블러 처리
 /// 버튼은 제거하고 Floating Button으로 통합
-class BlurredFortuneContent extends StatelessWidget {
+///
+/// **프리미엄 사용자**: 프리미엄 구독자는 블러 없이 전체 콘텐츠를 볼 수 있습니다.
+class BlurredFortuneContent extends ConsumerWidget {
   final FortuneResult fortuneResult;
   final Widget child;
 
@@ -19,8 +23,14 @@ class BlurredFortuneContent extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // ✅ 프리미엄 사용자는 블러 처리 없이 전체 콘텐츠 표시
+    final isPremium = ref.watch(isPremiumProvider);
+    if (isPremium) {
+      return child;
+    }
 
     // 블러 상태가 아니면 그냥 child 반환
     if (!fortuneResult.isBlurred) {

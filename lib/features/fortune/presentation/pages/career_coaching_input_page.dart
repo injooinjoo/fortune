@@ -22,6 +22,10 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
   String? _primaryConcern;
   String? _industry;
 
+  // F20: 분야 및 맞춤 포지션
+  String? _field;
+  String? _position;
+
   // 목표와 가치
   String? _shortTermGoal;
   String? _coreValue;
@@ -40,10 +44,36 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
 
   void _initializeAccordionSections() {
     _accordionSections = [
-      // 1. 현재 포지션
+      // F20: 1. 분야 선택 (먼저 분야를 선택하면 맞춤 포지션 표시)
+      AccordionInputSection(
+        id: 'field',
+        title: '분야 선택',
+        icon: Icons.category_outlined,
+        inputWidgetBuilder: (context, onComplete) => _buildFieldInput(onComplete),
+        value: _field,
+        isCompleted: _field != null,
+        displayValue: _field != null
+            ? fieldOptions.firstWhere((f) => f.id == _field).title
+            : null,
+      ),
+
+      // F20: 2. 맞춤 포지션 (선택한 분야에 따라 동적 표시)
+      AccordionInputSection(
+        id: 'position',
+        title: '포지션',
+        icon: Icons.person_outline,
+        inputWidgetBuilder: (context, onComplete) => _buildPositionInput(onComplete),
+        value: _position,
+        isCompleted: _position != null,
+        displayValue: _position != null && _field != null
+            ? fieldPositions[_field]?.firstWhere((p) => p.id == _position).title
+            : null,
+      ),
+
+      // 3. 경력 수준
       AccordionInputSection(
         id: 'currentRole',
-        title: '현재 포지션',
+        title: '경력 수준',
         icon: Icons.work_outline,
         inputWidgetBuilder: (context, onComplete) => _buildCurrentRoleInput(onComplete),
         value: _currentRole,
@@ -53,7 +83,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             : null,
       ),
 
-      // 2. 핵심 고민
+      // 4. 핵심 고민
       AccordionInputSection(
         id: 'primaryConcern',
         title: '핵심 고민',
@@ -127,8 +157,10 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
   }
 
   bool _canGenerate() {
-    // 필수: 현재 포지션, 핵심 고민, 단기 목표, 핵심 가치, 개선 스킬 1개 이상
-    return _currentRole != null &&
+    // 필수: F20 분야, 포지션, 경력수준, 핵심 고민, 단기 목표, 핵심 가치, 개선 스킬 1개 이상
+    return _field != null &&
+        _position != null &&
+        _currentRole != null &&
         _primaryConcern != null &&
         _shortTermGoal != null &&
         _coreValue != null &&
@@ -166,6 +198,8 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
         experienceLevel: _experienceLevel ?? 'mid',
         primaryConcern: _primaryConcern!,
         industry: _industry,
+        field: _field,         // F20: 분야
+        position: _position,   // F20: 맞춤 포지션
         shortTermGoal: _shortTermGoal!,
         coreValue: _coreValue!,
         skillsToImprove: _skillsToImprove.toList(),
@@ -243,6 +277,176 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
   }
 
   // ===== 입력 위젯들 =====
+
+  /// F20: 분야 선택 입력 위젯
+  Widget _buildFieldInput(Function(dynamic) onComplete) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      childAspectRatio: 1.6,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      children: fieldOptions.map((field) {
+        final isSelected = _field == field.id;
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _field = field.id;
+              // 분야가 바뀌면 포지션 초기화
+              _position = null;
+              _updateAccordionSection('field', field.id, field.title);
+              _updateAccordionSection('position', null, null);
+            });
+            ref.read(fortuneHapticServiceProvider).selection();
+            onComplete(field.id);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.accentGreen.withValues(alpha: 0.1)
+                  : isDark
+                      ? AppColors.inputBackgroundDark
+                      : AppColors.inputBackgroundLight,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected
+                    ? AppColors.accentGreen
+                    : isDark
+                        ? AppColors.borderDark
+                        : AppColors.borderLight,
+                width: isSelected ? 2 : 1,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(field.emoji, style: const TextStyle(fontSize: 24)),
+                const SizedBox(height: 4),
+                Text(
+                  field.title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected
+                        ? AppColors.accentGreen
+                        : isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimaryLight,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  field.description,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  /// F20: 맞춤 포지션 선택 입력 위젯 (선택한 분야에 따라 동적 표시)
+  Widget _buildPositionInput(Function(dynamic) onComplete) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // 분야가 선택되지 않았으면 안내 메시지
+    if (_field == null) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isDark
+              ? AppColors.inputBackgroundDark
+              : AppColors.inputBackgroundLight,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(
+          child: Text(
+            '먼저 분야를 선택해주세요',
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondaryLight,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 선택한 분야의 포지션 목록
+    final positions = fieldPositions[_field] ?? [];
+
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: positions.map((position) {
+        final isSelected = _position == position.id;
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _position = position.id;
+              _updateAccordionSection('position', position.id, position.title);
+            });
+            ref.read(fortuneHapticServiceProvider).selection();
+            onComplete(position.id);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.accentGreen.withValues(alpha: 0.1)
+                  : isDark
+                      ? AppColors.inputBackgroundDark
+                      : AppColors.inputBackgroundLight,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isSelected
+                    ? AppColors.accentGreen
+                    : isDark
+                        ? AppColors.borderDark
+                        : AppColors.borderLight,
+                width: isSelected ? 2 : 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(position.emoji, style: const TextStyle(fontSize: 18)),
+                const SizedBox(width: 8),
+                Text(
+                  position.title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected
+                        ? AppColors.accentGreen
+                        : isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimaryLight,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
 
   Widget _buildCurrentRoleInput(Function(dynamic) onComplete) {
     final isDark = Theme.of(context).brightness == Brightness.dark;

@@ -238,15 +238,22 @@ ${category ? `- 카테고리: ${category}` : ''}
       fortuneData = generateFallbackFortune(name, celebrityInfo.name, connection_type)
     }
 
-    // 토큰 사용량 로깅
-    const usageLogger = new UsageLogger(supabaseClient)
-    await usageLogger.log({
+    // 토큰 사용량 로깅 (B03: static 메서드로 호출)
+    await UsageLogger.log({
+      fortuneType: 'celebrity',
       userId,
-      functionName: 'fortune-celebrity',
+      provider: 'openai',
       model: response.model || 'gpt-4o-mini',
-      promptTokens: response.usage?.prompt_tokens || 0,
-      completionTokens: response.usage?.completion_tokens || 0,
-      totalTokens: response.usage?.total_tokens || 0
+      response: {
+        content: response.content,
+        usage: {
+          promptTokens: response.usage?.prompt_tokens || 0,
+          completionTokens: response.usage?.completion_tokens || 0,
+          totalTokens: response.usage?.total_tokens || 0,
+        },
+        latency: endTime - startTime,
+        finishReason: 'stop',
+      },
     })
 
     // 전체 운세 데이터 구성

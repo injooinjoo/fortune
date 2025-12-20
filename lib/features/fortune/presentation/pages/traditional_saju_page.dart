@@ -11,6 +11,7 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
@@ -931,6 +932,11 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
+          // ✅ 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'saju');
+          }
+
           if (mounted) {
             setState(() {
               _isBlurred = false;
@@ -975,6 +981,8 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           shortDescription: concept['short']!,
           fullDescription: concept['full']!,
           icon: Icons.grid_view_rounded,
+          realLife: concept['realLife'],
+          tips: concept['tips'],
         ),
         const SizedBox(height: DSSpacing.lg),
         SajuPillarTablePro(sajuData: sajuData),
@@ -996,6 +1004,8 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           shortDescription: concept['short']!,
           fullDescription: concept['full']!,
           icon: Icons.donut_large_rounded,
+          realLife: concept['realLife'],
+          tips: concept['tips'],
         ),
         const SizedBox(height: DSSpacing.lg),
         SajuElementChart(
@@ -1016,6 +1026,8 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           shortDescription: concept['short']!,
           fullDescription: concept['full']!,
           icon: Icons.layers_rounded,
+          realLife: concept['realLife'],
+          tips: concept['tips'],
         ),
         const SizedBox(height: DSSpacing.lg),
         SajuJijangganWidget(sajuData: sajuData),
@@ -1033,6 +1045,8 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           shortDescription: concept['short']!,
           fullDescription: concept['full']!,
           icon: Icons.loop_rounded,
+          realLife: concept['realLife'],
+          tips: concept['tips'],
         ),
         const SizedBox(height: DSSpacing.lg),
         SajuTwelveStagesWidget(sajuData: sajuData),
@@ -1050,6 +1064,8 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           shortDescription: concept['short']!,
           fullDescription: concept['full']!,
           icon: Icons.stars_rounded,
+          realLife: concept['realLife'],
+          tips: concept['tips'],
         ),
         const SizedBox(height: DSSpacing.lg),
         SajuSinsalWidget(sajuData: sajuData),
@@ -1067,6 +1083,8 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           shortDescription: concept['short']!,
           fullDescription: concept['full']!,
           icon: Icons.compare_arrows_rounded,
+          realLife: concept['realLife'],
+          tips: concept['tips'],
         ),
         const SizedBox(height: DSSpacing.lg),
         SajuHapchungWidget(sajuData: sajuData),

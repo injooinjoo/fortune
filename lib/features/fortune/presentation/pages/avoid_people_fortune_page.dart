@@ -16,6 +16,7 @@ import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 
 class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
   const AvoidPeopleFortunePage({super.key});
@@ -28,7 +29,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
   // ✅ PageView Controller
   final PageController _pageController = PageController();
 
-  // ✅ 단계별 상태 (0: 환경, 1: 일정, 2: 기분, 3: 상황)
+  // ✅ 단계별 상태 (0: 장소, 1: 일정, 2: 기분, 3: 상황)
   int _currentStep = 0;
 
   // ✅ Blur 상태 관리
@@ -356,8 +357,18 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
     );
   }
 
-  // ===== Step 1: 환경 선택 =====
+  // ===== Step 1: 장소 선택 =====
   Widget _buildStep1Environment(bool isDark) {
+    // 장소 옵션 (이모지 + 라벨)
+    const placeOptions = [
+      ('🏢', '직장'),
+      ('🏫', '학교'),
+      ('🎉', '모임'),
+      ('🏠', '집'),
+      ('☕', '카페'),
+      ('🚇', '대중교통'),
+    ];
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600),
@@ -368,26 +379,26 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             children: [
               // ChatGPT 스타일 헤더
               const PageHeaderSection(
-                emoji: '👥',
-                title: '오늘의 주요 환경',
+                emoji: '📍',
+                title: '오늘의 주요 장소',
                 subtitle: '현재 상태와 일정을 입력하면\n오늘 주의해야 할 사람 유형을 분석해드립니다',
               ),
               const SizedBox(height: 40),
 
-              // 환경 선택 라벨
-              const FieldLabel(text: '주요 환경을 선택해주세요'),
+              // 장소 선택 라벨
+              const FieldLabel(text: '주요 장소를 선택해주세요'),
 
-              // 환경 선택
+              // 장소 선택
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 alignment: WrapAlignment.center,
-                children: ['직장', '학교', '모임', '가족', '데이트', '집']
-                    .map((env) => SelectionChip(
-                        label: env,
-                        isSelected: _environment == env,
+                children: placeOptions
+                    .map((option) => SelectionChip(
+                        label: '${option.$1} ${option.$2}',
+                        isSelected: _environment == option.$2,
                         onTap: () {
-                          setState(() => _environment = env);
+                          setState(() => _environment = option.$2);
                           HapticFeedback.selectionClick();
                         }))
                     .toList(),
@@ -401,6 +412,17 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
 
   // ===== Step 2: 중요 일정 선택 =====
   Widget _buildStep2Schedule(bool isDark) {
+    // 일정 옵션 (이모지 + 라벨)
+    const scheduleOptions = [
+      ('💼', '면접'),
+      ('📊', '프레젠테이션'),
+      ('🤝', '미팅'),
+      ('📝', '시험'),
+      ('💕', '데이트'),
+      ('👨‍👩‍👧‍👦', '가족모임'),
+      ('✨', '없음'),
+    ];
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600),
@@ -425,12 +447,12 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                 spacing: 8,
                 runSpacing: 8,
                 alignment: WrapAlignment.center,
-                children: ['면접', '프레젠테이션', '미팅', '시험', '데이트', '가족모임', '없음']
-                    .map((schedule) => SelectionChip(
-                        label: schedule,
-                        isSelected: _importantSchedule == schedule,
+                children: scheduleOptions
+                    .map((option) => SelectionChip(
+                        label: '${option.$1} ${option.$2}',
+                        isSelected: _importantSchedule == option.$2,
                         onTap: () {
-                          setState(() => _importantSchedule = schedule);
+                          setState(() => _importantSchedule = option.$2);
                           HapticFeedback.selectionClick();
                         }))
                     .toList(),
@@ -563,7 +585,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
 
     // 버튼 텍스트
     final buttonText = _currentStep == 0
-        ? (_environment.isEmpty ? '환경을 선택해주세요' : '다음')
+        ? (_environment.isEmpty ? '장소를 선택해주세요' : '다음')
         : _currentStep == 1
             ? (_importantSchedule.isEmpty ? '일정을 선택해주세요' : '다음')
             : _currentStep == 3
@@ -662,6 +684,11 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'avoid-people');
+          }
 
           // ✅ 광고 시청 완료 시 블러만 해제 (로컬 상태 변경)
           if (mounted) {

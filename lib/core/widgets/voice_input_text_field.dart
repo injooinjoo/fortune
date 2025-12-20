@@ -26,6 +26,9 @@ class VoiceInputTextField extends StatefulWidget {
   /// 텍스트 전송 시 호출되는 콜백
   final Function(String text) onSubmit;
 
+  /// 텍스트 변경 시 호출되는 콜백 (실시간 업데이트용)
+  final Function(String text)? onChanged;
+
   /// 기본 상태의 힌트 텍스트
   final String hintText;
 
@@ -41,6 +44,7 @@ class VoiceInputTextField extends StatefulWidget {
   const VoiceInputTextField({
     super.key,
     required this.onSubmit,
+    this.onChanged,
     this.hintText = 'Ask anything',
     this.transcribingText = 'Transcribing',
     this.controller,
@@ -108,7 +112,8 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
   }
 
   void _onTextChanged() {
-    final hasText = _textController.text.isNotEmpty;
+    final text = _textController.text;
+    final hasText = text.isNotEmpty;
 
     // idle 또는 hasText 상태에서만 전환
     if (_state == VoiceInputState.idle && hasText) {
@@ -116,6 +121,9 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
     } else if (_state == VoiceInputState.hasText && !hasText) {
       setState(() => _state = VoiceInputState.idle);
     }
+
+    // B07: 실시간 텍스트 변경 콜백 호출
+    widget.onChanged?.call(text);
   }
 
   /// 마이크 버튼 탭 - 녹음 시작

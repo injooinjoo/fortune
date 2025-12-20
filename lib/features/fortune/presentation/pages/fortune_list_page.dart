@@ -48,8 +48,8 @@ class FortuneCategory {
   String get soulDescription => SoulRates.getActionDescription(type);
   int get soulCost => soulAmount.abs(); // Convert to positive cost value
 
-  // 빨간 dot 표시 여부 (새 운세 OR 오늘 안 본 운세)
-  bool get shouldShowRedDot => isNew || !hasViewedToday;
+  // 빨간 dot 표시 여부 (오늘 안 본 운세만 표시, 조회하면 제거)
+  bool get shouldShowRedDot => !hasViewedToday;
 
   // copyWith 메서드 추가 (hasViewedToday 업데이트용)
   FortuneCategory copyWith({
@@ -259,7 +259,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     FortuneCategory(
       title: '달력',
       route: '/time',
-      type: 'daily',
+      type: 'daily_calendar',  // DB 저장 값과 일치
       icon: Icons.schedule_rounded,
       iconAsset: 'assets/icons/fortune/daily.png',
       gradientColors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
@@ -272,7 +272,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     FortuneCategory(
       title: '전통',
       route: '/traditional',
-      type: 'traditional',
+      type: 'traditional_saju',  // DB 저장 값과 일치
       icon: Icons.auto_awesome_rounded,
       iconAsset: 'assets/icons/fortune/traditional.png',
       gradientColors: [Color(0xFFEF4444), Color(0xFFEC4899)],
@@ -379,7 +379,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     FortuneCategory(
       title: '경계대상',
       route: '/avoid-people',
-      type: 'relationship',
+      type: 'avoid-people',  // DB 저장 값과 일치
       icon: Icons.person_off_rounded,
       iconAsset: 'assets/icons/fortune/avoid_people.png',
       gradientColors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
@@ -389,7 +389,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     FortuneCategory(
       title: '재회',
       route: '/ex-lover-simple',
-      type: 'ex-lover',
+      type: 'ex_lover',  // DB 저장 값과 일치
       icon: Icons.heart_broken_rounded,
       iconAsset: 'assets/icons/fortune/ex_lover.png',
       gradientColors: [Color(0xFF6B7280), Color(0xFF374151)],
@@ -399,7 +399,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     FortuneCategory(
       title: '소개팅',
       route: '/blind-date',
-      type: 'blind-date',
+      type: 'blind_date',  // DB 저장 값과 일치
       icon: Icons.waving_hand_rounded,
       iconAsset: 'assets/icons/fortune/blind_date.png',
       gradientColors: [Color(0xFFFF6B9D), Color(0xFFE91E63)],
@@ -421,7 +421,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     FortuneCategory(
       title: '시험',
       route: '/lucky-exam',
-      type: 'study',
+      type: 'exam',  // DB 저장 값과 일치
       icon: Icons.school_rounded,
       iconAsset: 'assets/icons/fortune/study.png',
       gradientColors: [Color(0xFF03A9F4), Color(0xFF0288D1)],
@@ -451,6 +451,16 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
       description: '색깔/숫자/음식/아이템',
       category: 'lifestyle'),
+    FortuneCategory(
+      title: '로또',
+      route: '/lotto',
+      type: 'lucky-lottery',
+      icon: Icons.casino_rounded,
+      iconAsset: 'assets/icons/fortune/lotto.png',
+      gradientColors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+      description: '오늘의 행운 번호',
+      category: 'lifestyle',
+      isNew: true),
     FortuneCategory(
       title: '재능',
       route: '/talent-fortune-input',

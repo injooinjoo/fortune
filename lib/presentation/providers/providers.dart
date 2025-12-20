@@ -21,6 +21,7 @@ export 'theme_provider.dart';
 export 'user_statistics_provider.dart';
 export 'recommendation_provider.dart';
 export 'navigation_visibility_provider.dart';
+export 'fortune_gauge_provider.dart';
 
 // Core providers
 final supabaseProvider = Provider<SupabaseClient>((ref) {

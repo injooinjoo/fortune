@@ -167,7 +167,7 @@ class TodayRecommendationCard extends StatelessWidget {
     } else if (physicalScore <= 30) {
       recommendations.add({
         'title': '휴식 권장',
-        'text': '화기(火氣)가 약하니 충분한 휴식과 수면을 취하소서',
+        'text': '화기(火氣)가 약하니 충분한 휴식과 수면을 취하세요',
         'hanja': '休',
         'type': BiorhythmType.physical,
       });
@@ -183,7 +183,7 @@ class TodayRecommendationCard extends StatelessWidget {
     } else if (emotionalScore <= 30) {
       recommendations.add({
         'title': '정서 관리',
-        'text': '목기(木氣)가 약하니 감정적으로 민감할 수 있으니 여유를 가지소서',
+        'text': '목기(木氣)가 약하니 감정적으로 민감할 수 있으니 여유를 가지세요',
         'hanja': '靜',
         'type': BiorhythmType.emotional,
       });
@@ -199,7 +199,7 @@ class TodayRecommendationCard extends StatelessWidget {
     } else if (intellectualScore <= 30) {
       recommendations.add({
         'title': '단순 업무 권장',
-        'text': '수기(水氣)가 약하니 복잡한 업무는 피하고 단순한 일에 집중하소서',
+        'text': '수기(水氣)가 약하니 복잡한 업무는 피하고 단순한 일에 집중하세요',
         'hanja': '簡',
         'type': BiorhythmType.intellectual,
       });
@@ -214,7 +214,7 @@ class TodayRecommendationCard extends StatelessWidget {
       });
       recommendations.add({
         'title': '자기 관찰',
-        'text': '자신의 컨디션을 잘 살펴보며 행동하소서',
+        'text': '자신의 컨디션을 잘 살펴보며 행동하세요',
         'hanja': '觀',
         'type': null,
       });
@@ -387,14 +387,14 @@ class WeeklyActivityGuide extends StatelessWidget {
       },
       {
         'title': '교류 및 소통 (木)',
-        'description': '목기(木氣)가 좋은 날에 중요한 대화나 만남을 가지소서',
+        'description': '목기(木氣)가 좋은 날에 중요한 대화나 만남을 가지세요',
         'hanja': '木',
         'color': DSBiorhythmColors.getEmotional(isDark),
         'bestDays': '최적: ${_formatDayName(emotionalBestDay)}',
       },
       {
         'title': '학습 및 업무 (水)',
-        'description': '수기(水氣)가 높은 날에 집중이 필요한 일을 처리하소서',
+        'description': '수기(水氣)가 높은 날에 집중이 필요한 일을 처리하세요',
         'hanja': '水',
         'color': DSBiorhythmColors.getIntellectual(isDark),
         'bestDays': '최적: ${_formatDayName(intellectualBestDay)}',

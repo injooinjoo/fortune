@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
+import '../../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../domain/models/fortune_result.dart';
 
-class FortuneSectionWidget extends StatelessWidget {
+class FortuneSectionWidget extends ConsumerWidget {
   final IconData icon;
   final String title;
   final String content;
@@ -30,7 +32,7 @@ class FortuneSectionWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Widget cardContent = AppCard(
       style: AppCardStyle.outlined,
       padding: const EdgeInsets.all(20),
@@ -102,8 +104,11 @@ class FortuneSectionWidget extends StatelessWidget {
       ),
     );
 
-    // 블러가 필요 없거나, 해당 섹션이 블러 대상이 아니면 그대로 반환
-    if (!result.isBlurred || !result.blurredSections.contains(sectionKey)) {
+    // ✅ 프리미엄 사용자는 블러 제외
+    final isPremium = ref.watch(isPremiumProvider);
+
+    // 블러가 필요 없거나, 해당 섹션이 블러 대상이 아니거나, 프리미엄이면 그대로 반환
+    if (!result.isBlurred || !result.blurredSections.contains(sectionKey) || isPremium) {
       return cardContent.animate().fadeIn(duration: 500.ms, delay: delay.ms).slideY(begin: 0.1);
     }
 

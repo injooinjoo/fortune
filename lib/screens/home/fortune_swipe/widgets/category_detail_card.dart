@@ -137,9 +137,8 @@ class CategoryDetailCard extends StatelessWidget {
             const SizedBox(width: 10),
             Text(
               title,
-              style: context.heading3.copyWith(
+              style: context.calligraphyTitle.copyWith(
                 color: isDark ? Colors.white : Colors.black87,
-                letterSpacing: -0.5,
               ),
             ),
           ],
@@ -222,9 +221,10 @@ class CategoryDetailCard extends StatelessWidget {
               // 조언 텍스트
               Text(
                 advice,
-                style: context.bodySmall.copyWith(
+                style: context.calligraphyBody.copyWith(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
-                  height: 1.5,
+                  fontSize: 14,
+                  height: 1.7,
                 ),
               ),
             ],

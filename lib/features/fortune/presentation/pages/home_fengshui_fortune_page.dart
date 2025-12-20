@@ -16,6 +16,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 
 /// 집 풍수 진단 페이지 (UnifiedFortuneBaseWidget 사용)
 class HomeFengshuiFortunePage extends ConsumerStatefulWidget {
@@ -321,6 +322,11 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
         onUserEarnedReward: (ad, rewardItem) async {
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'fengshui');
+          }
 
           if (mounted) {
             setState(() {

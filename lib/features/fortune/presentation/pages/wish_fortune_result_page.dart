@@ -11,6 +11,7 @@ import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
 import '../../../../presentation/providers/subscription_provider.dart'; // ✅ 구독 체크용
 
@@ -591,6 +592,11 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'wish');
+          }
 
           if (mounted) {
             setState(() {

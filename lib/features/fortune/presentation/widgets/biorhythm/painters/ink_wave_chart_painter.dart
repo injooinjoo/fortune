@@ -28,12 +28,18 @@ class InkWaveChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Ensure minimum size to prevent negative chart area
+    if (size.width < 100 || size.height < 100) return;
+
     final chartArea = Rect.fromLTWH(
       40, // left margin for Y axis
       20, // top margin
       size.width - 50, // right margin
       size.height - 50, // bottom margin for X axis labels
     );
+
+    // Additional safety check
+    if (chartArea.width <= 0 || chartArea.height <= 0) return;
 
     // 1. Draw ink wash guide lines (담묵 가이드)
     _drawGuideLines(canvas, chartArea);
@@ -131,13 +137,21 @@ class InkWaveChartPainter extends CustomPainter {
   ) {
     if (data.isEmpty) return;
 
+    // Check for invalid chart area
+    if (chartArea.width <= 0 || chartArea.height <= 0) return;
+
     final points = <Offset>[];
     final dayCount = data.length;
 
+    // Prevent division by zero
+    if (dayCount < 2) return;
+
     for (var i = 0; i < dayCount; i++) {
       final x = chartArea.left + (chartArea.width / (dayCount - 1)) * i;
-      // Convert -100~100 to 0~1 range, then to chart coordinates
-      final normalizedValue = (data[i] + 100) / 200;
+      // Convert 0~100 to 0~1 range, then to chart coordinates
+      // Clamp values to prevent overflow
+      final clampedValue = data[i].clamp(0.0, 100.0);
+      final normalizedValue = clampedValue / 100;
       final y = chartArea.bottom - (chartArea.height * normalizedValue);
       points.add(Offset(x, y));
     }
@@ -255,9 +269,14 @@ class InkWaveChartPainter extends CustomPainter {
   void _drawDataPoints(Canvas canvas, Rect chartArea, List<double> data, Color color) {
     final dayCount = data.length;
 
+    // Prevent division by zero and invalid state
+    if (dayCount < 2 || chartArea.width <= 0 || chartArea.height <= 0) return;
+
     for (var i = 0; i < dayCount; i++) {
       final x = chartArea.left + (chartArea.width / (dayCount - 1)) * i;
-      final normalizedValue = (data[i] + 100) / 200;
+      // Convert 0~100 to 0~1 range (matching Y-axis labels)
+      final clampedValue = data[i].clamp(0.0, 100.0);
+      final normalizedValue = clampedValue / 100;
       final y = chartArea.bottom - (chartArea.height * normalizedValue);
       final point = Offset(x, y);
 

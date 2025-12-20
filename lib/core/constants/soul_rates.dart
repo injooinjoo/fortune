@@ -5,6 +5,7 @@ class SoulRates {
   static const Map<String, int> earnRates = {
     // 기본 운세 (1-2 영혼 획득)
     'daily': 1,
+    'daily_calendar': 1,  // DB 저장 값 alias
     'today': 1,
     'tomorrow': 1,
     'lucky-color': 1,
@@ -60,6 +61,7 @@ class SoulRates {
     // 프리미엄 운세 (10-20 영혼 소비)
     'saju': -15,
     'traditional-saju': -15,
+    'traditional_saju': -15,  // DB 저장 값 alias
     'traditional-unified': -15,
     'saju-psychology': -12,
     'tojeong': -15,
@@ -69,7 +71,9 @@ class SoulRates {
     'couple-match': -12,
     'chemistry': -10,
     'ex-lover': -12,
+    'ex_lover': -12,  // DB 저장 값 alias
     'blind-date': -10,
+    'blind_date': -10,  // DB 저장 값 alias
     'celebrity-match': -10,
     'traditional-compatibility': -15,
     'palmistry': -12,
@@ -77,6 +81,7 @@ class SoulRates {
     'face-reading': -15,
     'timeline': -15,
     'lucky-exam': -10,
+    'exam': -10,  // DB 저장 값 alias
 
     // 울트라 프리미엄 운세 (30-50 영혼 소비)
     'startup': -30,

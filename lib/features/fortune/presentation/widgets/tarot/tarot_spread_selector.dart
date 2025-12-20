@@ -60,6 +60,48 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
     super.dispose();
   }
 
+  // F11: 난이도별 색상 반환
+  Color _getDifficultyColor(TarotDifficulty difficulty) {
+    switch (difficulty) {
+      case TarotDifficulty.beginner:
+        return const Color(0xFF22C55E); // 초록 - 쉬움
+      case TarotDifficulty.intermediate:
+        return const Color(0xFFF59E0B); // 주황 - 중간
+      case TarotDifficulty.advanced:
+        return const Color(0xFFEF4444); // 빨강 - 어려움
+    }
+  }
+
+  // F11: 스프레드별 설정 반환
+  Map<String, dynamic> _getSpreadConfig(TarotSpreadType spread) {
+    switch (spread) {
+      case TarotSpreadType.single:
+        return {
+          'icon': Icons.style,
+          'color': const Color(0xFF3B82F6),
+          'recommended': '빠른 답변이 필요할 때',
+        };
+      case TarotSpreadType.threeCard:
+        return {
+          'icon': Icons.timeline,
+          'color': const Color(0xFF7C3AED),
+          'recommended': '시간의 흐름을 보고 싶을 때',
+        };
+      case TarotSpreadType.relationship:
+        return {
+          'icon': Icons.favorite,
+          'color': const Color(0xFFEC4899),
+          'recommended': '연애/관계 질문',
+        };
+      case TarotSpreadType.celticCross:
+        return {
+          'icon': Icons.apps,
+          'color': const Color(0xFF10B981),
+          'recommended': '심층 분석이 필요할 때',
+        };
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -108,44 +150,20 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
 
                   const SizedBox(height: 32),
 
-                  // 스프레드 옵션들
-                  _buildSpreadCard(
-                    spread: TarotSpreadType.single,
-                    icon: Icons.style,
-                    color: const Color(0xFF3B82F6),
-                    recommended: '빠른 답변이 필요할 때',
-                    isDark: isDark,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  _buildSpreadCard(
-                    spread: TarotSpreadType.threeCard,
-                    icon: Icons.timeline,
-                    color: const Color(0xFF7C3AED),
-                    recommended: '시간의 흐름을 보고 싶을 때',
-                    isDark: isDark,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  _buildSpreadCard(
-                    spread: TarotSpreadType.relationship,
-                    icon: Icons.favorite,
-                    color: const Color(0xFFEC4899),
-                    recommended: '연애/관계 질문',
-                    isDark: isDark,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  _buildSpreadCard(
-                    spread: TarotSpreadType.celticCross,
-                    icon: Icons.apps,
-                    color: const Color(0xFF10B981),
-                    recommended: '심층 분석이 필요할 때',
-                    isDark: isDark,
-                  ),
+                  // F11: 난이도순 정렬된 스프레드 옵션들
+                  ...TarotSpreadType.sortedByDifficulty.map((spread) {
+                    final config = _getSpreadConfig(spread);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: _buildSpreadCard(
+                        spread: spread,
+                        icon: config['icon'] as IconData,
+                        color: config['color'] as Color,
+                        recommended: config['recommended'] as String,
+                        isDark: isDark,
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -250,6 +268,26 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                 ),
                               ),
                               const SizedBox(width: 8),
+                              // F11: 난이도 뱃지
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _getDifficultyColor(spread.difficulty).withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                                ),
+                                child: Text(
+                                  spread.difficulty.label,
+                                  style: typography.labelSmall.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: _getDifficultyColor(spread.difficulty),
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8,

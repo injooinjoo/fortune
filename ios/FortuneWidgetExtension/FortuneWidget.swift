@@ -5,19 +5,22 @@ import SwiftUI
 struct FortuneWidgetBundle: WidgetBundle {
     @WidgetBundleBuilder
     var body: some Widget {
-        // Daily Fortune Widget
-        FortuneWidget()
+        // New Unified Widgets (4 types based on fortune-daily data)
+        FortuneOverallWidget()     // Overall score and grade
+        FortuneCategoryWidget()    // Category-specific fortune (love/money/work/study/health)
+        FortuneTimeSlotWidget()    // Time-based fortune (morning/afternoon/evening)
+        FortuneLottoWidget()       // Lucky numbers (5 numbers)
 
-        // Love Compatibility Widget
-        LoveFortuneWidget()
-
-        // Favorites Rolling Widget (1-minute rotation)
-        FavoritesFortuneWidget()
+        // Legacy widgets (kept for backward compatibility)
+        FortuneWidget()            // Daily Fortune Widget
+        LoveFortuneWidget()        // Love Compatibility Widget
 
         // Lock Screen Widget (iOS 16.1+)
         if #available(iOS 16.1, *) {
             LockScreenFortuneWidget()
         }
+
+        // Note: FavoritesFortuneWidget removed - replaced by new unified widgets
     }
 }
 

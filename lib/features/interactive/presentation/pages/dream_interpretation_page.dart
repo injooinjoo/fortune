@@ -16,6 +16,7 @@ import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/floating_dream_bubbles.dart';
 import '../../../../core/widgets/voice_input_text_field.dart';
 import '../../../../data/popular_dream_topics.dart';
+import '../../../../services/storage_service.dart';
 
 /// 꿈 해몽 페이지 (UnifiedFortuneService 버전)
 ///
@@ -40,9 +41,70 @@ class _DreamInterpretationPageState
   bool _isLoading = false;
   bool _showResult = false;
   DreamTopic? _selectedTopic;
+  bool _isLoadingSavedResult = true; // F15: 저장된 결과 로딩 상태
+
+  // F14: 미리 로드된 버블 토픽
+  late List<DreamTopic> _preloadedBubbleTopics;
 
   // 텍스트 입력 컨트롤러
   final TextEditingController _dreamTextController = TextEditingController();
+
+  // Storage service for F15
+  final StorageService _storageService = StorageService();
+
+  @override
+  void initState() {
+    super.initState();
+    // F14: 버블 토픽 미리 로드 (UI 렌더링 전에 준비)
+    _preloadedBubbleTopics = PopularDreamTopics.getRandomTopics(15);
+    _loadSavedResult();
+  }
+
+  /// F15: 저장된 꿈 해몽 결과 로드 (오늘 결과가 있으면 바로 표시)
+  Future<void> _loadSavedResult() async {
+    try {
+      final savedData = await _storageService.getDreamResult();
+      if (savedData != null && mounted) {
+        debugPrint('🌙 [DreamPage] 저장된 결과 발견, 복원 중...');
+
+        // FortuneResult 복원 (fromJson 사용)
+        final resultData = savedData['fortuneResult'] as Map<String, dynamic>?;
+        if (resultData != null) {
+          final result = FortuneResult.fromJson(resultData);
+
+          // 저장된 topic 복원
+          final topicData = savedData['selectedTopic'] as Map<String, dynamic>?;
+          DreamTopic? topic;
+          if (topicData != null) {
+            topic = DreamTopic(
+              id: topicData['id'] as String? ?? 'custom',
+              emoji: topicData['emoji'] as String? ?? '✨',
+              title: topicData['title'] as String? ?? '저장된 꿈',
+              category: topicData['category'] as String? ?? '기타',
+              customContent: topicData['customContent'] as String?,
+            );
+          }
+
+          setState(() {
+            _fortuneResult = result;
+            _selectedTopic = topic;
+            _showResult = true;
+            _isLoadingSavedResult = false;
+          });
+          debugPrint('🌙 [DreamPage] ✅ 저장된 결과 복원 완료');
+          return;
+        }
+      }
+    } catch (e) {
+      debugPrint('🌙 [DreamPage] 저장된 결과 로드 실패: $e');
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingSavedResult = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -106,7 +168,9 @@ class _DreamInterpretationPageState
         child: Stack(
           children: [
             // 메인 콘텐츠
-            if (_showResult && _fortuneResult != null)
+            if (_isLoadingSavedResult)
+              _buildInitialLoadingView() // F15: 저장된 결과 확인 중
+            else if (_showResult && _fortuneResult != null)
               _buildResultView(_fortuneResult!)
             else if (_isLoading)
               _buildLoadingView()
@@ -114,13 +178,50 @@ class _DreamInterpretationPageState
               _buildBubbleSelectionView(),
 
             // 결과 화면에서 다시하기 버튼
-            if (_showResult && _fortuneResult != null)
+            if (_showResult && _fortuneResult != null && !_isLoadingSavedResult)
               UnifiedButton.floating(
                 text: '다른 꿈 해몽하기',
                 onPressed: _resetForm,
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// F15: 초기 로딩 화면 (저장된 결과 확인 중)
+  Widget _buildInitialLoadingView() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            '🌙',
+            style: TextStyle(fontSize: 60),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: 32,
+            height: 32,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                const Color(0xFF8B5CF6),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '꿈 해몽 준비 중...',
+            style: DSTypography.bodyMedium.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossDesignSystem.textSecondaryLight,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -137,6 +238,7 @@ class _DreamInterpretationPageState
           child: FloatingDreamBubbles(
             onTopicSelected: _onTopicSelected,
             bubbleCount: 15,
+            preloadedTopics: _preloadedBubbleTopics, // F14: 미리 로드된 토픽 전달
           ),
         ),
 
@@ -581,6 +683,10 @@ class _DreamInterpretationPageState
           _showResult = true;
           _isLoading = false;
         });
+
+        // F15: 결과 저장 (다음날까지 유지)
+        await _saveDreamResult(result, topic);
+
         debugPrint('🌙 [DreamPage] ✅ 결과 화면 전환 완료');
       }
     } catch (e, stackTrace) {
@@ -598,7 +704,30 @@ class _DreamInterpretationPageState
     }
   }
 
+  /// F15: 꿈 해몽 결과 저장
+  Future<void> _saveDreamResult(FortuneResult result, DreamTopic topic) async {
+    try {
+      final dataToSave = {
+        'fortuneResult': result.toJson(),
+        'selectedTopic': {
+          'id': topic.id,
+          'emoji': topic.emoji,
+          'title': topic.title,
+          'category': topic.category,
+          'customContent': topic.customContent,
+        },
+      };
+      await _storageService.saveDreamResult(dataToSave);
+      debugPrint('🌙 [DreamPage] 결과 저장 완료');
+    } catch (e) {
+      debugPrint('🌙 [DreamPage] 결과 저장 실패: $e');
+    }
+  }
+
   void _resetForm() {
+    // F15: 저장된 결과도 삭제 (다른 꿈 해몽하기)
+    _storageService.clearDreamResult();
+
     setState(() {
       _showResult = false;
       _fortuneResult = null;

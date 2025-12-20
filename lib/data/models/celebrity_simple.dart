@@ -1,15 +1,16 @@
 // Simplified Celebrity model without JSON serialization for now
 // This avoids the build_runner issues while keeping functionality
 
+/// C04: 스트리머/프로게이머를 하단으로 이동
 enum CelebrityType {
-  proGamer('프로게이머'),
-  streamer('스트리머'),
-  politician('정치인'),
-  business('기업인'),
+  actor('배우'),
   soloSinger('솔로 가수'),
   idolMember('아이돌 멤버'),
-  actor('배우'),
-  athlete('운동선수');
+  athlete('운동선수'),
+  politician('정치인'),
+  business('기업인'),
+  streamer('스트리머'),
+  proGamer('프로게이머');
 
   final String displayName;
   const CelebrityType(this.displayName);

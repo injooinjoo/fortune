@@ -5,6 +5,8 @@ import '../../../../core/components/app_card.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../services/region_service.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 /// 이사운 통합 입력 페이지 - 토스 스타일
 class MovingInputUnified extends StatefulWidget {
@@ -35,6 +37,9 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
   final RegionService _regionService = RegionService();
+
+  // F24: 위치 공유 기능
+  bool _isLoadingLocation = false;
 
   // 아코디언 섹션
   late List<AccordionInputSection> _accordionSections;
@@ -136,12 +141,12 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
       });
       return;
     }
-    
+
     setState(() {
       _isSearching = true;
       _searchQuery = query;
     });
-    
+
     try {
       final results = await _regionService.searchRegions(query);
       if (mounted && _searchQuery == query) {
@@ -157,6 +162,105 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
           _isSearching = false;
         });
       }
+    }
+  }
+
+  /// F24: 현재 위치 가져오기 (GPS)
+  Future<void> _getCurrentLocation(Function(dynamic) onComplete) async {
+    setState(() {
+      _isLoadingLocation = true;
+    });
+
+    try {
+      // 위치 서비스 활성화 확인
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('위치 서비스를 활성화해주세요')),
+          );
+        }
+        setState(() => _isLoadingLocation = false);
+        return;
+      }
+
+      // 위치 권한 확인
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('위치 권한이 필요합니다')),
+            );
+          }
+          setState(() => _isLoadingLocation = false);
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('설정에서 위치 권한을 허용해주세요')),
+          );
+        }
+        setState(() => _isLoadingLocation = false);
+        return;
+      }
+
+      // 현재 위치 가져오기
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.medium,
+          timeLimit: Duration(seconds: 10),
+        ),
+      );
+
+      // 역지오코딩으로 주소 변환
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty && mounted) {
+        final place = placemarks.first;
+        // 한국 주소 형식: 시/도 + 구/군
+        final regionName = '${place.administrativeArea ?? ''} ${place.subAdministrativeArea ?? place.locality ?? ''}'.trim();
+
+        if (regionName.isNotEmpty) {
+          setState(() {
+            _currentArea = regionName;
+            _accordionSections[0] = AccordionInputSection(
+              id: 'current_area',
+              title: '현재 지역',
+              displayValue: _currentArea,
+              icon: Icons.home_outlined,
+              inputWidgetBuilder: (context, onComplete) => _buildAreaSelector(true, onComplete),
+            );
+            _isLoadingLocation = false;
+          });
+          HapticFeedback.mediumImpact();
+          onComplete(regionName);
+          return;
+        }
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('위치를 확인할 수 없습니다')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('위치를 가져오는데 실패했습니다')),
+        );
+      }
+    }
+
+    if (mounted) {
+      setState(() => _isLoadingLocation = false);
     }
   }
 
@@ -239,9 +343,53 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
       height: 400, // 고정 높이 지정
       child: Column(
         children: [
+          // F24: 현재 위치 사용 버튼 (현재 지역 선택 시에만 표시)
+          if (isCurrentArea)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: InkWell(
+                onTap: _isLoadingLocation ? null : () => _getCurrentLocation(onComplete),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: DSColors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: DSColors.accent.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (_isLoadingLocation)
+                        const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      else
+                        const Icon(
+                          Icons.my_location,
+                          color: DSColors.accent,
+                          size: 20,
+                        ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _isLoadingLocation ? '위치 확인 중...' : '📍 현재 위치 사용하기',
+                        style: DSTypography.bodyMedium.copyWith(
+                          color: DSColors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           // 검색창
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.fromLTRB(16, isCurrentArea ? 8 : 16, 16, 8),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(

@@ -1,17 +1,42 @@
 // 타로 카드 데이터 모델
 
-/// 타로 스프레드 타입
+/// 타로 스프레드 난이도
+enum TarotDifficulty {
+  beginner('초급', 0),
+  intermediate('중급', 1),
+  advanced('고급', 2);
+
+  final String label;
+  final int order;
+
+  const TarotDifficulty(this.label, this.order);
+}
+
+/// 타로 스프레드 타입 (F11: 난이도순 정렬 지원)
 enum TarotSpreadType {
-  single('단일 카드', '빠른 답변', 1),
-  threeCard('3카드 스프레드', '과거-현재-미래', 3),
-  relationship('관계 스프레드', '연애/관계 심화 분석', 5),
-  celticCross('켈틱 크로스', '가장 상세한 분석', 10);
+  single('단일 카드', '빠른 답변', 1, TarotDifficulty.beginner),
+  threeCard('3카드 스프레드', '과거-현재-미래', 3, TarotDifficulty.beginner),
+  relationship('관계 스프레드', '연애/관계 심화 분석', 5, TarotDifficulty.intermediate),
+  celticCross('켈틱 크로스', '가장 상세한 분석', 10, TarotDifficulty.advanced);
 
   final String displayName;
   final String description;
   final int cardCount;
+  final TarotDifficulty difficulty;
 
-  const TarotSpreadType(this.displayName, this.description, this.cardCount);
+  const TarotSpreadType(this.displayName, this.description, this.cardCount, this.difficulty);
+
+  /// F11: 난이도순 정렬된 스프레드 목록
+  static List<TarotSpreadType> get sortedByDifficulty {
+    final list = TarotSpreadType.values.toList();
+    list.sort((a, b) {
+      // 먼저 난이도로 정렬, 같으면 카드 수로 정렬
+      final diffCompare = a.difficulty.order.compareTo(b.difficulty.order);
+      if (diffCompare != 0) return diffCompare;
+      return a.cardCount.compareTo(b.cardCount);
+    });
+    return list;
+  }
 }
 
 /// 3카드 스프레드 포지션

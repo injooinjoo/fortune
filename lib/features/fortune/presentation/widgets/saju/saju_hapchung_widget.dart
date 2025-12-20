@@ -158,6 +158,8 @@ class SajuHapchungWidget extends StatelessWidget {
                   description: hapchungData['description'] ?? '',
                   effect: hapchungData['effect'] ?? '',
                   relationColor: color,
+                  realLife: hapchungData['realLife'],
+                  advice: hapchungData['advice'],
                 );
               }
             },
@@ -298,6 +300,8 @@ class SajuHapchungWidget extends StatelessWidget {
             description: '${hapchungData['description'] ?? ''}\n\n📍 ${relation.name}\n${relation.description}',
             effect: hapchungData['effect'] ?? '',
             relationColor: color,
+            realLife: hapchungData['realLife'],
+            advice: hapchungData['advice'],
           );
         }
       },

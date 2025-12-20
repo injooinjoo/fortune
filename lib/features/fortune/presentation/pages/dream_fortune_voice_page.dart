@@ -16,6 +16,7 @@ import '../widgets/floating_dream_topics_widget.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 import '../providers/dream_voice_provider.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 
 import '../../../../core/widgets/unified_button.dart';
 /// 음성 중심 꿈 해몽 페이지 (ChatGPT 앱 스타일)
@@ -221,9 +222,10 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
           const SizedBox(height: DSSpacing.md),
 
           // 운세 결과
+          // ✅ 프리미엄 사용자는 블러 제외
           DreamResultWidget(
             fortuneResult: _fortuneResult!,
-            isBlurred: _isBlurred,
+            isBlurred: _isBlurred && !ref.watch(isPremiumProvider),
             blurredSections: _blurredSections,
           ),
           const SizedBox(height: 100), // 버튼 여유 공간
@@ -355,6 +357,11 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'dream');
+          }
 
           if (mounted) {
             setState(() {

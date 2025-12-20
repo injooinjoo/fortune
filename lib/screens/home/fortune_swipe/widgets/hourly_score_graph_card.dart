@@ -63,12 +63,12 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2E8B57).withValues(alpha: 0.15),
+                      color: const Color(0xFF4CAF50).withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Center(
                       child: Text('吉', style: TextStyle(
-                        color: Color(0xFF2E8B57),
+                        color: Color(0xFF4CAF50),
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'ZenSerif',
@@ -84,7 +84,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                       Text(
                         '베스트',
                         style: context.labelSmall.copyWith(
-                          color: const Color(0xFF2E8B57),
+                          color: const Color(0xFF4CAF50),
                           fontWeight: FontWeight.w600,
                           height: 1.0,
                         ),
@@ -105,7 +105,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
               Container(
                 width: 1,
                 height: 36,
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12),
               ),
               Row(
                 children: [
@@ -113,12 +113,12 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFDC143C).withValues(alpha: 0.15),
+                      color: const Color(0xFFE53935).withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Center(
                       child: Text('凶', style: TextStyle(
-                        color: Color(0xFFDC143C),
+                        color: Color(0xFFE53935),
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'ZenSerif',
@@ -134,7 +134,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                       Text(
                         '주의',
                         style: context.labelSmall.copyWith(
-                          color: const Color(0xFFDC143C),
+                          color: const Color(0xFFE53935),
                           fontWeight: FontWeight.w600,
                           height: 1.0,
                         ),
@@ -212,11 +212,13 @@ class HourlyScoreGraphCard extends StatelessWidget {
                 LineChartBarData(
                   spots: spots,
                   isCurved: true,
-                  // 전통 오방색 기반 그라데이션 (수→목: 물의 흐름이 나무를 기르듯)
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF1E3A5F), Color(0xFF2E8B57)],
+                  // U08: 더욱 밝고 선명한 색상으로 가시성 대폭 개선
+                  gradient: LinearGradient(
+                    colors: isDark
+                      ? [const Color(0xFF64B5F6), const Color(0xFF81C784)] // 다크모드: 더 밝은 파랑 → 더 밝은 녹색
+                      : [const Color(0xFF1E88E5), const Color(0xFF43A047)], // 라이트모드: 더 선명한 파랑 → 녹색
                   ),
-                  barWidth: 3,
+                  barWidth: 4,
                   dotData: FlDotData(
                     show: true,
                     checkToShowDot: (spot, barData) {
@@ -226,20 +228,25 @@ class HourlyScoreGraphCard extends StatelessWidget {
                       final isBest = spot.x.toInt() == bestHour;
                       // 전통 색상: 吉(녹색) / 凶(적색)
                       return FlDotCirclePainter(
-                        radius: 6,
-                        color: isBest ? const Color(0xFF2E8B57) : const Color(0xFFDC143C),
-                        strokeWidth: 2,
-                        strokeColor: Colors.white,
+                        radius: 7,
+                        color: isBest ? const Color(0xFF4CAF50) : const Color(0xFFE53935),
+                        strokeWidth: 2.5,
+                        strokeColor: isDark ? Colors.white : Colors.white,
                       );
                     },
                   ),
                   belowBarData: BarAreaData(
                     show: true,
                     gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFF1E3A5F).withValues(alpha: 0.25),
-                        const Color(0xFF2E8B57).withValues(alpha: 0.05),
-                      ],
+                      colors: isDark
+                        ? [
+                            const Color(0xFF64B5F6).withValues(alpha: 0.45), // 더 강한 그라디언트
+                            const Color(0xFF81C784).withValues(alpha: 0.15),
+                          ]
+                        : [
+                            const Color(0xFF1E88E5).withValues(alpha: 0.35),
+                            const Color(0xFF43A047).withValues(alpha: 0.12),
+                          ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -247,6 +254,38 @@ class HourlyScoreGraphCard extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ),
+
+        // U08: 아래 공백 활용 - 시간대 활용 팁
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.lightbulb_outline,
+                color: Color(0xFFFFB300),
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '베스트 시간대에 중요한 결정이나 미팅을 배치하세요',
+                  style: context.labelSmall.copyWith(
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],

@@ -77,14 +77,20 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 상단: 업로드 이미지 + 관상 맵 이미지 나란히
-            _buildHeaderWithFaceMap(
-              isDark: isDark,
-              faceType: faceType,
-              luckScore: luckScore,
-              cardColor: cardColor,
-              textPrimary: textPrimary,
-              textSecondary: textSecondary,
-              accentColor: accentColor,
+            // F25: 총평 외 모든 섹션 블러 처리
+            UnifiedBlurWrapper(
+              isBlurred: widget.result.isBlurred,
+              blurredSections: widget.result.blurredSections,
+              sectionKey: 'face_header',
+              child: _buildHeaderWithFaceMap(
+                isDark: isDark,
+                faceType: faceType,
+                luckScore: luckScore,
+                cardColor: cardColor,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                accentColor: accentColor,
+              ),
             ),
 
             const SizedBox(height: 20),
@@ -102,25 +108,32 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
             const SizedBox(height: 24),
 
             // 닮은꼴 연예인
+            // F25: 총평 외 모든 섹션 블러 처리
             if (data['similar_celebrities'] != null &&
                 (data['similar_celebrities'] as List).isNotEmpty) ...[
               CelebrityMatchCarousel(
                 celebrities: (data['similar_celebrities'] as List)
                     .map((e) => e as Map<String, dynamic>)
                     .toList(),
-                isBlurred: false,
+                isBlurred: widget.result.isBlurred,
               ),
               const SizedBox(height: 24),
             ],
 
             // 닮은꼴 상(相) 분류 - 2025 트렌드
+            // F25: 총평 외 모든 섹션 블러 처리
             if (data['faceTypeClassification'] != null) ...[
-              _buildFaceTypeClassification(
-                data: data['faceTypeClassification'] as Map<String, dynamic>,
-                isDark: isDark,
-                cardColor: cardColor,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
+              UnifiedBlurWrapper(
+                isBlurred: widget.result.isBlurred,
+                blurredSections: widget.result.blurredSections,
+                sectionKey: 'face_type_classification',
+                child: _buildFaceTypeClassification(
+                  data: data['faceTypeClassification'] as Map<String, dynamic>,
+                  isDark: isDark,
+                  cardColor: cardColor,
+                  textPrimary: textPrimary,
+                  textSecondary: textSecondary,
+                ),
               ),
               const SizedBox(height: 24),
             ],

@@ -19,6 +19,7 @@ class _NotificationSettingsPageState
   late NotificationSettings _settings;
   TimeOfDay _morningTime = const TimeOfDay(hour: 7, minute: 0);
   TimeOfDay _eveningTime = const TimeOfDay(hour: 21, minute: 0);
+  bool _isSendingTestNotification = false;
 
   @override
   void initState() {
@@ -377,27 +378,57 @@ class _NotificationSettingsPageState
   Widget _buildTestNotificationButton(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
+    final isEnabled = _settings.enabled && !_isSendingTestNotification;
 
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: _sendTestNotification,
-        icon: const Icon(Icons.notifications_active),
-        label: Text(
-          '테스트 알림 보내기',
-          style: typography.buttonMedium.copyWith(
-            color: colors.accent,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: isEnabled ? _sendTestNotification : null,
+            icon: _isSendingTestNotification
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colors.accent,
+                    ),
+                  )
+                : Icon(
+                    Icons.notifications_active,
+                    color: isEnabled ? colors.accent : colors.textTertiary,
+                  ),
+            label: Text(
+              _isSendingTestNotification ? '전송 중...' : '테스트 알림 보내기',
+              style: typography.buttonMedium.copyWith(
+                color: isEnabled ? colors.accent : colors.textTertiary,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
+              side: BorderSide(
+                color: isEnabled ? colors.accent : colors.textTertiary,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              foregroundColor: colors.accent,
+            ),
           ),
         ),
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
-          side: BorderSide(color: colors.accent),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DSRadius.md),
+        if (!_settings.enabled)
+          Padding(
+            padding: const EdgeInsets.only(top: DSSpacing.sm),
+            child: Text(
+              '알림을 허용하면 테스트 알림을 보낼 수 있습니다',
+              style: typography.labelSmall.copyWith(
+                color: colors.textTertiary,
+              ),
+            ),
           ),
-          foregroundColor: colors.accent,
-        ),
-      ),
+      ],
     );
   }
 
@@ -481,20 +512,46 @@ class _NotificationSettingsPageState
   Future<void> _sendTestNotification() async {
     final colors = context.colors;
 
+    setState(() {
+      _isSendingTestNotification = true;
+    });
+
+    HapticUtils.lightImpact();
+
     try {
       await _fcmService.sendTestNotification();
+
+      HapticUtils.success();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('테스트 알림을 전송했습니다'),
-            backgroundColor: colors.accent,
+            content: const Text('테스트 알림을 전송했습니다. 알림을 확인해주세요!'),
+            backgroundColor: colors.success,
             behavior: SnackBarBehavior.floating,
           ),
         );
       }
     } catch (e) {
       Logger.error('테스트 알림 전송 실패', e);
+
+      HapticUtils.error();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('테스트 알림 전송에 실패했습니다. 알림 권한을 확인해주세요.'),
+            backgroundColor: colors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSendingTestNotification = false;
+        });
+      }
     }
   }
 }

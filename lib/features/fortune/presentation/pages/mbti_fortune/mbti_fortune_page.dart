@@ -8,6 +8,7 @@ import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
 import 'package:fortune/core/services/unified_fortune_service.dart';
 import 'package:fortune/core/utils/logger.dart';
+import 'package:fortune/core/utils/fortune_completion_helper.dart';
 import 'package:fortune/shared/components/toast.dart';
 import 'package:fortune/services/ad_service.dart';
 import 'package:fortune/core/utils/subscription_snackbar.dart';
@@ -47,7 +48,6 @@ class _MbtiFortunePageState
   FortuneResult? _fortuneResult;
   bool _isLoading = false;
   bool _showResult = false;
-  double _energyLevel = 0.75;
 
   // GPT 스타일 타이핑 효과 섹션 관리
   int _currentTypingSection = 0;
@@ -232,10 +232,6 @@ class _MbtiFortunePageState
       debugPrint('🧠 [MbtiPage] data keys: ${result.data.keys.toList()}');
       Logger.info('[MbtiFortunePage] 운세 생성 완료: ${result.id}');
 
-      // API 응답에서 energyLevel 추출
-      final data = result.data as Map<String, dynamic>? ?? {};
-      final energyLevelValue = data['energyLevel'] as num? ?? 75;
-
       // ✅ 최소 1초 대기 (로딩 애니메이션 보여주기 위함)
       loadingTimer.stop();
       final elapsedMs = loadingTimer.elapsedMilliseconds;
@@ -247,13 +243,12 @@ class _MbtiFortunePageState
         // ✅ MBTI 운세 결과 공개 시 햅틱 피드백
         final score = result.score ?? 70;
         ref.read(fortuneHapticServiceProvider).scoreReveal(score);
-        debugPrint('🧠 [MbtiPage] ✅ 결과 설정: score=$score, energyLevel=$energyLevelValue');
+        debugPrint('🧠 [MbtiPage] ✅ 결과 설정: score=$score');
 
         setState(() {
           _fortuneResult = result;
           _showResult = true;
           _isLoading = false;
-          _energyLevel = (energyLevelValue / 100).clamp(0.0, 1.0);
           _currentTypingSection = 0; // 타이핑 섹션 리셋
         });
         debugPrint('🧠 [MbtiPage] ✅ 결과 화면 전환 완료');
@@ -270,7 +265,7 @@ class _MbtiFortunePageState
 
         Toast.show(
           context,
-          message: '운세 생성 중 오류가 발생했습니다',
+          message: 'MBTI 운세를 불러올 수 없습니다. 네트워크 연결을 확인해주세요.',
           type: ToastType.error,
         );
       }
@@ -327,6 +322,11 @@ class _MbtiFortunePageState
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // ✅ 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'mbti');
+          }
 
           if (mounted) {
             setState(() {
@@ -464,14 +464,7 @@ class _MbtiFortunePageState
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          // 1. Energy Level Card (무료)
-          EnergyCard(
-            energyLevel: _energyLevel,
-            colors: _mbtiColors[_selectedMbti!]!,
-          ),
-          const SizedBox(height: 16),
-
-          // 2. Main Fortune Card - todayFortune (무료)
+          // 1. Main Fortune Card - todayFortune (무료)
           MainFortuneCard(
             fortuneResult: result,
             selectedMbti: _selectedMbti!,

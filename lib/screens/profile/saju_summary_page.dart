@@ -230,6 +230,8 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
           shortDescription: concept['short']!,
           fullDescription: concept['full']!,
           icon: icon,
+          realLife: concept['realLife'],
+          tips: concept['tips'],
         ),
         const SizedBox(height: DSSpacing.md),
         child,

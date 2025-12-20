@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/domain/entities/fortune.dart' show Fortune;
-import 'package:fortune/services/favorites_widget_data_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../pages/fortune_list_page.dart';
 
@@ -145,11 +144,11 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
     await _syncWidgetFavorites(newFavorites);
   }
 
-  /// 위젯 즐겨찾기 동기화
+  /// 위젯 즐겨찾기 동기화 (새 위젯 시스템에서는 fortune-daily 기반이므로 별도 동기화 불필요)
   Future<void> _syncWidgetFavorites(Set<String> favorites) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('fortune_favorites', favorites.toList());
-    await FavoritesWidgetDataManager.syncToWidget();
+    // 새 위젯 시스템은 fortune-daily 기반이므로 별도 동기화 불필요
   }
 
   /// 정렬 옵션 변경
@@ -174,18 +173,20 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
     await _saveToPreferences();
   }
 
-  /// 운세 데이터를 위젯에 캐시 (즐겨찾기된 운세만)
+  /// 운세 데이터를 위젯에 캐시
+  /// 새 위젯 시스템에서는 fortune-daily 기반이므로 별도 캐시 불필요
+  /// daily fortune 조회 시 WidgetDataService.fetchAndSaveForWidget() 호출
   Future<void> cacheFortuneForWidget(String fortuneType, Fortune fortune) async {
-    // 즐겨찾기된 운세만 캐시
-    if (state.favorites.contains(fortuneType)) {
-      await FavoritesWidgetDataManager.cacheFortune(fortuneType, fortune);
-      await FavoritesWidgetDataManager.syncToWidget();
-    }
+    // 새 위젯 시스템은 fortune-daily 기반이므로
+    // daily fortune 조회 시점에 WidgetDataService에서 처리
+    // 이 메서드는 호환성을 위해 유지하되 동작하지 않음
   }
 
-  /// 위젯 롤링 업데이트 트리거
+  /// 위젯 업데이트 트리거
+  /// 새 위젯 시스템에서는 백그라운드 갱신으로 대체
   Future<void> triggerWidgetRolling() async {
-    await FavoritesWidgetDataManager.handleRollingUpdate();
+    // 새 위젯 시스템은 1분 롤링이 아닌 백그라운드 갱신 방식
+    // 수동 업데이트가 필요한 경우에만 호출
   }
 
   /// 오늘 조회 가능 여부 확인

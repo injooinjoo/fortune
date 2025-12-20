@@ -87,7 +87,7 @@ class _OverallCardState extends State<OverallCard> {
                     Expanded(
                       child: Text(
                         widget.message,
-                        style: ctx.bodyLarge.copyWith(
+                        style: ctx.calligraphySubtitle.copyWith(
                           color: widget.isDark ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.w700,
                         ),
@@ -115,11 +115,10 @@ class _OverallCardState extends State<OverallCard> {
                   child: SingleChildScrollView(
                     child: Text(
                       widget.fullDescription,
-                      style: ctx.bodySmall.copyWith(
+                      style: ctx.calligraphyBody.copyWith(
                         color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
-                        fontWeight: FontWeight.w400,
-                        height: 1.6,
-                        letterSpacing: -0.2,
+                        fontSize: 15,
+                        height: 1.8,
                       ),
                     ),
                   ),
@@ -191,13 +190,22 @@ class _OverallCardState extends State<OverallCard> {
           .fadeIn(duration: 600.ms)
           .scale(begin: const Offset(0.95, 0.95), duration: 600.ms, curve: Curves.easeOut),
 
-        // 헤더 (카드 제목만 표시 - 이름은 상단 헤더에 있음)
-        Text(
-          '오늘의 총운',
-          style: context.heading3.copyWith(
-            color: widget.isDark ? Colors.white : Colors.black87,
-            letterSpacing: -0.5,
-          ),
+        // 헤더 (카드 제목 - category_detail_card와 통일)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              '🌟',
+              style: TextStyle(fontSize: 28),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              '오늘의 총운',
+              style: context.calligraphyTitle.copyWith(
+                color: widget.isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+          ],
         ),
 
         const SizedBox(height: 16),
@@ -218,16 +226,31 @@ class _OverallCardState extends State<OverallCard> {
           ),
           child: Column(
             children: [
-              // 점수 - 크고 임팩트 있는 숫자
-              Text(
-                '${widget.score}',
-                style: context.displayLarge.copyWith(
-                  fontSize: 72, // 예외: 초대형 숫자
-                  color: scoreColor,
-                  fontWeight: FontWeight.w200,
-                  letterSpacing: -4,
-                  height: 1.0,
-                ),
+              // 점수 - 크고 임팩트 있는 숫자 + "점" 표시
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    '${widget.score}',
+                    style: context.displayLarge.copyWith(
+                      fontSize: 72, // 예외: 초대형 숫자
+                      color: scoreColor,
+                      fontWeight: FontWeight.w200,
+                      letterSpacing: -4,
+                      height: 1.0,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '점',
+                    style: context.bodyLarge.copyWith(
+                      color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ).animate()
                 .fadeIn(duration: 500.ms)
                 .scale(begin: const Offset(0.9, 0.9), duration: 500.ms, curve: Curves.easeOut),
@@ -286,10 +309,9 @@ class _OverallCardState extends State<OverallCard> {
           child: Center(
             child: Text(
               widget.message,
-              style: context.bodyLarge.copyWith(
+              style: context.calligraphySubtitle.copyWith(
                 color: widget.isDark ? Colors.white : Colors.black87,
                 fontWeight: FontWeight.w700,
-                height: 1.4,
               ),
             ),
           ),
@@ -322,19 +344,32 @@ class _OverallCardState extends State<OverallCard> {
                   widget.fullDescription,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
-                  style: context.bodySmall.copyWith(
+                  style: context.calligraphyBody.copyWith(
                     color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
-                    fontWeight: FontWeight.w400,
-                    height: 1.5,
-                    letterSpacing: -0.2,
+                    fontSize: 14,
+                    height: 1.6,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
+                // 확장 힌트
                 Center(
-                  child: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: scoreColor.withValues(alpha: 0.5),
-                    size: 20,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '탭하여 자세히 보기',
+                        style: context.labelSmall.copyWith(
+                          color: scoreColor.withValues(alpha: 0.6),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        color: scoreColor.withValues(alpha: 0.6),
+                        size: 16,
+                      ),
+                    ],
                   ),
                 ),
               ],

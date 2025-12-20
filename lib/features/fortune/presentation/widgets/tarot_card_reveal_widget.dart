@@ -217,12 +217,14 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 child: SizedBox(
                   width: widget.width,
                   height: widget.height,
+                  // U13: 플립 애니메이션 후 앞면 미러링 수정
+                  // 180° 회전 후에는 이미지가 뒤집혀 보이므로 다시 180° 회전하여 원상복구
                   child: isShowingFront
-                      ? _buildFrontSide()
-                      : Transform(
+                      ? Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.identity()..rotateY(math.pi),
-                          child: _buildBackSide()),
+                          child: _buildFrontSide())
+                      : _buildBackSide(),
                 ),
               );
             },

@@ -3,9 +3,9 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:typed_data';
-import '../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
+/// U09: 스크린샷 감지 UI 리뉴얼 - 한지 스타일 전통 디자인
 class SocialShareBottomSheet extends ConsumerStatefulWidget {
   final String fortuneTitle;
   final String fortuneContent;
@@ -25,11 +25,18 @@ class SocialShareBottomSheet extends ConsumerStatefulWidget {
   ConsumerState<SocialShareBottomSheet> createState() => _SocialShareBottomSheetState();
 }
 
-class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet> 
+class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
+
+  // U09: Traditional Korean color palette (한지/오방색 스타일)
+  static const _hanjiBeige = Color(0xFFFFF8E1);
+  static const _traditionalBrown = Color(0xFF8D6E63);
+  static const _lightBrown = Color(0xFFBCAAA4);
+  static const _darkBrown = Color(0xFF5D4037);
+  static const _sealRed = Color(0xFFB71C1C);
 
   @override
   void initState() {
@@ -37,19 +44,19 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this);
-    
+
     _slideAnimation = Tween<double>(
       begin: 1.0,
       end: 0.0).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOutCubic));
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeIn));
-    
+
     _animationController.forward();
   }
 
@@ -63,41 +70,47 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
+    final isDark = theme.brightness == Brightness.dark;
 
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
         return Container(
-          height: size.height * 0.75,
+          height: size.height * 0.72,
           decoration: BoxDecoration(
-            color: theme.scaffoldBackgroundColor,
+            // U09: 한지 스타일 배경
+            color: isDark ? const Color(0xFF1C1C1E) : _hanjiBeige,
             borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20)),
+              top: Radius.circular(24)),
+            border: Border(
+              top: BorderSide(color: _traditionalBrown.withValues(alpha: 0.3), width: 2),
+              left: BorderSide(color: _traditionalBrown.withValues(alpha: 0.3), width: 2),
+              right: BorderSide(color: _traditionalBrown.withValues(alpha: 0.3), width: 2),
+            ),
             boxShadow: [
               BoxShadow(
-                color: TossDesignSystem.gray900.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, -5))]),
+                color: Colors.black.withValues(alpha: 0.15),
+                blurRadius: 24,
+                offset: const Offset(0, -8))]),
           child: Transform.translate(
-            offset: Offset(0, size.height * 0.75 * _slideAnimation.value),
+            offset: Offset(0, size.height * 0.72 * _slideAnimation.value),
             child: Opacity(
               opacity: _fadeAnimation.value,
               child: Column(
                 children: [
-                  _buildHandle(),
-                  _buildHeader(theme),
+                  _buildHandle(isDark),
+                  _buildHeader(theme, isDark),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppSpacing.spacing5),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         children: [
-                          _buildPreview(theme),
-                          SizedBox(height: AppSpacing.spacing6),
-                          _buildShareOptions(theme),
-                          SizedBox(height: AppSpacing.spacing5),
-                          _buildSaveOptions(theme),
-                          SizedBox(height: AppSpacing.spacing10),
+                          _buildPreview(theme, isDark),
+                          const SizedBox(height: 20),
+                          _buildShareOptions(theme, isDark),
+                          const SizedBox(height: 16),
+                          _buildSaveOptions(theme, isDark),
+                          const SizedBox(height: 24),
                         ],
                       ),
                     ),
@@ -111,74 +124,110 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
     );
   }
 
-  Widget _buildHandle() {
+  Widget _buildHandle(bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(
-        top: AppSpacing.small),
-      width: 40,
-      height: 4,
+      margin: const EdgeInsets.only(top: 12),
+      width: 48,
+      height: 5,
       decoration: BoxDecoration(
-        color: TossDesignSystem.gray600,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall)));
+        color: _traditionalBrown.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(3)));
   }
 
-  Widget _buildHeader(ThemeData theme) {
+  Widget _buildHeader(ThemeData theme, bool isDark) {
     return Padding(
-      padding: AppSpacing.paddingAll20,
+      padding: const EdgeInsets.all(20),
       child: Row(
         children: [
-          Icon(
-            Icons.screenshot_outlined,
-            color: theme.primaryColor,
-            size: AppDimensions.iconSizeLarge),
-          SizedBox(width: AppSpacing.spacing3),
+          // U09: 전통 스타일 아이콘
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: _sealRed.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: _sealRed.withValues(alpha: 0.3)),
+            ),
+            child: const Center(
+              child: Text(
+                '共',
+                style: TextStyle(
+                  color: _sealRed,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'ZenSerif',
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '스크린샷 감지됨',
-                  style: theme.textTheme.titleLarge?.copyWith(
+                  '운세 공유하기',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : _darkBrown,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: AppSpacing.spacing1),
+                const SizedBox(height: 4),
                 Text(
-                  '운세를 친구들과 공유해보세요!',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: TossDesignSystem.gray600)),
+                  '친구들과 오늘의 운세를 나눠보세요',
+                  style: TextStyle(
+                    color: (isDark ? Colors.white : _darkBrown).withValues(alpha: 0.6),
+                    fontSize: 13)),
               ],
             ),
           ),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.close),
+            icon: Icon(
+              Icons.close,
+              color: (isDark ? Colors.white : _darkBrown).withValues(alpha: 0.5),
+            ),
             padding: EdgeInsets.zero),
         ],
       ),
     );
   }
 
-  Widget _buildPreview(ThemeData theme) {
+  Widget _buildPreview(ThemeData theme, bool isDark) {
     if (widget.previewImage == null) {
       return const SizedBox();
     }
 
-    return GlassContainer(
-      borderRadius: AppDimensions.borderRadiusLarge,
-      padding: AppSpacing.paddingAll12,
+    // U09: 한지 스타일 미리보기 카드
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: _lightBrown.withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           Text(
-            '미리보기',
-            style: theme.textTheme.titleMedium?.copyWith(
+            '📜 미리보기',
+            style: TextStyle(
+              color: isDark ? Colors.white : _darkBrown,
+              fontSize: 14,
               fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: 10),
           ClipRRect(
-            borderRadius: AppDimensions.borderRadiusMedium,
+            borderRadius: BorderRadius.circular(10),
             child: Image.memory(
               widget.previewImage!,
-              height: 200,
+              height: 160,
               fit: BoxFit.cover),
           ),
         ],
@@ -186,25 +235,33 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
     );
   }
 
-  Widget _buildShareOptions(ThemeData theme) {
+  Widget _buildShareOptions(ThemeData theme, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'SNS로 공유하기',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold)),
-        SizedBox(height: AppSpacing.spacing4),
+        Row(
+          children: [
+            Container(width: 3, height: 16, color: _traditionalBrown),
+            const SizedBox(width: 8),
+            Text(
+              'SNS로 공유하기',
+              style: TextStyle(
+                color: isDark ? Colors.white : _darkBrown,
+                fontSize: 15,
+                fontWeight: FontWeight.bold)),
+          ],
+        ),
+        const SizedBox(height: 14),
         Wrap(
-          spacing: 12,
-          runSpacing: 12,
+          spacing: 10,
+          runSpacing: 10,
           children: [
             _buildShareButton(
               platform: SharePlatform.kakaoTalk,
               label: '카카오톡',
               icon: Icons.chat_bubble,
               color: const Color(0xFFFEE500),
-              iconColor: TossDesignSystem.gray900.withValues(alpha: 0.87)),
+              iconColor: const Color(0xFF3C1E1E)),
             _buildShareButton(
               platform: SharePlatform.instagram,
               label: '인스타그램',
@@ -220,9 +277,9 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               color: const Color(0xFF1877F2)),
             _buildShareButton(
               platform: SharePlatform.twitter,
-              label: 'X (트위터)',
+              label: 'X',
               icon: Icons.tag,
-              color: TossDesignSystem.gray900),
+              color: const Color(0xFF1DA1F2)),
             _buildShareButton(
               platform: SharePlatform.whatsapp,
               label: 'WhatsApp',
@@ -232,7 +289,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               platform: SharePlatform.other,
               label: '더보기',
               icon: Icons.more_horiz,
-              color: TossDesignSystem.gray600)])]);
+              color: _traditionalBrown)])]);
   }
 
   Widget _buildShareButton({
@@ -273,15 +330,24 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               style: Theme.of(context).textTheme.labelSmall)])));
   }
 
-  Widget _buildSaveOptions(ThemeData theme) {
+  Widget _buildSaveOptions(ThemeData theme, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '저장 옵션',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold)),
-        SizedBox(height: AppSpacing.spacing4),
+        // U09: 전통 스타일 헤더
+        Row(
+          children: [
+            Container(width: 3, height: 16, color: _traditionalBrown),
+            const SizedBox(width: 8),
+            Text(
+              '저장 옵션',
+              style: TextStyle(
+                color: isDark ? Colors.white : _darkBrown,
+                fontSize: 15,
+                fontWeight: FontWeight.bold)),
+          ],
+        ),
+        const SizedBox(height: 14),
         Row(
           children: [
             Expanded(
@@ -292,8 +358,8 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                 },
                 icon: Icons.download_outlined,
                 label: '갤러리에 저장',
-                color: theme.primaryColor)),
-            SizedBox(width: AppSpacing.spacing3),
+                color: _traditionalBrown)),
+            const SizedBox(width: 10),
             Expanded(
               child: _buildActionButton(
                 onTap: () {
@@ -302,7 +368,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                 },
                 icon: Icons.copy_outlined,
                 label: '텍스트 복사',
-                color: TossDesignSystem.gray600))])]);
+                color: _lightBrown))])]);
   }
 
   Widget _buildActionButton({

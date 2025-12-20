@@ -13,6 +13,18 @@ class CategorySelectionStep extends StatelessWidget {
     required this.onCategorySelected,
   });
 
+  // C04: 스트리머/프로게이머를 하단에 배치한 카테고리 순서
+  static const List<CelebrityType> _orderedCategories = [
+    CelebrityType.actor,
+    CelebrityType.soloSinger,
+    CelebrityType.idolMember,
+    CelebrityType.athlete,
+    CelebrityType.politician,
+    CelebrityType.business,
+    CelebrityType.streamer,    // 하단 배치
+    CelebrityType.proGamer,    // 하단 배치
+  ];
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -51,8 +63,8 @@ class CategorySelectionStep extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          // Individual categories
-          ...CelebrityType.values.map((category) {
+          // Individual categories (C04: 스트리머/프로게이머 하단 배치)
+          ..._orderedCategories.map((category) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: CategoryCard(

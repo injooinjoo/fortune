@@ -14,6 +14,7 @@ import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/presentation/providers/auth_provider.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/utils/fortune_completion_helper.dart';
 import 'widgets/dna_header_widget.dart';
 import 'widgets/daily_fortune_section.dart';
 import 'widgets/love_style_section.dart';
@@ -201,6 +202,175 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
         );
       },
       resultBuilder: (context, result) => _buildResultView(result),
+    );
+  }
+
+  /// 인기 순위 클릭 시 랭킹 상세 바텀시트 표시
+  void _showRankingBottomSheet() {
+    if (_currentDNA == null) return;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final rank = _currentDNA!.popularityRank ?? 0;
+    const totalCombinations = 768; // 16 MBTI × 4 혈액형 × 12 띠
+    final percentile = ((totalCombinations - rank) / totalCombinations * 100).clamp(0, 100).toInt();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 드래그 핸들
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey[700] : Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 타이틀
+            Text(
+              '🏆 나의 성격 DNA 랭킹',
+              style: TextStyle(
+                fontFamily: 'GowunBatang',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 순위 표시
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    _currentDNA!.popularityColor,
+                    _currentDNA!.popularityColor.withValues(alpha: 0.7),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: _currentDNA!.popularityColor.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    rank <= 10 ? '🥇' : rank <= 50 ? '🥈' : '🎖️',
+                    style: const TextStyle(fontSize: 48),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '$rank위',
+                    style: const TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 36,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    '전체 $totalCombinations개 조합 중',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white.withValues(alpha: 0.9),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // 백분위 설명
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.grey.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '인기도 상위',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                      Text(
+                        '$percentile%',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: _currentDNA!.popularityColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // 프로그레스 바
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: percentile / 100,
+                      backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
+                      valueColor: AlwaysStoppedAnimation(_currentDNA!.popularityColor),
+                      minHeight: 8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // DNA 코드
+            Text(
+              _currentDNA!.dnaCode,
+              style: TextStyle(
+                fontFamily: 'GowunBatang',
+                fontSize: 14,
+                color: isDark ? Colors.grey[500] : Colors.grey[600],
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              rank <= 10
+                  ? '✨ 희귀한 성격 조합이에요!'
+                  : rank <= 50
+                      ? '💫 특별한 성격 조합이네요!'
+                      : '🌟 독특한 나만의 성격이에요!',
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
+
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
+          ],
+        ),
+      ),
     );
   }
 
@@ -429,7 +599,10 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
         SingleChildScrollView(
           child: Column(
             children: [
-              DnaHeaderWidget(dna: _currentDNA!),
+              DnaHeaderWidget(
+                dna: _currentDNA!,
+                onPopularityTapped: () => _showRankingBottomSheet(),
+              ),
               const SizedBox(height: 12),
               if (_currentDNA!.dailyFortune != null) ...[
                 DailyFortuneSection(dailyFortune: _currentDNA!.dailyFortune!),
@@ -576,6 +749,11 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
 
           // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
           await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // NEW: 게이지 증가 호출
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'personality-dna');
+          }
 
           if (mounted) {
             setState(() {

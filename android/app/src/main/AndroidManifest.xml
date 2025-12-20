@@ -127,7 +127,7 @@
                 android:resource="@xml/fortune_love_widget_info" />
         </receiver>
 
-        <!-- Favorites Rolling Widget -->
+        <!-- Favorites Rolling Widget (Legacy - to be removed) -->
         <receiver
             android:name=".FavoritesAppWidget"
             android:exported="true">
@@ -138,6 +138,56 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/favorites_widget_info" />
+        </receiver>
+
+        <!-- New Unified Widgets (4 types based on fortune-daily data) -->
+
+        <!-- Overall Fortune Widget -->
+        <receiver
+            android:name=".OverallAppWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/overall_widget_info" />
+        </receiver>
+
+        <!-- Category Fortune Widget -->
+        <receiver
+            android:name=".CategoryAppWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/category_widget_info" />
+        </receiver>
+
+        <!-- Time Slot Fortune Widget -->
+        <receiver
+            android:name=".TimeSlotAppWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/timeslot_widget_info" />
+        </receiver>
+
+        <!-- Lotto Fortune Widget -->
+        <receiver
+            android:name=".LottoAppWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/lotto_widget_info" />
         </receiver>
 
         <!-- WorkManager initialization -->

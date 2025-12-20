@@ -1,21 +1,27 @@
 /// 커리어 코칭 입력 모델 (간소화된 2단계)
 class CareerCoachingInput {
   // Step 1: 현재 상황
-  final String currentRole; // 현재 직무/역할
+  final String currentRole; // 현재 직무/역할 (경력 수준: junior, mid, senior 등)
   final String experienceLevel; // 경력 수준
   final String primaryConcern; // 핵심 고민
-  final String? industry; // 업계 (선택)
-  
+  final String? industry; // 업계 (선택) - deprecated, use field instead
+
+  // F20: 분야 및 맞춤 포지션
+  final String? field; // 분야 (tech, finance, healthcare 등)
+  final String? position; // 분야별 맞춤 포지션 (developer, analyst 등)
+
   // Step 2: 목표와 가치
   final String shortTermGoal; // 3-6개월 목표
   final String coreValue; // 핵심 가치
   final List<String> skillsToImprove; // 개선하고 싶은 스킬
-  
+
   CareerCoachingInput({
     required this.currentRole,
     required this.experienceLevel,
     required this.primaryConcern,
     this.industry,
+    this.field,
+    this.position,
     required this.shortTermGoal,
     required this.coreValue,
     required this.skillsToImprove,
@@ -294,3 +300,142 @@ const Map<String, List<String>> skillCategories = {
   '창의': ['디자인', 'UX/UI', '콘텐츠제작', '브랜딩', '스토리텔링'],
   '언어': ['영어', '중국어', '일본어', '프레젠테이션', '문서작성'],
 };
+
+/// F20: 분야(산업군) 옵션 - 먼저 분야를 선택하면 맞춤 포지션 표시
+const List<FieldOption> fieldOptions = [
+  FieldOption(id: 'tech', title: 'IT/테크', emoji: '💻', description: '소프트웨어, 하드웨어, AI'),
+  FieldOption(id: 'finance', title: '금융', emoji: '💰', description: '은행, 증권, 보험, 핀테크'),
+  FieldOption(id: 'healthcare', title: '의료/바이오', emoji: '🏥', description: '병원, 제약, 바이오텍'),
+  FieldOption(id: 'education', title: '교육', emoji: '📚', description: '학교, 학원, 에듀테크'),
+  FieldOption(id: 'service', title: '서비스업', emoji: '🛎️', description: '유통, 호텔, F&B'),
+  FieldOption(id: 'manufacturing', title: '제조업', emoji: '🏭', description: '자동차, 전자, 화학'),
+  FieldOption(id: 'media', title: '미디어/엔터', emoji: '🎬', description: '방송, 게임, 콘텐츠'),
+  FieldOption(id: 'consulting', title: '컨설팅', emoji: '📊', description: '경영, 전략, 인사'),
+  FieldOption(id: 'startup', title: '스타트업', emoji: '🚀', description: '초기창업, 성장기업'),
+  FieldOption(id: 'public', title: '공공/비영리', emoji: '🏛️', description: '공기업, NGO, 정부'),
+  FieldOption(id: 'other', title: '기타', emoji: '✨', description: '그 외 분야'),
+];
+
+/// 분야 옵션 클래스
+class FieldOption {
+  final String id;
+  final String title;
+  final String emoji;
+  final String description;
+
+  const FieldOption({
+    required this.id,
+    required this.title,
+    required this.emoji,
+    required this.description,
+  });
+}
+
+/// F20: 분야별 맞춤 포지션 - 선택한 분야에 따라 해당 포지션 목록 표시
+const Map<String, List<PositionOption>> fieldPositions = {
+  'tech': [
+    PositionOption(id: 'developer', title: '개발자', emoji: '👨‍💻'),
+    PositionOption(id: 'designer', title: '디자이너', emoji: '🎨'),
+    PositionOption(id: 'pm', title: 'PM/기획자', emoji: '📋'),
+    PositionOption(id: 'data', title: '데이터분석가', emoji: '📊'),
+    PositionOption(id: 'qa', title: 'QA/테스터', emoji: '🔍'),
+    PositionOption(id: 'devops', title: 'DevOps/인프라', emoji: '🔧'),
+    PositionOption(id: 'ai', title: 'AI/ML 엔지니어', emoji: '🤖'),
+    PositionOption(id: 'security', title: '보안전문가', emoji: '🔒'),
+  ],
+  'finance': [
+    PositionOption(id: 'analyst', title: '애널리스트', emoji: '📈'),
+    PositionOption(id: 'trader', title: '트레이더', emoji: '💹'),
+    PositionOption(id: 'rm', title: 'RM/PB', emoji: '🤝'),
+    PositionOption(id: 'risk', title: '리스크관리', emoji: '⚠️'),
+    PositionOption(id: 'compliance', title: '컴플라이언스', emoji: '📜'),
+    PositionOption(id: 'quant', title: '퀀트', emoji: '🔢'),
+    PositionOption(id: 'accounting', title: '회계/재무', emoji: '💵'),
+  ],
+  'healthcare': [
+    PositionOption(id: 'doctor', title: '의사', emoji: '👨‍⚕️'),
+    PositionOption(id: 'nurse', title: '간호사', emoji: '👩‍⚕️'),
+    PositionOption(id: 'pharmacist', title: '약사', emoji: '💊'),
+    PositionOption(id: 'researcher', title: '연구원', emoji: '🔬'),
+    PositionOption(id: 'biotech', title: '바이오엔지니어', emoji: '🧬'),
+    PositionOption(id: 'clinical', title: '임상연구', emoji: '🧪'),
+    PositionOption(id: 'admin', title: '병원행정', emoji: '🏥'),
+  ],
+  'education': [
+    PositionOption(id: 'teacher', title: '교사', emoji: '👩‍🏫'),
+    PositionOption(id: 'professor', title: '교수', emoji: '🎓'),
+    PositionOption(id: 'tutor', title: '강사', emoji: '📖'),
+    PositionOption(id: 'curriculum', title: '교육과정개발', emoji: '📝'),
+    PositionOption(id: 'edtech', title: '에듀테크', emoji: '💻'),
+    PositionOption(id: 'admin', title: '교육행정', emoji: '🏫'),
+  ],
+  'service': [
+    PositionOption(id: 'retail', title: '유통/리테일', emoji: '🛍️'),
+    PositionOption(id: 'hospitality', title: '호텔/관광', emoji: '🏨'),
+    PositionOption(id: 'fnb', title: 'F&B', emoji: '🍽️'),
+    PositionOption(id: 'cs', title: '고객서비스', emoji: '📞'),
+    PositionOption(id: 'logistics', title: '물류', emoji: '📦'),
+    PositionOption(id: 'sales', title: '영업', emoji: '🤝'),
+  ],
+  'manufacturing': [
+    PositionOption(id: 'engineer', title: '생산엔지니어', emoji: '⚙️'),
+    PositionOption(id: 'quality', title: '품질관리', emoji: '✅'),
+    PositionOption(id: 'rnd', title: 'R&D', emoji: '🔬'),
+    PositionOption(id: 'supply', title: '구매/자재', emoji: '📦'),
+    PositionOption(id: 'maintenance', title: '설비관리', emoji: '🔧'),
+    PositionOption(id: 'safety', title: '안전관리', emoji: '⛑️'),
+  ],
+  'media': [
+    PositionOption(id: 'pd', title: 'PD/디렉터', emoji: '🎬'),
+    PositionOption(id: 'writer', title: '작가/기자', emoji: '✍️'),
+    PositionOption(id: 'creator', title: '콘텐츠크리에이터', emoji: '📱'),
+    PositionOption(id: 'game', title: '게임개발', emoji: '🎮'),
+    PositionOption(id: 'marketing', title: '마케팅', emoji: '📣'),
+    PositionOption(id: 'art', title: '아티스트', emoji: '🎨'),
+  ],
+  'consulting': [
+    PositionOption(id: 'strategy', title: '전략컨설턴트', emoji: '🎯'),
+    PositionOption(id: 'operation', title: '운영컨설턴트', emoji: '⚙️'),
+    PositionOption(id: 'hr', title: 'HR컨설턴트', emoji: '👥'),
+    PositionOption(id: 'it', title: 'IT컨설턴트', emoji: '💻'),
+    PositionOption(id: 'tax', title: '세무/회계', emoji: '📊'),
+    PositionOption(id: 'legal', title: '법률자문', emoji: '⚖️'),
+  ],
+  'startup': [
+    PositionOption(id: 'founder', title: '창업자/대표', emoji: '🚀'),
+    PositionOption(id: 'cto', title: 'CTO/개발리드', emoji: '👨‍💻'),
+    PositionOption(id: 'growth', title: '그로스해커', emoji: '📈'),
+    PositionOption(id: 'ops', title: '운영총괄', emoji: '⚙️'),
+    PositionOption(id: 'biz', title: '사업개발', emoji: '🤝'),
+    PositionOption(id: 'product', title: '프로덕트매니저', emoji: '📋'),
+  ],
+  'public': [
+    PositionOption(id: 'civil', title: '공무원', emoji: '🏛️'),
+    PositionOption(id: 'researcher', title: '연구원', emoji: '🔬'),
+    PositionOption(id: 'ngo', title: 'NGO활동가', emoji: '🌍'),
+    PositionOption(id: 'policy', title: '정책기획', emoji: '📜'),
+    PositionOption(id: 'social', title: '사회복지사', emoji: '❤️'),
+    PositionOption(id: 'military', title: '군인/경찰', emoji: '👮'),
+  ],
+  'other': [
+    PositionOption(id: 'freelance', title: '프리랜서', emoji: '💼'),
+    PositionOption(id: 'artist', title: '예술가', emoji: '🎨'),
+    PositionOption(id: 'athlete', title: '운동선수', emoji: '🏃'),
+    PositionOption(id: 'influencer', title: '인플루언서', emoji: '📱'),
+    PositionOption(id: 'entrepreneur', title: '개인사업자', emoji: '🏪'),
+    PositionOption(id: 'etc', title: '기타', emoji: '✨'),
+  ],
+};
+
+/// 포지션 옵션 클래스
+class PositionOption {
+  final String id;
+  final String title;
+  final String emoji;
+
+  const PositionOption({
+    required this.id,
+    required this.title,
+    required this.emoji,
+  });
+}

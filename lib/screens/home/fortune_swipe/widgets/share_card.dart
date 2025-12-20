@@ -97,20 +97,56 @@ class _ShareCardState extends State<ShareCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '오늘의 운세 공유하기',
-          style: TextStyle(
-            color: widget.isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          '친구들과 함께 운세를 나눠보세요',
-          style: context.bodySmall.copyWith(
-            color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-          ),
+        // 헤더 (제목 + 공유 버튼)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '오늘의 운세 공유하기',
+                    style: context.calligraphyTitle.copyWith(
+                      color: widget.isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '친구들과 함께 운세를 나눠보세요',
+                    style: context.bodySmall.copyWith(
+                      color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // U05: 오른쪽 상단 공유 버튼
+            IconButton(
+              onPressed: _isCapturing ? null : _captureAndShare,
+              icon: _isCapturing
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: _traditionalBrown,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.share_rounded,
+                      color: _traditionalBrown,
+                      size: 24,
+                    ),
+              style: IconButton.styleFrom(
+                backgroundColor: _traditionalBrown.withValues(alpha: 0.1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
         ),
 
         const SizedBox(height: 16),
@@ -222,35 +258,35 @@ class _TraditionalShareCardContent extends StatelessWidget {
           // 헤더
           _buildHeader(),
 
-          // 콘텐츠
+          // 콘텐츠 (U06: 컴팩트한 패딩으로 짤림 방지)
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Column(
               children: [
                 // 날짜 & 사용자
                 _buildDateUserRow(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // 福 인장 스타일 점수
                 _buildSealScore(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // 카테고리 점수
                 if (categoryScores != null && categoryScores!.isNotEmpty) ...[
                   _buildCategoryScores(),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                 ],
 
                 // 럭키 아이템
                 if (luckyItems != null && luckyItems!.isNotEmpty) ...[
                   _buildLuckyItems(),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                 ],
 
                 // 오행 분석
                 if (fiveElements != null && fiveElements!.isNotEmpty) ...[
                   _buildFiveElements(),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                 ],
 
                 // 푸터
@@ -301,10 +337,10 @@ class _TraditionalShareCardContent extends StatelessWidget {
   Widget _buildSealScore() {
     return Column(
       children: [
-        // 福 인장 스타일
+        // 福 인장 스타일 (U06: 컴팩트하게 조정)
         Container(
-          width: 90,
-          height: 90,
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
             color: _sealRed.withValues(alpha: 0.08),
             shape: BoxShape.circle,
@@ -317,7 +353,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
                 '福',
                 style: TextStyle(
                   color: _sealRed,
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'ZenSerif',
                 ),
@@ -326,17 +362,17 @@ class _TraditionalShareCardContent extends StatelessWidget {
                 '$score점',
                 style: const TextStyle(
                   color: _sealRed,
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         // 사자성어/메시지
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
           decoration: BoxDecoration(
             color: _lightBrown.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(20),
@@ -346,7 +382,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
             message,
             style: const TextStyle(
               color: _darkBrown,
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               fontFamily: 'ZenSerif',
             ),
@@ -366,30 +402,30 @@ class _TraditionalShareCardContent extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: _lightBrown.withValues(alpha: 0.3)),
       ),
       child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
+        spacing: 6,
+        runSpacing: 6,
         alignment: WrapAlignment.center,
         children: categories.entries.map((entry) {
           final scoreVal = categoryScores?[entry.key] ?? 70;
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: _hanjiBeige,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               border: Border.all(color: _lightBrown.withValues(alpha: 0.4)),
             ),
             child: Text(
               '${entry.value} $scoreVal',
               style: const TextStyle(
                 color: _darkBrown,
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -399,20 +435,36 @@ class _TraditionalShareCardContent extends StatelessWidget {
     );
   }
 
+  /// U07: 시간 포맷 변경 ("저녁6시에서8시" → "저녁6~8시")
+  String _formatTimeRange(String time) {
+    // "저녁6시에서8시" 또는 "오전10시에서12시" 패턴을 "저녁6~8시"로 변환
+    final regex = RegExp(r'^(.+?)(\d+)시에서(\d+)시$');
+    final match = regex.firstMatch(time);
+    if (match != null) {
+      final prefix = match.group(1) ?? ''; // 저녁, 오전, 오후 등
+      final startHour = match.group(2) ?? '';
+      final endHour = match.group(3) ?? '';
+      return '$prefix$startHour~$endHour시';
+    }
+    // 매칭되지 않으면 원본 반환
+    return time;
+  }
+
   Widget _buildLuckyItems() {
     // 4개만 표시 (시간, 색상, 숫자, 방향)
+    final rawTime = luckyItems?['시간'] ?? luckyItems?['time'] ?? '오전 10시';
     final displayItems = {
-      '🕐': luckyItems?['시간'] ?? luckyItems?['time'] ?? '오전 10시',
+      '🕐': _formatTimeRange(rawTime),
       '🎨': luckyItems?['색상'] ?? luckyItems?['color'] ?? '파란색',
       '🔢': luckyItems?['숫자'] ?? luckyItems?['number'] ?? '7',
       '🧭': luckyItems?['방향'] ?? luckyItems?['direction'] ?? '동쪽',
     };
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: _lightBrown.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -420,13 +472,13 @@ class _TraditionalShareCardContent extends StatelessWidget {
         children: displayItems.entries.map((entry) {
           return Column(
             children: [
-              Text(entry.key, style: const TextStyle(fontSize: 18)),
-              const SizedBox(height: 4),
+              Text(entry.key, style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 2),
               Text(
                 entry.value,
                 style: const TextStyle(
                   color: _darkBrown,
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -455,10 +507,10 @@ class _TraditionalShareCardContent extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: _lightBrown.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -473,27 +525,27 @@ class _TraditionalShareCardContent extends StatelessWidget {
                     entry.key,
                     style: TextStyle(
                       color: elementColors[entry.key],
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.w700,
                       fontFamily: 'ZenSerif',
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 3),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(3),
                     child: LinearProgressIndicator(
                       value: percentage / 100,
                       backgroundColor: _lightBrown.withValues(alpha: 0.3),
                       color: elementColors[entry.key],
-                      minHeight: 6,
+                      minHeight: 5,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 1),
                   Text(
                     '$percentage%',
                     style: const TextStyle(
                       color: _darkBrown,
-                      fontSize: 9,
+                      fontSize: 8,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -512,27 +564,27 @@ class _TraditionalShareCardContent extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(width: 30, height: 1, color: _lightBrown),
-            const SizedBox(width: 12),
+            Container(width: 24, height: 1, color: _lightBrown),
+            const SizedBox(width: 10),
             const Text(
               '福',
               style: TextStyle(
                 color: _sealRed,
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 fontFamily: 'ZenSerif',
               ),
             ),
-            const SizedBox(width: 12),
-            Container(width: 30, height: 1, color: _lightBrown),
+            const SizedBox(width: 10),
+            Container(width: 24, height: 1, color: _lightBrown),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         const Text(
           'Fortune AI · 행운이 가득하길',
           style: TextStyle(
             color: _lightBrown,
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: FontWeight.w500,
           ),
         ),

@@ -299,17 +299,17 @@ class FortuneSwipeHelpers {
       return [
         {
           'title': '🌅 오전: 중요 업무 우선 처리',
-          'description': '에너지 최고조 시간, 핵심 업무 + 네트워킹',
+          'description': '에너지가 최고조인 시간이니 핵심 업무와 네트워킹에 집중하세요.',
           'priority': 'high',
         },
         {
           'title': '🍽 점심: 영양 충전 & 휴식',
-          'description': '건강한 식사로 오후 에너지 준비',
+          'description': '건강한 식사로 오후 에너지를 준비하세요.',
           'priority': 'medium',
         },
         {
           'title': '💡 오후: 창의적 마무리',
-          'description': '새 아이디어 브레인스토밍 후 가벼운 운동',
+          'description': '새 아이디어를 정리하고 가벼운 운동으로 마무리하세요.',
           'priority': 'high',
         },
       ];
@@ -317,17 +317,17 @@ class FortuneSwipeHelpers {
       return [
         {
           'title': '📝 오전: 우선순위 정리',
-          'description': '꼭 해야 할 일 3가지 노트 정리',
+          'description': '꼭 해야 할 일 3가지를 노트에 정리해 보세요.',
           'priority': 'high',
         },
         {
           'title': '🤝 점심: 동료와 식사',
-          'description': '가벼운 대화로 스트레스 환기',
+          'description': '가벼운 대화로 스트레스를 환기해 보세요.',
           'priority': 'medium',
         },
         {
           'title': '📊 오후: 집중 업무 + 휴식',
-          'description': '2시간 집중 모드 후 10분 스트레칭',
+          'description': '2시간 집중 후 10분 스트레칭으로 휴식하세요.',
           'priority': 'high',
         },
       ];
@@ -335,17 +335,17 @@ class FortuneSwipeHelpers {
       return [
         {
           'title': '🌤 아침: 긍정 루틴',
-          'description': '환기 + 감사 3가지 떠올리기',
+          'description': '환기하고 감사한 일 3가지를 떠올려 보세요.',
           'priority': 'medium',
         },
         {
           'title': '📱 오전: 알림 정리 & 집중',
-          'description': 'SNS 일시정지, 필수 연락만',
+          'description': 'SNS를 일시 정지하고 필수 연락만 하세요.',
           'priority': 'high',
         },
         {
           'title': '🎯 오후: 작은 목표 달성',
-          'description': '10분 과제부터 시작, 점진적 성취',
+          'description': '10분 과제부터 시작하여 점진적으로 성취해 보세요.',
           'priority': 'medium',
         },
       ];
@@ -353,17 +353,17 @@ class FortuneSwipeHelpers {
       return [
         {
           'title': '😌 아침: 스트레스 낮추기',
-          'description': '5분 심호흡(4-7-8 호흡법)',
+          'description': '5분간 심호흡(4-7-8 호흡법)을 해보세요.',
           'priority': 'high',
         },
         {
           'title': '👂 점심: 대화 & 위로',
-          'description': '신뢰하는 사람과 고민 나누기',
+          'description': '신뢰하는 사람과 고민을 나누어 보세요.',
           'priority': 'medium',
         },
         {
           'title': '🌳 오후: 20분 산책',
-          'description': '자연 속 걷기로 생각 비우기',
+          'description': '자연 속을 걸으며 생각을 비워 보세요.',
           'priority': 'high',
         },
       ];

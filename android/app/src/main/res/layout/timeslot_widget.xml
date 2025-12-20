@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="14dp"
+    android:background="@drawable/widget_background">
+
+    <!-- Header with Time Slot Name -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/timeslot_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🌅"
+            android:textSize="18sp"
+            android:layout_marginEnd="6dp" />
+
+        <TextView
+            android:id="@+id/timeslot_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="오전 운세"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_title_color" />
+
+        <TextView
+            android:id="@+id/last_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12:00"
+            android:textSize="11sp"
+            android:textColor="@color/widget_subtitle_color" />
+    </LinearLayout>
+
+    <!-- Score -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/timeslot_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="82"
+            android:textSize="38sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_score_color" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/100"
+            android:textSize="14sp"
+            android:textColor="@color/widget_subtitle_color"
+            android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <!-- Time Slot Message -->
+    <TextView
+        android:id="@+id/timeslot_message"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="오전에는 집중력이 높아 중요한 업무에 적합합니다."
+        android:textSize="12sp"
+        android:textColor="@color/widget_text_color"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:gravity="center" />
+
+</LinearLayout>
