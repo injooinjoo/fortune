@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
 import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
 import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
-import 'toss_section_widget.dart';
+import 'package:fortune/core/theme/font_config.dart';
+import 'fortune_section_widget.dart';
 
 /// 연애 스타일 섹션 - 한국 전통 스타일
 ///
@@ -32,8 +33,8 @@ class LoveStyleSection extends StatelessWidget {
           Text(
             loveStyle.title,
             style: TextStyle(
-              fontFamily: 'GowunBatang',
-              fontSize: 18,
+              fontFamily: FontConfig.primary,
+              fontSize: FontConfig.buttonMedium,
               fontWeight: FontWeight.w600,
               color: loveAccent,
               height: 1.3,
@@ -43,8 +44,8 @@ class LoveStyleSection extends StatelessWidget {
           Text(
             loveStyle.description,
             style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 15,
+              fontFamily: FontConfig.primary,
+              fontSize: FontConfig.labelLarge,
               fontWeight: FontWeight.w400,
               color: DSFortuneColors.getInk(isDark),
               height: 1.5,
@@ -102,8 +103,8 @@ class _LoveDetailCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontFamily: 'GowunBatang',
-              fontSize: 13,
+              fontFamily: FontConfig.primary,
+              fontSize: FontConfig.labelSmall,
               fontWeight: FontWeight.w600,
               color: loveAccent,
             ),
@@ -112,8 +113,8 @@ class _LoveDetailCard extends StatelessWidget {
           Text(
             content,
             style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 15,
+              fontFamily: FontConfig.primary,
+              fontSize: FontConfig.labelLarge,
               fontWeight: FontWeight.w400,
               color: DSFortuneColors.getInk(isDark),
               height: 1.5,

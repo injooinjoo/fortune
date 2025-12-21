@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/fortune_design_system.dart';
 
 /// Custom painter for drawing timeline chart with real hourly scores
 class TimelineChartPainter extends CustomPainter {

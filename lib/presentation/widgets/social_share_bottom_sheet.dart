@@ -3,7 +3,8 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:typed_data';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_design_system.dart';
+import '../../../../core/theme/font_config.dart';
 
 /// U09: 스크린샷 감지 UI 리뉴얼 - 한지 스타일 전통 디자인
 class SocialShareBottomSheet extends ConsumerStatefulWidget {
@@ -155,7 +156,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                   color: _sealRed,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'ZenSerif',
+                  fontFamily: FontConfig.primary,
                 ),
               ),
             ),

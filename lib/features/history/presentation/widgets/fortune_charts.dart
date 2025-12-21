@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 // import '../../../../shared/glassmorphism/glass_container.dart'; // TODO: Remove if not needed

@@ -5,8 +5,8 @@ import '../../../services/celebrity_crawling_service.dart';
 import '../../../core/components/app_card.dart';
 import '../../../core/widgets/unified_button.dart';
 import '../../../core/widgets/unified_button_enums.dart';
-import '../../../core/theme/toss_theme.dart';
-import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/fortune_theme.dart';
+import '../../../core/theme/fortune_design_system.dart';
 import '../../../core/design_system/design_system.dart';
 
 class CelebrityCrawlingPage extends ConsumerStatefulWidget {

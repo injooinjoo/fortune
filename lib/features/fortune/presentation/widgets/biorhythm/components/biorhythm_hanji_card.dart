@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../../core/theme/font_config.dart';
 
 /// Korean traditional Hanji paper style card for biorhythm pages
 ///
@@ -454,7 +455,7 @@ class _SealStampPainter extends CustomPainter {
         style: TextStyle(
           color: color,
           fontSize: size.width * 0.45,
-          fontFamily: 'GowunBatang',
+          fontFamily: FontConfig.primary,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -519,7 +520,7 @@ class BiorhythmHanjiSectionCard extends StatelessWidget {
               style: TextStyle(
                 color: textColor,
                 fontSize: 18,
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -530,7 +531,7 @@ class BiorhythmHanjiSectionCard extends StatelessWidget {
                 style: TextStyle(
                   color: textColor.withValues(alpha: 0.7),
                   fontSize: 14,
-                  fontFamily: 'Pretendard',
+                  fontFamily: FontConfig.primary,
                 ),
               ),
             ],

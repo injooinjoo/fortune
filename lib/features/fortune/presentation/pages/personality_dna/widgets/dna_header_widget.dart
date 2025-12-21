@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
 import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
 import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
+import 'package:fortune/core/theme/font_config.dart';
 
 /// 성격DNA 헤더 위젯 - 한국 전통 스타일
 ///
@@ -58,15 +59,15 @@ class DnaHeaderWidget extends StatelessWidget {
                 // 이모지
                 Text(
                   dna.emoji,
-                  style: const TextStyle(fontSize: 56),
+                  style: TextStyle(fontSize: FontConfig.emojiMedium),
                 ),
                 const SizedBox(height: 16),
-                // 타이틀 (GowunBatang)
+                // 타이틀
                 Text(
                   dna.title,
                   style: TextStyle(
-                    fontFamily: 'GowunBatang',
-                    fontSize: 24,
+                    fontFamily: FontConfig.primary,
+                    fontSize: FontConfig.heading3,
                     fontWeight: FontWeight.w700,
                     color: DSFortuneColors.getInk(isDark),
                     height: 1.3,
@@ -79,8 +80,8 @@ class DnaHeaderWidget extends StatelessWidget {
                   Text(
                     dna.description,
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 15,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.labelLarge,
                       fontWeight: FontWeight.w400,
                       color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.7),
                       height: 1.5,
@@ -140,9 +141,9 @@ class DnaHeaderWidget extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             dna.popularityText,
-            style: const TextStyle(
-              fontFamily: 'GowunBatang',
-              fontSize: 14,
+            style: TextStyle(
+              fontFamily: FontConfig.primary,
+              fontSize: FontConfig.labelMedium,
               fontWeight: FontWeight.w600,
               color: Colors.white,
             ),
@@ -180,10 +181,10 @@ class DnaHeaderWidget extends StatelessWidget {
               color: DSFortuneColors.getGold(isDark).withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 '🧬',
-                style: TextStyle(fontSize: 12),
+                style: TextStyle(fontSize: FontConfig.labelTiny),
               ),
             ),
           ),
@@ -191,8 +192,8 @@ class DnaHeaderWidget extends StatelessWidget {
           Text(
             dna.dnaCode,
             style: TextStyle(
-              fontFamily: 'GowunBatang',
-              fontSize: 15,
+              fontFamily: FontConfig.primary,
+              fontSize: FontConfig.labelLarge,
               fontWeight: FontWeight.w600,
               color: DSFortuneColors.getInk(isDark),
               letterSpacing: 1.5,

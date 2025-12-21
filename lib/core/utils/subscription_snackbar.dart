@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/toss_design_system.dart';
+import '../theme/fortune_design_system.dart';
 
 /// 광고 시청 후 구독 유도 스낵바를 표시하는 유틸리티
 ///

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_theme.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import '../../domain/models/fortune_history.dart';
 
 /// 운세 히스토리 캘린더 뷰

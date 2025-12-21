@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import '../../../../../../core/theme/font_config.dart';
 import '../../../../../../core/theme/obangseok_colors.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/design_system/components/traditional/hanji_card.dart';
@@ -79,7 +80,7 @@ class LottoPensionCard extends StatelessWidget {
               Text(
                 '연금복권 720+',
                 style: TypographyUnified.heading4.copyWith(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w700,
                   color: isDark
                       ? ObangseokColors.baekDark

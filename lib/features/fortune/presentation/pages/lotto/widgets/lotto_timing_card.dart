@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../../../../core/theme/font_config.dart';
 import '../../../../../../core/theme/obangseok_colors.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/design_system/components/traditional/hanji_card.dart';
@@ -70,7 +71,7 @@ class LottoTimingCard extends StatelessWidget {
               Text(
                 '최적 구매 타이밍',
                 style: TypographyUnified.heading4.copyWith(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w700,
                   color: isDark
                       ? ObangseokColors.baekDark
@@ -146,7 +147,7 @@ class LottoTimingCard extends StatelessWidget {
                 Text(
                   formattedDate,
                   style: TypographyUnified.heading4.copyWith(
-                    fontFamily: 'GowunBatang',
+                    fontFamily: FontConfig.primary,
                     fontWeight: FontWeight.w700,
                     color: ObangseokColors.jeok,
                   ),

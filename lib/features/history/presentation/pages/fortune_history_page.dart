@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/fortune_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../core/providers/user_settings_provider.dart';

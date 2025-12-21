@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../../core/theme/font_config.dart';
 
 /// Ink wash painting style chart painter for biorhythm visualization
 ///
@@ -331,8 +332,8 @@ class InkWaveChartPainter extends CustomPainter {
           text: labels[i],
           style: TextStyle(
             color: textColor,
-            fontSize: 11,
-            fontFamily: 'Pretendard',
+            fontSize: FontConfig.captionLarge,
+            fontFamily: FontConfig.primary,
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -360,8 +361,8 @@ class InkWaveChartPainter extends CustomPainter {
           text: dayLabels[i],
           style: TextStyle(
             color: textColor,
-            fontSize: 11,
-            fontFamily: 'GowunBatang',
+            fontSize: FontConfig.captionLarge,
+            fontFamily: FontConfig.primary,
             fontWeight: i == 0 ? FontWeight.w600 : FontWeight.w400,
           ),
         ),

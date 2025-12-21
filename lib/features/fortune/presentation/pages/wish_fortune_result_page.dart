@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../domain/models/wish_fortune_result.dart';
+import '../../../../core/theme/font_config.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
@@ -278,7 +279,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildExpandedEmpathyCard(DSColorScheme colors) {
     return Column(
       children: [
-        const Text('💝', style: TextStyle(fontSize: 64)),
+        Text('💝', style: TextStyle(fontSize: FontConfig.emojiLarge)),
         const SizedBox(height: 24),
         Text(
           '당신의 마음이 느껴져요',
@@ -303,7 +304,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildExpandedHopeCard(DSColorScheme colors) {
     return Column(
       children: [
-        const Text('✨', style: TextStyle(fontSize: 64)),
+        Text('✨', style: TextStyle(fontSize: FontConfig.emojiLarge)),
         const SizedBox(height: 24),
         Text(
           '당신은 할 수 있어요',
@@ -328,7 +329,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildExpandedAdviceCard(DSColorScheme colors) {
     return Column(
       children: [
-        const Text('💡', style: TextStyle(fontSize: 64)),
+        Text('💡', style: TextStyle(fontSize: FontConfig.emojiLarge)),
         const SizedBox(height: 24),
         Text(
           '이렇게 해보세요',
@@ -389,7 +390,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildExpandedEncouragementCard(DSColorScheme colors) {
     return Column(
       children: [
-        const Text('🙌', style: TextStyle(fontSize: 64)),
+        Text('🙌', style: TextStyle(fontSize: FontConfig.emojiLarge)),
         const SizedBox(height: 24),
         Text(
           '힘내세요!',
@@ -427,7 +428,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
       ),
       child: Column(
         children: [
-          const Text('🔮', style: TextStyle(fontSize: 64)),
+          Text('🔮', style: TextStyle(fontSize: FontConfig.emojiLarge)),
           const SizedBox(height: 24),
           Text(
             '신이 전하는 한마디',
@@ -500,7 +501,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         // 하트 이모지
         Text(
           '💝',
-          style: const TextStyle(fontSize: 56),
+          style: TextStyle(fontSize: FontConfig.emojiMedium),
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -551,7 +552,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         // 별 이모지
         Text(
           '✨',
-          style: const TextStyle(fontSize: 56),
+          style: TextStyle(fontSize: FontConfig.emojiMedium),
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -602,7 +603,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         // 전구 이모지
         Text(
           '💡',
-          style: const TextStyle(fontSize: 48),
+          style: TextStyle(fontSize: FontConfig.emojiSmall),
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -697,7 +698,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         // 응원 이모지
         Text(
           '🙌',
-          style: const TextStyle(fontSize: 56),
+          style: TextStyle(fontSize: FontConfig.emojiMedium),
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -760,7 +761,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           // 신비로운 이모지
           Text(
             '🔮',
-            style: const TextStyle(fontSize: 56),
+            style: TextStyle(fontSize: FontConfig.emojiMedium),
           )
               .animate()
               .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -791,7 +792,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
                 textAlign: TextAlign.center,
                 style: DSTypography.bodyLarge.copyWith(
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: FontConfig.buttonMedium,
                   height: 1.5,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.5,

@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/font_config.dart';
+import '../../../../core/theme/fortune_theme.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../presentation/providers/providers.dart';
@@ -265,7 +266,7 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
               Text(
                 '${_result!.healthScore}',
                 style: TossTheme.heading1.copyWith(
-                  fontSize: 64,
+                  fontSize: FontConfig.scoreXLarge,
                   fontWeight: FontWeight.w700,
                   color: _result!.scoreColor,
                 ),
@@ -399,7 +400,7 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
                   style: TossTheme.caption.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 10,
+                    fontSize: FontConfig.captionSmall,
                   ),
                 ),
               ),

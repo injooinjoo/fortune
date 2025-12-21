@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/font_config.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
@@ -696,7 +697,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   Text(
                     gender.symbol,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: FontConfig.heading4,
                       color: isSelected
                         ? (gender == PetGender.male ? colors.accent : gender == PetGender.female ? DSColors.error : colors.textTertiary)
                         : colors.textTertiary,
@@ -1170,7 +1171,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                       Text(
                         PetGender.fromString(pet.gender).symbol,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: FontConfig.buttonMedium,
                           color: pet.gender == '수컷' ? colors.accent : DSColors.error,
                         ),
                       ),

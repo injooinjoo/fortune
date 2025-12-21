@@ -6,7 +6,7 @@ import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
 import 'package:fortune/core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/theme/fortune_design_system.dart';
 
 class PolicyPage extends ConsumerWidget {
   const PolicyPage({super.key});

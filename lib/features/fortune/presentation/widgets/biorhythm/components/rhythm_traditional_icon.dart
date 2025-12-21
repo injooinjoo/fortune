@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../../core/theme/font_config.dart';
 import 'biorhythm_score_badge.dart';
 
 /// Traditional Korean ink wash style icon for biorhythm types
@@ -65,7 +66,7 @@ class RhythmTraditionalIcon extends StatelessWidget {
             style: TextStyle(
               color: color,
               fontSize: size * 0.25,
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -479,7 +480,7 @@ class ElementBadge extends StatelessWidget {
         style: TextStyle(
           color: color,
           fontSize: size * 0.5,
-          fontFamily: 'GowunBatang',
+          fontFamily: FontConfig.primary,
           fontWeight: FontWeight.w700,
         ),
       ),

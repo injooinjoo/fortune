@@ -4,6 +4,7 @@ import 'package:fortune/core/models/personality_dna_model.dart';
 import 'package:fortune/core/widgets/unified_fortune_base_widget.dart';
 import 'package:fortune/core/services/unified_fortune_service.dart';
 import 'package:fortune/core/models/fortune_result.dart';
+import 'package:fortune/core/theme/font_config.dart';
 import 'package:fortune/features/fortune/domain/models/conditions/personality_dna_fortune_conditions.dart';
 import 'package:fortune/core/widgets/accordion_input_section.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
@@ -22,7 +23,7 @@ import 'widgets/work_style_section.dart';
 import 'widgets/daily_matching_section.dart';
 import 'widgets/compatibility_section.dart';
 import 'widgets/celebrity_section.dart';
-import 'widgets/toss_section_widget.dart';
+import 'widgets/fortune_section_widget.dart';
 import 'widgets/input_widgets.dart';
 import 'package:fortune/core/widgets/unified_blur_wrapper.dart';
 import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
@@ -242,8 +243,8 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
             Text(
               '🏆 나의 성격 DNA 랭킹',
               style: TextStyle(
-                fontFamily: 'GowunBatang',
-                fontSize: 20,
+                fontFamily: FontConfig.primary,
+                fontSize: FontConfig.heading4,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : Colors.black87,
               ),
@@ -273,14 +274,14 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                 children: [
                   Text(
                     rank <= 10 ? '🥇' : rank <= 50 ? '🥈' : '🎖️',
-                    style: const TextStyle(fontSize: 48),
+                    style: TextStyle(fontSize: FontConfig.emojiSmall),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '$rank위',
-                    style: const TextStyle(
-                      fontFamily: 'GowunBatang',
-                      fontSize: 36,
+                    style: TextStyle(
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.scoreMedium,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
                     ),
@@ -288,7 +289,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                   Text(
                     '전체 $totalCombinations개 조합 중',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: FontConfig.labelMedium,
                       color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
@@ -314,14 +315,14 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                       Text(
                         '인기도 상위',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: FontConfig.labelMedium,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
                       Text(
                         '$percentile%',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: FontConfig.bodyMedium,
                           fontWeight: FontWeight.w700,
                           color: _currentDNA!.popularityColor,
                         ),
@@ -348,8 +349,8 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
             Text(
               _currentDNA!.dnaCode,
               style: TextStyle(
-                fontFamily: 'GowunBatang',
-                fontSize: 14,
+                fontFamily: FontConfig.primary,
+                fontSize: FontConfig.labelMedium,
                 color: isDark ? Colors.grey[500] : Colors.grey[600],
                 letterSpacing: 1.5,
               ),
@@ -362,7 +363,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                       ? '💫 특별한 성격 조합이네요!'
                       : '🌟 독특한 나만의 성격이에요!',
               style: TextStyle(
-                fontSize: 13,
+                fontSize: FontConfig.labelSmall,
                 color: isDark ? Colors.grey[400] : Colors.grey[600],
               ),
             ),

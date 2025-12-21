@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/toss_theme.dart';
+import '../../../core/theme/fortune_theme.dart';
 import '../../../core/theme/typography_unified.dart';
 import '../../../core/components/app_card.dart';
 import 'compact/compact_pillar_table.dart';

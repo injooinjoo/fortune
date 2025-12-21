@@ -4,6 +4,7 @@ import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/theme/font_config.dart';
 
 class TarotResultCard extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -436,7 +437,7 @@ class _TarotResultCardState extends State<TarotResultCard>
                         widget.result['cardName'] ?? 'The Fool',
                         style: const TextStyle(
                           color: Colors.white,
-                          fontFamily: 'ZenSerif',
+                          fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,

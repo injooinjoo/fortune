@@ -8,7 +8,7 @@ import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/providers/user_settings_provider.dart';
 
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../../core/widgets/voice_input_text_field.dart';
 

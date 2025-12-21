@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/font_config.dart';
 import '../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
 import '../widgets/biorhythm_widgets.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -230,7 +231,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                 Text(
                   '바이오리듬 분석',
                   style: context.heading3.copyWith(
-                    fontFamily: 'GowunBatang',
+                    fontFamily: FontConfig.primary,
                     color: textColor,
                   ),
                 ),
@@ -248,7 +249,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                   child: Text(
                     _formatTraditionalDate(),
                     style: context.labelMedium.copyWith(
-                      fontFamily: 'GowunBatang',
+                      fontFamily: FontConfig.primary,
                       color: DSBiorhythmColors.goldAccent,
                     ),
                   ),
@@ -274,7 +275,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                 child: Text(
                   '閉',
                   style: context.bodyMedium.copyWith(
-                    fontFamily: 'GowunBatang',
+                    fontFamily: FontConfig.primary,
                     fontWeight: FontWeight.w600,
                     color: textColor.withValues(alpha: 0.7),
                   ),
@@ -346,7 +347,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                       child: Text(
                         pageHanja[index],
                         style: context.labelMedium.copyWith(
-                          fontFamily: 'GowunBatang',
+                          fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.w700,
                           color: isSelected
                               ? Colors.white
@@ -359,7 +360,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                   Text(
                     pageLabels[index],
                     style: context.labelMedium.copyWith(
-                      fontFamily: 'GowunBatang',
+                      fontFamily: FontConfig.primary,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                       color: isSelected
                           ? color
@@ -424,7 +425,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
                 child: Text(
                   '解',
                   style: context.bodySmall.copyWith(
-                    fontFamily: 'GowunBatang',
+                    fontFamily: FontConfig.primary,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                   ),
@@ -435,7 +436,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
             Text(
               '남은 풀이 모두 보기',
               style: context.bodyMedium.copyWith(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),

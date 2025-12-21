@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../tokens/ds_fortune_colors.dart';
 import '../../tokens/ds_love_colors.dart';
 import '../../tokens/ds_luck_colors.dart';
+import '../../../theme/font_config.dart';
 
 /// Korean Traditional Button Styles
 ///
@@ -269,7 +270,7 @@ class _TraditionalButtonState extends State<TraditionalButton>
             : Text(
                 widget.hanja ?? widget.text.substring(0, 1),
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontSize: size * 0.4,
                   fontWeight: FontWeight.w700,
                   color: isDisabled
@@ -337,7 +338,7 @@ class _TraditionalButtonState extends State<TraditionalButton>
             Text(
               widget.text,
               style: TextStyle(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: textColor,
@@ -349,7 +350,7 @@ class _TraditionalButtonState extends State<TraditionalButton>
               Text(
                 widget.hanja!,
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontSize: 11,
                   fontWeight: FontWeight.w400,
                   color: textColor.withValues(alpha: 0.7),
@@ -537,7 +538,7 @@ class _TraditionalTextButtonState extends State<TraditionalTextButton> {
             Text(
               widget.text,
               style: TextStyle(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: isDisabled ? color.withValues(alpha: 0.4) : color,
@@ -551,7 +552,7 @@ class _TraditionalTextButtonState extends State<TraditionalTextButton> {
               Text(
                 '(${widget.hanja})',
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontSize: 12,
                   color: isDisabled
                       ? color.withValues(alpha: 0.3)

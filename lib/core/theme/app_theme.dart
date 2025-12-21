@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_theme_extensions.dart';
 import 'obangseok_colors.dart';
-import 'toss_design_system.dart';
+import 'fortune_design_system.dart';
 import 'typography_unified.dart';
 
 class AppTheme {

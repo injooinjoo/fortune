@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/toss_design_system.dart';
+import '../theme/fortune_design_system.dart';
 
 /// TOSS 스타일 스켈레톤 로딩
 class TossSkeleton extends StatelessWidget {

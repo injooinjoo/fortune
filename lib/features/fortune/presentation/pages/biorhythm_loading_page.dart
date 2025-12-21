@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../core/theme/font_config.dart';
 import '../../domain/models/conditions/biorhythm_fortune_conditions.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -259,8 +260,8 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
                   child: Text(
                     '운세를 풀이하고 있습니다',
                     style: TextStyle(
-                      fontFamily: 'GowunBatang',
-                      fontSize: 18,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.buttonMedium,
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
@@ -366,8 +367,8 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
             currentStepData['hanja'] as String,
             key: ValueKey(_currentStep),
             style: const TextStyle(
-              fontFamily: 'GowunBatang',
-              fontSize: 24,
+              fontFamily: FontConfig.primary,
+              fontSize: FontConfig.heading1,
               fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
@@ -392,8 +393,8 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
             Text(
               currentStepData['text'] as String,
               style: TextStyle(
-                fontFamily: 'GowunBatang',
-                fontSize: 17,
+                fontFamily: FontConfig.primary,
+                fontSize: FontConfig.bodyLarge,
                 fontWeight: FontWeight.w600,
                 color: textColor,
               ),
@@ -404,8 +405,8 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
             Text(
               currentStepData['description'] as String,
               style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 13,
+                fontFamily: FontConfig.primary,
+                fontSize: FontConfig.labelSmall,
                 color: textColor.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
@@ -452,8 +453,8 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
         Text(
           '${_currentStep + 1} / ${_analysisSteps.length}',
           style: TextStyle(
-            fontFamily: 'GowunBatang',
-            fontSize: 14,
+            fontFamily: FontConfig.primary,
+            fontSize: FontConfig.labelMedium,
             color: DSBiorhythmColors.getInkBleed(isDark).withValues(alpha: 0.5),
           ),
         ),
@@ -479,8 +480,8 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
             Text(
               '삼기(三氣)의 흐름을 읽고 있습니다',
               style: TextStyle(
-                fontFamily: 'GowunBatang',
-                fontSize: 13,
+                fontFamily: FontConfig.primary,
+                fontSize: FontConfig.labelSmall,
                 color: textColor.withValues(alpha: 0.6),
               ),
             ),

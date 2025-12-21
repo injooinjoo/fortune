@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/toss_design_system.dart';
+import '../theme/fortune_design_system.dart';
 
 class TarotDeckMetadata {
   // 사용 가능한 타로 카드 목록

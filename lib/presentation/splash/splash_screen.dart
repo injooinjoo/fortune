@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/fortune_design_system.dart';
+import '../../core/theme/font_config.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -60,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     : TossDesignSystem.black,
                 fontWeight: FontWeight.w300,
                 letterSpacing: 2,
-                fontFamily: 'ZenSerif',
+                fontFamily: FontConfig.primary,
               ),
             )
                 .animate()

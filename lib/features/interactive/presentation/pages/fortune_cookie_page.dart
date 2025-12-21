@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:video_player/video_player.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/font_config.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/utils/logger.dart';
 import 'dart:math' as math;
@@ -300,7 +301,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             ],
           ),
           child: const Center(
-            child: Text('🥠', style: TextStyle(fontSize: 55)),
+            child: Text('🥠', style: TextStyle(fontSize: FontConfig.emojiMedium)),
           ),
         ).animate()
           .scale(begin: const Offset(0.5, 0.5), duration: 600.ms, curve: Curves.elasticOut)
@@ -310,8 +311,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         Text(
           '오늘의 운세를\n확인해보세요',
           style: TextStyle(
-            fontFamily: 'GowunBatang',
-            fontSize: 26,
+            fontFamily: FontConfig.primary,
+            fontSize: FontConfig.heading2,
             fontWeight: FontWeight.w700,
             color: isDark ? const Color(0xFFF5F0E8) : const Color(0xFF2C2C2C),
             height: 1.4,
@@ -326,8 +327,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         Text(
           '마음이 끌리는 쿠키를 선택하세요',
           style: TextStyle(
-            fontFamily: 'GowunBatang',
-            fontSize: 15,
+            fontFamily: FontConfig.primary,
+            fontSize: FontConfig.labelLarge,
             fontWeight: FontWeight.w400,
             color: isDark
                 ? const Color(0xFFF5F0E8).withValues(alpha: 0.7)
@@ -351,8 +352,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             ? '쿠키가 열리고 있어요!'
             : '쿠키를 탭해서 깨뜨리세요',
           style: TextStyle(
-            fontFamily: 'GowunBatang',
-            fontSize: 22,
+            fontFamily: FontConfig.primary,
+            fontSize: FontConfig.heading3,
             fontWeight: FontWeight.w700,
             color: isDark ? const Color(0xFFF5F0E8) : const Color(0xFF2C2C2C),
           ),
@@ -364,8 +365,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         Text(
           '특별한 메시지가 당신을 기다리고 있어요',
           style: TextStyle(
-            fontFamily: 'GowunBatang',
-            fontSize: 14,
+            fontFamily: FontConfig.primary,
+            fontSize: FontConfig.labelMedium,
             color: isDark
                 ? const Color(0xFFF5F0E8).withValues(alpha: 0.7)
                 : const Color(0xFF5C5C5C),
@@ -404,8 +405,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
               const Text(
                 '五方色',
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
-                  fontSize: 14,
+                  fontFamily: FontConfig.primary,
+                  fontSize: FontConfig.labelMedium,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFFC9A962),
                   letterSpacing: 2,
@@ -415,7 +416,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
               Text(
                 '오방색으로 운세를 선택하세요',
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontSize: 12,
                   color: isDark
                       ? const Color(0xFFF5F0E8).withValues(alpha: 0.6)
@@ -509,8 +510,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
               child: Text(
                 elementLabel,
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
-                  fontSize: 22,
+                  fontFamily: FontConfig.primary,
+                  fontSize: FontConfig.heading3,
                   fontWeight: FontWeight.w700,
                   color: cookie.color.withValues(alpha: 0.2),
                 ),
@@ -536,7 +537,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                     child: Center(
                       child: Text(
                         cookie.emoji,
-                        style: const TextStyle(fontSize: 28),
+                        style: TextStyle(fontSize: FontConfig.heading1),
                       ),
                     ),
                   ),
@@ -545,8 +546,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                   Text(
                     cookie.title,
                     style: TextStyle(
-                      fontFamily: 'GowunBatang',
-                      fontSize: 16,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.bodySmall,
                       fontWeight: FontWeight.w700,
                       color: isDark
                           ? const Color(0xFFF5F0E8)
@@ -560,8 +561,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                     child: Text(
                       cookie.description,
                       style: TextStyle(
-                        fontFamily: 'GowunBatang',
-                        fontSize: 11,
+                        fontFamily: FontConfig.primary,
+                        fontSize: FontConfig.captionLarge,
                         color: isDark
                             ? const Color(0xFFF5F0E8).withValues(alpha: 0.6)
                             : const Color(0xFF5C5C5C),

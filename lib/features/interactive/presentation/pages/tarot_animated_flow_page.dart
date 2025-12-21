@@ -1,4 +1,4 @@
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

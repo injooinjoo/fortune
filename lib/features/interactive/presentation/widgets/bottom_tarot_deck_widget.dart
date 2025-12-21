@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 
 class BottomTarotDeckWidget extends ConsumerStatefulWidget {
   final Function(int) onCardSelected;

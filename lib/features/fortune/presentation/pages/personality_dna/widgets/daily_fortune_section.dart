@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
 import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
 import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
+import 'package:fortune/core/theme/font_config.dart';
 
 /// 오늘의 운세 섹션 - 한국 전통 스타일
 ///
@@ -43,8 +44,8 @@ class DailyFortuneSection extends StatelessWidget {
                   child: Text(
                     '今',
                     style: TextStyle(
-                      fontFamily: 'GowunBatang',
-                      fontSize: 16,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.bodyMedium,
                       fontWeight: FontWeight.w700,
                       color: DSFortuneColors.getGold(isDark),
                     ),
@@ -55,8 +56,8 @@ class DailyFortuneSection extends StatelessWidget {
               Text(
                 '오늘의 운세',
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
-                  fontSize: 20,
+                  fontFamily: FontConfig.primary,
+                  fontSize: FontConfig.heading4,
                   fontWeight: FontWeight.w700,
                   color: DSFortuneColors.getInk(isDark),
                 ),
@@ -94,9 +95,9 @@ class DailyFortuneSection extends StatelessWidget {
                 child: _FortuneInfoCard(
                   title: '행운 번호',
                   content: '${dailyFortune.luckyNumber}',
-                  leading: const Text(
+                  leading: Text(
                     '🎯',
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: FontConfig.heading4),
                   ),
                   isDark: isDark,
                   isHighlight: true,
@@ -205,8 +206,8 @@ class _FortuneInfoCard extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 12,
+                    fontFamily: FontConfig.primary,
+                    fontSize: FontConfig.labelTiny,
                     color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.6),
                   ),
                 ),
@@ -214,8 +215,8 @@ class _FortuneInfoCard extends StatelessWidget {
                 Text(
                   content,
                   style: TextStyle(
-                    fontFamily: 'GowunBatang',
-                    fontSize: 15,
+                    fontFamily: FontConfig.primary,
+                    fontSize: FontConfig.labelLarge,
                     fontWeight: FontWeight.w600,
                     color: isHighlight
                         ? DSFortuneColors.getGold(isDark)
@@ -261,16 +262,16 @@ class _EnergyLevelBar extends StatelessWidget {
               Text(
                 '오늘의 에너지',
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
-                  fontSize: 14,
+                  fontFamily: FontConfig.primary,
+                  fontSize: FontConfig.labelMedium,
                   color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.7),
                 ),
               ),
               Text(
                 '$energyLevel%',
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
-                  fontSize: 18,
+                  fontFamily: FontConfig.primary,
+                  fontSize: FontConfig.buttonMedium,
                   fontWeight: FontWeight.w700,
                   color: DSFortuneColors.getGold(isDark),
                 ),
@@ -314,7 +315,7 @@ class _FortuneDetailRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(icon, style: const TextStyle(fontSize: 18)),
+        Text(icon, style: TextStyle(fontSize: FontConfig.buttonMedium)),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -323,8 +324,8 @@ class _FortuneDetailRow extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
-                  fontSize: 13,
+                  fontFamily: FontConfig.primary,
+                  fontSize: FontConfig.labelSmall,
                   fontWeight: FontWeight.w600,
                   color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.6),
                 ),
@@ -333,8 +334,8 @@ class _FortuneDetailRow extends StatelessWidget {
               Text(
                 content,
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 15,
+                  fontFamily: FontConfig.primary,
+                  fontSize: FontConfig.labelLarge,
                   fontWeight: FontWeight.w400,
                   color: DSFortuneColors.getInk(isDark),
                   height: 1.5,

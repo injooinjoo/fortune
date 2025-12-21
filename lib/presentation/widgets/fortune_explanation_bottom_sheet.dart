@@ -5,7 +5,7 @@ import '../../presentation/providers/auth_provider.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import 'ads/interstitial_ad_helper.dart';
 import '../../core/utils/logger.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/fortune_design_system.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/widgets/date_picker/numeric_date_input.dart';
 

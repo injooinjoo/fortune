@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../core/theme/font_config.dart';
 import '../../../../../core/theme/typography_unified.dart';
 import '../../pages/biorhythm_result_page.dart';
 import 'components/biorhythm_hanji_card.dart';
@@ -51,7 +52,7 @@ class TodayOverallStatusCard extends StatelessWidget {
                     Text(
                       '${biorhythmData.overallScore}',
                       style: context.displayMedium.copyWith(
-                        fontFamily: 'GowunBatang',
+                        fontFamily: FontConfig.primary,
                         fontSize: 40,
                         fontWeight: FontWeight.w900,
                         color: textColor,
@@ -61,7 +62,7 @@ class TodayOverallStatusCard extends StatelessWidget {
                     Text(
                       '점',
                       style: context.bodyMedium.copyWith(
-                        fontFamily: 'GowunBatang',
+                        fontFamily: FontConfig.primary,
                         color: textColor.withValues(alpha: 0.7),
                       ),
                     ),
@@ -76,7 +77,7 @@ class TodayOverallStatusCard extends StatelessWidget {
           Text(
             biorhythmData.statusMessage,
             style: context.heading3.copyWith(
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -93,7 +94,7 @@ class TodayOverallStatusCard extends StatelessWidget {
             child: Text(
               _formatTraditionalDate(),
               style: context.labelMedium.copyWith(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 color: textColor.withValues(alpha: 0.6),
               ),
             ),
@@ -198,7 +199,7 @@ class RhythmDetailCards extends StatelessWidget {
                     Text(
                       title,
                       style: context.bodyMedium.copyWith(
-                        fontFamily: 'GowunBatang',
+                        fontFamily: FontConfig.primary,
                         fontWeight: FontWeight.w600,
                         color: textColor,
                       ),
@@ -214,7 +215,7 @@ class RhythmDetailCards extends StatelessWidget {
                 Text(
                   subtitle,
                   style: context.labelMedium.copyWith(
-                    fontFamily: 'Pretendard',
+                    fontFamily: FontConfig.primary,
                     color: textColor.withValues(alpha: 0.5),
                   ),
                 ),
@@ -233,7 +234,7 @@ class RhythmDetailCards extends StatelessWidget {
                   child: Text(
                     status,
                     style: context.labelMedium.copyWith(
-                      fontFamily: 'GowunBatang',
+                      fontFamily: FontConfig.primary,
                       color: color,
                       fontWeight: FontWeight.w500,
                     ),
@@ -321,7 +322,7 @@ class CompactRhythmScores extends StatelessWidget {
           Text(
             '오늘의 삼기(三氣)',
             style: context.bodySmall.copyWith(
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),

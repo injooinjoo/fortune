@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
 import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
 import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
-import 'toss_section_widget.dart';
+import 'package:fortune/core/theme/font_config.dart';
+import 'fortune_section_widget.dart';
 
 /// 일상 매칭 섹션 - 한국 전통 스타일
 ///
@@ -96,7 +97,7 @@ class _MatchingCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 18)),
+              child: Text(emoji, style: TextStyle(fontSize: FontConfig.buttonMedium)),
             ),
           ),
           const SizedBox(width: 12),
@@ -107,8 +108,8 @@ class _MatchingCard extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    fontFamily: 'GowunBatang',
-                    fontSize: 13,
+                    fontFamily: FontConfig.primary,
+                    fontSize: FontConfig.labelSmall,
                     fontWeight: FontWeight.w600,
                     color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.6),
                   ),
@@ -117,8 +118,8 @@ class _MatchingCard extends StatelessWidget {
                 Text(
                   content,
                   style: TextStyle(
-                    fontFamily: 'GowunBatang',
-                    fontSize: 16,
+                    fontFamily: FontConfig.primary,
+                    fontSize: FontConfig.bodyMedium,
                     fontWeight: FontWeight.w600,
                     color: accentColor,
                     height: 1.4,

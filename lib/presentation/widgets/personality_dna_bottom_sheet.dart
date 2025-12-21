@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
 import 'ads/interstitial_ad_helper.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/fortune_design_system.dart';
 import '../../core/services/personality_dna_service.dart';
 import '../../core/models/personality_dna_model.dart';
 import '../../presentation/providers/auth_provider.dart';

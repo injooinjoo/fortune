@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/font_config.dart';
 
 /// ⏱️ 시간대별 점수 그래프 카드
 class HourlyScoreGraphCard extends StatelessWidget {
@@ -71,7 +72,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                         color: Color(0xFF4CAF50),
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'ZenSerif',
+                        fontFamily: FontConfig.primary,
                       )),
                     ),
                   ),
@@ -121,7 +122,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                         color: Color(0xFFE53935),
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'ZenSerif',
+                        fontFamily: FontConfig.primary,
                       )),
                     ),
                   ),

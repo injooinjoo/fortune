@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/font_config.dart';
 
 class TalentShareCard extends StatelessWidget {
   final String userName;
@@ -120,7 +121,7 @@ class TalentShareCard extends StatelessWidget {
                         todaysFocus,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontFamily: 'ZenSerif',
+                          fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -131,7 +132,7 @@ class TalentShareCard extends StatelessWidget {
                     '활성화 지수: $activationLevel%',
                     style: TextStyle(
                       color: Colors.white.withValues(alpha:0.9),
-                      fontFamily: 'ZenSerif',
+                      fontFamily: FontConfig.primary,
                     ),
                   ),
                 ],
@@ -145,7 +146,7 @@ class TalentShareCard extends StatelessWidget {
               '상위 재능',
               style: TextStyle(
                 color: Colors.white.withValues(alpha:0.8),
-                fontFamily: 'ZenSerif',
+                fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -169,7 +170,7 @@ class TalentShareCard extends StatelessWidget {
                       entry.key,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontFamily: 'ZenSerif',
+                        fontFamily: FontConfig.primary,
                       ),
                     ),
                   ),
@@ -177,7 +178,7 @@ class TalentShareCard extends StatelessWidget {
                     '${entry.value}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontFamily: 'ZenSerif',
+                      fontFamily: FontConfig.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -192,7 +193,7 @@ class TalentShareCard extends StatelessWidget {
               '추천 직업',
               style: TextStyle(
                 color: Colors.white.withValues(alpha:0.8),
-                fontFamily: 'ZenSerif',
+                fontFamily: FontConfig.primary,
                 
                 fontWeight: FontWeight.w500,
               ),

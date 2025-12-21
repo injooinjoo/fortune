@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../tokens/ds_fortune_colors.dart';
 import '../../tokens/ds_love_colors.dart';
 import '../../tokens/ds_luck_colors.dart';
+import '../../../theme/font_config.dart';
 
 /// Fortune header layout style
 enum FortuneHeaderStyle {
@@ -350,7 +351,7 @@ class FortuneHeader extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: colors.textColor,
@@ -361,7 +362,7 @@ class FortuneHeader extends StatelessWidget {
               Text(
                 '($hanja)',
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontSize: 14,
                   color: colors.textColor.withValues(alpha: 0.6),
                 ),
@@ -384,7 +385,7 @@ class FortuneHeader extends StatelessWidget {
           Text(
             hanja!,
             style: TextStyle(
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontSize: 13,
               fontWeight: FontWeight.w400,
               color: colors.primary.withValues(alpha: 0.7),
@@ -396,7 +397,7 @@ class FortuneHeader extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            fontFamily: 'GowunBatang',
+            fontFamily: FontConfig.primary,
             fontSize: 22,
             fontWeight: FontWeight.w700,
             color: colors.textColor,
@@ -411,7 +412,7 @@ class FortuneHeader extends StatelessWidget {
           Text(
             subtitle!,
             style: TextStyle(
-              fontFamily: 'Pretendard',
+              fontFamily: FontConfig.primary,
               fontSize: 13,
               color: colors.textColor.withValues(alpha: 0.6),
             ),
@@ -468,7 +469,7 @@ class FortuneHeader extends StatelessWidget {
         child: Text(
           stampText,
           style: TextStyle(
-            fontFamily: 'GowunBatang',
+            fontFamily: FontConfig.primary,
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: colors.sealColor,
@@ -651,7 +652,7 @@ class FortuneHeaderSliver extends StatelessWidget {
         title: Text(
           title,
           style: TextStyle(
-            fontFamily: 'GowunBatang',
+            fontFamily: FontConfig.primary,
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: _getTextColor(isDark),
@@ -675,7 +676,7 @@ class FortuneHeaderSliver extends StatelessWidget {
                     child: Text(
                       hanja!,
                       style: TextStyle(
-                        fontFamily: 'GowunBatang',
+                        fontFamily: FontConfig.primary,
                         fontSize: 24,
                         fontWeight: FontWeight.w300,
                         color: _getPrimaryColor(isDark).withValues(alpha: 0.3),
@@ -705,7 +706,7 @@ class FortuneHeaderSliver extends StatelessWidget {
         child: Text(
           stampText,
           style: TextStyle(
-            fontFamily: 'GowunBatang',
+            fontFamily: FontConfig.primary,
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: sealColor,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/components/app_card.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/theme/font_config.dart';
 
 class CompatibilityCard extends StatelessWidget {
   final String selectedMbti;
@@ -121,7 +122,7 @@ class CompatibilityCard extends StatelessWidget {
                         type,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontFamily: 'ZenSerif',
+                          fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.w700,
                           fontSize: 13,
                         ),
@@ -182,7 +183,7 @@ class CompatibilityCard extends StatelessWidget {
                         type,
                         style: TextStyle(
                           color: themeColors.textSecondary,
-                          fontFamily: 'ZenSerif',
+                          fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),

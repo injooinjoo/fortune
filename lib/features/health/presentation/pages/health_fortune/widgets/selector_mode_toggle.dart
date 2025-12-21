@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/theme/fortune_theme.dart';
+import '../../../../../../core/theme/fortune_design_system.dart';
 
 class SelectorModeToggle extends StatelessWidget {
   final bool useGridSelector;

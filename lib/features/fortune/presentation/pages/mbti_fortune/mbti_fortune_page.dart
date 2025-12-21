@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fortune/core/models/fortune_result.dart';
+import 'package:fortune/core/theme/font_config.dart';
 import 'package:fortune/features/fortune/domain/models/conditions/mbti_fortune_conditions.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
@@ -584,7 +585,7 @@ class _MbtiFortunePageState
           Text(
             '오늘의 $_selectedMbti 운세',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: FontConfig.labelMedium,
               fontWeight: FontWeight.w500,
               color: isDark ? Colors.white70 : Colors.black54,
             ),
@@ -601,8 +602,8 @@ class _MbtiFortunePageState
                 ).createShader(bounds),
                 child: Text(
                   '$score',
-                  style: const TextStyle(
-                    fontSize: 56,
+                  style: TextStyle(
+                    fontSize: FontConfig.displayLarge,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                     height: 1,
@@ -613,7 +614,7 @@ class _MbtiFortunePageState
               Text(
                 '점',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: FontConfig.heading4,
                   fontWeight: FontWeight.w600,
                   color: colors[0],
                 ),
@@ -630,7 +631,7 @@ class _MbtiFortunePageState
             child: Text(
               grade,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: FontConfig.labelSmall,
                 fontWeight: FontWeight.w600,
                 color: colors[0],
               ),
@@ -640,7 +641,7 @@ class _MbtiFortunePageState
           Text(
             message,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: FontConfig.labelMedium,
               color: isDark ? Colors.white60 : Colors.black45,
             ),
           ),

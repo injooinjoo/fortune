@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../tokens/ds_fortune_colors.dart';
 import '../../tokens/ds_love_colors.dart';
 import '../../tokens/ds_luck_colors.dart';
+import '../../../theme/font_config.dart';
 
 /// Seal stamp shape styles
 enum SealStampShape {
@@ -332,7 +333,7 @@ class _SealStampPainter extends CustomPainter {
     final textSpan = TextSpan(
       text: text,
       style: TextStyle(
-        fontFamily: 'GowunBatang',
+        fontFamily: FontConfig.primary,
         fontSize: _calculateFontSize(size),
         fontWeight: FontWeight.w700,
         color: filled ? Colors.white : color,
@@ -419,7 +420,7 @@ class _OrganicSealPainter extends CustomPainter {
     final textSpan = TextSpan(
       text: text,
       style: TextStyle(
-        fontFamily: 'GowunBatang',
+        fontFamily: FontConfig.primary,
         fontSize: _calculateFontSize(size),
         fontWeight: FontWeight.w700,
         color: filled ? Colors.white : color,

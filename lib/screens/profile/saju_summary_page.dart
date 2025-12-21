@@ -5,7 +5,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import '../../core/theme/toss_theme.dart';
+import '../../core/theme/fortune_theme.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/theme/typography_unified.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';

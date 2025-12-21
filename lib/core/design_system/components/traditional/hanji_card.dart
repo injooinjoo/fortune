@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../design_system.dart';
 import '../../tokens/ds_fortune_colors.dart';
+import '../../../theme/font_config.dart';
 
 /// Korean traditional Hanji paper style card - Universal component
 ///
@@ -582,7 +583,7 @@ class _SealStampPainter extends CustomPainter {
         style: TextStyle(
           color: color,
           fontSize: size.width * 0.45,
-          fontFamily: 'GowunBatang',
+          fontFamily: FontConfig.primary,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -664,7 +665,7 @@ class HanjiSectionCard extends StatelessWidget {
                         style: TextStyle(
                           color: accentColor ?? colors.accent,
                           fontSize: 14,
-                          fontFamily: 'GowunBatang',
+                          fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -681,7 +682,7 @@ class HanjiSectionCard extends StatelessWidget {
                         style: TextStyle(
                           color: textColor,
                           fontSize: 18,
-                          fontFamily: 'GowunBatang',
+                          fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -691,7 +692,7 @@ class HanjiSectionCard extends StatelessWidget {
                           style: TextStyle(
                             color: textColor.withValues(alpha: 0.7),
                             fontSize: 14,
-                            fontFamily: 'Pretendard',
+                            fontFamily: FontConfig.primary,
                           ),
                         ),
                     ],

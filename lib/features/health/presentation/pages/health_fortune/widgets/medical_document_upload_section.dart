@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/theme/font_config.dart';
+import '../../../../../../core/theme/fortune_theme.dart';
+import '../../../../../../core/theme/fortune_design_system.dart';
 
 /// 전문 진단 서류 업로드 섹션
 /// 건강검진표, 처방전, 진단서 분석 기능으로 연결
@@ -81,7 +82,7 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                           style: TossTheme.caption.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
-                            fontSize: 9,
+                            fontSize: FontConfig.badgeText,
                           ),
                         ),
                       ),

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../../core/theme/font_config.dart';
 
 /// Ink brush style circular score painter
 ///
@@ -157,7 +158,7 @@ class InkScoreCirclePainter extends CustomPainter {
         style: TextStyle(
           color: textColor.withValues(alpha: scoreAlpha),
           fontSize: size.width * 0.35,
-          fontFamily: 'GowunBatang',
+          fontFamily: FontConfig.primary,
           fontWeight: FontWeight.w700,
           letterSpacing: -2,
         ),
@@ -173,7 +174,7 @@ class InkScoreCirclePainter extends CustomPainter {
         style: TextStyle(
           color: textColor.withValues(alpha: scoreAlpha * 0.2),
           fontSize: size.width * 0.35,
-          fontFamily: 'GowunBatang',
+          fontFamily: FontConfig.primary,
           fontWeight: FontWeight.w700,
           letterSpacing: -2,
         ),
@@ -215,7 +216,7 @@ class InkScoreCirclePainter extends CustomPainter {
         style: TextStyle(
           color: textColor.withValues(alpha: labelAlpha),
           fontSize: size.width * 0.12,
-          fontFamily: 'GowunBatang',
+          fontFamily: FontConfig.primary,
           fontWeight: FontWeight.w400,
         ),
       ),
@@ -239,7 +240,7 @@ class InkScoreCirclePainter extends CustomPainter {
           style: TextStyle(
             color: DSBiorhythmColors.getStatusColor(score).withValues(alpha: (labelAlpha - 0.5) * 2),
             fontSize: size.width * 0.08,
-            fontFamily: 'GowunBatang',
+            fontFamily: FontConfig.primary,
             fontWeight: FontWeight.w600,
           ),
         ),

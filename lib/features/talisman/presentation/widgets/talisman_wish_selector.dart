@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_wish.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_theme.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
 /// 전통 부적 스타일 색상 팔레트

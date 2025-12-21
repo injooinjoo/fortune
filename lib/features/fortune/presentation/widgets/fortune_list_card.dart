@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../domain/entities/fortune_category.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/font_config.dart';
 
 class FortuneListCard extends ConsumerStatefulWidget {
   final FortuneCategory category;
@@ -115,7 +116,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         widget.category.title,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontFamily: 'ZenSerif',
+                          fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
                         ),

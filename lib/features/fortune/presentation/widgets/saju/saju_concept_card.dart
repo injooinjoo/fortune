@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../../../core/theme/font_config.dart';
 import '../../../../../core/theme/typography_unified.dart';
 
 /// 사주 개념 설명 카드 위젯
@@ -372,10 +373,10 @@ void showCharacterExplanationSheet({
                         child: Text(
                           hanja,
                           style: TextStyle(
-                            fontSize: 28,
+                            fontSize: FontConfig.heading1,
                             fontWeight: FontWeight.w700,
                             color: elementColor,
-                            fontFamily: 'ZenSerif',
+                            fontFamily: FontConfig.primary,
                           ),
                         ),
                       ),
@@ -707,10 +708,10 @@ void showOhangExplanationSheet({
                         child: Text(
                           hanja,
                           style: TextStyle(
-                            fontSize: 28,
+                            fontSize: FontConfig.heading1,
                             fontWeight: FontWeight.w700,
                             color: elementColor,
-                            fontFamily: 'ZenSerif',
+                            fontFamily: FontConfig.primary,
                           ),
                         ),
                       ),
@@ -1041,10 +1042,10 @@ void showTwelveStageExplanationSheet({
                         child: Text(
                           hanja,
                           style: TextStyle(
-                            fontSize: 28,
+                            fontSize: FontConfig.heading1,
                             fontWeight: FontWeight.w700,
                             color: stageColor,
-                            fontFamily: 'ZenSerif',
+                            fontFamily: FontConfig.primary,
                           ),
                         ),
                       ),
@@ -1335,10 +1336,10 @@ void showSinsalExplanationSheet({
                         child: Text(
                           hanja.length > 2 ? hanja.substring(0, 2) : hanja,
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: FontConfig.heading4,
                             fontWeight: FontWeight.w700,
                             color: sinsalColor,
-                            fontFamily: 'ZenSerif',
+                            fontFamily: FontConfig.primary,
                           ),
                         ),
                       ),
@@ -1627,10 +1628,10 @@ void showHapchungExplanationSheet({
                         child: Text(
                           hanja,
                           style: TextStyle(
-                            fontSize: 28,
+                            fontSize: FontConfig.heading1,
                             fontWeight: FontWeight.w700,
                             color: relationColor,
-                            fontFamily: 'ZenSerif',
+                            fontFamily: FontConfig.primary,
                           ),
                         ),
                       ),

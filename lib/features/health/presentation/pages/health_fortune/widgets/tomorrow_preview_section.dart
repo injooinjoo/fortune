@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_theme.dart';
+import '../../../../../../core/theme/fortune_theme.dart';
 
 class TomorrowPreviewSection extends StatelessWidget {
   final String tomorrowPreview;

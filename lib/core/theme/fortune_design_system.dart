@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'font_size_system.dart';
+import 'font_config.dart';
 
-/// 토스 디자인 시스템 완전 정의
-/// Toss Design System Complete Definition
-class TossDesignSystem {
+/// Fortune 디자인 시스템 완전 정의
+/// Fortune Design System Complete Definition
+class FortuneDesignSystem {
   // ==========================================
   // 1. COLOR SYSTEM (색상 시스템)
   // ==========================================
@@ -433,7 +434,7 @@ class TossDesignSystem {
         fontSize: 17,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
-        fontFamily: 'ZenSerif',
+        fontFamily: FontConfig.primary,
       ),
     );
   }
@@ -457,7 +458,7 @@ class TossDesignSystem {
         fontSize: 17,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
-        fontFamily: 'ZenSerif',
+        fontFamily: FontConfig.primary,
       ),
     );
   }
@@ -478,7 +479,7 @@ class TossDesignSystem {
         fontSize: 15,
         fontWeight: FontWeight.w500,
         letterSpacing: 0,
-        fontFamily: 'ZenSerif',
+        fontFamily: FontConfig.primary,
       ),
     );
   }
@@ -761,7 +762,7 @@ class TossDesignSystem {
             fontSize: 17,
             fontWeight: FontWeight.w600,
             letterSpacing: 0,
-            fontFamily: 'ZenSerif',
+            fontFamily: FontConfig.primary,
           ),
         ),
       ),
@@ -779,7 +780,7 @@ class TossDesignSystem {
             fontSize: 15,
             fontWeight: FontWeight.w500,
             letterSpacing: 0,
-            fontFamily: 'ZenSerif',
+            fontFamily: FontConfig.primary,
           ),
         ),
       ),
@@ -860,12 +861,18 @@ class TossDesignSystem {
 }
 
 /// Extension for easy access
-extension TossDesignSystemContext on BuildContext {
-  TossDesignSystem get toss => TossDesignSystem();
+extension FortuneDesignSystemContext on BuildContext {
+  FortuneDesignSystem get fortune => FortuneDesignSystem();
 }
 
-/// 토스 스타일 금액 포맷터
-class TossAmountFormatter {
+/// @deprecated Use FortuneDesignSystemContext instead
+/// Legacy alias for backwards compatibility
+extension TossDesignSystemContext on BuildContext {
+  FortuneDesignSystem get toss => FortuneDesignSystem();
+}
+
+/// Fortune 스타일 금액 포맷터
+class FortuneAmountFormatter {
   static String format(int amount, {bool showCurrency = true}) {
     final formatted = amount.toString().replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
@@ -884,8 +891,11 @@ class TossAmountFormatter {
   }
 }
 
-/// 토스 스타일 날짜 포맷터
-class TossDateFormatter {
+/// @deprecated Use FortuneAmountFormatter instead
+typedef TossAmountFormatter = FortuneAmountFormatter;
+
+/// Fortune 스타일 날짜 포맷터
+class FortuneDateFormatter {
   static String formatRelative(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
@@ -920,3 +930,9 @@ class TossDateFormatter {
     return '$hour:$minute';
   }
 }
+
+/// @deprecated Use FortuneDateFormatter instead
+typedef TossDateFormatter = FortuneDateFormatter;
+
+/// @deprecated Use FortuneDesignSystem instead
+typedef TossDesignSystem = FortuneDesignSystem;

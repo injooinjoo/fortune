@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/theme/fortune_design_system.dart';
 
 /// ⚠️ DEPRECATED: AppTextStyles는 이제 사용하지 않습니다!
 ///

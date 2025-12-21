@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import '../../domain/models/talisman_wish.dart';
 
 /// 부적 생성 로딩 스켈레톤 UI - 결과 화면과 동일한 레이아웃

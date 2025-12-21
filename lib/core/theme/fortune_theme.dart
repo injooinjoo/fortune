@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
 
-/// ⚠️ DEPRECATED: TossTheme은 이제 사용하지 않습니다!
+/// ⚠️ DEPRECATED: FortuneTheme은 이제 사용하지 않습니다!
 ///
-/// 색상은 TossDesignSystem을 사용하세요.
+/// 색상은 FortuneDesignSystem을 사용하세요.
 /// 타이포그래피는 TypographyUnified를 사용하세요.
 ///
 /// 마이그레이션 가이드:
-/// - Colors → TossDesignSystem
+/// - Colors → FortuneDesignSystem
 /// - TextStyles → TypographyUnified
-/// - Spacing → TossDesignSystem
-class TossTheme {
+/// - Spacing → FortuneDesignSystem
+class FortuneTheme {
   // Colors
   static const Color primaryBlue = Color(0xFF0066FF);
   static const Color brandBlue = Color(0xFF0066FF);
@@ -161,6 +161,14 @@ class TossTheme {
 }
 
 // Theme Extension for easier access
-extension TossThemeExtension on BuildContext {
-  TossTheme get tossTheme => TossTheme();
+extension FortuneThemeExtension on BuildContext {
+  FortuneTheme get fortuneTheme => FortuneTheme();
 }
+
+/// @deprecated Use FortuneThemeExtension instead
+extension TossThemeExtension on BuildContext {
+  FortuneTheme get tossTheme => FortuneTheme();
+}
+
+/// @deprecated Use FortuneTheme instead
+typedef TossTheme = FortuneTheme;

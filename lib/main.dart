@@ -11,7 +11,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'core/config/environment.dart';
 import 'core/utils/logger.dart';
 import 'routes/route_config.dart';
-import 'core/theme/toss_design_system.dart';
+import 'core/theme/fortune_design_system.dart';
 // // import 'presentation/providers/app_providers.dart'; // Has syntax errors
 import 'presentation/providers/theme_provider.dart';
 import 'core/theme/font_size_system.dart';

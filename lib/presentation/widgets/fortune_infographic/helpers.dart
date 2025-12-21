@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/fortune_design_system.dart';
 
 /// Helper methods for fortune infographic widgets
 class FortuneInfographicHelpers {

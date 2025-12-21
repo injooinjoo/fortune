@@ -3,6 +3,7 @@ import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import 'dart:math' as math;
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/font_config.dart';
 
 /// 소원 빌기 분수대 위젯
 class WishFountainWidget extends StatefulWidget {
@@ -170,7 +171,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                 '분수대 동전: ${widget.coinCount}개',
                 style: const TextStyle(
                   color: Colors.white,
-                  fontFamily: 'ZenSerif',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w500,
                 ),
               ),

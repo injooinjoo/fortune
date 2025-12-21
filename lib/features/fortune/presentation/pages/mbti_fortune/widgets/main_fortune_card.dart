@@ -5,6 +5,7 @@ import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/utils/fortune_text_cleaner.dart';
 import 'package:fortune/core/widgets/gpt_style_typing_text.dart';
 import 'lucky_items.dart';
+import 'package:fortune/core/theme/font_config.dart';
 
 class MainFortuneCard extends StatelessWidget {
   final FortuneResult fortuneResult;
@@ -51,7 +52,7 @@ class MainFortuneCard extends StatelessWidget {
               '$selectedMbti 오늘의 운세',
               style: const TextStyle(
                 color: Colors.white,
-                fontFamily: 'ZenSerif',
+                fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),

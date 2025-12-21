@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../../core/theme/font_config.dart';
 import '../../../../../core/theme/obangseok_colors.dart';
 import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/design_system/components/traditional/hanji_card.dart';
@@ -206,9 +207,9 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
       title: Text(
         '로또 운세',
         style: TextStyle(
-          fontFamily: 'GowunBatang',
+          fontFamily: FontConfig.primary,
           color: ObangseokColors.getMeok(context),
-          fontSize: 18,
+          fontSize: FontConfig.buttonMedium,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -295,7 +296,7 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
                   Text(
                     '로또 운세',
                     style: TypographyUnified.heading2.copyWith(
-                      fontFamily: 'GowunBatang',
+                      fontFamily: FontConfig.primary,
                       fontWeight: FontWeight.w700,
                       color: isDark
                           ? ObangseokColors.baekDark

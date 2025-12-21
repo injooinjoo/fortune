@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/theme/font_config.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/design_system/tokens/ds_love_colors.dart';
 import 'package:fortune/core/design_system/components/traditional/traditional_button.dart';
@@ -272,7 +273,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
             Text(
               '宮合',
               style: context.labelMedium.copyWith(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 color: primaryColor.withValues(alpha: 0.7),
                 letterSpacing: 2,
               ),
@@ -280,7 +281,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
             Text(
               '궁합 분석',
               style: context.heading3.copyWith(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 color: inkColor,
                 letterSpacing: 1,
               ),

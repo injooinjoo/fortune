@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../core/theme/font_config.dart';
 import '../../../../../../core/theme/obangseok_colors.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/design_system/components/traditional/hanji_card.dart';
@@ -69,7 +70,7 @@ class LottoLocationCard extends StatelessWidget {
                     ? '$currentLocationName 행운의 구매 장소'
                     : '행운의 구매 장소',
                 style: TypographyUnified.heading4.copyWith(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w700,
                   color: isDark
                       ? ObangseokColors.baekDark
@@ -108,7 +109,7 @@ class LottoLocationCard extends StatelessWidget {
                 Text(
                   '${luckyLocation.direction} 방향',
                   style: TypographyUnified.heading4.copyWith(
-                    fontFamily: 'GowunBatang',
+                    fontFamily: FontConfig.primary,
                     fontWeight: FontWeight.w700,
                     color: ObangseokColors.cheong,
                   ),

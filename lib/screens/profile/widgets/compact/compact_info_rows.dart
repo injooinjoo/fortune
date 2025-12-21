@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/fortune_theme.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../features/fortune/domain/models/saju/ji_jang_gan_data.dart';
 import '../../../../features/fortune/domain/models/saju/twelve_stage_calculator.dart';

@@ -171,7 +171,7 @@ Text('본문', style: TypographyUnified.bodyMedium)
 Text('제목', style: context.heading1.copyWith(color: ObangseokColors.inju))
 ```
 
-### 전통 폰트 사용 (GowunBatang)
+### 전통 폰트 사용 (NanumMyeongjo)
 
 전통적 느낌이 필요한 제목, 한자, 낙관에 사용:
 
@@ -180,8 +180,8 @@ Text('제목', style: context.heading1.copyWith(color: ObangseokColors.inju))
 Text(
   '오늘의 운세',
   style: TextStyle(
-    fontFamily: 'GowunBatang',
-    fontSize: 24,
+    fontFamily: 'NanumMyeongjo',
+    fontSize: 26,
     fontWeight: FontWeight.w600,
     color: ObangseokColors.meok,
   ),
@@ -191,8 +191,8 @@ Text(
 Text(
   '運',
   style: TextStyle(
-    fontFamily: 'GowunBatang',
-    fontSize: 32,
+    fontFamily: 'NanumMyeongjo',
+    fontSize: 34,
     fontWeight: FontWeight.w700,
     color: ObangseokColors.inju,
   ),
@@ -212,30 +212,32 @@ Text('제목', style: TextStyle(fontSize: 24))   // WRONG!
 
 ### 스타일 가이드
 
-| 카테고리 | 스타일 | 크기 | 폰트 | 용도 |
-|---------|--------|------|------|------|
-| **Display** | displayLarge | 48pt | GowunBatang | 스플래시, 온보딩 |
-| | displayMedium | 40pt | GowunBatang | 큰 헤드라인 |
-| | displaySmall | 32pt | GowunBatang | 중간 헤드라인 |
-| **Heading** | heading1 | 28pt | GowunBatang | 메인 페이지 제목 |
-| | heading2 | 24pt | GowunBatang | 섹션 제목 |
-| | heading3 | 20pt | Pretendard | 서브 섹션 제목 |
-| | heading4 | 18pt | Pretendard | 작은 섹션 제목 |
-| **Body** | bodyLarge | 17pt | Pretendard | 큰 본문 |
-| | bodyMedium | 15pt | Pretendard | 기본 본문 |
-| | bodySmall | 14pt | Pretendard | 작은 본문 |
-| **Label** | labelLarge | 13pt | Pretendard | 큰 라벨 |
-| | labelMedium | 12pt | Pretendard | 기본 라벨 |
-| | labelSmall | 11pt | Pretendard | 작은 라벨 |
-| | labelTiny | 10pt | Pretendard | 배지, NEW 표시 |
-| **Button** | buttonLarge | 17pt | Pretendard | 큰 버튼 |
-| | buttonMedium | 16pt | Pretendard | 기본 버튼 |
-| | buttonSmall | 15pt | Pretendard | 작은 버튼 |
-| | buttonTiny | 14pt | Pretendard | 매우 작은 버튼 |
-| **Number** | numberXLarge | 40pt | TossFace | 매우 큰 숫자 |
-| | numberLarge | 32pt | TossFace | 큰 숫자 |
-| | numberMedium | 24pt | TossFace | 중간 숫자 |
-| | numberSmall | 18pt | TossFace | 작은 숫자 |
+**모든 텍스트는 NanumMyeongjo (나눔명조) 폰트를 사용합니다.**
+
+| 카테고리 | 스타일 | 크기 | 용도 |
+|---------|--------|------|------|
+| **Display** | displayLarge | 50pt | 스플래시, 온보딩 |
+| | displayMedium | 42pt | 큰 헤드라인 |
+| | displaySmall | 34pt | 중간 헤드라인 |
+| **Heading** | heading1 | 30pt | 메인 페이지 제목 |
+| | heading2 | 26pt | 섹션 제목 |
+| | heading3 | 22pt | 서브 섹션 제목 |
+| | heading4 | 20pt | 작은 섹션 제목 |
+| **Body** | bodyLarge | 19pt | 큰 본문 |
+| | bodyMedium | 17pt | 기본 본문 |
+| | bodySmall | 16pt | 작은 본문 |
+| **Label** | labelLarge | 15pt | 큰 라벨 |
+| | labelMedium | 14pt | 기본 라벨 |
+| | labelSmall | 13pt | 작은 라벨 |
+| | labelTiny | 12pt | 배지, NEW 표시 |
+| **Button** | buttonLarge | 19pt | 큰 버튼 |
+| | buttonMedium | 18pt | 기본 버튼 |
+| | buttonSmall | 17pt | 작은 버튼 |
+| | buttonTiny | 16pt | 매우 작은 버튼 |
+| **Number** | numberXLarge | 42pt | 매우 큰 숫자 |
+| | numberLarge | 34pt | 큰 숫자 |
+| | numberMedium | 26pt | 중간 숫자 |
+| | numberSmall | 20pt | 작은 숫자 |
 
 ---
 
@@ -391,9 +393,9 @@ AppBar(
   title: Text(
     '페이지 제목',
     style: TextStyle(
-      fontFamily: 'GowunBatang',  // 전통 폰트
+      fontFamily: 'NanumMyeongjo',  // 전통 폰트
       color: ObangseokColors.getMeok(context),
-      fontSize: 18,
+      fontSize: 20,
       fontWeight: FontWeight.w600,
     ),
   ),
@@ -438,7 +440,7 @@ DSRadius.full   // 9999px (완전 둥근)
 - [ ] HanjiCard 또는 HanjiSectionCard 사용 (운세 결과)
 - [ ] ObangseokColors 우선 사용 (색상)
 - [ ] TypographyUnified 사용 (텍스트)
-- [ ] GowunBatang 사용 (전통 제목/한자)
+- [ ] NanumMyeongjo 폰트 사용 (context.heading1, context.bodyMedium 등)
 - [ ] 다크모드 지원 (`isDark` 조건문)
 - [ ] 블러 처리 시 UnifiedBlurWrapper 사용
 - [ ] AppBar에 iOS 스타일 뒤로가기 버튼

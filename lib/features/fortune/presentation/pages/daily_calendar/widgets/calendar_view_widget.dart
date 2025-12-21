@@ -5,6 +5,7 @@ import '../../../../../../core/components/app_card.dart';
 import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/models/holiday_models.dart';
+import '../../../../../../core/theme/font_config.dart';
 
 /// 캘린더 뷰 위젯
 class CalendarViewWidget extends StatelessWidget {
@@ -53,8 +54,8 @@ class CalendarViewWidget extends StatelessWidget {
         onPageChanged: onPageChanged,
         calendarStyle: CalendarStyle(
           outsideDaysVisible: false,
-          weekendTextStyle: const TextStyle(color: DSColors.error, fontFamily: 'ZenSerif'),
-          holidayTextStyle: const TextStyle(color: DSColors.error, fontFamily: 'ZenSerif'),
+          weekendTextStyle: const TextStyle(color: DSColors.error, fontFamily: FontConfig.primary),
+          holidayTextStyle: const TextStyle(color: DSColors.error, fontFamily: FontConfig.primary),
           selectedDecoration: BoxDecoration(
             color: AppTheme.primaryColor,
             shape: BoxShape.circle,

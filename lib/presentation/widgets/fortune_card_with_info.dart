@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'fortune_card.dart';
 import 'fortune_explanation_bottom_sheet.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 
 class FortuneCardWithInfo extends StatelessWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/font_config.dart';
 import 'package:fortune/core/theme/font_size_system.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/theme/fortune_design_system.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// 통합 타이포그래피 시스템
@@ -20,20 +21,20 @@ import 'package:google_fonts/google_fonts.dart';
 /// ```
 class TypographyUnified {
   // ==========================================
-  // FONT FAMILIES
+  // FONT FAMILIES (FontConfig 참조)
   // ==========================================
 
-  /// 한글 폰트 (ZenSerif)
-  static const String fontFamilyKorean = 'ZenSerif';
+  /// 한글 폰트 (FontConfig.korean 참조)
+  static const String fontFamilyKorean = FontConfig.korean;
 
-  /// 영문 폰트
-  static const String fontFamilyEnglish = 'ZenSerif';
+  /// 영문 폰트 (FontConfig.english 참조)
+  static const String fontFamilyEnglish = FontConfig.english;
 
-  /// 숫자 전용 폰트 (ZenSerif)
-  static const String fontFamilyNumber = 'ZenSerif';
+  /// 숫자 전용 폰트 (FontConfig.number 참조)
+  static const String fontFamilyNumber = FontConfig.number;
 
-  /// 기본 폰트 (ZenSerif)
-  static const String fontFamilyDefault = fontFamilyKorean;
+  /// 기본 폰트 (FontConfig.primary 참조)
+  static const String fontFamilyDefault = FontConfig.primary;
 
   // ==========================================
   // CALLIGRAPHY STYLES (동양화/서예 스타일)

@@ -869,6 +869,20 @@ class UnifiedFortuneService {
       case 'lucky_items':
         // ✅ 행운 아이템 블러 섹션: 로또(마지막번호), 쇼핑, 게임, 음식, 여행, 건강, 패션, 라이프, 오늘의색상
         return ['lotto', 'shopping', 'game', 'food', 'travel', 'health', 'fashion', 'lifestyle', 'today_color'];
+      case 'face-reading':
+        // ✅ 관상 운세 블러 섹션: 상세 분석 + 프리미엄 섹션 (반 정도 블러)
+        // 무료: 총평, face_header, face_type_classification, 닮은꼴 연예인
+        // 블러: 오관/십이궁 상세 분석 + 프리미엄 섹션들
+        return [
+          'detailed_analysis',  // 오관(五官) + 십이궁(十二宮) 상세 분석
+          'personality',        // 성격과 기질
+          'special_features',   // 특별한 관상 특징
+          'advice',             // 조언과 개운법
+          'wealth_fortune',     // 재물운
+          'love_fortune',       // 연애운
+          'career_fortune',     // 직업운
+          'health_fortune',     // 건강운
+        ];
       default:
         // 기본적으로 'advice', 'details', 'recommendations' 블러 처리
         return ['advice', 'details', 'recommendations'];

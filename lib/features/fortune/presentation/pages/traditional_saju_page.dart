@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/font_config.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/design_system/tokens/ds_fortune_colors.dart';
 import '../../../../core/design_system/components/traditional/traditional_button.dart';
@@ -126,7 +127,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             Text(
               '四柱命理',
               style: context.labelMedium.copyWith(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 color: inkColor.withValues(alpha: 0.6),
                 letterSpacing: 2,
               ),
@@ -134,7 +135,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             Text(
               '사주 명리',
               style: context.heading3.copyWith(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 color: inkColor,
               ),
             ),
@@ -362,11 +363,11 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
         unselectedLabelColor: colors.textSecondary,
         labelStyle: context.bodySmall.copyWith(
           fontWeight: FontWeight.bold,
-          fontFamily: 'GowunBatang',
+          fontFamily: FontConfig.primary,
         ),
         unselectedLabelStyle: context.bodySmall.copyWith(
           fontWeight: FontWeight.w500,
-          fontFamily: 'GowunBatang',
+          fontFamily: FontConfig.primary,
         ),
         indicatorColor: sealColor,
         indicatorWeight: 2,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/theme/font_config.dart';
 import '../../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../domain/models/tarot_card_model.dart';
 
@@ -405,7 +406,7 @@ class _DailyTarotCard extends StatelessWidget {
                           style: DSTypography.labelSmall.copyWith(
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
-                            fontSize: 10,
+                            fontSize: FontConfig.captionSmall,
                           ),
                         ),
                       ),

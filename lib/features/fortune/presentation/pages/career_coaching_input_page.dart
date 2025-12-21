@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/font_config.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../domain/models/career_coaching_model.dart';
@@ -324,12 +325,12 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(field.emoji, style: const TextStyle(fontSize: 24)),
+                Text(field.emoji, style: TextStyle(fontSize: FontConfig.heading3)),
                 const SizedBox(height: 4),
                 Text(
                   field.title,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: FontConfig.labelMedium,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                     color: isSelected
                         ? AppColors.accentGreen
@@ -343,7 +344,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                 Text(
                   field.description,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: FontConfig.captionLarge,
                     color: isDark
                         ? AppColors.textSecondaryDark
                         : AppColors.textSecondaryLight,
@@ -378,7 +379,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
           child: Text(
             '먼저 분야를 선택해주세요',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: FontConfig.labelMedium,
               color: isDark
                   ? AppColors.textSecondaryDark
                   : AppColors.textSecondaryLight,
@@ -426,12 +427,12 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(position.emoji, style: const TextStyle(fontSize: 18)),
+                Text(position.emoji, style: TextStyle(fontSize: FontConfig.buttonMedium)),
                 const SizedBox(width: 8),
                 Text(
                   position.title,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: FontConfig.labelMedium,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                     color: isSelected
                         ? AppColors.accentGreen
@@ -490,12 +491,12 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(role.emoji, style: const TextStyle(fontSize: 24)),
+                Text(role.emoji, style: TextStyle(fontSize: FontConfig.heading3)),
                 const SizedBox(height: 4),
                 Text(
                   role.title,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: FontConfig.labelMedium,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                     color: isSelected
                         ? AppColors.accentGreen
@@ -588,7 +589,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
         Text(
           '복수 선택 가능',
           style: TextStyle(
-            fontSize: 13,
+            fontSize: FontConfig.labelSmall,
             color: isDark
                 ? AppColors.textSecondaryDark
                 : AppColors.textSecondaryLight,

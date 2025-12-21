@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/fortune_design_system.dart';
 import '../../../core/design_system/design_system.dart';
 
 /// Miscellaneous widgets for fortune infographic

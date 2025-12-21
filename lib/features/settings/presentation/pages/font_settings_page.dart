@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/theme/fortune_design_system.dart';
 import 'package:fortune/core/theme/typography_theme.dart';
 import 'package:fortune/core/providers/user_settings_provider.dart';
 import '../../../../core/design_system/design_system.dart';

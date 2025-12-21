@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/font_config.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../data/saju_explanations.dart';
 import 'saju/saju_concept_card.dart';
@@ -90,7 +91,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   '천간지지의 오행 분포를 확인해보세요',
                   style: typography.bodySmall.copyWith(
                     color: colors.textSecondary,
-                    fontSize: 12,
+                    fontSize: FontConfig.labelTiny,
                   ),
                 ),
               ),
@@ -317,7 +318,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   Text(
                     strength,
                     style: typography.bodySmall.copyWith(
-                      fontSize: 10,
+                      fontSize: FontConfig.captionSmall,
                       color: colors.textTertiary,
                     ),
                   ),
@@ -434,7 +435,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   Text(
                     title,
                     style: typography.bodySmall.copyWith(
-                      fontSize: 11,
+                      fontSize: FontConfig.captionLarge,
                       color: colors.textSecondary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -449,7 +450,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                     child: Text(
                       element,
                       style: typography.bodySmall.copyWith(
-                        fontSize: 10,
+                        fontSize: FontConfig.captionSmall,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -461,7 +462,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
               Text(
                 interpretation,
                 style: typography.bodySmall.copyWith(
-                  fontSize: 11,
+                  fontSize: FontConfig.captionLarge,
                   color: colors.textSecondary,
                 ),
                 maxLines: 2,

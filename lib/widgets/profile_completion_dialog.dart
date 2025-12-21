@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../core/theme/toss_design_system.dart';
+import '../core/theme/fortune_design_system.dart';
 import '../core/theme/typography_unified.dart';
 
 class ProfileCompletionDialog extends StatelessWidget {

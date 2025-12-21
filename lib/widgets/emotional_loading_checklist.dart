@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../presentation/providers/navigation_visibility_provider.dart';
-import '../core/theme/toss_design_system.dart';
+import '../core/theme/fortune_design_system.dart';
 import '../core/theme/typography_unified.dart';
 import '../core/services/fortune_haptic_service.dart';
 

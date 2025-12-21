@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../core/design_system/tokens/ds_love_colors.dart';
+import '../../../../../core/theme/font_config.dart';
 import '../../../../../core/design_system/components/traditional/traditional_button.dart';
 import '../../../../../core/widgets/accordion_input_section.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
@@ -679,7 +680,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
             Text(
               '戀愛運勢',
               style: TextStyle(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
                 color: inkColor.withValues(alpha: 0.6),
@@ -689,7 +690,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
             Text(
               '연애운세',
               style: TextStyle(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
                 color: inkColor,
@@ -743,7 +744,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
           Text(
             '나의 연애 이야기',
             style: TextStyle(
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: inkColor,
@@ -753,7 +754,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
           Text(
             '솔직하게 답할수록 정확한 조언을 드려요',
             style: TextStyle(
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontSize: 15,
               color: inkColor.withValues(alpha: 0.7),
             ),

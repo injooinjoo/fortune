@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../theme/toss_design_system.dart';
+import '../theme/fortune_design_system.dart';
 
 /// 앱 색상 정의 (ChatGPT 스타일 참고)
 class AppColors {

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/font_config.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -275,7 +276,7 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                                   Text(
                                     '생체 리듬의 흐름을\n읽어드립니다',
                                     style: context.heading3.copyWith(
-                                      fontFamily: 'GowunBatang',
+                                      fontFamily: FontConfig.primary,
                                       color: textColor,
                                       height: 1.5,
                                     ),
@@ -336,7 +337,7 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                                       Text(
                                         '생년월일',
                                         style: context.bodyMedium.copyWith(
-                                          fontFamily: 'GowunBatang',
+                                          fontFamily: FontConfig.primary,
                                           fontWeight: FontWeight.w600,
                                           color: textColor,
                                         ),
@@ -363,7 +364,7 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                           Text(
                             '※ 분석 결과는 참고용으로만 활용해 주세요',
                             style: context.labelMedium.copyWith(
-                              fontFamily: 'GowunBatang',
+                              fontFamily: FontConfig.primary,
                               color: textColor.withValues(alpha: 0.5),
                             ),
                             textAlign: TextAlign.center,

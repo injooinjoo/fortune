@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../fortune/domain/models/conditions/dream_fortune_conditions.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/font_config.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -197,9 +198,9 @@ class _DreamInterpretationPageState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             '🌙',
-            style: TextStyle(fontSize: 60),
+            style: TextStyle(fontSize: FontConfig.emojiMedium),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -368,7 +369,7 @@ class _DreamInterpretationPageState
           if (_selectedTopic != null) ...[
             Text(
               _selectedTopic!.emoji,
-              style: const TextStyle(fontSize: 80),
+              style: TextStyle(fontSize: FontConfig.emojiXLarge),
             ),
             const SizedBox(height: 16),
             Text(

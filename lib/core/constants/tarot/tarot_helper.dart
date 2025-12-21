@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/toss_design_system.dart';
+import '../../theme/fortune_design_system.dart';
 import 'tarot_metadata_data.dart';
 
 // TarotHelper utility class

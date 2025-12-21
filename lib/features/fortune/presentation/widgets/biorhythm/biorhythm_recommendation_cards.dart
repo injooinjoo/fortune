@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
 import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/theme/font_config.dart';
 import '../../pages/biorhythm_result_page.dart';
 import 'components/biorhythm_hanji_card.dart';
 import 'components/biorhythm_score_badge.dart';
@@ -49,7 +50,7 @@ class TodayRecommendationCard extends StatelessWidget {
               Text(
                 '오늘의 지침 (指針)',
                 style: context.bodyMedium.copyWith(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
@@ -69,7 +70,7 @@ class TodayRecommendationCard extends StatelessWidget {
                 child: Text(
                   '吉',
                   style: context.labelMedium.copyWith(
-                    fontFamily: 'GowunBatang',
+                    fontFamily: FontConfig.primary,
                     fontWeight: FontWeight.w700,
                     color: DSBiorhythmColors.goldAccent,
                   ),
@@ -111,7 +112,7 @@ class TodayRecommendationCard extends StatelessWidget {
                       child: Text(
                         recommendation['hanja'] as String,
                         style: context.labelMedium.copyWith(
-                          fontFamily: 'GowunBatang',
+                          fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.w700,
                           color: color,
                         ),
@@ -125,7 +126,7 @@ class TodayRecommendationCard extends StatelessWidget {
                         Text(
                           recommendation['title'] as String,
                           style: context.bodySmall.copyWith(
-                            fontFamily: 'GowunBatang',
+                            fontFamily: FontConfig.primary,
                             fontWeight: FontWeight.w600,
                             color: textColor,
                           ),
@@ -268,7 +269,7 @@ class WeeklyActivityGuide extends StatelessWidget {
           Text(
             '주간 활동 지침',
             style: context.heading4.copyWith(
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -312,7 +313,7 @@ class WeeklyActivityGuide extends StatelessWidget {
                         Text(
                           activity['hanja'] as String,
                           style: context.heading4.copyWith(
-                            fontFamily: 'GowunBatang',
+                            fontFamily: FontConfig.primary,
                             fontWeight: FontWeight.w700,
                             color: color,
                           ),
@@ -329,7 +330,7 @@ class WeeklyActivityGuide extends StatelessWidget {
                         Text(
                           activity['title'] as String,
                           style: context.bodyMedium.copyWith(
-                            fontFamily: 'GowunBatang',
+                            fontFamily: FontConfig.primary,
                             fontWeight: FontWeight.w600,
                             color: textColor,
                           ),
@@ -354,7 +355,7 @@ class WeeklyActivityGuide extends StatelessWidget {
                           child: Text(
                             activity['bestDays'] as String,
                             style: context.labelTiny.copyWith(
-                              fontFamily: 'GowunBatang',
+                              fontFamily: FontConfig.primary,
                               color: color,
                             ),
                           ),
@@ -449,7 +450,7 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
               Text(
                 '삼기(三氣)의 조화',
                 style: context.bodyMedium.copyWith(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
@@ -488,7 +489,7 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
                 Text(
                   balanceStatus['hanja'] as String,
                   style: context.bodySmall.copyWith(
-                    fontFamily: 'GowunBatang',
+                    fontFamily: FontConfig.primary,
                     fontWeight: FontWeight.w700,
                     color: balanceStatus['color'],
                   ),
@@ -497,7 +498,7 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
                 Text(
                   balanceStatus['text'] as String,
                   style: context.labelMedium.copyWith(
-                    fontFamily: 'GowunBatang',
+                    fontFamily: FontConfig.primary,
                     color: textColor.withValues(alpha: 0.7),
                   ),
                 ),
@@ -531,7 +532,7 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
             child: Text(
               hanja,
               style: context.bodyMedium.copyWith(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
@@ -542,7 +543,7 @@ class ThreeEnergiesBalanceCard extends StatelessWidget {
         Text(
           '$score',
           style: context.labelMedium.copyWith(
-            fontFamily: 'GowunBatang',
+            fontFamily: FontConfig.primary,
             color: color,
           ),
         ),

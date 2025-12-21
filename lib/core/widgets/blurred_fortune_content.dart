@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../theme/toss_design_system.dart';
+import '../theme/fortune_design_system.dart';
 import '../models/fortune_result.dart';
 import '../../presentation/providers/subscription_provider.dart';
 

@@ -8,7 +8,7 @@ import '../../core/utils/supabase_helper.dart';
 import '../../core/utils/logger.dart';
 import '../../utils/date_utils.dart';
 import 'profile_edit_dialogs/index.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/fortune_design_system.dart';
 import '../../shared/components/base_card.dart';
 
 class UserInfoCard extends StatefulWidget {

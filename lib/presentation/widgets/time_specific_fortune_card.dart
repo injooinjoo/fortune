@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/fortune_design_system.dart';
 import '../../domain/entities/fortune.dart';
 
 class TimeSpecificFortuneCard extends StatelessWidget {

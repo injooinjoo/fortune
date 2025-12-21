@@ -6,6 +6,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/font_config.dart';
 
 /// 🎁 공유 카드 - Traditional 한지 스타일 + 이미지 공유
 class ShareCard extends StatefulWidget {
@@ -355,7 +356,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
                   color: _sealRed,
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'ZenSerif',
+                  fontFamily: FontConfig.primary,
                 ),
               ),
               Text(
@@ -384,7 +385,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
               color: _darkBrown,
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              fontFamily: 'ZenSerif',
+              fontFamily: FontConfig.primary,
             ),
           ),
         ),
@@ -527,7 +528,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
                       color: elementColors[entry.key],
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      fontFamily: 'ZenSerif',
+                      fontFamily: FontConfig.primary,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -572,7 +573,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
                 color: _sealRed,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                fontFamily: 'ZenSerif',
+                fontFamily: FontConfig.primary,
               ),
             ),
             const SizedBox(width: 10),

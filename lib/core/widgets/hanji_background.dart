@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/toss_design_system.dart';
+import '../theme/fortune_design_system.dart';
 
 /// 한지 텍스처 배경 위젯
 ///

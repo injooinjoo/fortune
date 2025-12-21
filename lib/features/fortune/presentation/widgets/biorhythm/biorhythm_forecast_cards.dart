@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../core/theme/font_config.dart';
 import '../../../../../core/theme/typography_unified.dart';
 import '../../pages/biorhythm_result_page.dart';
 import 'components/biorhythm_hanji_card.dart';
@@ -37,7 +38,7 @@ class WeeklyForecastHeader extends StatelessWidget {
           Text(
             '주간 운세 전망',
             style: context.heading3.copyWith(
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -46,7 +47,7 @@ class WeeklyForecastHeader extends StatelessWidget {
           Text(
             _formatDateRange(startDate, endDate),
             style: context.bodySmall.copyWith(
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               color: textColor.withValues(alpha: 0.6),
             ),
           ),
@@ -108,7 +109,7 @@ class WeeklyForecastHeader extends StatelessWidget {
         Text(
           label,
           style: context.labelMedium.copyWith(
-            fontFamily: 'GowunBatang',
+            fontFamily: FontConfig.primary,
             color: textColor.withValues(alpha: 0.6),
           ),
         ),
@@ -245,7 +246,7 @@ class ImportantDatesCard extends StatelessWidget {
               Text(
                 '이번 주 길흉일',
                 style: context.bodyMedium.copyWith(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
@@ -311,7 +312,7 @@ class ImportantDatesCard extends StatelessWidget {
             child: Text(
               hanja,
               style: context.heading3.copyWith(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
@@ -329,7 +330,7 @@ class ImportantDatesCard extends StatelessWidget {
                   Text(
                     title,
                     style: context.bodySmall.copyWith(
-                      fontFamily: 'GowunBatang',
+                      fontFamily: FontConfig.primary,
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
@@ -344,7 +345,7 @@ class ImportantDatesCard extends StatelessWidget {
                     child: Text(
                       date,
                       style: context.labelMedium.copyWith(
-                        fontFamily: 'GowunBatang',
+                        fontFamily: FontConfig.primary,
                         fontWeight: FontWeight.w500,
                         color: color,
                       ),
@@ -356,7 +357,7 @@ class ImportantDatesCard extends StatelessWidget {
               Text(
                 description,
                 style: context.labelMedium.copyWith(
-                  fontFamily: 'Pretendard',
+                  fontFamily: FontConfig.primary,
                   color: textColor.withValues(alpha: 0.6),
                 ),
               ),
@@ -448,7 +449,7 @@ class RhythmCycleInfoCard extends StatelessWidget {
           Text(
             '바이오리듬 주기',
             style: context.bodyMedium.copyWith(
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -508,7 +509,7 @@ class RhythmCycleInfoCard extends StatelessWidget {
             child: Text(
               '$days',
               style: context.heading4.copyWith(
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
@@ -519,14 +520,14 @@ class RhythmCycleInfoCard extends StatelessWidget {
         Text(
           label,
           style: context.labelMedium.copyWith(
-            fontFamily: 'GowunBatang',
+            fontFamily: FontConfig.primary,
             color: textColor.withValues(alpha: 0.6),
           ),
         ),
         Text(
           '일 주기',
           style: context.labelTiny.copyWith(
-            fontFamily: 'Pretendard',
+            fontFamily: FontConfig.primary,
             color: textColor.withValues(alpha: 0.4),
           ),
         ),

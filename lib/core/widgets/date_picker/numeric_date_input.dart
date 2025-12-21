@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../../theme/toss_design_system.dart';
+import '../../theme/fortune_design_system.dart';
 import '../../design_system/design_system.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_dimensions.dart';
@@ -286,10 +285,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
                       controller: _controller,
                       focusNode: _focusNode,
                       keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(8),
-                      ],
+                      // inputFormatters 제거 - _handleInput에서 숫자 필터링 및 길이 제한 처리
                       style: DSTypography.bodyLarge.copyWith(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1.2,

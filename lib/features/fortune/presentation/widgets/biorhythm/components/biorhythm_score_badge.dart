@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
+import '../../../../../../core/theme/font_config.dart';
 
 /// Calligraphy style score badge for biorhythm display
 ///
@@ -77,7 +78,7 @@ class BiorhythmScoreBadge extends StatelessWidget {
               style: TextStyle(
                 color: color,
                 fontSize: dimensions.labelSize,
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -90,7 +91,7 @@ class BiorhythmScoreBadge extends StatelessWidget {
                   ? DSBiorhythmColors.hanjiCream
                   : DSBiorhythmColors.inkBleed,
               fontSize: dimensions.scoreSize,
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
               fontWeight: FontWeight.w700,
               height: 1.1,
             ),
@@ -105,7 +106,7 @@ class BiorhythmScoreBadge extends StatelessWidget {
                       : DSBiorhythmColors.inkBleed)
                   .withValues(alpha: 0.6),
               fontSize: dimensions.unitSize,
-              fontFamily: 'GowunBatang',
+              fontFamily: FontConfig.primary,
             ),
           ),
 
@@ -117,7 +118,7 @@ class BiorhythmScoreBadge extends StatelessWidget {
               style: TextStyle(
                 color: DSBiorhythmColors.getStatusColor(score),
                 fontSize: dimensions.hanjaSize,
-                fontFamily: 'GowunBatang',
+                fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -385,7 +386,7 @@ class BiorhythmScoreInline extends StatelessWidget {
                 style: TextStyle(
                   color: color,
                   fontSize: 12,
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -396,7 +397,7 @@ class BiorhythmScoreInline extends StatelessWidget {
                       ? DSBiorhythmColors.hanjiCream
                       : DSBiorhythmColors.inkBleed,
                   fontSize: 12,
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w600,
                 ),
               ),

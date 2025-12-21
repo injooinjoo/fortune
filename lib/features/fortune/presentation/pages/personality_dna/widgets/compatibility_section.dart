@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
 import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
 import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
-import 'toss_section_widget.dart';
+import 'package:fortune/core/theme/font_config.dart';
+import 'fortune_section_widget.dart';
 
 /// 궁합 섹션 - 한국 전통 스타일
 ///
@@ -95,8 +96,8 @@ class _CompatibilityCard extends StatelessWidget {
               Text(
                 '$emoji $type',
                 style: TextStyle(
-                  fontFamily: 'GowunBatang',
-                  fontSize: 14,
+                  fontFamily: FontConfig.primary,
+                  fontSize: FontConfig.labelMedium,
                   fontWeight: FontWeight.w600,
                   color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.7),
                 ),
@@ -123,9 +124,9 @@ class _CompatibilityCard extends StatelessWidget {
                 ),
                 child: Text(
                   mbti,
-                  style: const TextStyle(
-                    fontFamily: 'GowunBatang',
-                    fontSize: 13,
+                  style: TextStyle(
+                    fontFamily: FontConfig.primary,
+                    fontSize: FontConfig.labelSmall,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                   ),
@@ -137,8 +138,8 @@ class _CompatibilityCard extends StatelessWidget {
           Text(
             description,
             style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 15,
+              fontFamily: FontConfig.primary,
+              fontSize: FontConfig.labelLarge,
               fontWeight: FontWeight.w400,
               color: DSFortuneColors.getInk(isDark),
               height: 1.5,

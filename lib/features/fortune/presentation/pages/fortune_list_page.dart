@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
@@ -9,6 +10,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/design_system/tokens/ds_fortune_colors.dart';
 import '../../../../core/design_system/components/traditional/traditional_button.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/theme/font_config.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
 import '../providers/fortune_order_provider.dart';
 import '../providers/fortune_categories_provider.dart';
@@ -99,36 +101,24 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     }
   }
 
-  // 오늘 조회한 운세 타입 로드
+  // 오늘 조회한 운세 타입 로드 (SharedPreferences 기반 - 진입만 해도 체크됨)
   Future<void> _loadViewedTodayTypes() async {
     try {
-      final user = ref.read(userProvider).value;
-      if (user == null) return;
-
-      final supabase = ref.read(supabaseClientProvider);
-
-      // 로컬 타임존 기준 오늘 (한국 시간 기준)
+      final prefs = await SharedPreferences.getInstance();
       final now = DateTime.now();
-      final todayStart = DateTime(now.year, now.month, now.day); // 로컬 자정
-      final todayEnd = todayStart.add(const Duration(days: 1));
+      final todayKey = 'viewed_fortunes_${now.year}_${now.month}_${now.day}';
 
-      final response = await supabase
-          .from('fortune_history')
-          .select('fortune_type')
-          .eq('user_id', user.id)
-          .gte('created_at', todayStart.toUtc().toIso8601String())
-          .lt('created_at', todayEnd.toUtc().toIso8601String());
+      // SharedPreferences에서 오늘 진입한 운세 목록 로드
+      final viewedTypes = prefs.getStringList(todayKey) ?? [];
 
       if (mounted) {
         setState(() {
-          _viewedTodayTypes = (response as List)
-              .map((item) => item['fortune_type'] as String)
-              .toSet();
+          _viewedTodayTypes = viewedTypes.toSet();
         });
-        debugPrint('[FortuneList] 오늘 조회한 운세: $_viewedTodayTypes');
+        debugPrint('[FortuneList] 오늘 진입한 운세: $_viewedTodayTypes');
       }
     } catch (e) {
-      debugPrint('[FortuneList] 오늘 조회 여부 로드 실패: $e');
+      debugPrint('[FortuneList] 오늘 진입 여부 로드 실패: $e');
     }
   }
 
@@ -240,8 +230,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
             Text(
               '運勢',
               style: TextStyle(
-                fontFamily: 'GowunBatang',
-                fontSize: 12,
+                fontFamily: FontConfig.primary,
+                fontSize: FontConfig.labelTiny,
                 fontWeight: FontWeight.w400,
                 color: DSFortuneColors.getPrimary(isDark).withValues(alpha: 0.7),
                 letterSpacing: 2,
@@ -250,8 +240,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
             Text(
               '운세',
               style: TextStyle(
-                fontFamily: 'GowunBatang',
-                fontSize: 22,
+                fontFamily: FontConfig.primary,
+                fontSize: FontConfig.heading3,
                 fontWeight: FontWeight.w700,
                 color: DSFortuneColors.getInk(isDark),
                 letterSpacing: 1,
@@ -396,8 +386,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   Text(
                     '整列',
                     style: TextStyle(
-                      fontFamily: 'GowunBatang',
-                      fontSize: 12,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.labelTiny,
                       fontWeight: FontWeight.w400,
                       color: primaryColor.withValues(alpha: 0.6),
                       letterSpacing: 2,
@@ -407,8 +397,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   Text(
                     '정렬 방식',
                     style: TextStyle(
-                      fontFamily: 'GowunBatang',
-                      fontSize: 20,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.heading4,
                       fontWeight: FontWeight.w700,
                       color: inkColor,
                       letterSpacing: 1,
@@ -516,8 +506,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   Text(
                     title,
                     style: TextStyle(
-                      fontFamily: 'GowunBatang',
-                      fontSize: 16,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.bodySmall,
                       fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                       color: isSelected ? primaryColor : inkColor,
                     ),
@@ -526,8 +516,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   Text(
                     description,
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 13,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.labelSmall,
                       color: inkColor.withValues(alpha: 0.6),
                     ),
                   ),
@@ -549,8 +539,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   child: Text(
                     '✓',
                     style: TextStyle(
-                      fontFamily: 'GowunBatang',
-                      fontSize: 14,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.labelMedium,
                       fontWeight: FontWeight.w700,
                       color: sealColor,
                     ),
@@ -577,13 +567,34 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // Record view for order provider
     ref.read(fortuneOrderProvider.notifier).recordView(fortuneType);
 
+    // 진입 즉시 빨간점 제거 (UI 즉시 업데이트)
+    if (!_viewedTodayTypes.contains(fortuneType)) {
+      setState(() {
+        _viewedTodayTypes.add(fortuneType);
+      });
+      // SharedPreferences에도 저장 (앱 재시작 후에도 유지)
+      _saveViewedType(fortuneType);
+    }
+
     // 모든 운세를 직접 페이지로 라우팅 (bottomsheet 제거)
-    // 복귀 시 빨간점 상태 새로고침
-    context.push(category.route).then((_) {
-      if (mounted) {
-        _loadViewedTodayTypes();
+    context.push(category.route);
+  }
+
+  // 진입한 운세 타입을 SharedPreferences에 저장
+  Future<void> _saveViewedType(String fortuneType) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final now = DateTime.now();
+      final todayKey = 'viewed_fortunes_${now.year}_${now.month}_${now.day}';
+
+      final existingTypes = prefs.getStringList(todayKey) ?? [];
+      if (!existingTypes.contains(fortuneType)) {
+        existingTypes.add(fortuneType);
+        await prefs.setStringList(todayKey, existingTypes);
       }
-    });
+    } catch (e) {
+      debugPrint('[FortuneList] 진입 기록 저장 실패: $e');
+    }
   }
 
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/theme/fortune_theme.dart';
+import '../../../../../../core/theme/fortune_design_system.dart';
 import '../../../../domain/models/health_fortune_model.dart';
 
 class ConditionOption extends StatelessWidget {

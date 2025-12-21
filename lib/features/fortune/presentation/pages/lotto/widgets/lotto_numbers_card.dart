@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../../../../../core/theme/font_config.dart';
 import '../../../../../../core/theme/obangseok_colors.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/design_system/components/traditional/hanji_card.dart';
@@ -97,7 +98,7 @@ class LottoNumbersCard extends StatelessWidget {
               Text(
                 '오늘의 행운 번호',
                 style: TypographyUnified.heading3.copyWith(
-                  fontFamily: 'GowunBatang',
+                  fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w700,
                   color: isDark
                       ? ObangseokColors.baekDark
@@ -217,10 +218,9 @@ class LottoNumbersCard extends StatelessWidget {
       child: Center(
         child: Text(
           '$number',
-          style: TypographyUnified.numberMedium.copyWith(
+          style: TypographyUnified.numberSmall.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w700,
-            fontSize: 18,
           ),
         ),
       ),
@@ -299,11 +299,10 @@ class LottoNumbersCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 guide['range'] as String,
-                style: TypographyUnified.labelSmall.copyWith(
+                style: TypographyUnified.labelTiny.copyWith(
                   color: isDark
                       ? ObangseokColors.baekDark.withValues(alpha: 0.7)
                       : ObangseokColors.meok.withValues(alpha: 0.6),
-                  fontSize: 10,
                 ),
               ),
             ],

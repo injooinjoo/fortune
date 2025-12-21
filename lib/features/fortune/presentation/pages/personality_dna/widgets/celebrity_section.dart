@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
 import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
 import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
-import 'toss_section_widget.dart';
+import 'package:fortune/core/theme/font_config.dart';
+import 'fortune_section_widget.dart';
 
 /// 닮은 유명인 섹션 - 한국 전통 스타일
 ///
@@ -55,8 +56,8 @@ class CelebritySection extends StatelessWidget {
                   width: 1.5,
                 ),
               ),
-              child: const Center(
-                child: Text('⭐', style: TextStyle(fontSize: 22)),
+              child: Center(
+                child: Text('⭐', style: TextStyle(fontSize: FontConfig.heading3)),
               ),
             ),
             const SizedBox(width: 16),
@@ -67,8 +68,8 @@ class CelebritySection extends StatelessWidget {
                   Text(
                     celebrity.name,
                     style: TextStyle(
-                      fontFamily: 'GowunBatang',
-                      fontSize: 20,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.heading4,
                       fontWeight: FontWeight.w700,
                       color: DSFortuneColors.getGold(isDark),
                       height: 1.3,
@@ -78,8 +79,8 @@ class CelebritySection extends StatelessWidget {
                   Text(
                     celebrity.reason,
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
+                      fontFamily: FontConfig.primary,
+                      fontSize: FontConfig.labelMedium,
                       fontWeight: FontWeight.w400,
                       color: DSFortuneColors.getInk(isDark).withValues(alpha: 0.8),
                       height: 1.4,

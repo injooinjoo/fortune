@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
-import '../core/theme/toss_design_system.dart';
+import '../core/theme/fortune_design_system.dart';
+import '../core/theme/font_config.dart';
 
 /// 여러 장의 사진을 선택할 수 있는 위젯
 class MultiPhotoSelector extends StatefulWidget {
@@ -401,7 +402,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                 '${index + 1}',
                                 style: const TextStyle(
                                   color: TossDesignSystem.white,
-                                  fontFamily: 'ZenSerif',
+                                  fontFamily: FontConfig.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

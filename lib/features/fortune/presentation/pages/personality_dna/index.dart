@@ -7,6 +7,6 @@ export 'widgets/work_style_section.dart';
 export 'widgets/daily_matching_section.dart';
 export 'widgets/compatibility_section.dart';
 export 'widgets/celebrity_section.dart';
-export 'widgets/toss_section_widget.dart';
+export 'widgets/fortune_section_widget.dart';
 export 'widgets/input_widgets.dart';
 export 'widgets/blur_wrapper_widget.dart';

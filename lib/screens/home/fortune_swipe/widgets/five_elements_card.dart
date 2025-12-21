@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/font_config.dart';
 
 /// 🌊 오행 밸런스 카드
 class FiveElementsCard extends StatelessWidget {
@@ -148,7 +149,7 @@ class FiveElementsCard extends StatelessWidget {
                                     color: color,
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    fontFamily: 'ZenSerif',
+                                    fontFamily: FontConfig.primary,
                                   ),
                                 ),
                               ),
