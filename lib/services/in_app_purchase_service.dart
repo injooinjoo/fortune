@@ -27,6 +27,11 @@ class InAppPurchaseService {
   // 중복 구매 처리 방지를 위한 처리된 구매 ID 추적
   final Set<String> _processedPurchaseIds = {};
 
+  // 복원 관련 상태
+  bool _isRestoring = false;
+  int _restoredCount = 0;
+  Timer? _restoreTimeoutTimer;
+
   // Compatibility getters
   bool get isAvailable => _isAvailable;
   bool get purchasePending => _purchasePending;
@@ -43,6 +48,10 @@ class InAppPurchaseService {
   void Function(String productId, bool isSubscription)? onSubscriptionActivated;
   void Function(String error)? onPurchaseError;
   void Function()? onPurchaseCanceled;
+  /// 구매 복원 완료 시 호출되는 콜백
+  /// [hasRestoredItems]: 복원된 항목이 있는지 여부
+  /// [restoredCount]: 복원된 항목 수
+  void Function(bool hasRestoredItems, int restoredCount)? onRestoreCompleted;
   
   // Set context for UI notifications
   void setContext(BuildContext context) {
@@ -57,6 +66,7 @@ class InAppPurchaseService {
     void Function(String productId, bool isSubscription)? onSubscriptionActivated,
     void Function(String error)? onPurchaseError,
     void Function()? onPurchaseCanceled,
+    void Function(bool hasRestoredItems, int restoredCount)? onRestoreCompleted,
   }) {
     this.onPurchaseStarted = onPurchaseStarted;
     this.onPurchaseSuccess = onPurchaseSuccess;
@@ -64,6 +74,7 @@ class InAppPurchaseService {
     this.onSubscriptionActivated = onSubscriptionActivated;
     this.onPurchaseError = onPurchaseError;
     this.onPurchaseCanceled = onPurchaseCanceled;
+    this.onRestoreCompleted = onRestoreCompleted;
   }
   
   // 초기화
@@ -203,6 +214,11 @@ class InAppPurchaseService {
         } else {
           if (purchaseId != null) {
             _processedPurchaseIds.add(purchaseId);
+          }
+          // 복원 시 카운트 증가
+          if (purchaseDetails.status == PurchaseStatus.restored && _isRestoring) {
+            _restoredCount++;
+            Logger.info('복원된 구매 카운트: $_restoredCount');
           }
           await _deliverProduct(purchaseDetails);
         }
@@ -350,14 +366,31 @@ class InAppPurchaseService {
   // 구매 복원
   Future<void> restorePurchases() async {
     try {
+      // 복원 상태 초기화
+      _isRestoring = true;
+      _restoredCount = 0;
+      _restoreTimeoutTimer?.cancel();
+
       await _inAppPurchase.restorePurchases();
       Logger.info('구매 복원 시작');
+
+      // 타임아웃: 5초 후 복원할 항목이 없으면 완료 콜백 호출
+      _restoreTimeoutTimer = Timer(const Duration(seconds: 5), () {
+        if (_isRestoring) {
+          _isRestoring = false;
+          Logger.info('복원 타임아웃 - 복원된 항목: $_restoredCount개');
+          onRestoreCompleted?.call(_restoredCount > 0, _restoredCount);
+          _restoredCount = 0;
+        }
+      });
     } catch (e) {
+      _isRestoring = false;
+      _restoredCount = 0;
       Logger.error('구매 복원 실패', e);
       throw Exception('구매 복원에 실패했습니다.');
     }
   }
-  
+
   // 구독 상태 확인
   Future<bool> isSubscriptionActive() async {
     try {
@@ -474,15 +507,51 @@ class InAppPurchaseService {
   // Helper method to get user-friendly error messages
   String _getErrorMessage(String errorCode) {
     switch (errorCode) {
+      // 사용자 취소
       case 'E_USER_CANCELLED':
+      case 'BillingResponse.userCanceled':
+      case 'SKErrorPaymentCancelled':
         return '구매가 취소되었습니다';
+
+      // 네트워크 오류
       case 'E_NETWORK_ERROR':
-        return '네트워크 오류가 발생했습니다. 다시 시도해주세요';
+      case 'BillingResponse.serviceUnavailable':
+      case 'SKErrorCloudServiceNetworkConnectionFailed':
+        return '네트워크 연결을 확인해주세요';
+
+      // 결제 정보 오류
       case 'E_PAYMENT_INVALID':
+      case 'BillingResponse.developerError':
+      case 'SKErrorPaymentInvalid':
         return '결제 정보가 올바르지 않습니다';
+
+      // 상품 구매 불가
       case 'E_PRODUCT_NOT_AVAILABLE':
+      case 'BillingResponse.itemUnavailable':
+      case 'SKErrorStoreProductNotAvailable':
         return '해당 상품을 구매할 수 없습니다';
+
+      // 이미 소유한 상품
+      case 'BillingResponse.itemAlreadyOwned':
+      case 'E_ALREADY_OWNED':
+        return '이미 구매한 상품입니다. 구매 복원을 시도해주세요';
+
+      // 구매 허용되지 않음
+      case 'BillingResponse.featureNotSupported':
+      case 'SKErrorPaymentNotAllowed':
+        return '이 기기에서는 인앱 구매가 허용되지 않습니다';
+
+      // 결제 지연
+      case 'SKErrorPaymentDeferred':
+        return '결제 승인 대기 중입니다. 잠시 후 다시 확인해주세요';
+
+      // 서버 오류
+      case 'BillingResponse.error':
+      case 'SKErrorUnknown':
+        return '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요';
+
       default:
+        Logger.warning('알 수 없는 에러 코드: $errorCode');
         return '구매 중 오류가 발생했습니다. 다시 시도해주세요';
     }
   }

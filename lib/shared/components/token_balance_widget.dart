@@ -23,7 +23,7 @@ class TokenBalanceWidget extends ConsumerWidget {
     return GestureDetector(
       onTap: () {
         DSHaptics.light();
-        context.push('/payment/history');
+        context.push('/token-purchase');
       },
       child: GlassContainer(
         key: tokenBalanceGlobalKey,

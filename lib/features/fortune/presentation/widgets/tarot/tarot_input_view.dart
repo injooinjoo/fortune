@@ -3,7 +3,7 @@ import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../../core/widgets/unified_voice_text_field.dart';
 
 /// Simplified input view for tarot questions
 class TarotInputView extends ConsumerStatefulWidget {
@@ -57,7 +57,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
         const SizedBox(height: 32),
 
         // Voice input
-        VoiceInputTextField(
+        UnifiedVoiceTextField(
           onSubmit: _handleQuestionSubmit,
           hintText: '질문을 말하거나 적어주세요',
           transcribingText: '듣고 있어요...',

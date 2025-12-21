@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/design_system.dart';
-import '../../../../core/utils/haptic_utils.dart';
-import '../../../../core/widgets/chat_bubble.dart';
-import '../../../../services/speech_recognition_service.dart';
-import 'voice_spectrum_animation.dart';
+import '../design_system/design_system.dart';
+import '../utils/haptic_utils.dart';
+import '../../services/speech_recognition_service.dart';
+import '../../features/fortune/presentation/widgets/voice_spectrum_animation.dart';
+import 'chat_bubble.dart';
 
-/// 소원빌기용 음성 입력 위젯
+/// 버블 스타일 음성 입력 위젯
 ///
 /// 특징:
 /// - 음성 입력 후 ChatBubble에 텍스트 표시
 /// - 내장 전송 버튼 없음 (외부 버튼 사용)
 /// - 정지 버튼으로 녹음 종료
-class WishVoiceInput extends StatefulWidget {
+///
+/// 기존 WishVoiceInput 통합
+class UnifiedVoiceBubbleInput extends StatefulWidget {
   /// 텍스트 컨트롤러
   final TextEditingController controller;
 
   /// 텍스트 변경 콜백
   final VoidCallback? onTextChanged;
+
+  /// 녹음 상태 변경 콜백 (Provider 연동용)
+  final Function(bool isRecording)? onRecordingChanged;
 
   /// 힌트 텍스트
   final String hintText;
@@ -27,20 +32,33 @@ class WishVoiceInput extends StatefulWidget {
   /// 활성화 여부
   final bool enabled;
 
-  const WishVoiceInput({
+  /// 글자수 표시 여부 (기본 true)
+  final bool showCharacterCount;
+
+  /// 수정/삭제 버튼 표시 여부 (기본 true)
+  final bool showEditDeleteButtons;
+
+  /// 웨이브폼 바 개수 (기본 50)
+  final int waveformBarCount;
+
+  const UnifiedVoiceBubbleInput({
     super.key,
     required this.controller,
     this.onTextChanged,
+    this.onRecordingChanged,
     this.hintText = '소원을 말하거나 적어주세요',
     this.transcribingText = '듣고 있어요...',
     this.enabled = true,
+    this.showCharacterCount = true,
+    this.showEditDeleteButtons = true,
+    this.waveformBarCount = 50,
   });
 
   @override
-  State<WishVoiceInput> createState() => _WishVoiceInputState();
+  State<UnifiedVoiceBubbleInput> createState() => _UnifiedVoiceBubbleInputState();
 }
 
-class _WishVoiceInputState extends State<WishVoiceInput>
+class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
     with SingleTickerProviderStateMixin {
   final SpeechRecognitionService _speechService = SpeechRecognitionService();
 
@@ -72,6 +90,7 @@ class _WishVoiceInputState extends State<WishVoiceInput>
     if (!_speechService.isListeningNotifier.value && mounted) {
       if (_isRecording) {
         setState(() => _isRecording = false);
+        widget.onRecordingChanged?.call(false);
       }
     }
   }
@@ -103,6 +122,8 @@ class _WishVoiceInputState extends State<WishVoiceInput>
       _isSpeaking = false;
     });
 
+    widget.onRecordingChanged?.call(true);
+
     await _startListeningWithAutoRestart();
   }
 
@@ -118,6 +139,7 @@ class _WishVoiceInputState extends State<WishVoiceInput>
               TextPosition(offset: text.length),
             );
           });
+          widget.onRecordingChanged?.call(false);
         }
       },
       onPartialResult: (text) {
@@ -133,7 +155,7 @@ class _WishVoiceInputState extends State<WishVoiceInput>
       },
       onNoMatch: () {
         if (mounted && _isRecording) {
-          debugPrint('🎤 [WishVoiceInput] Auto-restarting after no_match');
+          debugPrint('🎤 [UnifiedVoiceBubble] Auto-restarting after no_match');
           _startListeningWithAutoRestart();
         }
       },
@@ -151,6 +173,8 @@ class _WishVoiceInputState extends State<WishVoiceInput>
       _isRecording = false;
       _isSpeaking = false;
     });
+
+    widget.onRecordingChanged?.call(false);
   }
 
   Future<void> _showPermissionDialog(MicrophonePermissionStatus status) async {
@@ -294,7 +318,7 @@ class _WishVoiceInputState extends State<WishVoiceInput>
               builder: (context, soundLevel, child) {
                 return VoiceSpectrumAnimation(
                   isRecording: true,
-                  barCount: 50,
+                  barCount: widget.waveformBarCount,
                   soundLevel: soundLevel,
                   isSpeaking: _isSpeaking,
                 );
@@ -328,98 +352,102 @@ class _WishVoiceInputState extends State<WishVoiceInput>
                   height: 1.5,
                 ),
               ),
-              const SizedBox(height: DSSpacing.sm),
-              // 수정/삭제 버튼
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // 수정 버튼 (다시 입력)
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {});
-                      _showEditSheet();
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: DSSpacing.sm,
-                        vertical: DSSpacing.xs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colors.accent.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(DSRadius.sm),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.edit,
-                            size: 14,
-                            color: colors.accent,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '수정',
-                            style: DSTypography.labelSmall.copyWith(
+              if (widget.showEditDeleteButtons) ...[
+                const SizedBox(height: DSSpacing.sm),
+                // 수정/삭제 버튼
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // 수정 버튼 (다시 입력)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {});
+                        _showEditSheet();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.sm,
+                          vertical: DSSpacing.xs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(DSRadius.sm),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.edit,
+                              size: 14,
                               color: colors.accent,
-                              fontWeight: FontWeight.w500,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Text(
+                              '수정',
+                              style: DSTypography.labelSmall.copyWith(
+                                color: colors.accent,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: DSSpacing.sm),
-                  // 삭제 버튼
-                  GestureDetector(
-                    onTap: () {
-                      widget.controller.clear();
-                      setState(() {});
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: DSSpacing.sm,
-                        vertical: DSSpacing.xs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colors.error.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(DSRadius.sm),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.delete_outline,
-                            size: 14,
-                            color: colors.error,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '삭제',
-                            style: DSTypography.labelSmall.copyWith(
+                    const SizedBox(width: DSSpacing.sm),
+                    // 삭제 버튼
+                    GestureDetector(
+                      onTap: () {
+                        widget.controller.clear();
+                        setState(() {});
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.sm,
+                          vertical: DSSpacing.xs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.error.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(DSRadius.sm),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.delete_outline,
+                              size: 14,
                               color: colors.error,
-                              fontWeight: FontWeight.w500,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Text(
+                              '삭제',
+                              style: DSTypography.labelSmall.copyWith(
+                                color: colors.error,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
-        const SizedBox(height: DSSpacing.sm),
-        // 글자수 표시
-        Padding(
-          padding: const EdgeInsets.only(left: DSSpacing.sm),
-          child: Text(
-            '${widget.controller.text.length}자',
-            style: DSTypography.labelSmall.copyWith(
-              color: colors.textTertiary,
+        if (widget.showCharacterCount) ...[
+          const SizedBox(height: DSSpacing.sm),
+          // 글자수 표시
+          Padding(
+            padding: const EdgeInsets.only(left: DSSpacing.sm),
+            child: Text(
+              '${widget.controller.text.length}자',
+              style: DSTypography.labelSmall.copyWith(
+                color: colors.textTertiary,
+              ),
             ),
           ),
-        ),
+        ],
       ],
     );
   }
@@ -521,7 +549,7 @@ class _WishVoiceInputState extends State<WishVoiceInput>
               ),
               const SizedBox(height: DSSpacing.lg),
               Text(
-                '소원 수정',
+                '내용 수정',
                 style: DSTypography.headingSmall.copyWith(
                   color: colors.textPrimary,
                 ),
@@ -533,7 +561,7 @@ class _WishVoiceInputState extends State<WishVoiceInput>
                 autofocus: true,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: '소원을 입력하세요',
+                  hintText: '내용을 입력하세요',
                   filled: true,
                   fillColor: colors.backgroundSecondary,
                   border: OutlineInputBorder(

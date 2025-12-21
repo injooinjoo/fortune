@@ -429,16 +429,16 @@ ${photoAnalysisText}${chatAnalysisText}
         : []
 
       const result = {
-        overallScore: fortuneData.overallScore, // ✅ 무료: 공개
-        content: fortuneData.content, // ✅ 무료: 공개
-        successPrediction: isBlurred ? { score: 0, message: '🔒 프리미엄 전용', advice: '🔒 프리미엄 결제 후 확인 가능합니다' } : fortuneData.successPrediction, // 🔒 유료
-        firstImpressionTips: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.firstImpressionTips, // 🔒 유료
-        conversationTopics: isBlurred ? { recommended: ['🔒 프리미엄 전용'], avoid: ['🔒 프리미엄 전용'] } : fortuneData.conversationTopics, // 🔒 유료
-        outfitAdvice: isBlurred ? { style: '🔒 프리미엄 결제 후 확인 가능합니다', colors: ['🔒 프리미엄 전용'] } : fortuneData.outfitAdvice, // 🔒 유료
-        locationAdvice: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.locationAdvice, // 🔒 유료
-        dosList: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.dosList, // 🔒 유료
-        dontsList: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.dontsList, // 🔒 유료
-        finalMessage: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.finalMessage, // 🔒 유료
+        overallScore: fortuneData.overallScore,
+        content: fortuneData.content,
+        successPrediction: fortuneData.successPrediction,
+        firstImpressionTips: fortuneData.firstImpressionTips,
+        conversationTopics: fortuneData.conversationTopics,
+        outfitAdvice: fortuneData.outfitAdvice,
+        locationAdvice: fortuneData.locationAdvice,
+        dosList: fortuneData.dosList,
+        dontsList: fortuneData.dontsList,
+        finalMessage: fortuneData.finalMessage,
         userInfo: { name, birthDate, gender, mbti },
         meetingInfo: { meetingDate, meetingTime, meetingType, introducer },
         analysisType,

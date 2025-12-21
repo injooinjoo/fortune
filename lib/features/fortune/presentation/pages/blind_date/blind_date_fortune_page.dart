@@ -19,6 +19,7 @@ import '../../../../../core/services/debug_premium_service.dart';
 import '../../../../../core/models/fortune_result.dart';
 import '../../../../../core/utils/logger.dart';
 import '../../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../../../data/models/user_profile.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
@@ -33,15 +34,15 @@ import '../../../../../core/widgets/gpt_style_typing_text.dart';
 
 // 분리된 위젯들
 import 'constants/blind_date_options.dart';
-import 'widgets/blind_date_tab_selector.dart';
 import 'widgets/blind_date_success_prediction.dart';
 import 'widgets/blind_date_first_impression.dart';
 import 'widgets/blind_date_conversation_topics.dart';
 import 'widgets/blind_date_outfit_recommendation.dart';
 import 'widgets/blind_date_location_advice.dart';
 import 'widgets/blind_date_dos_donts.dart';
-import 'widgets/blind_date_chat_analysis.dart';
+import 'widgets/blind_date_partner_info.dart';
 import 'widgets/blind_date_photo_analysis.dart';
+import 'widgets/blind_date_face_analysis.dart';
 
 class BlindDateFortunePage extends ConsumerStatefulWidget {
   const BlindDateFortunePage({super.key});
@@ -81,18 +82,16 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   String? _pastExperience;
   bool _isFirstBlindDate = false;
 
-  // Photo Analysis
-  List<XFile> _myPhotos = [];
+  // Photo Analysis (상대 사진만)
   List<XFile> _partnerPhotos = [];
   BlindDateAnalysis? _photoAnalysis;
-  bool _isAnalyzingPhotos = false;
+
+  // 관상 분석 데이터
+  FaceAnalysisData? _faceAnalysisData;
 
   // Chat Analysis
   final _chatContentController = TextEditingController();
   String? _chatPlatform;
-
-  // Tab Index
-  int _selectedTabIndex = 0;
 
   // User info form state
   final _nameController = TextEditingController();
@@ -105,20 +104,35 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
     super.initState();
 
     // Pre-fill user data with profile if available
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final userProfileAsync = ref.read(userProfileProvider);
-      final userProfile = userProfileAsync.maybeWhen(
-        data: (profile) => profile,
-        orElse: () => null,
-      );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _prefillUserData();
 
-      if (userProfile != null && mounted) {
-        setState(() {
-          _nameController.text = userProfile.name ?? '';
-          _birthDate = userProfile.birthDate;
-          _gender = userProfile.gender;
-          _mbti = userProfile.mbtiType;
-        });
+      // Listen for profile changes (in case still loading)
+      ref.listenManual(userProfileProvider, (previous, next) {
+        if (next is AsyncData<UserProfile?> && next.value != null) {
+          _prefillUserData();
+        }
+      });
+    });
+  }
+
+  void _prefillUserData() {
+    final userProfileAsync = ref.read(userProfileProvider);
+    userProfileAsync.whenData((profile) {
+      if (profile != null && mounted) {
+        // Only fill if fields are empty (don't overwrite user input)
+        if (_nameController.text.isEmpty && profile.name != null) {
+          _nameController.text = profile.name!;
+        }
+        if (_birthDate == null && profile.birthDate != null) {
+          setState(() => _birthDate = profile.birthDate);
+        }
+        if (_gender == null && profile.gender != null) {
+          setState(() => _gender = profile.gender);
+        }
+        if (_mbti == null && profile.mbtiType != null) {
+          setState(() => _mbti = profile.mbtiType);
+        }
       }
     });
   }
@@ -257,17 +271,8 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
 
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
-      // Base64 인코딩된 사진 데이터 준비
-      List<String>? myEncodedPhotos;
+      // Base64 인코딩된 상대 사진 데이터 준비
       List<String>? partnerEncodedPhotos;
-
-      if (_myPhotos.isNotEmpty) {
-        myEncodedPhotos = [];
-        for (final photo in _myPhotos) {
-          final bytes = await photo.readAsBytes();
-          myEncodedPhotos.add(base64Encode(bytes));
-        }
-      }
 
       if (_partnerPhotos.isNotEmpty) {
         partnerEncodedPhotos = [];
@@ -283,14 +288,15 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       final realPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
       final isPremium = debugPremium || realPremium;
 
-      // Analysis Type 결정
+      // Analysis Type 결정 (상대 사진 + 대화 기반)
       String analysisType = 'basic';
-      if (_chatContentController.text.isNotEmpty &&
-          (myEncodedPhotos?.isNotEmpty ?? false)) {
+      final hasPhotos = partnerEncodedPhotos?.isNotEmpty ?? false;
+      final hasChat = _chatContentController.text.isNotEmpty;
+      if (hasChat && hasPhotos) {
         analysisType = 'comprehensive';
-      } else if (myEncodedPhotos?.isNotEmpty ?? false) {
+      } else if (hasPhotos) {
         analysisType = 'photos';
-      } else if (_chatContentController.text.isNotEmpty) {
+      } else if (hasChat) {
         analysisType = 'chat';
       }
 
@@ -311,7 +317,6 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
         'past_experience': params['pastExperience'],
         'is_first_blind_date': params['isFirstBlindDate'],
         'analysis_type': analysisType,
-        'my_photos': myEncodedPhotos,
         'partner_photos': partnerEncodedPhotos,
         'chat_content': _chatContentController.text.isEmpty
             ? null
@@ -328,10 +333,18 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
         inputConditions: inputConditions,
       );
 
+      // 관상 분석 데이터 생성 (상대방 사진이 있을 경우)
+      final isPartnerMale = _gender == 'female'; // 내가 여자면 상대는 남자
+      _faceAnalysisData = FaceAnalysisData.generate(
+        partnerBirthDate: null, // 상대방 생년월일은 모르므로 랜덤
+        isPartnerMale: isPartnerMale,
+      );
+
       // Blur 상태 설정
       _isBlurred = !isPremium;
       _blurredSections = _isBlurred
           ? [
+              'face_analysis', // 관상 분석 (닮은꼴, 예상나이)
               'success_prediction',
               'first_impression',
               'conversation_topics',
@@ -383,10 +396,6 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
     final userInfo = await _getUserInfo();
     if (userInfo == null) return null;
 
-    if (_myPhotos.isNotEmpty) {
-      await _analyzePhotos();
-    }
-
     if (_meetingDate == null ||
         _meetingTime == null ||
         _meetingType == null ||
@@ -425,29 +434,6 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
     };
   }
 
-  Future<void> _analyzePhotos() async {
-    if (_myPhotos.isEmpty && _partnerPhotos.isEmpty) return;
-
-    setState(() => _isAnalyzingPhotos = true);
-
-    try {
-      Logger.info(
-          '[BlindDate] Photos prepared: my=${_myPhotos.length}, partner=${_partnerPhotos.length}');
-
-      if (mounted) {
-        Toast.success(context, '사진이 준비되었습니다');
-      }
-    } catch (e) {
-      Logger.error('Photo preparation failed', e);
-      if (mounted) {
-        Toast.error(context, '사진 준비에 실패했습니다');
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isAnalyzingPhotos = false);
-      }
-    }
-  }
 
   Widget _buildInputForm() {
     final theme = Theme.of(context);
@@ -463,49 +449,31 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Tab Selector
-          BlindDateTabSelector(
-            selectedIndex: _selectedTabIndex,
-            onTabChanged: (index) => setState(() => _selectedTabIndex = index),
+          // 1. 기본 정보 (필수)
+          _buildUserInfoForm(),
+          const SizedBox(height: 16),
+
+          // 2. 상대 정보 (선택) - 사진 + 대화 통합
+          BlindDatePartnerInfo(
+            partnerPhotos: _partnerPhotos,
+            onPartnerPhotosSelected: (photos) =>
+                setState(() => _partnerPhotos = photos),
+            chatContentController: _chatContentController,
+            chatPlatform: _chatPlatform,
+            onPlatformChanged: (platform) =>
+                setState(() => _chatPlatform = platform),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
-          // Selected Tab Content
-          if (_selectedTabIndex == 0) ...[
-            _buildUserInfoForm(),
-            const SizedBox(height: 16),
-          ] else if (_selectedTabIndex == 1) ...[
-            BlindDatePhotoAnalysis(
-              myPhotos: _myPhotos,
-              partnerPhotos: _partnerPhotos,
-              isAnalyzingPhotos: _isAnalyzingPhotos,
-              onMyPhotosSelected: (photos) =>
-                  setState(() => _myPhotos = photos),
-              onPartnerPhotosSelected: (photos) =>
-                  setState(() => _partnerPhotos = photos),
-              onAnalyzePressed: _analyzePhotos,
-              userInfoForm: _buildUserInfoForm(),
-            ),
-            const SizedBox(height: 16),
-          ] else if (_selectedTabIndex == 2) ...[
-            BlindDateChatAnalysis(
-              chatContentController: _chatContentController,
-              chatPlatform: _chatPlatform,
-              onPlatformChanged: (platform) =>
-                  setState(() => _chatPlatform = platform),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Meeting Details
+          // 3. 만남 정보 (필수)
           _buildMeetingDetailsSection(theme, isDark),
           const SizedBox(height: 16),
 
-          // Preferences
+          // 4. 선호 사항 (필수)
           _buildPreferencesSection(theme, isDark),
           const SizedBox(height: 16),
 
-          // Self Assessment
+          // 5. 자기 평가 (필수)
           _buildSelfAssessmentSection(theme, isDark),
         ],
       ),
@@ -799,6 +767,20 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              // 관상 분석 섹션 (최상단, 블러 처리)
+              if (_faceAnalysisData != null)
+                UnifiedBlurWrapper(
+                  isBlurred: _isBlurred,
+                  blurredSections: _blurredSections,
+                  sectionKey: 'face_analysis',
+                  child: BlindDateFaceAnalysis(
+                    estimatedAge: _faceAnalysisData!.estimatedAge,
+                    lookalikeData: _faceAnalysisData!.lookalikeData,
+                    faceTraits: _faceAnalysisData!.faceTraits,
+                    isPartnerMale: _gender == 'female',
+                  ),
+                ),
+              if (_faceAnalysisData != null) const SizedBox(height: 16),
               _buildMainFortuneContent(),
               const SizedBox(height: 16),
               if (_photoAnalysis != null)

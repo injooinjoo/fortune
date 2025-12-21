@@ -13,7 +13,7 @@ import '../../../../core/utils/logger.dart';
 import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 
 class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
@@ -225,11 +225,13 @@ class _ExLoverFortuneSimplePageState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 헤더
-                const PageHeaderSection(
-                  emoji: '💜',
-                  title: '힘드셨죠?',
-                  subtitle: '천천히 답해주세요. 당신의 마음을 읽어드릴게요.',
+                // 헤더 (Center로 감싸서 중앙 정렬)
+                const Center(
+                  child: PageHeaderSection(
+                    emoji: '💜',
+                    title: '힘드셨죠?',
+                    subtitle: '천천히 답해주세요. 당신의 마음을 읽어드릴게요.',
+                  ),
                 ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
 
                 const SizedBox(height: 32),
@@ -447,11 +449,11 @@ class _ExLoverFortuneSimplePageState
                         ),
                       ),
                       const SizedBox(height: 12),
-                      VoiceInputTextField(
+                      UnifiedVoiceTextField(
                         hintText: '이별하게 된 이유를 말씀해주세요...',
                         transcribingText: '듣고 있어요...',
                         // B07: 실시간 텍스트 변경 시 버튼 활성화
-                        onChanged: (text) {
+                        onTextChanged: (text) {
                           setState(() => _breakupDetail = text.isNotEmpty ? text : null);
                         },
                         onSubmit: (text) {

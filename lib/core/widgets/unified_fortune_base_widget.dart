@@ -12,6 +12,8 @@ import '../design_system/design_system.dart';
 import '../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../utils/haptic_utils.dart';
 import '../constants/soul_rates.dart';
+import '../errors/exceptions.dart';
+import '../../data/services/token_api_service.dart';
 import '../../presentation/providers/providers.dart';
 import '../../shared/components/token_insufficient_modal.dart';
 import '../../services/screenshot_detection_service.dart';
@@ -160,7 +162,9 @@ class _UnifiedFortuneBaseWidgetState
     super.initState();
     _fortuneService = UnifiedFortuneService(
       Supabase.instance.client,
+      tokenService: ref.read(tokenApiServiceProvider),
       enableOptimization: widget.enableOptimization,
+      enableTokenValidation: true,
     );
     _screenshotService = ref.read(screenshotDetectionServiceProvider);
     _initScreenshotDetection();
@@ -328,6 +332,23 @@ class _UnifiedFortuneBaseWidgetState
       });
 
       HapticUtils.success();
+    } on InsufficientTokensException catch (e) {
+      // 토큰 부족 예외 → 모달 표시
+      Logger.warning('[UnifiedFortuneBaseWidget] 토큰 부족: ${e.fortuneType}');
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        HapticUtils.error();
+
+        // 토큰 부족 모달 표시
+        await TokenInsufficientModal.show(
+          context: context,
+          requiredTokens: e.required ?? 1,
+          fortuneType: e.fortuneType ?? widget.fortuneType,
+        );
+      }
     } catch (error, stackTrace) {
       Logger.error(
         '[UnifiedFortuneBaseWidget] 운세 생성 실패: ${widget.fortuneType}',

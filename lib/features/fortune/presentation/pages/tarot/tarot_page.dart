@@ -27,7 +27,7 @@ class TarotPage extends ConsumerStatefulWidget {
 
 class _TarotPageState extends ConsumerState<TarotPage>
     with TickerProviderStateMixin {
-  TarotFlowState _currentState = TarotFlowState.deckSelection; // 덱 선택부터 시작
+  TarotFlowState _currentState = TarotFlowState.flashLayer; // 플래시 레이어부터 시작
   String? _selectedQuestion;
   String? _customQuestion;
   TarotSpreadType? _selectedSpread;
@@ -72,6 +72,10 @@ class _TarotPageState extends ConsumerState<TarotPage>
     // 초기 애니메이션 시작
     _fadeController.forward();
     _slideController.forward();
+
+    // 오늘의 덱 설정 및 플래시 레이어 타이머 시작
+    _setTodaysDeck();
+    _startFlashLayerTimer();
   }
 
   @override
@@ -109,18 +113,6 @@ class _TarotPageState extends ConsumerState<TarotPage>
               switchOutCurve: Curves.easeInOut,
               child: _buildCurrentStateWidget(),
             ),
-            // 🃏 카드 선택 화면에서 "카드 선택 완료" 버튼
-            if (_currentState == TarotFlowState.deckSelection)
-              UnifiedButton.floating(
-                text: '카드 선택 완료',
-                onPressed: () {
-                  setState(() {
-                    _currentState = TarotFlowState.questioning;
-                  });
-                },
-                isLoading: false,
-                isEnabled: true,
-              ),
             // ✅ FloatingBottomButton - 타로 결과 화면에서 블러 상태일 때만 표시 (구독자 제외)
             if (_currentState == TarotFlowState.result && _tarotResult != null && _tarotResult!.isBlurred && !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
@@ -149,16 +141,13 @@ class _TarotPageState extends ConsumerState<TarotPage>
                 color: colors.textPrimary,
               ),
               onPressed: () {
-                // 질문 화면에서 뒤로가면 덱 선택으로
-                if (_currentState == TarotFlowState.questioning) {
-                  setState(() {
-                    _currentState = TarotFlowState.deckSelection;
-                  });
-                } else if (_currentState == TarotFlowState.spreadSelection) {
+                // 스프레드 선택에서 뒤로가면 질문으로
+                if (_currentState == TarotFlowState.spreadSelection) {
                   setState(() {
                     _currentState = TarotFlowState.questioning;
                   });
                 } else {
+                  // flashLayer, questioning에서는 페이지 나가기
                   context.pop();
                 }
               },
@@ -191,19 +180,13 @@ class _TarotPageState extends ConsumerState<TarotPage>
 
   Widget _buildCurrentStateWidget() {
     switch (_currentState) {
-      case TarotFlowState.deckSelection:
-        return DeckSelectionScreen(
-          key: const ValueKey('deck-selection'),
-          selectedDeck: _selectedDeck,
-          onDeckSelected: (deck) {
-            setState(() {
-              _selectedDeck = deck;
-            });
-          },
-          // F12: 오늘의 타로 (서버 랜덤 선택)
-          onDailyTarot: _handleDailyTarot,
+      case TarotFlowState.flashLayer:
+        return DeckFlashLayer(
+          key: const ValueKey('flash-layer'),
+          deckType: _selectedDeck,
           fadeAnimation: _fadeAnimation,
           slideAnimation: _slideAnimation,
+          onTap: _skipToQuestioning,
         );
       case TarotFlowState.initial:
         return InitialScreen(
@@ -274,25 +257,33 @@ class _TarotPageState extends ConsumerState<TarotPage>
     }
   }
 
-  // F12: 오늘의 타로 (서버가 덱을 랜덤으로 선택) 핸들러
-  void _handleDailyTarot() {
-    Logger.info('[TarotPage] 오늘의 타로 시작 - 서버가 덱 랜덤 선택');
-
-    // 오늘 날짜 기반 시드로 덱 랜덤 선택 (하루 동안 고정)
+  // 오늘의 덱 설정 (날짜 기반 랜덤)
+  void _setTodaysDeck() {
     final today = DateTime.now();
     final seed = today.year * 10000 + today.month * 100 + today.day;
     final randomDeckIndex = seed % TarotDeckType.values.length;
-    final randomDeck = TarotDeckType.values[randomDeckIndex];
+    _selectedDeck = TarotDeckType.values[randomDeckIndex];
+    Logger.info('[TarotPage] 오늘의 덱: ${_selectedDeck.name}');
+  }
 
-    Logger.info('[TarotPage] 오늘의 덱: ${randomDeck.name}');
-
-    // 덱 설정 후 바로 질문 선택으로 이동
-    setState(() {
-      _selectedDeck = randomDeck;
-      _selectedQuestion = null;
-      _customQuestion = null;
-      _currentState = TarotFlowState.questioning;
+  // 플래시 레이어 3초 타이머
+  void _startFlashLayerTimer() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && _currentState == TarotFlowState.flashLayer) {
+        setState(() {
+          _currentState = TarotFlowState.questioning;
+        });
+      }
     });
+  }
+
+  // 플래시 레이어 탭 시 즉시 전환
+  void _skipToQuestioning() {
+    if (_currentState == TarotFlowState.flashLayer) {
+      setState(() {
+        _currentState = TarotFlowState.questioning;
+      });
+    }
   }
 
   Future<void> _handleSpreadSelected(TarotSpreadType spread) async {

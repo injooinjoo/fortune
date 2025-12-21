@@ -104,3 +104,44 @@ class UnknownException extends AppException {
   const UnknownException([String message = '알 수 없는 오류가 발생했습니다'])
       : super(message: message, code: 'UNKNOWN');
 }
+
+// Insufficient Tokens Exception (토큰 부족)
+class InsufficientTokensException extends AppException {
+  final int? required;
+  final int? available;
+  final String? fortuneType;
+
+  const InsufficientTokensException([
+    String message = '복주머니가 부족합니다',
+    this.required,
+    this.available,
+    this.fortuneType,
+  ]) : super(message: message, code: 'INSUFFICIENT_TOKENS');
+
+  /// 상세 정보가 포함된 팩토리 생성자
+  factory InsufficientTokensException.withDetails({
+    required int required,
+    required int available,
+    required String fortuneType,
+    String message = '복주머니가 부족합니다',
+  }) {
+    return InsufficientTokensException(message, required, available, fortuneType);
+  }
+
+  @override
+  String toString() => fortuneType != null
+      ? 'InsufficientTokensException: $fortuneType 실행에 $required개 필요 (현재: $available개)'
+      : 'InsufficientTokensException: $message';
+}
+
+// Already Claimed Exception (이미 수령함)
+class AlreadyClaimedException extends AppException {
+  const AlreadyClaimedException([String message = '이미 수령하셨습니다'])
+      : super(message: message, code: 'ALREADY_CLAIMED');
+}
+
+// Too Many Requests Exception (요청 과다)
+class TooManyRequestsException extends AppException {
+  const TooManyRequestsException([String message = '요청이 너무 많습니다'])
+      : super(message: message, code: 'TOO_MANY_REQUESTS');
+}

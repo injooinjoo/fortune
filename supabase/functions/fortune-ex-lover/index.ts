@@ -378,10 +378,6 @@ serve(async (req) => {
         ? ['relationship_analysis', 'breakup_analysis', 'reunion_possibility', 'healing_roadmap', 'new_love_forecast', 'practical_advice']
         : []
 
-      // 블러 처리용 기본 메시지
-      const blurredMessage = '🔒 프리미엄 결제 후 확인 가능합니다'
-      const blurredArray = ['🔒 프리미엄 결제 후 확인 가능합니다']
-
       fortuneData = {
         title: parsedResponse.title || `${name}님, 새로운 시작을 응원합니다`,
         fortune_type: 'ex_lover',
@@ -394,77 +390,50 @@ serve(async (req) => {
         overall_fortune: parsedResponse.overall_fortune || '이별은 끝이 아닌 새로운 시작입니다.',
         comfort_message: parsedResponse.comfort_message || '지금의 아픔은 반드시 지나갑니다.',
 
-        // 🔒 프리미엄: 인연 분석
-        relationship_analysis: isBlurred ? {
-          energy_compatibility: blurredMessage,
-          meeting_meaning: blurredMessage,
-          karma_interpretation: blurredMessage
-        } : (parsedResponse.relationship_analysis || {
+        // 인연 분석
+        relationship_analysis: parsedResponse.relationship_analysis || {
           energy_compatibility: '두 분의 에너지 분석이 진행 중입니다.',
           meeting_meaning: '만남의 의미를 분석 중입니다.',
           karma_interpretation: '인연의 깊이를 해석 중입니다.'
-        }),
+        },
 
-        // 🔒 프리미엄: 이별 분석
-        breakup_analysis: isBlurred ? {
-          type: blurredMessage,
-          type_description: blurredMessage,
-          pattern: blurredMessage,
-          hidden_emotions: blurredMessage
-        } : (parsedResponse.breakup_analysis || {
+        // 이별 분석
+        breakup_analysis: parsedResponse.breakup_analysis || {
           type: '분석 중',
           type_description: '이별 유형을 분석 중입니다.',
           pattern: '관계 패턴을 분석 중입니다.',
           hidden_emotions: '숨겨진 감정을 분석 중입니다.'
-        }),
+        },
 
-        // 🔒 프리미엄: 재회 가능성
-        reunion_possibility: isBlurred ? {
-          score: 0,
-          analysis: blurredMessage,
-          favorable_timing: blurredMessage,
-          conditions: blurredArray,
-          recommendation: blurredMessage
-        } : (parsedResponse.reunion_possibility || {
+        // 재회 가능성
+        reunion_possibility: parsedResponse.reunion_possibility || {
           score: 50,
           analysis: '재회 가능성을 분석 중입니다.',
           favorable_timing: '적절한 시기를 분석 중입니다.',
           conditions: ['조건을 분석 중입니다.'],
           recommendation: '추천 방향을 분석 중입니다.'
-        }),
+        },
 
-        // 🔒 프리미엄: 치유 로드맵
-        healing_roadmap: isBlurred ? {
-          phase1: { period: blurredMessage, goal: blurredMessage, actions: blurredArray },
-          phase2: { period: blurredMessage, goal: blurredMessage, actions: blurredArray },
-          phase3: { period: blurredMessage, goal: blurredMessage, actions: blurredArray }
-        } : (parsedResponse.healing_roadmap || {
+        // 치유 로드맵
+        healing_roadmap: parsedResponse.healing_roadmap || {
           phase1: { period: '수용기', goal: '감정 인정', actions: ['천천히 감정 정리하기'] },
           phase2: { period: '정리기', goal: '관계 복기', actions: ['배움 찾기'] },
           phase3: { period: '회복기', goal: '새로운 시작', actions: ['자기 성장'] }
-        }),
+        },
 
-        // 🔒 프리미엄: 새로운 인연 전망
-        new_love_forecast: isBlurred ? {
-          timing: blurredMessage,
-          ideal_type: blurredMessage,
-          meeting_context: blurredMessage
-        } : (parsedResponse.new_love_forecast || {
+        // 새로운 인연 전망
+        new_love_forecast: parsedResponse.new_love_forecast || {
           timing: '새 인연 시기를 분석 중입니다.',
           ideal_type: '이상형을 분석 중입니다.',
           meeting_context: '만남 계기를 분석 중입니다.'
-        }),
+        },
 
-        // 🔒 프리미엄: 실천 조언
-        practical_advice: isBlurred ? {
-          do_now: blurredArray,
-          never_do: blurredArray,
-          monthly_checklist: blurredArray
-        } : (parsedResponse.practical_advice || {
+        // 실천 조언
+        practical_advice: parsedResponse.practical_advice || {
           do_now: ['자기 돌봄에 집중하기'],
           never_do: ['충동적 연락 금지'],
           monthly_checklist: ['감정 일기 쓰기']
-        }),
+        },
 
         timestamp: new Date().toISOString(),
         isBlurred, // ✅ 블러 상태

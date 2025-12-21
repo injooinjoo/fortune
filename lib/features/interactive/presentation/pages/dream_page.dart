@@ -10,7 +10,7 @@ import '../../../../core/providers/user_settings_provider.dart';
 
 import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
-import '../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../core/widgets/unified_voice_text_field.dart';
 
 // Import domain models
 import '../../domain/models/dream_models.dart';
@@ -368,7 +368,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                   ),
                 ),
                 const SizedBox(height: 8),
-                VoiceInputTextField(
+                UnifiedVoiceTextField(
                   controller: _titleController,
                   onSubmit: (text) {},
                   hintText: '꿈의 제목을 입력하세요',
@@ -391,7 +391,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     fontSize: fontSize + 2,
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                VoiceInputTextField(
+                UnifiedVoiceTextField(
                   controller: _contentController,
                   onSubmit: (text) {},
                   hintText: '꿈의 내용을 자세히 기록해주세요',

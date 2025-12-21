@@ -156,27 +156,27 @@ serve(async (req) => {
 다음 JSON 형식으로 응답해주세요:
 {
   "overallScore": 0-100 사이의 점수 (전체 재물운 점수),
-  "content": "오늘의 가족 재물운 종합 분석 (150자 내외, 긍정적이고 따뜻한 톤으로)",
+  "content": "오늘의 가족 재물운 종합 분석 (400자 내외, 사주 분석 기반으로 상세하게, 긍정적이고 따뜻한 톤으로)",
   "wealthCategories": {
     "income": {
       "score": 0-100,
       "title": "소득운",
-      "description": "가족의 소득과 수입에 관한 운세 (50자 내외)"
+      "description": "가족의 소득과 수입에 관한 운세와 소득 증대 방법 (120자 내외)"
     },
     "savings": {
       "score": 0-100,
       "title": "저축운",
-      "description": "재산 형성과 저축에 관한 운세 (50자 내외)"
+      "description": "재산 형성과 저축에 관한 운세, 효과적인 저축 전략 (120자 내외)"
     },
     "investment": {
       "score": 0-100,
       "title": "투자운",
-      "description": "재테크와 투자에 관한 운세 (50자 내외)"
+      "description": "재테크와 투자에 관한 운세, 투자 시 유의점 (120자 내외)"
     },
     "stability": {
       "score": 0-100,
       "title": "안정운",
-      "description": "경제적 안정성에 관한 운세 (50자 내외)"
+      "description": "경제적 안정성에 관한 운세, 리스크 관리 방법 (120자 내외)"
     }
   },
   "luckyElements": {
@@ -186,17 +186,28 @@ serve(async (req) => {
     "time": "재물운이 가장 좋은 시간대"
   },
   "monthlyTrend": {
-    "best_period": "이번 달 재물운 최고 시기",
-    "caution_period": "재물 관련 주의 시기",
-    "overall_trend": "이번 달 전체 재물운 흐름 (50자 내외)"
+    "best_period": "이번 달 재물운 최고 시기와 활용법 (80자 내외)",
+    "caution_period": "재물 관련 주의 시기와 대처법 (80자 내외)",
+    "overall_trend": "이번 달 전체 재물운 흐름과 전망 (100자 내외)"
+  },
+  "familySynergy": {
+    "title": "가족 재물 조화 분석",
+    "compatibility": "가족 구성원 간 재물 관리 궁합과 협력 방법 (200자 내외)",
+    "strengthPoints": ["가족 재물운의 강점 3가지 (각 60자 내외)"],
+    "improvementAreas": ["개선하면 좋을 재테크 습관 2가지 (각 60자 내외)"]
+  },
+  "monthlyFlow": {
+    "current": "이번 달 가족 재물운 흐름과 기회 (100자 내외)",
+    "next": "다음 달 재물운 전망 (80자 내외)",
+    "advice": "시기별 재테크 조언 (80자 내외)"
   },
   "familyAdvice": {
     "title": "가족과 함께하는 재물 운 높이기",
-    "tips": ["가족과 함께 실천할 수 있는 구체적인 팁 3가지 (각 30자 내외)"]
+    "tips": ["가족과 함께 실천할 수 있는 구체적인 재테크 팁 3가지 (각 80자 내외)"]
   },
-  "recommendations": ["긍정적인 재물운 조언 3가지 (각 40자 내외)"],
-  "warnings": ["주의해야 할 사항 2가지 (각 30자 내외)"],
-  "specialAnswer": "사용자 특별 질문에 대한 답변 (있는 경우, 100자 내외)"
+  "recommendations": ["긍정적인 재물운 조언과 실천 방법 3가지 (각 100자 내외)"],
+  "warnings": ["주의해야 할 사항과 대처 방법 2가지 (각 80자 내외)"],
+  "specialAnswer": "사용자 특별 질문에 대한 상세한 답변 (있는 경우, 250자 내외)"
 }`
 
     const userPrompt = `[사용자 정보]
@@ -255,7 +266,7 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
     // Blur 로직 적용
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['wealthCategories', 'monthlyTrend', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
+      ? ['wealthCategories', 'monthlyTrend', 'familySynergy', 'monthlyFlow', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
       : []
 
     const result = {
@@ -267,38 +278,30 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
       content: fortuneData.content,
 
       // 재물 카테고리 점수
-      wealthCategories: isBlurred ? {
-        income: { score: 0, title: '소득운', description: '🔒 프리미엄 결제 후 확인 가능합니다' },
-        savings: { score: 0, title: '저축운', description: '🔒 프리미엄 결제 후 확인 가능합니다' },
-        investment: { score: 0, title: '투자운', description: '🔒 프리미엄 결제 후 확인 가능합니다' },
-        stability: { score: 0, title: '안정운', description: '🔒 프리미엄 결제 후 확인 가능합니다' }
-      } : fortuneData.wealthCategories,
+      wealthCategories: fortuneData.wealthCategories,
 
       // 행운의 요소
       luckyElements: fortuneData.luckyElements,
       lucky_items: fortuneData.luckyElements, // 호환성
 
       // 월간 트렌드
-      monthlyTrend: isBlurred ? {
-        best_period: '🔒 프리미엄 결제 후 확인',
-        caution_period: '🔒 프리미엄 결제 후 확인',
-        overall_trend: '🔒 프리미엄 결제 후 확인 가능합니다'
-      } : fortuneData.monthlyTrend,
+      monthlyTrend: fortuneData.monthlyTrend,
+
+      // 가족 재물 조화 분석 (신규)
+      familySynergy: fortuneData.familySynergy,
+
+      // 월별 운세 흐름 (신규)
+      monthlyFlow: fortuneData.monthlyFlow,
 
       // 가족 조언
-      familyAdvice: isBlurred ? {
-        title: '가족과 함께하는 재물 운 높이기',
-        tips: ['🔒 프리미엄 결제 후 확인 가능합니다']
-      } : fortuneData.familyAdvice,
+      familyAdvice: fortuneData.familyAdvice,
 
       // 추천/경고
-      recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.recommendations,
-      warnings: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.warnings,
+      recommendations: fortuneData.recommendations,
+      warnings: fortuneData.warnings,
 
       // 특별 질문 답변
-      specialAnswer: isBlurred
-        ? (special_question ? '🔒 프리미엄 결제 후 확인 가능합니다' : null)
-        : fortuneData.specialAnswer,
+      specialAnswer: fortuneData.specialAnswer,
 
       // 메타데이터
       metadata: {

@@ -47,14 +47,6 @@ class LottoNumbersCard extends StatelessWidget {
 
             // 번호 색상 안내
             _buildColorGuide(isDark),
-
-            // 잠금 해제 버튼 (잠겨있을 때만)
-            if (!isPremiumUnlocked) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: UnlockPremiumButton(onPressed: onUnlockPressed),
-              ),
-            ],
           ],
         ),
       ),

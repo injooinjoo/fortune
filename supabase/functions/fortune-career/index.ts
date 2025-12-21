@@ -405,33 +405,29 @@ serve(async (req) => {
         ? ['predictions', 'skillAnalysis', 'strengthsAssessment', 'improvementAreas', 'actionPlan', 'industryInsights', 'networkingAdvice', 'luckyPeriods', 'cautionPeriods', 'careerKeywords', 'mentorshipAdvice']
         : []
 
-      // 응답 데이터 구조화
+      // 응답 데이터 구조화 (블러 없이 전체 데이터)
       fortuneData = {
         fortuneType,
         currentRole,
         timeHorizon,
         careerPath,
-        careerScore: Math.floor(predictions[0]?.probability || 75), // ✅ 무료: 공개
-        overallOutlook: parsedResponse.전반적인전망 || parsedResponse.overallOutlook || '긍정적인 커리어 발전이 예상됩니다.', // ✅ 무료: 공개
-        predictions: isBlurred ? [{ timeframe: '🔒 프리미엄 전용', probability: 0, keyMilestones: ['🔒 프리미엄 전용'], requiredActions: ['🔒 프리미엄 전용'], potentialChallenges: ['🔒 프리미엄 전용'], successFactors: ['🔒 프리미엄 전용'] }] : predictions, // 🔒 유료
-        skillAnalysis: isBlurred ? [{ skill: '🔒 프리미엄 전용', currentLevel: 0, targetLevel: 0, developmentPlan: '🔒 프리미엄 결제 후 확인 가능합니다', timeToMaster: '🔒 프리미엄 전용', importanceScore: 0 }] : skillAnalysis, // 🔒 유료
-        strengthsAssessment: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.강점평가 || parsedResponse.strengthsAssessment || ['전문성', '책임감', '학습능력']), // 🔒 유료
-        improvementAreas: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.개선영역 || parsedResponse.improvementAreas || ['리더십', '커뮤니케이션', '전략적 사고']), // 🔒 유료
-        actionPlan: isBlurred ? {
-          immediate: ['🔒 프리미엄 결제 후 확인 가능합니다'],
-          shortTerm: ['🔒 프리미엄 결제 후 확인 가능합니다'],
-          longTerm: ['🔒 프리미엄 결제 후 확인 가능합니다']
-        } : {
+        careerScore: Math.floor(predictions[0]?.probability || 75),
+        overallOutlook: parsedResponse.전반적인전망 || parsedResponse.overallOutlook || '긍정적인 커리어 발전이 예상됩니다.',
+        predictions: predictions,
+        skillAnalysis: skillAnalysis,
+        strengthsAssessment: parsedResponse.강점평가 || parsedResponse.strengthsAssessment || ['전문성', '책임감', '학습능력'],
+        improvementAreas: parsedResponse.개선영역 || parsedResponse.improvementAreas || ['리더십', '커뮤니케이션', '전략적 사고'],
+        actionPlan: {
           immediate: parsedResponse.실행계획?.즉시실행 || parsedResponse.actionPlan?.immediate || ['포트폴리오 업데이트', '네트워킹 이벤트 참여', '스킬 평가'],
           shortTerm: parsedResponse.실행계획?.단기목표 || parsedResponse.actionPlan?.shortTerm || ['전문 교육 수료', '프로젝트 성과 달성', '멘토 관계 구축'],
           longTerm: parsedResponse.실행계획?.장기목표 || parsedResponse.actionPlan?.longTerm || ['승진 또는 이직', '전문성 인정', '업계 네트워크 확장']
-        }, // 🔒 유료
-        industryInsights: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.업계인사이트 || parsedResponse.industryInsights || `${careerField} 분야는 지속적인 성장이 예상되는 유망한 영역입니다.`), // 🔒 유료
-        networkingAdvice: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.네트워킹조언 || parsedResponse.networkingAdvice || ['업계 컨퍼런스 참여', 'LinkedIn 활용', '동문 네트워크 활성화']), // 🔒 유료
-        luckyPeriods: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.행운의시기 || parsedResponse.luckyPeriods || ['2024년 상반기', '2024년 4분기']), // 🔒 유료
-        cautionPeriods: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.주의시기 || parsedResponse.cautionPeriods || ['급변하는 시장 환경', '조직 개편 시기']), // 🔒 유료
-        careerKeywords: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.핵심키워드 || parsedResponse.careerKeywords || ['전문성', '리더십', '혁신', '네트워킹', '지속학습']), // 🔒 유료
-        mentorshipAdvice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.멘토링조언 || parsedResponse.mentorshipAdvice || '업계 선배와의 멘토링 관계를 적극적으로 구축하세요.'), // 🔒 유료
+        },
+        industryInsights: parsedResponse.업계인사이트 || parsedResponse.industryInsights || `${careerField} 분야는 지속적인 성장이 예상되는 유망한 영역입니다.`,
+        networkingAdvice: parsedResponse.네트워킹조언 || parsedResponse.networkingAdvice || ['업계 컨퍼런스 참여', 'LinkedIn 활용', '동문 네트워크 활성화'],
+        luckyPeriods: parsedResponse.행운의시기 || parsedResponse.luckyPeriods || ['2024년 상반기', '2024년 4분기'],
+        cautionPeriods: parsedResponse.주의시기 || parsedResponse.cautionPeriods || ['급변하는 시장 환경', '조직 개편 시기'],
+        careerKeywords: parsedResponse.핵심키워드 || parsedResponse.careerKeywords || ['전문성', '리더십', '혁신', '네트워킹', '지속학습'],
+        mentorshipAdvice: parsedResponse.멘토링조언 || parsedResponse.mentorshipAdvice || '업계 선배와의 멘토링 관계를 적극적으로 구축하세요.',
         timestamp: new Date().toISOString(),
         isBlurred, // ✅ 블러 상태
         blurredSections // ✅ 블러된 섹션 목록

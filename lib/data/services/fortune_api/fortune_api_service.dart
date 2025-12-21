@@ -930,13 +930,6 @@ final fortuneApiServiceProvider = Provider<FortuneApiService>((ref) {
   return FortuneApiService(apiClient);
 });
 
-// Exceptions
-class InsufficientTokensException extends AppException {
-  const InsufficientTokensException([String message = '복주머니가 부족합니다'])
-      : super(message: message, code: 'INSUFFICIENT_TOKENS');
-}
-
-class TooManyRequestsException extends AppException {
-  const TooManyRequestsException([String message = '요청이 너무 많습니다'])
-      : super(message: message, code: 'TOO_MANY_REQUESTS');
-}
+// Exceptions moved to lib/core/errors/exceptions.dart
+// - InsufficientTokensException
+// - TooManyRequestsException

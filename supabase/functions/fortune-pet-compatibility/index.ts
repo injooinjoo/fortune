@@ -462,48 +462,17 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
   }
 })
 
-// 블러 처리 함수
+// 블러 처리 함수 (데이터는 그대로 유지, 플래그만 설정)
 function applyBlurring(fortune: any, isPremium: boolean): any {
-  if (isPremium) {
-    return {
-      ...fortune,
-      isBlurred: false,
-      blurredSections: []
-    }
-  }
-
-  // 프리미엄 섹션 블러 처리
-  const blurredSections = ['pets_voice', 'health_insight', 'activity_recommendation', 'emotional_care', 'special_tips']
+  const blurredSections = isPremium ? [] : [
+    'pets_voice', 'health_insight', 'activity_recommendation',
+    'emotional_care', 'special_tips'
+  ]
 
   return {
-    ...fortune,
-    isBlurred: true,
-    blurredSections,
-
-    // 프리미엄 섹션을 블러 메시지로 대체
-    pets_voice: {
-      morning_message: '🔒 프리미엄 결제 후 확인 가능합니다',
-      to_owner: '🔒 프리미엄 결제 후 확인 가능합니다',
-      secret_wish: '🔒 프리미엄 결제 후 확인 가능합니다'
-    },
-    health_insight: {
-      overall: '🔒 프리미엄 결제 후 확인 가능합니다',
-      energy_level: 0,
-      check_points: ['🔒 프리미엄 결제 후 확인 가능합니다'],
-      seasonal_tip: '🔒 프리미엄 결제 후 확인 가능합니다'
-    },
-    activity_recommendation: {
-      morning: '🔒 프리미엄 결제 후 확인 가능합니다',
-      afternoon: '🔒 프리미엄 결제 후 확인 가능합니다',
-      evening: '🔒 프리미엄 결제 후 확인 가능합니다',
-      special_activity: '🔒 프리미엄 결제 후 확인 가능합니다'
-    },
-    emotional_care: {
-      primary_emotion: '🔒',
-      bonding_tip: '🔒 프리미엄 결제 후 확인 가능합니다',
-      stress_indicator: '🔒 프리미엄 결제 후 확인 가능합니다'
-    },
-    special_tips: ['🔒 프리미엄 결제 후 확인 가능합니다']
+    ...fortune,  // 실제 데이터 그대로 유지 (클라이언트에서 블러 처리)
+    isBlurred: !isPremium,
+    blurredSections
   }
 }
 

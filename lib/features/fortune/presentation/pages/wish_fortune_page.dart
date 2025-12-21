@@ -9,7 +9,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../widgets/wish_voice_input.dart';
+import '../../../../core/widgets/unified_voice_bubble_input.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -510,7 +510,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   }
 
   Widget _buildWishInput(Function(dynamic) onComplete) {
-    return WishVoiceInput(
+    return UnifiedVoiceBubbleInput(
       controller: _wishController,
       onTextChanged: () {
         final text = _wishController.text;

@@ -14,7 +14,7 @@ import '../../../../core/constants/api_endpoints.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
-import '../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../core/widgets/unified_voice_text_field.dart';
 
 // Example questions for quick access
 final tarotExampleQuestions = [
@@ -661,7 +661,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             color: TossDesignSystem.gray600,
             width: 1)),
       ),
-      child: VoiceInputTextField(
+      child: UnifiedVoiceTextField(
         onSubmit: _sendMessage,
         hintText: '궁금한 것을 물어보세요...',
         transcribingText: '듣고 있어요...',

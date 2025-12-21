@@ -69,11 +69,13 @@ class _CompatibilityInputViewState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 헤더 카드 - ChatGPT 스타일
-                const PageHeaderSection(
-                  emoji: '💕',
-                  title: '두 사람의 궁합',
-                  subtitle: '이름과 생년월일을 입력하면\n두 사람의 궁합을 자세히 분석해드릴게요',
+                // 헤더 카드 - ChatGPT 스타일 (Center로 감싸서 중앙 정렬)
+                const Center(
+                  child: PageHeaderSection(
+                    emoji: '💕',
+                    title: '두 사람의 궁합',
+                    subtitle: '이름과 생년월일을 입력하면\n두 사람의 궁합을 자세히 분석해드릴게요',
+                  ),
                 ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
 
                 const SizedBox(height: 32),

@@ -241,13 +241,13 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
       direction: fortuneData.direction || '동쪽', // ✅ 무료: 공개
       element: fortuneData.element || '금', // ✅ 무료: 공개
       score: fortuneData.score || 75, // ✅ 무료: 공개
-      fashion: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.fashion || []), // 🔒 유료
-      food: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.food || []), // 🔒 유료
-      jewelry: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.jewelry || []), // 🔒 유료
-      material: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.material || []), // 🔒 유료
-      places: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.places || []), // 🔒 유료
-      relationships: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.relationships || []), // 🔒 유료
-      advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (fortuneData.advice || ''), // 🔒 유료
+      fashion: fortuneData.fashion || [],
+      food: fortuneData.food || [],
+      jewelry: fortuneData.jewelry || [],
+      material: fortuneData.material || [],
+      places: fortuneData.places || [],
+      relationships: fortuneData.relationships || [],
+      advice: fortuneData.advice || '',
       timestamp: new Date().toISOString(),
       isBlurred, // ✅ 블러 상태
       blurredSections, // ✅ 블러된 섹션 목록

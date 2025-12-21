@@ -9,10 +9,8 @@ import '../../widgets/body_part_grid_selector.dart';
 import '../../widgets/health_score_card.dart';
 import '../../widgets/health_timeline_chart.dart';
 import '../../../domain/models/health_fortune_model.dart';
-import '../../../domain/models/medical_document_models.dart';
 import '../../../data/services/health_fortune_service.dart';
-import '../../../../../core/theme/fortune_theme.dart';
-import '../../../../../core/theme/fortune_design_system.dart';
+import '../../../../../core/theme/obangseok_colors.dart';
 import '../../../../../core/widgets/unified_button.dart' show UnifiedButton, BottomButtonSpacing;
 import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../shared/components/toast.dart';
@@ -69,7 +67,9 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: isDark
+          ? ObangseokColors.hanjiBackgroundDark
+          : ObangseokColors.hanjiBackground,
       appBar: _buildAppBar(isDark),
       body: SafeArea(
         child: Stack(
@@ -98,30 +98,26 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
   PreferredSizeWidget _buildAppBar(bool isDark) {
     return AppBar(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark.withValues(alpha: 0.0) : TossDesignSystem.white.withValues(alpha: 0.0),
+      backgroundColor: isDark
+          ? ObangseokColors.hanjiBackgroundDark
+          : ObangseokColors.hanjiBackground,
       elevation: 0,
       scrolledUnderElevation: 0,
-      leading: Container(
-        margin: const EdgeInsets.only(left: 16),
-        child: IconButton(
-          onPressed: () => Navigator.pop(context),
-          style: IconButton.styleFrom(
-            backgroundColor: isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-            size: 20,
-          ),
+      leading: IconButton(
+        onPressed: () => context.pop(),
+        icon: Icon(
+          Icons.arrow_back_ios,
+          color: ObangseokColors.getMeok(context),
+          size: 20,
         ),
       ),
       title: Text(
         '건강운세',
-        style: TossTheme.heading3.copyWith(
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+        style: TextStyle(
+          fontFamily: 'NanumMyeongjo',
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: ObangseokColors.getMeok(context),
         ),
       ),
       centerTitle: true,
@@ -137,22 +133,30 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
 
           Text(
             '오늘 몸 상태는\n어떠신가요?',
-            style: TossTheme.heading2.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+            style: TextStyle(
+              fontFamily: 'NanumMyeongjo',
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: ObangseokColors.getMeok(context),
               height: 1.3,
             ),
           ),
 
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
 
           Text(
             '현재 컨디션을 선택해주세요',
-            style: TossTheme.subtitle1.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+              color: isDark
+                  ? ObangseokColors.baekMuted
+                  : ObangseokColors.meokFaded,
             ),
           ),
 

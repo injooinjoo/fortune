@@ -5,6 +5,7 @@ import '../../data/models/user_profile.dart';
 import '../../data/services/token_api_service.dart';
 import '../../core/errors/exceptions.dart';
 import '../../core/constants/soul_rates.dart';
+import '../../core/utils/logger.dart';
 import 'providers.dart';
 
 // Token State
@@ -133,7 +134,27 @@ class TokenNotifier extends StateNotifier<TokenState> {
   final Ref ref;
 
   TokenNotifier(this._apiService, this.ref) : super(const TokenState()) {
-    loadTokenData();
+    _initializeTokenData();
+  }
+
+  // 초기화 - StreamProvider가 준비될 때까지 대기 후 토큰 데이터 로드
+  Future<void> _initializeTokenData() async {
+    // 다음 프레임까지 대기 (StreamProvider가 emit할 시간 확보)
+    await Future.delayed(Duration.zero);
+
+    // 재시도 로직 (최대 5회, 100ms 간격)
+    for (int i = 0; i < 5; i++) {
+      final user = ref.read(userProvider).value;
+      if (user != null) {
+        Logger.info('🔄 [TokenNotifier] User ready, loading token data (attempt ${i + 1})');
+        await loadTokenData();
+        return;
+      }
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
+    Logger.warning('⚠️ [TokenNotifier] User not available after 5 retries');
+    state = state.copyWith(isLoading: false, error: 'User not authenticated');
   }
 
   // 토큰 데이터 로드 (잔액, 구독 정보 등)
@@ -146,6 +167,8 @@ class TokenNotifier extends StateNotifier<TokenState> {
         throw UnauthorizedException('로그인이 필요합니다');
       }
 
+      Logger.info('🔍 [TokenNotifier] Loading token data for user: ${user.id}');
+
       // Load user profile
       final userProfile = await ref.read(userProfileProvider.future);
 
@@ -156,13 +179,18 @@ class TokenNotifier extends StateNotifier<TokenState> {
         _apiService.getTokenConsumptionRates(),
       ]);
 
+      final balance = results[0] as TokenBalance;
+
       state = state.copyWith(
-        balance: results[0] as TokenBalance,
+        balance: balance,
         subscription: results[1] as UnlimitedSubscription?,
         consumptionRates: results[2] as Map<String, int>,
         userProfile: userProfile,
         isLoading: false);
-    } catch (e) {
+
+      Logger.info('✅ [TokenNotifier] Token data loaded: balance=${balance.remainingTokens}, unlimited=${balance.hasUnlimitedAccess}');
+    } catch (e, stackTrace) {
+      Logger.error('❌ [TokenNotifier] Failed to load token data', e, stackTrace);
       state = state.copyWith(
         isLoading: false,
         error: e.toString());

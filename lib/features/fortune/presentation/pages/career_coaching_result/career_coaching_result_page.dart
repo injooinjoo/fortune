@@ -104,9 +104,16 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           _fortuneResult = result;
           _isLoading = false;
 
-          // ✅ Blur 상태 동기화
-          _isBlurred = result.isBlurred;
-          _blurredSections = List<String>.from(result.blurredSections);
+          // ✅ Blur 상태 설정 (blind_date 패턴)
+          _isBlurred = !isPremium;
+          _blurredSections = _isBlurred
+              ? [
+                  'key_insights',
+                  'action_plan',
+                  'growth_roadmap',
+                  'recommendations',
+                ]
+              : [];
 
           // ✅ 타이핑 효과 초기화
           _currentTypingSection = 0;
@@ -118,8 +125,8 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
 
         debugPrint('');
         debugPrint('✅ [커리어 코칭] 운세 생성 프로세스 완료!');
-        if (result.isBlurred) {
-          debugPrint('   → 블러된 섹션: ${result.blurredSections.join(", ")}');
+        if (_isBlurred) {
+          debugPrint('   → 블러된 섹션: ${_blurredSections.join(", ")}');
         }
         debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       }

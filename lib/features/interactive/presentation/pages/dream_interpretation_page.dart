@@ -15,8 +15,9 @@ import '../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/floating_dream_bubbles.dart';
-import '../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../../../data/popular_dream_topics.dart';
+import '../../../../data/dream_interpretations_data.dart';
 import '../../../../services/storage_service.dart';
 
 /// 꿈 해몽 페이지 (UnifiedFortuneService 버전)
@@ -327,7 +328,7 @@ class _DreamInterpretationPageState
                           : TossDesignSystem.white,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: VoiceInputTextField(
+                    child: UnifiedVoiceTextField(
                       controller: _dreamTextController,
                       onSubmit: _onTextSubmit,
                       hintText: '예: 하늘을 나는 꿈, 이빨 빠지는 꿈...',
@@ -643,31 +644,28 @@ class _DreamInterpretationPageState
       final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
       debugPrint('🌙 [DreamPage] isPremium: $isPremium');
 
-      // Conditions 생성 (선택된 꿈 주제 기반)
-      final conditions = DreamFortuneConditions(
-        dreamContent: topic.dreamContentForApi,
-        dreamDate: DateTime.now(),
-        dreamEmotion: null, // 버블 선택에서는 감정 없음
-      );
+      FortuneResult result;
 
-      // UnifiedFortuneService 호출
-      debugPrint('🌙 [DreamPage] API 호출 시작...');
-      final supabase = Supabase.instance.client;
-      final fortuneService = UnifiedFortuneService(supabase);
-      var result = await fortuneService.getFortune(
-        fortuneType: 'dream',
-        dataSource: FortuneDataSource.api,
-        inputConditions: {
-          'dream': topic.dreamContentForApi, // Edge Function이 기대하는 필드명
-          'dream_topic_id': topic.id,
-          'dream_topic_title': topic.title,
-          'dream_topic_category': topic.category,
-          'isPremium': isPremium,
-        },
-        conditions: conditions,
-        isPremium: isPremium,
-      );
-      debugPrint('🌙 [DreamPage] API 응답 받음: ${result.type}, score=${result.score}');
+      // ✅ 분기 처리: 버블 선택 vs 직접 입력
+      if (!topic.isCustom) {
+        // 버블 선택 → 하드코딩 데이터 사용 (API 호출 X)
+        final hardcodedData = DreamInterpretations.getById(topic.id);
+        if (hardcodedData != null) {
+          debugPrint('🌙 [DreamPage] 하드코딩 데이터 사용: ${topic.id}');
+          result = hardcodedData.toFortuneResult(
+            isPremium: isPremium,
+            dreamTitle: topic.title,
+          );
+        } else {
+          // fallback: 하드코딩 데이터 없으면 API 호출
+          debugPrint('🌙 [DreamPage] 하드코딩 데이터 없음, API 호출: ${topic.id}');
+          result = await _callDreamApi(topic, isPremium);
+        }
+      } else {
+        // 직접 입력 → API 호출
+        debugPrint('🌙 [DreamPage] 직접 입력, API 호출');
+        result = await _callDreamApi(topic, isPremium);
+      }
 
       // 일반 사용자는 블러 적용
       if (!isPremium) {
@@ -703,6 +701,36 @@ class _DreamInterpretationPageState
         );
       }
     }
+  }
+
+  /// 꿈 해몽 API 호출 (직접 입력 또는 하드코딩 데이터 없을 때)
+  Future<FortuneResult> _callDreamApi(DreamTopic topic, bool isPremium) async {
+    // Conditions 생성 (선택된 꿈 주제 기반)
+    final conditions = DreamFortuneConditions(
+      dreamContent: topic.dreamContentForApi,
+      dreamDate: DateTime.now(),
+      dreamEmotion: null,
+    );
+
+    // UnifiedFortuneService 호출
+    debugPrint('🌙 [DreamPage] API 호출 시작...');
+    final supabase = Supabase.instance.client;
+    final fortuneService = UnifiedFortuneService(supabase);
+    final result = await fortuneService.getFortune(
+      fortuneType: 'dream',
+      dataSource: FortuneDataSource.api,
+      inputConditions: {
+        'dream': topic.dreamContentForApi,
+        'dream_topic_id': topic.id,
+        'dream_topic_title': topic.title,
+        'dream_topic_category': topic.category,
+        'isPremium': isPremium,
+      },
+      conditions: conditions,
+      isPremium: isPremium,
+    );
+    debugPrint('🌙 [DreamPage] API 응답 받음: ${result.type}, score=${result.score}');
+    return result;
   }
 
   /// F15: 꿈 해몽 결과 저장

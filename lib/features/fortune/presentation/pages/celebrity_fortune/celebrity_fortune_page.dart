@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../../presentation/providers/fortune_provider.dart';
 import '../../../../../presentation/providers/auth_provider.dart';
 import '../../../../../core/widgets/unified_button.dart';
@@ -43,13 +44,34 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final isResultScreen = _fortune != null;
 
     return Scaffold(
       backgroundColor: colors.background,
-      appBar: const StandardFortuneAppBar(
-        title: '유명인',
-      ),
-      body: _fortune != null
+      appBar: isResultScreen
+          ? AppBar(
+              backgroundColor: colors.background,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              title: Text(
+                '유명인 궁합',
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.close, color: colors.textPrimary),
+                  onPressed: () => context.pop(),
+                ),
+              ],
+            )
+          : const StandardFortuneAppBar(
+              title: '유명인',
+            ),
+      body: isResultScreen
           ? CelebrityResultScreen(
               fortune: _fortune!,
               selectedCelebrity: _selectedCelebrity,

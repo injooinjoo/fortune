@@ -4,7 +4,7 @@ import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../core/widgets/unified_voice_text_field.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -268,7 +268,7 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
             ),
           ),
           const SizedBox(height: DSSpacing.md),
-          VoiceInputTextField(
+          UnifiedVoiceTextField(
             controller: _wishController,
             onSubmit: (text) {
               // 텍스트가 입력되면 submit 버튼 활성화를 위해 setState 호출

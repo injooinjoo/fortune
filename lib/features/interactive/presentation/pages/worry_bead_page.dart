@@ -13,7 +13,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../../../data/services/token_api_service.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../core/widgets/unified_voice_text_field.dart';
 
 class WorryBeadPage extends ConsumerStatefulWidget {
   const WorryBeadPage({super.key});
@@ -177,7 +177,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
             ),
           ),
           const SizedBox(height: 12),
-          VoiceInputTextField(
+          UnifiedVoiceTextField(
             controller: _worryController,
             onSubmit: (text) {
               setState(() {

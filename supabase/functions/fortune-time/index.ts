@@ -91,8 +91,11 @@ serve(async (req) => {
       location,  // 옵셔널 위치 정보 (deprecated)
       userLocation,  // ✅ LocationManager에서 전달받은 실제 사용자 위치
       period = 'today',
-      date
+      date,
+      isPremium = false  // ✅ 프리미엄 사용자 여부
     } = requestData
+
+    console.log('💎 [Time] Premium 상태:', isPremium)
 
     console.log('📍 [Time] 사용자 위치:', userLocation || location || '미제공')
 
@@ -401,6 +404,12 @@ serve(async (req) => {
       return titles[period] || '일일운세'
     }
 
+    // ✅ Blur 로직 적용 (프리미엄이 아니면 상세 분석 블러 처리)
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['timeSpecificFortunes', 'birthYearFortunes', 'hexagonScores', 'luckyItems', 'specialTip', 'advice']
+      : []
+
     // 운세 데이터 구성
     const fortune = {
       id: `${Date.now()}-${period}`,
@@ -442,7 +451,11 @@ serve(async (req) => {
         targetDate: targetDate.toISOString(),
         location: processedLocation,
         generatedAt: new Date().toISOString()
-      }
+      },
+
+      // ✅ 블러 상태 정보
+      isBlurred,
+      blurredSections
     }
 
     // ✅ Percentile 계산 추가

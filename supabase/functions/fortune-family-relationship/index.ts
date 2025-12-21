@@ -156,27 +156,27 @@ serve(async (req) => {
 다음 JSON 형식으로 응답해주세요:
 {
   "overallScore": 0-100 사이의 점수 (전체 관계운 점수),
-  "content": "오늘의 가족 관계운 종합 분석 (150자 내외, 긍정적이고 따뜻한 톤으로)",
+  "content": "오늘의 가족 관계운 종합 분석 (400자 내외, 사주 분석과 육친론(六親論) 관점으로 상세하게, 긍정적이고 따뜻한 톤으로)",
   "relationshipCategories": {
     "couple": {
       "score": 0-100,
       "title": "부부운",
-      "description": "부부 사이의 사랑과 조화에 관한 운세 (50자 내외)"
+      "description": "부부 사이의 사랑과 조화에 관한 운세, 부부 관계 개선 방법 (120자 내외)"
     },
     "parentChild": {
       "score": 0-100,
       "title": "부모자녀운",
-      "description": "부모와 자녀 간의 유대에 관한 운세 (50자 내외)"
+      "description": "부모와 자녀 간의 유대에 관한 운세, 소통과 이해의 방법 (120자 내외)"
     },
     "siblings": {
       "score": 0-100,
       "title": "형제운",
-      "description": "형제자매 간의 우애에 관한 운세 (50자 내외)"
+      "description": "형제자매 간의 우애에 관한 운세, 협력과 화합의 방법 (120자 내외)"
     },
     "harmony": {
       "score": 0-100,
       "title": "화목운",
-      "description": "가족 전체의 화합에 관한 운세 (50자 내외)"
+      "description": "가족 전체의 화합에 관한 운세, 가정 분위기 개선 방법 (120자 내외)"
     }
   },
   "luckyElements": {
@@ -186,17 +186,28 @@ serve(async (req) => {
     "time": "가족과 대화하기 좋은 시간대"
   },
   "communicationAdvice": {
-    "style": "추천하는 대화 스타일",
-    "topic": "나누면 좋은 대화 주제",
-    "avoid": "피하면 좋은 대화 주제"
+    "style": "추천하는 대화 스타일과 구체적 표현법 (100자 내외)",
+    "topic": "나누면 좋은 대화 주제와 접근법 (80자 내외)",
+    "avoid": "피하면 좋은 대화 주제와 이유 (80자 내외)"
+  },
+  "familySynergy": {
+    "title": "가족 관계 조화 분석",
+    "compatibility": "가족 구성원 간 성격 궁합과 서로 이해하는 방법 (200자 내외)",
+    "strengthPoints": ["가족 관계의 강점 3가지 (각 60자 내외)"],
+    "improvementAreas": ["개선하면 좋을 소통 방법 2가지 (각 60자 내외)"]
+  },
+  "monthlyFlow": {
+    "current": "이번 달 가족 관계운 흐름과 주의점 (100자 내외)",
+    "next": "다음 달 관계운 전망 (80자 내외)",
+    "advice": "시기별 가족 화합 조언 (80자 내외)"
   },
   "familyAdvice": {
     "title": "가족 화목을 위한 조언",
-    "tips": ["가족 관계 개선을 위한 팁 3가지 (각 30자 내외)"]
+    "tips": ["가족 관계 개선을 위한 구체적 팁 3가지 (각 80자 내외)"]
   },
-  "recommendations": ["긍정적인 관계 조언 3가지 (각 40자 내외)"],
-  "warnings": ["관계 관련 주의사항 2가지 (각 30자 내외)"],
-  "specialAnswer": "사용자 특별 질문에 대한 답변 (있는 경우, 100자 내외)"
+  "recommendations": ["긍정적인 관계 조언과 실천 방법 3가지 (각 100자 내외)"],
+  "warnings": ["관계 관련 주의사항과 갈등 해소법 2가지 (각 80자 내외)"],
+  "specialAnswer": "사용자 특별 질문에 대한 상세한 답변 (있는 경우, 250자 내외)"
 }`
 
     const userPrompt = `[사용자 정보]
@@ -255,7 +266,7 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
     // Blur 로직 적용
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['relationshipCategories', 'communicationAdvice', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
+      ? ['relationshipCategories', 'communicationAdvice', 'familySynergy', 'monthlyFlow', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
       : []
 
     const result = {
@@ -267,38 +278,30 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
       content: fortuneData.content,
 
       // 관계 카테고리 점수
-      relationshipCategories: isBlurred ? {
-        couple: { score: 0, title: '부부운', description: '🔒 프리미엄 결제 후 확인 가능합니다' },
-        parentChild: { score: 0, title: '부모자녀운', description: '🔒 프리미엄 결제 후 확인 가능합니다' },
-        siblings: { score: 0, title: '형제운', description: '🔒 프리미엄 결제 후 확인 가능합니다' },
-        harmony: { score: 0, title: '화목운', description: '🔒 프리미엄 결제 후 확인 가능합니다' }
-      } : fortuneData.relationshipCategories,
+      relationshipCategories: fortuneData.relationshipCategories,
 
       // 행운의 요소
       luckyElements: fortuneData.luckyElements,
       lucky_items: fortuneData.luckyElements,
 
       // 소통 조언
-      communicationAdvice: isBlurred ? {
-        style: '🔒 프리미엄 결제 후 확인',
-        topic: '🔒 프리미엄 결제 후 확인',
-        avoid: '🔒 프리미엄 결제 후 확인'
-      } : fortuneData.communicationAdvice,
+      communicationAdvice: fortuneData.communicationAdvice,
+
+      // 가족 관계 조화 분석 (신규)
+      familySynergy: fortuneData.familySynergy,
+
+      // 월별 관계운 흐름 (신규)
+      monthlyFlow: fortuneData.monthlyFlow,
 
       // 가족 조언
-      familyAdvice: isBlurred ? {
-        title: '가족 화목을 위한 조언',
-        tips: ['🔒 프리미엄 결제 후 확인 가능합니다']
-      } : fortuneData.familyAdvice,
+      familyAdvice: fortuneData.familyAdvice,
 
       // 추천/경고
-      recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.recommendations,
-      warnings: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.warnings,
+      recommendations: fortuneData.recommendations,
+      warnings: fortuneData.warnings,
 
       // 특별 질문 답변
-      specialAnswer: isBlurred
-        ? (special_question ? '🔒 프리미엄 결제 후 확인 가능합니다' : null)
-        : fortuneData.specialAnswer,
+      specialAnswer: fortuneData.specialAnswer,
 
       // 메타데이터
       metadata: {

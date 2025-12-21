@@ -1,4 +1,5 @@
 // Barrel export for tarot page widgets
+export 'deck_flash_layer.dart';
 export 'deck_selection_screen.dart';
 export 'initial_screen.dart';
 export 'loading_screen.dart';

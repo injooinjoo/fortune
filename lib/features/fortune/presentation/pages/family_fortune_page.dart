@@ -1139,7 +1139,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
           ),
       ],
     );

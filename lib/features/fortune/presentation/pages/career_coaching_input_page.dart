@@ -270,10 +270,12 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
   }
 
   Widget _buildTitleSection(bool isDark) {
-    return const PageHeaderSection(
-      emoji: '💼',
-      title: '맞춤 직업 전략',
-      subtitle: '현재 상황과 목표를 분석해서\n최적의 성장 로드맵을 제시해드려요',
+    return const Center(
+      child: PageHeaderSection(
+        emoji: '💼',
+        title: '맞춤 직업 전략',
+        subtitle: '현재 상황과 목표를 분석해서\n최적의 성장 로드맵을 제시해드려요',
+      ),
     );
   }
 

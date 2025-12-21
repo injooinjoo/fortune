@@ -12,6 +12,10 @@ class InAppProducts {
   static const String yearlySubscription =
       'com.beyond.fortune.subscription.yearly';
 
+  // Non-Consumable Products (평생 소유)
+  static const String premiumSajuLifetime =
+      'com.beyond.fortune.premium_saju_lifetime';
+
   // Product Details
   static const Map<String, ProductInfo> productDetails = {
     tokens10: ProductInfo(
@@ -57,7 +61,16 @@ class InAppProducts {
       price: 19000,
       tokens: -1, // Unlimited
       isSubscription: true,
-      subscriptionPeriod: 'yearly')};
+      subscriptionPeriod: 'yearly'),
+    premiumSajuLifetime: ProductInfo(
+      id: premiumSajuLifetime,
+      title: '프리미엄 사주명리서',
+      description: '215페이지 상세 사주 분석서 (평생 소유)',
+      price: 39000,
+      tokens: 0, // Not token-based
+      isSubscription: false,
+      isNonConsumable: true),
+  };
 
   // Get all consumable product IDs
   static List<String> get consumableIds => [
@@ -71,10 +84,15 @@ class InAppProducts {
         monthlySubscription,
         yearlySubscription];
 
+  // Get all non-consumable product IDs (평생 소유)
+  static List<String> get nonConsumableIds => [
+        premiumSajuLifetime];
+
   // Get all product IDs
   static List<String> get allProductIds => [
         ...consumableIds,
-        ...subscriptionIds];
+        ...subscriptionIds,
+        ...nonConsumableIds];
 }
 
 class ProductInfo {
@@ -85,6 +103,7 @@ class ProductInfo {
   final int tokens; // -1 for unlimited
   final bool isSubscription;
   final String? subscriptionPeriod; // 'monthly' or 'yearly'
+  final bool isNonConsumable; // 평생 소유 상품 (프리미엄 사주명리서 등)
 
   const ProductInfo({
     required this.id,
@@ -93,7 +112,8 @@ class ProductInfo {
     required this.price,
     required this.tokens,
     required this.isSubscription,
-    this.subscriptionPeriod});
+    this.subscriptionPeriod,
+    this.isNonConsumable = false});
 
   /// 구독 여부에 따른 혜택 문구
   String get benefitText {

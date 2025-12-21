@@ -295,40 +295,13 @@ ${Array.from({ length: 7 }, (_, i) => {
       ? ['personal_analysis', 'lifestyle_advice', 'health_tips', 'weekly_activities']
       : []
 
-    // 블러 처리용 기본 메시지
-    const blurredMessage = '🔒 프리미엄 결제 후 확인 가능합니다'
-    const blurredArray = ['🔒 프리미엄 결제 후 확인 가능합니다']
-
-    // 블러 처리된 응답 구성
+    // 응답 구성 (블러 없이 전체 데이터)
     const blurredResult = {
       ...result,
-      // 🔒 프리미엄: 개인 맞춤 분석
-      personal_analysis: isBlurred ? {
-        personality_insight: blurredMessage,
-        life_phase: blurredMessage,
-        current_challenge: blurredMessage,
-        growth_opportunity: blurredMessage
-      } : result.personal_analysis,
-      // 🔒 프리미엄: 라이프스타일 조언
-      lifestyle_advice: isBlurred ? {
-        sleep_pattern: blurredMessage,
-        exercise_timing: blurredMessage,
-        nutrition_tip: blurredMessage,
-        stress_management: blurredMessage
-      } : result.lifestyle_advice,
-      // 🔒 프리미엄: 건강 관리 팁
-      health_tips: isBlurred ? {
-        physical_health: blurredMessage,
-        mental_health: blurredMessage,
-        energy_boost: blurredMessage,
-        warning_signs: blurredMessage
-      } : result.health_tips,
-      // 🔒 프리미엄: 주간 활동 가이드
-      weekly_activities: isBlurred ? {
-        physical_activities: blurredArray,
-        mental_activities: blurredArray,
-        rest_days: blurredArray
-      } : result.weekly_activities,
+      personal_analysis: result.personal_analysis,
+      lifestyle_advice: result.lifestyle_advice,
+      health_tips: result.health_tips,
+      weekly_activities: result.weekly_activities,
       // ✅ 블러 상태 정보
       isBlurred,
       blurredSections

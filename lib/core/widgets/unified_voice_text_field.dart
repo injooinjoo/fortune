@@ -19,15 +19,20 @@ enum VoiceInputState {
   hasText,
 }
 
-/// ChatGPT 스타일의 음성 입력 텍스트 필드
+/// ChatGPT 스타일의 통합 음성 입력 텍스트 필드
 ///
 /// 레이아웃: [왼쪽 버튼] [가운데 pill] [오른쪽 버튼]
-class VoiceInputTextField extends StatefulWidget {
+///
+/// 기존 VoiceInputTextField, DreamVoiceInputWidget 통합
+class UnifiedVoiceTextField extends StatefulWidget {
   /// 텍스트 전송 시 호출되는 콜백
   final Function(String text) onSubmit;
 
   /// 텍스트 변경 시 호출되는 콜백 (실시간 업데이트용)
-  final Function(String text)? onChanged;
+  final Function(String text)? onTextChanged;
+
+  /// 녹음 상태 변경 콜백 (Provider 연동용)
+  final Function(bool isRecording)? onRecordingChanged;
 
   /// 기본 상태의 힌트 텍스트
   final String hintText;
@@ -41,21 +46,34 @@ class VoiceInputTextField extends StatefulWidget {
   /// 활성화 여부
   final bool enabled;
 
-  const VoiceInputTextField({
+  /// 전송 버튼 표시 여부 (기본 true)
+  final bool showSendButton;
+
+  /// 웨이브폼 바 개수 (기본 50)
+  final int waveformBarCount;
+
+  /// 정지 버튼 색상 (null이면 기본 grey)
+  final Color? stopButtonColor;
+
+  const UnifiedVoiceTextField({
     super.key,
     required this.onSubmit,
-    this.onChanged,
+    this.onTextChanged,
+    this.onRecordingChanged,
     this.hintText = 'Ask anything',
     this.transcribingText = 'Transcribing',
     this.controller,
     this.enabled = true,
+    this.showSendButton = true,
+    this.waveformBarCount = 50,
+    this.stopButtonColor,
   });
 
   @override
-  State<VoiceInputTextField> createState() => _VoiceInputTextFieldState();
+  State<UnifiedVoiceTextField> createState() => _UnifiedVoiceTextFieldState();
 }
 
-class _VoiceInputTextFieldState extends State<VoiceInputTextField>
+class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     with SingleTickerProviderStateMixin {
   late TextEditingController _textController;
   final SpeechRecognitionService _speechService = SpeechRecognitionService();
@@ -88,7 +106,8 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
   void _onListeningStateChanged() {
     if (!_speechService.isListeningNotifier.value && mounted) {
       // 서비스가 중지되었는데 UI가 아직 recording 상태면 복구
-      if (_state == VoiceInputState.recording || _state == VoiceInputState.transcribing) {
+      if (_state == VoiceInputState.recording ||
+          _state == VoiceInputState.transcribing) {
         final text = _textController.text.trim();
         // 텍스트가 있으면 hasText, 없으면 idle로 복구
         if (text.isNotEmpty) {
@@ -122,8 +141,8 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
       setState(() => _state = VoiceInputState.idle);
     }
 
-    // B07: 실시간 텍스트 변경 콜백 호출
-    widget.onChanged?.call(text);
+    // 실시간 텍스트 변경 콜백 호출
+    widget.onTextChanged?.call(text);
   }
 
   /// 마이크 버튼 탭 - 녹음 시작
@@ -148,6 +167,9 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
       _textController.clear();
     });
 
+    // 녹음 상태 콜백
+    widget.onRecordingChanged?.call(true);
+
     await _startListeningWithAutoRestart();
   }
 
@@ -165,6 +187,8 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
               TextPosition(offset: text.length),
             );
           });
+          // 녹음 상태 콜백
+          widget.onRecordingChanged?.call(false);
         }
       },
       onPartialResult: (text) {
@@ -184,13 +208,16 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
       },
       onNoMatch: () {
         // error_no_match 발생 시 자동 재시작
-        if (mounted && (_state == VoiceInputState.recording || _state == VoiceInputState.transcribing)) {
-          debugPrint('🎤 [UI] Auto-restarting after no_match');
+        if (mounted &&
+            (_state == VoiceInputState.recording ||
+                _state == VoiceInputState.transcribing)) {
+          debugPrint('🎤 [UnifiedVoice] Auto-restarting after no_match');
           _startListeningWithAutoRestart();
         } else {
           // stop 버튼 눌렀거나 mounted 아니면 idle로 복구
           if (mounted) {
             setState(() => _state = VoiceInputState.idle);
+            widget.onRecordingChanged?.call(false);
           }
         }
       },
@@ -209,6 +236,9 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
     setState(() {
       _state = text.isEmpty ? VoiceInputState.idle : VoiceInputState.hasText;
     });
+
+    // 녹음 상태 콜백
+    widget.onRecordingChanged?.call(false);
   }
 
   /// 전송 버튼 탭
@@ -311,8 +341,8 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isRecordingOrTranscribing =
-        _state == VoiceInputState.recording || _state == VoiceInputState.transcribing;
+    final isRecordingOrTranscribing = _state == VoiceInputState.recording ||
+        _state == VoiceInputState.transcribing;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -352,7 +382,8 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
         ),
 
         // 오른쪽: 전송 버튼 (hasText 또는 recording/transcribing 상태에서)
-        if (_state == VoiceInputState.hasText || isRecordingOrTranscribing) ...[
+        if (widget.showSendButton &&
+            (_state == VoiceInputState.hasText || isRecordingOrTranscribing)) ...[
           const SizedBox(width: 8),
           _buildSendButton(isDark),
         ],
@@ -417,7 +448,7 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
         builder: (context, soundLevel, child) {
           return VoiceSpectrumAnimation(
             isRecording: true,
-            barCount: 50,
+            barCount: widget.waveformBarCount,
             soundLevel: soundLevel,
             isSpeaking: _isSpeaking,
           );
@@ -459,20 +490,24 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
     );
   }
 
-  /// 정지 버튼 (왼쪽, 회색 스타일)
+  /// 정지 버튼 (왼쪽)
   Widget _buildStopButton(bool isDark) {
+    final stopColor = widget.stopButtonColor;
+
     return GestureDetector(
       onTap: _stopRecording,
       child: Container(
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: isDark ? Colors.grey[700] : Colors.grey[300],
+          color: stopColor ?? (isDark ? Colors.grey[700] : Colors.grey[300]),
           shape: BoxShape.circle,
         ),
         child: Icon(
           Icons.stop,
-          color: isDark ? Colors.grey[300] : Colors.grey[700],
+          color: stopColor != null
+              ? Colors.white
+              : (isDark ? Colors.grey[300] : Colors.grey[700]),
           size: 20,
         ),
       ),

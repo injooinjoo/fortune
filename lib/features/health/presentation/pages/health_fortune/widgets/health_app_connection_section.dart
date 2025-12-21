@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/fortune_theme.dart';
-import '../../../../../../core/theme/fortune_design_system.dart';
+import '../../../../../../core/theme/obangseok_colors.dart';
 import '../../../../../../core/widgets/unified_button.dart';
 import '../../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../../services/health_data_service.dart';
+
+/// Health 액센트 색상 (건강 도메인)
+const Color _healthAccent = Color(0xFF38A169);
+const Color _healthAccentLight = Color(0xFF68D391);
 
 class HealthAppConnectionSection extends StatelessWidget {
   final bool isDark;
@@ -38,17 +41,23 @@ class HealthAppConnectionSection extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  TossTheme.primaryBlue.withValues(alpha: 0.1),
-                  TossTheme.success.withValues(alpha: 0.1),
+                  _healthAccent.withValues(alpha: 0.08),
+                  _healthAccentLight.withValues(alpha: 0.05),
                 ],
               )
             : null,
-        color: isPremium ? null : (isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary),
+        color: isPremium
+            ? null
+            : (isDark
+                ? ObangseokColors.heukLight.withValues(alpha: 0.5)
+                : ObangseokColors.misaekDark),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isPremium
-              ? TossTheme.primaryBlue.withValues(alpha: 0.3)
-              : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+              ? _healthAccent.withValues(alpha: 0.3)
+              : (isDark
+                  ? ObangseokColors.heukMuted.withValues(alpha: 0.5)
+                  : ObangseokColors.baekMuted),
         ),
       ),
       child: Column(
@@ -60,13 +69,17 @@ class HealthAppConnectionSection extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isPremium
-                      ? TossTheme.primaryBlue.withValues(alpha: 0.15)
-                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white),
+                      ? _healthAccent.withValues(alpha: 0.15)
+                      : (isDark
+                          ? ObangseokColors.heukLight
+                          : ObangseokColors.baek),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   platformIcon,
-                  color: isPremium ? TossTheme.primaryBlue : TossTheme.textGray600,
+                  color: isPremium
+                      ? _healthAccent
+                      : ObangseokColors.meokFaded,
                   size: 20,
                 ),
               ),
@@ -79,22 +92,28 @@ class HealthAppConnectionSection extends StatelessWidget {
                       children: [
                         Text(
                           '$platformName 연동',
-                          style: TossTheme.body2.copyWith(
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                            color: ObangseokColors.getMeok(context),
                           ),
                         ),
                         const SizedBox(width: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
-                            color: TossTheme.primaryBlue,
+                            color: _healthAccent,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Text(
+                          child: const Text(
                             'PREMIUM',
-                            style: TossTheme.caption.copyWith(
-                              color: TossDesignSystem.white,
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              color: Colors.white,
                               fontWeight: FontWeight.w700,
                               fontSize: 9,
                             ),
@@ -105,8 +124,13 @@ class HealthAppConnectionSection extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       '건강 데이터로 더 정확한 분석',
-                      style: TossTheme.caption.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: isDark
+                            ? ObangseokColors.baekMuted
+                            : ObangseokColors.meokFaded,
                       ),
                     ),
                   ],
@@ -137,9 +161,12 @@ class HealthAppConnectionSection extends StatelessWidget {
                       ? const SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: _healthAccent,
+                          ),
                         )
-                      : Icon(platformIcon, size: 18),
+                      : Icon(platformIcon, size: 18, color: _healthAccent),
                 ),
               ),
             ],
@@ -149,22 +176,27 @@ class HealthAppConnectionSection extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white.withValues(alpha: 0.7),
+                color: isDark
+                    ? ObangseokColors.heukLight.withValues(alpha: 0.7)
+                    : ObangseokColors.baek.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.lock_rounded,
-                    color: TossTheme.textGray600,
+                    color: ObangseokColors.meokFaded,
                     size: 14,
                   ),
                   const SizedBox(width: 6),
-                  Text(
+                  const Text(
                     '프리미엄 구독 시 사용 가능',
-                    style: TossTheme.caption.copyWith(
-                      color: TossTheme.textGray600,
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: ObangseokColors.meokFaded,
                     ),
                   ),
                 ],
@@ -196,7 +228,9 @@ class ConnectedHealthDataSummary extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: isDark
+            ? ObangseokColors.heukLight
+            : ObangseokColors.baek,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -204,25 +238,27 @@ class ConnectedHealthDataSummary extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.check_circle_rounded,
-                color: TossTheme.success,
+                color: _healthAccent,
                 size: 16,
               ),
               const SizedBox(width: 6),
-              Text(
+              const Text(
                 '건강 데이터 연동됨',
-                style: TossTheme.caption.copyWith(
-                  color: TossTheme.success,
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 12,
+                  color: _healthAccent,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const Spacer(),
               GestureDetector(
                 onTap: onRefresh,
-                child: Icon(
+                child: const Icon(
                   Icons.refresh_rounded,
-                  color: TossTheme.primaryBlue,
+                  color: _healthAccent,
                   size: 18,
                 ),
               ),
@@ -259,9 +295,13 @@ class ConnectedHealthDataSummary extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '이 데이터가 건강운세 분석에 활용됩니다',
-            style: TossTheme.caption.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+            style: TextStyle(
+              fontFamily: 'Pretendard',
               fontSize: 11,
+              fontWeight: FontWeight.w400,
+              color: isDark
+                  ? ObangseokColors.baekMuted
+                  : ObangseokColors.meokFaded,
             ),
           ),
         ],
@@ -292,13 +332,17 @@ class HealthDataChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary,
+        color: isDark
+            ? ObangseokColors.heukMuted.withValues(alpha: 0.5)
+            : ObangseokColors.misaekDark,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         text,
-        style: TossTheme.caption.copyWith(
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+        style: TextStyle(
+          fontFamily: 'Pretendard',
+          fontSize: 12,
+          color: ObangseokColors.getMeok(context),
           fontWeight: FontWeight.w500,
         ),
       ),

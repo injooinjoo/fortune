@@ -3,6 +3,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/logger.dart';
 import '../models/fortune_result.dart';
 import '../models/cached_fortune_result.dart';
+import '../constants/soul_rates.dart';
+import '../errors/exceptions.dart';
+import '../../data/services/token_api_service.dart';
 import 'fortune_generators/tarot_generator.dart';
 import 'fortune_generators/moving_generator.dart';
 import 'fortune_generators/time_based_generator.dart';
@@ -36,15 +39,21 @@ import '../../features/fortune/domain/models/conditions/health_fortune_condition
 /// 4. 결과 반환
 class UnifiedFortuneService {
   final SupabaseClient _supabase;
+  final TokenApiService? _tokenService;
   late final FortuneOptimizationService _optimizationService;
 
   // 최적화 시스템 활성화 플래그 (기본값: true)
   final bool enableOptimization;
 
+  // 토큰 검증 활성화 플래그 (기본값: true)
+  final bool enableTokenValidation;
+
   UnifiedFortuneService(
     this._supabase, {
+    TokenApiService? tokenService,
     this.enableOptimization = true, // 최적화 기본 활성화
-  }) {
+    this.enableTokenValidation = true, // 토큰 검증 기본 활성화
+  }) : _tokenService = tokenService {
     _optimizationService = FortuneOptimizationService(supabase: _supabase);
   }
 
@@ -85,6 +94,36 @@ class UnifiedFortuneService {
       Logger.info('[$fortuneType] 👤 사용자: $userId');
       Logger.info('[$fortuneType] 📋 입력 조건: ${jsonEncode(inputConditions)}');
       Logger.info('[$fortuneType] 📡 데이터 소스: $dataSource');
+
+      // ===== 토큰 검증 (API 호출 전) =====
+      final soulAmount = SoulRates.getSoulAmount(fortuneType);
+      Logger.info('[$fortuneType] 💰 영혼 비용: $soulAmount (${soulAmount < 0 ? "프리미엄" : "무료"})');
+
+      if (enableTokenValidation && _tokenService != null && userId != 'unknown') {
+        try {
+          final balance = await _tokenService.getTokenBalance(userId: userId);
+
+          if (soulAmount < 0) {
+            // 프리미엄 운세 → 토큰 부족 시 예외
+            final requiredTokens = -soulAmount;
+            if (!balance.hasUnlimitedAccess && balance.remainingTokens < requiredTokens) {
+              Logger.warning('[$fortuneType] ❌ 토큰 부족: 필요 $requiredTokens, 보유 ${balance.remainingTokens}');
+              throw InsufficientTokensException.withDetails(
+                required: requiredTokens,
+                available: balance.remainingTokens,
+                fortuneType: fortuneType,
+              );
+            }
+            Logger.info('[$fortuneType] ✅ 토큰 검증 통과 (보유: ${balance.remainingTokens}, 필요: $requiredTokens)');
+          }
+        } catch (e) {
+          if (e is InsufficientTokensException) {
+            rethrow; // 토큰 부족 예외는 그대로 전파
+          }
+          // 토큰 조회 실패 시 로깅만 하고 계속 진행 (graceful degradation)
+          Logger.warning('[$fortuneType] ⚠️ 토큰 검증 건너뜀: $e');
+        }
+      }
 
       // ===== 최적화 시스템 사용 (조건 객체가 있고 활성화된 경우) =====
       if (enableOptimization && conditions != null && dataSource == FortuneDataSource.api) {
@@ -155,6 +194,9 @@ class UnifiedFortuneService {
             );
           }
 
+          // ===== API 호출 성공 후 토큰 처리 =====
+          await _processSoulTransaction(userId, fortuneType, soulAmount);
+
           // 최종 반환 (블러 상태 또는 블러 해제 상태)
           return fortuneResult;
         } catch (e, stackTrace) {
@@ -193,6 +235,9 @@ class UnifiedFortuneService {
         // DB 저장 실패해도 API 결과는 사용자에게 반환
         Logger.error('[$fortuneType] ❌ fortune_history 저장 실패 (결과는 반환됨): $saveError');
       }
+
+      // ===== API 호출 성공 후 토큰 처리 =====
+      await _processSoulTransaction(userId, fortuneType, soulAmount);
 
       return result;
 
@@ -886,6 +931,44 @@ class UnifiedFortuneService {
       default:
         // 기본적으로 'advice', 'details', 'recommendations' 블러 처리
         return ['advice', 'details', 'recommendations'];
+    }
+  }
+
+  /// 토큰(영혼) 트랜잭션 처리
+  ///
+  /// API 호출 성공 후 토큰 차감(프리미엄) 또는 획득(무료)
+  Future<void> _processSoulTransaction(
+    String userId,
+    String fortuneType,
+    int soulAmount,
+  ) async {
+    if (_tokenService == null || userId == 'unknown') {
+      Logger.info('[$fortuneType] ⏭️ 토큰 처리 건너뜀 (서비스 없음 또는 비로그인)');
+      return;
+    }
+
+    try {
+      if (soulAmount < 0) {
+        // 프리미엄 운세 → 토큰 차감
+        final amount = -soulAmount;
+        await _tokenService.consumeTokens(
+          userId: userId,
+          fortuneType: fortuneType,
+          amount: amount,
+        );
+        Logger.info('[$fortuneType] 💸 토큰 차감 완료: $amount개');
+      } else if (soulAmount > 0) {
+        // 무료 운세 → 영혼 획득
+        await _tokenService.rewardTokensForAdView(
+          userId: userId,
+          fortuneType: fortuneType,
+          rewardAmount: soulAmount,
+        );
+        Logger.info('[$fortuneType] 🎁 영혼 획득 완료: $soulAmount개');
+      }
+    } catch (e) {
+      // 토큰 처리 실패해도 결과는 반환 (graceful degradation)
+      Logger.warning('[$fortuneType] ⚠️ 토큰 처리 실패 (결과는 반환됨): $e');
     }
   }
 

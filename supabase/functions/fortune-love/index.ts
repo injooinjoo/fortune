@@ -440,10 +440,6 @@ serve(async (req) => {
       ? ['loveProfile', 'detailedAnalysis', 'predictions', 'actionPlan']
       : [];
 
-    // 블러 처리용 기본 메시지
-    const blurredMessage = '🔒 프리미엄 결제 후 확인 가능합니다';
-    const blurredArray = ['🔒 프리미엄 결제 후 확인 가능합니다'];
-
     // 응답 데이터 구조화
     const response: LoveFortuneResponse = {
       success: true,
@@ -458,42 +454,16 @@ serve(async (req) => {
         loveScore: fortuneData.loveScore || Math.floor(Math.random() * 35) + 60,
         mainMessage: fortuneData.mainMessage || '새로운 사랑의 기회가 찾아올 것입니다.',
 
-        // 🔒 프리미엄: 연애 프로필
-        loveProfile: isBlurred ? {
-          dominantStyle: blurredMessage,
-          personalityType: blurredMessage,
-          communicationStyle: blurredMessage,
-          conflictResolution: blurredMessage
-        } : {
+        // 연애 프로필
+        loveProfile: {
           dominantStyle: fortuneData.loveProfile?.dominantStyle || '헌신형',
           personalityType: fortuneData.loveProfile?.attachmentType || fortuneData.loveProfile?.personalityType || '안정형',
           communicationStyle: fortuneData.loveProfile?.communicationStyle || '진솔한 소통을 선호합니다.',
           conflictResolution: fortuneData.loveProfile?.conflictResolution || '대화를 통해 해결하려 합니다.'
         },
 
-        // 🔒 프리미엄: 상세 분석
-        detailedAnalysis: isBlurred ? {
-          loveStyle: {
-            description: blurredMessage,
-            strengths: blurredArray,
-            tendencies: blurredArray
-          },
-          charmPoints: {
-            primary: blurredMessage,
-            secondary: blurredMessage,
-            details: blurredArray
-          },
-          improvementAreas: {
-            main: blurredMessage,
-            specific: blurredArray,
-            actionItems: blurredArray
-          },
-          compatibilityInsights: {
-            bestMatch: blurredMessage,
-            avoidTypes: blurredMessage,
-            relationshipTips: blurredArray
-          }
-        } : (fortuneData.detailedAnalysis || {
+        // 상세 분석
+        detailedAnalysis: fortuneData.detailedAnalysis || {
           loveStyle: {
             description: '따뜻하고 진실한 연애 스타일을 가지고 있습니다.',
             strengths: ['진정성 있는 감정 표현', '상대방을 배려하는 마음', '안정적인 관계 유지 능력'],
@@ -514,37 +484,29 @@ serve(async (req) => {
             avoidTypes: '감정 기복이 심하거나 진실하지 못한 사람은 피하는 것이 좋습니다.',
             relationshipTips: ['서로의 가치관 존중하기', '꾸준한 소통 유지하기', '개인 성장도 함께 추구하기']
           }
-        }),
-
-        // ✅ 무료: 오늘의 조언 (일부만 공개)
-        todaysAdvice: {
-          general: fortuneData.todaysAdvice?.general || '오늘은 사랑에 적극적인 하루가 될 것입니다.',
-          specific: isBlurred ? blurredArray : (fortuneData.todaysAdvice?.specific || ['새로운 만남에 열린 마음 갖기', '솔직한 대화하기', '자신의 매력 표현하기']),
-          luckyAction: fortuneData.todaysAdvice?.luckyAction || '좋아하는 사람에게 진심을 담은 메시지 보내기',
-          warningArea: isBlurred ? blurredMessage : (fortuneData.todaysAdvice?.warningArea || '과도한 기대는 실망으로 이어질 수 있으니 주의')
         },
 
-        // 🔒 프리미엄: 예측
-        predictions: isBlurred ? {
-          thisWeek: blurredMessage,
-          thisMonth: blurredMessage,
-          nextThreeMonths: blurredMessage
-        } : (fortuneData.predictions || {
+        // 오늘의 조언
+        todaysAdvice: {
+          general: fortuneData.todaysAdvice?.general || '오늘은 사랑에 적극적인 하루가 될 것입니다.',
+          specific: fortuneData.todaysAdvice?.specific || ['새로운 만남에 열린 마음 갖기', '솔직한 대화하기', '자신의 매력 표현하기'],
+          luckyAction: fortuneData.todaysAdvice?.luckyAction || '좋아하는 사람에게 진심을 담은 메시지 보내기',
+          warningArea: fortuneData.todaysAdvice?.warningArea || '과도한 기대는 실망으로 이어질 수 있으니 주의'
+        },
+
+        // 예측
+        predictions: fortuneData.predictions || {
           thisWeek: '새로운 만남이나 관계의 진전이 있을 것입니다.',
           thisMonth: '연애운이 상승하며 좋은 소식이 들려올 것입니다.',
           nextThreeMonths: '안정적이고 행복한 관계를 유지할 수 있을 것입니다.'
-        }),
+        },
 
-        // 🔒 프리미엄: 실천 계획
-        actionPlan: isBlurred ? {
-          immediate: blurredArray,
-          shortTerm: blurredArray,
-          longTerm: blurredArray
-        } : (fortuneData.actionPlan || {
+        // 실천 계획
+        actionPlan: fortuneData.actionPlan || {
           immediate: ['자신의 감정 솔직하게 정리하기', '상대방에게 먼저 연락하기'],
           shortTerm: ['데이트 계획 세우기', '관계 발전 방향 대화하기'],
           longTerm: ['서로의 미래 계획 공유하기', '신뢰 관계 더 깊게 구축하기']
-        }),
+        },
 
         // ✅ 블러 상태 정보
         isBlurred,

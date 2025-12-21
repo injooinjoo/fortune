@@ -189,21 +189,16 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
           : ObangseokColors.hanjiBackground,
       elevation: 0,
       scrolledUnderElevation: 0,
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios,
-          color: ObangseokColors.getMeok(context),
-        ),
-        onPressed: () {
-          if (_showResult) {
-            setState(() {
-              _showResult = false;
-            });
-          } else {
-            context.pop();
-          }
-        },
-      ),
+      leading: _showResult
+          ? null // 결과 화면에서는 왼쪽 버튼 없음
+          : IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: ObangseokColors.getMeok(context),
+              ),
+              onPressed: () => context.pop(),
+            ),
+      automaticallyImplyLeading: false,
       title: Text(
         '로또 운세',
         style: TextStyle(
@@ -214,6 +209,22 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
         ),
       ),
       centerTitle: true,
+      actions: _showResult
+          ? [
+              // 결과 화면에서는 오른쪽에 X 버튼
+              IconButton(
+                icon: Icon(
+                  Icons.close,
+                  color: ObangseokColors.getMeok(context),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _showResult = false;
+                  });
+                },
+              ),
+            ]
+          : null,
     );
   }
 
@@ -343,21 +354,9 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
         ),
         // 광고 보고 잠금 해제 버튼 (프리미엄이 아니고 아직 해제 안 했을 때)
         if (!_isPremiumUnlocked && !isPremium)
-          UnifiedButton.floating(
-            text: '🔓 마지막 번호 확인하기',
+          UnifiedButton.floatingDanger(
+            text: '🔓 광고 보고 전체 번호 확인',
             onPressed: _showAdAndUnlock,
-            isEnabled: true,
-          ),
-        // 다시 생성 버튼 (프리미엄이거나 이미 해제했을 때)
-        if (_isPremiumUnlocked || isPremium)
-          UnifiedButton.floating(
-            text: '🔄 행운 번호 다시 받기',
-            onPressed: () {
-              setState(() {
-                _showResult = false;
-                _isPremiumUnlocked = false;
-              });
-            },
             isEnabled: true,
           ),
       ],

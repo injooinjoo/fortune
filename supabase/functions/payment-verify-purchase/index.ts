@@ -6,6 +6,110 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Apple Receipt Validation URLs
+const APPLE_PRODUCTION_URL = 'https://buy.itunes.apple.com/verifyReceipt'
+const APPLE_SANDBOX_URL = 'https://sandbox.itunes.apple.com/verifyReceipt'
+
+// Apple Receipt Status Codes
+const APPLE_STATUS = {
+  SUCCESS: 0,
+  SANDBOX_RECEIPT_IN_PRODUCTION: 21007,
+  PRODUCTION_RECEIPT_IN_SANDBOX: 21008,
+}
+
+/**
+ * iOS 영수증 검증 (Apple 권장 방식)
+ * 1. Production 서버에서 먼저 검증 시도
+ * 2. 21007 에러 시 Sandbox 서버로 재시도
+ */
+async function verifyAppleReceipt(receipt: string, sharedSecret?: string): Promise<{
+  isValid: boolean
+  productId?: string
+  transactionId?: string
+  environment?: string
+  error?: string
+}> {
+  const requestBody = {
+    'receipt-data': receipt,
+    ...(sharedSecret && { 'password': sharedSecret }),
+    'exclude-old-transactions': true,
+  }
+
+  console.log('🍎 Apple 영수증 검증 시작...')
+
+  // 1. Production 서버에서 먼저 시도
+  console.log('🍎 [1/2] Production 서버 검증 시도...')
+  try {
+    const productionResponse = await fetch(APPLE_PRODUCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+    })
+
+    const productionResult = await productionResponse.json()
+    console.log(`🍎 Production 응답 status: ${productionResult.status}`)
+
+    // 성공
+    if (productionResult.status === APPLE_STATUS.SUCCESS) {
+      console.log('✅ Production 서버 검증 성공!')
+      const latestReceipt = productionResult.latest_receipt_info?.[0] ||
+                           productionResult.receipt?.in_app?.[0]
+      return {
+        isValid: true,
+        productId: latestReceipt?.product_id,
+        transactionId: latestReceipt?.transaction_id,
+        environment: 'production',
+      }
+    }
+
+    // 2. Sandbox 영수증인 경우 (21007) → Sandbox 서버로 재시도
+    if (productionResult.status === APPLE_STATUS.SANDBOX_RECEIPT_IN_PRODUCTION) {
+      console.log('🍎 [2/2] Sandbox 영수증 감지 → Sandbox 서버로 재시도...')
+
+      const sandboxResponse = await fetch(APPLE_SANDBOX_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+      })
+
+      const sandboxResult = await sandboxResponse.json()
+      console.log(`🍎 Sandbox 응답 status: ${sandboxResult.status}`)
+
+      if (sandboxResult.status === APPLE_STATUS.SUCCESS) {
+        console.log('✅ Sandbox 서버 검증 성공!')
+        const latestReceipt = sandboxResult.latest_receipt_info?.[0] ||
+                             sandboxResult.receipt?.in_app?.[0]
+        return {
+          isValid: true,
+          productId: latestReceipt?.product_id,
+          transactionId: latestReceipt?.transaction_id,
+          environment: 'sandbox',
+        }
+      }
+
+      console.log(`❌ Sandbox 검증 실패: status=${sandboxResult.status}`)
+      return {
+        isValid: false,
+        error: `Sandbox validation failed: ${sandboxResult.status}`,
+      }
+    }
+
+    // 기타 에러
+    console.log(`❌ Production 검증 실패: status=${productionResult.status}`)
+    return {
+      isValid: false,
+      error: `Apple validation failed: ${productionResult.status}`,
+    }
+
+  } catch (error) {
+    console.error('❌ Apple 서버 통신 오류:', error)
+    return {
+      isValid: false,
+      error: `Network error: ${error.message}`,
+    }
+  }
+}
+
 /**
  * ============================================================
  * 테이블 참조 (중요!)
@@ -26,7 +130,8 @@ const PRODUCT_TOKENS: Record<string, number> = {
 
 serve(async (req) => {
   console.log('========================================')
-  console.log('🚀 payment-verify-purchase v17 시작')
+  console.log('🚀 payment-verify-purchase v18 시작')
+  console.log('🍎 Apple 영수증 검증: Production → Sandbox fallback 지원')
   console.log('========================================')
 
   // CORS preflight
@@ -101,24 +206,63 @@ serve(async (req) => {
 
     console.log(`🔍 검증 시작: ${platform}/${productId} for user ${userId || 'anonymous'}`)
 
-    // 플랫폼별 검증 (현재 개발 모드로 통과)
-    let isValid = true
+    // 플랫폼별 영수증 검증
+    let isValid = false
+    let verifiedProductId = productId
+    let verifiedTransactionId = transactionId || orderId
+    let environment = 'unknown'
 
     if (platform === 'ios') {
       console.log('📱 iOS 플랫폼 검증')
-      if (!receipt && !transactionId) {
-        console.warn('⚠️ iOS: receipt와 transactionId 모두 없음')
+
+      if (!receipt) {
+        console.error('❌ iOS: receipt 없음 - 검증 불가')
+        return new Response(
+          JSON.stringify({ valid: false, error: 'Missing iOS receipt' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
       }
+
+      // Apple App Store 공유 시크릿 (환경 변수에서 로드)
+      const appleSharedSecret = Deno.env.get('APPLE_SHARED_SECRET')
+
+      // Apple 영수증 검증 (Production → Sandbox fallback)
+      const appleResult = await verifyAppleReceipt(receipt, appleSharedSecret)
+
+      isValid = appleResult.isValid
+      environment = appleResult.environment || 'unknown'
+
+      if (appleResult.isValid) {
+        verifiedProductId = appleResult.productId || productId
+        verifiedTransactionId = appleResult.transactionId || transactionId
+        console.log(`✅ iOS 검증 성공 (${environment}): ${verifiedProductId}`)
+      } else {
+        console.error(`❌ iOS 검증 실패: ${appleResult.error}`)
+      }
+
     } else if (platform === 'android') {
       console.log('🤖 Android 플랫폼 검증')
+
       if (!purchaseToken) {
-        console.warn('⚠️ Android: purchaseToken 없음')
+        console.error('❌ Android: purchaseToken 없음 - 검증 불가')
+        return new Response(
+          JSON.stringify({ valid: false, error: 'Missing Android purchase token' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
       }
+
+      // TODO: Google Play 영수증 검증 구현
+      // 현재는 purchaseToken 존재 여부만 확인 (추후 Google Play Developer API 연동 필요)
+      console.log('⚠️ Android: Google Play 검증은 아직 미구현 - purchaseToken 존재로 통과')
+      isValid = true
+      environment = 'android'
+
     } else {
       console.warn(`⚠️ 알 수 없는 플랫폼: ${platform}`)
       isValid = false
     }
-    console.log(`✅ 플랫폼 검증 결과: isValid = ${isValid}`)
+
+    console.log(`✅ 플랫폼 검증 결과: isValid = ${isValid}, environment = ${environment}`)
 
     // 검증 성공 시 토큰 추가
     const tokensToAdd = PRODUCT_TOKENS[productId] || 0
@@ -238,9 +382,10 @@ serve(async (req) => {
 
     const responseData = {
       valid: isValid,
-      productId,
+      productId: verifiedProductId,
       platform,
-      tokensAdded: tokensToAdd,
+      environment,
+      tokensAdded: isValid ? tokensToAdd : 0,
       verifiedAt: new Date().toISOString()
     }
     console.log('📤 응답 데이터:', JSON.stringify(responseData, null, 2))

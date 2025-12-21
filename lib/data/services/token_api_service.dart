@@ -180,15 +180,12 @@ class TokenApiService {
       final data = await _apiClient.get('/token-consumption-rates');
 
       return Map<String, int>.from(data['rates'] ?? {});
-    } on DioException catch (e) {
-      // 404 또는 네트워크 에러 시 기본값 반환 (optional endpoint)
-      if (e.type == DioExceptionType.connectionError ||
-          e.response?.statusCode == 0 ||
-          e.response?.statusCode == 404) {
-        // Return default token consumption rates
-        return _defaultConsumptionRates;
-      }
-      throw _handleDioError(e);
+    } catch (e) {
+      // 모든 에러에서 기본값 반환 (optional endpoint)
+      // ApiClient가 DioException을 NotFoundException 등으로 변환하므로
+      // 모든 예외를 catch해야 함
+      Logger.debug('Token consumption rates 조회 실패, 기본값 사용: $e');
+      return _defaultConsumptionRates;
     }
   }
 
@@ -341,13 +338,6 @@ final tokenApiServiceProvider = Provider<TokenApiService>((ref) {
   return TokenApiService(apiClient);
 });
 
-// Custom Exceptions
-class InsufficientTokensException extends AppException {
-  const InsufficientTokensException([String message = '복주머니가 부족합니다'])
-      : super(message: message, code: 'INSUFFICIENT_TOKENS');
-}
-
-class AlreadyClaimedException extends AppException {
-  const AlreadyClaimedException([String message = '이미 받으셨습니다'])
-      : super(message: message, code: 'ALREADY_CLAIMED');
-}
+// Custom Exceptions moved to lib/core/errors/exceptions.dart
+// - InsufficientTokensException
+// - AlreadyClaimedException

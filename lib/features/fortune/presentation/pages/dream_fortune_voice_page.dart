@@ -10,7 +10,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
-import '../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../widgets/dream_result_widget.dart';
 import '../widgets/floating_dream_topics_widget.dart';
 import '../widgets/fortune_loading_skeleton.dart';
@@ -88,7 +88,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
               bottom: MediaQuery.of(context).padding.bottom + DSSpacing.lg,
               left: DSSpacing.md,
               right: DSSpacing.md,
-              child: VoiceInputTextField(
+              child: UnifiedVoiceTextField(
                 onSubmit: _handleTextRecognized,
                 hintText: '무슨 꿈이었나요?',
                 transcribingText: '듣고 있어요...',

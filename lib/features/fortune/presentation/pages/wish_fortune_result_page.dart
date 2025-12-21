@@ -194,9 +194,39 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(28),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: _buildCardContent(context, index, colors),
+          child: Stack(
+            children: [
+              // 기존 카드 내용
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: _buildCardContent(context, index, colors),
+              ),
+              // 탭 힌트 (하단 중앙)
+              Positioned(
+                bottom: 16,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.touch_app_outlined,
+                      size: 14,
+                      color: colors.textTertiary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '탭하여 자세히 보기',
+                      style: DSTypography.labelSmall.copyWith(
+                        color: colors.textTertiary,
+                      ),
+                    ),
+                  ],
+                ).animate(
+                  onPlay: (controller) => controller.repeat(reverse: true),
+                ).fade(begin: 1.0, end: 0.5, duration: 1500.ms),
+              ),
+            ],
           ),
         ),
       ),

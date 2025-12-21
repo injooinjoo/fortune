@@ -6,7 +6,7 @@ import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/services/talisman_generation_service.dart' as ai_talisman;
 import '../../../../core/utils/logger.dart';
-import '../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../core/widgets/unified_voice_text_field.dart';
 
 class TalismanWishInput extends StatefulWidget {
   final TalismanCategory selectedCategory;
@@ -143,7 +143,7 @@ class TalismanWishInputState extends State<TalismanWishInput> {
         const SizedBox(height: 24),
 
         // Voice Input
-        VoiceInputTextField(
+        UnifiedVoiceTextField(
           controller: _wishController,
           onSubmit: _isValid ? (text) => handleAISubmit() : (text) {},
           hintText: _placeholderText,
@@ -225,7 +225,7 @@ class TalismanWishInputState extends State<TalismanWishInput> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('신령 부적 생성 중 오류가 발생했습니다: $e'),
+            content: Text('부적 생성 중 오류가 발생했습니다: $e'),
             backgroundColor: TossDesignSystem.errorRed,
           ),
         );
@@ -253,7 +253,7 @@ class TalismanWishInputState extends State<TalismanWishInput> {
       case TalismanCategory.study:
         return ai_talisman.TalismanCategory.academicSuccess;
       case TalismanCategory.relationship:
-        return ai_talisman.TalismanCategory.homeProtection;
+        return ai_talisman.TalismanCategory.loveRelationship;
     }
   }
 }

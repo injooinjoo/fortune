@@ -9,7 +9,9 @@ import '../../core/constants/in_app_products.dart';
 import '../../services/in_app_purchase_service.dart';
 import '../../shared/components/app_header.dart';
 import '../../shared/components/toast.dart';
+import '../../shared/components/purchase_loading_overlay.dart';
 import '../../presentation/providers/subscription_provider.dart';
+import '../../presentation/providers/token_provider.dart';
 
 class SubscriptionPage extends ConsumerStatefulWidget {
   const SubscriptionPage({super.key});
@@ -39,11 +41,18 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           setState(() => _isLoading = true);
         }
       },
-      onPurchaseSuccess: (message) {
+      onPurchaseSuccess: (message) async {
         if (mounted) {
           setState(() => _isLoading = false);
-          // 구독 상태 업데이트
-          ref.read(subscriptionProvider.notifier).setActive(true);
+          // 구독 상태 업데이트 (상세 정보 포함)
+          await ref.read(subscriptionProvider.notifier).setActive(
+            true,
+            plan: _selectedPlan,
+            expiresAt: _calculateExpirationDate(_selectedPlan),
+            productId: _selectedPlan == 'monthly'
+                ? InAppProducts.monthlySubscription
+                : InAppProducts.yearlySubscription,
+          );
           Toast.show(context, message: message, type: ToastType.success);
           Navigator.of(context).pop(); // 구독 완료 후 이전 화면으로
         }
@@ -54,12 +63,44 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           Toast.show(context, message: error, type: ToastType.error);
         }
       },
+      onRestoreCompleted: (hasRestoredItems, restoredCount) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          if (hasRestoredItems) {
+            // 구독 상태 갱신
+            ref.read(subscriptionProvider.notifier).checkSubscriptionStatus();
+            ref.read(tokenProvider.notifier).loadTokenData();
+            Toast.show(
+              context,
+              message: '$restoredCount개의 구매가 복원되었습니다',
+              type: ToastType.success,
+            );
+          } else {
+            Toast.show(
+              context,
+              message: '복원할 구매 내역이 없습니다',
+              type: ToastType.info,
+            );
+          }
+        }
+      },
     );
+  }
+
+  /// 만료일 계산
+  DateTime _calculateExpirationDate(String plan) {
+    final now = DateTime.now();
+    return plan == 'yearly'
+        ? now.add(const Duration(days: 365))
+        : now.add(const Duration(days: 30));
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final isPremium = ref.watch(isPremiumProvider);
+    final subscriptionState = ref.watch(subscriptionProvider);
+
     return Scaffold(
       backgroundColor: colors.backgroundSecondary,
       appBar: AppHeader(
@@ -82,106 +123,115 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           children: [
             const SizedBox(height: DSSpacing.md),
 
-            // Premium Benefits - 황색(Hwang) 그라데이션으로 복/풍요의 느낌
-            Container(
-              padding: const EdgeInsets.all(DSSpacing.lg),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    ObangseokColors.hwangLight,
-                    ObangseokColors.hwang,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(DSRadius.lg),
-                boxShadow: [
-                  BoxShadow(
-                    color: ObangseokColors.hwang.withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.workspace_premium,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                      const SizedBox(width: DSSpacing.md),
-                      Text(
-                        '프리미엄운세',
-                        style: context.heading2.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
+            // 구독자: 프리미엄 상태 카드
+            if (isPremium) ...[
+              _buildActiveSubscriptionCard(subscriptionState),
+              const SizedBox(height: DSSpacing.xl),
+            ],
+
+            // 비구독자: 프리미엄 소개 배너 + 플랜 선택
+            if (!isPremium) ...[
+              // Premium Benefits - 황색(Hwang) 그라데이션으로 복/풍요의 느낌
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.lg),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      ObangseokColors.hwangLight,
+                      ObangseokColors.hwang,
                     ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  const SizedBox(height: DSSpacing.md),
-                  Text(
-                    '무제한 운세와 프리미엄 기능을 경험하세요',
-                    style: context.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(DSRadius.lg),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ObangseokColors.hwang.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.workspace_premium,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                        const SizedBox(width: DSSpacing.md),
+                        Text(
+                          '프리미엄운세',
+                          style: context.heading2.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: DSSpacing.md),
+                    Text(
+                      '무제한 운세와 프리미엄 기능을 경험하세요',
+                      style: context.bodySmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.9),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: DSSpacing.xl),
+              const SizedBox(height: DSSpacing.xl),
 
-            // Plan Selection
-            Text(
-              '구독 플랜 선택',
-              style: context.labelSmall.copyWith(
-                color: colors.textSecondary,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
+              // Plan Selection
+              Text(
+                '구독 플랜 선택',
+                style: context.labelSmall.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
               ),
-            ),
 
-            const SizedBox(height: DSSpacing.md),
+              const SizedBox(height: DSSpacing.md),
 
-            // Free Plan
-            _buildPlanCard(
-              id: 'free',
-              title: '무료',
-              price: '₩0',
-              period: '',
-              badge: '지금',
-            ),
+              // Free Plan
+              _buildPlanCard(
+                id: 'free',
+                title: '무료',
+                price: '₩0',
+                period: '',
+                badge: '지금',
+              ),
 
-            const SizedBox(height: DSSpacing.md),
+              const SizedBox(height: DSSpacing.md),
 
-            // Monthly Plan
-            _buildPlanCard(
-              id: 'monthly',
-              title: '월간 구독',
-              price: '₩2,200',
-              period: '/ 월',
-              badge: null,
-            ),
+              // Monthly Plan
+              _buildPlanCard(
+                id: 'monthly',
+                title: '월간 구독',
+                price: '₩2,200',
+                period: '/ 월',
+                badge: null,
+              ),
 
-            const SizedBox(height: DSSpacing.md),
+              const SizedBox(height: DSSpacing.md),
 
-            // Yearly Plan
-            _buildPlanCard(
-              id: 'yearly',
-              title: '연간 구독',
-              price: '₩19,000',
-              period: '/ 년',
-              badge: '28% 절약',
-              originalPrice: '₩26,400',
-            ),
+              // Yearly Plan
+              _buildPlanCard(
+                id: 'yearly',
+                title: '연간 구독',
+                price: '₩19,000',
+                period: '/ 년',
+                badge: '28% 절약',
+                originalPrice: '₩26,400',
+              ),
 
-            const SizedBox(height: DSSpacing.xl),
+              const SizedBox(height: DSSpacing.xl),
+            ],
 
-            // Premium Features
+            // 공통: Premium Features
             Text(
               '프리미엄운세 혜택',
               style: context.labelSmall.copyWith(
@@ -297,17 +347,24 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
         ),
           ),
 
-          // Floating Bottom Button
-          UnifiedButton.floating(
-            text: _isLoading
-                ? '처리 중...'
-                : _selectedPlan == 'free'
-                    ? '무료 플랜 사용 중'
-                    : _selectedPlan == 'monthly'
-                        ? '월간 구독 시작하기 - ₩2,200/월'
-                        : '연간 구독 시작하기 - ₩19,000/년',
-            onPressed: _selectedPlan == 'free' || _isLoading ? null : _startSubscription,
-            isEnabled: _selectedPlan != 'free' && !_isLoading,
+          // Floating Bottom Button (구독자가 아닌 경우에만 표시)
+          if (!isPremium)
+            UnifiedButton.floating(
+              text: _isLoading
+                  ? '처리 중...'
+                  : _selectedPlan == 'free'
+                      ? '무료 플랜 사용 중'
+                      : _selectedPlan == 'monthly'
+                          ? '월간 구독 시작하기 - ₩2,200/월'
+                          : '연간 구독 시작하기 - ₩19,000/년',
+              onPressed: _selectedPlan == 'free' || _isLoading ? null : _startSubscription,
+              isEnabled: _selectedPlan != 'free' && !_isLoading,
+            ),
+
+          // 결제 진행 중 로딩 오버레이
+          PurchaseLoadingOverlay(
+            isVisible: _isLoading,
+            message: '결제 처리 중...',
           ),
         ],
       ),
@@ -492,6 +549,205 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 활성 구독 상태 카드 (구독자용)
+  Widget _buildActiveSubscriptionCard(SubscriptionState subscriptionState) {
+    final planName = subscriptionState.plan == 'yearly' ? '연간 구독' : '월간 구독';
+    final remainingDays = subscriptionState.remainingDays;
+    final expiresAt = subscriptionState.expiresAt;
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            ObangseokColors.hwangLight,
+            ObangseokColors.hwang,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        boxShadow: [
+          BoxShadow(
+            color: ObangseokColors.hwang.withValues(alpha: 0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더: 아이콘 + 타이틀
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.sm),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                ),
+                child: const Icon(
+                  Icons.workspace_premium,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: DSSpacing.md),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '프리미엄운세',
+                    style: context.heading3.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      planName,
+                      style: context.labelSmall.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              // 구독 중 뱃지
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.check_circle,
+                      size: 14,
+                      color: ObangseokColors.cheong,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '구독 중',
+                      style: context.labelSmall.copyWith(
+                        color: ObangseokColors.cheong,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: DSSpacing.lg),
+
+          // 구독 정보 박스
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.md),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(DSRadius.md),
+            ),
+            child: Column(
+              children: [
+                // 남은 기간
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '남은 기간',
+                      style: context.bodySmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                    Text(
+                      '$remainingDays일',
+                      style: context.bodyMedium.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                // 구분선
+                Divider(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  height: 1,
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                // 다음 결제일
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '다음 결제일',
+                      style: context.bodySmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                    Text(
+                      expiresAt != null
+                          ? '${expiresAt.year}.${expiresAt.month.toString().padLeft(2, '0')}.${expiresAt.day.toString().padLeft(2, '0')}'
+                          : '-',
+                      style: context.bodyMedium.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: DSSpacing.md),
+
+          // 구독 관리 버튼
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => _showSubscriptionManagementGuide(context),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(color: Colors.white, width: 1.5),
+                padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                ),
+              ),
+              icon: const Icon(Icons.settings_outlined, size: 18),
+              label: Text(
+                '구독 관리',
+                style: context.bodySmall.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ],

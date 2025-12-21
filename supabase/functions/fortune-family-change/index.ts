@@ -156,27 +156,27 @@ serve(async (req) => {
 다음 JSON 형식으로 응답해주세요:
 {
   "overallScore": 0-100 사이의 점수 (전체 변화운 점수),
-  "content": "오늘의 변화운 종합 분석 (150자 내외, 긍정적이고 따뜻한 톤으로)",
+  "content": "오늘의 변화운 종합 분석 (400자 내외, 사주 분석 기반으로 상세하게, 긍정적이고 따뜻한 톤으로)",
   "changeCategories": {
     "moving": {
       "score": 0-100,
       "title": "이사운",
-      "description": "주거지 이동과 관련된 운세 (50자 내외)"
+      "description": "주거지 이동과 관련된 운세, 좋은 방향과 시기 (120자 내외)"
     },
     "career": {
       "score": 0-100,
       "title": "전직운",
-      "description": "직장 변화와 관련된 운세 (50자 내외)"
+      "description": "직장 변화와 관련된 운세, 이직/전직 적합성 (120자 내외)"
     },
     "environment": {
       "score": 0-100,
       "title": "환경변화운",
-      "description": "생활 환경 변화에 관한 운세 (50자 내외)"
+      "description": "생활 환경 변화에 관한 운세, 적응과 안정 방법 (120자 내외)"
     },
     "timing": {
       "score": 0-100,
       "title": "타이밍운",
-      "description": "변화의 적절한 시기에 관한 운세 (50자 내외)"
+      "description": "변화의 적절한 시기에 관한 운세, 최적의 결정 시점 (120자 내외)"
     }
   },
   "luckyElements": {
@@ -186,17 +186,28 @@ serve(async (req) => {
     "time": "중요한 결정하기 좋은 시간대"
   },
   "timingAdvice": {
-    "best_month": "변화에 가장 좋은 달",
-    "caution_period": "변화 시 주의할 시기",
-    "preparation": "변화 전 준비할 것"
+    "best_month": "변화에 가장 좋은 달과 그 이유 (80자 내외)",
+    "caution_period": "변화 시 주의할 시기와 대처법 (80자 내외)",
+    "preparation": "변화 전 반드시 준비할 것들 (100자 내외)"
+  },
+  "familySynergy": {
+    "title": "가족 변화 조화 분석",
+    "compatibility": "가족 구성원 간 변화 대응 궁합과 협력 방법 (200자 내외)",
+    "strengthPoints": ["가족의 변화 대응 강점 3가지 (각 60자 내외)"],
+    "improvementAreas": ["변화 시 개선하면 좋을 점 2가지 (각 60자 내외)"]
+  },
+  "monthlyFlow": {
+    "current": "이번 달 변화운 흐름과 기회 (100자 내외)",
+    "next": "다음 달 변화운 전망 (80자 내외)",
+    "advice": "시기별 변화 대응 조언 (80자 내외)"
   },
   "familyAdvice": {
     "title": "가족과 함께하는 변화 준비",
-    "tips": ["변화에 대비하는 가족 팁 3가지 (각 30자 내외)"]
+    "tips": ["변화에 대비하는 구체적 가족 팁 3가지 (각 80자 내외)"]
   },
-  "recommendations": ["긍정적인 변화 조언 3가지 (각 40자 내외)"],
-  "warnings": ["변화 관련 주의사항 2가지 (각 30자 내외)"],
-  "specialAnswer": "사용자 특별 질문에 대한 답변 (있는 경우, 100자 내외)"
+  "recommendations": ["긍정적인 변화 조언과 실천 방법 3가지 (각 100자 내외)"],
+  "warnings": ["변화 관련 주의사항과 대비법 2가지 (각 80자 내외)"],
+  "specialAnswer": "사용자 특별 질문에 대한 상세한 답변 (있는 경우, 250자 내외)"
 }`
 
     const userPrompt = `[사용자 정보]
@@ -255,7 +266,7 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
     // Blur 로직 적용
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['changeCategories', 'timingAdvice', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
+      ? ['changeCategories', 'timingAdvice', 'familySynergy', 'monthlyFlow', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
       : []
 
     const result = {
@@ -267,38 +278,30 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
       content: fortuneData.content,
 
       // 변화 카테고리 점수
-      changeCategories: isBlurred ? {
-        moving: { score: 0, title: '이사운', description: '🔒 프리미엄 결제 후 확인 가능합니다' },
-        career: { score: 0, title: '전직운', description: '🔒 프리미엄 결제 후 확인 가능합니다' },
-        environment: { score: 0, title: '환경변화운', description: '🔒 프리미엄 결제 후 확인 가능합니다' },
-        timing: { score: 0, title: '타이밍운', description: '🔒 프리미엄 결제 후 확인 가능합니다' }
-      } : fortuneData.changeCategories,
+      changeCategories: fortuneData.changeCategories,
 
       // 행운의 요소
       luckyElements: fortuneData.luckyElements,
       lucky_items: fortuneData.luckyElements,
 
       // 타이밍 조언
-      timingAdvice: isBlurred ? {
-        best_month: '🔒 프리미엄 결제 후 확인',
-        caution_period: '🔒 프리미엄 결제 후 확인',
-        preparation: '🔒 프리미엄 결제 후 확인'
-      } : fortuneData.timingAdvice,
+      timingAdvice: fortuneData.timingAdvice,
+
+      // 가족 변화 조화 분석 (신규)
+      familySynergy: fortuneData.familySynergy,
+
+      // 월별 변화운 흐름 (신규)
+      monthlyFlow: fortuneData.monthlyFlow,
 
       // 가족 조언
-      familyAdvice: isBlurred ? {
-        title: '가족과 함께하는 변화 준비',
-        tips: ['🔒 프리미엄 결제 후 확인 가능합니다']
-      } : fortuneData.familyAdvice,
+      familyAdvice: fortuneData.familyAdvice,
 
       // 추천/경고
-      recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.recommendations,
-      warnings: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.warnings,
+      recommendations: fortuneData.recommendations,
+      warnings: fortuneData.warnings,
 
       // 특별 질문 답변
-      specialAnswer: isBlurred
-        ? (special_question ? '🔒 프리미엄 결제 후 확인 가능합니다' : null)
-        : fortuneData.specialAnswer,
+      specialAnswer: fortuneData.specialAnswer,
 
       // 메타데이터
       metadata: {
