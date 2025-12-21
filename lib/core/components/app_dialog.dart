@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/fortune_design_system.dart';
 import '../theme/typography_unified.dart';
+import '../theme/font_config.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
 
@@ -364,7 +365,7 @@ class _TossSuccessDialog extends StatelessWidget {
               color: Theme.of(context).brightness == Brightness.light
                   ? TossDesignSystem.gray600.withValues(alpha: 0.7)
                   : TossDesignSystem.gray600.withValues(alpha: 0.3),
-              fontFamily: 'TossProductSans',
+              fontFamily: FontConfig.primary,
               height: 1.5,
             ),
             textAlign: TextAlign.center,

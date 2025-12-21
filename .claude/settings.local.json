@@ -265,7 +265,10 @@
       "Bash(md5:*)",
       "Bash(dart run build_runner build:*)",
       "Bash(sips:*)",
-      "Bash(pngquant:*)"
+      "Bash(pngquant:*)",
+      "Bash(fastlane ios beta:*)",
+      "Bash(bundle exec fastlane:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nimprove: 24절기 설명을 실생활 연결형으로 개선\n\n- GPT 프롬프트에 절기 설명 가이드라인 추가\n- 학문적 설명 대신 친근한 일상 연결형으로 변경\n- 예: \"동지예요, 밤이 가장 긴 날! 따뜻한 팥죽과 함께 한 해를 돌아보세요\"\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ],
     "deny": [],
     "ask": [],
