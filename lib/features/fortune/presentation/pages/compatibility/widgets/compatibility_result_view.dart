@@ -203,7 +203,7 @@ class _CompatibilityResultViewState extends ConsumerState<CompatibilityResultVie
                   Text(
                     '${widget.person2Name}님을 프로필에 저장할까요?',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 15, // 예외: 플로팅 프롬프트 타이틀
                       fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : Colors.black87,
                     ),
@@ -212,7 +212,7 @@ class _CompatibilityResultViewState extends ConsumerState<CompatibilityResultVie
                   Text(
                     '저장하면 다음에 더 빠르게 궁합을 확인할 수 있어요',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 13, // 예외: 초소형 안내 문구
                       color: isDark ? Colors.white60 : Colors.black54,
                     ),
                   ),

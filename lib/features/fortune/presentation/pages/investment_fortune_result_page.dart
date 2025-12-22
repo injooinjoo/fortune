@@ -313,7 +313,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 16)),
+          Text(emoji, style: const TextStyle(fontSize: 16)), // 예외: 이모지
           const SizedBox(width: 6),
           Text(value, style: context.bodySmall.copyWith(fontWeight: FontWeight.w600, color: colors.textPrimary)),
         ],

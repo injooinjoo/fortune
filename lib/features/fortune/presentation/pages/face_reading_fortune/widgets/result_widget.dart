@@ -597,7 +597,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     style: context.labelSmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
-                      fontSize: 10,
+                      fontSize: 10, // 예외: 초소형 랭킹 배지
                     ),
                   ),
                 ),
@@ -634,7 +634,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                         feature,
                         style: context.labelSmall.copyWith(
                           color: DSColors.accent,
-                          fontSize: 11,
+                          fontSize: 11, // 예외: 초소형 특징 태그
                         ),
                       ),
                     )).toList(),
@@ -688,7 +688,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     style: context.labelSmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
-                      fontSize: 9,
+                      fontSize: 9, // 예외: 초소형 랭킹 배지
                     ),
                   ),
                 ),
@@ -770,7 +770,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           style: context.heading2.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w700,
-            fontSize: size * 0.4,
+            fontSize: size * 0.4, // 예외: 동적 아바타 이니셜 크기
           ),
         ),
       ),
@@ -819,7 +819,7 @@ class _ResultWidgetState extends State<ResultWidget> {
               style: context.labelSmall.copyWith(
                 color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 fontWeight: FontWeight.w700,
-                fontSize: size * 0.24,
+                fontSize: size * 0.24, // 예외: 동적 프로그레스 퍼센트 크기
               ),
             ),
           ),
@@ -1260,7 +1260,7 @@ class _ResultWidgetState extends State<ResultWidget> {
             label,
             style: context.labelSmall.copyWith(
               color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
-              fontSize: 10,
+              fontSize: 10, // 예외: 초소형 나이 라벨
             ),
             textAlign: TextAlign.center,
           ),
@@ -1270,7 +1270,7 @@ class _ResultWidgetState extends State<ResultWidget> {
             style: context.labelSmall.copyWith(
               color: color,
               fontWeight: FontWeight.w700,
-              fontSize: isHighlighted ? 13 : 12,
+              fontSize: isHighlighted ? 13 : 12, // 예외: 결혼 나이 강조 표시
             ),
             textAlign: TextAlign.center,
           ),

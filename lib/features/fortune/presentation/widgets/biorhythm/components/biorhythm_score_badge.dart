@@ -385,7 +385,7 @@ class BiorhythmScoreInline extends StatelessWidget {
                 _getTypeLabel(),
                 style: TextStyle(
                   color: color,
-                  fontSize: 12,
+                  fontSize: 12, // 예외: 바이오리듬 타입 라벨
                   fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w500,
                 ),
@@ -396,7 +396,7 @@ class BiorhythmScoreInline extends StatelessWidget {
                   color: isDark
                       ? DSBiorhythmColors.hanjiCream
                       : DSBiorhythmColors.inkBleed,
-                  fontSize: 12,
+                  fontSize: 12, // 예외: 바이오리듬 점수 표시
                   fontFamily: FontConfig.primary,
                   fontWeight: FontWeight.w600,
                 ),

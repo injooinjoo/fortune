@@ -83,7 +83,7 @@ class MbtiCard extends StatelessWidget {
               Text(
                 mbtiNicknames[mbti] ?? '',
                 style: DSTypography.labelSmall.copyWith(
-                  fontSize: 10,
+                  fontSize: 10, // 예외: 초소형 MBTI 별칭
                   fontWeight: FontWeight.w400,
                   color: isSelected
                       ? Colors.white.withValues(alpha: 0.85)

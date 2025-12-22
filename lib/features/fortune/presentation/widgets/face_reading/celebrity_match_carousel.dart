@@ -318,7 +318,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                                     color: isDark
                                         ? DSColors.textSecondary
                                         : DSColors.textSecondary,
-                                    fontSize: 11,
+                                    fontSize: 11, // 예외: 초소형 특징 태그
                                   ),
                                 ),
                               );

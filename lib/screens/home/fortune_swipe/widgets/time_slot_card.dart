@@ -271,9 +271,8 @@ class _TimeSlotItem extends StatelessWidget {
                         ),
                         child: Text(
                           '지금',
-                          style: TextStyle(
+                          style: context.labelTiny.copyWith(
                             color: accentColor,
-                            fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -284,9 +283,8 @@ class _TimeSlotItem extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   advice,
-                  style: context.calligraphyBody.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
-                    fontSize: 13,
                     height: 1.6,
                   ),
                   maxLines: 2,
@@ -299,10 +297,10 @@ class _TimeSlotItem extends StatelessWidget {
                   children: [
                     Text(
                       '탭하여 자세히 보기',
-                      style: context.labelSmall.copyWith(
+                      style: context.labelTiny.copyWith(
                         color: accentColor.withValues(alpha: 0.6),
                         fontWeight: FontWeight.w500,
-                        fontSize: 10,
+                        fontSize: 10, // 예외: 초소형 힌트
                       ),
                     ),
                     const SizedBox(width: 2),

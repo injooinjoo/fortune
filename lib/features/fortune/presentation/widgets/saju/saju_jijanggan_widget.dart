@@ -146,7 +146,7 @@ class SajuJijangganWidget extends StatelessWidget {
                             color: isDark
                                 ? DSColors.textTertiary
                                 : DSColors.textSecondary,
-                            fontSize: 10,
+                            fontSize: 10, // 예외: 초소형 사주 칼럼 헤더
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -241,7 +241,7 @@ class SajuJijangganWidget extends StatelessWidget {
           style: DSTypography.labelSmall.copyWith(
             color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
             fontWeight: FontWeight.w500,
-            fontSize: 10,
+            fontSize: 10, // 예외: 초소형 사주 한글명
           ),
           textAlign: TextAlign.center,
         ),
@@ -301,7 +301,7 @@ class SajuJijangganWidget extends StatelessWidget {
                 Text(
                   stem.stemHanja,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 14, // 예외: 사주 천간 한자 크기
                     fontWeight: FontWeight.bold,
                     color: color,
                   ),

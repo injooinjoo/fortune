@@ -274,7 +274,7 @@ class SajuSinsalWidget extends StatelessWidget {
                             ? DSColors.textTertiary
                             : DSColors.textSecondary,
                         fontWeight: FontWeight.w500,
-                        fontSize: 11,
+                        fontSize: 11, // 예외: 초소형 신살 의미
                       ),
                     ),
                   ],
@@ -308,7 +308,7 @@ class SajuSinsalWidget extends StatelessWidget {
               sinsal.description,
               style: context.labelTiny.copyWith(
                 color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
-                fontSize: 11,
+                fontSize: 11, // 예외: 초소형 신살 설명
               ),
             ),
             const SizedBox(height: DSSpacing.xs),
@@ -410,7 +410,7 @@ class SajuSinsalWidget extends StatelessWidget {
               style: context.labelTiny.copyWith(
                 color:
                     isDark ? DSColors.textTertiary : DSColors.textSecondary,
-                fontSize: 11,
+                fontSize: 11, // 예외: 초소형 신살 요약
               ),
             ),
           ),

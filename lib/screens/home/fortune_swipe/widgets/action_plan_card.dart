@@ -19,10 +19,8 @@ class ActionPlanCard extends StatelessWidget {
       children: [
         Text(
           '오늘의 액션 플랜',
-          style: TextStyle(
+          style: context.heading3.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 4),
@@ -113,18 +111,16 @@ class _ActionItem extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: context.labelMedium.copyWith(
                     color: isDark ? Colors.white : Colors.black87,
-                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   description,
-                  style: TextStyle(
+                  style: context.labelTiny.copyWith(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                    fontSize: 12,
                     height: 1.4,
                   ),
                 ),

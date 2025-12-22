@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 /// 폰트 크기 표준화 시스템
 ///
@@ -177,6 +177,73 @@ class FontSizeSystem {
     debugPrint('  Large: $bodyLarge → $bodyLargeScaled');
     debugPrint('  Medium: $bodyMedium → $bodyMediumScaled');
     debugPrint('  Small: $bodySmall → $bodySmallScaled');
+    debugPrint('========================================');
+  }
+
+  // ==========================================
+  // DEVICE SCALE FACTOR (디바이스 접근성 연동)
+  // ==========================================
+  //
+  // 디바이스의 시스템 폰트 크기 설정을 반영합니다.
+  // 접근성을 위해 최대 1.5배까지 제한합니다.
+
+  /// 디바이스 최소 스케일 (0.8x)
+  static const double _minDeviceScale = 0.8;
+
+  /// 디바이스 최대 스케일 (1.5x) - 레이아웃 깨짐 방지
+  static const double _maxDeviceScale = 1.5;
+
+  /// 디바이스 설정을 포함한 최종 스케일 팩터 계산
+  ///
+  /// [context] BuildContext (MediaQuery 접근용)
+  /// returns 앱 설정 * 디바이스 설정 (제한 범위 내)
+  static double getDeviceScaleFactor(BuildContext context) {
+    final textScaler = MediaQuery.textScalerOf(context);
+    // TextScaler.scale(1.0)으로 기준 스케일 팩터 계산
+    final deviceScale = textScaler.scale(1.0);
+    final combinedScale = deviceScale * _scaleFactor;
+    return combinedScale.clamp(_minDeviceScale, _maxDeviceScale);
+  }
+
+  /// 디바이스 설정을 반영한 폰트 크기 계산
+  ///
+  /// [baseSize] 기본 폰트 크기
+  /// [context] BuildContext
+  /// returns 디바이스 설정이 반영된 최종 크기
+  static double scaledWithContext(double baseSize, BuildContext context) {
+    return baseSize * getDeviceScaleFactor(context);
+  }
+
+  /// 디바이스 설정만 반영 (앱 설정 무시)
+  ///
+  /// [baseSize] 기본 폰트 크기
+  /// [context] BuildContext
+  /// returns 디바이스 설정만 반영된 크기
+  static double scaledWithDevice(double baseSize, BuildContext context) {
+    final textScaler = MediaQuery.textScalerOf(context);
+    final deviceScale = textScaler.scale(1.0);
+    return baseSize * deviceScale.clamp(_minDeviceScale, _maxDeviceScale);
+  }
+
+  /// 현재 디바이스의 텍스트 스케일 팩터 조회 (디버깅용)
+  static double getDeviceTextScale(BuildContext context) {
+    final textScaler = MediaQuery.textScalerOf(context);
+    return textScaler.scale(1.0);
+  }
+
+  /// 디바이스 스케일 정보 출력 (디버깅용)
+  static void printDeviceInfo(BuildContext context) {
+    final textScaler = MediaQuery.textScalerOf(context);
+    final deviceScale = textScaler.scale(1.0);
+    final combinedScale = getDeviceScaleFactor(context);
+    debugPrint('========================================');
+    debugPrint('FontSizeSystem Device Info');
+    debugPrint('========================================');
+    debugPrint('App Scale Factor: $_scaleFactor');
+    debugPrint('Device Text Scale: $deviceScale');
+    debugPrint('Combined Scale: $combinedScale');
+    debugPrint('Min Device Scale: $_minDeviceScale');
+    debugPrint('Max Device Scale: $_maxDeviceScale');
     debugPrint('========================================');
   }
 }

@@ -110,7 +110,7 @@ class _CompatibilityInputViewState
                   child: Text(
                     '분석 결과는 참고용으로만 활용해 주세요',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 13, // 예외: 초소형 안내 문구
                       color: isDark
                           ? AppColors.textSecondaryDark
                           : AppColors.textSecondaryLight,
@@ -215,7 +215,7 @@ class _CompatibilityInputViewState
             // 관계 아이콘
             Text(
               _getRelationshipEmoji(profile.relationship),
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16), // 예외: 이모지
             ),
             const SizedBox(width: 6),
             Text(

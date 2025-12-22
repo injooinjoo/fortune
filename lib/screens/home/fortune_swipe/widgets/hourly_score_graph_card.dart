@@ -25,10 +25,8 @@ class HourlyScoreGraphCard extends StatelessWidget {
       children: [
         Text(
           '시간대별 운세 그래프',
-          style: TextStyle(
+          style: context.heading3.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 4),

@@ -116,9 +116,8 @@ class _OverallCardState extends State<OverallCard> {
                   child: SingleChildScrollView(
                     child: Text(
                       widget.fullDescription,
-                      style: ctx.calligraphyBody.copyWith(
+                      style: ctx.bodyMedium.copyWith(
                         color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
-                        fontSize: 15,
                         height: 1.8,
                       ),
                     ),
@@ -345,9 +344,8 @@ class _OverallCardState extends State<OverallCard> {
                   widget.fullDescription,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
-                  style: context.calligraphyBody.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
-                    fontSize: 14,
                     height: 1.6,
                   ),
                 ),

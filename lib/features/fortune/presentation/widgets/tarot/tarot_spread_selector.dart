@@ -283,7 +283,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                   style: typography.labelSmall.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: _getDifficultyColor(spread.difficulty),
-                                    fontSize: 10,
+                                    fontSize: 10, // 예외: 초소형 난이도 배지
                                   ),
                                 ),
                               ),
@@ -447,7 +447,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                         style: context.typography.labelSmall.copyWith(
                           fontWeight: FontWeight.w600,
                           color: color,
-                          fontSize: 10,
+                          fontSize: 10, // 예외: 초소형 타로 라벨
                         ),
                       ),
                     ],

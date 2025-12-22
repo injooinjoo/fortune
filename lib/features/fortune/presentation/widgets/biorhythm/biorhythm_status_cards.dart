@@ -53,7 +53,7 @@ class TodayOverallStatusCard extends StatelessWidget {
                       '${biorhythmData.overallScore}',
                       style: context.displayMedium.copyWith(
                         fontFamily: FontConfig.primary,
-                        fontSize: 40,
+                        fontSize: 40, // 예외: 대형 점수 디스플레이
                         fontWeight: FontWeight.w900,
                         color: textColor,
                         height: 1.0,

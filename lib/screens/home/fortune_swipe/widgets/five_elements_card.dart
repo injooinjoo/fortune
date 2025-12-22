@@ -62,18 +62,15 @@ class FiveElementsCard extends StatelessWidget {
       children: [
         Text(
           '오행 밸런스',
-          style: TextStyle(
+          style: context.heading3.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '당신의 오행 에너지 분석',
-          style: TextStyle(
+          style: context.labelSmall.copyWith(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 13,
           ),
         ),
 
@@ -257,9 +254,8 @@ class FiveElementsCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 explanation,
-                style: context.bodySmall.copyWith(
+                style: context.labelTiny.copyWith(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                  fontSize: 12,
                   height: 1.5,
                 ),
               ),
@@ -288,18 +284,15 @@ class _PillarItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: context.labelTiny.copyWith(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 3),
         Text(
           value,
-          style: TextStyle(
+          style: context.bodySmall.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
         ),

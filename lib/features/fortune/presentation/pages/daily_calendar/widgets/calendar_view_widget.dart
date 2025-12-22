@@ -194,7 +194,7 @@ class CalendarViewWidget extends StatelessWidget {
                   child: Text(
                     '${eventInfo!.deviceEventCount}',
                     style: TextStyle(
-                      fontSize: 8,
+                      fontSize: 8, // 예외: 초소형 배지 숫자
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),

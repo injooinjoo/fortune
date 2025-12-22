@@ -681,7 +681,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
               '戀愛運勢',
               style: TextStyle(
                 fontFamily: FontConfig.primary,
-                fontSize: 12,
+                fontSize: 12, // 예외: 전통 한자 헤더
                 fontWeight: FontWeight.w400,
                 color: inkColor.withValues(alpha: 0.6),
                 letterSpacing: 2,
@@ -691,7 +691,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
               '연애운세',
               style: TextStyle(
                 fontFamily: FontConfig.primary,
-                fontSize: 20,
+                fontSize: 20, // 예외: 전통 스타일 AppBar 타이틀
                 fontWeight: FontWeight.w700,
                 color: inkColor,
               ),
@@ -745,7 +745,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
             '나의 연애 이야기',
             style: TextStyle(
               fontFamily: FontConfig.primary,
-              fontSize: 24,
+              fontSize: 24, // 예외: 전통 스타일 섹션 타이틀
               fontWeight: FontWeight.w700,
               color: inkColor,
             ),
@@ -755,7 +755,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
             '솔직하게 답할수록 정확한 조언을 드려요',
             style: TextStyle(
               fontFamily: FontConfig.primary,
-              fontSize: 15,
+              fontSize: 15, // 예외: 전통 스타일 서브타이틀
               color: inkColor.withValues(alpha: 0.7),
             ),
           ),

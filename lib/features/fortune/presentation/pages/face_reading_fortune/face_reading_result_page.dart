@@ -394,7 +394,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
             children: [
               const Text(
                 '✨',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20), // 예외: 이모지
               ),
               const SizedBox(width: 8),
               Text(
@@ -467,7 +467,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
           // 동물상 타이틀 + 점수
           Row(
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 28)),
+              Text(emoji, style: const TextStyle(fontSize: 28)), // 예외: 이모지
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -579,7 +579,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
       ),
       child: Row(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 24)),
+          Text(emoji, style: const TextStyle(fontSize: 24)), // 예외: 이모지
           const SizedBox(width: 12),
           Expanded(
             child: Column(

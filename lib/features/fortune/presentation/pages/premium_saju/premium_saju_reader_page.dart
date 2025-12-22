@@ -218,7 +218,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const Text('📚', style: TextStyle(fontSize: 24)),
+                  const Text('📚', style: TextStyle(fontSize: 24)), // 예외: 이모지
                   const SizedBox(width: 12),
                   Text(
                     '목차',
@@ -319,7 +319,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
                   children: [
                     Text(
                       chapter['emoji'] ?? '📖',
-                      style: const TextStyle(fontSize: 32),
+                      style: const TextStyle(fontSize: 32), // 예외: 이모지
                     ),
                     const SizedBox(width: 12),
                     Expanded(

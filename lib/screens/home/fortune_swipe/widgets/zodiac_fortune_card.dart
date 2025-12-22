@@ -30,10 +30,8 @@ class ZodiacFortuneCard extends StatelessWidget {
                 children: [
                   Text(
                     '띠별 운세',
-                    style: TextStyle(
+                    style: context.heading3.copyWith(
                       color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -120,12 +118,12 @@ class ZodiacFortuneCard extends StatelessWidget {
                                     color: const Color(0xFFDAA520),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     '내 띠',
-                                    style: TextStyle(
+                                    style: context.labelTiny.copyWith(
                                       color: Colors.white,
-                                      fontSize: 10,
                                       fontWeight: FontWeight.w600,
+                                      fontSize: 10, // 예외: 초소형 배지
                                     ),
                                   ),
                                 ),
@@ -143,9 +141,8 @@ class ZodiacFortuneCard extends StatelessWidget {
                       ),
                       child: Text(
                         '${fortune['score']}점',
-                        style: TextStyle(
+                        style: context.labelSmall.copyWith(
                           color: FortuneSwipeHelpers.getZodiacScoreColor(fortune['score'] as int),
-                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -158,10 +155,9 @@ class ZodiacFortuneCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   fortune['description'] as String,
-                  style: context.bodySmall.copyWith(
+                  style: context.labelTiny.copyWith(
                     color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
                     height: 1.5,
-                    fontSize: 12,
                   ),
                 ),
               ],
@@ -257,18 +253,16 @@ class ZodiacFortuneCard extends StatelessWidget {
                 children: [
                   Text(
                     '가족/친구 추가하기',
-                    style: TextStyle(
+                    style: context.labelMedium.copyWith(
                       color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     '소중한 사람의 운세도 한눈에 확인하세요',
-                    style: TextStyle(
+                    style: context.labelTiny.copyWith(
                       color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-                      fontSize: 12,
                     ),
                   ),
                 ],

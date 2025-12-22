@@ -519,7 +519,7 @@ class BiorhythmHanjiSectionCard extends StatelessWidget {
               title!,
               style: TextStyle(
                 color: textColor,
-                fontSize: 18,
+                fontSize: 18, // 예외: 한지 카드 타이틀
                 fontFamily: FontConfig.primary,
                 fontWeight: FontWeight.w600,
               ),
@@ -530,7 +530,7 @@ class BiorhythmHanjiSectionCard extends StatelessWidget {
                 subtitle!,
                 style: TextStyle(
                   color: textColor.withValues(alpha: 0.7),
-                  fontSize: 14,
+                  fontSize: 14, // 예외: 한지 카드 서브타이틀
                   fontFamily: FontConfig.primary,
                 ),
               ),

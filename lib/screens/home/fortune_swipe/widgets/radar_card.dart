@@ -23,10 +23,8 @@ class RadarCard extends StatelessWidget {
         // 헤더
         Text(
           '5대 영역별 운세',
-          style: TextStyle(
+          style: context.heading3.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 4),

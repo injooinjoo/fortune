@@ -221,9 +221,8 @@ class CategoryDetailCard extends StatelessWidget {
               // 조언 텍스트
               Text(
                 advice,
-                style: context.calligraphyBody.copyWith(
+                style: context.bodySmall.copyWith(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
-                  fontSize: 14,
                   height: 1.7,
                 ),
               ),

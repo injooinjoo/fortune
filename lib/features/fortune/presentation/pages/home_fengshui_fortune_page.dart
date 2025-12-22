@@ -574,7 +574,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(icon, style: const TextStyle(fontSize: 24)),
+          Text(icon, style: const TextStyle(fontSize: 24)), // 예외: 이모지
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -789,7 +789,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
         children: [
           Row(
             children: [
-              Text(icon, style: const TextStyle(fontSize: 20)),
+              Text(icon, style: const TextStyle(fontSize: 20)), // 예외: 이모지
               const SizedBox(width: 8),
               Text(
                 title,
@@ -918,7 +918,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
         children: [
           Row(
             children: [
-              Text(icon, style: const TextStyle(fontSize: 18)),
+              Text(icon, style: const TextStyle(fontSize: 18)), // 예외: 이모지
               const SizedBox(width: 8),
               Text(
                 title,
@@ -1118,7 +1118,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
       children: [
         Row(
           children: [
-            Text(icon, style: const TextStyle(fontSize: 18)),
+            Text(icon, style: const TextStyle(fontSize: 18)), // 예외: 이모지
             const SizedBox(width: 8),
             Text(
               title,
@@ -1212,7 +1212,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                   children: [
                     Row(
                       children: [
-                        Text(season['icon'] as String, style: const TextStyle(fontSize: 20)),
+                        Text(season['icon'] as String, style: const TextStyle(fontSize: 20)), // 예외: 이모지
                         const SizedBox(width: 4),
                         Text(
                           season['title'] as String,

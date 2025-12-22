@@ -413,7 +413,7 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
                 children: [
                   Text(
                     homeType['icon']!,
-                    style: const TextStyle(fontSize: 32),
+                    style: const TextStyle(fontSize: 32), // 예외: 이모지
                   ),
                   const SizedBox(height: 8),
                   Text(

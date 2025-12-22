@@ -155,11 +155,8 @@ class LuckyItemsCard extends StatelessWidget {
         // 헤더
         Text(
           '오늘의 행운 아이템',
-          style: TextStyle(
+          style: context.heading3.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 4),
@@ -214,19 +211,16 @@ class LuckyItemsCard extends StatelessWidget {
                       // 라벨 (작게)
                       Text(
                         entry.key,
-                        style: TextStyle(
+                        style: context.labelTiny.copyWith(
                           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 2),
                       // 값 (중간) - 시간 포맷 적용
                       Text(
                         _formatValue(entry.key, entry.value),
-                        style: TextStyle(
+                        style: context.labelMedium.copyWith(
                           color: isDark ? Colors.white : Colors.black87,
-                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

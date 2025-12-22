@@ -769,7 +769,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                     children: [
                       Text(
                         tip['icon'] as String,
-                        style: const TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20), // 예외: 이모지
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -1146,7 +1146,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 20)),
+            Text(emoji, style: const TextStyle(fontSize: 20)), // 예외: 이모지
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -1189,7 +1189,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 20)),
+            Text(emoji, style: const TextStyle(fontSize: 20)), // 예외: 이모지
             const SizedBox(width: 12),
             Expanded(
               child: Column(

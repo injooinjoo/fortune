@@ -32,10 +32,8 @@ class WeeklyTrendCard extends StatelessWidget {
       children: [
         Text(
           '주간 운세 트렌드',
-          style: TextStyle(
+          style: context.heading3.copyWith(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 4),
@@ -71,10 +69,8 @@ class WeeklyTrendCard extends StatelessWidget {
                   const SizedBox(width: 10),
                   Text(
                     _getTrendLabel(),
-                    style: const TextStyle(
+                    style: context.heading4.copyWith(
                       color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
@@ -88,10 +84,9 @@ class WeeklyTrendCard extends StatelessWidget {
                 ),
                 child: Text(
                   '이번 주는 전반적으로 상승세를 타고 있습니다. 특히 수요일부터 금요일까지가 가장 좋은 시기입니다. 새로운 도전이나 중요한 결정을 내리기에 최적의 타이밍입니다.',
-                  style: context.bodySmall.copyWith(
+                  style: context.labelTiny.copyWith(
                     color: Colors.white,
                     height: 1.5,
-                    fontSize: 12,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -130,20 +125,18 @@ class WeeklyTrendCard extends StatelessWidget {
                     children: [
                       Text(
                         day,
-                        style: TextStyle(
+                        style: context.labelTiny.copyWith(
                           color: isDark ? Colors.white : Colors.black87,
-                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '$score',
-                        style: TextStyle(
+                        style: context.labelTiny.copyWith(
                           color: score >= 80
                               ? const Color(0xFF2E8B57)
                               : (isDark ? Colors.white60 : Colors.black54),
-                          fontSize: 11,
                         ),
                       ),
                     ],

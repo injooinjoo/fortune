@@ -223,7 +223,7 @@ class FortuneResultCard extends StatelessWidget {
         children: [
           Text(
             emoji,
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16), // 예외: 이모지
           ),
           const SizedBox(width: 6),
           Text(

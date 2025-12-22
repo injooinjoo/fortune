@@ -505,7 +505,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('✨', style: TextStyle(fontSize: 12)),
+            const Text('✨', style: TextStyle(fontSize: 12)), // 예외: 이모지
             const SizedBox(width: 4),
             Text(
               charm,

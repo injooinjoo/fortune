@@ -184,12 +184,11 @@ class _ShareCardState extends State<ShareCard> {
                       color: Colors.white,
                     ),
                   )
-                : const Text('📤', style: TextStyle(fontSize: 18)),
+                : const Text('📤', style: TextStyle(fontSize: 18)), // 예외: 이모지
             label: Text(
               _isCapturing ? '이미지 생성 중...' : '이미지로 공유하기',
-              style: const TextStyle(
+              style: context.buttonMedium.copyWith(
                 color: Colors.white,
-                fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -257,7 +256,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // 헤더
-          _buildHeader(),
+          _buildHeader(context),
 
           // 콘텐츠 (U06: 컴팩트한 패딩, 하단 여유 추가)
           Padding(
@@ -265,16 +264,16 @@ class _TraditionalShareCardContent extends StatelessWidget {
             child: Column(
               children: [
                 // 날짜 & 사용자
-                _buildDateUserRow(),
+                _buildDateUserRow(context),
                 const SizedBox(height: 12),
 
                 // 福 인장 스타일 점수
-                _buildSealScore(),
+                _buildSealScore(context),
                 const SizedBox(height: 12),
 
                 // 카테고리 점수
                 if (categoryScores != null && categoryScores!.isNotEmpty) ...[
-                  _buildCategoryScores(),
+                  _buildCategoryScores(context),
                   const SizedBox(height: 10),
                 ],
 
@@ -300,19 +299,18 @@ class _TraditionalShareCardContent extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: const BoxDecoration(
         color: _traditionalBrown,
         borderRadius: BorderRadius.vertical(top: Radius.circular(13)),
       ),
-      child: const Center(
+      child: Center(
         child: Text(
           '⊹ 오늘의 운세 ⊹',
-          style: TextStyle(
+          style: context.labelLarge.copyWith(
             color: Colors.white,
-            fontSize: 16,
             fontWeight: FontWeight.w600,
             letterSpacing: 2,
           ),
@@ -321,21 +319,20 @@ class _TraditionalShareCardContent extends StatelessWidget {
     );
   }
 
-  Widget _buildDateUserRow() {
+  Widget _buildDateUserRow(BuildContext context) {
     final dateStr = '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
     final displayName = userName != null && userName!.isNotEmpty ? '$userName님의 운세' : '오늘의 운세';
 
     return Text(
       '$dateStr  $displayName',
-      style: const TextStyle(
+      style: context.labelSmall.copyWith(
         color: _darkBrown,
-        fontSize: 13,
         fontWeight: FontWeight.w500,
       ),
     );
   }
 
-  Widget _buildSealScore() {
+  Widget _buildSealScore(BuildContext context) {
     return Column(
       children: [
         // 福 인장 스타일 (U06: 컴팩트하게 조정)
@@ -354,7 +351,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
                 '福',
                 style: TextStyle(
                   color: _sealRed,
-                  fontSize: 24,
+                  fontSize: 24, // 예외: 전통 인장 한자 디자인
                   fontWeight: FontWeight.w700,
                   fontFamily: FontConfig.primary,
                 ),
@@ -363,7 +360,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
                 '$score점',
                 style: const TextStyle(
                   color: _sealRed,
-                  fontSize: 18,
+                  fontSize: 18, // 예외: 인장 점수 디자인
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -381,9 +378,8 @@ class _TraditionalShareCardContent extends StatelessWidget {
           ),
           child: Text(
             message,
-            style: const TextStyle(
+            style: context.labelSmall.copyWith(
               color: _darkBrown,
-              fontSize: 13,
               fontWeight: FontWeight.w600,
               fontFamily: FontConfig.primary,
             ),
@@ -393,7 +389,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryScores() {
+  Widget _buildCategoryScores(BuildContext context) {
     final categories = {
       'love': '♥ 연애',
       'money': '💰 금전',
@@ -424,9 +420,8 @@ class _TraditionalShareCardContent extends StatelessWidget {
             ),
             child: Text(
               '${entry.value} $scoreVal',
-              style: const TextStyle(
+              style: context.labelTiny.copyWith(
                 color: _darkBrown,
-                fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -473,13 +468,13 @@ class _TraditionalShareCardContent extends StatelessWidget {
         children: displayItems.entries.map((entry) {
           return Column(
             children: [
-              Text(entry.key, style: const TextStyle(fontSize: 16)),
+              Text(entry.key, style: const TextStyle(fontSize: 16)), // 예외: 이모지
               const SizedBox(height: 2),
               Text(
                 entry.value,
                 style: const TextStyle(
                   color: _darkBrown,
-                  fontSize: 10,
+                  fontSize: 10, // 예외: 공유 카드 초소형 텍스트
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -526,7 +521,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
                     entry.key,
                     style: TextStyle(
                       color: elementColors[entry.key],
-                      fontSize: 13,
+                      fontSize: 13, // 예외: 오행 한자 디자인
                       fontWeight: FontWeight.w700,
                       fontFamily: FontConfig.primary,
                     ),
@@ -546,7 +541,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
                     '$percentage%',
                     style: const TextStyle(
                       color: _darkBrown,
-                      fontSize: 8,
+                      fontSize: 8, // 예외: 공유 카드 초소형 퍼센트
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -571,7 +566,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
               '福',
               style: TextStyle(
                 color: _sealRed,
-                fontSize: 14,
+                fontSize: 14, // 예외: 전통 福 한자 디자인
                 fontWeight: FontWeight.w700,
                 fontFamily: FontConfig.primary,
               ),
@@ -585,7 +580,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
           'Fortune 신점 · 행운이 가득하길',
           style: TextStyle(
             color: _lightBrown,
-            fontSize: 10,
+            fontSize: 10, // 예외: 공유 카드 푸터
             fontWeight: FontWeight.w500,
           ),
         ),

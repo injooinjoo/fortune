@@ -141,7 +141,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
               children: [
                 const Text(
                   '📜',
-                  style: TextStyle(fontSize: 40),
+                  style: TextStyle(fontSize: 40), // 예외: 이모지
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -202,7 +202,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 20)),
+          Text(emoji, style: const TextStyle(fontSize: 20)), // 예외: 이모지
           const SizedBox(width: 12),
           Text(
             text,
@@ -342,7 +342,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
                     style: DSTypography.button.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 18, // 예외: CTA 버튼 강조
                     ),
                   ),
           ),

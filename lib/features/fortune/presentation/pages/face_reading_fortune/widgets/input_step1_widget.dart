@@ -348,7 +348,7 @@ class _InputStep1WidgetState extends ConsumerState<InputStep1Widget> {
                   style: DSTypography.labelSmall.copyWith(
                     color: DSColors.error,
                     fontWeight: FontWeight.w600,
-                    fontSize: 11,
+                    fontSize: 11, // 예외: 초소형 필수 태그
                   ),
                 ),
               ),

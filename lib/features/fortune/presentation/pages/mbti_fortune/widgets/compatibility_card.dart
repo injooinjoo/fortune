@@ -124,7 +124,7 @@ class CompatibilityCard extends StatelessWidget {
                           color: Colors.white,
                           fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.w700,
-                          fontSize: 13,
+                          fontSize: 13, // 예외: 그라디언트 원형 배지 내 MBTI
                         ),
                       ),
                     ),
@@ -185,7 +185,7 @@ class CompatibilityCard extends StatelessWidget {
                           color: themeColors.textSecondary,
                           fontFamily: FontConfig.primary,
                           fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                          fontSize: 12, // 예외: 원형 배지 내 MBTI
                         ),
                       ),
                     ),
@@ -195,7 +195,7 @@ class CompatibilityCard extends StatelessWidget {
                     '조심 ⚡',
                     style: DSTypography.labelSmall.copyWith(
                       color: themeColors.textTertiary,
-                      fontSize: 11,
+                      fontSize: 11, // 예외: 초소형 경고 라벨
                     ),
                   ),
                 ],
