@@ -105,7 +105,7 @@ class _TalismanWishSelectorState extends State<TalismanWishSelector> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.auto_awesome,
               color: _TalismanColors.gold,
               size: 20,
@@ -120,7 +120,7 @@ class _TalismanWishSelectorState extends State<TalismanWishSelector> {
               ),
             ),
             const SizedBox(width: 12),
-            Icon(
+            const Icon(
               Icons.auto_awesome,
               color: _TalismanColors.gold,
               size: 20,
@@ -214,7 +214,7 @@ class _TraditionalCategoryCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.asset(
-                  'assets/images/talismans/${category.name}.png',
+                  'assets/images/talismans/${category.name}.webp',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     // 이미지 로드 실패 시 기존 한자 표시

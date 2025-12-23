@@ -63,20 +63,20 @@ class AdminApiService {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
       case DioExceptionType.connectionError:
-        return NetworkException('네트워크 연결 오류가 발생했습니다.');
+        return const NetworkException('네트워크 연결 오류가 발생했습니다.');
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode ?? 0;
         final message = e.response?.data['message'] ?? '알 수 없는 오류가 발생했습니다.';
         
         if (statusCode == 401) {
-          return UnauthorizedException('관리자 권한이 필요합니다.');
+          return const UnauthorizedException('관리자 권한이 필요합니다.');
         } else if (statusCode == 403) {
-          return ServerException(message: '접근 권한이 없습니다.');
+          return const ServerException(message: '접근 권한이 없습니다.');
         } else {
           return ServerException(message: message);
         }
       default:
-        return ServerException(message: '예상치 못한 오류가 발생했습니다.');
+        return const ServerException(message: '예상치 못한 오류가 발생했습니다.');
     }
   }
 }

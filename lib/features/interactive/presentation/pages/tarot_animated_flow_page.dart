@@ -174,7 +174,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.auto_awesome, size: 24),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Text(
                     'Begin Your Journey',
                     style: TossDesignSystem.button.copyWith(
@@ -262,7 +262,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                               size: 60,
                               color: TossDesignSystem.white,
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             Text(
                               'Card ${index + 1}',
                               style: TossDesignSystem.heading3.copyWith(
@@ -326,7 +326,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                               size: 80,
                               color: TossDesignSystem.white,
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Text(
                               cardData['name'] ?? 'Unknown',
                               style: DSTypography.displaySmall.copyWith(
@@ -343,7 +343,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
               ),
             ),
             
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             
             // Card info
             Text(
@@ -410,7 +410,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
     return Row(
       children: [
         Icon(icon, color: TossDesignSystem.white.withValues(alpha: 0.6), size: 20),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Text(
           text,
           style: DSTypography.bodySmall.copyWith(

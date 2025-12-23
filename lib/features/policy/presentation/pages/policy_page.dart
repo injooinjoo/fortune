@@ -16,7 +16,7 @@ class PolicyPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: Container(
-        decoration: BoxDecoration(color: AppTheme.backgroundColor),
+        decoration: const BoxDecoration(color: AppTheme.backgroundColor),
         child: SafeArea(
           child: Column(
             children: [
@@ -97,7 +97,7 @@ class PolicyPage extends ConsumerWidget {
                     style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: TossDesignSystem.white)),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: DSTypography.bodySmall.copyWith(
@@ -132,7 +132,7 @@ class PolicyPage extends ConsumerWidget {
             Icons.info_outline_rounded,
             color: TossDesignSystem.white.withValues(alpha: 0.6),
             size: 32),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             'Fortune은 이용자의 개인정보를 소중히 여기며,\n'
             '관련 법령에 따라 안전하게 관리하고 있습니다.',
@@ -140,7 +140,7 @@ class PolicyPage extends ConsumerWidget {
               color: TossDesignSystem.white.withValues(alpha: 0.8),
               height: 1.5),
             textAlign: TextAlign.center),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '문의사항이 있으시면 고객지원 페이지를 이용해주세요.',
             style: DSTypography.labelMedium.copyWith(

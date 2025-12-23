@@ -323,7 +323,7 @@ class FortuneHistoryDetailPage extends StatelessWidget {
                     color: TossDesignSystem.purple.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.auto_awesome, color: TossDesignSystem.purple, size: 18),
+                  child: const Icon(Icons.auto_awesome, color: TossDesignSystem.purple, size: 18),
                 ),
                 const SizedBox(width: 12),
                 Text(

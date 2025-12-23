@@ -236,14 +236,14 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
           children: [
             // Card background gradient
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFF1E3A5F),
-                    const Color(0xFF0D1B2A),
-                    const Color(0xFF415A77),
+                    Color(0xFF1E3A5F),
+                    Color(0xFF0D1B2A),
+                    Color(0xFF415A77),
                   ],
                 ),
               ),

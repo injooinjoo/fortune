@@ -288,7 +288,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
           const SizedBox(width: 8),
           GestureDetector(
             onTap: _copyTransactionId,
-            child: Icon(
+            child: const Icon(
               Icons.copy,
               size: 16,
               color: ObangseokColors.meokFaded,
@@ -307,7 +307,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
           UnifiedButton(
             onPressed: _navigateToHome,
             text: '홈으로 돌아가기',
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [ObangseokColors.inju, ObangseokColors.injuDark],
             ),
             width: double.infinity,
@@ -329,7 +329,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
           UnifiedButton(
             onPressed: _retry,
             text: '다시 시도',
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [ObangseokColors.meokLight, ObangseokColors.meok],
             ),
             width: double.infinity,
@@ -377,7 +377,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.info_outline,
             color: ObangseokColors.cheong,
             size: 20,

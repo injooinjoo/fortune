@@ -61,7 +61,7 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          icon: Icon(Icons.chevron_left, color: TossTheme.textBlack),
+          icon: const Icon(Icons.chevron_left, color: TossTheme.textBlack),
           onPressed: () => _changeMonth(-1),
         ),
         Text(
@@ -71,7 +71,7 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
           ),
         ),
         IconButton(
-          icon: Icon(Icons.chevron_right, color: TossTheme.textBlack),
+          icon: const Icon(Icons.chevron_right, color: TossTheme.textBlack),
           onPressed: () => _changeMonth(1),
         ),
       ],

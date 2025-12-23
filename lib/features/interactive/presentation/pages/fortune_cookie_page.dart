@@ -537,7 +537,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                     child: Center(
                       child: Text(
                         cookie.emoji,
-                        style: TextStyle(fontSize: FontConfig.heading1),
+                        style: const TextStyle(fontSize: FontConfig.heading1),
                       ),
                     ),
                   ),
@@ -766,7 +766,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             ),
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Text(
           '오늘의 운세 메시지',
           style: TossDesignSystem.heading2.copyWith(
@@ -815,11 +815,11 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         '"',
                         style: DSTypography.displaySmall.copyWith(
                           fontWeight: FontWeight.w300,
-                          color: Color(0xFFFFB74D),
+                          color: const Color(0xFFFFB74D),
                           height: 0.5,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         _mainMessage,
                         style: TossDesignSystem.body1.copyWith(
@@ -829,12 +829,12 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         '"',
                         style: DSTypography.displaySmall.copyWith(
                           fontWeight: FontWeight.w300,
-                          color: Color(0xFFFFB74D),
+                          color: const Color(0xFFFFB74D),
                           height: 0.5,
                         ),
                       ),
@@ -862,7 +862,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                           letterSpacing: 2,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         _chineseProverbMeaning,
                         style: TossDesignSystem.body2.copyWith(
@@ -897,7 +897,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                           color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.lightbulb_outline,
                           color: TossDesignSystem.tossBlue,
                           size: 20,
@@ -915,7 +915,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               _advice,
                               style: TossDesignSystem.body2.copyWith(
@@ -975,14 +975,14 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             color: color,
             size: 32,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             title,
             style: TossDesignSystem.caption.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             value,
             style: TossDesignSystem.body1.copyWith(

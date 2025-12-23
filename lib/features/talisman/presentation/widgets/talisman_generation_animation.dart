@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/fortune_theme.dart';
 import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
-class TalismanGenerationAnimation extends StatefulWidget {
+class TalismanGenerationAnimation extends ConsumerStatefulWidget {
   final TalismanCategory category;
   final String wishText;
   final VoidCallback? onCompleted;
@@ -18,10 +20,10 @@ class TalismanGenerationAnimation extends StatefulWidget {
   });
 
   @override
-  State<TalismanGenerationAnimation> createState() => _TalismanGenerationAnimationState();
+  ConsumerState<TalismanGenerationAnimation> createState() => _TalismanGenerationAnimationState();
 }
 
-class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimation>
+class _TalismanGenerationAnimationState extends ConsumerState<TalismanGenerationAnimation>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late AnimationController _rotateController;
@@ -67,8 +69,10 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
         _startStepAnimation();
       } else if (mounted && _currentStep == _steps.length - 1) {
         // Complete after final step
-        Future.delayed(const Duration(milliseconds: 1500), () {
+        Future.delayed(const Duration(milliseconds: 1500), () async {
           if (mounted) {
+            // 시그니처 햅틱: 부적 생성 완료!
+            await ref.read(fortuneHapticServiceProvider).talismanSaved();
             widget.onCompleted?.call();
           }
         });
@@ -151,7 +155,7 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
             .then()
             .shake(duration: 500.ms),
           
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           
           // Title
           Text(

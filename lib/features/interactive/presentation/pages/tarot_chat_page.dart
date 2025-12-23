@@ -270,8 +270,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
     }
     
     // 질문에 따른 해석 생성
-    String interpretation = _generateInterpretation(question, selectedCards);
-    String advice = _generateAdvice(question, selectedCards);
+    final String interpretation = _generateInterpretation(question, selectedCards);
+    final String advice = _generateAdvice(question, selectedCards);
     
     messages.updateLastMessage(ChatMessage(
       text: '$interpretation\n\n💡 조언: $advice',
@@ -523,7 +523,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(
@@ -604,7 +604,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: TossDesignSystem.gray100,
-                    child: Icon(
+                    child: const Icon(
                       Icons.style,
                       size: 40,
                       color: TossDesignSystem.gray600,
@@ -654,7 +654,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
         right: 16,
         top: 12,
         bottom: MediaQuery.of(context).padding.bottom + 12),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: TossDesignSystem.white,
         border: Border(
           top: BorderSide(

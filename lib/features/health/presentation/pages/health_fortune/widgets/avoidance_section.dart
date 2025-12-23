@@ -32,12 +32,12 @@ class AvoidanceSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.warning_rounded,
                 color: TossTheme.warning,
                 size: 24,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '오늘 피해야 할 것들',
                 style: TossTheme.heading3.copyWith(

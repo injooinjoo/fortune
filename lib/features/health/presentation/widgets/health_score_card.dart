@@ -226,7 +226,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                     size: 16,
                     color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.gray500,
                   ),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text(
                     '탭하여 자세히 보기',
                     style: TossDesignSystem.caption.copyWith(

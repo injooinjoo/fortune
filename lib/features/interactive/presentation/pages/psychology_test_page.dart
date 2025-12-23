@@ -7,7 +7,6 @@ import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 
 // Import domain models
@@ -182,7 +181,7 @@ class _TestInputView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           // Title
           Text(
             '당신의 심리 유형을 분석해드립니다',
@@ -457,8 +456,8 @@ class _TestResultView extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            LoadingIndicator(size: 60),
-            SizedBox(height: 24),
+            const LoadingIndicator(size: 60),
+            const SizedBox(height: 24),
             Text(
               '심리를 분석하고 있습니다...',
               style: context.heading3),
@@ -547,7 +546,7 @@ class _TestResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.category_outlined, color: theme.colorScheme.primary),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Text(
                               '결과 유형',
                               style: context.heading3.copyWith(
@@ -603,7 +602,7 @@ class _TestResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.description_outlined, color: theme.colorScheme.primary),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Text(
                               '상세 분석',
                               style: context.heading3.copyWith(
@@ -630,7 +629,7 @@ class _TestResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.lightbulb_outline, color: theme.colorScheme.primary),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Text(
                               '조언',
                               style: context.heading3.copyWith(

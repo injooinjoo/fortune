@@ -96,7 +96,7 @@ class _TrendIdealWorldcupPageState
     }
     return Column(
       children: [
-        AppHeader(
+        const AppHeader(
           title: '이상형 월드컵',
           showBackButton: true,
           showActions: false,
@@ -194,7 +194,7 @@ class _TrendIdealWorldcupPageState
               height: 60,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
                     TossDesignSystem.tossBlue,
                     TossDesignSystem.purple,

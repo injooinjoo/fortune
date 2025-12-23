@@ -85,7 +85,7 @@ class SelectorModeToggle extends StatelessWidget {
                   ? TossTheme.primaryBlue
                   : TossTheme.textGray600,
             ),
-            SizedBox(width: 6),
+            const SizedBox(width: 6),
             Text(
               label,
               style: TossTheme.body3.copyWith(

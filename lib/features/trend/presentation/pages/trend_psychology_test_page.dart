@@ -66,7 +66,7 @@ class _TrendPsychologyTestPageState
     }
     return Column(
       children: [
-        AppHeader(
+        const AppHeader(
           title: '심리테스트',
           showBackButton: true,
           showActions: false,
@@ -431,7 +431,7 @@ class _TrendPsychologyTestPageState
                       errorBuilder: (_, __, ___) => Container(
                         height: 200,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [
                               TossDesignSystem.tossBlue,
                               TossDesignSystem.purple,
@@ -574,7 +574,7 @@ class _TrendPsychologyTestPageState
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       '•',
                       style: TextStyle(
                         color: TossDesignSystem.tossBlue,
@@ -614,9 +614,9 @@ class _TrendPsychologyTestPageState
               ),
               child: Column(
                 children: [
-                  Text(
+                  const Text(
                     '💚',
-                    style: const TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 24),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -652,9 +652,9 @@ class _TrendPsychologyTestPageState
               ),
               child: Column(
                 children: [
-                  Text(
+                  const Text(
                     '💔',
-                    style: const TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 24),
                   ),
                   const SizedBox(height: 8),
                   Text(

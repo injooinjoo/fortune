@@ -147,7 +147,7 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Expanded(child: Divider(color: TossTheme.borderGray200)),
+                    const Expanded(child: Divider(color: TossTheme.borderGray200)),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
@@ -157,7 +157,7 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Expanded(child: Divider(color: TossTheme.borderGray200)),
+                    const Expanded(child: Divider(color: TossTheme.borderGray200)),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -270,7 +270,7 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: TossTheme.success,
                 size: 20,

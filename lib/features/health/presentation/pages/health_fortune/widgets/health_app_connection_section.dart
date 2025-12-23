@@ -181,16 +181,16 @@ class HealthAppConnectionSection extends StatelessWidget {
                     : ObangseokColors.baek.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.lock_rounded,
                     color: ObangseokColors.meokFaded,
                     size: 14,
                   ),
-                  const SizedBox(width: 6),
-                  const Text(
+                  SizedBox(width: 6),
+                  Text(
                     '프리미엄 구독 시 사용 가능',
                     style: TextStyle(
                       fontFamily: 'Pretendard',

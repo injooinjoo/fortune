@@ -175,7 +175,7 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.calendar_today,
                     size: 18,
                     color: TossDesignSystem.tossBlue,

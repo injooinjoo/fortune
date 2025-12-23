@@ -244,12 +244,12 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               Expanded(
                 child: GlassButton(
                   onPressed: () => _pickImage(ImageSource.camera),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.camera_alt),
-                      const SizedBox(width: 8),
-                      const Text('카메라로 촬영'),
+                      Icon(Icons.camera_alt),
+                      SizedBox(width: 8),
+                      Text('카메라로 촬영'),
                     ],
                   ),
                 ),
@@ -258,12 +258,12 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               Expanded(
                 child: GlassButton(
                   onPressed: () => _pickImage(ImageSource.gallery),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.photo_library),
-                      const SizedBox(width: 8),
-                      const Text('갤러리에서 선택'),
+                      Icon(Icons.photo_library),
+                      SizedBox(width: 8),
+                      Text('갤러리에서 선택'),
                     ],
                   ),
                 ),
@@ -276,16 +276,16 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
             onPressed: _isAnalyzing ? null : _analyzeImage,
             width: double.infinity,
             child: _isAnalyzing 
-              ? Row(
+              ? const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     ),
-                    const SizedBox(width: 8),
-                    const Text('분석 중...'),
+                    SizedBox(width: 8),
+                    Text('분석 중...'),
                   ],
                 )
               : const Text('관상 분석 시작'),
@@ -354,12 +354,12 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               Expanded(
                 child: GlassButton(
                   onPressed: _shareResult,
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.share),
-                      const SizedBox(width: 8),
-                      const Text('결과 공유'),
+                      Icon(Icons.share),
+                      SizedBox(width: 8),
+                      Text('결과 공유'),
                     ],
                   ),
                 ),
@@ -691,7 +691,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: TossDesignSystem.transparent,
-      builder: (context) => TokenInsufficientModal(
+      builder: (context) => const TokenInsufficientModal(
         requiredTokens: _requiredTokens,
         fortuneType: 'face-reading',
       ),

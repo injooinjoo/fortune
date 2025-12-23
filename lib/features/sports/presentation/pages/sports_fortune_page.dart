@@ -25,7 +25,7 @@ class ExerciseFortunePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back_ios_new,
               color: TossTheme.textBlack,
               size: 20,
@@ -61,7 +61,7 @@ class ExerciseFortunePage extends StatelessWidget {
                   ),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.fitness_center_rounded,
                   size: 60,
                   color: TossTheme.primaryBlue,

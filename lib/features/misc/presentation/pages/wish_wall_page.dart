@@ -523,7 +523,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 const Spacer(),
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.favorite,
                       size: 16,
                       color: TossDesignSystem.error,

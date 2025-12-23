@@ -66,7 +66,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
     }
     return Column(
       children: [
-        AppHeader(
+        const AppHeader(
           title: '밸런스 게임',
           showBackButton: true,
           showActions: false,
@@ -461,7 +461,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
             TossDesignSystem.tossBlue,
             TossDesignSystem.purple,

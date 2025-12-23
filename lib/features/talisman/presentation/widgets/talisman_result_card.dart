@@ -111,7 +111,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                         widget.talismanDesign.category.emoji,
                         style: context.labelMedium,
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         widget.talismanDesign.category.displayName,
                         style: context.labelSmall.copyWith(
@@ -244,7 +244,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                         color: _categoryColor,
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: GptStyleTypingText(
                         text: blessing,
@@ -358,7 +358,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
             widget.talismanDesign.category.emoji,
             style: context.displayLarge,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             widget.talismanDesign.category.displayName,
             style: context.labelSmall.copyWith(

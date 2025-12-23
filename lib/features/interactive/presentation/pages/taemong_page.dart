@@ -85,14 +85,14 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             size: 48,
             color: TossDesignSystem.tossBlue,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '태몽의 의미를 해석해드립니다',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             '임신 중 꾼 특별한 꿈을 입력하면\n'
             '아기의 미래와 성향을 예측해드립니다.',
@@ -116,7 +116,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                   size: 16,
                   color: TossDesignSystem.tossBlue,
                 ),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
                   '$_requiredTokens 복주머니 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -153,10 +153,10 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               hintStyle: TextStyle(color: TossDesignSystem.gray600.withValues(alpha: 0.5)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: TossDesignSystem.gray200)),
+                borderSide: const BorderSide(color: TossDesignSystem.gray200)),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: TossDesignSystem.gray200)),
+                borderSide: const BorderSide(color: TossDesignSystem.gray200)),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: TossDesignSystem.tossBlue, width: 2)),
@@ -178,7 +178,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             '꿈에 나온 주요 상징을 선택하면 더 정확한 해석이 가능합니다',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -293,7 +293,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                 color: TossDesignSystem.tossBlue,
                 size: 24,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '태몽 해석 결과',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -302,7 +302,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             _analysisResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -317,7 +317,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                   onPressed: _resetAnalysis,
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    side: BorderSide(color: TossDesignSystem.tossBlue),
+                    side: const BorderSide(color: TossDesignSystem.tossBlue),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -457,7 +457,7 @@ ${_selectedKeywords.map((keyword) => '• $keyword: ${_getKeywordInterpretation(
       context: context,
       isScrollControlled: true,
       backgroundColor: TossDesignSystem.transparent,
-      builder: (context) => TokenInsufficientModal(
+      builder: (context) => const TokenInsufficientModal(
         requiredTokens: _requiredTokens,
         fortuneType: 'taemong',
       ),

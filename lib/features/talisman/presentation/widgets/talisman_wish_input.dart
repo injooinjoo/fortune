@@ -105,7 +105,7 @@ class TalismanWishInputState extends State<TalismanWishInput> {
                 widget.selectedCategory.emoji,
                 style: context.heading3,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 widget.selectedCategory.displayName,
                 style: TossTheme.body2.copyWith(
@@ -119,7 +119,7 @@ class TalismanWishInputState extends State<TalismanWishInput> {
           .fadeIn(duration: 300.ms)
           .slideX(begin: -0.2, end: 0),
         
-        SizedBox(height: 32),
+        const SizedBox(height: 32),
         
         // Input Title
         Text(
@@ -130,7 +130,7 @@ class TalismanWishInputState extends State<TalismanWishInput> {
         ).animate(delay: 100.ms)
           .fadeIn(duration: 400.ms),
         
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         
         Text(
           '구체적이고 명확할수록 더욱 효과적인 부적을 만들어드려요',
@@ -165,7 +165,7 @@ class TalismanWishInputState extends State<TalismanWishInput> {
                   size: 16,
                   color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
                 ),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
                   '최소 5자 이상 입력해주세요',
                   style: TossTheme.caption.copyWith(

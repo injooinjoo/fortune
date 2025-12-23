@@ -6,7 +6,7 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -118,14 +118,14 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
             Icons.self_improvement,
             size: 48,
             color: AppTheme.primaryColor),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '걱정을 내려놓으세요',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             '마음속 걱정을 적고 염주를 돌리면\n'
             '마음의 평안과 함께 조언을 드립니다.',
@@ -147,7 +147,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   Icons.toll,
                   size: 16,
                   color: AppTheme.primaryColor),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
                   '$_requiredTokens 복주머니 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -337,7 +337,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                 color: AppTheme.primaryColor,
                 size: 24,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '마음의 조언',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -346,7 +346,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             _adviceResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -361,7 +361,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   onPressed: _resetWorry,
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    side: BorderSide(color: AppTheme.primaryColor),
+                    side: const BorderSide(color: AppTheme.primaryColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -409,8 +409,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       _adviceResult = null;
     });
     
-    HapticUtils.mediumImpact();
-    
+    ref.read(fortuneHapticServiceProvider).cardSelect();
+
     // 염주 회전 애니메이션
     _rotationController.repeat();
     
@@ -423,7 +423,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
         setState(() {
           _spinCount++;
         });
-        HapticUtils.lightImpact();
+        ref.read(fortuneHapticServiceProvider).beadRotateTick();
       }
     }
     
@@ -472,8 +472,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
 ''';
         _isSpinning = false;
       });
-      
-      HapticUtils.success();
+
+      ref.read(fortuneHapticServiceProvider).mysticalReveal();
     } catch (e) {
       Logger.error('걱정 염주 실패', e);
       setState(() => _isSpinning = false);
@@ -487,7 +487,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
   }
 
   void _resetWorry() {
-    HapticUtils.lightImpact();
+    ref.read(fortuneHapticServiceProvider).selection();
     setState(() {
       _worryController.clear();
       _hasWorry = false;
@@ -497,7 +497,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
   }
 
   void _shareResult() {
-    HapticUtils.lightImpact();
+    ref.read(fortuneHapticServiceProvider).shareAction();
     // TODO: 공유 기능 구현
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('공유 기능은 준비 중입니다')),
@@ -509,7 +509,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       context: context,
       isScrollControlled: true,
       backgroundColor: TossDesignSystem.transparent,
-      builder: (context) => TokenInsufficientModal(
+      builder: (context) => const TokenInsufficientModal(
         requiredTokens: _requiredTokens,
         fortuneType: 'worry_bead',
       ),

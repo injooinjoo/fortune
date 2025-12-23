@@ -68,7 +68,7 @@ class RecommendationsSection extends StatelessWidget {
                             color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
                           rec.description,
                           style: TossTheme.body3.copyWith(

@@ -4,6 +4,7 @@ import 'package:fortune/core/theme/fortune_design_system.dart';
 import 'package:fortune/core/theme/typography_theme.dart';
 import 'package:fortune/core/providers/user_settings_provider.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 /// 폰트 설정 페이지
 /// 사용자가 폰트 크기와 글꼴을 조절할 수 있습니다.
@@ -69,7 +70,7 @@ class FontSettingsPage extends ConsumerWidget {
                           : TossDesignSystem.textSecondaryLight,
                     ),
                   ),
-                  SizedBox(height: TossDesignSystem.spacingM),
+                  const SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     '제목 텍스트',
                     style: typography.headingMedium.copyWith(
@@ -78,7 +79,7 @@ class FontSettingsPage extends ConsumerWidget {
                           : TossDesignSystem.textPrimaryLight,
                     ),
                   ),
-                  SizedBox(height: TossDesignSystem.spacingS),
+                  const SizedBox(height: TossDesignSystem.spacingS),
                   Text(
                     '본문 텍스트입니다. 이 텍스트는 일반적인 본문에 사용됩니다.',
                     style: typography.bodyMedium.copyWith(
@@ -87,7 +88,7 @@ class FontSettingsPage extends ConsumerWidget {
                           : TossDesignSystem.textPrimaryLight,
                     ),
                   ),
-                  SizedBox(height: TossDesignSystem.spacingS),
+                  const SizedBox(height: TossDesignSystem.spacingS),
                   Text(
                     '작은 텍스트 - 캡션이나 부가 설명',
                     style: typography.labelSmall.copyWith(
@@ -180,7 +181,12 @@ class FontSettingsPage extends ConsumerWidget {
                               ? TossDesignSystem.dividerDark
                               : TossDesignSystem.dividerLight,
                           onChanged: (value) {
-                            TossDesignSystem.hapticSelection();
+                            // 스냅 포인트 변경 시에만 햅틱 피드백
+                            final oldStep = ((settings.fontScale - 0.85) / 0.05).round();
+                            final newStep = ((value - 0.85) / 0.05).round();
+                            if (oldStep != newStep) {
+                              ref.read(fortuneHapticServiceProvider).sliderSnap();
+                            }
                             settingsNotifier.setFontScale(value);
                           },
                         ),

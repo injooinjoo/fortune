@@ -367,7 +367,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       body: SafeArea(
         child: Column(
           children: [
-            AppHeader(
+            const AppHeader(
               title: '타로',
               showBackButton: true,
               showActions: true,

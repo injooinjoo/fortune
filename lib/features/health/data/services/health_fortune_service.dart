@@ -41,7 +41,7 @@ class HealthFortuneService {
       await Future.delayed(const Duration(seconds: 2));
 
       // 기본 점수 계산 (현재 컨디션 기반)
-      int baseScore = _calculateBaseScore(input.currentCondition);
+      final int baseScore = _calculateBaseScore(input.currentCondition);
       
       // 신체 부위별 건강 상태 생성
       final bodyPartHealthList = _generateBodyPartHealthList(

@@ -32,12 +32,12 @@ class TomorrowPreviewSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.wb_sunny_rounded,
                 color: TossTheme.primaryBlue,
                 size: 24,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '내일 건강 미리보기',
                 style: TossTheme.heading3.copyWith(
@@ -46,7 +46,7 @@ class TomorrowPreviewSection extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
 
           Text(
             tomorrowPreview,

@@ -89,7 +89,7 @@ class BodyPartHealthSection extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     bph.description,
                     style: TossTheme.body3.copyWith(

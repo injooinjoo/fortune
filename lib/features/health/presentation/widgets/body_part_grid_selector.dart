@@ -237,7 +237,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                   child: Container(
                     width: 24,
                     height: 24,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: TossTheme.primaryBlue,
                       shape: BoxShape.circle,
                     ),
@@ -274,7 +274,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.check_circle_outline,
                 color: TossTheme.primaryBlue,
                 size: 20,
@@ -311,7 +311,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                   ),
                 ),
                 backgroundColor: TossTheme.primaryBlue.withValues(alpha: 0.1),
-                deleteIcon: Icon(
+                deleteIcon: const Icon(
                   Icons.close,
                   size: 16,
                   color: TossTheme.primaryBlue,

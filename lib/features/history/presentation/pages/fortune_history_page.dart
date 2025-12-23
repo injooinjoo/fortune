@@ -63,7 +63,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
         onBackPressed: () => Navigator.of(context).pop(),
         actions: [
           IconButton(
-            icon: Icon(Icons.filter_list, color: TossTheme.textGray600),
+            icon: const Icon(Icons.filter_list, color: TossTheme.textGray600),
             onPressed: _showFilterOptions,
           ),
         ],
@@ -215,7 +215,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
           );
         },
         loading: () => const Center(child: LoadingIndicator()),
-        error: (error, stack) => Center(
+        error: (error, stack) => const Center(
           child: Text(
             '운세 기록을 불러올 수 없습니다',
             style: DSTypography.labelMedium,

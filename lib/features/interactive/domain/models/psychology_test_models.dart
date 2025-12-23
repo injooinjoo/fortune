@@ -79,7 +79,7 @@ class PsychologyTestResult {
 // ============================================================================
 
 final psychologyQuestions = [
-  PsychologyQuestion(
+  const PsychologyQuestion(
     id: 'q1',
     question: '새로운 환경에 놓였을 때 당신의 반응은?',
     options: [
@@ -89,7 +89,7 @@ final psychologyQuestions = [
       QuestionOption(value: 'd', label: '불안하지만 필요한 것만 빠르게 파악한다'),
     ],
   ),
-  PsychologyQuestion(
+  const PsychologyQuestion(
     id: 'q2',
     question: '스트레스를 받을 때 주로 어떻게 해소하나요?',
     options: [
@@ -99,7 +99,7 @@ final psychologyQuestions = [
       QuestionOption(value: 'd', label: '취미 활동에 몰두한다'),
     ],
   ),
-  PsychologyQuestion(
+  const PsychologyQuestion(
     id: 'q3',
     question: '중요한 결정을 내릴 때 당신의 방식은?',
     options: [
@@ -109,7 +109,7 @@ final psychologyQuestions = [
       QuestionOption(value: 'd', label: '과거 경험을 바탕으로 판단한다'),
     ],
   ),
-  PsychologyQuestion(
+  const PsychologyQuestion(
     id: 'q4',
     question: '팀 프로젝트에서 당신의 역할은?',
     options: [
@@ -119,7 +119,7 @@ final psychologyQuestions = [
       QuestionOption(value: 'd', label: '맡은 일을 꼼꼼하게 완수한다'),
     ],
   ),
-  PsychologyQuestion(
+  const PsychologyQuestion(
     id: 'q5',
     question: '휴일을 보내는 이상적인 방법은?',
     options: [

@@ -52,7 +52,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   '아래 인체 그림에서 해당 부위를 터치해주세요\n(선택하지 않아도 괜찮습니다)',
                   style: TossTheme.body3.copyWith(
@@ -175,7 +175,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
                 ),
               // 선택 체크마크
               if (isSelected)
-                Icon(
+                const Icon(
                   Icons.check_circle,
                   color: TossDesignSystem.white,
                   size: 20,
@@ -219,13 +219,13 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
       // 건강 상태가 있는 경우 (결과 화면에서)
       switch (healthLevel) {
         case HealthLevel.excellent:
-          return Color(0xFF4CAF50).withValues(alpha: isSelected ? 0.8 : 0.3);
+          return const Color(0xFF4CAF50).withValues(alpha: isSelected ? 0.8 : 0.3);
         case HealthLevel.good:
-          return Color(0xFF2196F3).withValues(alpha: isSelected ? 0.8 : 0.3);
+          return const Color(0xFF2196F3).withValues(alpha: isSelected ? 0.8 : 0.3);
         case HealthLevel.caution:
-          return Color(0xFFFF9800).withValues(alpha: isSelected ? 0.8 : 0.3);
+          return const Color(0xFFFF9800).withValues(alpha: isSelected ? 0.8 : 0.3);
         case HealthLevel.warning:
-          return Color(0xFFFF5722).withValues(alpha: isSelected ? 0.8 : 0.3);
+          return const Color(0xFFFF5722).withValues(alpha: isSelected ? 0.8 : 0.3);
       }
     }
     
@@ -296,7 +296,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
                     const SizedBox(width: 4),
                     GestureDetector(
                       onTap: () => _toggleBodyPart(part),
-                      child: Icon(
+                      child: const Icon(
                         Icons.close,
                         size: 14,
                         color: TossTheme.primaryBlue,

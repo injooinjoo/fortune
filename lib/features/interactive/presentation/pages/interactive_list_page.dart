@@ -11,56 +11,56 @@ class InteractiveListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final interactiveFeatures = [
-      _InteractiveFeature(
+      const _InteractiveFeature(
         title: '포춘 쿠키',
         subtitle: '오늘의 행운 메시지를 확인해보세요',
         icon: Icons.cookie_outlined,
         route: '/fortune-cookie',
         isAvailable: true,
       ),
-      _InteractiveFeature(
+      const _InteractiveFeature(
         title: '꿈 해몽',
         subtitle: '꿈에 숨겨진 의미를 해석해드립니다',
         icon: Icons.bedtime_outlined,
         route: '/interactive/dream',
         isAvailable: true,
       ),
-      _InteractiveFeature(
+      const _InteractiveFeature(
         title: '관상',
         subtitle: '얼굴을 분석해 운세를 알려드려요',
         icon: Icons.face_retouching_natural,
         route: '/interactive/face-reading',
         isAvailable: false,
       ),
-      _InteractiveFeature(
+      const _InteractiveFeature(
         title: '심리 테스트',
         subtitle: '다양한 심리 테스트로 자신을 알아보세요',
         icon: Icons.psychology_outlined,
         route: '/interactive/psychology-test',
         isAvailable: true,
       ),
-      _InteractiveFeature(
+      const _InteractiveFeature(
         title: '태몽',
         subtitle: '태몽의 의미를 해석해드립니다',
         icon: Icons.child_care_outlined,
         route: '/interactive/taemong',
         isAvailable: false,
       ),
-      _InteractiveFeature(
+      const _InteractiveFeature(
         title: '타로카드',
         subtitle: '타로카드로 보는 오늘의 운세',
         icon: Icons.style_outlined,
         route: '/interactive/tarot',
         isAvailable: true,
       ),
-      _InteractiveFeature(
+      const _InteractiveFeature(
         title: '걱정 염주',
         subtitle: '고민을 털어놓고 마음의 평화를 찾으세요',
         icon: Icons.radio_button_checked_outlined,
         route: '/interactive/worry-bead',
         isAvailable: true,
       ),
-      _InteractiveFeature(
+      const _InteractiveFeature(
         title: '꿈 일기',
         subtitle: '꿈을 기록하고 영험한 해몽을 받아보세요',
         icon: Icons.nights_stay_outlined,

@@ -68,7 +68,7 @@ class ConditionOption extends StatelessWidget {
                       color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     ),
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
                     _getConditionDescription(condition),
                     style: TossTheme.body3.copyWith(
@@ -79,7 +79,7 @@ class ConditionOption extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios,
                 color: TossTheme.primaryBlue,
                 size: 16,

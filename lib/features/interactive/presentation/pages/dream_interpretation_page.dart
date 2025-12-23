@@ -199,18 +199,18 @@ class _DreamInterpretationPageState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             '🌙',
             style: TextStyle(fontSize: FontConfig.emojiMedium),
           ),
           const SizedBox(height: 16),
-          SizedBox(
+          const SizedBox(
             width: 32,
             height: 32,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
-                const Color(0xFF8B5CF6),
+                Color(0xFF8B5CF6),
               ),
             ),
           ),
@@ -370,7 +370,7 @@ class _DreamInterpretationPageState
           if (_selectedTopic != null) ...[
             Text(
               _selectedTopic!.emoji,
-              style: TextStyle(fontSize: FontConfig.emojiXLarge),
+              style: const TextStyle(fontSize: FontConfig.emojiXLarge),
             ),
             const SizedBox(height: 16),
             Text(
@@ -383,7 +383,7 @@ class _DreamInterpretationPageState
             ),
           ],
           const SizedBox(height: 32),
-          SizedBox(
+          const SizedBox(
             width: 48,
             height: 48,
             child: CircularProgressIndicator(
@@ -459,10 +459,10 @@ class _DreamInterpretationPageState
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
-            const Color(0xFF8B5CF6),
-            const Color(0xFF6366F1),
+            Color(0xFF8B5CF6),
+            Color(0xFF6366F1),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

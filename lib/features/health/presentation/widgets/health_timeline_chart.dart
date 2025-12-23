@@ -69,12 +69,12 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.timeline_rounded,
                 color: TossTheme.primaryBlue,
                 size: 24,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '시간대별 컨디션',
                 style: TossTheme.heading3.copyWith(
@@ -129,7 +129,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
         drawVerticalLine: false,
         horizontalInterval: 25,
         getDrawingHorizontalLine: (value) {
-          return FlLine(
+          return const FlLine(
             color: TossTheme.borderGray200,
             strokeWidth: 1,
             dashArray: [5, 5],
@@ -352,7 +352,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                             : TossTheme.textBlack,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       timeSlot.description,
                       style: TossTheme.body3.copyWith(
@@ -365,7 +365,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               
               // 추천사항 아이콘
               if (timeSlot.recommendations != null && timeSlot.recommendations!.isNotEmpty)
-                Icon(
+                const Icon(
                   Icons.lightbulb_outline_rounded,
                   color: TossTheme.primaryBlue,
                   size: 16,
@@ -405,7 +405,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               color: TossTheme.primaryBlue.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.schedule_rounded,
               color: TossTheme.primaryBlue,
               size: 20,
@@ -423,7 +423,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                     color: TossTheme.textBlack,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   widget.timeline.bestTimeActivity!,
                   style: TossTheme.body3.copyWith(

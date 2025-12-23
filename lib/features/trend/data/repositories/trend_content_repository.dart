@@ -53,7 +53,7 @@ class TrendContentRepository {
     } catch (e) {
       debugPrint('❌ [TrendContentRepository] getContents error: $e');
       // 테이블이 없는 경우 빈 목록 반환 (DB 마이그레이션 전까지 임시 처리)
-      return TrendContentListResponse(
+      return const TrendContentListResponse(
         contents: [],
         totalCount: 0,
         hasMore: false,

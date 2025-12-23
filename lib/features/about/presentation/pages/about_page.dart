@@ -35,7 +35,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,
       body: Container(
-        decoration: BoxDecoration(color: TossDesignSystem.gray50),
+        decoration: const BoxDecoration(color: TossDesignSystem.gray50),
         child: SafeArea(
           child: Column(
             children: [
@@ -93,18 +93,18 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               Icons.auto_awesome,
               size: 50,
               color: TossDesignSystem.white)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Text(
             '관상은 과학',
             style: DSTypography.displayLarge.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)).animate().fadeIn(delay: 200.ms),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             '신이 전하는 나만의 운세',
             style: DSTypography.headingSmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.9))).animate().fadeIn(delay: 400.ms),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '매일 새로운 인사이트와 함께\n더 나은 하루를 시작하세요',
             style: DSTypography.bodySmall.copyWith(
@@ -195,13 +195,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: color, size: 32),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             title,
             style: DSTypography.bodySmall.copyWith(
               color: TossDesignSystem.white,
               fontWeight: FontWeight.bold)),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             description,
             style: DSTypography.labelSmall.copyWith(
@@ -263,12 +263,12 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   Widget _buildVersionInfo() {
     return Column(
       children: [
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Text(
           '버전 $_version',
           style: DSTypography.labelMedium.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.5))),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           '© 2025 Fortune. All rights reserved.',
           style: DSTypography.labelMedium.copyWith(
