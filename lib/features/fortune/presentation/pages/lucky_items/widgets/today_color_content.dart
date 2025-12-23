@@ -9,41 +9,73 @@ class TodayColorContent extends StatelessWidget {
 
   const TodayColorContent({super.key, required this.birthDate});
 
+  /// 사주 기반 행운 색상 생성
   Map<String, dynamic> _generateTodayColor() {
     final now = DateTime.now();
 
     // 사주 기반 시드
-    final seed = birthDate.day + birthDate.month * 10 + now.day + now.month * 100;
+    final seed =
+        birthDate.day + birthDate.month * 10 + now.day + now.month * 100;
     final random = Random(seed);
 
-    // RGB 생성
-    final r = random.nextInt(256);
-    final g = random.nextInt(256);
-    final b = random.nextInt(256);
+    // 미리 정의된 행운 색상 팔레트 (한글명, Color)
+    final luckyColors = [
+      {'name': '진홍색', 'color': const Color(0xFFDC143C), 'meaning': '열정과 활력'},
+      {'name': '산호색', 'color': const Color(0xFFFF7F50), 'meaning': '따뜻한 에너지'},
+      {'name': '주황색', 'color': const Color(0xFFFF8C00), 'meaning': '창의력과 자신감'},
+      {'name': '황금색', 'color': const Color(0xFFFFD700), 'meaning': '풍요와 번영'},
+      {'name': '레몬색', 'color': const Color(0xFFFFF44F), 'meaning': '밝은 희망'},
+      {'name': '연두색', 'color': const Color(0xFF90EE90), 'meaning': '새로운 시작'},
+      {'name': '초록색', 'color': const Color(0xFF228B22), 'meaning': '성장과 건강'},
+      {'name': '청록색', 'color': const Color(0xFF20B2AA), 'meaning': '균형과 조화'},
+      {'name': '하늘색', 'color': const Color(0xFF87CEEB), 'meaning': '평화와 안정'},
+      {'name': '파란색', 'color': const Color(0xFF4169E1), 'meaning': '신뢰와 지혜'},
+      {'name': '남색', 'color': const Color(0xFF191970), 'meaning': '깊은 통찰'},
+      {'name': '보라색', 'color': const Color(0xFF9370DB), 'meaning': '영감과 창조'},
+      {'name': '자주색', 'color': const Color(0xFF8B008B), 'meaning': '고귀함과 품위'},
+      {'name': '분홍색', 'color': const Color(0xFFFFB6C1), 'meaning': '사랑과 행복'},
+      {'name': '복숭아색', 'color': const Color(0xFFFFDAB9), 'meaning': '부드러운 행운'},
+      {'name': '베이지색', 'color': const Color(0xFFF5DEB3), 'meaning': '안정과 편안함'},
+      {'name': '갈색', 'color': const Color(0xFF8B4513), 'meaning': '신뢰와 안정'},
+      {'name': '은색', 'color': const Color(0xFFC0C0C0), 'meaning': '직관과 통찰'},
+      {'name': '회색', 'color': const Color(0xFF808080), 'meaning': '중립과 균형'},
+      {'name': '검정색', 'color': const Color(0xFF2F2F2F), 'meaning': '세련됨과 권위'},
+    ];
 
-    final hex = '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
-        '${g.toRadixString(16).padLeft(2, '0').toUpperCase()}'
-        '${b.toRadixString(16).padLeft(2, '0').toUpperCase()}';
+    final selected = luckyColors[random.nextInt(luckyColors.length)];
 
     return {
-      'hex': hex,
-      'color': Color.fromARGB(255, r, g, b),
-      'r': r,
-      'g': g,
-      'b': b,
+      'name': selected['name'] as String,
+      'color': selected['color'] as Color,
+      'meaning': selected['meaning'] as String,
     };
   }
 
-  String _getColorMeaning(int r, int g, int b) {
-    // RGB 값에 따른 색상 의미
-    if (r > 200 && g < 100 && b < 100) return '열정과 에너지의 빨간색 계열';
-    if (r < 100 && g < 100 && b > 200) return '평온과 안정의 파란색 계열';
-    if (r < 100 && g > 200 && b < 100) return '성장과 희망의 녹색 계열';
-    if (r > 200 && g > 200 && b < 100) return '활력과 기쁨의 노란색 계열';
-    if (r > 200 && g < 100 && b > 200) return '창의성의 보라색 계열';
-    if (r > 150 && g > 150 && b > 150) return '순수함과 청명함의 밝은 색';
-    if (r < 100 && g < 100 && b < 100) return '세련됨과 우아함의 어두운 색';
-    return '균형과 조화의 중간 톤';
+  /// 색상에 따른 상세 설명
+  String _getColorDescription(String colorName) {
+    final descriptions = {
+      '진홍색': '오늘은 당신의 열정이 빛나는 날입니다. 적극적으로 행동하면 좋은 결과가 있을 거예요.',
+      '산호색': '따뜻한 기운이 당신을 감싸고 있어요. 주변 사람들과 좋은 관계를 맺기 좋은 날입니다.',
+      '주황색': '창의적인 아이디어가 떠오르는 날이에요. 새로운 시도를 해보세요.',
+      '황금색': '재물운이 좋은 날입니다. 금전적인 결정을 내리기 좋아요.',
+      '레몬색': '밝고 긍정적인 에너지가 가득한 날이에요. 웃음이 행운을 가져다 줍니다.',
+      '연두색': '새로운 시작에 적합한 날입니다. 무언가 새롭게 시작해보세요.',
+      '초록색': '건강과 성장의 기운이 함께해요. 운동이나 자기계발에 좋은 날입니다.',
+      '청록색': '마음의 평화를 찾기 좋은 날이에요. 명상이나 휴식을 취해보세요.',
+      '하늘색': '커뮤니케이션 운이 좋아요. 중요한 대화나 발표가 있다면 잘 될 거예요.',
+      '파란색': '집중력이 높아지는 날입니다. 중요한 업무나 공부에 집중해보세요.',
+      '남색': '깊은 생각이 필요한 날이에요. 중요한 결정을 내리기 좋습니다.',
+      '보라색': '영감이 넘치는 날입니다. 예술적인 활동이나 창작에 좋아요.',
+      '자주색': '품위 있는 행동이 행운을 가져옵니다. 격식 있는 자리에 좋은 날이에요.',
+      '분홍색': '연애운이 좋은 날이에요. 사랑하는 사람과의 시간이 특별해질 거예요.',
+      '복숭아색': '부드러운 행운이 찾아오는 날입니다. 편안한 마음으로 지내세요.',
+      '베이지색': '안정적인 하루가 될 거예요. 차분하게 일상을 보내면 좋습니다.',
+      '갈색': '실용적인 결정이 좋은 결과를 가져옵니다. 현실적으로 생각하세요.',
+      '은색': '직관을 믿어보세요. 느낌대로 행동하면 좋은 일이 생길 거예요.',
+      '회색': '균형 잡힌 하루가 될 거예요. 무리하지 말고 중용을 지키세요.',
+      '검정색': '세련되고 프로페셔널한 모습이 빛나는 날입니다. 중요한 미팅에 좋아요.',
+    };
+    return descriptions[colorName] ?? '오늘 이 색상이 행운을 가져다 줄 거예요.';
   }
 
   @override
@@ -51,10 +83,12 @@ class TodayColorContent extends StatelessWidget {
     final colors = context.colors;
     final colorData = _generateTodayColor();
     final color = colorData['color'] as Color;
-    final hex = colorData['hex'] as String;
-    final r = colorData['r'] as int;
-    final g = colorData['g'] as int;
-    final b = colorData['b'] as int;
+    final colorName = colorData['name'] as String;
+    final meaning = colorData['meaning'] as String;
+
+    // 텍스트 색상 계산 (명도 기반)
+    final luminance = color.computeLuminance();
+    final textColor = luminance > 0.5 ? Colors.black : Colors.white;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -76,9 +110,9 @@ class TodayColorContent extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                hex,
+                colorName,
                 style: DSTypography.headingMedium.copyWith(
-                  color: (r + g + b) > 382 ? Colors.black : Colors.white,
+                  color: textColor,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -86,10 +120,10 @@ class TodayColorContent extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // 색상 정보
-          InfoItem(label: 'HEX 코드', value: hex),
-          InfoItem(label: 'RGB', value: 'R:$r, G:$g, B:$b'),
-          InfoItem(label: '색상 의미', value: _getColorMeaning(r, g, b)),
+          // 색상 정보 (한글로만 표시)
+          InfoItem(label: '오늘의 행운색', value: colorName),
+          InfoItem(label: '색상 의미', value: meaning),
+          InfoItem(label: '오늘의 조언', value: _getColorDescription(colorName)),
           const InfoItem(
             label: '활용 팁',
             value: '오늘 이 색상의 옷이나 소품을 착용하면 행운이 따릅니다',
