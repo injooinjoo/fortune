@@ -138,6 +138,97 @@ function getMainCuriosityKorean(curiosity: string): string {
   return map[curiosity] || curiosity
 }
 
+/**
+ * 재회운 헤더 이미지 프롬프트 생성
+ *
+ * 현재 감정과 재회 가능성 점수에 따라 감성적인 이미지 프롬프트를 생성합니다.
+ * - 한국 전통 연인 테마 (한복, 달빛, 전통 배경)
+ * - 감정 상태에 따른 분위기 조절
+ * - 재회 희망/치유 메시지 반영
+ */
+function generateReunionImagePrompt(
+  currentEmotion: string,
+  reunionScore: number,
+  mainCuriosity: string
+): string {
+  // 감정별 분위기 설정
+  const emotionMood = (() => {
+    switch (currentEmotion) {
+      case 'miss': return {
+        mood: '그리움과 애틋함',
+        colors: 'soft purple, misty blue, moonlight silver',
+        elements: '달빛 아래 기다리는 실루엣, 떨어지는 꽃잎, 빈 그네'
+      };
+      case 'anger': return {
+        mood: '정화와 치유',
+        colors: 'calming blue, soft white, gentle lavender',
+        elements: '빗물에 씻기는 연꽃, 맑아지는 하늘, 새벽빛'
+      };
+      case 'sadness': return {
+        mood: '위로와 희망',
+        colors: 'warm sunset orange, gentle pink, golden light',
+        elements: '비 갠 후 무지개, 피어나는 꽃봉오리, 따뜻한 햇살'
+      };
+      case 'relief': return {
+        mood: '평온과 새 출발',
+        colors: 'fresh green, sky blue, bright white',
+        elements: '탁 트인 풍경, 나비의 비상, 열린 문'
+      };
+      case 'acceptance': return {
+        mood: '성숙과 감사',
+        colors: 'golden amber, warm brown, soft cream',
+        elements: '노을빛 풍경, 낙엽 위 발자국, 멀리 가는 길'
+      };
+      default: return {
+        mood: '애틋한 그리움',
+        colors: 'soft lavender, moonlight blue',
+        elements: '달빛 아래 풍경'
+      };
+    }
+  })();
+
+  // 재회 점수에 따른 상징물
+  const reunionSymbols = reunionScore >= 70
+    ? '두 개의 연결된 붉은 실, 다시 만나는 두 별, 이어지는 다리'
+    : reunionScore >= 50
+    ? '서서히 가까워지는 두 나비, 같은 달을 바라보는 두 그림자'
+    : '각자의 길을 가는 두 사람의 평화로운 실루엣, 감사의 꽃';
+
+  // 궁금증에 따른 포커스
+  const curiosityFocus = (() => {
+    switch (mainCuriosity) {
+      case 'theirFeelings': return '멀리서 바라보는 그리운 시선, 가슴에 손을 얹은 실루엣';
+      case 'reunionChance': return '다가오는 두 그림자, 교차하는 운명의 실';
+      case 'newLove': return '새벽빛 속 피어나는 새 꽃, 열리는 새로운 문';
+      case 'healing': return '따뜻한 빛에 감싸인 마음, 치유의 물결';
+      default: return '달빛 아래 서있는 실루엣';
+    }
+  })();
+
+  return `Korean traditional romantic reunion fortune illustration:
+
+Main elements: ${reunionSymbols}
+Emotional focus: ${curiosityFocus}
+${emotionMood.elements}
+
+Style requirements:
+- Traditional Korean aesthetic (한국 전통 미학)
+- Hanbok (한복) silhouette elements for romantic mood
+- Moonlit or twilight atmosphere (달빛/황혼 분위기)
+- Watercolor + digital art hybrid style
+- Color palette: ${emotionMood.colors}
+- Dreamy, ethereal quality with soft gradients
+- Korean traditional patterns (전통 문양) as subtle accents
+- Cherry blossoms (벚꽃) or magnolia (목련) petals floating
+
+Mood: ${emotionMood.mood}
+Emotional tone: ${reunionScore >= 70 ? 'Hopeful reunion, warm anticipation' : reunionScore >= 50 ? 'Bittersweet longing, gentle hope' : 'Peaceful acceptance, self-healing journey'}
+
+Aspect ratio: 16:9, cinematic composition
+No text, no faces clearly visible, focus on silhouettes and atmosphere
+Artistic, emotionally evocative imagery`;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', {
@@ -378,6 +469,9 @@ serve(async (req) => {
         ? ['relationship_analysis', 'breakup_analysis', 'reunion_possibility', 'healing_roadmap', 'new_love_forecast', 'practical_advice']
         : []
 
+      // 재회 가능성 점수 추출 (이미지 프롬프트용)
+      const reunionScore = parsedResponse.reunion_possibility?.score ?? 50
+
       fortuneData = {
         title: parsedResponse.title || `${name}님, 새로운 시작을 응원합니다`,
         fortune_type: 'ex_lover',
@@ -385,6 +479,8 @@ serve(async (req) => {
         relationship_duration,
         breakup_initiator,
         contact_status,
+        // ✅ 헤더 이미지 프롬프트 (감정 + 재회점수 + 궁금증 기반)
+        headerImagePrompt: generateReunionImagePrompt(current_emotion, reunionScore, main_curiosity),
         // ✅ 무료: 공개 섹션
         score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
         overall_fortune: parsedResponse.overall_fortune || '이별은 끝이 아닌 새로운 시작입니다.',

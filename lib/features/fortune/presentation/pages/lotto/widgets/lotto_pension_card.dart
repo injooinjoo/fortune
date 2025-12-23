@@ -130,50 +130,65 @@ class LottoPensionCard extends StatelessWidget {
           color: ObangseokColors.cheong.withValues(alpha: 0.2),
         ),
       ),
-      child: Column(
-        children: [
-          // 조 번호 + 6자리 번호
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 화면 너비에 따라 크기 동적 계산
+          // 조 번호 + 구분선 + 간격 + 6자리 번호
+          final availableWidth = constraints.maxWidth - 32; // 좌우 패딩 제외
+          // 조 번호(groupSize) + 간격(8+8) + 구분선(2) + 6자리(digitSize*6 + 간격*5*2)
+          // groupSize ≈ digitSize * 1.4
+          final digitSize = ((availableWidth - 18 - 20) / 8.4).clamp(24.0, 30.0);
+          final groupSize = (digitSize * 1.4).clamp(34.0, 42.0);
+
+          return Column(
             children: [
-              // 조 번호 (블러 또는 공개)
-              _buildGroupNumber(isDark),
-              const SizedBox(width: 8),
-              // 구분선
-              Container(
-                width: 2,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? ObangseokColors.baekDark.withValues(alpha: 0.2)
-                      : ObangseokColors.meok.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(1),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // 6자리 번호
-              Flexible(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: pensionResult.numbers.map((number) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: _buildDigit(number, isDark),
-                      )).toList(),
-                ),
+              // 조 번호 + 6자리 번호
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 조 번호 (블러 또는 공개)
+                  _buildGroupNumber(isDark, size: groupSize),
+                  const SizedBox(width: 8),
+                  // 구분선
+                  Container(
+                    width: 2,
+                    height: groupSize * 0.86,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? ObangseokColors.baekDark.withValues(alpha: 0.2)
+                          : ObangseokColors.meok.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(1),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // 6자리 번호
+                  Flexible(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: pensionResult.numbers.map((number) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: _buildDigit(number, isDark, size: digitSize),
+                          )).toList(),
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildGroupNumber(bool isDark) {
+  Widget _buildGroupNumber(bool isDark, {double size = 42}) {
+    final fontSize = size * 0.33;
+    final iconSize = size * 0.43;
+
     if (isGroupUnlocked) {
       // 공개된 조 번호
       return Container(
-        width: 42,
-        height: 42,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
@@ -198,6 +213,7 @@ class LottoPensionCard extends StatelessWidget {
             style: TypographyUnified.bodyMedium.copyWith(
               fontWeight: FontWeight.w700,
               color: Colors.white,
+              fontSize: fontSize,
             ),
           ),
         ),
@@ -208,8 +224,8 @@ class LottoPensionCard extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: 42,
-          height: 42,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             color: isDark
                 ? ObangseokColors.meok.withValues(alpha: 0.5)
@@ -229,6 +245,7 @@ class LottoPensionCard extends StatelessWidget {
                   style: TypographyUnified.bodyMedium.copyWith(
                     fontWeight: FontWeight.w700,
                     color: ObangseokColors.cheong,
+                    fontSize: fontSize,
                   ),
                 ),
               ),
@@ -242,11 +259,11 @@ class LottoPensionCard extends StatelessWidget {
               color: ObangseokColors.cheong.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Center(
+            child: Center(
               child: Icon(
                 Icons.lock_rounded,
                 color: ObangseokColors.cheong,
-                size: 18,
+                size: iconSize,
               ),
             ),
           ),
@@ -255,10 +272,13 @@ class LottoPensionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDigit(int digit, bool isDark) {
+  Widget _buildDigit(int digit, bool isDark, {double size = 30}) {
+    final height = size * 1.27; // 비율 유지 (38/30)
+    final fontSize = size * 0.53;
+
     return Container(
-      width: 30,
-      height: 38,
+      width: size,
+      height: height,
       decoration: BoxDecoration(
         color: isDark
             ? ObangseokColors.meok.withValues(alpha: 0.5)
@@ -282,6 +302,7 @@ class LottoPensionCard extends StatelessWidget {
           '$digit',
           style: TypographyUnified.bodyLarge.copyWith(
             fontWeight: FontWeight.w700,
+            fontSize: fontSize,
             color: isDark
                 ? ObangseokColors.baekDark
                 : ObangseokColors.meok,

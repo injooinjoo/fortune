@@ -285,38 +285,12 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     const fortuneData = JSON.parse(response.content)
 
     // 블러 로직 (프리미엄 아니면 주요 섹션 블러)
+    // ✅ 변경: 실제 데이터는 그대로 반환하고 isBlurred/blurredSections만 설정
+    // 클라이언트에서 UI 블러 처리 (광고 시청 후 해제 가능)
     const isBlurred = !isPremium
     const blurredSections = isBlurred
       ? ['timing', 'outlook', 'risks', 'marketMood', 'advice', 'psychologyTip']
       : []
-
-    // 블러 처리된 데이터
-    const blurredTiming = {
-      buySignal: 'moderate',
-      buySignalText: '🔒 프리미엄 구독으로 확인하세요',
-      bestTimeSlot: 'afternoon',
-      bestTimeSlotText: '🔒 프리미엄 구독으로 확인하세요',
-      holdAdvice: '🔒 프리미엄 구독으로 확인하세요'
-    }
-
-    const blurredOutlook = {
-      shortTerm: { score: 0, trend: 'neutral', text: '🔒 프리미엄 구독으로 확인하세요' },
-      midTerm: { score: 0, trend: 'neutral', text: '🔒 프리미엄 구독으로 확인하세요' },
-      longTerm: { score: 0, trend: 'neutral', text: '🔒 프리미엄 구독으로 확인하세요' }
-    }
-
-    const blurredRisks = {
-      warnings: ['🔒 프리미엄 구독으로 확인하세요'],
-      avoidActions: ['🔒 프리미엄 구독으로 확인하세요'],
-      volatilityLevel: 'medium',
-      volatilityText: '🔒 프리미엄 구독으로 확인하세요'
-    }
-
-    const blurredMarketMood = {
-      categoryMood: 'neutral',
-      categoryMoodText: '🔒 프리미엄 구독으로 확인하세요',
-      investorSentiment: '🔒 프리미엄 구독으로 확인하세요'
-    }
 
     // C03: 재물운 이미지 프롬프트 (한국 전통 스타일)
     const wealthImagePrompt = generateWealthImagePrompt(fortuneData.overallScore, categoryLabel)
@@ -336,19 +310,19 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       overall_score: fortuneData.overallScore,
       content: fortuneData.content,
 
-      // 새로운 구조 (블러 적용)
-      timing: isBlurred ? blurredTiming : fortuneData.timing,
-      outlook: isBlurred ? blurredOutlook : fortuneData.outlook,
-      risks: isBlurred ? blurredRisks : fortuneData.risks,
-      marketMood: isBlurred ? blurredMarketMood : fortuneData.marketMood,
+      // ✅ 실제 데이터 반환 (클라이언트에서 블러 처리)
+      timing: fortuneData.timing,
+      outlook: fortuneData.outlook,
+      risks: fortuneData.risks,
+      marketMood: fortuneData.marketMood,
 
       // 기존 유지 (무료 공개)
       luckyItems: fortuneData.luckyItems,
       lucky_items: fortuneData.luckyItems,
 
-      // 조언 (블러 적용)
-      advice: isBlurred ? '🔒 프리미엄 구독으로 확인하세요' : fortuneData.advice,
-      psychologyTip: isBlurred ? '🔒 프리미엄 구독으로 확인하세요' : fortuneData.psychologyTip,
+      // ✅ 실제 데이터 반환 (클라이언트에서 블러 처리)
+      advice: fortuneData.advice,
+      psychologyTip: fortuneData.psychologyTip,
 
       // C03: 재물 이미지 프롬프트 추가
       imagePrompt: wealthImagePrompt,
@@ -365,27 +339,14 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     const percentileData = await calculatePercentile(supabaseClient, 'investment', result.overallScore)
     const resultWithPercentile = addPercentileToResult(result, percentileData)
 
-    // 캐싱 (원본 데이터 저장 - 블러 해제용)
-    const cacheData = {
-      ...result,
-      // 원본 데이터도 저장 (프리미엄 전환 시 사용)
-      _originalData: {
-        timing: fortuneData.timing,
-        outlook: fortuneData.outlook,
-        risks: fortuneData.risks,
-        marketMood: fortuneData.marketMood,
-        advice: fortuneData.advice,
-        psychologyTip: fortuneData.psychologyTip
-      }
-    }
-
+    // 캐싱 (실제 데이터 저장 - _originalData 불필요)
     await supabaseClient
       .from('fortune_cache')
       .insert({
         cache_key: cacheKey,
         fortune_type: 'investment',
         user_id: userId || null,
-        result: cacheData,
+        result: result,
         created_at: new Date().toISOString()
       })
 

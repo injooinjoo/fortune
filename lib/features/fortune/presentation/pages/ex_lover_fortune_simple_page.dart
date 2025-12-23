@@ -15,6 +15,7 @@ import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
   const ExLoverFortuneSimplePage({super.key});
@@ -29,11 +30,14 @@ class _ExLoverFortuneSimplePageState
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
-  // 각 섹션의 GlobalKey (자동 스크롤용)
-  final List<GlobalKey> _sectionKeys = List.generate(10, (_) => GlobalKey());
+  // 각 섹션의 GlobalKey (자동 스크롤용) - 11개로 확장 (생년월일 추가)
+  final List<GlobalKey> _sectionKeys = List.generate(11, (_) => GlobalKey());
 
   // 1. 상대방 이름/닉네임
   final TextEditingController _exNameController = TextEditingController();
+
+  // 1.5. 상대방 생년월일 (선택)
+  DateTime? _exBirthDate;
 
   // 2. 상대방 MBTI
   String? _exMbti;
@@ -134,6 +138,7 @@ class _ExLoverFortuneSimplePageState
         exName: _exNameController.text.isNotEmpty
             ? _exNameController.text
             : null,
+        exBirthDate: _exBirthDate,
         exMbti: _exMbti,
         relationshipDuration: _relationshipDuration!,
         timeSinceBreakup: _timeSinceBreakup!,
@@ -266,10 +271,75 @@ class _ExLoverFortuneSimplePageState
                   ),
                 ),
 
-                // 2. 상대방 MBTI
+                // 1.5. 상대방 생년월일 (선택)
                 _buildSection(
                   key: _sectionKeys[1],
                   index: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '그 사람 생년월일을 아시나요? (선택)'),
+                      const SizedBox(height: 4),
+                      Text(
+                        '더 정확한 인연 분석이 가능해요',
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      NumericDateInput(
+                        selectedDate: _exBirthDate,
+                        onDateChanged: (date) {
+                          setState(() => _exBirthDate = date);
+                          _scrollToNextSection(1);
+                        },
+                        hintText: 'YYYY년 MM월 DD일',
+                        minDate: DateTime(1940),
+                        maxDate: DateTime.now(),
+                        showAge: true,
+                      ),
+                      if (_exBirthDate != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.check_circle,
+                                  color: DSColors.success, size: 16),
+                              const SizedBox(width: 6),
+                              Text(
+                                '입력 완료',
+                                style: DSTypography.labelSmall.copyWith(
+                                  color: DSColors.success,
+                                ),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() => _exBirthDate = null);
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: const Size(40, 30),
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                child: Text(
+                                  '건너뛰기',
+                                  style: DSTypography.labelSmall.copyWith(
+                                    color: colors.textSecondary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+
+                // 2. 상대방 MBTI
+                _buildSection(
+                  key: _sectionKeys[2],
+                  index: 2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -285,7 +355,7 @@ class _ExLoverFortuneSimplePageState
                             isSelected: _exMbti == mbti,
                             onTap: () {
                               setState(() => _exMbti = mbti);
-                              _scrollToNextSection(1);
+                              _scrollToNextSection(2);
                             },
                           );
                         }).toList(),
@@ -296,8 +366,8 @@ class _ExLoverFortuneSimplePageState
 
                 // 3. 관계 기간
                 _buildSection(
-                  key: _sectionKeys[2],
-                  index: 2,
+                  key: _sectionKeys[3],
+                  index: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -312,7 +382,7 @@ class _ExLoverFortuneSimplePageState
                             isSelected: _relationshipDuration == option.id,
                             onTap: () {
                               setState(() => _relationshipDuration = option.id);
-                              _scrollToNextSection(2);
+                              _scrollToNextSection(3);
                             },
                           );
                         }).toList(),
@@ -323,8 +393,8 @@ class _ExLoverFortuneSimplePageState
 
                 // 4. 이별 시기
                 _buildSection(
-                  key: _sectionKeys[3],
-                  index: 3,
+                  key: _sectionKeys[4],
+                  index: 4,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -339,7 +409,7 @@ class _ExLoverFortuneSimplePageState
                             isSelected: _timeSinceBreakup == 'recent',
                             onTap: () {
                               setState(() => _timeSinceBreakup = 'recent');
-                              _scrollToNextSection(3);
+                              _scrollToNextSection(4);
                             },
                           ),
                           SelectionChip(
@@ -347,7 +417,7 @@ class _ExLoverFortuneSimplePageState
                             isSelected: _timeSinceBreakup == 'short',
                             onTap: () {
                               setState(() => _timeSinceBreakup = 'short');
-                              _scrollToNextSection(3);
+                              _scrollToNextSection(4);
                             },
                           ),
                           SelectionChip(
@@ -355,7 +425,7 @@ class _ExLoverFortuneSimplePageState
                             isSelected: _timeSinceBreakup == 'medium',
                             onTap: () {
                               setState(() => _timeSinceBreakup = 'medium');
-                              _scrollToNextSection(3);
+                              _scrollToNextSection(4);
                             },
                           ),
                           SelectionChip(
@@ -363,7 +433,7 @@ class _ExLoverFortuneSimplePageState
                             isSelected: _timeSinceBreakup == 'long',
                             onTap: () {
                               setState(() => _timeSinceBreakup = 'long');
-                              _scrollToNextSection(3);
+                              _scrollToNextSection(4);
                             },
                           ),
                           SelectionChip(
@@ -371,7 +441,7 @@ class _ExLoverFortuneSimplePageState
                             isSelected: _timeSinceBreakup == 'verylong',
                             onTap: () {
                               setState(() => _timeSinceBreakup = 'verylong');
-                              _scrollToNextSection(3);
+                              _scrollToNextSection(4);
                             },
                           ),
                         ],
@@ -382,8 +452,8 @@ class _ExLoverFortuneSimplePageState
 
                 // 5. 이별 통보자
                 _buildSection(
-                  key: _sectionKeys[4],
-                  index: 4,
+                  key: _sectionKeys[5],
+                  index: 5,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -398,7 +468,7 @@ class _ExLoverFortuneSimplePageState
                               isSelected: _breakupInitiator == card.id,
                               onTap: () {
                                 setState(() => _breakupInitiator = card.id);
-                                _scrollToNextSection(4);
+                                _scrollToNextSection(5);
                               },
                             ),
                           )),
@@ -408,8 +478,8 @@ class _ExLoverFortuneSimplePageState
 
                 // 6. 현재 연락 상태
                 _buildSection(
-                  key: _sectionKeys[5],
-                  index: 5,
+                  key: _sectionKeys[6],
+                  index: 6,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -424,7 +494,7 @@ class _ExLoverFortuneSimplePageState
                             isSelected: _contactStatus == option.id,
                             onTap: () {
                               setState(() => _contactStatus = option.id);
-                              _scrollToNextSection(5);
+                              _scrollToNextSection(6);
                             },
                           );
                         }).toList(),
@@ -435,8 +505,8 @@ class _ExLoverFortuneSimplePageState
 
                 // 7. 이별 이유 상세 (STT + 타이핑)
                 _buildSection(
-                  key: _sectionKeys[6],
-                  index: 6,
+                  key: _sectionKeys[7],
+                  index: 7,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -458,7 +528,7 @@ class _ExLoverFortuneSimplePageState
                         },
                         onSubmit: (text) {
                           setState(() => _breakupDetail = text);
-                          _scrollToNextSection(6);
+                          _scrollToNextSection(7);
                         },
                       ),
                       if (_breakupDetail != null &&
@@ -503,8 +573,8 @@ class _ExLoverFortuneSimplePageState
 
                 // 8. 현재 감정
                 _buildSection(
-                  key: _sectionKeys[7],
-                  index: 7,
+                  key: _sectionKeys[8],
+                  index: 8,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -519,7 +589,7 @@ class _ExLoverFortuneSimplePageState
                               isSelected: _currentEmotion == card.id,
                               onTap: () {
                                 setState(() => _currentEmotion = card.id);
-                                _scrollToNextSection(7);
+                                _scrollToNextSection(8);
                               },
                             ),
                           )),
@@ -529,8 +599,8 @@ class _ExLoverFortuneSimplePageState
 
                 // 9. 가장 궁금한 것
                 _buildSection(
-                  key: _sectionKeys[8],
-                  index: 8,
+                  key: _sectionKeys[9],
+                  index: 9,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -545,7 +615,7 @@ class _ExLoverFortuneSimplePageState
                               isSelected: _mainCuriosity == card.id,
                               onTap: () {
                                 setState(() => _mainCuriosity = card.id);
-                                _scrollToNextSection(8);
+                                _scrollToNextSection(9);
                               },
                             ),
                           )),
@@ -555,8 +625,8 @@ class _ExLoverFortuneSimplePageState
 
                 // 10. 카톡/대화 내용 (선택)
                 _buildSection(
-                  key: _sectionKeys[9],
-                  index: 9,
+                  key: _sectionKeys[10],
+                  index: 10,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 /// 장소 & 분위기 조언 위젯
@@ -12,82 +13,87 @@ class BlindDateLocationAdvice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
     final locationAdvice = _getLocationAdvice();
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: GlassCard(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return GlassCard(
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.location_on,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '장소 & 분위기',
-                    style: theme.textTheme.headlineSmall,
-                  )
-                ],
+              Icon(
+                Icons.location_on,
+                color: colors.accentSecondary,
+                size: 24,
               ),
-              const SizedBox(height: 16),
-              ...locationAdvice.map((advice) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 4),
-                          width: 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            advice,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '장소 & 분위기',
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
+              )
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+          // 조언 리스트
+          ...locationAdvice.map((advice) => Padding(
+                padding: const EdgeInsets.only(bottom: DSSpacing.md),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.tips_and_updates,
-                      size: 20,
-                      color: theme.colorScheme.primary,
+                    Container(
+                      margin: const EdgeInsets.only(top: 6),
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: colors.accent,
+                      ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: DSSpacing.sm),
                     Expanded(
                       child: Text(
-                        '조용하고 대화하기 좋은 장소를 선택하세요. 너무 시끄럽거나 붐비는 곳은 피하는 것이 좋습니다.',
-                        style: theme.textTheme.bodyMedium,
+                        advice,
+                        style: DSTypography.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
+              )),
+          const SizedBox(height: DSSpacing.sm),
+          // 팁 박스
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.md),
+            decoration: BoxDecoration(
+              color: colors.accent.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.tips_and_updates,
+                  size: 20,
+                  color: colors.accent,
+                ),
+                const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Text(
+                    '조용하고 대화하기 좋은 장소를 선택하세요. 너무 시끄럽거나 붐비는 곳은 피하는 것이 좋습니다.',
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

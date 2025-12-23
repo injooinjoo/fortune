@@ -764,11 +764,11 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       fit: StackFit.expand,
       children: [
         SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(DSSpacing.md),
           child: Column(
             children: [
               // 관상 분석 섹션 (최상단, 블러 처리)
-              if (_faceAnalysisData != null)
+              if (_faceAnalysisData != null) ...[
                 UnifiedBlurWrapper(
                   isBlurred: _isBlurred,
                   blurredSections: _blurredSections,
@@ -780,41 +780,49 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
                     isPartnerMale: _gender == 'female',
                   ),
                 ),
-              if (_faceAnalysisData != null) const SizedBox(height: 16),
+                const SizedBox(height: DSSpacing.md),
+              ],
               _buildMainFortuneContent(),
-              const SizedBox(height: 16),
-              if (_photoAnalysis != null)
+              const SizedBox(height: DSSpacing.md),
+              if (_photoAnalysis != null) ...[
                 BlindDatePhotoAnalysisResult(analysis: _photoAnalysis!),
+                const SizedBox(height: DSSpacing.md),
+              ],
               UnifiedBlurWrapper(
                 isBlurred: _isBlurred,
                 blurredSections: _blurredSections,
                 sectionKey: 'success_prediction',
                 child: BlindDateSuccessPrediction(successRate: successRate),
               ),
+              const SizedBox(height: DSSpacing.md),
               UnifiedBlurWrapper(
                 isBlurred: _isBlurred,
                 blurredSections: _blurredSections,
                 sectionKey: 'first_impression',
                 child: const BlindDateFirstImpression(),
               ),
+              const SizedBox(height: DSSpacing.md),
               UnifiedBlurWrapper(
                 isBlurred: _isBlurred,
                 blurredSections: _blurredSections,
                 sectionKey: 'conversation_topics',
                 child: const BlindDateConversationTopics(),
               ),
+              const SizedBox(height: DSSpacing.md),
               UnifiedBlurWrapper(
                 isBlurred: _isBlurred,
                 blurredSections: _blurredSections,
                 sectionKey: 'outfit',
                 child: BlindDateOutfitRecommendation(meetingType: _meetingType),
               ),
+              const SizedBox(height: DSSpacing.md),
               UnifiedBlurWrapper(
                 isBlurred: _isBlurred,
                 blurredSections: _blurredSections,
                 sectionKey: 'location',
                 child: BlindDateLocationAdvice(meetingType: _meetingType),
               ),
+              const SizedBox(height: DSSpacing.md),
               UnifiedBlurWrapper(
                 isBlurred: _isBlurred,
                 blurredSections: _blurredSections,

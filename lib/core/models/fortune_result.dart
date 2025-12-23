@@ -69,11 +69,23 @@ class FortuneResult {
 
   /// JSON으로부터 FortuneResult 생성
   factory FortuneResult.fromJson(Map<String, dynamic> json) {
+    // summary는 String 또는 Map일 수 있음 (Edge Function별 응답 형식 차이)
+    Map<String, dynamic> parsedSummary;
+    final rawSummary = json['summary'];
+    if (rawSummary is Map<String, dynamic>) {
+      parsedSummary = rawSummary;
+    } else if (rawSummary is String) {
+      // String인 경우 message 필드로 래핑
+      parsedSummary = {'message': rawSummary};
+    } else {
+      parsedSummary = {};
+    }
+
     return FortuneResult(
       id: json['id'] as String?,
       type: json['fortune_type'] as String? ?? json['type'] as String? ?? 'unknown',
       title: json['title'] as String? ?? '운세 결과',
-      summary: json['summary'] as Map<String, dynamic>? ?? {},
+      summary: parsedSummary,
       data: json['fortune_data'] as Map<String, dynamic>? ?? json['data'] as Map<String, dynamic>? ?? {},
       score: json['score'] as int?,
       createdAt: json['created_at'] != null

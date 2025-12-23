@@ -120,71 +120,91 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   /// 테스터 전용: 모든 데이터 초기화 후 온보딩으로 이동
   Future<void> _performFullReset(BuildContext context) async {
+    // ⚠️ 핵심 전략:
+    // 1. 로딩 다이얼로그 사용하지 않음 (Navigator.pop이 GoRouter와 충돌)
+    // 2. 먼저 온보딩으로 이동
+    // 3. 이동 후 백그라운드에서 정리 작업 수행
+
+    debugPrint('🚀 초기화 시작 - 온보딩으로 이동');
+
+    // 1. 먼저 온보딩으로 이동! (모든 정리 작업 전에)
+    if (context.mounted) {
+      context.go('/onboarding/toss-style');
+    }
+
+    // 2. 약간의 지연 후 정리 작업 수행 (네비게이션이 완전히 완료된 후)
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      await _performCleanup();
+    });
+  }
+
+  /// 백그라운드에서 정리 작업 수행 (네비게이션 완료 후)
+  Future<void> _performCleanup() async {
     try {
-      AppDialog.showLoading(context: context, message: '데이터 초기화 중...');
+      debugPrint('🧹 정리 작업 시작...');
 
       // 1. Supabase 로그아웃
-      await supabase.auth.signOut();
+      try {
+        await supabase.auth.signOut();
+        debugPrint('  ✓ Supabase 로그아웃');
+      } catch (e) {
+        debugPrint('  ✗ SignOut error: $e');
+      }
 
-      // 2. Secure Storage 삭제 (인증 토큰)
-      await SecureStorage.deleteAll();
+      // 2. Secure Storage 삭제
+      try {
+        await SecureStorage.deleteAll();
+        debugPrint('  ✓ SecureStorage 삭제');
+      } catch (e) {
+        debugPrint('  ✗ SecureStorage error: $e');
+      }
 
-      // 3. SharedPreferences 삭제 (사용자 프로필, 운세 기록 등)
-      await _storageService.clearAll();
+      // 3. SharedPreferences 삭제
+      try {
+        await _storageService.clearAll();
+        debugPrint('  ✓ SharedPreferences 삭제');
+      } catch (e) {
+        debugPrint('  ✗ Storage error: $e');
+      }
 
       // 4. Hive Cache 삭제
       try {
         final cacheService = CacheService();
         await cacheService.clearAllCache();
+        debugPrint('  ✓ Hive Cache 삭제');
       } catch (e) {
-        debugPrint('Cache clear error (non-critical): $e');
+        debugPrint('  ✗ Cache error: $e');
       }
 
       // 5. Performance Cache 삭제
       try {
         final performanceCacheService = PerformanceCacheService();
         await performanceCacheService.clearAll();
+        debugPrint('  ✓ Performance Cache 삭제');
       } catch (e) {
-        debugPrint('Performance cache clear error (non-critical): $e');
+        debugPrint('  ✗ Performance cache error: $e');
       }
 
       // 6. Widget data 삭제
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('unified_fortune_widget_data');
+        debugPrint('  ✓ Widget data 삭제');
       } catch (e) {
-        debugPrint('Widget data clear error (non-critical): $e');
+        debugPrint('  ✗ Widget data error: $e');
       }
 
       // 7. Debug Premium Override 해제
       try {
         await DebugPremiumService.setOverride(null);
+        debugPrint('  ✓ Debug Premium 해제');
       } catch (e) {
-        debugPrint('Debug premium clear error (non-critical): $e');
+        debugPrint('  ✗ Debug premium error: $e');
       }
 
-      // 로딩 다이얼로그 닫기
-      if (context.mounted) {
-        AppDialog.hideLoading(context);
-      }
-
-      // 8. 온보딩으로 이동
-      if (context.mounted) {
-        context.go('/onboarding/toss-style');
-      }
+      debugPrint('✅ 모든 정리 작업 완료');
     } catch (e) {
-      debugPrint('Reset error: $e');
-      if (context.mounted) {
-        try {
-          AppDialog.hideLoading(context);
-        } catch (_) {}
-
-        await AppDialog.showError(
-          context: context,
-          title: '초기화 실패',
-          message: '데이터 초기화 중 오류가 발생했습니다.\n다시 시도해주세요.',
-        );
-      }
+      debugPrint('❌ Cleanup error: $e');
     }
   }
 

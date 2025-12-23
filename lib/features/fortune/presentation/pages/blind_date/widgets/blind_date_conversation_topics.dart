@@ -8,7 +8,7 @@ class BlindDateConversationTopics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
 
     final topics = [
       {
@@ -27,116 +27,129 @@ class BlindDateConversationTopics extends StatelessWidget {
 
     final avoidTopics = ['전 애인', '정치/종교', '연봉', '결혼 압박', '부정적인 이야기'];
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.chat_bubble_outline,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '대화 주제 추천',
-                  style: theme.textTheme.headlineSmall,
-                )
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...topics.map((topic) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color:
-                              theme.colorScheme.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          topic['category'] as String,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: (topic['items'] as List)
-                            .map((item) => Chip(
-                                  label: Text(
-                                    item as String,
-                                    style: theme.textTheme.bodySmall,
-                                  ),
-                                  backgroundColor: theme.colorScheme.surface
-                                      .withValues(alpha: 0.8),
-                                  side: BorderSide(
-                                    color: theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.2),
-                                  ),
-                                ))
-                            .toList(),
-                      ),
-                    ],
-                  ),
-                )),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: DSColors.error.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: DSColors.error.withValues(alpha: 0.3),
-                ),
+    return GlassCard(
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
+            children: [
+              Icon(
+                Icons.chat_bubble_outline,
+                color: colors.accent,
+                size: 24,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.warning_amber_rounded,
-                        size: 16,
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '대화 주제 추천',
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+          // 주제 카테고리들
+          ...topics.map((topic) => Padding(
+                padding: const EdgeInsets.only(bottom: DSSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colors.accent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.full),
+                      ),
+                      child: Text(
+                        topic['category'] as String,
+                        style: DSTypography.bodyMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colors.accent,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: DSSpacing.sm),
+                    Wrap(
+                      spacing: DSSpacing.sm,
+                      runSpacing: DSSpacing.sm,
+                      children: (topic['items'] as List)
+                          .map((item) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: colors.surface,
+                                  borderRadius: BorderRadius.circular(DSRadius.full),
+                                  border: Border.all(
+                                    color: colors.border,
+                                  ),
+                                ),
+                                child: Text(
+                                  item as String,
+                                  style: DSTypography.bodySmall.copyWith(
+                                    color: colors.textPrimary,
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                ),
+              )),
+          const SizedBox(height: DSSpacing.sm),
+          // 피해야 할 주제
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.md),
+            decoration: BoxDecoration(
+              color: DSColors.error.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
+              border: Border.all(
+                color: DSColors.error.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.warning_amber_rounded,
+                      size: 16,
+                      color: DSColors.error,
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Text(
+                      '피해야 할 주제',
+                      style: DSTypography.bodyMedium.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: DSColors.error,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '피해야 할 주제',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: DSColors.error,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: avoidTopics
-                        .map((topic) => Text(
-                              '• $topic',
-                              style: theme.textTheme.bodySmall,
-                            ))
-                        .toList(),
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                Wrap(
+                  spacing: DSSpacing.sm,
+                  runSpacing: DSSpacing.sm,
+                  children: avoidTopics
+                      .map((topic) => Text(
+                            '• $topic',
+                            style: DSTypography.bodySmall.copyWith(
+                              color: colors.textPrimary,
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

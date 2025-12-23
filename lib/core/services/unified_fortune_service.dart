@@ -249,15 +249,47 @@ class UnifiedFortuneService {
 
   /// CachedFortuneResult → FortuneResult 변환
   FortuneResult _convertCachedToFortuneResult(CachedFortuneResult cached) {
+    // Edge Function 응답 구조에 따라 필드명이 다를 수 있음
+    // - score 또는 overallScore
+    // - title이 없을 수 있음
+    final score = cached.resultData['score'] ?? cached.resultData['overallScore'];
+    final title = cached.resultData['title'] as String? ?? _getDefaultTitle(cached.fortuneType);
+
     return FortuneResult.fromJson({
       'id': cached.id,
       'type': cached.fortuneType,
       'data': cached.resultData,
-      'score': cached.resultData['score'],
-      'title': cached.resultData['title'],
+      'score': score is num ? score.toInt() : null,
+      'title': title,
       'summary': cached.resultData['summary'],
       'created_at': cached.createdAt.toIso8601String(),
     });
+  }
+
+  /// 운세 타입별 기본 제목
+  String _getDefaultTitle(String fortuneType) {
+    const titles = {
+      'avoid-people': '피해야 할 사람',
+      'avoid_people': '피해야 할 사람',
+      'daily': '오늘의 운세',
+      'tarot': '타로 운세',
+      'mbti': 'MBTI 운세',
+      'love': '연애 운세',
+      'career': '직장 운세',
+      'health': '건강 운세',
+      'investment': '투자 운세',
+      'exam': '시험 운세',
+      'talent': '재능 운세',
+      'dream': '꿈 해몽',
+      'face-reading': '관상 분석',
+      'compatibility': '궁합 운세',
+      'blind-date': '소개팅 운세',
+      'ex-lover': '전 애인 운세',
+      'lucky-series': '럭키 시리즈',
+      'fortune-celebrity': '연예인 운세',
+      'fortune-pet': '반려동물 운세',
+    };
+    return titles[fortuneType] ?? '운세 결과';
   }
 
   /// ==================== Step 1: 중복 체크 ====================

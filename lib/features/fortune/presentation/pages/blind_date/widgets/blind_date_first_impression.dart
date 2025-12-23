@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 /// 첫인상 가이드 위젯
@@ -7,7 +8,7 @@ class BlindDateFirstImpression extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
 
     final impressionTips = [
       {
@@ -32,74 +33,73 @@ class BlindDateFirstImpression extends StatelessWidget {
       }
     ];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GlassCard(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return GlassCard(
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.star_outline,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '첫인상 가이드',
-                    style: theme.textTheme.headlineSmall,
-                  )
-                ],
+              Icon(
+                Icons.star_outline,
+                color: colors.accentTertiary,
+                size: 24,
               ),
-              const SizedBox(height: 16),
-              ...impressionTips.map((tip) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color:
-                                theme.colorScheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            tip['icon'] as IconData,
-                            size: 20,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                tip['tip'] as String,
-                                style: theme.textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                tip['detail'] as String,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.7),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '첫인상 가이드',
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                ),
+              )
             ],
           ),
-        ),
+          const SizedBox(height: DSSpacing.md),
+          // 팁 리스트
+          ...impressionTips.map((tip) => Padding(
+                padding: const EdgeInsets.only(bottom: DSSpacing.md),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(DSSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: colors.accent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.sm),
+                      ),
+                      child: Icon(
+                        tip['icon'] as IconData,
+                        size: 20,
+                        color: colors.accent,
+                      ),
+                    ),
+                    const SizedBox(width: DSSpacing.iconTextGap),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            tip['tip'] as String,
+                            style: DSTypography.bodyLarge.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: DSSpacing.xs),
+                          Text(
+                            tip['detail'] as String,
+                            style: DSTypography.bodyMedium.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ],
       ),
     );
   }

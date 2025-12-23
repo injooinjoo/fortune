@@ -413,6 +413,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
         SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(20, 20, 20, _isBlurred ? 120 : 40),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildMainResultCard(fortune, score, data, colors),
               const SizedBox(height: 20),

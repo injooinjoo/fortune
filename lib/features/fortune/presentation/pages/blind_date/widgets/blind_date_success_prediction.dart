@@ -13,84 +13,89 @@ class BlindDateSuccessPrediction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: GlassCard(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
+    return GlassCard(
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      child: Column(
+        children: [
+          // 헤더
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.favorite,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '소개팅 성공 예측',
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                ],
+              Icon(
+                Icons.favorite,
+                color: colors.accentSecondary,
+                size: 24,
               ),
-              const SizedBox(height: 24),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: CircularProgressIndicator(
-                      value: successRate / 100,
-                      strokeWidth: 20,
-                      backgroundColor:
-                          theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        _getSuccessColor(successRate),
-                      ),
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        '$successRate%',
-                        style: theme.textTheme.displayLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: _getSuccessColor(successRate),
-                        ),
-                      ),
-                      Text(
-                        _getSuccessMessage(successRate),
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      theme.colorScheme.primary.withValues(alpha: 0.1),
-                      theme.colorScheme.secondary.withValues(alpha: 0.1),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  _getSuccessAdvice(successRate),
-                  style: theme.textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '소개팅 성공 예측',
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: DSSpacing.lg),
+          // 원형 프로그레스
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 200,
+                height: 200,
+                child: CircularProgressIndicator(
+                  value: successRate / 100,
+                  strokeWidth: 20,
+                  backgroundColor: colors.textPrimary.withValues(alpha: 0.1),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    _getSuccessColor(successRate),
+                  ),
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$successRate%',
+                    style: DSTypography.displayLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: _getSuccessColor(successRate),
+                    ),
+                  ),
+                  Text(
+                    _getSuccessMessage(successRate),
+                    style: DSTypography.bodyLarge.copyWith(
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.lg),
+          // 조언 컨테이너
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.md),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  colors.accent.withValues(alpha: 0.1),
+                  colors.accentSecondary.withValues(alpha: 0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(DSRadius.md),
+            ),
+            child: Text(
+              _getSuccessAdvice(successRate),
+              style: DSTypography.bodyLarge.copyWith(
+                color: colors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
       ),
     );
   }

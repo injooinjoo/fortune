@@ -8,7 +8,7 @@ class BlindDateDosDonts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
 
     final dos = [
       '시간 약속 지키기 (10분 전 도착)',
@@ -26,161 +26,175 @@ class BlindDateDosDonts extends StatelessWidget {
       '결론 급하게 내리지 않기'
     ];
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-      child: GlassCard(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return GlassCard(
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.rule,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'DO\'s & DON\'Ts',
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                ],
+              Icon(
+                Icons.rule,
+                color: colors.accent,
+                size: 24,
               ),
-              const SizedBox(height: 16),
-              // DO's Section
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: DSColors.success.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: DSColors.success.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.check_circle,
-                          size: 20,
-                          color: DSColors.success,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'DO\'s - 꼭 하세요',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: DSColors.success,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    ...dos.map((item) => Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('• '),
-                              Expanded(
-                                child: Text(
-                                  item,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              // DON'Ts Section
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: DSColors.error.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: DSColors.error.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.cancel,
-                          size: 20,
-                          color: DSColors.error,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'DON\'Ts - 피하세요',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: DSColors.error,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    ...donts.map((item) => Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('• '),
-                              Expanded(
-                                child: Text(
-                                  item,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Final Message
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      DSColors.warning.withValues(alpha: 0.1),
-                      DSColors.warning.withValues(alpha: 0.15)
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.auto_awesome,
-                      color: DSColors.warning,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        '가장 중요한 것은 진실된 자신의 모습을 보여주는 것입니다. 행운을 빕니다!',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                'DO\'s & DON\'Ts',
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: DSSpacing.md),
+          // DO's Section
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.md),
+            decoration: BoxDecoration(
+              color: DSColors.success.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(DSRadius.md),
+              border: Border.all(
+                color: DSColors.success.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.check_circle,
+                      size: 20,
+                      color: DSColors.success,
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Text(
+                      'DO\'s - 꼭 하세요',
+                      style: DSTypography.bodyLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: DSColors.success,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                ...dos.map((item) => Padding(
+                      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '• ',
+                            style: DSTypography.bodyMedium.copyWith(
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              item,
+                              style: DSTypography.bodyMedium.copyWith(
+                                color: colors.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
+            ),
+          ),
+          const SizedBox(height: DSSpacing.md),
+          // DON'Ts Section
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.md),
+            decoration: BoxDecoration(
+              color: DSColors.error.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(DSRadius.md),
+              border: Border.all(
+                color: DSColors.error.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.cancel,
+                      size: 20,
+                      color: DSColors.error,
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Text(
+                      'DON\'Ts - 피하세요',
+                      style: DSTypography.bodyLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: DSColors.error,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                ...donts.map((item) => Padding(
+                      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '• ',
+                            style: DSTypography.bodyMedium.copyWith(
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              item,
+                              style: DSTypography.bodyMedium.copyWith(
+                                color: colors.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
+            ),
+          ),
+          const SizedBox(height: DSSpacing.md),
+          // Final Message
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.md),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  DSColors.warning.withValues(alpha: 0.1),
+                  DSColors.warning.withValues(alpha: 0.15)
+                ],
+              ),
+              borderRadius: BorderRadius.circular(DSRadius.md),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.auto_awesome,
+                  color: DSColors.warning,
+                ),
+                const SizedBox(width: DSSpacing.md),
+                Expanded(
+                  child: Text(
+                    '가장 중요한 것은 진실된 자신의 모습을 보여주는 것입니다. 행운을 빕니다!',
+                    style: DSTypography.bodyLarge.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

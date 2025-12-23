@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 /// 스타일링 추천 위젯
@@ -12,112 +13,114 @@ class BlindDateOutfitRecommendation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
     final outfitStyle = _getOutfitStyle();
-    final colors = _getLuckyColors();
+    final luckyColors = _getLuckyColors();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GlassCard(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return GlassCard(
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.checkroom,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '스타일링 추천',
-                    style: theme.textTheme.headlineSmall,
-                  )
+              Icon(
+                Icons.checkroom,
+                color: colors.accent,
+                size: 24,
+              ),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '스타일링 추천',
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+          // 추천 스타일
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.md),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  colors.accent.withValues(alpha: 0.05),
+                  colors.accentSecondary.withValues(alpha: 0.05)
                 ],
               ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      theme.colorScheme.primary.withValues(alpha: 0.05),
-                      theme.colorScheme.secondary.withValues(alpha: 0.05)
-                    ],
+              borderRadius: BorderRadius.circular(DSRadius.md),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '추천 스타일',
+                  style: DSTypography.bodyLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.textPrimary,
                   ),
-                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '추천 스타일',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      outfitStyle,
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ],
+                const SizedBox(height: DSSpacing.sm),
+                Text(
+                  outfitStyle,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                  ),
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: DSSpacing.md),
+          // 행운의 색상
+          Row(
+            children: [
+              Icon(
+                Icons.palette,
+                size: 20,
+                color: colors.accent,
               ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Icon(
-                    Icons.palette,
-                    size: 20,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '행운의 색상',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: colors
-                    .map((color) => Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: color['color'],
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.2),
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                color['name'],
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color:
-                                      (color['color'] as Color).computeLuminance() >
-                                              0.5
-                                          ? Colors.black
-                                          : Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ))
-                    .toList(),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '행운의 색상',
+                style: DSTypography.bodyLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colors.textPrimary,
+                ),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: DSSpacing.sm),
+          Row(
+            children: luckyColors
+                .map((colorData) => Padding(
+                      padding: const EdgeInsets.only(right: DSSpacing.sm),
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: colorData['color'] as Color,
+                          borderRadius: BorderRadius.circular(DSRadius.sm),
+                          border: Border.all(
+                            color: colors.border,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            colorData['name'] as String,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: (colorData['color'] as Color).computeLuminance() > 0.5
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ))
+                .toList(),
+          ),
+        ],
       ),
     );
   }

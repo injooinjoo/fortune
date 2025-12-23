@@ -163,32 +163,46 @@ class LottoNumbersCard extends StatelessWidget {
               : ObangseokColors.meok.withValues(alpha: 0.1),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          // 5개 공개 번호
-          ...lottoResult.visibleNumbers.map((number) => _buildNumberBall(
-                number,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 화면 너비에 따라 볼 크기 동적 계산
+          // 6개 볼 + 간격(5개 x 8px) + 패딩 여유
+          final availableWidth = constraints.maxWidth - 16; // 좌우 패딩
+          final maxBallSize = (availableWidth - 40) / 6; // 6개 볼, 간격 고려
+          final ballSize = maxBallSize.clamp(36.0, 48.0); // 최소 36, 최대 48
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // 5개 공개 번호
+              ...lottoResult.visibleNumbers.map((number) => _buildNumberBall(
+                    number,
+                    isDark,
+                    isLocked: false,
+                    size: ballSize,
+                  )),
+              // 1개 잠금 번호
+              _buildNumberBall(
+                lottoResult.lockedNumber,
                 isDark,
-                isLocked: false,
-              )),
-          // 1개 잠금 번호
-          _buildNumberBall(
-            lottoResult.lockedNumber,
-            isDark,
-            isLocked: !isPremiumUnlocked,
-          ),
-        ],
+                isLocked: !isPremiumUnlocked,
+                size: ballSize,
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildNumberBall(int number, bool isDark, {required bool isLocked}) {
+  Widget _buildNumberBall(int number, bool isDark, {required bool isLocked, double size = 48}) {
     final ballColor = Color(LottoNumberGenerator.getNumberColor(number));
+    // 폰트 크기도 볼 크기에 비례하여 조정
+    final fontSize = size * 0.38;
 
     final ball = Container(
-      width: 48,
-      height: 48,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -213,6 +227,7 @@ class LottoNumbersCard extends StatelessWidget {
           style: TypographyUnified.numberSmall.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w700,
+            fontSize: fontSize,
           ),
         ),
       ),
@@ -231,8 +246,8 @@ class LottoNumbersCard extends StatelessWidget {
             ),
             // 자물쇠 오버레이
             Container(
-              width: 48,
-              height: 48,
+              width: size,
+              height: size,
               decoration: BoxDecoration(
                 color: ObangseokColors.hwang.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
@@ -241,10 +256,10 @@ class LottoNumbersCard extends StatelessWidget {
                   width: 2,
                 ),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.lock_rounded,
                 color: ObangseokColors.hwang,
-                size: 20,
+                size: size * 0.42,
               ),
             ),
           ],
