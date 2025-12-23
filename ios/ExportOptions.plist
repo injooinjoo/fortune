@@ -3,23 +3,14 @@
 <plist version="1.0">
 <dict>
     <key>method</key>
-    <string>app-store</string>
-    <key>teamID</key>
-    <string>YOUR_TEAM_ID</string>
-    <key>uploadBitcode</key>
-    <true/>
-    <key>compileBitcode</key>
+    <string>app-store-connect</string>
+    <key>destination</key>
+    <string>upload</string>
+    <key>signingStyle</key>
+    <string>automatic</string>
+    <key>uploadSymbols</key>
     <true/>
     <key>stripSwiftSymbols</key>
     <true/>
-    <key>uploadSymbols</key>
-    <true/>
-    <key>signingStyle</key>
-    <string>automatic</string>
-    <key>provisioningProfiles</key>
-    <dict>
-        <key>com.beyond.fortune</key>
-        <string>Fortune App Store Distribution</string>
-    </dict>
 </dict>
 </plist>
