@@ -14,7 +14,7 @@
 | 버그/에러 분석 | Sequential | error-resolver | /sc:analyze-error | 01 |
 | 테스트 작성 | Playwright | testing-architect | /sc:generate-test | - |
 | 아키텍처 검토 | Sequential | flutter-architect | /sc:validate-arch | 02 |
-| E2E QA | Playwright | playwright-qa-agent | /sc:auto-qa | 16 |
+| E2E QA | Playwright | playwright-qa-agent | /sc:auto-qa | 13 |
 | JIRA 작업 | JIRA | - | - | 07 |
 | Figma 연동 | Figma | toss-design-guardian | - | 03 |
 
@@ -66,7 +66,7 @@ const llm = LLMFactory.createFromConfig('fortune-type')
 |------|------|----------|
 | **1 (항상)** | 이 파일 (CLAUDE.md) | 모든 요청 |
 | **2 (키워드)** | 01-06 | 개발 관련 키워드 시 |
-| **3 (요청)** | 07-16 | 명시적 요청 시만 |
+| **3 (요청)** | 07-16 (13: 자동QA, 14: API최적화, 15: 사주용어, 16: 타이포) | 명시적 요청 시만 |
 
 ### 문서 참조
 | 문서 | 트리거 키워드 |
@@ -100,7 +100,7 @@ const llm = LLMFactory.createFromConfig('fortune-type')
 "수정 완료! QA 테스트할까요?" (localhost:3000 실행 중이면)
 ```
 
-상세: [16-auto-qa-system.md](.claude/docs/16-auto-qa-system.md)
+상세: [13-auto-qa-system.md](.claude/docs/13-auto-qa-system.md)
 
 ---
 

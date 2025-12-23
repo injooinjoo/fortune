@@ -25,6 +25,7 @@ Fortune App의 디자인 시스템은 **한국 전통 미학 (Korean Traditional
 | 문서 | 설명 | 주요 내용 |
 |------|------|----------|
 | [KOREAN_TALISMAN_DESIGN_GUIDE.md](./KOREAN_TALISMAN_DESIGN_GUIDE.md) | 부적/민화 디자인 가이드 | 민화 에셋, 전통 문양 |
+| [TALISMAN_GENERATION_INTEGRATION.md](./TALISMAN_GENERATION_INTEGRATION.md) | 부적 생성 시스템 연동 | AI 부적 생성, 통합 가이드 |
 | [UI_UX_MASTER_POLICY.md](./UI_UX_MASTER_POLICY.md) | UI/UX 마스터 정책 | 인터랙션, 접근성 |
 | [BLUR_SYSTEM_GUIDE.md](./BLUR_SYSTEM_GUIDE.md) | 블러 시스템 가이드 | 프리미엄 콘텐츠 처리 |
 
@@ -34,7 +35,7 @@ Fortune App의 디자인 시스템은 **한국 전통 미학 (Korean Traditional
 
 | 문서 | 설명 | 참조 시점 |
 |------|------|----------|
-| [UNIFIED_FONT_SYSTEM.md](./UNIFIED_FONT_SYSTEM.md) | 통합 폰트 시스템 | 폰트 설정 시 |
+| [FONT_SYSTEM_GUIDE.md](./FONT_SYSTEM_GUIDE.md) | 통합 폰트 시스템 | 폰트 설정 시 |
 | [WIDGET_ARCHITECTURE_DESIGN.md](./WIDGET_ARCHITECTURE_DESIGN.md) | 위젯 아키텍처 | 위젯 설계 시 |
 | [FORTUNE_INPUT_ACCORDION_STANDARD.md](./FORTUNE_INPUT_ACCORDION_STANDARD.md) | 입력 아코디언 표준 | 입력 폼 구현 시 |
 
@@ -54,9 +55,9 @@ Fortune App의 디자인 시스템은 **한국 전통 미학 (Korean Traditional
 
 | 문서 | 설명 | 상태 |
 |------|------|------|
-| [FONT_MIGRATION_GUIDE.md](./FONT_MIGRATION_GUIDE.md) | 폰트 마이그레이션 가이드 | 참조용 |
-| [FONT_MIGRATION_PLAN.md](./FONT_MIGRATION_PLAN.md) | 폰트 마이그레이션 계획 | 참조용 |
 | [TYPOGRAPHY_MIGRATION_GUIDE.md](./TYPOGRAPHY_MIGRATION_GUIDE.md) | 타이포그래피 마이그레이션 | 참조용 |
+
+> **Note**: 폰트 관련 문서들(FONT_MIGRATION_GUIDE, FONT_MIGRATION_PLAN, UNIFIED_FONT_SYSTEM)은 [FONT_SYSTEM_GUIDE.md](./FONT_SYSTEM_GUIDE.md)로 통합되었습니다.
 
 ---
 
@@ -147,8 +148,8 @@ DESIGN_SYSTEM.md (최상위 통합 문서)
     │
     ├── UI_UX_MASTER_POLICY.md (인터랙션/접근성)
     │
-    ├── UNIFIED_FONT_SYSTEM.md (폰트)
-    │       └── GowunBatang, ZenSerif
+    ├── FONT_SYSTEM_GUIDE.md (폰트)
+    │       └── GowunBatang, NotoSansKR
     │
     └── TOSS_DESIGN_SYSTEM.md (보조 참조)
             └── 한국 전통 미학 우선
@@ -167,10 +168,19 @@ DESIGN_SYSTEM.md (최상위 통합 문서)
 
 ---
 
+## 아카이브
+
+완료된 작업 또는 히스토리 참조용 문서는 `_archive/` 폴더에 보관됩니다:
+- `LUCKY_POUCH_IMAGE_PROMPTS.md` - 복주머니 이미지 생성 프롬프트 (생성 완료)
+
+---
+
 ## 업데이트 이력
 
 | 날짜 | 변경 내용 |
 |------|----------|
+| 2025-12 | TALISMAN_GENERATION_INTEGRATION 문서 연결 |
+| 2025-12 | LUCKY_POUCH_IMAGE_PROMPTS → _archive/ 이동 |
 | 2024-12 | 한국 전통 미학 기반 디자인 시스템 v2.0 도입 |
 | 2024-12 | Toss Design System → 보조 참조로 변경 |
 | 2024-12 | HanjiCard, ObangseokColors 문서화 완료 |

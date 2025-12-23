@@ -38,7 +38,7 @@ docs/
 - [UI/UX 마스터 정책](design/UI_UX_MASTER_POLICY.md) - UI/UX 개발 원칙 및 정책
 - [UI/UX 확장 로드맵](design/UI_UX_EXPANSION_ROADMAP.md) - 향후 UI/UX 개선 계획
 - [위젯 아키텍처](design/WIDGET_ARCHITECTURE_DESIGN.md) - Flutter 위젯 설계 패턴
-- [폰트 마이그레이션 가이드](design/FONT_MIGRATION_GUIDE.md) - 폰트 시스템 마이그레이션 절차
+- [폰트 시스템 가이드](design/FONT_SYSTEM_GUIDE.md) - 통합 폰트 시스템 (마이그레이션 포함)
 
 ---
 
@@ -71,10 +71,25 @@ docs/
 
 ## 🚢 배포 & 보안 (deployment/)
 
+### 핵심 가이드
 - [Android 배포 요약](deployment/ANDROID_DEPLOYMENT_SUMMARY.md) - 안드로이드 배포 체크리스트
 - [iOS 런칭 퀵스타트](deployment/IOS_LAUNCH_QUICKSTART.md) - iOS 런칭 핵심 요약
 - [앱 스토어 가이드](deployment/APP_STORE_GUIDE.md) ⭐️ - App Store Connect 및 Google Play Console
 - [보안 체크리스트](deployment/SECURITY_CHECKLIST.md) - 배포 전 보안 점검
+
+### iOS 설정 & 운영
+- [Apple Capabilities 설정](deployment/APPLE_CAPABILITIES_SETUP.md) - iOS 기능 권한 설정
+- [Xcode 설정 가이드](../ios/FortuneWatch/XCODE_SETUP_GUIDE.md) - Xcode/Watch 프로젝트 설정
+
+### 앱스토어 에셋 & 제출
+- [앱스토어 에셋 가이드](deployment/APP_STORE_ASSETS_GUIDE.md) - 스크린샷, 아이콘 가이드
+- [스크린샷 가이드](deployment/SCREENSHOT_GUIDE.md) - 스토어 스크린샷 생성
+- [앱스토어 제출 정보](deployment/APP_STORE_SUBMISSION_INFO.md) - 제출 체크리스트
+- [앱스토어 제품 디자인](deployment/APP_STORE_PRODUCTS_DESIGN.md) - 인앱 상품 디자인
+- [Google Play 제출](deployment/GOOGLE_PLAY_SUBMISSION_GUIDE.md) - 구글 플레이 제출 가이드
+
+### 보안 & 키 관리
+- [API 키 로테이션 가이드](deployment/API_KEY_ROTATION_GUIDE.md) - API 키 보안 관리
 
 ---
 
@@ -85,11 +100,17 @@ docs/
 - [Git + JIRA 워크플로우](development/GIT_JIRA_WORKFLOW.md) - Git과 JIRA 통합
 - [JIRA 설정](development/JIRA_CONFIG.md) - JIRA 프로젝트 설정
 - [UX 요청 처리 가이드](development/UX_REQUEST_GUIDE.md) - UX 피드백 자동 처리
-- [실시간 에러 모니터링](development/RUNTIME_ERROR_MONITORING.md) ⭐️ - 런타임 에러 자동 JIRA 등록
+
+> **Note**: 일부 개발 추적 문서들(ALL_FILES_LIST, DEPENDENCY_TRACE 등)은 `development/_archive/`로 이동되었습니다.
 
 ### MCP & Agent
 - [MCP 설정 가이드](development/MCP_SETUP_GUIDE.md) - Model Context Protocol 서버 설정
-- [Agent 사양](development/AGENTS.md) - Claude Agent 상세 사양
+
+### Fortune API 개발
+- [API 개발 체크리스트](development/FORTUNE_API_DEVELOPMENT_CHECKLIST.md) - Fortune API 개발 가이드
+- [표준화 가이드](development/FORTUNE_STANDARDIZATION_GUIDE.md) - 운세 기능 표준화
+- [상태 매핑](development/FORTUNE_STATUS_MAPPING.md) - 운세 상태 코드 매핑
+- [UX 개선](development/FORTUNE_UX_IMPROVEMENTS.md) - 운세 UX 개선 가이드
 
 ---
 
@@ -102,6 +123,7 @@ docs/
 ## ⚖️ 법률 & 정책 (legal/)
 
 - [개인정보 처리방침](legal/PRIVACY_POLICY_CONTENT.md) - 앱 개인정보 처리방침 전문
+- [서비스 이용약관](legal/TERMS_OF_SERVICE_CONTENT.md) - 서비스 이용약관 전문
 
 ---
 
@@ -159,6 +181,13 @@ docs/
 ---
 
 ## 📝 문서 정리 히스토리
+
+### 2025-12-22: 2차 문서 정리 (Orphan/중복 해소)
+- **Orphan 해소**: 21개 고아 문서를 인덱스에 연결
+- **중복 제거**: IOS_LAUNCH_GUIDE, APP_STORE_FINAL_CHECKLIST 등 중복 문서 삭제
+- **아카이브**: LUCKY_POUCH_IMAGE_PROMPTS → design/_archive/
+- **이동**: APP_STORE_PRODUCTS_DESIGN → deployment/
+- **섹션 확장**: deployment, development, legal 섹션 확장
 
 ### 2025-12-07: 문서 정리 및 구조화
 - **루트 정리**: 루트에 흩어져 있던 `plan.md` 및 가이드 파일들을 관련 폴더로 이동

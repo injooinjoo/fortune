@@ -144,6 +144,16 @@ conditions = {
 }
 ```
 
+### 작명 운세 (Naming)
+```dart
+conditions = {
+  'mother_saju': mother.sajuData,
+  'expected_birth_date': expectedDate,
+  'baby_gender': 'male' | 'female' | 'unknown',
+  'family_name': familyName,
+}
+```
+
 ---
 
 ## 프리미엄 & 광고 시스템

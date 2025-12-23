@@ -1,6 +1,6 @@
 # Fortune App Deployment Complete Guide
 
-**Last Updated**: January 2025
+**Last Updated**: December 2025
 **Purpose**: Comprehensive deployment guide for Android and iOS app stores
 
 ---
@@ -20,17 +20,19 @@
 
 ## 1. Pre-Deployment Security Checklist
 
-### Critical Security Actions Required
+### API Key Security
 
-**IMPORTANT**: Do not deploy until all exposed API keys are rotated!
+배포 전 모든 API 키가 올바르게 관리되고 있는지 확인하세요.
 
-| Service | Status | Action Required |
-|---------|--------|-----------------|
-| OpenAI | ⚠️ Exposed | Regenerate at [platform.openai.com](https://platform.openai.com/api-keys) |
-| Supabase Service Role | ⚠️ Exposed | Regenerate in Supabase Dashboard > Settings > API |
-| Upstash Redis | ⚠️ Exposed | Regenerate at [console.upstash.com](https://console.upstash.com) |
-| Figma | ⚠️ Exposed | Regenerate in Figma settings |
-| Kakao | ⚠️ Exposed | Regenerate in Kakao Developer Console |
+| Service | 관리 위치 | 키 로테이션 주기 |
+|---------|----------|----------------|
+| OpenAI | [platform.openai.com](https://platform.openai.com/api-keys) | 90일 권장 |
+| Supabase | Supabase Dashboard > Settings > API | 90일 권장 |
+| Upstash Redis | [console.upstash.com](https://console.upstash.com) | 90일 권장 |
+| Figma | Figma 개인 설정 | 필요시 |
+| Kakao | Kakao Developer Console | 연간 |
+
+> **참고**: API 키 로테이션 상세 가이드는 [API_KEY_ROTATION_GUIDE.md](./API_KEY_ROTATION_GUIDE.md)를 참조하세요.
 
 ### Security Best Practices
 

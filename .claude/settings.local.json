@@ -138,6 +138,14 @@
       "// === MCP Brave Search (auto-allow all) ===",
       "mcp__brave-search__brave_web_search",
       "mcp__brave-search__brave_local_search",
+      "// === MCP TestSprite (auto-allow all) ===",
+      "mcp__TestSprite__testsprite_bootstrap_tests",
+      "mcp__TestSprite__testsprite_generate_code_summary",
+      "mcp__TestSprite__testsprite_generate_standardized_prd",
+      "mcp__TestSprite__testsprite_generate_frontend_test_plan",
+      "mcp__TestSprite__testsprite_generate_backend_test_plan",
+      "mcp__TestSprite__testsprite_generate_code_and_execute",
+      "mcp__TestSprite__testsprite_rerun_tests",
       "// === Node/NPM ===",
       "Bash(node:*)",
       "Bash(npm:*)",
@@ -281,7 +289,30 @@
       "Bash($HOME/Library/Android/sdk/platform-tools/adb start-server)",
       "Bash($HOME/Library/Android/sdk/platform-tools/adb devices)",
       "Bash(npx supabase functions deploy:*)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(git -C /Users/jacobmac/Desktop/Dev/fortune status --porcelain)",
+      "Bash(git -C /Users/jacobmac/Desktop/Dev/fortune diff --name-only)",
+      "Bash(flutter emulators:*)",
+      "Bash(./gradlew compileDebugKotlin:*)",
+      "Bash(# 에뮬레이터 캐시 정리 adb -s emulator-5554 shell pm clear com.beyond.fortune || true adb -s emulator-5554 shell pm uninstall com.beyond.fortune || true # 다른 앱 캐시 정리 adb -s emulator-5554 shell pm list packages -3)",
+      "Bash(xcrun simctl io:*)",
+      "Bash(supabase projects list:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nrefactor: 폰트 사이즈 정책 정리 및 디바이스 스케일 연동\n\n- 타이포그래피 정책 문서 작성 \\(17-typography-policy.md\\)\n- FontSizeSystem에 디바이스 폰트 스케일 연동 추가 \\(최대 1.5배 제한\\)\n- 49개 하드코딩된 fontSize에 예외 주석 추가\n  - 초소형 UI 요소 \\(8-13pt\\): 배지, 태그, 라벨\n  - 이모지 \\(12-40pt\\)\n  - 전통 스타일 \\(14-24pt\\): 한자, 사주\n  - 동적 크기 계산: size * factor\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(open -a \"Transporter\" /Users/jacobmac/Desktop/Dev/fortune/build/ios/ipa/)",
+      "Bash(du:*)",
+      "Bash(file:*)",
+      "Bash(cwebp -version:*)",
+      "Bash(flutter build ios:*)",
+      "Bash(__NEW_LINE__ echo \"=== CHECKING LINKS IN docs/design/README.md ===\")",
+      "Bash(for link in DESIGN_SYSTEM.md KOREAN_TALISMAN_DESIGN_GUIDE.md UI_UX_MASTER_POLICY.md BLUR_SYSTEM_GUIDE.md FONT_SYSTEM_GUIDE.md WIDGET_ARCHITECTURE_DESIGN.md FORTUNE_INPUT_ACCORDION_STANDARD.md TOSS_DESIGN_SYSTEM.md TYPOGRAPHY_MIGRATION_GUIDE.md)",
+      "Bash(do)",
+      "Bash(file=\"/Users/jacobmac/Desktop/Dev/fortune/docs/design/$link\")",
+      "Bash(if [ -f \"$file\" ])",
+      "Bash(then)",
+      "Bash(else)",
+      "Bash(brew list:*)",
+      "Bash(# 1. 불필요한 assets 및 빌드 캐시 삭제 커밋\ngit add assets/fonts/NotoSansKR/ assets/images/minhwa/ assets/images/talismans/\n\ngit commit -m \"\"$\\(cat <<''EOF''\nchore: remove unused assets \\(fonts, minhwa images, talismans\\)\n\n- Remove NotoSansKR fonts and iOS build cache files\n- Remove minhwa \\(민화\\) images no longer used\n- Remove talisman \\(부적\\) images no longer used\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\"\")",
+      "Bash(# 2. 문서 구조 정리 커밋\ngit add .claude/docs/ docs/ CLAUDE.md .claude/settings.local.json figma/\n\ngit commit -m \"\"$\\(cat <<''EOF''\ndocs: reorganize and consolidate documentation structure\n\n- Remove redundant quick-reference and policy docs\n- Update fortune-system documentation\n- Simplify CLAUDE.md with unified mapping table\n- Update Claude settings\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\"\")"
     ],
     "deny": [],
     "ask": [],
@@ -304,6 +335,15 @@
       "env": {
         "PLAYWRIGHT_HEADLESS": "false",
         "PLAYWRIGHT_TIMEOUT": "30000"
+      }
+    },
+    "TestSprite": {
+      "command": "npx",
+      "args": [
+        "@testsprite/testsprite-mcp@latest"
+      ],
+      "env": {
+        "API_KEY": "sk-user-ReVqfB1Cz77IMSEzTR-cDdasK9X-3-8LP5l9uIZlH2HihJ9K0ijyr5VkiP1oF8SPEtIjgPC86VjJ0JZUkxr23SedEQi0IA1eEC98qsl8JgTxVRz9SbDNhRqrY6L5nCo602E"
       }
     }
   }
