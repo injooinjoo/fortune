@@ -24,13 +24,16 @@ async def run_test():
         
         # Create a new browser context (like an incognito window)
         context = await browser.new_context()
-        context.set_default_timeout(5000)
+        context.set_default_timeout(10000)  # Increased for test_mode
         
         # Open a new page in the browser context
         page = await context.new_page()
         
         # Navigate to your target URL and wait until the network request is committed
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        await page.goto("http://localhost:3000/?test_mode=true", wait_until="commit", timeout=10000)
+
+        # Wait for test_mode auto-redirect to /home
+        await page.wait_for_url("**/home**", timeout=15000)
         
         # Wait for the main page to reach DOMContentLoaded state (optional for stability)
         try:
@@ -47,7 +50,7 @@ async def run_test():
         
         # Interact with the page elements to simulate user flow
         # --> Assertions to verify final state
-        frame = context.pages[-1]
+        frame = page  # Use main page after test_mode redirect
         try:
             await expect(frame.locator('text=Purchase Completed Successfully').first).to_be_visible(timeout=30000)
         except AssertionError:

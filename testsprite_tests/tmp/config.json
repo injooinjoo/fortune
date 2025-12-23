@@ -2,15 +2,17 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:3000",
+  "localEndpoint": "http://localhost:3000/?test_mode=true",
   "executionArgs": {
     "projectName": "fortune",
     "projectPath": "/Users/jacobmac/Desktop/Dev/fortune",
-    "testIds": [],
-    "additionalInstruction": "This is a Korean Flutter Web app. User will manually log in via OAuth (Kakao/Google) when the login screen appears. Tests should wait for user interaction on login. The app uses Flutter Canvas rendering (CanvasKit), so use accessibility selectors or wait for specific routes. Korean UI - look for Korean text patterns.",
+    "testIds": [
+      "TC004"
+    ],
+    "additionalInstruction": "IMPORTANT: The app is running at http://localhost:3000\n\nTo bypass OAuth authentication, navigate to http://localhost:3000/?test_mode=true instead of the base URL. This will automatically create a test user profile and redirect to the home page, bypassing the login flow.\n\nFor TC004 (Home Dashboard test):\n1. Navigate to http://localhost:3000/?test_mode=true\n2. Wait for automatic redirect to /home (the test mode will auto-login)\n3. Verify fortune cards are displayed\n4. Test swipe functionality on cards",
     "envs": {
       "API_KEY": "sk-user-ReVqfB1Cz77IMSEzTR-cDdasK9X-3-8LP5l9uIZlH2HihJ9K0ijyr5VkiP1oF8SPEtIjgPC86VjJ0JZUkxr23SedEQi0IA1eEC98qsl8JgTxVRz9SbDNhRqrY6L5nCo602E"
     }
   },
-  "proxy": "http://a1c96cb4-447e-48f7-ba76-6e6b687fa05f:tGxyfgy0aw6GENxGmCCVmOMaOQFdiKox@tun.testsprite.com:8080"
+  "proxy": "http://50e52a59-dd34-4ebc-8c0e-1f84616c46b8:khW8mK54kjSRnOVyAvEi2FdESnzZ3VCA@tun.testsprite.com:8080"
 }
