@@ -68,7 +68,7 @@ abstract class BaseFortuneNotifier extends StateNotifier<FortuneState> {
       
       if (user == null) {
         Logger.error('❌ [BaseFortuneNotifier] User is null - throwing UnauthorizedException');
-        throw UnauthorizedException('로그인이 필요합니다');
+        throw const UnauthorizedException('로그인이 필요합니다');
       }
 
       Logger.debug('🔍 [BaseFortuneNotifier] Calling generateFortune', {
@@ -559,7 +559,7 @@ class FortuneHistoryNotifier extends StateNotifier<AsyncValue<List<Fortune>>> {
       
       if (user == null) {
         Logger.warning('⚠️ [FortuneHistoryNotifier] User not authenticated');
-        throw UnauthorizedException('로그인이 필요합니다');
+        throw const UnauthorizedException('로그인이 필요합니다');
       }
 
       Logger.debug('📡 [FortuneHistoryNotifier] Fetching history from API');
@@ -726,7 +726,7 @@ final fortuneGenerationProvider = FutureProvider.family<Fortune, FortuneGenerati
   if (user == null) {
     Logger.endTimer('Fortune Generation Provider', stopwatch);
     Logger.warning('⚠️ [FortuneGenerationProvider] User not authenticated');
-    throw UnauthorizedException('로그인이 필요합니다');
+    throw const UnauthorizedException('로그인이 필요합니다');
   }
 
   try {

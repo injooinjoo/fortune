@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fortune/services/app_icon_badge_service.dart';
 
 /// 운세 탭 안읽음 배지 상태 관리
 ///
@@ -45,6 +46,9 @@ class FortuneBadgeNotifier extends StateNotifier<bool> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_lastVisitKey, DateTime.now().toIso8601String());
     state = false;
+
+    // 앱 아이콘 배지도 함께 제거
+    await AppIconBadgeService.clearBadge();
   }
 
   /// 배지 강제 리셋 (테스트용)

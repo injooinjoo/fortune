@@ -19,7 +19,7 @@ class LuckyItemWidgets {
     final actualItems = luckyItems ?? items;
 
     if (actualItems.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           '행운 아이템이 없습니다',
           style: TextStyle(color: TossDesignSystem.gray500),

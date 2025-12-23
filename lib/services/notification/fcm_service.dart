@@ -6,8 +6,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/utils/logger.dart';
 import '../../core/network/api_client.dart';
+import '../../routes/route_config.dart';
 
 // 백그라운드 메시지 핸들러 (반드시 톱레벨 함수여야 함)
 @pragma('vm:entry-point')
@@ -131,7 +133,7 @@ class FCMService {
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     
     // iOS 초기화 설정
-    final iosSettings = DarwinInitializationSettings(
+    final iosSettings = const DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
@@ -345,22 +347,84 @@ class FCMService {
   // 알림 탭 액션 처리
   void _handleNotificationTap(Map<String, dynamic> data) {
     final type = data['type'];
+    final route = data['route'] as String?;
 
+    // 알림 오픈 로깅
+    _logNotificationOpen(data);
+
+    // route가 명시되어 있으면 해당 경로로 이동
+    if (route != null && route.isNotEmpty) {
+      _navigateTo(route);
+      return;
+    }
+
+    // type 기반 네비게이션 (하위 호환성)
     switch (type) {
       case 'daily_fortune':
-        // 일일 운세 페이지로 이동
-        Logger.info('일일 운세 페이지로 이동');
+        _navigateTo('/home');
         break;
+      case 'score_alert':
+        _navigateTo('/home');
+        break;
+      case 'token_alert':
       case 'token_purchase':
-        // 토큰 구매 페이지로 이동
-        Logger.info('토큰 구매 페이지로 이동');
+        _navigateTo('/token-purchase');
+        break;
+      case 'winback':
+        _navigateTo('/home');
         break;
       case 'promotion':
-        // 프로모션 상세 페이지로 이동
-        Logger.info('Supabase initialized successfully');
+        final promoId = data['promo_id'] as String?;
+        if (promoId != null) {
+          _navigateTo('/promotion/$promoId');
+        } else {
+          _navigateTo('/home');
+        }
+        break;
+      case 'streak':
+        _navigateTo('/home');
+        break;
+      case 'event':
+        final eventRoute = data['event_route'] as String?;
+        _navigateTo(eventRoute ?? '/home');
         break;
       default:
-        Logger.info('Supabase initialized successfully');
+        Logger.info('알림 탭: 타입 $type, 홈으로 이동');
+        _navigateTo('/home');
+    }
+  }
+
+  // 네비게이션 실행
+  void _navigateTo(String route) {
+    try {
+      final context = rootNavigatorKey.currentContext;
+      if (context != null) {
+        GoRouter.of(context).go(route);
+        Logger.info('알림 딥링크 이동: $route');
+      } else {
+        Logger.warning('네비게이션 컨텍스트 없음, 경로: $route');
+      }
+    } catch (e) {
+      Logger.error('알림 딥링크 이동 실패', e);
+    }
+  }
+
+  // 알림 오픈 로깅 (분석용)
+  Future<void> _logNotificationOpen(Map<String, dynamic> data) async {
+    try {
+      final notificationId = data['notification_id'] as String?;
+      final notificationType = data['type'] as String?;
+
+      await _apiClient.post('/notification/opened', data: {
+        'notification_id': notificationId,
+        'notification_type': notificationType,
+        'opened_at': DateTime.now().toIso8601String(),
+      });
+
+      Logger.info('알림 오픈 로깅 완료: $notificationType');
+    } catch (e) {
+      // 로깅 실패는 무시 (사용자 경험에 영향 없음)
+      Logger.warning('알림 오픈 로깅 실패: $e');
     }
   }
   
@@ -465,13 +529,13 @@ class FCMService {
       '오늘의 운세가 도착했습니다 🔮',
       '오늘은 어떤 일이 일어날까요? 지금 확인해보세요!',
       RepeatInterval.daily,
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           NotificationChannels.dailyFortune,
           NotificationChannels.dailyFortune,
           importance: Importance.high,
           priority: Priority.high),
-        iOS: const DarwinNotificationDetails()),
+        iOS: DarwinNotificationDetails()),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: jsonEncode({
         'type': 'daily_fortune'})

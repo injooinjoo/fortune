@@ -417,7 +417,7 @@ class FortuneHistoryService {
         'target_user_id': userId,
       });
 
-      List<int> scores = List.filled(7, 0);
+      final List<int> scores = List.filled(7, 0);
       
       if (response is List && response.isNotEmpty) {
         for (final item in response) {

@@ -29,14 +29,14 @@ class AdDialog extends ConsumerWidget {
               size: 64,
               color: Theme.of(context).colorScheme.primary,
             ),
-            SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: AppSpacing.spacing4),
             Text(
               '광고 시청하기',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: AppSpacing.spacing2),
             Text(
               '짧은 광고를 시청하고 운세를 확인하세요',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -44,7 +44,7 @@ class AdDialog extends ConsumerWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: AppSpacing.spacing6),
             Row(
               children: [
                 Expanded(
@@ -53,7 +53,7 @@ class AdDialog extends ConsumerWidget {
                     child: const Text('취소'),
                   ),
                 ),
-                SizedBox(width: AppSpacing.spacing4),
+                const SizedBox(width: AppSpacing.spacing4),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
@@ -139,7 +139,7 @@ class NativeAdWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   borderRadius: AppDimensions.borderRadiusSmall)),
-              SizedBox(width: AppSpacing.spacing3),
+              const SizedBox(width: AppSpacing.spacing3),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +163,7 @@ class NativeAdWidget extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurfaceVariant)
             ],
           ),
-          SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: AppSpacing.spacing3),
           Text(
             'This is a placeholder for native ad content. In production, this would display actual ad content.',
             style: Theme.of(context).textTheme.bodyMedium)

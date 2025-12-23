@@ -21,11 +21,13 @@ import 'services/att_service.dart';
 import 'services/remote_config_service.dart';
 // import 'presentation/providers/font_size_provider.dart'; // ⚠️ REMOVED: 이제 user_settings_provider 사용
 import 'core/services/test_auth_service.dart';
+import 'services/notification/fcm_service.dart';
 import 'core/services/supabase_connection_service.dart';
 import 'core/utils/route_observer_logger.dart';
 import 'core/services/error_reporter_service.dart';
 import 'core/providers/user_settings_provider.dart';
 import 'core/services/fortune_haptic_service.dart';
+import 'presentation/providers/auth_provider.dart';
 
 void main() async {
   debugPrint('🚀 [STARTUP] App main() started');
@@ -38,15 +40,15 @@ void main() async {
     if (TestAuthService.isTestMode()) {
       debugPrint('🔧 [TEST] Running in test mode, loading test environment...');
       try {
-        await dotenv.dotenv.load(fileName: ".env.test");
+        await dotenv.dotenv.load(fileName: '.env.test');
         debugPrint('🔧 [TEST] Test environment variables loaded');
       } catch (e) {
         debugPrint('🔧 [TEST] Test env not found, falling back to .env: $e');
-        await dotenv.dotenv.load(fileName: ".env");
+        await dotenv.dotenv.load(fileName: '.env');
       }
       TestAuthService.enableTestLogging();
     } else {
-      await dotenv.dotenv.load(fileName: ".env");
+      await dotenv.dotenv.load(fileName: '.env');
     }
     debugPrint('🚀 [STARTUP] Environment variables loaded');
   } catch (e) {
@@ -87,8 +89,8 @@ void main() async {
     debugPrint('🚀 [STARTUP] Initializing Supabase...');
     final success = await SupabaseConnectionService.initialize(
       maxRetries: 3,
-      timeout: Duration(seconds: 10),
-      retryDelay: Duration(seconds: 2),
+      timeout: const Duration(seconds: 10),
+      retryDelay: const Duration(seconds: 2),
     );
 
     if (success) {
@@ -212,6 +214,19 @@ void main() async {
     Logger.error('Error Reporter Service initialization failed', e);
   }
 
+  // Initialize FCM Service for push notifications
+  if (!kIsWeb) {
+    try {
+      debugPrint('🔔 [STARTUP] Initializing FCM Service...');
+      await FCMService().initialize();
+      debugPrint('🔔 [STARTUP] FCM Service initialized successfully');
+      Logger.info('FCM Service initialized successfully');
+    } catch (e) {
+      debugPrint('⚠️ [STARTUP] FCM Service initialization failed: $e');
+      Logger.warning('FCM Service initialization failed (optional feature): $e');
+    }
+  }
+
   debugPrint('🚀 [STARTUP] All initializations complete, starting app...');
   runApp(
     const ProviderScope(
@@ -230,14 +245,17 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
     // 🎯 사용자 폰트 설정을 앱 전체에 적용
     final userSettings = ref.watch(userSettingsProvider);
-    
+
+    // 위젯 데이터 준비 프로바이더 활성화 (auth 상태 변경 시 자동 실행)
+    ref.read(widgetDataPreparationProvider);
+
     // FontSizeSystem에 스케일 팩터 동기화 (TypographyUnified용)
     FontSizeSystem.setScaleFactor(userSettings.fontScale);
 
     return MaterialApp.router(
       title: '관상은 과학',
-      theme: TossDesignSystem.lightTheme(fontScale: userSettings.fontScale),
-      darkTheme: TossDesignSystem.darkTheme(fontScale: userSettings.fontScale),
+      theme: FortuneDesignSystem.lightTheme(fontScale: userSettings.fontScale),
+      darkTheme: FortuneDesignSystem.darkTheme(fontScale: userSettings.fontScale),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       routerConfig: router,

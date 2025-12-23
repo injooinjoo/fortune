@@ -113,13 +113,13 @@ class _UserInfoCardState extends State<UserInfoCard> {
               ),
             ],
           ),
-          SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 프로필 이미지와 이름
           Row(
             children: [
               _buildProfileImage(context),
-              SizedBox(width: AppSpacing.spacing4),
+              const SizedBox(width: AppSpacing.spacing4),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,18 +128,18 @@ class _UserInfoCardState extends State<UserInfoCard> {
                       _getDisplayName(),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold)),
-                    SizedBox(height: AppSpacing.spacing1),
+                    const SizedBox(height: AppSpacing.spacing1),
                     if (userProfile!['birth_date'] != null) ...[
                       Row(
                         children: [
                           Text(
                             _calculateAge(userProfile!['birth_date']),
                             style: theme.textTheme.bodyLarge),
-                          SizedBox(width: AppSpacing.spacing2),
+                          const SizedBox(width: AppSpacing.spacing2),
                           Text(
                             '·',
                             style: theme.textTheme.bodyLarge),
-                          SizedBox(width: AppSpacing.spacing2),
+                          const SizedBox(width: AppSpacing.spacing2),
                           Text(
                             _getGenderLabel(userProfile!['gender']),
                             style: theme.textTheme.bodyLarge,
@@ -153,7 +153,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
             ],
           ),
           
-          SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 정보 그리드
           _buildInfoGrid(context),
@@ -206,7 +206,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
             label: '출생시간',
             value: userProfile!['birth_time'] ?? '미입력',
             onTap: () => _showBirthTimeEditDialog(context))]),
-        SizedBox(height: AppSpacing.spacing3),
+        const SizedBox(height: AppSpacing.spacing3),
         _buildInfoRow(context, [
           _InfoItem(
             icon: Icons.pets,
@@ -220,7 +220,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
             value: userProfile!['zodiac_sign'] ?? _calculateZodiacSign(userProfile!['birth_date']),
             onTap: () => _showBirthDateEditDialog(context), // 생년월일 수정 시 자동 계산
           )]),
-        SizedBox(height: AppSpacing.spacing3),
+        const SizedBox(height: AppSpacing.spacing3),
         _buildInfoRow(context, [
           _InfoItem(
             icon: Icons.water_drop,
@@ -308,7 +308,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
                 item.icon,
                 size: AppDimensions.iconSizeSmall,
                 color: theme.colorScheme.primary),
-              SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: AppSpacing.spacing2),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,7 +319,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
-                    SizedBox(height: AppSpacing.xxxSmall),
+                    const SizedBox(height: AppSpacing.xxxSmall),
                     Text(
                       item.value,
                       style: theme.textTheme.bodyMedium?.copyWith(

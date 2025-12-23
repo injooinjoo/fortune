@@ -45,7 +45,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
       showCupertinoModalPopup(
         context: context,
         builder: (context) => CupertinoActionSheet(
-          title: Text('사진 선택'),
+          title: const Text('사진 선택'),
           message: Text('최대 ${widget.maxPhotos}장까지 선택 가능합니다'),
           actions: [
             CupertinoActionSheetAction(
@@ -248,7 +248,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
               ),
             ),
             if (widget.isRequired)
-              Text(
+              const Text(
                 ' *',
                 style: TextStyle(color: TossDesignSystem.errorRed),
               ),
@@ -298,7 +298,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.add_photo_alternate,
                                   size: 32,
                                   color: TossDesignSystem.gray600,

@@ -4,11 +4,11 @@ class PetProfile {
   final String species;
   final String name;
   final int age;
-  final String gender;          // ✅ 성별 (수컷/암컷/모름)
-  final String? breed;          // ✅ 품종 (선택)
-  final String? personality;    // ✅ 성격 (선택)
-  final String? healthNotes;    // ✅ 건강 특이사항 (선택)
-  final bool? isNeutered;       // ✅ 중성화 여부 (선택)
+  final String gender; // ✅ 성별 (수컷/암컷/모름)
+  final String? breed; // ✅ 품종 (선택)
+  final String? personality; // ✅ 성격 (선택)
+  final String? healthNotes; // ✅ 건강 특이사항 (선택)
+  final bool? isNeutered; // ✅ 중성화 여부 (선택)
   final DateTime createdAt;
   final DateTime? updatedAt;
 
@@ -140,6 +140,22 @@ enum PetSpecies {
 
   final String displayName;
   final String emoji;
+
+  /// 이미지 경로 (Ink Wash 스타일)
+  String? get imagePath {
+    switch (this) {
+      case PetSpecies.dog:
+        return 'assets/images/fortune/categories/pet_dog.png';
+      case PetSpecies.cat:
+        return 'assets/images/fortune/categories/pet_cat.png';
+      default:
+        // 나머지는 아직 생성되지 않음
+        return null;
+      // 추후 생성 예정:
+      // case PetSpecies.rabbit: return 'assets/images/fortune/categories/pet_rabbit.png';
+      // case PetSpecies.hamster: return 'assets/images/fortune/categories/pet_hamster.png';
+    }
+  }
 
   static PetSpecies fromString(String species) {
     switch (species) {

@@ -137,7 +137,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
             return Container(
               width: 120,
               height: 120,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
@@ -181,7 +181,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
     return Container(
       width: 120,
       height: 120,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
           colors: [

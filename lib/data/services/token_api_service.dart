@@ -301,13 +301,13 @@ class TokenApiService {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return NetworkException('연결 시간이 초과되었습니다');
+        return const NetworkException('연결 시간이 초과되었습니다');
         
       case DioExceptionType.connectionError:
-        return NetworkException('네트워크 연결을 확인해주세요');
+        return const NetworkException('네트워크 연결을 확인해주세요');
         
       case DioExceptionType.cancel:
-        return NetworkException('요청이 취소되었습니다');
+        return const NetworkException('요청이 취소되었습니다');
         
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
@@ -321,7 +321,7 @@ class TokenApiService {
           case 404:
             return const NotFoundException();
           case 500:
-            return ServerException(message: '서버 오류가 발생했습니다', statusCode: 500);
+            return const ServerException(message: '서버 오류가 발생했습니다', statusCode: 500);
           default:
             return ServerException(message: message, statusCode: statusCode);
         }

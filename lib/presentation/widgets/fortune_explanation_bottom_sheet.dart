@@ -211,7 +211,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             _getDetailedDescription(widget.fortuneType),
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -307,7 +307,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           showAge: true,
         ),
         
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         
         // Gender selection
         Text(
@@ -347,7 +347,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           ],
         ),
         
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         
         // MBTI selection (optional)
         Text(
@@ -469,7 +469,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               shape: BoxShape.circle,
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Text(
             '$score - $meaning',
             style: DSTypography.bodySmall.copyWith(
@@ -519,7 +519,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         ? TossDesignSystem.purple.withValues(alpha: 0.7)
                         : TossDesignSystem.purple,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text(
                     '신령이 점지하는 개인 맞춤 운세',
                     style: DSTypography.labelMedium.copyWith(
@@ -608,7 +608,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(_getFortuneIcon(widget.fortuneType)),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   '${_getFortuneTypeName(widget.fortuneType)} 보기',
                   style: DSTypography.labelMedium.copyWith(

@@ -138,26 +138,26 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
               Expanded(
                 child: SingleChildScrollView(
                   controller: _scrollController,
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing5),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildBasicInfo(theme, elementColor, explanation),
-                      SizedBox(height: AppSpacing.spacing6),
+                      const SizedBox(height: AppSpacing.spacing6),
                       _buildCharacteristics(theme, elementColor, explanation),
-                      SizedBox(height: AppSpacing.spacing6),
+                      const SizedBox(height: AppSpacing.spacing6),
                       _buildPersonality(theme, elementColor, explanation),
-                      SizedBox(height: AppSpacing.spacing6),
+                      const SizedBox(height: AppSpacing.spacing6),
                       _buildBalanceAdvice(theme, elementColor, explanation, percentage),
-                      SizedBox(height: AppSpacing.spacing6),
+                      const SizedBox(height: AppSpacing.spacing6),
                       _buildCompatibility(theme, elementColor, explanation),
-                      SizedBox(height: AppSpacing.spacing6),
+                      const SizedBox(height: AppSpacing.spacing6),
                       _buildHealth(theme, elementColor, explanation),
-                      SizedBox(height: AppSpacing.spacing6),
+                      const SizedBox(height: AppSpacing.spacing6),
                       _buildCareer(theme, elementColor, explanation),
-                      SizedBox(height: AppSpacing.spacing6),
+                      const SizedBox(height: AppSpacing.spacing6),
                       _buildLuckyItems(theme, elementColor, explanation),
-                      SizedBox(height: AppSpacing.spacing10),
+                      const SizedBox(height: AppSpacing.spacing10),
                     ],
                   ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
                 ),
@@ -239,7 +239,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                       duration: 300.ms,
                       curve: Curves.elasticOut,
                     ),
-                  SizedBox(width: AppSpacing.spacing4),
+                  const SizedBox(width: AppSpacing.spacing4),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -249,14 +249,14 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                             color: theme.colorScheme.onSurface.withValues(alpha:0.6),
                           ),
                         ),
-                      SizedBox(height: AppSpacing.spacing1),
+                      const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         explanation['basicMeaning'],
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: AppSpacing.spacing1),
+                      const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         '비율: $percentage%',
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -299,14 +299,14 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 _getElementIcon(widget.element),
                 color: elementColor,
                 size: AppDimensions.iconSizeMedium),
-              SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '기본 정보',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold)),
             ],
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: AppSpacing.spacing4),
           _buildInfoRow(theme, '색상', explanation['color']),
           _buildInfoRow(theme, '계절', explanation['season']),
           _buildInfoRow(theme, '방향', explanation['direction']),
@@ -319,7 +319,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
 
   Widget _buildInfoRow(ThemeData theme, String label, String value) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -356,14 +356,14 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 color: elementColor,
                 size: AppDimensions.iconSizeSmall),
             ),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Text(
               '주요 특징',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold)),
           ],
         ),
-        SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: AppSpacing.spacing4),
         ...characteristics.map((characteristic) => Padding(
           padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
           child: Row(
@@ -373,7 +373,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 Icons.check_circle,
                 size: AppDimensions.iconSizeSmall,
                 color: elementColor),
-              SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: AppSpacing.spacing2),
               Expanded(
                 child: Text(
                   characteristic,
@@ -403,14 +403,14 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 color: elementColor,
                 size: AppDimensions.iconSizeSmall),
             ),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Text(
               '성격과 성향',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold)),
           ],
         ),
-        SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: AppSpacing.spacing4),
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
@@ -469,22 +469,22 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
           color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
           borderRadius: AppDimensions.borderRadiusSmall,
         ),
-        child: Icon(
+        child: const Icon(
                 Icons.balance,
                 color: TossDesignSystem.warningOrange,
                 size: AppDimensions.iconSizeSmall,
               ),
             ),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Text(
               '오행 균형 조언',
               style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
             ),
-            SizedBox(width: AppSpacing.spacing2),
+            const SizedBox(width: AppSpacing.spacing2),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
         color: statusColor.withValues(alpha:0.2),
                 borderRadius: AppDimensions.borderRadiusMedium,
@@ -496,7 +496,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             ),
           ],
         ),
-        SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: AppSpacing.spacing4),
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
@@ -522,7 +522,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     Icons.tips_and_updates,
                     size: AppDimensions.iconSizeXSmall,
                     color: statusColor),
-                  SizedBox(width: AppSpacing.spacing2),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Text(
                     '상태: $percentage%',
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -530,7 +530,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                       fontWeight: FontWeight.bold)),
               ],
             ),
-              SizedBox(height: AppSpacing.spacing2),
+              const SizedBox(height: AppSpacing.spacing2),
               Text(
                 advice,
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -560,14 +560,14 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 color: elementColor,
                 size: AppDimensions.iconSizeSmall),
             ),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Text(
               '다른 오행과의 관계',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold)),
           ],
         ),
-        SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: AppSpacing.spacing4),
         ...compatibility.entries.map((entry) {
           final otherElement = entry.key;
           final relation = entry.value;
@@ -605,7 +605,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     ),
                   ),
                 ),
-                SizedBox(width: AppSpacing.spacing3),
+                const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -617,10 +617,10 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                             style: theme.textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: otherColor)),
-                          SizedBox(width: AppSpacing.spacing2),
+                          const SizedBox(width: AppSpacing.spacing2),
                           if (isHarmonious)
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
+                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
                               decoration: BoxDecoration(
                                 color: TossDesignSystem.successGreen.withValues(alpha:0.2),
                                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
@@ -631,7 +631,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                             )
                           else
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
+                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
                               decoration: BoxDecoration(
                                 color: TossDesignSystem.warningOrange.withValues(alpha:0.2),
                                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
@@ -642,7 +642,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                             ),
                         ],
                       ),
-                      SizedBox(height: AppSpacing.spacing1),
+                      const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         relation,
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -678,14 +678,14 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 color: TossDesignSystem.errorRed,
                 size: AppDimensions.iconSizeSmall),
             ),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Text(
               '건강 조언',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold)),
           ],
         ),
-        SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: AppSpacing.spacing4),
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
@@ -706,7 +706,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     size: AppDimensions.iconSizeXSmall,
                     color: TossDesignSystem.errorRed,
                   ),
-                  SizedBox(width: AppSpacing.spacing2),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       tip,
@@ -742,7 +742,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 color: TossDesignSystem.tossBlue,
                 size: AppDimensions.iconSizeSmall),
             ),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Text(
               '적합한 진로',
               style: theme.textTheme.titleLarge?.copyWith(
@@ -750,7 +750,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             ),
           ],
         ),
-        SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: AppSpacing.spacing4),
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
@@ -770,7 +770,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     size: AppDimensions.iconSizeSmall,
                     color: TossDesignSystem.tossBlue,
                   ),
-                  SizedBox(width: AppSpacing.spacing2),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       career,
@@ -807,7 +807,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 size: AppDimensions.iconSizeSmall,
               ),
             ),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Text(
               '행운의 아이템',
               style: theme.textTheme.titleLarge?.copyWith(
@@ -816,7 +816,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             ),
           ],
         ),
-        SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: AppSpacing.spacing4),
         Container(
           padding: AppSpacing.paddingAll16,
         decoration: BoxDecoration(
@@ -842,7 +842,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     size: AppDimensions.iconSizeXSmall,
                     color: TossDesignSystem.warningOrange,
                   ),
-                  SizedBox(width: AppSpacing.spacing2),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       item,

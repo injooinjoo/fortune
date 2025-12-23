@@ -16,7 +16,7 @@ class PetService {
           .select()
           .eq('user_id', userId)
           .order('created_at', ascending: false)
-          .timeout(Duration(seconds: 10)); // 10초 타임아웃 추가
+          .timeout(const Duration(seconds: 10)); // 10초 타임아웃 추가
 
       Logger.info('Pet query response received: ${response.length} pets');
       
@@ -79,7 +79,7 @@ class PetService {
           .insert(petData)
           .select()
           .single()
-          .timeout(Duration(seconds: 10));
+          .timeout(const Duration(seconds: 10));
 
       Logger.info('✅ Pet created successfully: ${response['name']} (ID: ${response['id']})');
       return PetProfile.fromJson(response);

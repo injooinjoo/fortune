@@ -69,7 +69,7 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
                   : TossDesignSystem.gray600,
             ),
           ),
-          SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: AppSpacing.spacing2),
           InkWell(
             onTap: () {
               // TODO: Open web browser to MBTI test
@@ -82,7 +82,7 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
               ),
             ),
           ),
-          SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: AppSpacing.spacing5),
           Container(
             constraints: const BoxConstraints(maxHeight: 300),
             child: SingleChildScrollView(
@@ -101,7 +101,7 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
                       final mbti = mbtiTypes[index];
                       return _buildMbtiOption(mbti);
                     }),
-                  SizedBox(height: AppSpacing.spacing3),
+                  const SizedBox(height: AppSpacing.spacing3),
                   _buildMbtiOption(null, '선택 안함'),
                 ],
               ),

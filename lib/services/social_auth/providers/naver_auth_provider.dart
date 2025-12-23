@@ -20,7 +20,7 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
       final initResult = await _naverChannel
           .invokeMethod('initializeNaver')
           .timeout(
-            Duration(seconds: 10),
+            const Duration(seconds: 10),
             onTimeout: () {
               Logger.warning('Naver SDK initialization timed out');
               throw TimeoutException('Naver SDK initialization timed out');
@@ -59,7 +59,7 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
         final errorData = response.data as Map<String, dynamic>?;
         final errorMessage = errorData?['error']?.toString() ?? '';
         if (errorMessage.contains('already been registered')) {
-          throw AuthException(
+          throw const AuthException(
             '이미 다른 소셜 계정(Google, Kakao, Apple)으로 가입된 이메일입니다.\n'
             '다른 로그인 방법을 시도해주세요.',
           );
@@ -76,7 +76,7 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
 
         final errorMessage = data['error']?.toString() ?? '';
         if (errorMessage.contains('already been registered')) {
-          throw AuthException(
+          throw const AuthException(
             '이미 다른 소셜 계정(Google, Kakao, Apple)으로 가입된 이메일입니다.\n'
             '다른 로그인 방법을 시도해주세요.',
           );

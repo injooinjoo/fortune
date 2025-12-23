@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -164,7 +163,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
           Navigator.pop(context);
         }
 
-        await Future.delayed(Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 100));
         handleSocialLogin('Google');
       },
       onAppleLogin: () async {
@@ -175,7 +174,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
           Navigator.pop(context);
         }
 
-        await Future.delayed(Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 100));
         handleAppleLogin();
       },
       onKakaoLogin: () async {
@@ -185,7 +184,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
           Navigator.pop(context);
         }
 
-        await Future.delayed(Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 100));
         handleSocialLogin('Kakao');
       },
       onNaverLogin: () {

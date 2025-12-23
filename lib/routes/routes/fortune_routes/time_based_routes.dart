@@ -9,7 +9,7 @@ final timeBasedRoutes = [
     name: 'fortune-time',
     builder: (context, state) {
       // TimeBasedFortunePage was removed, redirect to DailyCalendarFortunePage
-      return DailyCalendarFortunePage();
+      return const DailyCalendarFortunePage();
     }),
   
   // Time-based redirect (for backward compatibility)

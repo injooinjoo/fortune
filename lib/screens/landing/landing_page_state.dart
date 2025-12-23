@@ -10,6 +10,7 @@ import '../../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
 import '../../core/utils/profile_validation.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/services/test_auth_service.dart';
 
 /// State management for LandingPage
 /// Extracted from _LandingPageState to separate concerns
@@ -56,6 +57,35 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
   void _initializeAuth() {
     // Check auth in background without blocking UI
     Future.microtask(() async {
+      // Check for test mode first (URL param: ?test_mode=true)
+      if (TestAuthService.isTestMode()) {
+        debugPrint('🔧 [TestMode] Test mode detected via URL parameter');
+        if (mounted) {
+          setState(() {
+            _isCheckingAuth = true;
+          });
+        }
+
+        // Create test profile in local storage (no Supabase auth needed)
+        await _storageService.saveUserProfile({
+          'id': 'test-user-${DateTime.now().millisecondsSinceEpoch}',
+          'name': '테스트 사용자',
+          'email': 'test@fortune.com',
+          'birth_date': '1990-01-01',
+          'birth_time': '12:00',
+          'gender': 'male',
+          'onboarding_completed': true,
+          'is_test_account': true,
+          'created_at': DateTime.now().toIso8601String(),
+        });
+
+        debugPrint('🔧 [TestMode] Test profile created, navigating to home...');
+        if (mounted) {
+          context.go('/home');
+        }
+        return;
+      }
+
       if (!_isSupabaseAvailable) {
         debugPrint('⚠️ [LandingPage] Skipping auth check - Supabase not available');
         return;
@@ -259,7 +289,7 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
 
       debugPrint('user: ${user.id}');
 
-      var response = await Supabase.instance.client
+      final response = await Supabase.instance.client
           .from('user_profiles')
           .select()
           .eq('id', user.id)

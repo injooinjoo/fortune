@@ -47,7 +47,7 @@ class PurchaseLoadingOverlay extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // 로딩 인디케이터
-                SizedBox(
+                const SizedBox(
                   width: 56,
                   height: 56,
                   child: CircularProgressIndicator(
@@ -85,7 +85,7 @@ class PurchaseLoadingOverlay extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.warning_amber_rounded,
                         size: 18,
                         color: ObangseokColors.hwang,

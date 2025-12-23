@@ -55,23 +55,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
       if (_currentUser != null) {
         try {
-          // Retry logic to wait for profile creation (especially after Apple Sign In)
-          int retries = 0;
-          while (retries < 3) {
-            final dbProfile = await Supabase.instance.client
-                .from('user_profiles')
-                .select()
-                .eq('id', _currentUser!.id)
-                .maybeSingle();
+          // DB에서 1회만 시도 (재시도 제거로 로딩 속도 개선)
+          final dbProfile = await Supabase.instance.client
+              .from('user_profiles')
+              .select()
+              .eq('id', _currentUser!.id)
+              .maybeSingle();
 
-            if (dbProfile != null) {
-              existingProfile = dbProfile;
-              break;
-            }
-            
-            // Wait before retrying
-            await Future.delayed(const Duration(milliseconds: 500));
-            retries++;
+          if (dbProfile != null) {
+            existingProfile = dbProfile;
           }
         } catch (e) {
           debugPrint('Error loading profile from database: $e');
@@ -207,6 +199,53 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     }
   }
 
+  /// 백그라운드에서 사주 계산 (UI 블로킹 없음)
+  void _calculateSajuInBackground({
+    required String userId,
+    required String birthDate,
+    required String birthTime,
+  }) {
+    // unawaited - 백그라운드에서 실행
+    Future(() async {
+      try {
+        debugPrint('🔮 [백그라운드] 사주 계산 API 호출 중...');
+        final sajuResponse = await Supabase.instance.client.functions.invoke(
+          'calculate-saju',
+          body: {
+            'birthDate': birthDate,
+            'birthTime': birthTime,
+            'isLunar': false,
+            'timezone': 'Asia/Seoul'
+          },
+        ).timeout(
+          const Duration(seconds: 45),
+          onTimeout: () {
+            debugPrint('⏱️ [백그라운드] 사주 계산 시간 초과');
+            throw Exception('사주 계산 시간 초과 (45초)');
+          },
+        );
+
+        debugPrint('✅ [백그라운드] 사주 계산 완료: ${sajuResponse.status}');
+        if (sajuResponse.status == 200) {
+          final sajuData = sajuResponse.data;
+          if (sajuData['success'] == true) {
+            debugPrint('✅ [백그라운드] 사주 데이터 저장 성공');
+            await Supabase.instance.client.from('user_profiles').update({
+              'saju_calculated': true,
+              'updated_at': DateTime.now().toIso8601String()
+            }).eq('id', userId);
+            debugPrint('✅ [백그라운드] 사주 계산 플래그 업데이트 완료');
+          } else {
+            debugPrint('⚠️ [백그라운드] 사주 계산 응답 오류: ${sajuData['error']}');
+          }
+        }
+      } catch (e) {
+        debugPrint('⚠️ [백그라운드] 사주 계산 오류: $e');
+        // 실패해도 무시 - 나중에 재시도됨
+      }
+    });
+  }
+
   Future<void> _handleSubmit() async {
     try {
       // 프로필 데이터 준비
@@ -250,51 +289,20 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             'chinese_zodiac': profile.chineseZodiac,
             'updated_at': DateTime.now().toIso8601String()});
           debugPrint('Supabase에 프로필 동기화 완료');
-          
-          // 사주 계산 API 호출 (계정당 1회만)
-          try {
-            debugPrint('🔮 사주 계산 API 호출 중...');
-            final sajuResponse = await Supabase.instance.client.functions.invoke(
-              'calculate-saju',
-              body: {
-                'birthDate': _birthDate!.toIso8601String().split('T')[0],
-                'birthTime': birthTimeString,
-                'isLunar': false,
-                'timezone': 'Asia/Seoul'
-              },
-            ).timeout(
-              const Duration(seconds: 45),
-              onTimeout: () {
-                debugPrint('⏱️ 사주 계산 시간 초과');
-                throw Exception('사주 계산 시간 초과 (45초)');
-              },
-            );
-            
-            debugPrint('✅ 사주 계산 완료: ${sajuResponse.status}');
-            if (sajuResponse.status == 200) {
-              final sajuData = sajuResponse.data;
-              if (sajuData['success'] == true) {
-                debugPrint('✅ 사주 데이터 저장 성공');
-                // 사주 계산 플래그 업데이트
-                await Supabase.instance.client.from('user_profiles').update({
-                  'saju_calculated': true,
-                  'updated_at': DateTime.now().toIso8601String()
-                }).eq('id', _currentUser!.id);
-                debugPrint('✅ 사주 계산 플래그 업데이트 완료');
-              } else {
-                debugPrint('⚠️ 사주 계산 응답 오류: ${sajuData['error']}');
-              }
-            }
-          } catch (e) {
-            debugPrint('⚠️ 사주 계산 오류 (무시하고 계속 진행): $e');
-            // 사주 계산 실패해도 온보딩은 완료되도록 함
-          }
+
+          // 사주 계산은 백그라운드에서 처리 (UI 블로킹 제거)
+          _calculateSajuInBackground(
+            userId: _currentUser!.id,
+            birthDate: _birthDate!.toIso8601String().split('T')[0],
+            birthTime: birthTimeString,
+          );
         } catch (e) {
           debugPrint('Supabase 프로필 동기화 오류: $e');
           // Supabase 실패해도 로컬 저장은 성공했으므로 계속 진행
         }
       }
-      
+
+      // 즉시 홈으로 이동 (사주 계산 대기 없음)
       if (mounted) {
         context.go('/home?firstTime=true');
       }

@@ -235,7 +235,7 @@ class WeatherInfo {
 
   /// 날씨에 따른 운세 키워드
   List<String> get fortuneKeywords {
-    List<String> keywords = [];
+    final List<String> keywords = [];
     
     if (condition == 'Clear') {
       keywords.addAll(['밝은 기운', '긍정적 에너지', '새로운 시작']);

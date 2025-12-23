@@ -4,7 +4,12 @@ import '../../../../core/theme/typography_unified.dart';
 import '../../../../data/models/celebrity_saju.dart';
 import '../../../../presentation/providers/celebrity_saju_provider.dart';
 
-/// 🎭 유사 사주 연예인 카드 - ChatGPT Pulse 스타일
+/// 🎭 오늘 운세가 비슷한 유명인 카드
+///
+/// 사용자의 오늘 운세와 유명인의 오늘 운세를 비교하여 유사한 유명인 표시
+/// - 매일 다른 결과 (오늘 일진 기반)
+/// - API 비용 없음 (로컬 계산)
+/// - 유사도 50점 이상, 최대 3명 표시
 class CelebrityCard extends ConsumerWidget {
   final bool isDark;
 
@@ -15,15 +20,15 @@ class CelebrityCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // F04: 사용자 사주 기반 유사 유명인 (1~3명, 유사도 50점 이상)
-    final celebritiesAsync = ref.watch(similarCelebritiesProvider);
+    // 오늘 운세가 비슷한 유명인 (매일 다른 결과, 로컬 계산)
+    final celebritiesAsync = ref.watch(dailySimilarCelebritiesProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 헤더
         Text(
-          '나와 비슷한 사주',
+          '오늘 운세가 비슷한 유명인',
           style: context.heading3.copyWith(
             color: isDark ? Colors.white : Colors.black87,
             letterSpacing: -0.5,
@@ -31,7 +36,7 @@ class CelebrityCard extends ConsumerWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          '내 사주와 비슷한 유명인',
+          '오늘 나와 비슷한 하루를 보내는 유명인',
           style: context.bodySmall.copyWith(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
           ),
@@ -44,11 +49,11 @@ class CelebrityCard extends ConsumerWidget {
             if (celebDataList.isEmpty) {
               return _buildEmptyState();
             }
-            // F04: 이미 1~3명으로 필터링되어 있으므로 take(3) 불필요
+            // 이미 1~3명으로 필터링되어 있음
             return Column(
               children: celebDataList.map((data) {
                 final celeb = data['celebrity'] as CelebritySaju;
-                // F04: similarity 또는 compatibility 둘 다 지원 (폴백 대응)
+                // 오늘 운세 유사도 (100점 만점)
                 final similarity = (data['similarity'] ?? data['compatibility']) as int;
 
                 // 설명 생성 (한글 카테고리 또는 출생년도)

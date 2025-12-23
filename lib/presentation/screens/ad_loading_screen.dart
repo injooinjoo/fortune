@@ -283,7 +283,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.arrow_forward, size: 20),
+                              const Icon(Icons.arrow_forward, size: 20),
                               const SizedBox(width: AppSpacing.spacing2),
                               Text(
                                 '운세 확인하기',
@@ -303,7 +303,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                     ],
                   ] else ...[
                     // 프리미엄 사용자는 토스 스타일 로딩 표시
-                    TossFortuneLoadingWidget(
+                    const TossFortuneLoadingWidget(
                       message: '운세를 준비하고 있습니다',
                       size: 50,
                     ),

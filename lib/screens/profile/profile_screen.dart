@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/cache/cache_service.dart';
+import '../../core/components/app_dialog.dart';
+import '../../core/services/performance_cache_service.dart';
+import '../../core/utils/secure_storage.dart';
 import '../../services/storage_service.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../core/design_system/design_system.dart';
@@ -17,7 +22,6 @@ import '../../presentation/providers/token_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
 import '../../shared/components/premium_membership_card.dart';
-import '../../core/providers/user_settings_provider.dart';
 import 'widgets/profile_list_sheet.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -95,6 +99,94 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   // _buildSectionHeader replaced by SectionHeader component
 
   // _buildListItem replaced by SettingsListTile component
+
+  /// 테스터 전용: 초기화 확인 다이얼로그 표시
+  Future<void> _showResetConfirmationDialog(BuildContext context) async {
+    ref.read(fortuneHapticServiceProvider).warning();
+
+    final confirmed = await AppDialog.showConfirmation(
+      context: context,
+      title: '정말 초기화하시겠습니까?',
+      message: '모든 데이터가 삭제되며,\n온보딩부터 다시 시작합니다.\n\n이 작업은 되돌릴 수 없습니다.',
+      confirmText: '초기화',
+      cancelText: '취소',
+      isDanger: true,
+    );
+
+    if (confirmed == true && context.mounted) {
+      await _performFullReset(context);
+    }
+  }
+
+  /// 테스터 전용: 모든 데이터 초기화 후 온보딩으로 이동
+  Future<void> _performFullReset(BuildContext context) async {
+    try {
+      AppDialog.showLoading(context: context, message: '데이터 초기화 중...');
+
+      // 1. Supabase 로그아웃
+      await supabase.auth.signOut();
+
+      // 2. Secure Storage 삭제 (인증 토큰)
+      await SecureStorage.deleteAll();
+
+      // 3. SharedPreferences 삭제 (사용자 프로필, 운세 기록 등)
+      await _storageService.clearAll();
+
+      // 4. Hive Cache 삭제
+      try {
+        final cacheService = CacheService();
+        await cacheService.clearAllCache();
+      } catch (e) {
+        debugPrint('Cache clear error (non-critical): $e');
+      }
+
+      // 5. Performance Cache 삭제
+      try {
+        final performanceCacheService = PerformanceCacheService();
+        await performanceCacheService.clearAll();
+      } catch (e) {
+        debugPrint('Performance cache clear error (non-critical): $e');
+      }
+
+      // 6. Widget data 삭제
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('unified_fortune_widget_data');
+      } catch (e) {
+        debugPrint('Widget data clear error (non-critical): $e');
+      }
+
+      // 7. Debug Premium Override 해제
+      try {
+        await DebugPremiumService.setOverride(null);
+      } catch (e) {
+        debugPrint('Debug premium clear error (non-critical): $e');
+      }
+
+      // 로딩 다이얼로그 닫기
+      if (context.mounted) {
+        AppDialog.hideLoading(context);
+      }
+
+      // 8. 온보딩으로 이동
+      if (context.mounted) {
+        context.go('/onboarding/toss-style');
+      }
+    } catch (e) {
+      debugPrint('Reset error: $e');
+      if (context.mounted) {
+        try {
+          AppDialog.hideLoading(context);
+        } catch (_) {}
+
+        await AppDialog.showError(
+          context: context,
+          title: '초기화 실패',
+          message: '데이터 초기화 중 오류가 발생했습니다.\n다시 시도해주세요.',
+        );
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -472,8 +564,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         await DebugPremiumService.togglePremium();
                                         setState(() {});
                                       },
-                                      activeColor: context.colors.accent,
+                                      activeThumbColor: context.colors.accent,
                                     ),
+                                  ),
+                                  SettingsListTile(
+                                    icon: Icons.refresh_outlined,
+                                    title: '초기화 및 온보딩 재시작',
+                                    subtitle: '모든 데이터 삭제 후 처음부터',
+                                    trailing: Icon(
+                                      Icons.chevron_right,
+                                      color: context.colors.textSecondary,
+                                    ),
+                                    onTap: () => _showResetConfirmationDialog(context),
                                     isLast: true,
                                   ),
                                 ],

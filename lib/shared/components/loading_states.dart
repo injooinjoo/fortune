@@ -170,9 +170,9 @@ class CardSkeleton extends StatelessWidget {
       margin: margin,
       child: DSCard.hanji(
         padding: const EdgeInsets.all(DSSpacing.lg),
-        child: Column(
+        child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             SkeletonLoader(width: 150, height: 20),
             SizedBox(height: DSSpacing.sm),
             SkeletonLoader(height: 16),
@@ -230,10 +230,10 @@ class FortuneResultSkeleton extends StatelessWidget {
                 const SizedBox(height: DSSpacing.md),
                 ...List.generate(
                   4,
-                  (index) => Padding(
-                    padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+                  (index) => const Padding(
+                    padding: EdgeInsets.only(bottom: DSSpacing.sm),
                     child: Row(
-                      children: const [
+                      children: [
                         SkeletonLoader(width: 80, height: 16),
                         SizedBox(width: DSSpacing.sm),
                         Expanded(

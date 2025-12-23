@@ -325,7 +325,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               icon,
               color: iconColor ?? TossDesignSystem.grayDark900,
               size: AppDimensions.iconSizeXLarge),
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: AppSpacing.spacing2),
             Text(
               label,
               style: Theme.of(context).textTheme.labelSmall)])));
@@ -389,7 +389,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, color: color, size: AppDimensions.iconSizeSmall),
-              SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 label,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(

@@ -164,7 +164,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     try {
       final user = ref.read(userProvider).value;
       if (user == null) {
-        throw UnauthorizedException('로그인이 필요합니다');
+        throw const UnauthorizedException('로그인이 필요합니다');
       }
 
       Logger.info('🔍 [TokenNotifier] Loading token data for user: ${user.id}');
@@ -242,7 +242,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     try {
       final user = ref.read(userProvider).value;
       if (user == null) {
-        throw UnauthorizedException('로그인이 필요합니다');
+        throw const UnauthorizedException('로그인이 필요합니다');
       }
 
       // 낙관적 업데이트
@@ -307,7 +307,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     try {
       final user = ref.read(userProvider).value;
       if (user == null) {
-        throw UnauthorizedException('로그인이 필요합니다');
+        throw const UnauthorizedException('로그인이 필요합니다');
       }
 
       final history = await _apiService.getTokenHistory(
@@ -353,7 +353,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     try {
       final user = ref.read(userProvider).value;
       if (user == null) {
-        throw UnauthorizedException('로그인이 필요합니다');
+        throw const UnauthorizedException('로그인이 필요합니다');
       }
 
       final newBalance = await _apiService.claimDailyTokens(userId: user.id);
@@ -394,7 +394,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     try {
       final user = ref.read(userProvider).value;
       if (user == null) {
-        throw UnauthorizedException('로그인이 필요합니다');
+        throw const UnauthorizedException('로그인이 필요합니다');
       }
 
       // 낙관적 업데이트
@@ -445,7 +445,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     try {
       final user = ref.read(userProvider).value;
       if (user == null) {
-        throw UnauthorizedException('로그인이 필요합니다');
+        throw const UnauthorizedException('로그인이 필요합니다');
       }
 
       // 낙관적 업데이트

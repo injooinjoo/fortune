@@ -53,39 +53,80 @@ class WidgetService {
     });
   }
 
-  /// 백그라운드에서 위젯 데이터 새로고침
+  /// 백그라운드에서 위젯 데이터 새로고침 (Supabase 캐시 우선)
   static Future<void> _handleBackgroundRefresh() async {
     try {
-      // 캐시된 사용자 ID가 없으면 저장된 데이터에서 로드 시도
+      // 1. 캐시된 사용자 ID가 없으면 SharedPreferences에서 로드 시도
       if (_cachedUserId == null) {
-        Logger.warning('[WidgetService] 캐시된 사용자 ID 없음, 저장된 데이터 로드 시도');
-        // 저장된 데이터가 있으면 그대로 위젯 갱신만 수행
-        final existingData = await WidgetDataService.loadWidgetData();
-        if (existingData != null && existingData.isValidForToday) {
-          await updateAllWidgetsFromData(existingData);
-          Logger.info('[WidgetService] 기존 데이터로 위젯 갱신 완료');
+        final storedUserId = await WidgetDataService.loadStoredUserId();
+        if (storedUserId != null) {
+          _cachedUserId = storedUserId;
+          Logger.info('[WidgetService] 저장된 사용자 ID 로드: ${storedUserId.substring(0, 8)}...');
+        }
+      }
+
+      // 2. 사용자 ID가 있으면 Supabase 캐시 조회 시도
+      if (_cachedUserId != null) {
+        final cacheResult = await WidgetDataService.fetchFromSupabaseCache(_cachedUserId!);
+
+        if (cacheResult != null && cacheResult.hasData) {
+          // Supabase 캐시에서 데이터 로드 성공
+          final todayData = cacheResult.toSharedWidgetData(isToday: true);
+          final yesterdayData = cacheResult.toSharedWidgetData(isToday: false);
+
+          await WidgetDataService.saveWidgetDataWithEngagement(
+            todayData: todayData,
+            yesterdayData: yesterdayData,
+          );
+          Logger.info('[WidgetService] Supabase 캐시로 백그라운드 새로고침 완료');
           return;
         }
-        Logger.warning('[WidgetService] 백그라운드 새로고침 건너뜀: 사용자 ID 필요');
+      }
+
+      // 3. Supabase 캐시 실패 시 로컬 데이터로 폴백
+      final existingData = await WidgetDataService.loadWidgetData();
+      if (existingData != null) {
+        if (existingData.isValidForToday) {
+          // 오늘 데이터 - 정상 표시
+          await WidgetDataService.saveWidgetDataWithEngagement(
+            todayData: existingData,
+            yesterdayData: null,
+          );
+        } else {
+          // 어제 데이터 - engagement 유도
+          await WidgetDataService.saveWidgetDataWithEngagement(
+            todayData: null,
+            yesterdayData: existingData,
+          );
+        }
+        Logger.info('[WidgetService] 로컬 데이터로 위젯 갱신 완료');
         return;
       }
 
-      await forceRefreshWidgetData(_cachedUserId!);
-      Logger.info('[WidgetService] 백그라운드 새로고침 완료');
+      // 4. 데이터 전혀 없음 - 빈 상태
+      await WidgetDataService.saveWidgetDataWithEngagement(
+        todayData: null,
+        yesterdayData: null,
+      );
+      Logger.warning('[WidgetService] 데이터 없음, 빈 상태로 설정');
     } catch (e) {
       Logger.warning('[WidgetService] 백그라운드 새로고침 실패: $e');
     }
   }
 
   /// 사용자 ID 캐시 설정 (로그인 시 호출)
-  static void setUserId(String userId) {
+  static Future<void> setUserId(String userId) async {
     _cachedUserId = userId;
+    // SharedPreferences에도 저장 (백그라운드 새로고침 시 사용)
+    await WidgetDataService.storeUserId(userId);
     Logger.info('[WidgetService] 사용자 ID 캐시 설정: ${userId.substring(0, 8)}...');
   }
 
   /// 사용자 ID 캐시 해제 (로그아웃 시 호출)
-  static void clearUserId() {
+  static Future<void> clearUserId() async {
     _cachedUserId = null;
+    // SharedPreferences에서도 제거
+    await WidgetDataService.clearStoredUserId();
     Logger.info('[WidgetService] 사용자 ID 캐시 해제');
   }
 

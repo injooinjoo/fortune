@@ -39,6 +39,12 @@ mixin _$SharedWidgetData {
   /// 데이터 유효 날짜 (YYYY-MM-DD)
   String get validDate => throw _privateConstructorUsedError;
 
+  /// 위젯 표시 상태 (today/yesterday/empty)
+  WidgetDisplayState get displayState => throw _privateConstructorUsedError;
+
+  /// Engagement 유도 메시지 (앱 미접속 시)
+  String? get engagementMessage => throw _privateConstructorUsedError;
+
   /// Serializes this SharedWidgetData to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -61,7 +67,9 @@ abstract class $SharedWidgetDataCopyWith<$Res> {
       List<WidgetTimeSlotData> timeSlots,
       List<int> lottoNumbers,
       DateTime updatedAt,
-      String validDate});
+      String validDate,
+      WidgetDisplayState displayState,
+      String? engagementMessage});
 
   $WidgetOverallDataCopyWith<$Res> get overall;
 }
@@ -87,6 +95,8 @@ class _$SharedWidgetDataCopyWithImpl<$Res, $Val extends SharedWidgetData>
     Object? lottoNumbers = null,
     Object? updatedAt = null,
     Object? validDate = null,
+    Object? displayState = null,
+    Object? engagementMessage = freezed,
   }) {
     return _then(_value.copyWith(
       overall: null == overall
@@ -113,6 +123,14 @@ class _$SharedWidgetDataCopyWithImpl<$Res, $Val extends SharedWidgetData>
           ? _value.validDate
           : validDate // ignore: cast_nullable_to_non_nullable
               as String,
+      displayState: null == displayState
+          ? _value.displayState
+          : displayState // ignore: cast_nullable_to_non_nullable
+              as WidgetDisplayState,
+      engagementMessage: freezed == engagementMessage
+          ? _value.engagementMessage
+          : engagementMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -141,7 +159,9 @@ abstract class _$$SharedWidgetDataImplCopyWith<$Res>
       List<WidgetTimeSlotData> timeSlots,
       List<int> lottoNumbers,
       DateTime updatedAt,
-      String validDate});
+      String validDate,
+      WidgetDisplayState displayState,
+      String? engagementMessage});
 
   @override
   $WidgetOverallDataCopyWith<$Res> get overall;
@@ -166,6 +186,8 @@ class __$$SharedWidgetDataImplCopyWithImpl<$Res>
     Object? lottoNumbers = null,
     Object? updatedAt = null,
     Object? validDate = null,
+    Object? displayState = null,
+    Object? engagementMessage = freezed,
   }) {
     return _then(_$SharedWidgetDataImpl(
       overall: null == overall
@@ -192,6 +214,14 @@ class __$$SharedWidgetDataImplCopyWithImpl<$Res>
           ? _value.validDate
           : validDate // ignore: cast_nullable_to_non_nullable
               as String,
+      displayState: null == displayState
+          ? _value.displayState
+          : displayState // ignore: cast_nullable_to_non_nullable
+              as WidgetDisplayState,
+      engagementMessage: freezed == engagementMessage
+          ? _value.engagementMessage
+          : engagementMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -205,7 +235,9 @@ class _$SharedWidgetDataImpl implements _SharedWidgetData {
       required final List<WidgetTimeSlotData> timeSlots,
       required final List<int> lottoNumbers,
       required this.updatedAt,
-      required this.validDate})
+      required this.validDate,
+      this.displayState = WidgetDisplayState.today,
+      this.engagementMessage})
       : _categories = categories,
         _timeSlots = timeSlots,
         _lottoNumbers = lottoNumbers;
@@ -258,9 +290,18 @@ class _$SharedWidgetDataImpl implements _SharedWidgetData {
   @override
   final String validDate;
 
+  /// 위젯 표시 상태 (today/yesterday/empty)
+  @override
+  @JsonKey()
+  final WidgetDisplayState displayState;
+
+  /// Engagement 유도 메시지 (앱 미접속 시)
+  @override
+  final String? engagementMessage;
+
   @override
   String toString() {
-    return 'SharedWidgetData(overall: $overall, categories: $categories, timeSlots: $timeSlots, lottoNumbers: $lottoNumbers, updatedAt: $updatedAt, validDate: $validDate)';
+    return 'SharedWidgetData(overall: $overall, categories: $categories, timeSlots: $timeSlots, lottoNumbers: $lottoNumbers, updatedAt: $updatedAt, validDate: $validDate, displayState: $displayState, engagementMessage: $engagementMessage)';
   }
 
   @override
@@ -278,7 +319,11 @@ class _$SharedWidgetDataImpl implements _SharedWidgetData {
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.validDate, validDate) ||
-                other.validDate == validDate));
+                other.validDate == validDate) &&
+            (identical(other.displayState, displayState) ||
+                other.displayState == displayState) &&
+            (identical(other.engagementMessage, engagementMessage) ||
+                other.engagementMessage == engagementMessage));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -290,7 +335,9 @@ class _$SharedWidgetDataImpl implements _SharedWidgetData {
       const DeepCollectionEquality().hash(_timeSlots),
       const DeepCollectionEquality().hash(_lottoNumbers),
       updatedAt,
-      validDate);
+      validDate,
+      displayState,
+      engagementMessage);
 
   /// Create a copy of SharedWidgetData
   /// with the given fields replaced by the non-null parameter values.
@@ -316,7 +363,9 @@ abstract class _SharedWidgetData implements SharedWidgetData {
       required final List<WidgetTimeSlotData> timeSlots,
       required final List<int> lottoNumbers,
       required final DateTime updatedAt,
-      required final String validDate}) = _$SharedWidgetDataImpl;
+      required final String validDate,
+      final WidgetDisplayState displayState,
+      final String? engagementMessage}) = _$SharedWidgetDataImpl;
 
   factory _SharedWidgetData.fromJson(Map<String, dynamic> json) =
       _$SharedWidgetDataImpl.fromJson;
@@ -344,6 +393,14 @@ abstract class _SharedWidgetData implements SharedWidgetData {
   /// 데이터 유효 날짜 (YYYY-MM-DD)
   @override
   String get validDate;
+
+  /// 위젯 표시 상태 (today/yesterday/empty)
+  @override
+  WidgetDisplayState get displayState;
+
+  /// Engagement 유도 메시지 (앱 미접속 시)
+  @override
+  String? get engagementMessage;
 
   /// Create a copy of SharedWidgetData
   /// with the given fields replaced by the non-null parameter values.

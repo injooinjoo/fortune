@@ -175,7 +175,7 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                   return Container(
                     width: context.fortuneTheme.socialSharing.shareButtonSize - 8,
                     height: context.fortuneTheme.formStyles.inputHeight,
-                    margin: EdgeInsets.only(right: 8),
+                    margin: const EdgeInsets.only(right: 8),
                     child: KeyboardListener(
                       focusNode: FocusNode(),
                       onKeyEvent: (event) => _onKeyDown(event, index),

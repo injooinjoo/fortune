@@ -95,7 +95,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
                 borderRadius: AppDimensions.borderRadiusMedium,
               ),
             ),
-            SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: AppSpacing.spacing4),
             Container(
               height: AppSpacing.spacing5,
               width: double.infinity,
@@ -104,7 +104,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
                 borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
               ),
             ),
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: AppSpacing.spacing2),
             Container(
               height: 20,
               width: AppSpacing.spacing24 * 2.08,

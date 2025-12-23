@@ -416,7 +416,7 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.info_outline,
                         color: TossDesignSystem.tossBlue,
                         size: 20,

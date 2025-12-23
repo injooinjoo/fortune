@@ -38,8 +38,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Color(0xFF8B9CAD).withValues(alpha: 0.12), // 담먹색 (Light ink gray)
-                  Color(0xFF8B9CAD).withValues(alpha: 0.06),
+                  const Color(0xFF8B9CAD).withValues(alpha: 0.12), // 담먹색 (Light ink gray)
+                  const Color(0xFF8B9CAD).withValues(alpha: 0.06),
                   Colors.transparent,
                 ],
               ),
@@ -47,8 +47,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
           )
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
               .scale(
-                  begin: Offset(1.0, 1.0),
-                  end: Offset(1.15, 1.15),
+                  begin: const Offset(1.0, 1.0),
+                  end: const Offset(1.15, 1.15),
                   duration: 8.seconds,
                   curve: Curves.easeInOut)
               .moveX(
@@ -70,8 +70,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Color(0xFF6B7B8A).withValues(alpha: 0.15), // 회먹색 (Gray ink)
-                  Color(0xFF6B7B8A).withValues(alpha: 0.08),
+                  const Color(0xFF6B7B8A).withValues(alpha: 0.15), // 회먹색 (Gray ink)
+                  const Color(0xFF6B7B8A).withValues(alpha: 0.08),
                   Colors.transparent,
                 ],
               ),
@@ -79,8 +79,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
           )
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
               .scale(
-                  begin: Offset(1.0, 1.0),
-                  end: Offset(1.08, 1.08),
+                  begin: const Offset(1.0, 1.0),
+                  end: const Offset(1.08, 1.08),
                   duration: 10.seconds,
                   curve: Curves.easeInOut)
               .moveX(
@@ -102,8 +102,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Color(0xFFD4C5A9).withValues(alpha: 0.18), // 담황색 (Light ocher)
-                  Color(0xFFD4C5A9).withValues(alpha: 0.08),
+                  const Color(0xFFD4C5A9).withValues(alpha: 0.18), // 담황색 (Light ocher)
+                  const Color(0xFFD4C5A9).withValues(alpha: 0.08),
                   Colors.transparent,
                 ],
               ),
@@ -111,8 +111,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
           )
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
               .scale(
-                  begin: Offset(1.0, 1.0),
-                  end: Offset(1.12, 1.12),
+                  begin: const Offset(1.0, 1.0),
+                  end: const Offset(1.12, 1.12),
                   duration: 9.seconds,
                   curve: Curves.easeInOut)
               .moveY(
@@ -141,8 +141,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Color(0xFF2D3A5C).withValues(alpha: 0.25), // 쪽빛 (Deep indigo)
-                  Color(0xFF2D3A5C).withValues(alpha: 0.12),
+                  const Color(0xFF2D3A5C).withValues(alpha: 0.25), // 쪽빛 (Deep indigo)
+                  const Color(0xFF2D3A5C).withValues(alpha: 0.12),
                   Colors.transparent,
                 ],
               ),
@@ -150,8 +150,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
           )
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
               .scale(
-                  begin: Offset(1.0, 1.0),
-                  end: Offset(1.1, 1.1),
+                  begin: const Offset(1.0, 1.0),
+                  end: const Offset(1.1, 1.1),
                   duration: 12.seconds,
                   curve: Curves.easeInOut)
               .moveX(
@@ -173,8 +173,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Color(0xFF1F2937).withValues(alpha: 0.30), // 현무색 (Charcoal)
-                  Color(0xFF1F2937).withValues(alpha: 0.15),
+                  const Color(0xFF1F2937).withValues(alpha: 0.30), // 현무색 (Charcoal)
+                  const Color(0xFF1F2937).withValues(alpha: 0.15),
                   Colors.transparent,
                 ],
               ),
@@ -205,8 +205,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Color(0xFF4A5568).withValues(alpha: 0.15), // 회색 (Subtle gray)
-                  Color(0xFF4A5568).withValues(alpha: 0.06),
+                  const Color(0xFF4A5568).withValues(alpha: 0.15), // 회색 (Subtle gray)
+                  const Color(0xFF4A5568).withValues(alpha: 0.06),
                   Colors.transparent,
                 ],
               ),
@@ -214,8 +214,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
           )
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
               .scale(
-                  begin: Offset(1.0, 1.0),
-                  end: Offset(1.08, 1.08),
+                  begin: const Offset(1.0, 1.0),
+                  end: const Offset(1.08, 1.08),
                   duration: 10.seconds,
                   curve: Curves.easeInOut),
         ),

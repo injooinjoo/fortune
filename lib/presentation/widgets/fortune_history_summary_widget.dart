@@ -95,7 +95,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
     
     return Container(
       height: 120,
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         top: AppSpacing.spacing3,
         right: AppSpacing.spacing4,
       ),
@@ -175,7 +175,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
             ],
           ),
           
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: AppSpacing.spacing4),
           
           if (isLoading)
             Center(
@@ -192,7 +192,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                     color: theme.colorScheme.error,
                     size: 48,
                   ),
-                  SizedBox(height: AppSpacing.spacing2),
+                  const SizedBox(height: AppSpacing.spacing2),
                   Text(
                     '데이터를 불러올 수 없습니다',
                     style: theme.textTheme.bodyMedium,
@@ -206,17 +206,17 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
               '최근 7일 운세 점수',
               style: theme.textTheme.titleMedium,
             ),
-            SizedBox(height: AppSpacing.spacing3),
+            const SizedBox(height: AppSpacing.spacing3),
             _buildChart(context),
             
-            SizedBox(height: AppSpacing.spacing5),
+            const SizedBox(height: AppSpacing.spacing5),
             
             // Recent fortunes
             Text(
               '최근 운세',
               style: theme.textTheme.titleMedium,
             ),
-            SizedBox(height: AppSpacing.spacing3),
+            const SizedBox(height: AppSpacing.spacing3),
             
             if (recentFortunes != null && recentFortunes!['data'].isNotEmpty)
               Column(
@@ -246,7 +246,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
     final fortuneTheme = context.fortuneTheme;
     
     return Container(
-      margin: EdgeInsets.only(bottom: AppSpacing.spacing3),
+      margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
         color: fortuneTheme.cardBackground,
@@ -275,7 +275,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
               ),
             ),
           ),
-          SizedBox(width: AppSpacing.spacing3),
+          const SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,7 +284,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                   fortune['type'] ?? '운세',
                   style: theme.textTheme.titleSmall,
                 ),
-                SizedBox(height: AppSpacing.spacing1),
+                const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   fortune['title'] ?? '',
                   style: theme.textTheme.bodyMedium?.copyWith(

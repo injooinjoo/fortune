@@ -50,26 +50,10 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
       widget.onNameChanged(_nameController.text.trim());
     });
     
-    // 키보드 강제 활성화를 위한 다중 접근
+    // 키보드 활성화 - 단일 접근으로 최적화
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        // 1차 시도: 기본 포커스 요청
+      if (mounted && _focusNode.canRequestFocus) {
         _focusNode.requestFocus();
-        
-        // 2차 시도: 약간의 지연 후 시스템 키보드 강제 활성화
-        Future.delayed(const Duration(milliseconds: 100), () {
-          if (mounted) {
-            SystemChannels.textInput.invokeMethod('TextInput.show');
-          }
-        });
-        
-        // 3차 시도: 더 긴 지연 후 재시도
-        Future.delayed(const Duration(milliseconds: 300), () {
-          if (mounted) {
-            FocusScope.of(context).requestFocus(_focusNode);
-            SystemChannels.textInput.invokeMethod('TextInput.show');
-          }
-        });
       }
     });
   }

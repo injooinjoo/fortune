@@ -937,7 +937,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     // 로딩 중 조건
     // - 로그인된 사용자: isLoadingFortune이 true일 때만 로딩 화면
     // - 미로그인 사용자: 운세 데이터가 없거나 로딩 중일 때 로딩 화면
-    bool shouldShowLoading = _isReallyLoggedIn
+    final bool shouldShowLoading = _isReallyLoggedIn
         ? isLoadingFortune
         : (isLoadingFortune || storySegments == null || todaysFortune == null);
 

@@ -8,7 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import '../providers/providers.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/utils/haptic_utils.dart';
+import '../../core/services/fortune_haptic_service.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../core/services/holiday_service.dart';
 import '../../core/models/holiday_models.dart';
@@ -97,7 +97,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           _selectedDay = selectedDay;
           _focusedDay = focusedDay;
         });
-        HapticUtils.lightImpact();
+        ref.read(fortuneHapticServiceProvider).selection();
       }
     }
   }
@@ -113,8 +113,8 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
 
   void _onFortuneButtonPressed() async {
     if (_selectedDay == null || _isLoadingFortune) return;
-    
-    HapticUtils.mediumImpact();
+
+    ref.read(fortuneHapticServiceProvider).dateConfirm();
     
     setState(() {
       _isLoadingFortune = true;
@@ -283,7 +283,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.calendar_today,
                 color: AppTheme.primaryColor,
                 size: 20,
@@ -394,7 +394,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.info_outline,
                   color: TossDesignSystem.gray600,
                   size: 16,
@@ -535,7 +535,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
             outsideDaysVisible: false,
             weekendTextStyle: const TextStyle(color: TossDesignSystem.errorRed),
             holidayTextStyle: const TextStyle(color: TossDesignSystem.errorRed),
-            selectedDecoration: BoxDecoration(
+            selectedDecoration: const BoxDecoration(
               color: AppTheme.primaryColor,
               shape: BoxShape.circle,
             ),
@@ -553,11 +553,11 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,
-            leftChevronIcon: Icon(
+            leftChevronIcon: const Icon(
               Icons.chevron_left,
               color: AppTheme.primaryColor,
             ),
-            rightChevronIcon: Icon(
+            rightChevronIcon: const Icon(
               Icons.chevron_right,
               color: AppTheme.primaryColor,
             ),

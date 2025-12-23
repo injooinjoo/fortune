@@ -5,6 +5,8 @@ import '../../core/utils/supabase_helper.dart';
 import '../../data/models/user_profile.dart';
 import '../../services/user_statistics_service.dart';
 import '../../services/storage_service.dart';
+import '../../services/widget_service.dart';
+import '../../services/widget_data_service.dart';
 
 // Supabase client provider
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -233,7 +235,7 @@ class AuthService {
           .maybeSingle();
 
       if (response == null) return false;
-      
+
       return response['onboarding_completed'] == true;
     } catch (e) {
       Logger.error('Error checking user profile', e);
@@ -241,3 +243,45 @@ class AuthService {
     }
   }
 }
+
+/// 위젯 데이터 준비 프로바이더
+/// auth 상태 변경 시 자동으로 위젯 데이터 준비
+/// - Android: 위젯 설치 확인 후 API 호출
+/// - iOS: 앱 시작 시 무조건 API 호출 (감지 불가)
+final widgetDataPreparationProvider = Provider<void>((ref) {
+  ref.listen<AsyncValue<AuthState?>>(authStateProvider, (previous, next) {
+    next.whenData((authState) async {
+      if (authState == null) return;
+
+      final userId = authState.session?.user.id;
+      if (userId == null) {
+        // 로그아웃 시 캐시 해제
+        if (authState.event == AuthChangeEvent.signedOut) {
+          WidgetService.clearUserId();
+          Logger.info('[Widget] 로그아웃 - 사용자 ID 캐시 해제');
+        }
+        return;
+      }
+
+      // 로그인/세션 복구 시 위젯 데이터 준비
+      if (authState.event == AuthChangeEvent.signedIn ||
+          authState.event == AuthChangeEvent.tokenRefreshed ||
+          authState.event == AuthChangeEvent.initialSession) {
+        try {
+          // 위젯 설치 확인 (Android만 실제 확인, iOS는 항상 true)
+          final isInstalled = await WidgetDataService.isWidgetInstalled();
+
+          if (isInstalled) {
+            WidgetService.setUserId(userId);
+            await WidgetService.refreshWidgetData(userId);
+            Logger.info('[Widget] 위젯 데이터 준비 완료');
+          } else {
+            Logger.info('[Widget] 위젯 미설치 - 데이터 준비 건너뜀');
+          }
+        } catch (e) {
+          Logger.warning('[Widget] 위젯 데이터 준비 실패 (비치명적): $e');
+        }
+      }
+    });
+  });
+});

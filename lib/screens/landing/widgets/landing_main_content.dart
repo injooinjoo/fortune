@@ -27,12 +27,12 @@ class LandingMainContent extends StatelessWidget {
             width: 120,
             height: 120,
           ).animate().fadeIn(duration: 800.ms).scale(
-              begin: Offset(0.8, 0.8),
-              end: Offset(1.0, 1.0),
+              begin: const Offset(0.8, 0.8),
+              end: const Offset(1.0, 1.0),
               duration: 600.ms,
               curve: Curves.easeOutBack),
 
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
 
           // App Name
           Text(
@@ -63,8 +63,8 @@ class LandingMainContent extends StatelessWidget {
               .animate()
               .fadeIn(delay: 600.ms, duration: 600.ms)
               .scale(
-                  begin: Offset(0.9, 0.9),
-                  end: Offset(1.0, 1.0),
+                  begin: const Offset(0.9, 0.9),
+                  end: const Offset(1.0, 1.0),
                   duration: 400.ms),
         ],
       ),

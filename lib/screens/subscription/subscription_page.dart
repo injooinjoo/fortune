@@ -135,7 +135,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               Container(
                 padding: const EdgeInsets.all(DSSpacing.lg),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [
                       ObangseokColors.hwangLight,
                       ObangseokColors.hwang,

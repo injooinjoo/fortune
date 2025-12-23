@@ -8,15 +8,17 @@ import '../../core/widgets/unified_button_enums.dart';
 
 /// 이미지 업로드 옵션 타입
 enum ImageUploadType {
-  camera('카메라', Icons.camera_alt, '사진 촬영'),
-  gallery('갤러리', Icons.photo_library, '사진 선택'),
-  instagram('인스타그램', Icons.link, 'URL 입력');
+  camera('카메라', Icons.camera_alt, '사진 촬영', null),
+  gallery('갤러리', Icons.photo_library, '사진 선택', null),
+  instagram('인스타그램', Icons.link, 'URL 입력', null);
 
   final String label;
   final IconData icon;
   final String description;
+  final String? imagePath;
 
-  const ImageUploadType(this.label, this.icon, this.description);
+  const ImageUploadType(
+      this.label, this.icon, this.description, this.imagePath);
 }
 
 /// 이미지 업로드 결과
@@ -119,7 +121,8 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     );
   }
 
-  Widget _buildSelectedImage(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildSelectedImage(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
       height: widget.imageHeight,
       width: double.infinity,
@@ -164,7 +167,8 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
             bottom: DSSpacing.sm,
             left: DSSpacing.sm,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
               decoration: BoxDecoration(
                 color: colors.textPrimary.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(DSRadius.xl),
@@ -195,7 +199,8 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     ).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.95, 0.95));
   }
 
-  Widget _buildInstagramInput(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildInstagramInput(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -217,7 +222,11 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                     padding: const EdgeInsets.all(DSSpacing.sm),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [colors.accent, colors.accentSecondary, colors.accentTertiary],
+                        colors: [
+                          colors.accent,
+                          colors.accentSecondary,
+                          colors.accentTertiary
+                        ],
                       ),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                     ),
@@ -241,7 +250,8 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm + 2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: DSSpacing.md, vertical: DSSpacing.sm + 2),
                     decoration: BoxDecoration(
                       color: colors.surface,
                       borderRadius: const BorderRadius.only(
@@ -272,7 +282,8 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                         ),
                         suffixIcon: _instagramController.text.isNotEmpty
                             ? IconButton(
-                                icon: Icon(Icons.clear, color: colors.textTertiary),
+                                icon: Icon(Icons.clear,
+                                    color: colors.textTertiary),
                                 onPressed: () {
                                   setState(() {
                                     _instagramController.clear();
@@ -310,7 +321,9 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                             width: 2,
                           ),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm + 2),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: DSSpacing.md,
+                            vertical: DSSpacing.sm + 2),
                       ),
                       onChanged: (value) {
                         setState(() {});
@@ -353,7 +366,8 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                         final input = _instagramController.text.trim();
 
                         // URL 유효성 검증
-                        String? errorMessage = _validateInstagramInput(input);
+                        final String? errorMessage =
+                            _validateInstagramInput(input);
 
                         if (errorMessage != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -386,7 +400,8 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
   }
 
-  Widget _buildUploadOptions(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildUploadOptions(
+      DSColorScheme colors, DSTypographyScheme typography) {
     final options = [
       ImageUploadType.camera,
       ImageUploadType.gallery,
@@ -446,14 +461,15 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
 
         // Option buttons
         ...options.map((option) => Padding(
-          padding: const EdgeInsets.only(bottom: DSSpacing.sm),
-          child: _buildUploadOptionButton(option, colors, typography),
-        )),
+              padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+              child: _buildUploadOptionButton(option, colors, typography),
+            )),
       ],
     );
   }
 
-  Widget _buildUploadOptionButton(ImageUploadType type, DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildUploadOptionButton(ImageUploadType type, DSColorScheme colors,
+      DSTypographyScheme typography) {
     return InkWell(
       onTap: () => _handleOptionSelect(type),
       borderRadius: BorderRadius.circular(DSRadius.lg),
@@ -477,12 +493,26 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                     : colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.md),
               ),
-              child: Icon(
-                type.icon,
-                color: type == ImageUploadType.instagram
-                    ? colors.accent
-                    : colors.textSecondary,
-              ),
+              child: type.imagePath != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        type.imagePath!,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          type.icon,
+                          color: type == ImageUploadType.instagram
+                              ? colors.accent
+                              : colors.textSecondary,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      type.icon,
+                      color: type == ImageUploadType.instagram
+                          ? colors.accent
+                          : colors.textSecondary,
+                    ),
             ),
             const SizedBox(width: DSSpacing.md),
             Expanded(
@@ -514,9 +544,10 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
           ],
         ),
       ),
-    ).animate()
-      .fadeIn(duration: 400.ms, delay: (type.index * 100).ms)
-      .slideX(begin: 0.05, end: 0);
+    )
+        .animate()
+        .fadeIn(duration: 400.ms, delay: (type.index * 100).ms)
+        .slideX(begin: 0.05, end: 0);
   }
 
   Widget _buildGuidelines(DSColorScheme colors, DSTypographyScheme typography) {
@@ -551,33 +582,34 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
           ),
           const SizedBox(height: DSSpacing.sm),
           ...widget.guidelines.map((guideline) => Padding(
-            padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '• ',
-                  style: typography.labelSmall.copyWith(
-                    color: colors.accent,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    guideline,
-                    style: typography.labelSmall.copyWith(
-                      color: colors.accent,
+                padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '• ',
+                      style: typography.labelSmall.copyWith(
+                        color: colors.accent,
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      child: Text(
+                        guideline,
+                        style: typography.labelSmall.copyWith(
+                          color: colors.accent,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     ).animate().fadeIn(duration: 500.ms, delay: 300.ms);
   }
 
-  Widget _buildPrivacyNotice(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildPrivacyNotice(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
@@ -690,7 +722,8 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     });
   }
 
-  void _showImageSelectionBottomSheet(BuildContext context, DSColorScheme colors, DSTypographyScheme typography) {
+  void _showImageSelectionBottomSheet(BuildContext context,
+      DSColorScheme colors, DSTypographyScheme typography) {
     showModalBottomSheet(
       context: context,
       backgroundColor: colors.surface,
@@ -757,7 +790,11 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [colors.accent, colors.accentSecondary, colors.accentTertiary],
+                        colors: [
+                          colors.accent,
+                          colors.accentSecondary,
+                          colors.accentTertiary
+                        ],
                       ),
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -796,7 +833,9 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     }
 
     // 게시물 URL 제외
-    if (input.contains('/p/') || input.contains('/reel/') || input.contains('/tv/')) {
+    if (input.contains('/p/') ||
+        input.contains('/reel/') ||
+        input.contains('/tv/')) {
       return '프로필 URL을 입력해주세요. 게시물 URL은 사용할 수 없습니다.';
     }
 

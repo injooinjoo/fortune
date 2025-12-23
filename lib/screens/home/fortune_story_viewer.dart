@@ -101,14 +101,14 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                 end: Alignment.bottomCenter,
                 colors: isDark 
                   ? [
-                      Color(0xFF1a1a2e),  // 진한 남색
-                      Color(0xFF16213e),  // 더 진한 남색
-                      Color(0xFF0f1624),  // 거의 검정
+                      const Color(0xFF1a1a2e),  // 진한 남색
+                      const Color(0xFF16213e),  // 더 진한 남색
+                      const Color(0xFF0f1624),  // 거의 검정
                     ]
                   : [
                       Colors.white,        // 흰색
-                      Color(0xFFF8F9FA),   // 연한 회색
-                      Color(0xFFF1F3F4),   // 더 연한 회색
+                      const Color(0xFFF8F9FA),   // 연한 회색
+                      const Color(0xFFF1F3F4),   // 더 연한 회색
                     ],
                 stops: [0.0, 0.5, 1.0],
               ),
@@ -190,8 +190,8 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // 페이지 오프셋 계산 (스크롤 진행도)
-    double pageOffset = _pageOffset;
-    double diff = (index - pageOffset).abs();
+    final double pageOffset = _pageOffset;
+    final double diff = (index - pageOffset).abs();
     
     // 페이드 효과 계산 - 더 극적으로!
     double opacity = 1.0;
@@ -202,7 +202,7 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
       // 현재 페이지이거나 전환 중인 페이지
       if (index == pageOffset.floor()) {
         // 현재 페이지가 위로 스크롤되면서 사라짐
-        double progress = pageOffset - index;
+        final double progress = pageOffset - index;
         
         // 아주 조금만 스크롤해도 빠르게 사라지도록
         if (progress > 0.05) {  // 5%만 스크롤해도
@@ -220,7 +220,7 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
         
       } else if (index == pageOffset.ceil()) {
         // 다음 페이지가 아래에서 올라오면서 나타남
-        double progress = pageOffset - index + 1;
+        final double progress = pageOffset - index + 1;
         
         // 중앙에 가까워질 때만 나타나도록
         if (progress < 0.7) {  // 70% 전까지는 안 보임
@@ -278,14 +278,14 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                     shadows: isDark
                       ? [
                           Shadow(
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                             blurRadius: 4,
                             color: Colors.black.withValues(alpha: 0.3),
                           ),
                         ]
                       : [
                           Shadow(
-                            offset: Offset(0, 1),
+                            offset: const Offset(0, 1),
                             blurRadius: 2,
                             color: Colors.grey.withValues(alpha: 0.3),
                           ),
@@ -399,7 +399,7 @@ class FortuneStory {
     required Map<String, dynamic> fortuneData,
   }) {
     // 운세 데이터를 스토리 세그먼트로 변환
-    List<StorySegment> segments = [];
+    final List<StorySegment> segments = [];
 
     // 인사말
     segments.add(StorySegment(
@@ -425,8 +425,8 @@ class FortuneStory {
     // 운세 내용 추가 (fortuneData에서 추출)
     if (fortuneData['summary'] != null) {
       // 요약을 여러 줄로 나누기
-      String summary = fortuneData['summary'] as String;
-      List<String> lines = summary.split('. ');
+      final String summary = fortuneData['summary'] as String;
+      final List<String> lines = summary.split('. ');
       
       for (String line in lines) {
         if (line.isNotEmpty) {
@@ -466,7 +466,7 @@ class FortuneStory {
     }
 
     // 마무리
-    segments.add(StorySegment(
+    segments.add(const StorySegment(
       text: '오늘도 좋은 하루 되세요.',
       
       fontWeight: FontWeight.w400,

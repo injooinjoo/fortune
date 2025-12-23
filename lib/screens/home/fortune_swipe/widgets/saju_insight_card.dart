@@ -18,10 +18,10 @@ class SajuInsightCard extends StatelessWidget {
 
   /// 사주 민화 이미지 목록 (4개)
   static const List<Map<String, String>> _sajuImages = [
-    {'image': 'assets/images/minhwa/minhwa_saju_dragon.png', 'emoji': '🐉', 'label': '용 민화'},
-    {'image': 'assets/images/minhwa/minhwa_saju_fourguardians.png', 'emoji': '🏯', 'label': '사신도 민화'},
-    {'image': 'assets/images/minhwa/minhwa_saju_tiger_dragon.png', 'emoji': '🐅', 'label': '용호상박 민화'},
-    {'image': 'assets/images/minhwa/minhwa_saju_yin_yang.png', 'emoji': '☯️', 'label': '음양 민화'},
+    {'image': 'assets/images/minhwa/minhwa_saju_dragon.webp', 'emoji': '🐉', 'label': '용 민화'},
+    {'image': 'assets/images/minhwa/minhwa_saju_fourguardians.webp', 'emoji': '🏯', 'label': '사신도 민화'},
+    {'image': 'assets/images/minhwa/minhwa_saju_tiger_dragon.webp', 'emoji': '🐅', 'label': '용호상박 민화'},
+    {'image': 'assets/images/minhwa/minhwa_saju_yin_yang.webp', 'emoji': '☯️', 'label': '음양 민화'},
   ];
 
   /// 오늘 날짜 기반 이미지 선택 (하루 동안 일관성 유지)

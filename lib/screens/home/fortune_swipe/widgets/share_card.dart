@@ -2,14 +2,16 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/theme/font_config.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 /// 🎁 공유 카드 - Traditional 한지 스타일 + 이미지 공유
-class ShareCard extends StatefulWidget {
+class ShareCard extends ConsumerStatefulWidget {
   final int score;
   final String message;
   final bool isDark;
@@ -34,10 +36,10 @@ class ShareCard extends StatefulWidget {
   });
 
   @override
-  State<ShareCard> createState() => _ShareCardState();
+  ConsumerState<ShareCard> createState() => _ShareCardState();
 }
 
-class _ShareCardState extends State<ShareCard> {
+class _ShareCardState extends ConsumerState<ShareCard> {
   final ScreenshotController _screenshotController = ScreenshotController();
   bool _isCapturing = false;
 
@@ -46,6 +48,10 @@ class _ShareCardState extends State<ShareCard> {
 
   Future<void> _captureAndShare() async {
     if (_isCapturing) return;
+
+    // 공유 액션 햅틱 피드백
+    ref.read(fortuneHapticServiceProvider).shareAction();
+
     setState(() => _isCapturing = true);
 
     try {

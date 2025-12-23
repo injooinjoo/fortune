@@ -123,7 +123,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
   
   // 연애 관련 방문이 많으면 연애운 추천
   if (visitedCategories.contains('love') && !recommendations.any((r) => r.id == 'chemistry')) {
-    recommendations.add(RecommendedFortune(
+    recommendations.add(const RecommendedFortune(
       id: 'chemistry',
       title: '케미 운세',
       description: '상대방과의 특별한 연결',
@@ -134,7 +134,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
   
   // 직업 관련 방문이 많으면 직업운 추천
   if (visitedCategories.contains('career') && !recommendations.any((r) => r.id == 'lucky-job')) {
-    recommendations.add(RecommendedFortune(
+    recommendations.add(const RecommendedFortune(
       id: 'lucky-job',
       title: '천직 운세',
       description: '나에게 맞는 직업 찾기',
@@ -148,7 +148,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
   
   // 새해 시즌 (12월 ~ 1월)
   if (now.month == 12 || now.month == 1) {
-    recommendations.add(RecommendedFortune(
+    recommendations.add(const RecommendedFortune(
       id: 'new-year',
       title: '신년 운세',
       description: '새해의 전체적인 흐름',
@@ -160,21 +160,21 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
   // 4. 인기 운세 추가 (추천이 부족한 경우)
   if (recommendations.length < 3) {
     final popularFortunes = [
-      RecommendedFortune(
+      const RecommendedFortune(
         id: 'saju',
         title: '사주팔자',
         description: '정통 사주 풀이',
         route: '/fortune/saju',
         reason: '인기 운세',
         relevanceScore: 0.6),
-      RecommendedFortune(
+      const RecommendedFortune(
         id: 'love',
         title: '연애운',
         description: '사랑과 인연의 흐름',
         route: '/fortune/love',
         reason: '인기 운세',
         relevanceScore: 0.6),
-      RecommendedFortune(
+      const RecommendedFortune(
         id: 'wealth',
         title: '금전운',
         description: '재물과 투자의 운',

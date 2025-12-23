@@ -34,7 +34,7 @@ class ScoreCard extends StatelessWidget {
     final typography = context.typography;
     final brightness = Theme.of(context).brightness;
 
-    Widget content = Container(
+    final Widget content = Container(
       decoration: DSShadows.getInkWashDecoration(
         brightness,
         backgroundColor: colors.surface,

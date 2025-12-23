@@ -173,7 +173,7 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                           '프로필을 완성해주세요',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        SizedBox(height: AppSpacing.spacing1),
+                        const SizedBox(height: AppSpacing.spacing1),
                         Text(
                           _missingFields.isEmpty 
                               ? '더 정확한 운세를 위해 프로필을 확인해주세요'

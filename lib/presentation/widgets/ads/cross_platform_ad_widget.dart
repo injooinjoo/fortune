@@ -57,7 +57,7 @@ class CommonAdPlacements {
     EdgeInsets? padding,
     Color? backgroundColor}) {
     return CrossPlatformAdWidget(
-      padding: padding ?? EdgeInsets.symmetric(vertical: AppSpacing.spacing6),
+      padding: padding ?? const EdgeInsets.symmetric(vertical: AppSpacing.spacing6),
       mobileAdSize: AdSize.mediumRectangle,
       webAdSize: AdSenseBannerSize.mediumRectangle,
       backgroundColor: backgroundColor);
@@ -77,7 +77,7 @@ class CommonAdPlacements {
     EdgeInsets? padding,
     Color? backgroundColor}) {
     return CrossPlatformAdWidget(
-      padding: padding ?? EdgeInsets.symmetric(vertical: AppSpacing.spacing8),
+      padding: padding ?? const EdgeInsets.symmetric(vertical: AppSpacing.spacing8),
       mobileAdSize: AdSize.largeBanner,
       webAdSize: AdSenseBannerSize.largeRectangle,
       backgroundColor: backgroundColor);

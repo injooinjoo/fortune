@@ -10,7 +10,7 @@ class LandingThemeToggle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       alignment: Alignment.topRight,
       child: InkWell(
         onTap: () {
@@ -22,7 +22,7 @@ class LandingThemeToggle extends ConsumerWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(isDark ? '다크 모드로 전환되었습니다' : '라이트 모드로 전환되었습니다'),
-              duration: Duration(seconds: 1),
+              duration: const Duration(seconds: 1),
             ),
           );
         },

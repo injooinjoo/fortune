@@ -80,7 +80,7 @@ class TarotFortuneCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: AppSpacing.spacing4),
                   Text(
                     title,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -92,7 +92,7 @@ class TarotFortuneCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: TossDesignSystem.spacingXS),
+                  const SizedBox(height: TossDesignSystem.spacingXS),
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -107,7 +107,7 @@ class TarotFortuneCard extends StatelessWidget {
                   if (isPremium) ...[
                     const Spacer(),
                     Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.spacing3,
                         vertical: AppSpacing.spacing1,
                       ),

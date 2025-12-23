@@ -70,18 +70,18 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.cake,
                   color: TossDesignSystem.tossBlue,
                   size: AppDimensions.iconSizeSmall),
-                SizedBox(width: AppSpacing.spacing2),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   DateFormat('yyyy년 MM월 dd일').format(_selectedDate),
                   style: Theme.of(context).textTheme.titleMedium),
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: AppSpacing.spacing4),
           SizedBox(
             height: 300,
             child: CustomCalendarDatePicker(

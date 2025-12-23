@@ -23,7 +23,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<WeatherInfo?> _getWeatherInfoOptional() async {
     try {
       // Check location permission without requesting
-      LocationPermission permission = await Geolocator.checkPermission();
+      final LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied || 
           permission == LocationPermission.deniedForever) {
         // Don't request permission, just return null

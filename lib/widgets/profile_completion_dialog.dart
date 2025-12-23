@@ -52,7 +52,7 @@ class ProfileCompletionDialog extends StatelessWidget {
                 curve: Curves.easeOutBack,
               ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
             // Title
             Text(
@@ -66,7 +66,7 @@ class ProfileCompletionDialog extends StatelessWidget {
               .fadeIn(delay: 200.ms, duration: 400.ms)
               .slideY(begin: 0.1, end: 0, delay: 200.ms, duration: 400.ms),
             
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             
             // Subtitle
             Text(

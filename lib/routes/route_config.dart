@@ -82,8 +82,12 @@ import '../core/utils/page_transitions.dart';
 import '../core/utils/route_observer_logger.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
+/// 전역 Navigator Key - FCM 딥링크 등에서 사용
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: '/',
     debugLogDiagnostics: false, // Disabled to prevent freezing on real devices
     observers: kDebugMode ? [RouteObserverLogger()] : [],

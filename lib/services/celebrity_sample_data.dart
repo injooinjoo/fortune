@@ -28,7 +28,7 @@ class CelebritySampleData {
           'pro_debut': '2013-02',
           'retired': false,
         },
-        externalIds: ExternalIds(
+        externalIds: const ExternalIds(
           youtube: 'https://www.youtube.com/@faker',
           instagram: 'https://instagram.com/faker',
         ),
@@ -52,7 +52,7 @@ class CelebritySampleData {
           'first_stream_date': '2018-01',
           'avg_viewers_bucket': 'large',
         },
-        externalIds: ExternalIds(
+        externalIds: const ExternalIds(
           twitch: 'https://twitch.tv/jokbaltan',
           youtube: 'https://www.youtube.com/@jokbaltan',
         ),
@@ -82,7 +82,7 @@ class CelebritySampleData {
           'vocal_range': '소프라노',
           'notable_tracks': ['좋은 날', 'Through the Night', 'Celebrity'],
         },
-        externalIds: ExternalIds(
+        externalIds: const ExternalIds(
           wikipedia: 'https://ko.wikipedia.org/wiki/아이유',
           youtube: 'https://www.youtube.com/@dlwlrma',
           instagram: 'https://instagram.com/dlwlrma',
@@ -110,7 +110,7 @@ class CelebritySampleData {
           'sub_units': [],
           'solo_activities': ['Indigo 앨범', 'Right Place, Wrong Person'],
         },
-        externalIds: ExternalIds(
+        externalIds: const ExternalIds(
           instagram: 'https://instagram.com/rkive',
           youtube: 'https://www.youtube.com/@bts',
         ),
@@ -133,7 +133,7 @@ class CelebritySampleData {
           'notable_works': ['기생충', '옥자', '살인의 추억', '괴물'],
           'awards': ['아카데미 작품상', '칸 영화제 남우주연상'],
         },
-        externalIds: ExternalIds(
+        externalIds: const ExternalIds(
           wikipedia: 'https://ko.wikipedia.org/wiki/송강호',
           imdb: 'https://www.imdb.com/name/nm0814280/',
         ),
@@ -158,7 +158,7 @@ class CelebritySampleData {
           'career_highlights': ['2018 월드컵 16강', 'EPL 골든부트'],
           'records_personal_bests': ['EPL 시즌 최다골 23골'],
         },
-        externalIds: ExternalIds(
+        externalIds: const ExternalIds(
           instagram: 'https://instagram.com/hm_son7',
           wikipedia: 'https://ko.wikipedia.org/wiki/손흥민',
         ),
@@ -182,7 +182,7 @@ class CelebritySampleData {
           'previous_offices': ['경기도지사', '성남시장'],
           'ideology_tags': ['진보'],
         },
-        externalIds: ExternalIds(
+        externalIds: const ExternalIds(
           wikipedia: 'https://ko.wikipedia.org/wiki/이재명',
         ),
       ),
@@ -204,7 +204,7 @@ class CelebritySampleData {
           'board_memberships': ['삼성물산', '삼성SDS'],
           'notable_ventures': ['삼성 바이오로직스', '삼성전기'],
         },
-        externalIds: ExternalIds(
+        externalIds: const ExternalIds(
           wikipedia: 'https://ko.wikipedia.org/wiki/이재용_(기업인)',
         ),
       ),
@@ -345,7 +345,7 @@ class CelebritySampleData {
       } else {
         buffer.writeln("  '12:00',");
       }
-      buffer.writeln("  ${celebrity.activeFrom},");
+      buffer.writeln('  ${celebrity.activeFrom},');
       buffer.writeln("  ${celebrity.agencyManagement != null ? "'${celebrity.agencyManagement}'" : 'NULL'},");
       buffer.writeln("  ARRAY[${celebrity.languages.map((l) => "'$l'").join(', ')}],");
       buffer.writeln("  '${celebrity.externalIds?.toJson() ?? {}}'::jsonb,");

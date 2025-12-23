@@ -39,7 +39,7 @@ class BaseCard extends StatelessWidget {
 
     final cardColor = backgroundColor ?? colors.surface;
 
-    Widget content = Container(
+    final Widget content = Container(
       width: width,
       height: height,
       margin: margin,

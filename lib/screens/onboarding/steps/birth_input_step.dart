@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/design_system.dart';
-import '../../../core/providers/user_settings_provider.dart';
 
 class BirthInputStep extends ConsumerStatefulWidget {
   final DateTime? initialDate;
@@ -42,7 +41,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
   // For backspace detection
   // ignore: unused_field
-  String _prevYear = '';
+  final String _prevYear = '';
   String _prevMonth = '';
   String _prevDay = '';
   String _prevTime = '';
@@ -54,6 +53,11 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
   bool _isDateValid = false;
   bool _isTimeValid = false;
   bool _isTimeUnknown = false;
+
+  // 캐싱된 스타일 (테마 변경 시만 업데이트)
+  TextStyle? _inputStyle;
+  TextStyle? _hintStyle;
+  TextStyle? _labelStyle;
 
   @override
   void initState() {
@@ -82,8 +86,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
       // Auto-advance to month ONLY when exactly 4 digits
       if (text.length == 4 && _yearFocus.hasFocus) {
         if (!_showMonth) setState(() => _showMonth = true);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _monthFocus.requestFocus();
+        Future.microtask(() {
+          if (mounted) _monthFocus.requestFocus();
         });
       }
     });
@@ -93,7 +97,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
       // Backspace when empty → go back to year AND delete last digit
       if (text.isEmpty && _prevMonth.isNotEmpty && _monthFocus.hasFocus) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.microtask(() {
+          if (!mounted) return;
           if (_yearController.text.isNotEmpty) {
             _yearController.text = _yearController.text.substring(0, _yearController.text.length - 1);
           }
@@ -107,8 +112,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
       // Auto-advance to day ONLY when exactly 2 digits
       if (text.length == 2 && _monthFocus.hasFocus) {
         if (!_showDay) setState(() => _showDay = true);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _dayFocus.requestFocus();
+        Future.microtask(() {
+          if (mounted) _dayFocus.requestFocus();
         });
       }
     });
@@ -118,7 +123,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
       // Backspace when empty → go back to month AND delete last digit
       if (text.isEmpty && _prevDay.isNotEmpty && _dayFocus.hasFocus) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.microtask(() {
+          if (!mounted) return;
           if (_monthController.text.isNotEmpty) {
             _monthController.text = _monthController.text.substring(0, _monthController.text.length - 1);
           }
@@ -132,8 +138,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
       // Auto-advance to time ONLY when exactly 2 digits AND date is valid
       if (text.length == 2 && _dayFocus.hasFocus && _isDateValid) {
         if (!_showTime) setState(() => _showTime = true);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _timeFocus.requestFocus();
+        Future.microtask(() {
+          if (mounted) _timeFocus.requestFocus();
         });
       }
     });
@@ -161,7 +167,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
       // Backspace when empty → go back to day AND delete last digit
       if (text.isEmpty && _prevTime.isNotEmpty && !_isTimeUnknown && _timeFocus.hasFocus) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.microtask(() {
+          if (!mounted) return;
           if (_dayController.text.isNotEmpty) {
             _dayController.text = _dayController.text.substring(0, _dayController.text.length - 1);
           }
@@ -175,8 +182,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
       if (text.length == 2 && _timeFocus.hasFocus) {
         final hour = int.tryParse(text) ?? 0;
         if (hour >= 0 && hour <= 23) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _minuteFocus.requestFocus();
+          Future.microtask(() {
+            if (mounted) _minuteFocus.requestFocus();
           });
         }
       }
@@ -190,7 +197,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
       // Backspace when empty → go back to hour AND delete last digit
       if (text.isEmpty && _prevMinute.isNotEmpty && !_isTimeUnknown && _minuteFocus.hasFocus) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.microtask(() {
+          if (!mounted) return;
           if (_timeController.text.isNotEmpty) {
             _timeController.text = _timeController.text.substring(0, _timeController.text.length - 1);
           }
@@ -212,7 +220,32 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
       }
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _yearFocus.requestFocus());
+    Future.microtask(() {
+      if (mounted) _yearFocus.requestFocus();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateStyles();
+  }
+
+  void _updateStyles() {
+    final typography = context.typography;
+    final colors = context.colors;
+    _inputStyle = typography.displaySmall.copyWith(
+      color: colors.textPrimary,
+      fontWeight: FontWeight.w600,
+    );
+    _hintStyle = typography.displaySmall.copyWith(
+      color: colors.textTertiary,
+      fontWeight: FontWeight.w600,
+    );
+    _labelStyle = typography.displaySmall.copyWith(
+      color: colors.textSecondary,
+      fontWeight: FontWeight.w500,
+    );
   }
 
   void _validateDate() {
@@ -279,17 +312,19 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
   @override
   Widget build(BuildContext context) {
-    final typography = ref.watch(typographyThemeProvider);
     final colors = context.colors;
-    final inputStyle = typography.displaySmall.copyWith(
+    final typography = context.typography;
+
+    // 캐싱된 스타일 사용 (null인 경우 폴백)
+    final inputStyle = _inputStyle ?? typography.displaySmall.copyWith(
       color: colors.textPrimary,
       fontWeight: FontWeight.w600,
     );
-    final hintStyle = typography.displaySmall.copyWith(
+    final hintStyle = _hintStyle ?? typography.displaySmall.copyWith(
       color: colors.textTertiary,
       fontWeight: FontWeight.w600,
     );
-    final labelStyle = typography.displaySmall.copyWith(
+    final labelStyle = _labelStyle ?? typography.displaySmall.copyWith(
       color: colors.textSecondary,
       fontWeight: FontWeight.w500,
     );
@@ -349,67 +384,75 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                     ),
                     Text('년', style: labelStyle),
 
-                    // Month - fade in after year
-                    if (_showMonth) ...[
-                      const SizedBox(width: 16),
-                      SizedBox(
-                        width: 50,
-                        child: TextField(
-                          controller: _monthController,
-                          focusNode: _monthFocus,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                          style: inputStyle,
-                          cursorColor: colors.textSecondary,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(2),
-                          ],
-                          decoration: InputDecoration(
-                            hintText: 'MM',
-                            hintStyle: hintStyle,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            filled: false,
-                            contentPadding: EdgeInsets.zero,
-                            isDense: true,
+                    // Month - fade in after year (그룹화된 애니메이션)
+                    if (_showMonth)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(width: 16),
+                          SizedBox(
+                            width: 50,
+                            child: TextField(
+                              controller: _monthController,
+                              focusNode: _monthFocus,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: inputStyle,
+                              cursorColor: colors.textSecondary,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(2),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: 'MM',
+                                hintStyle: hintStyle,
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                filled: false,
+                                contentPadding: EdgeInsets.zero,
+                                isDense: true,
+                              ),
+                            ),
                           ),
-                        ),
+                          Text('월', style: labelStyle),
+                        ],
                       ).animate().fadeIn(duration: 300.ms),
-                      Text('월', style: labelStyle).animate().fadeIn(duration: 300.ms),
-                    ],
 
-                    // Day - fade in after month
-                    if (_showDay) ...[
-                      const SizedBox(width: 16),
-                      SizedBox(
-                        width: 50,
-                        child: TextField(
-                          controller: _dayController,
-                          focusNode: _dayFocus,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                          style: inputStyle,
-                          cursorColor: colors.textSecondary,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(2),
-                          ],
-                          decoration: InputDecoration(
-                            hintText: 'DD',
-                            hintStyle: hintStyle,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            filled: false,
-                            contentPadding: EdgeInsets.zero,
-                            isDense: true,
+                    // Day - fade in after month (그룹화된 애니메이션)
+                    if (_showDay)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(width: 16),
+                          SizedBox(
+                            width: 50,
+                            child: TextField(
+                              controller: _dayController,
+                              focusNode: _dayFocus,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: inputStyle,
+                              cursorColor: colors.textSecondary,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(2),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: 'DD',
+                                hintStyle: hintStyle,
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                filled: false,
+                                contentPadding: EdgeInsets.zero,
+                                isDense: true,
+                              ),
+                            ),
                           ),
-                        ),
+                          Text('일', style: labelStyle),
+                        ],
                       ).animate().fadeIn(duration: 300.ms),
-                      Text('일', style: labelStyle).animate().fadeIn(duration: 300.ms),
-                    ],
                   ],
                 ),
 

@@ -196,7 +196,7 @@ class SocialAuthService {
           .eq('id', userId)
           .maybeSingle();
 
-      List<dynamic> linkedProviders = profile?['linked_providers'] ?? [];
+      final List<dynamic> linkedProviders = profile?['linked_providers'] ?? [];
 
       if (isAdding) {
         if (!linkedProviders.contains(provider)) {

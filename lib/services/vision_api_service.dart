@@ -127,17 +127,17 @@ class VisionApiService {
 
       // API 요청 생성
       final request = {
-        "requests": [
+        'requests': [
           {
-            "image": {
-              "content": base64Image
+            'image': {
+              'content': base64Image
             },
-            "features": [
-              {"type": "FACE_DETECTION", "maxResults": 10},
-              {"type": "LABEL_DETECTION", "maxResults": 20},
-              {"type": "IMAGE_PROPERTIES", "maxResults": 10},
-              {"type": "SAFE_SEARCH_DETECTION"},
-              {"type": "WEB_DETECTION", "maxResults": 5},
+            'features': [
+              {'type': 'FACE_DETECTION', 'maxResults': 10},
+              {'type': 'LABEL_DETECTION', 'maxResults': 20},
+              {'type': 'IMAGE_PROPERTIES', 'maxResults': 10},
+              {'type': 'SAFE_SEARCH_DETECTION'},
+              {'type': 'WEB_DETECTION', 'maxResults': 5},
             ]
           }
         ]

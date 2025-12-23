@@ -3,6 +3,18 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'shared_widget_data.freezed.dart';
 part 'shared_widget_data.g.dart';
 
+/// 위젯 표시 상태
+enum WidgetDisplayState {
+  /// 오늘 데이터 (정상)
+  today,
+
+  /// 어제 데이터 (앱 미접속 - engagement 유도)
+  yesterday,
+
+  /// 데이터 없음 (신규 사용자)
+  empty,
+}
+
 /// 위젯용 통합 데이터 모델
 /// fortune-daily와 fortune-investment 데이터를 위젯에 필요한 형태로 변환
 @freezed
@@ -25,6 +37,12 @@ class SharedWidgetData with _$SharedWidgetData {
 
     /// 데이터 유효 날짜 (YYYY-MM-DD)
     required String validDate,
+
+    /// 위젯 표시 상태 (today/yesterday/empty)
+    @Default(WidgetDisplayState.today) WidgetDisplayState displayState,
+
+    /// Engagement 유도 메시지 (앱 미접속 시)
+    String? engagementMessage,
   }) = _SharedWidgetData;
 
   factory SharedWidgetData.fromJson(Map<String, dynamic> json) =>

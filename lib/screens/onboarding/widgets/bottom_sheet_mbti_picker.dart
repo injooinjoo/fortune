@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme_extensions.dart';
+import '../../../core/services/fortune_haptic_service.dart';
 
-class BottomSheetMbtiPicker extends StatelessWidget {
+class BottomSheetMbtiPicker extends ConsumerWidget {
   final String dimension;
   final String option1;
   final String option2;
@@ -64,7 +66,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.4,
       decoration: BoxDecoration(
@@ -105,9 +107,9 @@ class BottomSheetMbtiPicker extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildOption(context, option1),
+                  _buildOption(context, ref, option1),
                   SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
-                  _buildOption(context, option2),
+                  _buildOption(context, ref, option2),
                 ],
               ),
             ),
@@ -117,11 +119,14 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     );
   }
 
-  Widget _buildOption(BuildContext context, String option) {
+  Widget _buildOption(BuildContext context, WidgetRef ref, String option) {
     final isSelected = selectedOption == option;
-    
+
     return InkWell(
-      onTap: () => onOptionSelected(option),
+      onTap: () {
+        ref.read(fortuneHapticServiceProvider).selection();
+        onOptionSelected(option);
+      },
       borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4),
       child: Container(
         width: double.infinity,

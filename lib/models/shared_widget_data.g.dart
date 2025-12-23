@@ -23,6 +23,10 @@ _$SharedWidgetDataImpl _$$SharedWidgetDataImplFromJson(
           .toList(),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       validDate: json['validDate'] as String,
+      displayState: $enumDecodeNullable(
+              _$WidgetDisplayStateEnumMap, json['displayState']) ??
+          WidgetDisplayState.today,
+      engagementMessage: json['engagementMessage'] as String?,
     );
 
 Map<String, dynamic> _$$SharedWidgetDataImplToJson(
@@ -34,7 +38,15 @@ Map<String, dynamic> _$$SharedWidgetDataImplToJson(
       'lottoNumbers': instance.lottoNumbers,
       'updatedAt': instance.updatedAt.toIso8601String(),
       'validDate': instance.validDate,
+      'displayState': _$WidgetDisplayStateEnumMap[instance.displayState]!,
+      'engagementMessage': instance.engagementMessage,
     };
+
+const _$WidgetDisplayStateEnumMap = {
+  WidgetDisplayState.today: 'today',
+  WidgetDisplayState.yesterday: 'yesterday',
+  WidgetDisplayState.empty: 'empty',
+};
 
 _$WidgetOverallDataImpl _$$WidgetOverallDataImplFromJson(
         Map<String, dynamic> json) =>

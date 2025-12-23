@@ -99,13 +99,13 @@ class _SajuLoadingWidgetState extends State<SajuLoadingWidget>
               );
             },
           ),
-          SizedBox(height: AppSpacing.spacing6),
+          const SizedBox(height: AppSpacing.spacing6),
           
           // 로딩 메시지 with fade animation
           FadeTransition(
             opacity: _fadeAnimation,
             child: Container(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.spacing6,
                 vertical: AppSpacing.spacing3),
               decoration: BoxDecoration(

@@ -61,9 +61,9 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildHeader(context),
-                SizedBox(height: AppSpacing.spacing6),
+                const SizedBox(height: AppSpacing.spacing6),
                 _buildFortuneContent(context),
-                SizedBox(height: AppSpacing.spacing6),
+                const SizedBox(height: AppSpacing.spacing6),
                 _buildFooter(context),
               ],
             ),
@@ -111,7 +111,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                     userName!,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  SizedBox(height: AppSpacing.spacing2),
+                  const SizedBox(height: AppSpacing.spacing2),
                 ],
                 Container(
                   padding: AppSpacing.paddingAll20,
@@ -130,7 +130,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: AppSpacing.spacing4),
+                      const SizedBox(height: AppSpacing.spacing4),
                       Text(
                         content,
                         style: Theme.of(context).textTheme.bodyMedium,
@@ -139,7 +139,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: AppSpacing.spacing5),
+                const SizedBox(height: AppSpacing.spacing5),
                 _buildTraditionalFooter(context),
               ],
             ),
@@ -152,7 +152,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
   Widget _buildMinimalTemplate(BuildContext context) {
     return Container(
       width: AppSpacing.spacing1 * 100.0,
-      padding: EdgeInsets.all(AppSpacing.spacing8),
+      padding: const EdgeInsets.all(AppSpacing.spacing8),
       decoration: BoxDecoration(
         color: TossDesignSystem.white,
         borderRadius: AppDimensions.borderRadiusLarge,
@@ -175,22 +175,22 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
               _getIconForFortuneType(fortuneType),
               color: _getColorForFortuneType(fortuneType),
               size: AppDimensions.iconSizeXLarge)),
-          SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: AppSpacing.spacing5),
           Text(
             title,
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center),
           if (userName != null) ...[
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: AppSpacing.spacing2),
             Text(
               userName!,
               style: Theme.of(context).textTheme.bodyMedium)],
-          SizedBox(height: AppSpacing.spacing6),
+          const SizedBox(height: AppSpacing.spacing6),
           Text(
             content,
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center),
-          SizedBox(height: AppSpacing.spacing8),
+          const SizedBox(height: AppSpacing.spacing8),
           // Minimal Footer
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -205,7 +205,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                   Icons.auto_awesome,
                   color: TossDesignSystem.tossBlue,
                   size: AppDimensions.iconSizeSmall)),
-              SizedBox(width: AppSpacing.spacing3),
+              const SizedBox(width: AppSpacing.spacing3),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -248,7 +248,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
             // Content
             SafeArea(
               child: Padding(
-                padding: EdgeInsets.all(AppSpacing.spacing8),
+                padding: const EdgeInsets.all(AppSpacing.spacing8),
                 child: Column(
                   children: [
                     const Spacer(),
@@ -277,17 +277,17 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                               _getIconForFortuneType(fortuneType),
                               color: TossDesignSystem.white,
                               size: 40)),
-                          SizedBox(height: AppSpacing.spacing5),
+                          const SizedBox(height: AppSpacing.spacing5),
                           Text(
                             title,
                             style: Theme.of(context).textTheme.bodyMedium,
                             textAlign: TextAlign.center),
                           if (userName != null) ...[
-                            SizedBox(height: AppSpacing.spacing2),
+                            const SizedBox(height: AppSpacing.spacing2),
                             Text(
                               '@$userName',
                               style: Theme.of(context).textTheme.bodyMedium)],
-                          SizedBox(height: AppSpacing.spacing6),
+                          const SizedBox(height: AppSpacing.spacing6),
                           Text(
                             content,
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -297,7 +297,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                     const Spacer(),
                     // Instagram Footer
                     Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.spacing5,
                         vertical: AppSpacing.spacing3),
                       decoration: BoxDecoration(
@@ -310,7 +310,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                             Icons.auto_awesome,
                             color: TossDesignSystem.white,
                             size: AppDimensions.iconSizeSmall),
-                          SizedBox(width: AppSpacing.spacing2),
+                          const SizedBox(width: AppSpacing.spacing2),
                           Text(
                             'Fortune 신점',
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -341,7 +341,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
             _getIconForFortuneType(fortuneType),
             color: TossDesignSystem.white,
             size: AppDimensions.iconSizeLarge)),
-        SizedBox(width: AppSpacing.spacing4),
+        const SizedBox(width: AppSpacing.spacing4),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,7 +352,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                   color: TossDesignSystem.white.withValues(alpha: 0.9),
                   fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                   fontWeight: FontWeight.w500)),
-              SizedBox(height: AppSpacing.spacing1),
+              const SizedBox(height: AppSpacing.spacing1),
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodyMedium)]))]);
@@ -375,13 +375,13 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
             Text(
               userName!,
               style: Theme.of(context).textTheme.bodyMedium),
-            SizedBox(height: AppSpacing.spacing3)],
+            const SizedBox(height: AppSpacing.spacing3)],
           Text(
             content,
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center),
           if (additionalInfo != null) ...[
-            SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: AppSpacing.spacing4),
             _buildAdditionalInfo(context)]]));
   }
 
@@ -399,7 +399,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
               Text(
                 entry.key,
                 style: Theme.of(context).textTheme.bodyMedium),
-              SizedBox(height: AppSpacing.spacing1),
+              const SizedBox(height: AppSpacing.spacing1),
               Text(
                 entry.value.toString(),
                 style: Theme.of(context).textTheme.bodyMedium)]);
@@ -422,7 +422,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                 Icons.qr_code_2,
                 color: TossDesignSystem.white,
                 size: 30)),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -454,17 +454,17 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
               width: 30,
               height: 1,
               color: const Color(0xFFBCAAA4)),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Text(
               '福',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold)),
-            SizedBox(width: AppSpacing.spacing3),
+            const SizedBox(width: AppSpacing.spacing3),
             Container(
               width: 30,
               height: 1,
               color: const Color(0xFFBCAAA4))]),
-        SizedBox(height: AppSpacing.spacing3),
+        const SizedBox(height: AppSpacing.spacing3),
         Text(
           'Fortune 신점 · 행운이 가득하길',
           style: Theme.of(context).textTheme.bodyMedium)]);

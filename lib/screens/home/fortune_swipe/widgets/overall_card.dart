@@ -27,12 +27,12 @@ class OverallCard extends StatefulWidget {
 class _OverallCardState extends State<OverallCard> {
   /// 총운 민화 이미지 목록 (6개)
   static const List<Map<String, String>> _overallImages = [
-    {'image': 'assets/images/minhwa/minhwa_overall_tiger.png', 'emoji': '🐅', 'label': '호랑이 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_dragon.png', 'emoji': '🐉', 'label': '용 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_moon.png', 'emoji': '🌕', 'label': '보름달 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_phoenix.png', 'emoji': '🦅', 'label': '봉황 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_sunrise.png', 'emoji': '🌅', 'label': '일출 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_turtle.png', 'emoji': '🐢', 'label': '거북이 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_tiger.webp', 'emoji': '🐅', 'label': '호랑이 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_dragon.webp', 'emoji': '🐉', 'label': '용 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_moon.webp', 'emoji': '🌕', 'label': '보름달 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_phoenix.webp', 'emoji': '🦅', 'label': '봉황 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_sunrise.webp', 'emoji': '🌅', 'label': '일출 민화'},
+    {'image': 'assets/images/minhwa/minhwa_overall_turtle.webp', 'emoji': '🐢', 'label': '거북이 민화'},
   ];
 
   /// 오늘 날짜 기반 이미지 선택 (하루 동안 일관성 유지)

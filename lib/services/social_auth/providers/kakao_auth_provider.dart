@@ -39,7 +39,7 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
     try {
       Logger.info('Using native Kakao Sign-In with OAuth');
 
-      bool isKakaoTalkInstalled = await kakao.isKakaoTalkInstalled();
+      final bool isKakaoTalkInstalled = await kakao.isKakaoTalkInstalled();
 
       kakao.OAuthToken token;
       if (isKakaoTalkInstalled) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/services/fortune_haptic_service.dart';
 
 /// 재사용 가능한 소셜 로그인 BottomSheet
 /// Landing Page, Onboarding 등 여러 곳에서 사용 가능
@@ -14,7 +15,13 @@ class SocialLoginBottomSheet {
     required VoidCallback onKakaoLogin,
     required VoidCallback onNaverLogin,
     bool isProcessing = false,
+    WidgetRef? ref,
   }) async {
+    // 바텀시트 열림 햅틱
+    if (ref != null) {
+      ref.read(fortuneHapticServiceProvider).sheetOpen();
+    }
+
     return await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -152,7 +159,7 @@ class SocialLoginBottomSheet {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             icon,
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Text(
               text,
               style: DSTypography.labelLarge.copyWith(

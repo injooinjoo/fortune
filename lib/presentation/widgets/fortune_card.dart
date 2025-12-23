@@ -34,13 +34,13 @@ class FortuneCard extends StatelessWidget {
     // Light mode용 밝은 그라데이션 색상
     final lightModeGradients = {
       // 사주팔자 - 밝은 노란색
-      0xFF000000: [Color(0xFFFFF8E1), Color(0xFFFFF3CD)],
+      0xFF000000: [const Color(0xFFFFF8E1), const Color(0xFFFFF3CD)],
       // AI 관상 - 밝은 회색
-      0xFF1A1A1A: [Color(0xFFF5F5F5), Color(0xFFEEEEEE)],
+      0xFF1A1A1A: [const Color(0xFFF5F5F5), const Color(0xFFEEEEEE)],
       // 프리미엄 - 밝은 보라색
-      0xFF2C2C2C: [Color(0xFFF3E5F5), Color(0xFFE1BEE7)],
+      0xFF2C2C2C: [const Color(0xFFF3E5F5), const Color(0xFFE1BEE7)],
       // 전체 운세 - 밝은 파란색
-      0xFF4A4A4A: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)]};
+      0xFF4A4A4A: [const Color(0xFFE3F2FD), const Color(0xFFBBDEFB)]};
     
     List<Color>? adjustedGradient;
     if (gradient != null && !isDarkMode) {
@@ -103,7 +103,7 @@ class FortuneCard extends StatelessWidget {
                             : (iconColor ?? theme.colorScheme.primary),
                       ),
                     ),
-                  SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: AppSpacing.spacing4),
                   Text(
                     title,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -115,7 +115,7 @@ class FortuneCard extends StatelessWidget {
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
-                  SizedBox(height: AppSpacing.spacing1),
+                  const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -131,7 +131,7 @@ class FortuneCard extends StatelessWidget {
                   if (badge != null) ...[
                     const Spacer(),
                     Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.spacing3,
                         vertical: AppSpacing.spacing1),
                       decoration: BoxDecoration(

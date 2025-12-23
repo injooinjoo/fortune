@@ -814,15 +814,15 @@ class FortuneApiService {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         Logger.warning('⏱️ [FortuneApiService] Timeout error');
-        return NetworkException('연결 시간이 초과되었습니다');
+        return const NetworkException('연결 시간이 초과되었습니다');
 
       case DioExceptionType.connectionError:
         Logger.warning('🌐 [FortuneApiService] Connection error');
-        return NetworkException('네트워크 연결을 확인해주세요');
+        return const NetworkException('네트워크 연결을 확인해주세요');
 
       case DioExceptionType.cancel:
         Logger.warning('❌ [FortuneApiService] Request cancelled');
-        return NetworkException('요청이 취소되었습니다');
+        return const NetworkException('요청이 취소되었습니다');
 
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
@@ -847,7 +847,7 @@ class FortuneApiService {
             return const TooManyRequestsException('요청이 너무 많습니다. 잠시 후 다시 시도해주세요');
           case 500:
             Logger.error('💥 [FortuneApiService] Server error');
-            return ServerException(message: '서버 오류가 발생했습니다', statusCode: 500);
+            return const ServerException(message: '서버 오류가 발생했습니다', statusCode: 500);
           default:
             Logger.error('❓ [FortuneApiService] Unknown error');
             return ServerException(message: message, statusCode: statusCode);

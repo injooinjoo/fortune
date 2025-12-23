@@ -80,7 +80,7 @@ class FortuneLoadingIndicator extends StatelessWidget {
           ),
         ),
         if (message != null) ...[
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: AppSpacing.spacing4),
           Text(
             message!,
             style: theme.textTheme.bodyMedium?.copyWith(

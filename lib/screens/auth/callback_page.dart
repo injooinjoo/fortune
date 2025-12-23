@@ -44,7 +44,7 @@ class _CallbackPageState extends State<CallbackPage> {
       // First, try to sync profile from Supabase before checking local storage
       debugPrint('user: ${user.id}');
       try {
-        var response = await Supabase.instance.client
+        final response = await Supabase.instance.client
             .from('user_profiles')
             .select()
             .eq('id', user.id)
@@ -343,9 +343,9 @@ class _CallbackPageState extends State<CallbackPage> {
               FortuneCompassIcon(
                 size: 64,
                 color: colors.textPrimary.withValues(alpha: 0.87)),
-              SizedBox(height: AppSpacing.spacing6),
+              const SizedBox(height: AppSpacing.spacing6),
               const CircularProgressIndicator(),
-              SizedBox(height: AppSpacing.spacing4),
+              const SizedBox(height: AppSpacing.spacing4),
               Text(
                 '로그인 처리 중...',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(

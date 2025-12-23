@@ -34,18 +34,18 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
   bool _isLoading = false;
 
   static final List<TimePeriod> timePeriods = [
-    TimePeriod(value: '자시', label: '자시 (23:00 - 01:00)', description: '23:00 - 01:00'),
-    TimePeriod(value: '축시', label: '축시 (01:00 - 03:00)', description: '01:00 - 03:00'),
-    TimePeriod(value: '인시', label: '인시 (03:00 - 05:00)', description: '03:00 - 05:00'),
-    TimePeriod(value: '묘시', label: '묘시 (05:00 - 07:00)', description: '05:00 - 07:00'),
-    TimePeriod(value: '진시', label: '진시 (07:00 - 09:00)', description: '07:00 - 09:00'),
-    TimePeriod(value: '사시', label: '사시 (09:00 - 11:00)', description: '09:00 - 11:00'),
-    TimePeriod(value: '오시', label: '오시 (11:00 - 13:00)', description: '11:00 - 13:00'),
-    TimePeriod(value: '미시', label: '미시 (13:00 - 15:00)', description: '13:00 - 15:00'),
-    TimePeriod(value: '신시', label: '신시 (15:00 - 17:00)', description: '15:00 - 17:00'),
-    TimePeriod(value: '유시', label: '유시 (17:00 - 19:00)', description: '17:00 - 19:00'),
-    TimePeriod(value: '술시', label: '술시 (19:00 - 21:00)', description: '19:00 - 21:00'),
-    TimePeriod(value: '해시', label: '해시 (21:00 - 23:00)', description: '21:00 - 23:00')];
+    const TimePeriod(value: '자시', label: '자시 (23:00 - 01:00)', description: '23:00 - 01:00'),
+    const TimePeriod(value: '축시', label: '축시 (01:00 - 03:00)', description: '01:00 - 03:00'),
+    const TimePeriod(value: '인시', label: '인시 (03:00 - 05:00)', description: '03:00 - 05:00'),
+    const TimePeriod(value: '묘시', label: '묘시 (05:00 - 07:00)', description: '05:00 - 07:00'),
+    const TimePeriod(value: '진시', label: '진시 (07:00 - 09:00)', description: '07:00 - 09:00'),
+    const TimePeriod(value: '사시', label: '사시 (09:00 - 11:00)', description: '09:00 - 11:00'),
+    const TimePeriod(value: '오시', label: '오시 (11:00 - 13:00)', description: '11:00 - 13:00'),
+    const TimePeriod(value: '미시', label: '미시 (13:00 - 15:00)', description: '13:00 - 15:00'),
+    const TimePeriod(value: '신시', label: '신시 (15:00 - 17:00)', description: '15:00 - 17:00'),
+    const TimePeriod(value: '유시', label: '유시 (17:00 - 19:00)', description: '17:00 - 19:00'),
+    const TimePeriod(value: '술시', label: '술시 (19:00 - 21:00)', description: '19:00 - 21:00'),
+    const TimePeriod(value: '해시', label: '해시 (21:00 - 23:00)', description: '21:00 - 23:00')];
 
   @override
   void initState() {
@@ -93,7 +93,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                                 ? TossDesignSystem.gray300
                                 : TossDesignSystem.gray600),
                           textAlign: TextAlign.center),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: AppSpacing.spacing4),
           Container(
             constraints: const BoxConstraints(maxHeight: 400),
             child: ListView.builder(
@@ -133,7 +133,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
           },
           borderRadius: AppDimensions.borderRadiusSmall,
           child: Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.spacing4,
               vertical: AppSpacing.spacing3),
             decoration: BoxDecoration(
@@ -169,7 +169,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                         )
                       : null,
                 ),
-                SizedBox(width: AppSpacing.spacing3),
+                const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +181,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                               ? TossDesignSystem.tossBlue
                               : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.gray300 : TossDesignSystem.gray900))),
                       if (description != null) ...[
-                        SizedBox(height: AppSpacing.xxxSmall),
+                        const SizedBox(height: AppSpacing.xxxSmall),
                         Text(
                           description,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(

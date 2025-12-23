@@ -18,7 +18,7 @@ class OfflineIndicator extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
         border: Border(
@@ -35,7 +35,7 @@ class OfflineIndicator extends ConsumerWidget {
             size: AppDimensions.iconSizeXSmall,
             color: Theme.of(context).colorScheme.error.withValues(alpha: 0.9)
           ),
-          SizedBox(width: AppSpacing.spacing2),
+          const SizedBox(width: AppSpacing.spacing2),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +46,7 @@ class OfflineIndicator extends ConsumerWidget {
                   style: Theme.of(context).textTheme.labelSmall
                 ),
                 if (lastSyncTime != null) ...[
-                  SizedBox(height: AppSpacing.spacing1),
+                  const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     '동기화: ${_formatLastSync(lastSyncTime!)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.8))
@@ -66,7 +66,7 @@ class OfflineIndicator extends ConsumerWidget {
               );
             },
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
               minimumSize: Size.zero
             ),
             child: Text(
@@ -115,7 +115,7 @@ class CachedFortuneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       elevation: isExpired ? 1 : 2,
       child: InkWell(
         onTap: onTap,
@@ -140,7 +140,7 @@ class CachedFortuneCard extends StatelessWidget {
                     ),
                     if (isExpired)
                       Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.spacing2,
                           vertical: AppSpacing.spacing1
                         ),
@@ -153,7 +153,7 @@ class CachedFortuneCard extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.9))
                         )
                       ),
-                    SizedBox(width: AppSpacing.spacing2),
+                    const SizedBox(width: AppSpacing.spacing2),
                     Icon(
                       Icons.offline_bolt,
                       size: AppDimensions.iconSizeXSmall,
@@ -161,7 +161,7 @@ class CachedFortuneCard extends StatelessWidget {
                     )
                   ]
                 ),
-                SizedBox(height: AppSpacing.spacing2),
+                const SizedBox(height: AppSpacing.spacing2),
                 Text(
                   content,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -170,7 +170,7 @@ class CachedFortuneCard extends StatelessWidget {
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis
                 ),
-                SizedBox(height: AppSpacing.spacing2),
+                const SizedBox(height: AppSpacing.spacing2),
                 Text(
                   '캐시됨: ${_formatCachedTime(cachedAt)}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)

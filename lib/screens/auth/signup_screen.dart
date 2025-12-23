@@ -79,7 +79,7 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/')),
       ),
       body: SafeArea(

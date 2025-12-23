@@ -26,7 +26,7 @@ class BirthYearFortuneList extends StatelessWidget {
       children: [
         if (title != null) ...[
           Padding(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.spacing1,
               vertical: AppSpacing.spacing2,
             ),
@@ -79,7 +79,7 @@ class BirthYearFortuneCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: AppDimensions.borderRadiusLarge,
           side: isHighlighted
-              ? BorderSide(color: TossDesignSystem.tossBlue, width: 2)
+              ? const BorderSide(color: TossDesignSystem.tossBlue, width: 2)
               : BorderSide.none,
         ),
         child: Container(
@@ -103,7 +103,7 @@ class BirthYearFortuneCard extends StatelessWidget {
               Row(
                 children: [
                   _buildZodiacIcon(fortune.zodiacAnimal),
-                  SizedBox(width: AppSpacing.spacing3),
+                  const SizedBox(width: AppSpacing.spacing3),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +125,7 @@ class BirthYearFortuneCard extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: AppSpacing.spacing3),
+              const SizedBox(height: AppSpacing.spacing3),
               Expanded(
                 child: Text(
                   fortune.description,
@@ -135,9 +135,9 @@ class BirthYearFortuneCard extends StatelessWidget {
                 ),
               ),
               if (fortune.advice != null) ...[
-                SizedBox(height: AppSpacing.spacing2),
+                const SizedBox(height: AppSpacing.spacing2),
                 Container(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.spacing2,
                     vertical: AppSpacing.spacing1,
                   ),
@@ -153,7 +153,7 @@ class BirthYearFortuneCard extends StatelessWidget {
                         size: 14,
                         color: TossDesignSystem.warningOrange,
                       ),
-                      SizedBox(width: AppSpacing.spacing1),
+                      const SizedBox(width: AppSpacing.spacing1),
                       Expanded(
                         child: Text(
                           fortune.advice!,
@@ -230,7 +230,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
             Row(
               children: [
                 _buildZodiacIcon(fortune.zodiacAnimal),
-                SizedBox(width: AppSpacing.spacing4),
+                const SizedBox(width: AppSpacing.spacing4),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +241,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: AppSpacing.spacing1),
+                      const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         '특별 운세',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -253,13 +253,13 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: AppSpacing.spacing5),
+            const SizedBox(height: AppSpacing.spacing5),
             Text(
               fortune.description,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             if (fortune.advice != null) ...[
-              SizedBox(height: AppSpacing.spacing4),
+              const SizedBox(height: AppSpacing.spacing4),
               Container(
                 padding: AppSpacing.paddingAll16,
                 decoration: BoxDecoration(
@@ -277,7 +277,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                       color: TossDesignSystem.warningOrange,
                       size: AppDimensions.iconSizeSmall,
                     ),
-                    SizedBox(width: AppSpacing.spacing3),
+                    const SizedBox(width: AppSpacing.spacing3),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,7 +288,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: AppSpacing.spacing1),
+                          const SizedBox(height: AppSpacing.spacing1),
                           Text(
                             fortune.advice!,
                             style: Theme.of(context).textTheme.bodyMedium,

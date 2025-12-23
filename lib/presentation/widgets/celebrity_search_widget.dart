@@ -78,19 +78,19 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
                 : null,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: TossDesignSystem.gray300,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: TossDesignSystem.gray300,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: TossDesignSystem.tossBlue,
                 width: 2,
               ),
@@ -226,7 +226,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
         backgroundColor: TossDesignSystem.tossBlue.withValues(alpha:0.2),
         child: Text(
           celebrity.name.isNotEmpty ? celebrity.name[0] : '?',
-          style: TextStyle(
+          style: const TextStyle(
             color: TossDesignSystem.tossBlue,
             fontWeight: FontWeight.bold,
           ),
@@ -283,7 +283,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
       ),
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.search_off,
             size: 48,
             color: TossDesignSystem.gray400,
@@ -320,7 +320,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
       ),
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.error_outline,
             size: 48,
             color: TossDesignSystem.errorRed,

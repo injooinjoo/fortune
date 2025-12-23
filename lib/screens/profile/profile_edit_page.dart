@@ -10,8 +10,7 @@ import '../../services/storage_service.dart';
 import '../../services/supabase_storage_service.dart';
 import '../../utils/date_utils.dart';
 import '../../shared/components/app_header.dart';
-import '../../shared/components/numeric_date_input.dart';
-import '../../shared/components/numeric_time_input.dart';
+import '../../shared/components/progressive_date_input.dart';
 import '../../presentation/widgets/profile_image_picker.dart';
 import '../onboarding/widgets/birth_date_preview.dart';
 import '../../core/utils/logger.dart';
@@ -415,11 +414,11 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       ),
                       const SizedBox(height: DSSpacing.lg),
 
-                      // Birth date input (숫자패드)
-                      NumericDateInput(
+                      // Birth date input (년/월/일 분리 입력)
+                      ProgressiveDateInput(
                         initialDate: _birthDate,
                         label: '생년월일',
-                        hint: 'YYYY-MM-DD',
+                        compact: true,
                         onDateChanged: (date) {
                           setState(() {
                             _birthDate = date;
@@ -430,17 +429,19 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Birth time input (숫자패드)
-                      NumericTimeInput(
+                      // Birth time input (시/분 분리 입력)
+                      ProgressiveTimeInput(
                         initialTime: _birthTime != null
                             ? _parseTimeFromBirthTime(_birthTime!)
                             : null,
-                        label: '태어난 시간',
-                        hint: 'HH:MM',
-                        required: false,
+                        label: '태어난 시간 (선택)',
                         onTimeChanged: (time) {
                           setState(() {
-                            _birthTime = time;
+                            if (time != null) {
+                              _birthTime = '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+                            } else {
+                              _birthTime = null;
+                            }
                           });
                         },
                       ),

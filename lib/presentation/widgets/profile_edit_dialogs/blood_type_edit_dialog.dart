@@ -70,7 +70,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                   : TossDesignSystem.gray600,
             ),
           ),
-          SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: AppSpacing.spacing5),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -127,7 +127,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                       ? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
                       : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.gray300 : TossDesignSystem.gray600),
                 ),
-                SizedBox(width: AppSpacing.spacing2),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   label,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(

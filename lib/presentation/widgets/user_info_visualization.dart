@@ -25,7 +25,7 @@ class UserInfoVisualization extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(context),
-          SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: AppSpacing.spacing5),
           _buildInfoGrid(context),
         ],
       ),
@@ -58,7 +58,7 @@ class UserInfoVisualization extends StatelessWidget {
             size: AppDimensions.iconSizeMedium,
           ),
         ),
-        SizedBox(width: AppSpacing.spacing3),
+        const SizedBox(width: AppSpacing.spacing3),
         Text(
           '입력된 정보',
           style: theme.textTheme.headlineSmall?.copyWith(
@@ -166,9 +166,9 @@ class UserInfoVisualization extends StatelessWidget {
       return Column(
         children: [
           _buildPersonSection(context, '첫 번째 사람', userInfo['person1'], theme.colorScheme.primary),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: AppSpacing.spacing4),
           _buildConnectionIndicator(context),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: AppSpacing.spacing4),
           _buildPersonSection(context, '두 번째 사람', userInfo['person2'], theme.colorScheme.secondary),
         ],
       );
@@ -204,7 +204,7 @@ class UserInfoVisualization extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: AppSpacing.spacing3),
           Wrap(
             spacing: 12,
             runSpacing: 12,
@@ -279,7 +279,7 @@ class UserInfoVisualization extends StatelessWidget {
     final itemColor = color ?? theme.colorScheme.primary;
     
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.spacing3,
         vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
@@ -294,7 +294,7 @@ class UserInfoVisualization extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: AppDimensions.iconSizeXSmall, color: itemColor),
-          SizedBox(width: TossDesignSystem.spacingXS),
+          const SizedBox(width: TossDesignSystem.spacingXS),
           Text(
             '$label: ',
             style: theme.textTheme.bodySmall?.copyWith(

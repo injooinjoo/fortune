@@ -221,7 +221,7 @@ class ExternalApiService extends ResilientService {
     return await safeExecuteWithFallbackFunction(
       () async {
         // Check cache (shorter duration for crypto)
-        if (_isCacheValid(cacheKey, Duration(minutes: 5))) {
+        if (_isCacheValid(cacheKey, const Duration(minutes: 5))) {
           return _cache[cacheKey] as Map<String, dynamic>;
         }
 
@@ -283,7 +283,7 @@ class ExternalApiService extends ResilientService {
     return await safeExecuteWithFallbackFunction(
       () async {
         // Check cache first
-        if (_isCacheValid(cacheKey, Duration(days: 1))) {
+        if (_isCacheValid(cacheKey, const Duration(days: 1))) {
           return _cache[cacheKey] as Map<String, dynamic>;
         }
 
@@ -293,8 +293,8 @@ class ExternalApiService extends ResilientService {
           'hotNumbers': [7, 13, 23, 27, 35, 40],
           'coldNumbers': [2, 8, 15, 28, 37, 42],
           'mostDrawnPairs': [[7, 13], [23, 27], [35, 40]],
-          'lastDrawDate': DateTime.now().subtract(Duration(days: 3)),
-          'nextDrawDate': DateTime.now().add(Duration(days: 4)),
+          'lastDrawDate': DateTime.now().subtract(const Duration(days: 3)),
+          'nextDrawDate': DateTime.now().add(const Duration(days: 4)),
           'jackpot': 10000000000, // 100억
         };
 
@@ -309,8 +309,8 @@ class ExternalApiService extends ResilientService {
           'hotNumbers': [1, 7, 13, 21, 27, 35],
           'coldNumbers': [3, 9, 15, 23, 29, 37],
           'mostDrawnPairs': [[1, 7], [13, 21], [27, 35]],
-          'lastDrawDate': DateTime.now().subtract(Duration(days: 7)),
-          'nextDrawDate': DateTime.now().add(Duration(days: 1)),
+          'lastDrawDate': DateTime.now().subtract(const Duration(days: 7)),
+          'nextDrawDate': DateTime.now().add(const Duration(days: 1)),
           'jackpot': 5000000000, // 50억
         };
       },

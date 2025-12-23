@@ -29,29 +29,29 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
   String? _linkingProvider;
   
   final Map<String, SocialProviderInfo> _providers = {
-    'google': SocialProviderInfo(
+    'google': const SocialProviderInfo(
       name: 'Google',
       iconType: SocialIconType.network,
       iconData: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
-      color: const Color(0xFF4285F4),
+      color: Color(0xFF4285F4),
     ),
-    'apple': SocialProviderInfo(
+    'apple': const SocialProviderInfo(
       name: 'Apple',
       iconType: SocialIconType.icon,
       iconData: Icons.apple,
       color: TossDesignSystem.gray900,
     ),
-    'kakao': SocialProviderInfo(
+    'kakao': const SocialProviderInfo(
       name: 'Kakao',
       iconType: SocialIconType.text,
       iconData: 'K',
-      color: const Color(0xFFFEE500),
+      color: Color(0xFFFEE500),
     ),
-    'naver': SocialProviderInfo(
+    'naver': const SocialProviderInfo(
       name: 'Naver',
       iconType: SocialIconType.text,
       iconData: 'N',
-      color: const Color(0xFF03C75A),
+      color: Color(0xFF03C75A),
     ),
   };
   
@@ -230,7 +230,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
               child: _buildProviderIcon(providerInfo),
             ),
           ),
-          SizedBox(width: AppSpacing.spacing3),
+          const SizedBox(width: AppSpacing.spacing3),
           
           // Provider name and status
           Expanded(
@@ -244,15 +244,15 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
                   ),
                 ),
                 if (isLinked) ...[
-                  SizedBox(height: AppSpacing.xxxSmall),
+                  const SizedBox(height: AppSpacing.xxxSmall),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.check_circle,
                         size: 14,
                         color: TossDesignSystem.successGreen,
                       ),
-                      SizedBox(width: AppSpacing.spacing1),
+                      const SizedBox(width: AppSpacing.spacing1),
                       Text(
                         isPrimary ? '기본 계정' : '연결됨',
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -346,14 +346,14 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: AppSpacing.spacing2),
+        const SizedBox(height: AppSpacing.spacing2),
         Text(
           '여러 소셜 계정을 연결하여 편리하게 로그인하세요.',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
-        SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: AppSpacing.spacing4),
         ...(_providers.keys.map((provider) => Padding(
           padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
           child: _buildProviderButton(provider),

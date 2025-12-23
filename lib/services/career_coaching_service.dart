@@ -272,7 +272,7 @@ class CareerCoachingService {
     // 입력에 기반한 점수 계산 (실제로는 AI가 분석)
     int growthScore = 60 + random.nextInt(30);
     int satisfactionScore = 50 + random.nextInt(40);
-    int marketScore = 55 + random.nextInt(35);
+    final int marketScore = 55 + random.nextInt(35);
     int balanceScore = 45 + random.nextInt(45);
     
     // 고민에 따른 점수 조정

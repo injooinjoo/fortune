@@ -120,11 +120,11 @@ class StoryGenerator {
       // Check for both 'segments' and 'storySegments' keys
       if (response.data != null && (response.data['segments'] != null || response.data['storySegments'] != null)) {
         // GPT 응답을 StorySegment 리스트로 변환
-        dynamic segmentsRaw = response.data['segments'] ?? response.data['storySegments'];
+        final dynamic segmentsRaw = response.data['segments'] ?? response.data['storySegments'];
         Logger.info('Segments raw type: ${segmentsRaw.runtimeType}');
         Logger.info('Segments raw data: $segmentsRaw');
 
-        List<dynamic> segmentsData = _extractSegmentsData(segmentsRaw);
+        final List<dynamic> segmentsData = _extractSegmentsData(segmentsRaw);
 
         // 최소 10페이지 보장
         if (segmentsData.length < 10) {
@@ -174,7 +174,7 @@ class StoryGenerator {
         return [];
       } else {
         // 숫자 키로 된 페이지들 확인 (1, 2, 3... 또는 "1", "2", "3"...)
-        List<dynamic> extractedPages = [];
+        final List<dynamic> extractedPages = [];
         for (int i = 1; i <= 10; i++) {
           if (segmentsRaw[i.toString()] != null) {
             extractedPages.add(segmentsRaw[i.toString()]);
@@ -198,7 +198,7 @@ class StoryGenerator {
 
   /// 세그먼트 데이터 파싱
   List<StorySegment> _parseSegments(List<dynamic> segmentsData) {
-    List<StorySegment> resultSegments = [];
+    final List<StorySegment> resultSegments = [];
 
     for (int i = 0; i < segmentsData.length; i++) {
       try {
@@ -216,7 +216,7 @@ class StoryGenerator {
         }
 
         // text 필드가 String이 아닌 경우 처리
-        String textValue = segment['text']?.toString() ?? '';
+        final String textValue = segment['text']?.toString() ?? '';
 
         // fontSize 안전하게 처리
         double fontSizeValue = 24;
@@ -260,7 +260,7 @@ class StoryGenerator {
         Logger.error('Error processing segment $i: $e');
         Logger.error('Stack trace: $stack');
         // 에러가 나도 기본 세그먼트 추가
-        resultSegments.add(StorySegment(
+        resultSegments.add(const StorySegment(
           text: '...',
         ));
       }

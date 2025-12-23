@@ -101,7 +101,7 @@ class StoryHelpers {
   static String getColorName(dynamic color) {
     if (color is String) {
       if (color.startsWith('#')) {
-        Map<String, String> colorNames = {
+        final Map<String, String> colorNames = {
           '#FF6B6B': '붉은색',
           '#4ECDC4': '청록색',
           '#45B7D1': '하늘색',
@@ -140,7 +140,7 @@ class StoryHelpers {
     }
 
     final score = fortune.overallScore!;
-    List<StorySegment> segments = [];
+    final List<StorySegment> segments = [];
 
     // 1. 인사 페이지
     segments.add(StorySegment(
@@ -167,7 +167,7 @@ class StoryHelpers {
         final end = math.min((i + 1) * chunkSize, sentences.length);
         if (start < sentences.length) {
           final chunk = sentences.sublist(start, end).join(' ');
-          String subtitle = i == 0 ? '운세 이야기' : i == 1 ? '오전 운세' : '오후 운세';
+          final String subtitle = i == 0 ? '운세 이야기' : i == 1 ? '오전 운세' : '오후 운세';
           segments.add(StorySegment(
             subtitle: subtitle,
             text: chunk,
@@ -196,7 +196,7 @@ class StoryHelpers {
     }
 
     // 6. 오늘의 주의사항
-    String cautionText = fortune.metadata?['caution'] ?? getCautionByScore(score);
+    final String cautionText = fortune.metadata?['caution'] ?? getCautionByScore(score);
     segments.add(StorySegment(
       subtitle: '⚠️ 주의',
       text: cautionText,
@@ -228,7 +228,7 @@ class StoryHelpers {
     ));
 
     // 8. 오늘의 조언
-    String adviceText = fortune.metadata?['advice'] ?? getAdviceByScore(score);
+    final String adviceText = fortune.metadata?['advice'] ?? getAdviceByScore(score);
     segments.add(StorySegment(
       subtitle: '💡 조언',
       text: adviceText,

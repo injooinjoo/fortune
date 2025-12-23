@@ -123,13 +123,13 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               Icons.error_outline,
               color: theme.colorScheme.onErrorContainer,
               size: 48),
-            SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: AppSpacing.spacing4),
             Text(
               sajuState.error!,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onErrorContainer),
               textAlign: TextAlign.center),
-            SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: AppSpacing.spacing4),
             ElevatedButton(
               onPressed: _initializeSaju,
               child: const Text('다시 시도'),
@@ -158,11 +158,11 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               Icons.info_outline,
               color: theme.colorScheme.primary,
               size: 48),
-            SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: AppSpacing.spacing4),
             Text(
               '사주 정보가 없습니다',
               style: theme.textTheme.titleMedium),
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: AppSpacing.spacing2),
             Text(
               '생년월일시를 입력하면 정확한 사주팔자를 계산해드립니다.',
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -202,7 +202,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
                 icon: Icon(
                   Icons.refresh,
                   color: theme.colorScheme.primary))]),
-          SizedBox(height: AppSpacing.spacing6),
+          const SizedBox(height: AppSpacing.spacing6),
           
           // Four Pillars
           Row(
@@ -215,7 +215,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
             ],
           ),
           
-          SizedBox(height: AppSpacing.spacing6),
+          const SizedBox(height: AppSpacing.spacing6),
           
           // Summary info
           _buildSummaryInfo(context, sajuData),
@@ -236,7 +236,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
-          SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: AppSpacing.spacing2),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             decoration: BoxDecoration(
@@ -267,7 +267,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
-          SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: AppSpacing.spacing2),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -323,16 +323,16 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
             '오행 구성',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: AppSpacing.spacing4),
           _buildElementBalance(sajuData['element_balance'] ?? {}),
           
-          SizedBox(height: AppSpacing.spacing6),
+          const SizedBox(height: AppSpacing.spacing6),
           
           Text(
             '주요 특성',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)),
-          SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: AppSpacing.spacing4),
           _buildCharacteristics(sajuData['characteristics'] ?? {}),
         ],
       ),
@@ -370,7 +370,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
                 ),
               ),
             ),
-            SizedBox(height: AppSpacing.spacing1),
+            const SizedBox(height: AppSpacing.spacing1),
             Text(
               elementNames[element] ?? '',
               style: Theme.of(context).textTheme.labelSmall,
@@ -389,7 +389,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       if (value != null && value.toString().isNotEmpty) {
         items.add(
           Padding(
-            padding: EdgeInsets.only(bottom: AppSpacing.spacing2),
+            padding: const EdgeInsets.only(bottom: AppSpacing.spacing2),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -397,7 +397,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
                   Icons.check_circle,
                   color: theme.colorScheme.primary,
                   size: 16),
-                SizedBox(width: AppSpacing.spacing2),
+                const SizedBox(width: AppSpacing.spacing2),
                 Expanded(
                   child: Text(
                     value.toString(),

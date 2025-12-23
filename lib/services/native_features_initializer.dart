@@ -5,6 +5,7 @@ import 'package:fortune/services/native_platform_service.dart';
 import 'package:fortune/services/notification_service.dart';
 import 'package:fortune/services/widget_data_manager.dart';
 import 'package:fortune/services/widget_service.dart';
+import 'package:fortune/services/app_icon_badge_service.dart';
 import 'package:workmanager/workmanager.dart';
 
 @pragma('vm:entry-point')
@@ -16,6 +17,9 @@ void callbackDispatcher() {
           await WidgetDataManager.initialize();
           return true;
         case 'daily_fortune_fetch':
+          return true;
+        case 'morning_badge_check':
+          await AppIconBadgeService.checkAndSetMorningBadge();
           return true;
         default:
           return false;
@@ -163,6 +167,23 @@ class NativeFeaturesInitializer extends ResilientService {
       },
       '일일 운세 백그라운드 작업 등록',
       '일일 운세 자동 갱신 비활성화'
+    );
+
+    // 아침 배지 표시 태스크 (06:00, 푸시 없이 조용히)
+    await safeExecute(
+      () async {
+        await Workmanager().registerPeriodicTask(
+          'morning_badge_task',
+          'morning_badge_check',
+          frequency: const Duration(days: 1),
+          initialDelay: _calculateInitialDelay(6, 0),
+          constraints: Constraints(
+            networkType: NetworkType.notRequired
+          )
+        );
+      },
+      '아침 배지 백그라운드 작업 등록',
+      '아침 배지 자동 표시 비활성화'
     );
 
     Logger.info('Background tasks registration completed');

@@ -32,9 +32,9 @@ class ProfileFieldEditDialog extends StatelessWidget {
               title,
               style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center),
-            SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: AppSpacing.spacing6),
             content,
-            SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: AppSpacing.spacing6),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -43,14 +43,14 @@ class ProfileFieldEditDialog extends StatelessWidget {
                   child: Text(
                     '취소',
                     style: AppTypography.button)),
-                SizedBox(width: AppSpacing.spacing3),
+                const SizedBox(width: AppSpacing.spacing3),
                 ElevatedButton(
                   onPressed: isLoading ? null : onSave,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TossDesignSystem.tossBlue,
                     shape: RoundedRectangleBorder(
                       borderRadius: AppDimensions.borderRadiusSmall),
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.spacing6,
                       vertical: AppSpacing.spacing3)),
                   child: isLoading

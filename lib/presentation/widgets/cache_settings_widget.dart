@@ -107,8 +107,8 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
           children: [
             Row(
               children: [
-                Icon(Icons.storage, color: TossDesignSystem.tossBlue),
-                SizedBox(width: AppSpacing.spacing2),
+                const Icon(Icons.storage, color: TossDesignSystem.tossBlue),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '캐시 관리',
                   style: Theme.of(context).textTheme.titleLarge,
@@ -122,7 +122,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
                   ),
               ],
             ),
-            SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: AppSpacing.spacing4),
             
             // Cache Statistics
             if (_cacheStats != null) ...[
@@ -140,14 +140,14 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
               onPressed: _isLoading ? null : _preloadForOffline,
               color: TossDesignSystem.tossBlue,
             ),
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: AppSpacing.spacing2),
             _buildActionButton(
               icon: Icons.cleaning_services,
               label: '만료된 캐시 정리',
               onPressed: _isLoading ? null : _cleanExpiredCache,
               color: TossDesignSystem.warningOrange,
             ),
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: AppSpacing.spacing2),
             _buildActionButton(
               icon: Icons.delete_outline,
               label: '모든 캐시 삭제',
@@ -162,7 +162,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
 
   Widget _buildStatRow(String label, String value) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -194,7 +194,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
         style: OutlinedButton.styleFrom(
           foregroundColor: color,
           side: BorderSide(color: color.withValues(alpha: 0.5)),
-          padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
         ),
       ),
     );

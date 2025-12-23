@@ -66,7 +66,7 @@ class FortuneHistoryChart extends StatelessWidget {
                     ],
                   ),
                   if (onRefresh != null) ...[
-                    SizedBox(width: AppSpacing.spacing2),
+                    const SizedBox(width: AppSpacing.spacing2),
                     IconButton(
                       icon: Icon(
                         Icons.refresh,
@@ -85,7 +85,7 @@ class FortuneHistoryChart extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 차트
           SizedBox(
@@ -99,7 +99,7 @@ class FortuneHistoryChart extends StatelessWidget {
                 : _buildChart(context, _getDisplayScores()),
           ),
           
-          SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: AppSpacing.spacing5),
           _buildStatistics(context, _getDisplayScores()),
         ],
       ),
@@ -271,7 +271,7 @@ class FortuneHistoryChart extends StatelessWidget {
           size: AppDimensions.iconSizeSmall,
           color: theme.colorScheme.primary,
         ),
-        SizedBox(height: AppSpacing.spacing1),
+        const SizedBox(height: AppSpacing.spacing1),
         Text(
           label,
           style: theme.textTheme.labelSmall?.copyWith(

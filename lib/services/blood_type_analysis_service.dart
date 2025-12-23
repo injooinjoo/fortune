@@ -75,7 +75,7 @@ class BloodTypeAnalysisService {
   // 혈액형 궁합 점수 계산
   static double calculateCompatibility(String bloodType1, String rh1, String bloodType2, String rh2) {
     // 기본 혈액형 궁합
-    double baseScore = _getBaseCompatibilityScore(bloodType1, bloodType2);
+    final double baseScore = _getBaseCompatibilityScore(bloodType1, bloodType2);
     
     // Rh 인자 고려
     double rhBonus = 0;

@@ -91,7 +91,7 @@ class UserProfile extends Equatable {
     ];
     
     // 음력 변환이 필요한 경우 처리 (간단한 근사치)
-    int year = birthdate!.year;
+    final int year = birthdate!.year;
     if (isLunar) {
       // 음력->양력 변환 로직 필요
       // 여기서는 간단히 처리

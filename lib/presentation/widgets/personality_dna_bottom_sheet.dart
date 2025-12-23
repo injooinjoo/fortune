@@ -67,7 +67,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
         color: Theme.of(context).brightness == Brightness.dark
             ? TossDesignSystem.grayDark100
             : TossDesignSystem.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
         children: [
@@ -259,7 +259,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                         : TossDesignSystem.gray900,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'MBTI, 혈액형, 별자리, 띠를 조합하여 당신만의 독특한 성격 분석 결과를 만들어드립니다.',
                   style: context.bodySmall.copyWith(
@@ -335,7 +335,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                         : TossDesignSystem.gray600,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   value,
                   style: context.labelMedium.copyWith(

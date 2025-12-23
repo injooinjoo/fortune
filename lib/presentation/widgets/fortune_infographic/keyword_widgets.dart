@@ -15,7 +15,7 @@ class KeywordWidgets {
     Map<String, double>? importance,
   }) {
     if (keywords.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           '키워드가 없습니다',
           style: TextStyle(color: TossDesignSystem.gray500),

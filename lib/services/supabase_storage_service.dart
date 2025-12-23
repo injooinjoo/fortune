@@ -63,7 +63,7 @@ class SupabaseStorageService extends ResilientService {
         // 버킷 정책 검증
         final bucketPolicies = await _supabase
             .rpc('storage_bucket_policies_check')
-            .timeout(Duration(seconds: 5));
+            .timeout(const Duration(seconds: 5));
 
         if (bucketPolicies == null || bucketPolicies.isEmpty) {
           Logger.warning('스토리지 정책이 설정되지 않았습니다. 마이그레이션을 확인해주세요.');

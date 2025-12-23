@@ -11,7 +11,7 @@ class LandingGradientBackground extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: Theme.of(context).brightness == Brightness.dark
             // Dark Mode: 벼루(砚) & 먹(墨) inspired - Inkstone aesthetic
-            ? LinearGradient(
+            ? const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
@@ -23,7 +23,7 @@ class LandingGradientBackground extends StatelessWidget {
                 stops: [0.0, 0.35, 0.7, 1.0],
               )
             // Light Mode: 한지(韓紙) & 미색(米色) - Hanji paper aesthetic
-            : LinearGradient(
+            : const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [

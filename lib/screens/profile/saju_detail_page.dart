@@ -556,7 +556,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.info_outline,
                         color: DSColors.accent,
                         size: 20,
