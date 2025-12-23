@@ -140,6 +140,81 @@ interface DailyFortuneResponse {
   share_count: string;
 }
 
+// 위젯 캐시 저장 함수 (백그라운드 비동기 실행)
+async function saveWidgetCache(
+  supabaseClient: any,
+  userId: string,
+  fortune: any,
+  categories: any
+): Promise<void> {
+  try {
+    // 한국 시간 기준 오늘 날짜
+    const now = new Date()
+    const koreaOffset = 9 * 60 * 60 * 1000
+    const koreaTime = new Date(now.getTime() + koreaOffset)
+    const today = koreaTime.toISOString().split('T')[0]
+
+    // 등급 계산
+    const score = fortune.overall_score || 80
+    const grade = score >= 90 ? '대길' : score >= 75 ? '길' : score >= 50 ? '평' : score >= 25 ? '흉' : '대흉'
+
+    // 카테고리 데이터 포맷
+    const categoriesData: Record<string, { score: number; message: string }> = {}
+    for (const [key, value] of Object.entries(categories)) {
+      const cat = value as any
+      categoriesData[key] = {
+        score: cat.score || 80,
+        message: typeof cat.advice === 'string' ? cat.advice : (cat.advice?.description || cat.title || '')
+      }
+    }
+
+    // 시간대별 데이터
+    const timeSlots = [
+      { key: 'morning', name: '오전', score: categories.total?.score || score, message: fortune.daily_predictions?.morning || '' },
+      { key: 'afternoon', name: '오후', score: categories.total?.score || score, message: fortune.daily_predictions?.afternoon || '' },
+      { key: 'evening', name: '저녁', score: categories.total?.score || score, message: fortune.daily_predictions?.evening || '' }
+    ]
+
+    // 로또 번호
+    const lottoNumbers = (fortune.lucky_numbers || [])
+      .slice(0, 5)
+      .map((n: string) => parseInt(n) || 0)
+      .filter((n: number) => n > 0)
+
+    // 행운 아이템
+    const luckyItems = {
+      color: fortune.lucky_items?.color || '',
+      number: fortune.lucky_items?.number || '',
+      direction: fortune.lucky_items?.direction || '',
+      time: fortune.lucky_items?.time || '',
+      item: fortune.sajuInsight?.lucky_item || fortune.lucky_items?.item || ''
+    }
+
+    // Upsert (있으면 업데이트, 없으면 생성)
+    const { error } = await supabaseClient
+      .from('widget_fortune_cache')
+      .upsert({
+        user_id: userId,
+        fortune_date: today,
+        overall_score: score,
+        overall_grade: grade,
+        overall_message: fortune.summary || '',
+        categories: categoriesData,
+        time_slots: timeSlots,
+        lotto_numbers: lottoNumbers,
+        lucky_items: luckyItems
+      }, { onConflict: 'user_id,fortune_date' })
+
+    if (error) {
+      console.error('[widget-cache] DB upsert 오류:', error)
+    } else {
+      console.log(`[widget-cache] 저장 완료: userId=${userId}, date=${today}, score=${score}`)
+    }
+  } catch (err) {
+    console.error('[widget-cache] 저장 중 예외:', err)
+  }
+}
+
 // 응답 검증 함수
 function validateFortuneResponse(fortune: any): fortune is DailyFortuneResponse {
   const requiredFields = [
@@ -1475,6 +1550,11 @@ serve(async (req) => {
       totalTodayViewers: percentileData.totalTodayViewers,
       isPercentileValid: percentileData.isPercentileValid
     }
+
+    // ✅ 위젯용 캐시 저장 (백그라운드, 비동기 - 응답 지연 없음)
+    saveWidgetCache(supabaseClient, userId, fortune, categories).catch(err => {
+      console.warn('[widget-cache] 저장 실패 (무시):', err.message)
+    })
 
     // 운세와 스토리를 함께 반환
     return new Response(

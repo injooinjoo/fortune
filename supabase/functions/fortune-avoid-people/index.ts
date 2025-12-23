@@ -94,62 +94,137 @@ serve(async (req) => {
                    [6, 7, 8].includes(now.getMonth() + 1) ? '여름' : '가을'
     const isWeekend = now.getDay() === 0 || now.getDay() === 6
 
-    const systemPrompt = `당신은 심리학과 대인관계 전문가입니다. 사용자의 현재 상태, 일정, 그리고 오늘의 날짜/시간 정보를 종합하여 오늘 피해야 할 사람 유형을 분석하고 구체적인 전략을 제시하세요.
+    const systemPrompt = `당신은 한국 전통 운세와 현대 심리학을 결합한 경계대상 분석 전문가입니다.
+사용자의 현재 상태, 일정, 오늘의 날짜/시간/계절을 종합하여 오늘 조심해야 할 모든 것들을 8가지 카테고리로 상세 분석하세요.
+
+⚠️ 핵심: 단순히 "사람"만이 아니라, 사물, 색상, 숫자, 동물, 장소, 시간대, 방향까지 모두 분석!
 
 다음 JSON 형식으로 응답해주세요:
 {
-  "overallScore": 0-100 사이의 점수 (오늘의 대인관계 운세),
-  "content": "오늘의 대인관계 운세 요약 (100자 이내)",
-  "criticalAvoidTypes": [
+  "overallScore": 0-100 사이의 경계 지수 (높을수록 주의 필요),
+  "summary": "오늘의 경계대상 핵심 요약 (80자 이내)",
+
+  "cautionPeople": [
     {
-      "type": "유형명",
-      "reason": "왜 오늘 특히 피해야하는지 (100자)",
-      "warningSign": "주의 신호 (50자)",
-      "coping": "대처법 (100자)",
+      "type": "피해야 할 사람 유형 (예: 과도한 요구를 하는 상사)",
+      "reason": "왜 오늘 특히 피해야 하는지 (60자)",
+      "sign": "이런 신호가 보이면 피하세요 (40자)",
+      "tip": "대처법 (60자)",
       "severity": "high|medium|low"
     }
   ],
-  "personalityTypes": [
+
+  "cautionObjects": [
     {
-      "type": "과도한 요구를 하는 사람 등",
-      "description": "특징 설명 (80자)",
-      "example": "구체적 예시 (60자)",
-      "boundary": "경계선 설정법 (80자)"
+      "item": "조심해야 할 사물 (예: 날카로운 도구, 유리잔, 전자기기)",
+      "reason": "왜 조심해야 하는지 (50자)",
+      "situation": "특히 이런 상황에서 (40자)",
+      "tip": "예방법 (50자)"
     }
   ],
-  "situationTypes": [
+
+  "cautionColors": [
     {
-      "situation": "중요한 결정이 있을 때 등",
-      "avoidType": "피해야할 유형",
-      "impact": "영향 (60자)"
+      "color": "불길한 색상 (예: 빨간색)",
+      "avoid": "피해야 할 곳 (예: 옷, 액세서리, 인테리어)",
+      "reason": "왜 피해야 하는지 (40자)",
+      "alternative": "대신 추천하는 색상"
     }
   ],
-  "safeTypes": [
+
+  "cautionNumbers": [
     {
-      "type": "도움될 사람 유형",
-      "benefit": "어떤 도움 (60자)",
-      "approach": "접근법 (60자)"
+      "number": "피해야 할 숫자 (예: 4, 13)",
+      "avoid": "피해야 할 상황 (예: 4층, 4번 자리, 4시)",
+      "reason": "왜 피해야 하는지 (40자)",
+      "luckyNumber": "대신 좋은 숫자"
     }
   ],
-  "dailyStrategy": {
-    "morning": "오전 전략 (80자)",
-    "afternoon": "오후 전략 (80자)",
-    "evening": "저녁 전략 (80자)"
+
+  "cautionAnimals": [
+    {
+      "animal": "조심해야 할 동물 또는 띠 (예: 개, 뱀띠 사람)",
+      "context": "어떤 상황에서 (40자)",
+      "reason": "왜 조심해야 하는지 (40자)",
+      "tip": "대처법 (40자)"
+    }
+  ],
+
+  "cautionPlaces": [
+    {
+      "place": "피해야 할 장소 (예: 지하 주차장, 물가, 높은 곳)",
+      "timeSlot": "특히 이 시간에 (예: 저녁, 야간)",
+      "reason": "왜 피해야 하는지 (50자)",
+      "alternative": "대신 추천 장소"
+    }
+  ],
+
+  "cautionTimes": [
+    {
+      "time": "조심해야 할 시간대 (예: 10:00-11:00)",
+      "activity": "이 시간에 피해야 할 활동 (예: 중요한 결정, 계약)",
+      "reason": "왜 조심해야 하는지 (40자)",
+      "betterTime": "대신 좋은 시간"
+    }
+  ],
+
+  "cautionDirections": [
+    {
+      "direction": "피해야 할 방향/방위 (예: 서쪽, 북동쪽)",
+      "avoid": "피해야 할 행동 (예: 서쪽으로 출근, 북동쪽 여행)",
+      "reason": "왜 피해야 하는지 (40자)",
+      "goodDirection": "오늘 좋은 방향"
+    }
+  ],
+
+  "luckyElements": {
+    "color": "오늘 행운의 색상",
+    "number": "오늘 행운의 숫자",
+    "direction": "오늘 좋은 방향",
+    "time": "오늘 최고의 시간대",
+    "item": "오늘 행운의 아이템",
+    "person": "오늘 만나면 좋은 사람 유형"
   },
-  "emotionalTips": {
-    "stress": "스트레스 대처 (80자)",
-    "conflict": "갈등 회피법 (80자)",
-    "energy": "에너지 보존 (80자)"
+
+  "timeStrategy": {
+    "morning": {
+      "caution": "오전 주의사항 (60자)",
+      "advice": "오전 조언 (60자)"
+    },
+    "afternoon": {
+      "caution": "오후 주의사항 (60자)",
+      "advice": "오후 조언 (60자)"
+    },
+    "evening": {
+      "caution": "저녁 주의사항 (60자)",
+      "advice": "저녁 조언 (60자)"
+    }
   },
-  "advice": "종합 조언 (150자 내외)"
+
+  "dailyAdvice": "오늘 하루를 위한 종합 조언 (100자 내외)"
 }
 
-criticalAvoidTypes는 3개, personalityTypes는 5개, situationTypes는 사용자 상황에 맞게 2-3개, safeTypes는 3개를 제공하세요.`
+📌 각 카테고리별 항목 수:
+- cautionPeople: 3-4개 (심각도 다양하게)
+- cautionObjects: 3-4개 (일상에서 마주치는 물건)
+- cautionColors: 2-3개 (구체적인 상황과 함께)
+- cautionNumbers: 2-3개 (차량번호, 층수, 시간 등 다양하게)
+- cautionAnimals: 2-3개 (실제 동물 + 띠 조합)
+- cautionPlaces: 3-4개 (구체적인 장소)
+- cautionTimes: 2-3개 (구체적인 시간대)
+- cautionDirections: 2-3개 (방위 + 이동 방향)
+
+📌 중요 규칙:
+1. 각 항목은 사용자의 오늘 상황(장소, 일정, 기분)과 연결되어야 함
+2. severity는 상황의 심각도를 반영 (high: 반드시 피해야 함, medium: 주의, low: 참고)
+3. 한국 전통 운세 요소(띠, 방위, 숫자)와 현대적 요소(사물, 장소)를 조화롭게
+4. luckyElements는 반드시 포함하여 균형 잡힌 결과 제공
+5. 모든 내용은 구체적이고 실용적이어야 함 (추상적 표현 금지)`
 
     const userPrompt = `📅 날짜 정보:
 - 날짜: ${now.toLocaleDateString('ko-KR')}
 - 요일: ${dayOfWeek} (${isWeekend ? '주말' : '평일'})
-- 시간대: ${timeOfDay}
+- 시간대: ${timeOfDay} (${hour}시)
 - 계절: ${season}
 
 👤 사용자 상태:
@@ -162,23 +237,34 @@ criticalAvoidTypes는 3개, personalityTypes는 5개, situationTypes는 사용�
 - 민감한 대화: ${hasSensitiveConversation ? '있음' : '없음'}
 - 팀 프로젝트: ${hasTeamProject ? '있음' : '없음'}
 
-💡 컨텍스트 힌트:
-${isWeekend ? '- 주말이므로 가족/친구 관계에 더 집중해주세요.' : '- 평일이므로 직장/학교 내 대인관계에 초점을 맞춰주세요.'}
-${hour < 9 ? '- 아침 시간이므로 출근길/등교길에서 마주칠 수 있는 사람들에 대한 조언을 포함하세요.' : ''}
-${hour >= 18 ? '- 퇴근 시간 이후이므로 개인 시간 보호 및 저녁 모임에 대한 조언을 포함하세요.' : ''}
-${stressLevel >= 4 ? '- 스트레스가 높으므로 감정적 갈등이 발생할 수 있는 유형을 중점적으로 다뤄주세요.' : ''}
-${moodLevel <= 2 ? '- 기분이 좋지 않으므로 에너지를 소모시키는 사람을 특히 주의하세요.' : ''}
-${socialFatigue >= 4 ? '- 사회적 피로도가 높으므로 혼자 있는 시간 확보 전략을 포함하세요.' : ''}
-${environment === '대중교통' ? '- 대중교통 이용 시 마주칠 수 있는 불편한 상황과 대처법을 포함하세요.' : ''}
-${environment === '카페' ? '- 공공장소에서의 대인관계 경계 및 프라이버시 보호 전략을 포함하세요.' : ''}
+💡 컨텍스트 힌트 (각 카테고리에 반영해주세요):
+${isWeekend ? '- 주말: 가족/친구 관계, 외출/쇼핑 관련 경계대상 포함' : '- 평일: 직장/학교 관련 경계대상 포함'}
+${hour < 9 ? '- 아침: 출근길/등교길 관련 경계대상 포함' : ''}
+${hour >= 18 ? '- 저녁: 퇴근길/야간 활동 관련 경계대상 포함' : ''}
+${stressLevel >= 4 ? '- 스트레스 높음: 감정적 갈등 유발 요소 강조' : ''}
+${moodLevel <= 2 ? '- 기분 저조: 에너지 소모 요소 강조' : ''}
+${socialFatigue >= 4 ? '- 사회적 피로: 혼자 있는 시간 확보 전략 포함' : ''}
 
-⚠️ 주의상황 범주 (반드시 포함):
-- 직장/학교: 상사, 동료, 후배, 거래처 담당자, 선배, 동기
-- 가정/친척: 부모, 배우자, 자녀, 시댁/처가, 친척
-- 사회적 관계: 이웃, 지인, 온라인 친구, 낯선 사람
-- 서비스 관계: 고객, 판매원, 배달원, 서비스 제공자
+🎯 장소별 맞춤 힌트:
+${environment === '직장' ? '- 직장: 상사/동료/거래처 관련 경계인물, 사무용품 관련 경계사물' : ''}
+${environment === '학교' ? '- 학교: 선배/후배/교수 관련 경계인물, 시험/과제 관련 시간대' : ''}
+${environment === '대중교통' ? '- 대중교통: 붐비는 시간대, 분실물 관련 사물, 특정 노선 방향' : ''}
+${environment === '카페' ? '- 카페: 공공장소 프라이버시, 디지털 기기 관련 주의' : ''}
+${environment === '집' ? '- 집: 가족 관계, 가전제품/가구 관련 사물' : ''}
+${environment === '모임' ? '- 모임: 술자리 주의, 충동적 약속 경계' : ''}
 
-위 정보를 바탕으로 오늘 피해야 할 사람 유형을 JSON 형식으로 분석해주세요. 일반적이고 현실적인 상황을 기반으로 구체적인 조언을 제공하세요.`
+📌 8가지 경계대상 카테고리를 모두 채워서 JSON으로 응답해주세요:
+1. cautionPeople (사람): ${environment} 환경에서 만날 수 있는 구체적 유형
+2. cautionObjects (사물): 오늘 조심해야 할 물건 (전자기기, 날카로운 것, 깨지기 쉬운 것 등)
+3. cautionColors (색상): 오늘 피해야 할 색상과 착용/사용 상황
+4. cautionNumbers (숫자): 차량번호, 층수, 좌석번호, 시간 등에서 피해야 할 숫자
+5. cautionAnimals (동물/띠): 실제 동물 + 띠가 맞지 않는 사람
+6. cautionPlaces (장소): ${environment} 근처에서 피해야 할 구체적 장소
+7. cautionTimes (시간): 중요한 활동을 피해야 할 시간대
+8. cautionDirections (방향): 이동 시 피해야 할 방위
+
++ luckyElements (행운 요소): 오늘 도움이 되는 색상, 숫자, 방향, 시간, 아이템
++ timeStrategy (시간대별 전략): 오전/오후/저녁별 주의사항과 조언`
 
     const response = await llm.generate([
       { role: 'system', content: systemPrompt },
@@ -208,23 +294,31 @@ ${environment === '카페' ? '- 공공장소에서의 대인관계 경계 및 �
     const fortuneData = JSON.parse(response.content)
 
     console.log(`[AvoidPeople] ✅ 응답 데이터 파싱 완료`)
-    console.log(`[AvoidPeople]   📊 대인관계 운세 점수: ${fortuneData.overallScore}점`)
-    console.log(`[AvoidPeople]   🚫 Critical 유형: ${fortuneData.criticalAvoidTypes?.length || 0}개`)
-    console.log(`[AvoidPeople]   👥 성격 유형: ${fortuneData.personalityTypes?.length || 0}개`)
-    console.log(`[AvoidPeople]   📍 상황 유형: ${fortuneData.situationTypes?.length || 0}개`)
-    console.log(`[AvoidPeople]   ✅ Safe 유형: ${fortuneData.safeTypes?.length || 0}개`)
+    console.log(`[AvoidPeople]   📊 경계 지수: ${fortuneData.overallScore}점`)
+    console.log(`[AvoidPeople]   👤 경계인물: ${fortuneData.cautionPeople?.length || 0}개`)
+    console.log(`[AvoidPeople]   📦 경계사물: ${fortuneData.cautionObjects?.length || 0}개`)
+    console.log(`[AvoidPeople]   🎨 경계색상: ${fortuneData.cautionColors?.length || 0}개`)
+    console.log(`[AvoidPeople]   🔢 경계숫자: ${fortuneData.cautionNumbers?.length || 0}개`)
+    console.log(`[AvoidPeople]   🐾 경계동물: ${fortuneData.cautionAnimals?.length || 0}개`)
+    console.log(`[AvoidPeople]   📍 경계장소: ${fortuneData.cautionPlaces?.length || 0}개`)
+    console.log(`[AvoidPeople]   ⏰ 경계시간: ${fortuneData.cautionTimes?.length || 0}개`)
+    console.log(`[AvoidPeople]   🧭 경계방향: ${fortuneData.cautionDirections?.length || 0}개`)
 
     // ✅ Blur 로직 적용 (실제 데이터 저장, UnifiedBlurWrapper가 블러 처리)
     const isBlurred = !isPremium
     const blurredSections = isBlurred
       ? [
-          'criticalAvoidTypes_extended',  // [1,2]만 블러 ([0]은 무료 공개)
-          'personalityTypes',
-          'situationTypes',
-          'safeTypes',
-          'dailyStrategy',
-          'emotionalTips',
-          'advice'
+          'cautionPeople',
+          'cautionObjects',
+          'cautionColors',
+          'cautionNumbers',
+          'cautionAnimals',
+          'cautionPlaces',
+          'cautionTimes',
+          'cautionDirections',
+          'luckyElements',
+          'timeStrategy',
+          'dailyAdvice'
         ]
       : []
 
@@ -234,23 +328,40 @@ ${environment === '카페' ? '- 공공장소에서의 대인관계 경계 및 �
 
     const result = {
       overallScore: fortuneData.overallScore || 70,
-      content: fortuneData.content || '오늘의 대인관계 운세를 확인하세요.',
+      summary: fortuneData.summary || '오늘의 경계대상을 확인하세요.',
 
-      // ✅ 실제 데이터 저장 (프리미엄 메시지 제거)
-      criticalAvoidTypes: fortuneData.criticalAvoidTypes || [],
-      personalityTypes: fortuneData.personalityTypes || [],
-      situationTypes: fortuneData.situationTypes || [],
-      safeTypes: fortuneData.safeTypes || [],
-      dailyStrategy: fortuneData.dailyStrategy || { morning: '', afternoon: '', evening: '' },
-      emotionalTips: fortuneData.emotionalTips || { stress: '', conflict: '', energy: '' },
-      advice: fortuneData.advice || '오늘 하루 대인관계에 주의하세요.',
+      // ✅ 8가지 경계대상 카테고리
+      cautionPeople: fortuneData.cautionPeople || [],
+      cautionObjects: fortuneData.cautionObjects || [],
+      cautionColors: fortuneData.cautionColors || [],
+      cautionNumbers: fortuneData.cautionNumbers || [],
+      cautionAnimals: fortuneData.cautionAnimals || [],
+      cautionPlaces: fortuneData.cautionPlaces || [],
+      cautionTimes: fortuneData.cautionTimes || [],
+      cautionDirections: fortuneData.cautionDirections || [],
+
+      // ✅ 행운 요소 & 시간대별 전략
+      luckyElements: fortuneData.luckyElements || {
+        color: '파란색',
+        number: '8',
+        direction: '동쪽',
+        time: '14:00-16:00',
+        item: '동전',
+        person: '차분한 성격의 사람'
+      },
+      timeStrategy: fortuneData.timeStrategy || {
+        morning: { caution: '', advice: '' },
+        afternoon: { caution: '', advice: '' },
+        evening: { caution: '', advice: '' }
+      },
+      dailyAdvice: fortuneData.dailyAdvice || '오늘 하루 경계대상에 주의하세요.',
 
       timestamp: new Date().toISOString(),
       isBlurred,
       blurredSections
     }
 
-    console.log(`[AvoidPeople] ✅ 최종 결과 구조화 완료`)
+    console.log(`[AvoidPeople] ✅ 최종 결과 구조화 완료 (8개 카테고리 + 행운요소)`)
 
     // ✅ Percentile 계산 추가
     const percentileData = await calculatePercentile(supabaseClient, 'avoid-people', result.overallScore)

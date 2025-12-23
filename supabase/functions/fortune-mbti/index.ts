@@ -1,7 +1,8 @@
 /**
- * MBTI 운세 (MBTI Fortune) Edge Function
+ * MBTI 운세 (MBTI Fortune) Edge Function - 4차원 분리 버전
  *
- * @description MBTI 유형과 생년월일을 기반으로 맞춤형 운세를 생성합니다.
+ * @description MBTI 4차원(E/I, N/S, T/F, J/P)별 운세를 생성합니다.
+ * 하루 1회 8차원 모두 생성 후 캐싱하여 모든 사용자가 공유합니다.
  *
  * @endpoint POST /fortune-mbti
  *
@@ -13,17 +14,10 @@
  * - isPremium?: boolean - 프리미엄 사용자 여부
  *
  * @response MbtiFortuneResponse
- * - mbti_analysis: { type, characteristics, strengths, weaknesses }
- * - today_fortune: { overall, work, relationship, health }
- * - lucky_elements: { color, number, time, activity }
- * - advice: string - 오늘의 조언
- * - tips: string[] - MBTI별 맞춤 팁
- * - percentile: number - 상위 백분위
- *
- * @example
- * curl -X POST https://xxx.supabase.co/functions/v1/fortune-mbti \
- *   -H "Authorization: Bearer <token>" \
- *   -d '{"mbti":"INTJ","name":"홍길동","birthDate":"1990-01-01"}'
+ * - dimensions: DimensionFortune[] - 4개 차원별 운세
+ * - overallScore: number - 종합 점수
+ * - todayFortune: string - 종합 운세
+ * - ...
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -36,17 +30,32 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// ==================== 타입 정의 ====================
+
 interface MbtiFortuneRequest {
   mbti: string;
   name: string;
   birthDate: string;
   userId?: string;
-  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
+  isPremium?: boolean;
+}
+
+interface DimensionFortune {
+  dimension: string;      // "E" | "I" | "N" | "S" | "T" | "F" | "J" | "P"
+  title: string;          // "외향형 에너지"
+  fortune: string;        // 운세 텍스트 (50자 이내)
+  tip: string;            // 조언 (30자 이내)
+  score: number;          // 0-100
 }
 
 interface MbtiFortuneResponse {
   success: boolean;
   data: {
+    // 새로운 4차원 데이터
+    dimensions: DimensionFortune[];
+    overallScore: number;
+
+    // 기존 호환성 필드
     todayFortune: string;
     loveFortune: string;
     careerFortune: string;
@@ -56,19 +65,61 @@ interface MbtiFortuneResponse {
     luckyNumber: number;
     advice: string;
     compatibility: string[];
-    energyLevel: number; // 0-100
+    energyLevel: number;
     cognitiveStrengths: string[];
     challenges: string[];
     mbtiDescription: string;
     timestamp: string;
-    isBlurred?: boolean; // ✅ 블러 상태
-    blurredSections?: string[]; // ✅ 블러 처리된 섹션 목록
+    isBlurred?: boolean;
+    blurredSections?: string[];
   };
   error?: string;
 }
 
-// MBTI별 특성 및 인지 기능 매핑
-const MBTI_CHARACTERISTICS = {
+// ==================== 차원별 메타데이터 ====================
+
+const DIMENSION_META: Record<string, { title: string; description: string }> = {
+  'E': {
+    title: '외향형 에너지',
+    description: '사회적 상호작용과 외부 활동에서 에너지를 얻는 성향'
+  },
+  'I': {
+    title: '내향형 에너지',
+    description: '독립적 시간과 내면 성찰에서 에너지를 충전하는 성향'
+  },
+  'N': {
+    title: '직관의 영역',
+    description: '미래 가능성, 패턴 인식, 큰 그림을 보는 성향'
+  },
+  'S': {
+    title: '감각의 영역',
+    description: '현재 순간, 구체적 사실, 실용성을 중시하는 성향'
+  },
+  'T': {
+    title: '사고의 힘',
+    description: '논리적 분석, 객관적 판단, 효율성을 추구하는 성향'
+  },
+  'F': {
+    title: '감정의 흐름',
+    description: '가치 기반 결정, 공감, 조화를 중시하는 성향'
+  },
+  'J': {
+    title: '계획의 날',
+    description: '체계적 계획, 결정, 완료를 선호하는 성향'
+  },
+  'P': {
+    title: '유연의 날',
+    description: '유연성, 적응력, 열린 가능성을 선호하는 성향'
+  }
+}
+
+// MBTI별 특성 (기존 호환성 유지)
+const MBTI_CHARACTERISTICS: Record<string, {
+  description: string;
+  cognitiveStrengths: string[];
+  compatibility: string[];
+  challenges: string[];
+}> = {
   'INTJ': {
     description: '전략가 - 상상력이 풍부하고 전략적인 사고를 하는 계획가',
     cognitiveStrengths: ['전략적 사고', '체계적 계획', '독립적 판단', '미래 지향적'],
@@ -165,7 +216,59 @@ const MBTI_CHARACTERISTICS = {
     compatibility: ['ISFJ', 'ISTJ', 'INFJ', 'INTJ'],
     challenges: ['집중력', '비판 처리', '장기 목표']
   }
-};
+}
+
+// ==================== 헬퍼 함수 ====================
+
+/**
+ * MBTI 유형에서 4개 차원 추출
+ * @example "ENTJ" → ["E", "N", "T", "J"]
+ */
+function extractDimensions(mbti: string): string[] {
+  return [mbti[0], mbti[1], mbti[2], mbti[3]]
+}
+
+/**
+ * 8차원 데이터에서 사용자 MBTI에 맞는 4개 추출
+ */
+function extractUserDimensions(
+  mbti: string,
+  allDimensions: Record<string, { fortune: string; tip: string; score: number }>
+): DimensionFortune[] {
+  const userDims = extractDimensions(mbti)
+
+  return userDims.map(dim => ({
+    dimension: dim,
+    title: DIMENSION_META[dim].title,
+    fortune: allDimensions[dim]?.fortune || '오늘은 새로운 가능성이 열리는 날입니다.',
+    tip: allDimensions[dim]?.tip || '자신을 믿으세요',
+    score: allDimensions[dim]?.score || 70
+  }))
+}
+
+/**
+ * 4개 차원 점수의 평균 계산
+ */
+function calculateOverallScore(dimensions: DimensionFortune[]): number {
+  const total = dimensions.reduce((sum, d) => sum + d.score, 0)
+  return Math.round(total / dimensions.length)
+}
+
+/**
+ * 4차원 운세를 조합하여 종합 운세 텍스트 생성
+ */
+function generateCombinedFortune(mbti: string, dimensions: DimensionFortune[]): string {
+  const dimMap = Object.fromEntries(dimensions.map(d => [d.dimension, d]))
+
+  // 가장 높은 점수의 차원 찾기
+  const bestDim = dimensions.reduce((best, current) =>
+    current.score > best.score ? current : best
+  )
+
+  return `오늘 ${mbti}의 가장 빛나는 영역은 '${bestDim.title}'입니다. ${bestDim.fortune}`
+}
+
+// ==================== 메인 핸들러 ====================
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -180,7 +283,7 @@ serve(async (req) => {
 
     const { mbti, name, birthDate, userId, isPremium }: MbtiFortuneRequest = await req.json()
 
-    console.log(`[MBTI] Request - User: ${userId}, Premium: ${isPremium}, MBTI: ${mbti}`)
+    console.log(`[MBTI-v2] Request - User: ${userId}, Premium: ${isPremium}, MBTI: ${mbti}`)
 
     // 입력 데이터 검증
     if (!mbti || !name || !birthDate) {
@@ -197,7 +300,8 @@ serve(async (req) => {
     }
 
     // MBTI 유효성 검증
-    if (!MBTI_CHARACTERISTICS[mbti as keyof typeof MBTI_CHARACTERISTICS]) {
+    const upperMbti = mbti.toUpperCase()
+    if (!MBTI_CHARACTERISTICS[upperMbti]) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -210,140 +314,177 @@ serve(async (req) => {
       )
     }
 
-    // 캐시 확인 (오늘 같은 사용자, 같은 MBTI로 생성된 운세가 있는지)
     const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `${userId || 'anonymous'}_${mbti}_${today}`
 
-    const { data: cachedResult } = await supabaseClient
+    // ==================== 1. 전역 차원 캐시 확인 ====================
+    const dimensionCacheKey = `mbti_dimensions_${today}`
+
+    const { data: cachedDimensions } = await supabaseClient
       .from('fortune_cache')
       .select('result')
-      .eq('cache_key', cacheKey)
-      .eq('fortune_type', 'mbti')
+      .eq('cache_key', dimensionCacheKey)
+      .eq('fortune_type', 'mbti_dimensions')
       .single()
 
-    if (cachedResult) {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          data: cachedResult.result
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
-      )
-    }
+    let allDimensions: Record<string, { fortune: string; tip: string; score: number }>
 
-    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
-    const llm = await LLMFactory.createFromConfigAsync('mbti')
+    if (cachedDimensions?.result) {
+      console.log(`[MBTI-v2] ✅ 캐시 히트 (전역 차원)`)
+      allDimensions = cachedDimensions.result as typeof allDimensions
+    } else {
+      // ==================== 2. 8차원 모두 LLM 생성 ====================
+      console.log(`[MBTI-v2] 📡 캐시 미스 - LLM으로 8차원 생성`)
 
-    const systemPrompt = `당신은 전문적인 MBTI 운세 전문가입니다. 각 MBTI 유형의 특성을 깊이 이해하고 있으며, 한국 전통 운세와 현대 심리학을 결합하여 정확하고 의미있는 운세를 제공합니다.
+      const llm = await LLMFactory.createFromConfigAsync('mbti')
 
-다음 JSON 형식으로 응답해주세요:
+      const systemPrompt = `당신은 MBTI 운세 전문가입니다.
+오늘의 운세를 MBTI 8개 차원별로 생성해주세요.
+
+각 차원별 특성:
+- E(외향): 사회적 상호작용, 에너지 충전, 활동적 모임, 새로운 만남
+- I(내향): 독립적 시간, 깊은 사고, 에너지 보존, 의미 있는 1:1 대화
+- N(직관): 미래 가능성, 패턴 인식, 큰 그림, 영감과 아이디어
+- S(감각): 현재 순간, 구체적 사실, 실용적 행동, 오감 체험
+- T(사고): 논리적 분석, 객관적 판단, 효율성, 문제 해결
+- F(감정): 가치 기반 결정, 공감, 조화, 인간관계
+- J(판단): 계획성, 결정, 완료, 체계적 접근
+- P(인식): 유연성, 적응, 열린 가능성, 즉흥적 기회
+
+다음 JSON 형식으로 정확히 응답해주세요:
 {
-  "todayFortune": "오늘의 전체적인 운세 (100자 이내, 핵심만)",
-  "loveFortune": "연애/사랑 운세 (80자 이내)",
-  "careerFortune": "직장/학업 운세 (80자 이내)",
-  "moneyFortune": "금전/재물 운세 (80자 이내)",
-  "healthFortune": "건강 운세 (80자 이내)",
-  "luckyColor": "오늘의 행운 색상",
-  "luckyNumber": 행운 숫자 (1-99),
-  "advice": "MBTI 특성 기반 조언 (100자 이내)",
-  "energyLevel": 오늘의 에너지 레벨 (0-100),
-  "mbtiDescription": "해당 MBTI의 간단한 설명 (50자 이내)"
+  "E": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 75 },
+  "I": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 68 },
+  "N": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 82 },
+  "S": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 71 },
+  "T": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 79 },
+  "F": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 85 },
+  "J": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 73 },
+  "P": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 77 },
+  "luckyColor": "색상 이름",
+  "luckyNumber": 1부터 99 사이 숫자
 }
 
-모든 내용은 따뜻하고 긍정적이며 실용적인 조언을 포함해야 합니다.`
+규칙:
+- score는 50-95 사이로 설정 (너무 극단적인 점수 피하기)
+- fortune은 해당 차원의 특성을 반영한 구체적인 오늘의 운세
+- tip은 실행 가능한 짧은 조언
+- 모든 내용은 따뜻하고 긍정적인 톤으로`
 
-    const userPrompt = `이름: ${name}
-MBTI: ${mbti}
-생년월일: ${birthDate}
-오늘 날짜: ${new Date().toLocaleDateString('ko-KR')}
+      const userPrompt = `오늘 날짜: ${new Date().toLocaleDateString('ko-KR')}
 
-${mbti} 유형의 특성을 고려하여 오늘의 운세를 JSON 형식으로 봐주세요.`
+오늘 하루 MBTI 8개 차원별 운세를 JSON 형식으로 생성해주세요.`
 
-    const response = await llm.generate([
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt }
-    ], {
-      temperature: 1,
-      maxTokens: 8192,
-      jsonMode: true
-    })
-
-    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
-
-    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
-    await UsageLogger.log({
-      fortuneType: 'mbti',
-      userId: userId,
-      provider: response.provider,
-      model: response.model,
-      response: response,
-      metadata: { name, mbti, birthDate, isPremium }
-    })
-
-    if (!response.content) {
-      console.error('LLM 응답 없음')
-      throw new Error('LLM API 응답 형식 오류')
-    }
-
-    let fortuneData
-    try {
-      fortuneData = JSON.parse(response.content)
-    } catch (parseError) {
-      console.error('JSON 파싱 실패:', response.content)
-      throw new Error('LLM 응답 JSON 파싱 실패')
-    }
-
-    // ✅ 필수 필드 검증
-    if (!fortuneData.todayFortune) {
-      console.error('todayFortune 필드 없음:', fortuneData)
-      // 기본값 제공
-      fortuneData.todayFortune = `${mbti} 유형의 오늘 운세입니다. 새로운 가능성이 열리는 하루가 될 것입니다.`
-    }
-
-    // MBTI 특성 정보 추가
-    const mbtiCharacteristics = MBTI_CHARACTERISTICS[mbti as keyof typeof MBTI_CHARACTERISTICS]
-
-    // ✅ RewardedAd 방식: Premium 여부에 따라 Blur 처리
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['loveFortune', 'careerFortune', 'moneyFortune', 'healthFortune', 'advice', 'compatibility', 'cognitiveStrengths', 'challenges']
-      : []
-
-    console.log(`[MBTI] isPremium: ${isPremium}, isBlurred: ${isBlurred}`)
-
-    const result: MbtiFortuneResponse['data'] = {
-      todayFortune: fortuneData.todayFortune,  // ✅ 무료: 공개
-      loveFortune: fortuneData.loveFortune,    // 🔒 유료
-      careerFortune: fortuneData.careerFortune, // 🔒 유료
-      moneyFortune: fortuneData.moneyFortune,  // 🔒 유료
-      healthFortune: fortuneData.healthFortune, // 🔒 유료
-      luckyColor: fortuneData.luckyColor,      // ✅ 무료: 공개
-      luckyNumber: fortuneData.luckyNumber,    // ✅ 무료: 공개
-      advice: fortuneData.advice,              // 🔒 유료
-      compatibility: mbtiCharacteristics.compatibility, // 🔒 유료
-      energyLevel: fortuneData.energyLevel || 50, // ✅ 무료: 공개
-      cognitiveStrengths: mbtiCharacteristics.cognitiveStrengths, // 🔒 유료
-      challenges: mbtiCharacteristics.challenges, // 🔒 유료
-      mbtiDescription: mbtiCharacteristics.description, // ✅ 무료: 공개
-      timestamp: new Date().toISOString(),
-      isBlurred,           // ✅ 블러 상태
-      blurredSections,     // ✅ 블러 처리된 섹션 목록
-    }
-
-    console.log(`[MBTI] Result generated for ${mbti}`)
-
-    // 결과 캐싱
-    await supabaseClient
-      .from('fortune_cache')
-      .insert({
-        cache_key: cacheKey,
-        fortune_type: 'mbti',
-        user_id: userId || null,
-        result: result,
-        created_at: new Date().toISOString()
+      const response = await llm.generate([
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ], {
+        temperature: 0.9,
+        maxTokens: 4096,
+        jsonMode: true
       })
 
-    // ✅ 퍼센타일 계산
+      console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+      // LLM 사용량 로깅
+      await UsageLogger.log({
+        fortuneType: 'mbti_dimensions',
+        userId: 'system', // 전역 캐시용이므로 시스템
+        provider: response.provider,
+        model: response.model,
+        response: response,
+        metadata: { type: 'daily_dimensions', date: today }
+      })
+
+      if (!response.content) {
+        throw new Error('LLM API 응답 없음')
+      }
+
+      let parsedResponse: typeof allDimensions & { luckyColor?: string; luckyNumber?: number }
+      try {
+        parsedResponse = JSON.parse(response.content)
+      } catch {
+        console.error('JSON 파싱 실패:', response.content)
+        throw new Error('LLM 응답 JSON 파싱 실패')
+      }
+
+      // 기본값 보장
+      const defaultDim = { fortune: '오늘은 새로운 가능성이 열리는 날입니다.', tip: '자신을 믿으세요', score: 70 }
+      allDimensions = {
+        E: parsedResponse.E || defaultDim,
+        I: parsedResponse.I || defaultDim,
+        N: parsedResponse.N || defaultDim,
+        S: parsedResponse.S || defaultDim,
+        T: parsedResponse.T || defaultDim,
+        F: parsedResponse.F || defaultDim,
+        J: parsedResponse.J || defaultDim,
+        P: parsedResponse.P || defaultDim,
+        // 추가 데이터
+        _meta: {
+          luckyColor: parsedResponse.luckyColor || '파란색',
+          luckyNumber: parsedResponse.luckyNumber || 7
+        } as any
+      }
+
+      // ==================== 3. 전역 캐시 저장 ====================
+      await supabaseClient
+        .from('fortune_cache')
+        .insert({
+          cache_key: dimensionCacheKey,
+          fortune_type: 'mbti_dimensions',
+          user_id: null, // 전역 캐시
+          result: allDimensions,
+          created_at: new Date().toISOString()
+        })
+
+      console.log(`[MBTI-v2] ✅ 8차원 캐시 저장 완료`)
+    }
+
+    // ==================== 4. 사용자별 4차원 추출 ====================
+    const userDimensions = extractUserDimensions(upperMbti, allDimensions)
+    const overallScore = calculateOverallScore(userDimensions)
+    const todayFortune = generateCombinedFortune(upperMbti, userDimensions)
+
+    // MBTI 특성 정보
+    const mbtiCharacteristics = MBTI_CHARACTERISTICS[upperMbti]
+    const meta = (allDimensions as any)._meta || { luckyColor: '파란색', luckyNumber: 7 }
+
+    // ==================== 5. 블러 처리 ====================
+    const isBlurred = !isPremium
+    // 점수만 무료, 텍스트는 프리미엄
+    const blurredSections = isBlurred
+      ? ['dimensions.fortune', 'dimensions.tip', 'loveFortune', 'careerFortune', 'moneyFortune', 'healthFortune', 'advice', 'compatibility', 'cognitiveStrengths', 'challenges']
+      : []
+
+    console.log(`[MBTI-v2] isPremium: ${isPremium}, isBlurred: ${isBlurred}`)
+
+    // ==================== 6. 응답 구성 ====================
+    const result = {
+      // 새로운 4차원 데이터
+      dimensions: userDimensions,
+      overallScore,
+
+      // 기존 호환성 필드
+      todayFortune,
+      loveFortune: `${upperMbti}의 연애 운세: ${userDimensions[0].fortune}`, // F/T 차원 기반
+      careerFortune: `${upperMbti}의 직장 운세: ${userDimensions[2].fortune}`, // T/F 차원 기반
+      moneyFortune: `${upperMbti}의 금전 운세: 안정적인 재정 관리가 필요한 날입니다.`,
+      healthFortune: `${upperMbti}의 건강 운세: 무리하지 말고 충분한 휴식을 취하세요.`,
+      luckyColor: meta.luckyColor,
+      luckyNumber: meta.luckyNumber,
+      advice: `오늘의 조언: ${userDimensions.find(d => d.score === Math.max(...userDimensions.map(x => x.score)))?.tip || '자신을 믿으세요.'}`,
+      compatibility: mbtiCharacteristics.compatibility,
+      energyLevel: overallScore,
+      cognitiveStrengths: mbtiCharacteristics.cognitiveStrengths,
+      challenges: mbtiCharacteristics.challenges,
+      mbtiDescription: mbtiCharacteristics.description,
+      timestamp: new Date().toISOString(),
+      isBlurred,
+      blurredSections,
+    }
+
+    console.log(`[MBTI-v2] ✅ ${upperMbti} 결과 생성 완료 - 점수: ${overallScore}`)
+
+    // 퍼센타일 계산
     const percentileData = await calculatePercentile(supabaseClient, 'mbti', result.energyLevel)
     const resultWithPercentile = addPercentileToResult(result, percentileData)
 
@@ -358,21 +499,17 @@ ${mbti} 유형의 특성을 고려하여 오늘의 운세를 JSON 형식으로 �
   } catch (error) {
     console.error('MBTI Fortune API Error:', error)
 
-    // 에러 상세 로그
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('Error details:', {
       message: errorMessage,
       stack: error instanceof Error ? error.stack : undefined,
-      mbti,
-      name,
-      birthDate
     })
 
     return new Response(
       JSON.stringify({
         success: false,
         error: '운세 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+        details: Deno.env.get('ENVIRONMENT') === 'development' ? errorMessage : undefined
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
