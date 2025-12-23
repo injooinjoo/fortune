@@ -73,4 +73,17 @@
         android:ellipsize="end"
         android:gravity="center" />
 
+    <!-- Engagement Badge -->
+    <TextView
+        android:id="@+id/engagement_badge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="오늘의 연애운 확인 💕"
+        android:textSize="11sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/engagement_badge_bg"
+        android:padding="5dp"
+        android:gravity="center"
+        android:visibility="gone" />
+
 </LinearLayout>

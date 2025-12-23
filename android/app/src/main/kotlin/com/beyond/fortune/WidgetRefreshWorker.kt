@@ -105,23 +105,63 @@ class WidgetRefreshWorker(
         Log.i(TAG, "Widget refresh work started")
 
         return try {
+            val prefs: SharedPreferences = applicationContext.getSharedPreferences(
+                PREFS_NAME,
+                Context.MODE_PRIVATE
+            )
+
             // Check if data is already valid for today
             if (isDataValidForToday()) {
-                Log.i(TAG, "Widget data already valid for today, refreshing widgets only")
+                Log.i(TAG, "Widget data already valid for today")
+                // Ensure display state is "today"
+                prefs.edit().putString("flutter.display_state", "today").apply()
                 refreshAllWidgets()
                 return Result.success()
             }
 
-            // Data needs refresh - this will be handled by Flutter
-            // We trigger widget refresh here to show any cached data
-            Log.i(TAG, "Widget data needs refresh, triggering widget update")
-            refreshAllWidgets()
+            // Data needs refresh - check if we have any cached data
+            val hasAnyData = prefs.contains("flutter.overall_score")
 
+            if (hasAnyData) {
+                // We have yesterday's data - set engagement state
+                Log.i(TAG, "Setting yesterday engagement state")
+                prefs.edit()
+                    .putString("flutter.display_state", "yesterday")
+                    .putString("flutter.engagement_message", getRandomEngagementMessage())
+                    .putBoolean("flutter.is_yesterday", true)
+                    .putBoolean("flutter.is_empty", false)
+                    .apply()
+            } else {
+                // No data at all - empty state
+                Log.i(TAG, "Setting empty engagement state")
+                prefs.edit()
+                    .putString("flutter.display_state", "empty")
+                    .putString("flutter.engagement_message", "터치해서 오늘 운세 확인 ✨")
+                    .putBoolean("flutter.is_yesterday", false)
+                    .putBoolean("flutter.is_empty", true)
+                    .apply()
+            }
+
+            refreshAllWidgets()
             Result.success()
         } catch (e: Exception) {
             Log.e(TAG, "Widget refresh failed: ${e.message}")
             Result.retry()
         }
+    }
+
+    /**
+     * Get a random engagement message for widget
+     */
+    private fun getRandomEngagementMessage(): String {
+        val messages = listOf(
+            "오늘의 운세 미리보기 🔮",
+            "터치해서 오늘 운세 확인",
+            "오늘은 어떤 하루가 될까요? ✨",
+            "새로운 하루, 새로운 운세 🌅",
+            "행운이 기다리고 있어요 🍀"
+        )
+        return messages.random()
     }
 
     /**

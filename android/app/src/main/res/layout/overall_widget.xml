@@ -88,4 +88,17 @@
         android:ellipsize="end"
         android:gravity="center" />
 
+    <!-- Engagement Badge (shown when displayState != today) -->
+    <TextView
+        android:id="@+id/engagement_badge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="오늘의 운세 미리보기 🔮"
+        android:textSize="12sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/engagement_badge_bg"
+        android:padding="6dp"
+        android:gravity="center"
+        android:visibility="gone" />
+
 </LinearLayout>

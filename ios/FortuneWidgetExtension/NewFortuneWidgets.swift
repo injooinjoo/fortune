@@ -19,11 +19,34 @@ struct OverallWidgetProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<OverallEntry>) -> Void) {
-        let (overall, _, _, _) = UnifiedWidgetDataManager.shared.loadFromHomeWidget()
-        let entry = overall ?? .empty
+        let manager = UnifiedWidgetDataManager.shared
+        let (overall, _, _, _) = manager.loadFromHomeWidget()
+        let displayState = manager.getDisplayState()
+        let engagementMessage = manager.getEngagementMessage() ?? "오늘의 운세 미리보기 🔮"
 
-        // Refresh every hour
-        let nextUpdate = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
+        var entry: OverallEntry
+        if let overall = overall, !overall.isPlaceholder {
+            switch displayState {
+            case .today:
+                entry = overall
+            case .yesterday:
+                entry = OverallEntry.yesterday(
+                    score: overall.score,
+                    grade: overall.grade,
+                    message: overall.message,
+                    description: overall.description,
+                    engagementMessage: engagementMessage
+                )
+            case .empty:
+                entry = .empty
+            }
+        } else {
+            entry = .empty
+        }
+
+        // Refresh more frequently for engagement states (30 min vs 1 hour)
+        let refreshMinutes = entry.showEngagement ? 30 : 60
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: refreshMinutes, to: Date()) ?? Date()
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }
@@ -47,11 +70,35 @@ struct CategoryWidgetProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<CategoryEntry>) -> Void) {
-        let (_, category, _, _) = UnifiedWidgetDataManager.shared.loadFromHomeWidget()
-        let entry = category ?? .empty
+        let manager = UnifiedWidgetDataManager.shared
+        let (_, category, _, _) = manager.loadFromHomeWidget()
+        let displayState = manager.getDisplayState()
 
-        // Refresh every hour
-        let nextUpdate = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
+        var entry: CategoryEntry
+        if let category = category, !category.isPlaceholder {
+            switch displayState {
+            case .today:
+                entry = category
+            case .yesterday:
+                let engagementMessage = manager.getCategoryEngagementMessage(for: category.categoryKey)
+                entry = CategoryEntry.yesterday(
+                    categoryKey: category.categoryKey,
+                    name: category.name,
+                    score: category.score,
+                    message: category.message,
+                    icon: category.icon,
+                    engagementMessage: engagementMessage
+                )
+            case .empty:
+                entry = .empty
+            }
+        } else {
+            entry = .empty
+        }
+
+        // Refresh more frequently for engagement states (30 min vs 1 hour)
+        let refreshMinutes = entry.showEngagement ? 30 : 60
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: refreshMinutes, to: Date()) ?? Date()
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }
@@ -201,11 +248,18 @@ struct SmallOverallView: View {
                 Spacer()
             }
 
-            // Score
+            // Score (with opacity for yesterday state)
             HStack(alignment: .bottom, spacing: 4) {
-                Text("\(entry.score)")
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .foregroundColor(WidgetColors.scoreColor(for: entry.score))
+                if entry.displayState == .empty {
+                    Text("?")
+                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .foregroundColor(textColors.secondary)
+                } else {
+                    Text("\(entry.score)")
+                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .foregroundColor(WidgetColors.scoreColor(for: entry.score))
+                        .opacity(entry.displayState == .yesterday ? 0.5 : 1.0)
+                }
                 Text("점")
                     .font(.subheadline)
                     .foregroundColor(textColors.secondary)
@@ -214,17 +268,31 @@ struct SmallOverallView: View {
 
             Spacer()
 
-            // Grade badge
-            HStack {
-                Text(entry.grade)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(textColors.backgroundOverlay)
-                    .cornerRadius(8)
-                    .foregroundColor(textColors.primary)
-                Spacer()
+            // Show engagement badge or grade
+            if entry.showEngagement, let message = entry.engagementMessage {
+                HStack {
+                    Text(message)
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.purple)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                    Spacer()
+                }
+            } else {
+                HStack {
+                    Text(entry.grade)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(textColors.backgroundOverlay)
+                        .cornerRadius(8)
+                        .foregroundColor(textColors.primary)
+                    Spacer()
+                }
             }
         }
     }
@@ -306,11 +374,18 @@ struct CategoryWidgetView: View {
                 Spacer()
             }
 
-            // Score
+            // Score (with opacity for yesterday state)
             HStack(alignment: .bottom, spacing: 4) {
-                Text("\(entry.score)")
-                    .font(.system(size: 38, weight: .bold, design: .rounded))
-                    .foregroundColor(WidgetColors.scoreColor(for: entry.score))
+                if entry.displayState == .empty {
+                    Text("?")
+                        .font(.system(size: 38, weight: .bold, design: .rounded))
+                        .foregroundColor(textColors.secondary)
+                } else {
+                    Text("\(entry.score)")
+                        .font(.system(size: 38, weight: .bold, design: .rounded))
+                        .foregroundColor(WidgetColors.scoreColor(for: entry.score))
+                        .opacity(entry.displayState == .yesterday ? 0.5 : 1.0)
+                }
                 Text("점")
                     .font(.subheadline)
                     .foregroundColor(textColors.secondary)
@@ -319,11 +394,22 @@ struct CategoryWidgetView: View {
 
             Spacer()
 
-            // Message
-            Text(entry.message)
-                .font(.caption)
-                .foregroundColor(textColors.secondary)
-                .lineLimit(2)
+            // Show engagement badge or message
+            if entry.showEngagement, let message = entry.engagementMessage {
+                Text(message)
+                    .font(.caption2)
+                    .fontWeight(.semibold)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.purple)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            } else {
+                Text(entry.message)
+                    .font(.caption)
+                    .foregroundColor(textColors.secondary)
+                    .lineLimit(2)
+            }
         }
     }
 }

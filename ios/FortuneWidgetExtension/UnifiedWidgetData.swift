@@ -1,6 +1,14 @@
 import Foundation
 import WidgetKit
 
+// MARK: - Widget Display State
+// Matches Flutter's WidgetDisplayState enum
+enum WidgetDisplayState: String, Codable {
+    case today = "today"
+    case yesterday = "yesterday"
+    case empty = "empty"
+}
+
 // MARK: - Unified Widget Data Model
 // Matches the SharedWidgetData model from Flutter
 
@@ -243,6 +251,32 @@ class UnifiedWidgetDataManager {
 
         return validDate == todayStr
     }
+
+    /// Get current display state
+    func getDisplayState() -> WidgetDisplayState {
+        guard let sharedDefaults = sharedDefaults,
+              let stateString = sharedDefaults.string(forKey: "display_state") else {
+            return isDataValidForToday() ? .today : .yesterday
+        }
+        return WidgetDisplayState(rawValue: stateString) ?? .today
+    }
+
+    /// Get engagement message
+    func getEngagementMessage() -> String? {
+        return sharedDefaults?.string(forKey: "engagement_message")
+    }
+
+    /// Get category-specific engagement message
+    func getCategoryEngagementMessage(for category: String) -> String {
+        let categoryMessages: [String: String] = [
+            "love": "오늘의 연애운 확인 💕",
+            "money": "오늘의 금전운 확인 💰",
+            "work": "오늘의 직장운 확인 💼",
+            "study": "오늘의 학업운 확인 📚",
+            "health": "오늘의 건강운 확인 🏃"
+        ]
+        return categoryMessages[category] ?? "오늘의 운세 확인 ✨"
+    }
 }
 
 // MARK: - Widget Entries
@@ -254,6 +288,8 @@ struct OverallEntry: TimelineEntry {
     let message: String
     let description: String?
     let isPlaceholder: Bool
+    var displayState: WidgetDisplayState = .today
+    var engagementMessage: String? = nil
 
     static var placeholder: OverallEntry {
         OverallEntry(
@@ -273,7 +309,23 @@ struct OverallEntry: TimelineEntry {
             grade: "-",
             message: "앱을 열어 운세를 확인하세요",
             description: nil,
-            isPlaceholder: false
+            isPlaceholder: false,
+            displayState: .empty,
+            engagementMessage: "터치해서 오늘 운세 확인 ✨"
+        )
+    }
+
+    /// Create entry for yesterday's data with engagement
+    static func yesterday(score: Int, grade: String, message: String, description: String?, engagementMessage: String) -> OverallEntry {
+        OverallEntry(
+            date: Date(),
+            score: score,
+            grade: "어제",
+            message: message,
+            description: description,
+            isPlaceholder: false,
+            displayState: .yesterday,
+            engagementMessage: engagementMessage
         )
     }
 
@@ -287,6 +339,11 @@ struct OverallEntry: TimelineEntry {
         default: return "✨"
         }
     }
+
+    /// Whether to show engagement badge
+    var showEngagement: Bool {
+        displayState != .today
+    }
 }
 
 struct CategoryEntry: TimelineEntry {
@@ -297,6 +354,8 @@ struct CategoryEntry: TimelineEntry {
     let message: String
     let icon: String
     let isPlaceholder: Bool
+    var displayState: WidgetDisplayState = .today
+    var engagementMessage: String? = nil
 
     static var placeholder: CategoryEntry {
         CategoryEntry(
@@ -318,8 +377,30 @@ struct CategoryEntry: TimelineEntry {
             score: 0,
             message: "카테고리를 선택하세요",
             icon: "💫",
-            isPlaceholder: false
+            isPlaceholder: false,
+            displayState: .empty,
+            engagementMessage: "터치해서 운세 확인 ✨"
         )
+    }
+
+    /// Create entry for yesterday's data with engagement
+    static func yesterday(categoryKey: String, name: String, score: Int, message: String, icon: String, engagementMessage: String) -> CategoryEntry {
+        CategoryEntry(
+            date: Date(),
+            categoryKey: categoryKey,
+            name: name,
+            score: score,
+            message: message,
+            icon: icon,
+            isPlaceholder: false,
+            displayState: .yesterday,
+            engagementMessage: engagementMessage
+        )
+    }
+
+    /// Whether to show engagement badge
+    var showEngagement: Bool {
+        displayState != .today
     }
 }
 

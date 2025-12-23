@@ -1,5 +1,7 @@
 package com.beyond.fortune
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -41,8 +43,33 @@ class MainActivity: FlutterActivity() {
                         WidgetRefreshWorker.runImmediateRefresh(applicationContext)
                         result.success(mapOf("success" to true))
                     }
+                    "isWidgetInstalled" -> {
+                        val isInstalled = checkWidgetInstalled()
+                        result.success(mapOf("installed" to isInstalled))
+                    }
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    /// 위젯 설치 여부 확인
+    private fun checkWidgetInstalled(): Boolean {
+        val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
+        val widgetClasses = listOf(
+            OverallAppWidget::class.java,
+            CategoryAppWidget::class.java,
+            TimeSlotAppWidget::class.java,
+            LottoAppWidget::class.java
+        )
+        return widgetClasses.any { widgetClass ->
+            try {
+                val ids = appWidgetManager.getAppWidgetIds(
+                    ComponentName(applicationContext, widgetClass)
+                )
+                ids.isNotEmpty()
+            } catch (e: Exception) {
+                false
+            }
+        }
     }
 }
