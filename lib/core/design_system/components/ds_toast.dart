@@ -332,7 +332,7 @@ class DSSnackbar {
     Duration duration = const Duration(seconds: 4),
   }) {
     final colors = DSColorScheme(Theme.of(context).brightness);
-    final typography = DSTypographyScheme();
+    final typography = const DSTypographyScheme();
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

@@ -49,7 +49,7 @@
 /// └── utils/                <- Utilities
 ///     └── ds_haptics.dart
 /// ```
-library design_system;
+library;
 
 // ============================================
 // TOKENS

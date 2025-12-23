@@ -25,7 +25,7 @@ class AppCard extends StatelessWidget {
     final colors = context.colors;
     final shadows = context.shadows;
 
-    Widget card = Container(
+    final Widget card = Container(
       margin: margin,
       decoration: BoxDecoration(
         color: _getBackgroundColor(colors),

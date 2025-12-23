@@ -189,7 +189,7 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
                 loop: true,
               ),
               
-              SizedBox(height: TossDesignSystem.spacing4XL),
+              const SizedBox(height: TossDesignSystem.spacing4XL),
               
               // 감성 메시지 (롤링 애니메이션)
               Container(
@@ -228,7 +228,7 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
               ).animate()
                 .fadeIn(delay: 1000.ms, duration: 800.ms),
               
-              SizedBox(height: TossDesignSystem.spacing4XL),
+              const SizedBox(height: TossDesignSystem.spacing4XL),
             ],
           ),
         ),
@@ -262,7 +262,7 @@ class TossFortuneLoadingWidget extends StatelessWidget {
           loop: true,
         ),
         if (message != null) ...[
-          SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: TossDesignSystem.spacingM),
           Text(
             message!,
             style: TossDesignSystem.caption.copyWith(

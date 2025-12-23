@@ -436,7 +436,7 @@ class _DSButtonState extends State<DSButton>
         break;
     }
 
-    Widget buttonContent = Row(
+    final Widget buttonContent = Row(
       mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -465,7 +465,7 @@ class _DSButtonState extends State<DSButton>
       ],
     );
 
-    Widget button = AnimatedBuilder(
+    final Widget button = AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) => Transform.scale(
         scale: _scaleAnimation.value,

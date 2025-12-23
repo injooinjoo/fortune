@@ -255,13 +255,13 @@ class ApiClient {
         case DioExceptionType.connectionTimeout:
         case DioExceptionType.sendTimeout:
         case DioExceptionType.receiveTimeout:
-          return app_exceptions.NetworkException('네트워크 연결 시간이 초과되었습니다.');
+          return const app_exceptions.NetworkException('네트워크 연결 시간이 초과되었습니다.');
         
         case DioExceptionType.connectionError:
-          return app_exceptions.NetworkException('네트워크에 연결할 수 없습니다.');
+          return const app_exceptions.NetworkException('네트워크에 연결할 수 없습니다.');
         
         case DioExceptionType.cancel:
-          return app_exceptions.NetworkException('요청이 취소되었습니다.');
+          return const app_exceptions.NetworkException('요청이 취소되었습니다.');
         
         case DioExceptionType.badResponse:
           final statusCode = error.response?.statusCode;
@@ -296,12 +296,12 @@ class ApiClient {
             statusCode: statusCode);
         
         default:
-          return app_exceptions.NetworkException('네트워크 오류가 발생했습니다.');
+          return const app_exceptions.NetworkException('네트워크 오류가 발생했습니다.');
       }
     }
     
     if (error is SocketException) {
-      return app_exceptions.NetworkException('인터넷 연결을 확인해주세요.');
+      return const app_exceptions.NetworkException('인터넷 연결을 확인해주세요.');
     }
     
     return app_exceptions.ServerException(

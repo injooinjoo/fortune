@@ -87,7 +87,7 @@ class AppAnimations {
     const end = Offset.zero;
     const curve = curvePageTransition;
 
-    var tween = Tween(begin: begin, end: end).chain(
+    final tween = Tween(begin: begin, end: end).chain(
       CurveTween(curve: curve));
 
     return SlideTransition(position: animation.drive(tween), child: child);
@@ -100,7 +100,7 @@ class AppAnimations {
     Widget child) {
     const curve = curveScale;
 
-    var tween = Tween(begin: 0.9, end: 1.0).chain(
+    final tween = Tween(begin: 0.9, end: 1.0).chain(
       CurveTween(curve: curve));
 
     return ScaleTransition(

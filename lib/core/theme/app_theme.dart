@@ -70,7 +70,7 @@ class AppTheme {
           ),
         ),
         fontFamily: TossDesignSystem.fontFamilyKorean,
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           displayLarge: TossDesignSystem.display1,
           displayMedium: TossDesignSystem.display2,
           displaySmall: TossDesignSystem.heading1,
@@ -115,7 +115,7 @@ class AppTheme {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: TossDesignSystem.tossBlue, width: 2),
+            borderSide: const BorderSide(color: TossDesignSystem.tossBlue, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
@@ -141,7 +141,7 @@ class AppTheme {
         useMaterial3: true,
         brightness: Brightness.dark,
         primaryColor: TossDesignSystem.tossBlue,
-        colorScheme: ColorScheme.dark(
+        colorScheme: const ColorScheme.dark(
           primary: TossDesignSystem.tossBlue,
           secondary: secondaryColor,
           tertiary: TossDesignSystem.gray600,
@@ -198,19 +198,19 @@ class AppTheme {
               const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: TossDesignSystem.gray700, width: 1),
+            borderSide: const BorderSide(color: TossDesignSystem.gray700, width: 1),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: TossDesignSystem.gray700, width: 1),
+            borderSide: const BorderSide(color: TossDesignSystem.gray700, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: TossDesignSystem.tossBlue, width: 2),
+            borderSide: const BorderSide(color: TossDesignSystem.tossBlue, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: TossDesignSystem.errorRed, width: 1),
+            borderSide: const BorderSide(color: TossDesignSystem.errorRed, width: 1),
           ),
           labelStyle: TossDesignSystem.body3.copyWith(color: TossDesignSystem.gray400),
           hintStyle: TossDesignSystem.body3.copyWith(color: TossDesignSystem.gray500),
@@ -244,7 +244,7 @@ class _FastPageTransitionBuilder extends PageTransitionsBuilder {
     const end = Offset.zero;
     const curve = Curves.easeOutQuad;
     
-    var tween = Tween(begin: begin, end: end).chain(
+    final tween = Tween(begin: begin, end: end).chain(
       CurveTween(curve: curve),
     );
     

@@ -449,16 +449,16 @@ class _UnifiedFortuneBaseWidgetState
   Widget _buildLoadingSkeleton(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(DSSpacing.lg).copyWith(bottom: 100),
-      child: Column(
+      child: const Column(
         children: [
           // 헤더 스켈레톤
           DSSkeleton(height: 140),
-          const SizedBox(height: DSSpacing.md),
+          SizedBox(height: DSSpacing.md),
           // 컨텐츠 스켈레톤
           DSSkeleton(height: 180),
-          const SizedBox(height: DSSpacing.md),
+          SizedBox(height: DSSpacing.md),
           DSSkeleton(height: 160),
-          const SizedBox(height: DSSpacing.md),
+          SizedBox(height: DSSpacing.md),
           DSSkeleton(height: 140),
         ],
       ),

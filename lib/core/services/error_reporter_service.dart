@@ -66,7 +66,7 @@ class ErrorReporterService {
     };
 
     // 3. 주기적으로 에러 큐를 파일로 플러시 (5초마다)
-    _flushTimer = Timer.periodic(Duration(seconds: 5), (_) {
+    _flushTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       _flushErrorsToFile();
     });
 
@@ -200,7 +200,7 @@ class ErrorReporterService {
       existingErrors.addAll(_errorQueue);
 
       // 파일 저장
-      final jsonContent = JsonEncoder.withIndent('  ').convert(existingErrors);
+      final jsonContent = const JsonEncoder.withIndent('  ').convert(existingErrors);
       await file.writeAsString(jsonContent);
 
       Logger.info('💾 Flushed ${_errorQueue.length} errors to $_errorLogPath');

@@ -327,13 +327,13 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
               },
               calendarStyle: CalendarStyle(
                 outsideDaysVisible: false,
-                weekendTextStyle: TextStyle(
+                weekendTextStyle: const TextStyle(
                   color: TossDesignSystem.errorRed,
                 ),
-                holidayTextStyle: TextStyle(
+                holidayTextStyle: const TextStyle(
                   color: TossDesignSystem.errorRed,
                 ),
-                selectedDecoration: BoxDecoration(
+                selectedDecoration: const BoxDecoration(
                   color: TossDesignSystem.tossBlue,
                   shape: BoxShape.circle,
                 ),

@@ -74,7 +74,7 @@ class DSListTile extends StatelessWidget {
       vertical: DSSpacing.listItemVertical,
     );
 
-    Widget content = Container(
+    final Widget content = Container(
       padding: effectivePadding,
       decoration: BoxDecoration(
         border: (!isLast && showDivider)

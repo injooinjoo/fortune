@@ -285,7 +285,7 @@ class _TraditionalButtonState extends State<TraditionalButton>
   /// Ink button - Brush stroke style
   Widget _buildInkButton(
       bool isDark, _TraditionalButtonColors colors, bool isDisabled) {
-    return Container(
+    return SizedBox(
       width: widget.isExpanded ? double.infinity : widget.width,
       height: widget.height,
       child: CustomPaint(
@@ -395,9 +395,9 @@ class _TraditionalButtonState extends State<TraditionalButton>
           primaryDark: DSFortuneColors.inkBlack,
         );
       case TraditionalButtonColorScheme.earth:
-        return _TraditionalButtonColors(
+        return const _TraditionalButtonColors(
           primary: DSLuckColors.wealthLuck,
-          primaryDark: const Color(0xFF8B6914),
+          primaryDark: Color(0xFF8B6914),
         );
     }
   }

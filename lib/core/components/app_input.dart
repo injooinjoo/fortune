@@ -125,7 +125,7 @@ class _TossTextFieldState extends State<TossTextField>
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: TossDesignSystem.spacingS),
+          const SizedBox(height: TossDesignSystem.spacingS),
         ],
         AnimatedBuilder(
           animation: _focusAnimation,
@@ -167,7 +167,7 @@ class _TossTextFieldState extends State<TossTextField>
                   ),
                   prefixIcon: widget.prefixIcon,
                   suffixIcon: widget.suffixIcon,
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: TossDesignSystem.spacingM,
                     vertical: TossDesignSystem.spacingM,
                   ),
@@ -179,7 +179,7 @@ class _TossTextFieldState extends State<TossTextField>
           },
         ),
         if (widget.errorText != null || widget.helperText != null) ...[
-          SizedBox(height: TossDesignSystem.spacingXS),
+          const SizedBox(height: TossDesignSystem.spacingXS),
           Text(
             widget.errorText ?? widget.helperText ?? '',
             style: TossDesignSystem.caption1.copyWith(
@@ -229,7 +229,7 @@ class TossSelectField<T> extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: TossDesignSystem.spacingS),
+          const SizedBox(height: TossDesignSystem.spacingS),
         ],
         Container(
           decoration: BoxDecoration(
@@ -263,7 +263,7 @@ class TossSelectField<T> extends StatelessWidget {
               }).toList(),
               onChanged: enabled ? onChanged : null,
               isExpanded: true,
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: TossDesignSystem.spacingM,
                 vertical: TossDesignSystem.spacingM,
               ),
@@ -335,7 +335,7 @@ class TossCheckbox extends StatelessWidget {
               ),
             ),
             child: value
-                ? Icon(
+                ? const Icon(
                     Icons.check,
                     size: 14,
                     color: TossDesignSystem.white,
@@ -343,7 +343,7 @@ class TossCheckbox extends StatelessWidget {
                 : null,
           ),
           if (label != null) ...[
-            SizedBox(width: TossDesignSystem.spacingS),
+            const SizedBox(width: TossDesignSystem.spacingS),
             Text(
               label!,
               style: TossDesignSystem.body2.copyWith(

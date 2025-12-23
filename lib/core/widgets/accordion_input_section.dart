@@ -8,10 +8,12 @@ class AccordionInputSection {
   final String id;
   final String title;
   final IconData icon;
+  final String? imagePath; // ✅ 추가: 이미지 에셋 지원
   final Widget Function(BuildContext, Function(dynamic)) inputWidgetBuilder;
   bool isCompleted;
   dynamic value;
   String? displayValue;
+
   /// 다중 선택 섹션인 경우 true (선택 후에도 닫히지 않음)
   final bool isMultiSelect;
 
@@ -19,6 +21,7 @@ class AccordionInputSection {
     required this.id,
     required this.title,
     required this.icon,
+    this.imagePath,
     required this.inputWidgetBuilder,
     this.isCompleted = false,
     this.value,
@@ -37,6 +40,7 @@ class AccordionInputSection {
     String? id,
     String? title,
     IconData? icon,
+    String? imagePath,
     Widget Function(BuildContext, Function(dynamic))? inputWidgetBuilder,
     bool? isCompleted,
     dynamic value,
@@ -47,6 +51,7 @@ class AccordionInputSection {
       id: id ?? this.id,
       title: title ?? this.title,
       icon: icon ?? this.icon,
+      imagePath: imagePath ?? this.imagePath,
       inputWidgetBuilder: inputWidgetBuilder ?? this.inputWidgetBuilder,
       isCompleted: isCompleted ?? this.isCompleted,
       value: value ?? this.value,
@@ -155,14 +160,17 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
 
-      final RenderBox? renderBox = _sectionKeys[targetIndex].currentContext?.findRenderObject() as RenderBox?;
+      final RenderBox? renderBox = _sectionKeys[targetIndex]
+          .currentContext
+          ?.findRenderObject() as RenderBox?;
       if (renderBox != null) {
         final position = renderBox.localToGlobal(Offset.zero);
         final screenHeight = MediaQuery.of(context).size.height;
 
         // 섹션을 화면 중앙에 위치시키기 위한 오프셋 계산
         // 현재 스크롤 위치 + 섹션의 Y 좌표 - 화면 중앙 위치
-        final offset = _scrollController.offset + position.dy - (screenHeight / 2) + 100;
+        final offset =
+            _scrollController.offset + position.dy - (screenHeight / 2) + 100;
 
         _scrollController.animateTo(
           offset.clamp(0.0, _scrollController.position.maxScrollExtent),
@@ -188,7 +196,11 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
           ),
         // 아코디언 섹션들
         SliverPadding(
-          padding: EdgeInsets.only(left: 20, right: 20, top: widget.header != null ? 0 : 20, bottom: 120),
+          padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: widget.header != null ? 0 : 20,
+              bottom: 120),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -236,8 +248,8 @@ class AnimatedAccordionSection extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       child: isActive
-        ? _buildExpandedContent(context)
-        : _buildCollapsedHeader(context),
+          ? _buildExpandedContent(context)
+          : _buildCollapsedHeader(context),
     );
   }
 
@@ -248,16 +260,15 @@ class AnimatedAccordionSection extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg - 4, vertical: DSSpacing.md),
+        padding: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.lg - 4, vertical: DSSpacing.md),
         decoration: BoxDecoration(
-          color: section.isCompleted
-            ? colors.surfaceSecondary
-            : colors.surface,
+          color: section.isCompleted ? colors.surfaceSecondary : colors.surface,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
             color: section.isCompleted
-              ? colors.accent.withValues(alpha: 0.3)
-              : colors.border,
+                ? colors.accent.withValues(alpha: 0.3)
+                : colors.border,
             width: 1,
           ),
         ),
@@ -268,29 +279,45 @@ class AnimatedAccordionSection extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: section.isCompleted
-                  ? colors.accent.withValues(alpha: 0.1)
-                  : colors.surfaceSecondary,
+                    ? colors.accent.withValues(alpha: 0.1)
+                    : colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.md),
               ),
-              child: Icon(
-                section.icon,
-                color: section.isCompleted
-                  ? colors.accent
-                  : colors.textTertiary,
-                size: 20,
-              ),
+              child: section.imagePath != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        section.imagePath!,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            section.icon,
+                            color: section.isCompleted
+                                ? colors.accent
+                                : colors.textTertiary,
+                            size: 20,
+                          );
+                        },
+                      ),
+                    )
+                  : Icon(
+                      section.icon,
+                      color: section.isCompleted
+                          ? colors.accent
+                          : colors.textTertiary,
+                      size: 20,
+                    ),
             ),
             const SizedBox(width: DSSpacing.sm + 4),
             Expanded(
               child: Text(
-                section.isCompleted
-                  ? section.displayText
-                  : section.title,
+                section.isCompleted ? section.displayText : section.title,
                 style: typography.bodyMedium.copyWith(
                   color: section.isCompleted
-                    ? colors.textPrimary
-                    : colors.textTertiary,
-                  fontWeight: section.isCompleted ? FontWeight.w600 : FontWeight.w500,
+                      ? colors.textPrimary
+                      : colors.textTertiary,
+                  fontWeight:
+                      section.isCompleted ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
             ),
@@ -309,9 +336,10 @@ class AnimatedAccordionSection extends StatelessWidget {
           ],
         ),
       ),
-    ).animate()
-      .fadeIn(duration: 200.ms)
-      .slideY(begin: 0.1, end: 0, duration: 200.ms);
+    )
+        .animate()
+        .fadeIn(duration: 200.ms)
+        .slideY(begin: 0.1, end: 0, duration: 200.ms);
   }
 
   Widget _buildExpandedContent(BuildContext context) {
@@ -348,11 +376,26 @@ class AnimatedAccordionSection extends StatelessWidget {
                   color: colors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DSRadius.md + 2),
                 ),
-                child: Icon(
-                  section.icon,
-                  color: colors.accent,
-                  size: 24,
-                ),
+                child: section.imagePath != null
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          section.imagePath!,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              section.icon,
+                              color: colors.accent,
+                              size: 24,
+                            );
+                          },
+                        ),
+                      )
+                    : Icon(
+                        section.icon,
+                        color: colors.accent,
+                        size: 24,
+                      ),
               ),
               const SizedBox(width: DSSpacing.sm + 4),
               Expanded(
@@ -370,10 +413,14 @@ class AnimatedAccordionSection extends StatelessWidget {
           section.inputWidgetBuilder(context, onComplete),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 300.ms)
-      .slideY(begin: -0.1, end: 0, duration: 300.ms, curve: Curves.easeOut)
-      .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), duration: 300.ms);
+    )
+        .animate()
+        .fadeIn(duration: 300.ms)
+        .slideY(begin: -0.1, end: 0, duration: 300.ms, curve: Curves.easeOut)
+        .scale(
+            begin: const Offset(0.95, 0.95),
+            end: const Offset(1, 1),
+            duration: 300.ms);
   }
 }
 
@@ -393,10 +440,12 @@ class AccordionInputFormWithHeader extends StatefulWidget {
   });
 
   @override
-  State<AccordionInputFormWithHeader> createState() => _AccordionInputFormWithHeaderState();
+  State<AccordionInputFormWithHeader> createState() =>
+      _AccordionInputFormWithHeaderState();
 }
 
-class _AccordionInputFormWithHeaderState extends State<AccordionInputFormWithHeader> {
+class _AccordionInputFormWithHeaderState
+    extends State<AccordionInputFormWithHeader> {
   final ScrollController _scrollController = ScrollController();
   int _activeIndex = 0;
   final List<GlobalKey> _sectionKeys = [];
@@ -477,7 +526,9 @@ class _AccordionInputFormWithHeaderState extends State<AccordionInputFormWithHea
     Future.delayed(const Duration(milliseconds: 200), () {
       if (!mounted) return;
 
-      final RenderBox? renderBox = _sectionKeys[targetIndex].currentContext?.findRenderObject() as RenderBox?;
+      final RenderBox? renderBox = _sectionKeys[targetIndex]
+          .currentContext
+          ?.findRenderObject() as RenderBox?;
       if (renderBox != null) {
         final position = renderBox.localToGlobal(Offset.zero);
 

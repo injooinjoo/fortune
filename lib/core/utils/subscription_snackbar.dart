@@ -31,14 +31,14 @@ class SubscriptionSnackbar {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
             context.push('/subscription');
           },
-          child: Row(
+          child: const Row(
             children: [
               Icon(
                 Icons.workspace_premium,
                 color: Colors.amber,
                 size: 20,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Text(
                   '구독하면 광고 없이 볼 수 있어요',

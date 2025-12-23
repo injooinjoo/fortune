@@ -198,6 +198,38 @@ class FortuneHapticService {
   }
 
   // ============================================================
+  // 바텀시트/모달 전용
+  // ============================================================
+
+  /// 바텀시트 열림
+  ///
+  /// 시트가 올라올 때 가벼운 피드백
+  Future<void> sheetOpen() async {
+    if (!_canExecute) return;
+    await HapticUtils.lightImpact();
+  }
+
+  /// 바텀시트 닫힘
+  ///
+  /// 시트가 내려갈 때 부드러운 피드백
+  Future<void> sheetDismiss() async {
+    if (!_canExecute) return;
+    await HapticUtils.soft();
+  }
+
+  // ============================================================
+  // 슬라이더/입력 전용
+  // ============================================================
+
+  /// 슬라이더 스냅 포인트
+  ///
+  /// 슬라이더가 정수 값(1, 2, 3 등)에 스냅될 때
+  Future<void> sliderSnap() async {
+    if (!_canExecute) return;
+    await HapticUtils.selection();
+  }
+
+  // ============================================================
   // 로딩 화면 전용
   // ============================================================
 
@@ -317,6 +349,57 @@ class FortuneHapticService {
     await HapticUtils.mediumImpact();
   }
 
+  /// 염주 구슬 회전 틱
+  ///
+  /// 염주 페이지에서 구슬이 회전할 때마다 호출
+  /// 부드러운 틱으로 명상적인 느낌 연출
+  Future<void> beadRotateTick() async {
+    if (!_canExecute) return;
+    await HapticUtils.soft();
+  }
+
+  // ============================================================
+  // 액션 완료 전용
+  // ============================================================
+
+  /// 공유하기 액션
+  ///
+  /// 공유 버튼 탭 시 액션 인식 피드백
+  Future<void> shareAction() async {
+    if (!_canExecute) return;
+    await HapticUtils.mediumImpact();
+  }
+
+  /// 부적 저장 완료 - 시그니처 햅틱!
+  ///
+  /// 부적이 성공적으로 생성/저장되었을 때
+  /// 3단계 축하 패턴: 인식 → 성공 → 완료감
+  Future<void> talismanSaved() async {
+    if (!_canExecute) return;
+
+    await HapticUtils.mediumImpact(); // 1. 인식 (0ms)
+    await Future.delayed(const Duration(milliseconds: 200));
+    await HapticUtils.success(); // 2. 성공 (200ms)
+    await Future.delayed(const Duration(milliseconds: 100));
+    await HapticUtils.heavyImpact(); // 3. 완료감 (300ms)
+  }
+
+  /// 검색 완료
+  ///
+  /// 검색 결과가 로드되었을 때 가벼운 피드백
+  Future<void> searchComplete() async {
+    if (!_canExecute) return;
+    await HapticUtils.lightImpact();
+  }
+
+  /// 성공 피드백
+  ///
+  /// 폼 제출, 저장 완료 등 일반적인 성공 시
+  Future<void> successFeedback() async {
+    if (!_canExecute) return;
+    await HapticUtils.success();
+  }
+
   // ============================================================
   // 특수 이벤트
   // ============================================================
@@ -332,24 +415,36 @@ class FortuneHapticService {
     await HapticUtils.success();
   }
 
-  /// 스트릭 축하
+  /// 스트릭 축하 - 시그니처 햅틱!
   ///
   /// 연속 운세 조회 기념
+  /// - 30일+: 웅장한 축하 (heavy → success × 2)
+  /// - 7일+: 적당한 축하 (medium → success)
+  /// - 3일+: 가벼운 인식 (light → success)
+  /// - 1일+: 시작 응원 (light)
   Future<void> streak(int days) async {
     if (!_canExecute) return;
 
     if (days >= 30) {
-      await jackpot();
+      // 30일 달성: 웅장한 축하 패턴
+      await HapticUtils.heavyImpact();
+      await Future.delayed(const Duration(milliseconds: 150));
+      await HapticUtils.success();
+      await Future.delayed(const Duration(milliseconds: 100));
+      await HapticUtils.success();
     } else if (days >= 7) {
+      // 7일 달성: 적당한 축하
       await HapticUtils.mediumImpact();
       await Future.delayed(const Duration(milliseconds: 100));
       await HapticUtils.success();
-      await Future.delayed(const Duration(milliseconds: 100));
-      await HapticUtils.success();
     } else if (days >= 3) {
+      // 3일 달성: 가벼운 인식
       await HapticUtils.lightImpact();
       await Future.delayed(const Duration(milliseconds: 100));
       await HapticUtils.success();
+    } else if (days >= 1) {
+      // 1일 이상: 시작 응원
+      await HapticUtils.lightImpact();
     }
   }
 

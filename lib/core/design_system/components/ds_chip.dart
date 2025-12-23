@@ -87,7 +87,7 @@ class DSChip extends StatelessWidget {
       }
     }
 
-    Widget chip = Container(
+    final Widget chip = Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.sm + 4,
         vertical: DSSpacing.xs + 2,

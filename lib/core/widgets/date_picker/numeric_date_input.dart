@@ -279,7 +279,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
                         : TossDesignSystem.tossBlue,
                     size: 20,
                   ),
-                  SizedBox(width: AppSpacing.spacing3),
+                  const SizedBox(width: AppSpacing.spacing3),
                   Expanded(
                     child: TextField(
                       controller: _controller,
@@ -361,12 +361,12 @@ class _NumericDateInputState extends State<NumericDateInput> {
             padding: const EdgeInsets.only(top: AppSpacing.spacing2),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.error_outline,
                   color: TossDesignSystem.errorRed,
                   size: 16,
                 ),
-                SizedBox(width: AppSpacing.spacing1),
+                const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   _errorMessage!,
                   style: DSTypography.bodySmall.copyWith(

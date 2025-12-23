@@ -228,7 +228,7 @@ class _TossConfirmationDialog extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        SizedBox(height: TossDesignSystem.spacingM),
+        const SizedBox(height: TossDesignSystem.spacingM),
         Text(
           message,
           style: TossDesignSystem.body2.copyWith(
@@ -237,7 +237,7 @@ class _TossConfirmationDialog extends StatelessWidget {
                 : TossDesignSystem.gray400,
           ),
         ),
-        SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: TossDesignSystem.spacingL),
         Row(
           children: [
             Expanded(
@@ -248,7 +248,7 @@ class _TossConfirmationDialog extends StatelessWidget {
                 size: UnifiedButtonSize.medium,
               ),
             ),
-            SizedBox(width: TossDesignSystem.spacingM),
+            const SizedBox(width: TossDesignSystem.spacingM),
             Expanded(
               child: UnifiedButton(
                 text: confirmText,
@@ -286,7 +286,7 @@ class _TossAlertDialog extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        SizedBox(height: TossDesignSystem.spacingM),
+        const SizedBox(height: TossDesignSystem.spacingM),
         Text(
           message,
           style: TossDesignSystem.body2.copyWith(
@@ -295,7 +295,7 @@ class _TossAlertDialog extends StatelessWidget {
                 : TossDesignSystem.gray400,
           ),
         ),
-        SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: TossDesignSystem.spacingL),
         SizedBox(
           width: double.infinity,
           child: UnifiedButton(
@@ -351,14 +351,14 @@ class _TossSuccessDialog extends StatelessWidget {
               duration: TossDesignSystem.durationLong,
               curve: Curves.elasticOut,
             ),
-        SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: TossDesignSystem.spacingL),
         Text(
           title,
           style: Theme.of(context).textTheme.titleSmall,
           textAlign: TextAlign.center,
         ),
         if (message != null) ...[
-          SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: TossDesignSystem.spacingM),
           Text(
             message!,
             style: TypographyUnified.bodySmall.copyWith(
@@ -371,7 +371,7 @@ class _TossSuccessDialog extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ],
-        SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: TossDesignSystem.spacingL),
         SizedBox(
           width: double.infinity,
           child: UnifiedButton(
@@ -422,13 +422,13 @@ class _TossErrorDialog extends StatelessWidget {
         )
             .animate()
             .shake(duration: TossDesignSystem.durationMedium, hz: 2, offset: const Offset(4, 0)),
-        SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: TossDesignSystem.spacingL),
         Text(
           title,
           style: Theme.of(context).textTheme.titleSmall,
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: TossDesignSystem.spacingM),
+        const SizedBox(height: TossDesignSystem.spacingM),
         Text(
           message,
           style: TossDesignSystem.body2.copyWith(
@@ -438,7 +438,7 @@ class _TossErrorDialog extends StatelessWidget {
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: TossDesignSystem.spacingL),
         SizedBox(
           width: double.infinity,
           child: UnifiedButton(
@@ -490,7 +490,7 @@ class _AppLoadingDialog extends StatelessWidget {
               ),
             ),
             if (message != null) ...[
-              SizedBox(height: TossDesignSystem.spacingL),
+              const SizedBox(height: TossDesignSystem.spacingL),
               Text(
                 message!,
                 style: TossDesignSystem.body2,

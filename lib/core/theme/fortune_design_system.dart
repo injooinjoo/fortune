@@ -426,7 +426,7 @@ class FortuneDesignSystem {
       disabledForegroundColor: gray500,
       elevation: 0,
       shadowColor: white.withValues(alpha: 0.0),
-      fixedSize: fixedSize ?? Size.fromHeight(buttonHeightLarge),
+      fixedSize: fixedSize ?? const Size.fromHeight(buttonHeightLarge),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radiusM),
       ),
@@ -450,7 +450,7 @@ class FortuneDesignSystem {
       disabledForegroundColor: gray400,
       elevation: 0,
       shadowColor: white.withValues(alpha: 0.0),
-      fixedSize: fixedSize ?? Size.fromHeight(buttonHeightLarge),
+      fixedSize: fixedSize ?? const Size.fromHeight(buttonHeightLarge),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radiusM),
       ),
@@ -693,7 +693,7 @@ class FortuneDesignSystem {
       ),
       
       // Bottom Sheet Theme
-      bottomSheetTheme: BottomSheetThemeData(
+      bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -848,7 +848,7 @@ class FortuneDesignSystem {
       ),
       
       // Bottom Sheet Theme
-      bottomSheetTheme: BottomSheetThemeData(
+      bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: grayDark100,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(

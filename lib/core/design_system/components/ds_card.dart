@@ -240,7 +240,7 @@ class DSCard extends StatelessWidget {
         break;
     }
 
-    Widget card = Container(
+    final Widget card = Container(
       width: fullWidth ? double.infinity : null,
       margin: margin,
       padding: effectivePadding,

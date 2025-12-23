@@ -119,7 +119,7 @@ class DSRadius {
   static BorderRadius get modalBorder => BorderRadius.circular(modal);
 
   /// Bottom sheet top BorderRadius
-  static BorderRadius get bottomSheetBorder => BorderRadius.vertical(
+  static BorderRadius get bottomSheetBorder => const BorderRadius.vertical(
         top: Radius.circular(bottomSheet),
       );
 }

@@ -528,31 +528,31 @@ class PersonalityDNAService {
   /// 연애 스타일 생성
   static LoveStyle _generateLoveStyle(String mbti) {
     final loveStyles = {
-      'ENTJ': LoveStyle(
+      'ENTJ': const LoveStyle(
         title: '황제의 열정적 사랑',
         description: '사랑도 계획적이고 체계적으로! 목표지향적인 연애를 합니다.',
         whenDating: '완벽한 데이트 코스를 기획하고 상대방을 리드합니다. 장기적인 관계를 중시해요.',
         afterBreakup: '감정보다는 논리적으로 접근해서 빠르게 정리합니다. 다음 연애도 계획적으로!',
       ),
-      'ENTP': LoveStyle(
+      'ENTP': const LoveStyle(
         title: '썸의 마법사형',
         description: '새로운 사랑에 대한 호기심이 넘치는 연애 스타일입니다.',
         whenDating: '재미있는 대화와 독창적인 아이디어로 상대방을 매혹시킵니다.',
         afterBreakup: '아쉬워하면서도 새로운 만남에 대한 기대감을 가집니다.',
       ),
-      'INTJ': LoveStyle(
+      'INTJ': const LoveStyle(
         title: '신중한 전략가 사랑',
         description: '선택받은 사람만을 위한 깊고 진실한 사랑을 합니다.',
         whenDating: '상대방을 깊이 이해하려 노력하고 의미 있는 대화를 즐깁니다.',
         afterBreakup: '혼자만의 시간을 통해 관계를 분석하고 다음 연애의 교훈으로 삼아요.',
       ),
-      'ENFP': LoveStyle(
+      'ENFP': const LoveStyle(
         title: '열정적인 로맨티스트',
         description: '사랑에 빠지면 온 세상이 아름다워 보이는 타입입니다.',
         whenDating: '상대방을 응원하고 격려하며 함께 꿈을 키워나갑니다.',
         afterBreakup: '상처받지만 금방 회복하고 다시 사랑을 믿게 됩니다.',
       ),
-      'INFP': LoveStyle(
+      'INFP': const LoveStyle(
         title: '순수한 이상주의자',
         description: '진정한 사랑을 꿈꾸는 로맨틱한 연애 스타일입니다.',
         whenDating: '상대방의 내면을 이해하려 하고 감성적인 교감을 중시합니다.',
@@ -571,19 +571,19 @@ class PersonalityDNAService {
   /// 업무 스타일 생성
   static WorkStyle _generateWorkStyle(String mbti) {
     final workStyles = {
-      'ENTJ': WorkStyle(
+      'ENTJ': const WorkStyle(
         title: '카리스마 넘치는 리더',
         asBoss: '명확한 비전을 제시하고 팀을 이끌어갑니다. 성과를 중시하지만 공정합니다.',
         atCompanyDinner: '자연스럽게 분위기를 이끌고 팀원들과의 소통을 중요하게 여깁니다.',
         workHabit: '체계적이고 효율적으로 업무를 처리합니다. 목표 달성을 위해 최선을 다해요.',
       ),
-      'ENTP': WorkStyle(
+      'ENTP': const WorkStyle(
         title: '아이디어 뱅크형 직장인',
         asBoss: '창의적인 아이디어를 장려하고 자유로운 분위기를 만듭니다.',
         atCompanyDinner: '재미있는 이야기로 분위기 메이커 역할을 합니다.',
         workHabit: '새로운 프로젝트에 흥미를 보이고 혁신적인 방법을 시도합니다.',
       ),
-      'INTJ': WorkStyle(
+      'INTJ': const WorkStyle(
         title: '전략적 사고의 달인',
         asBoss: '장기적인 관점에서 팀을 이끌고 각자의 전문성을 존중합니다.',
         atCompanyDinner: '진지한 대화를 즐기고 업무 관련 인사이트를 공유합니다.',
@@ -602,27 +602,27 @@ class PersonalityDNAService {
   /// 일상 매칭 생성
   static DailyMatching _generateDailyMatching(String mbti) {
     final dailyMatchings = {
-      'ENTJ': DailyMatching(
+      'ENTJ': const DailyMatching(
         cafeMenu: '아메리카노 (진하고 강렬하게)',
         netflixGenre: '경영 다큐멘터리',
         weekendActivity: '새로운 비즈니스 아이디어 구상',
       ),
-      'ENTP': DailyMatching(
+      'ENTP': const DailyMatching(
         cafeMenu: '계절 한정 메뉴 (새로운 맛을 찾아서)',
         netflixGenre: 'SF 스릴러',
         weekendActivity: '새로운 카페 탐방',
       ),
-      'INTJ': DailyMatching(
+      'INTJ': const DailyMatching(
         cafeMenu: '드립커피 (정성스럽게 내린)',
         netflixGenre: '미스터리 드라마',
         weekendActivity: '독서와 사색',
       ),
-      'INFP': DailyMatching(
+      'INFP': const DailyMatching(
         cafeMenu: '바닐라 라떼 (부드럽고 달콤하게)',
         netflixGenre: '감성 영화',
         weekendActivity: '혼자만의 창작 활동',
       ),
-      'ENFP': DailyMatching(
+      'ENFP': const DailyMatching(
         cafeMenu: '카라멜 마키아토 (달콤하고 화려하게)',
         netflixGenre: '로맨틱 코미디',
         weekendActivity: '친구들과의 즐거운 모임',
@@ -639,17 +639,17 @@ class PersonalityDNAService {
   /// 궁합 생성
   static Compatibility _generateCompatibility(String mbti) {
     final compatibilities = {
-      'ENTJ': Compatibility(
+      'ENTJ': const Compatibility(
         friend: CompatibilityType(mbti: 'ENTP', description: '서로의 아이디어를 발전시켜주는 완벽한 브레인 파트너'),
         lover: CompatibilityType(mbti: 'INFP', description: '당신의 강함을 부드럽게 받아주는 따뜻한 연인'),
         colleague: CompatibilityType(mbti: 'INTJ', description: '전략적 사고를 공유하는 최고의 업무 파트너'),
       ),
-      'ENTP': Compatibility(
+      'ENTP': const Compatibility(
         friend: CompatibilityType(mbti: 'ENFP', description: '끝없는 에너지와 재미를 함께하는 절친'),
         lover: CompatibilityType(mbti: 'INFJ', description: '당신의 자유로운 영혼을 이해해주는 이상적인 파트너'),
         colleague: CompatibilityType(mbti: 'ENTJ', description: '혁신적인 아이디어를 현실로 만드는 드림팀'),
       ),
-      'INTJ': Compatibility(
+      'INTJ': const Compatibility(
         friend: CompatibilityType(mbti: 'INFJ', description: '깊이 있는 대화를 나눌 수 있는 지적인 친구'),
         lover: CompatibilityType(mbti: 'ENFP', description: '당신의 세계에 활기를 불어넣어주는 특별한 사람'),
         colleague: CompatibilityType(mbti: 'ENTJ', description: '큰 그림을 그려나가는 완벽한 비즈니스 파트너'),
@@ -671,22 +671,22 @@ class PersonalityDNAService {
   /// 유명인 생성
   static Celebrity _generateCelebrity(String mbti) {
     final celebrities = {
-      'ENTJ': Celebrity(name: '스티브 잡스', reason: '혁신적인 비전과 강력한 리더십으로 세상을 바꾼 CEO'),
-      'ENTP': Celebrity(name: '로버트 다우니 주니어', reason: '창의적이고 매력적인 아이디어로 사람들을 매혹시키는 배우'),
-      'INTJ': Celebrity(name: '일론 머스크', reason: '미래를 내다보는 전략적 사고로 혁신을 만들어내는 기업가'),
-      'INFP': Celebrity(name: '박보검', reason: '순수하고 따뜻한 매력으로 많은 사람들에게 사랑받는 배우'),
-      'ENFP': Celebrity(name: '유재석', reason: '긍정적인 에너지와 사람들을 즐겁게 하는 재능을 가진 MC'),
-      'INFJ': Celebrity(name: '손흥민', reason: '겸손하면서도 목표를 향한 강한 의지를 가진 축구선수'),
-      'ISFJ': Celebrity(name: '아이유', reason: '타인을 배려하고 완벽주의적인 성향을 가진 가수'),
-      'ISFP': Celebrity(name: '방탄소년단 지민', reason: '예술적 감각과 섬세한 감성을 가진 아티스트'),
-      'ESFJ': Celebrity(name: '송혜교', reason: '따뜻하고 사교적인 매력으로 사랑받는 배우'),
-      'ESFP': Celebrity(name: '박나래', reason: '활발하고 재미있는 성격으로 분위기를 이끄는 연예인'),
-      'ESTJ': Celebrity(name: '정우성', reason: '책임감 있고 신뢰할 수 있는 리더십을 보여주는 배우'),
-      'ESTP': Celebrity(name: '강호동', reason: '즉흥적이고 에너지 넘치는 매력을 가진 MC'),
-      'ISTJ': Celebrity(name: '김연아', reason: '완벽을 추구하고 성실함으로 목표를 달성한 피겨 선수'),
-      'ISTP': Celebrity(name: '정우성', reason: '조용하지만 확고한 자신만의 철학을 가진 배우'),
-      'ENFJ': Celebrity(name: '오프라 윈프리', reason: '사람들에게 영감을 주고 이끄는 카리스마적 리더'),
-      'INTP': Celebrity(name: '빌 게이츠', reason: '논리적 사고와 혁신적 아이디어로 세상을 바꾼 기업가'),
+      'ENTJ': const Celebrity(name: '스티브 잡스', reason: '혁신적인 비전과 강력한 리더십으로 세상을 바꾼 CEO'),
+      'ENTP': const Celebrity(name: '로버트 다우니 주니어', reason: '창의적이고 매력적인 아이디어로 사람들을 매혹시키는 배우'),
+      'INTJ': const Celebrity(name: '일론 머스크', reason: '미래를 내다보는 전략적 사고로 혁신을 만들어내는 기업가'),
+      'INFP': const Celebrity(name: '박보검', reason: '순수하고 따뜻한 매력으로 많은 사람들에게 사랑받는 배우'),
+      'ENFP': const Celebrity(name: '유재석', reason: '긍정적인 에너지와 사람들을 즐겁게 하는 재능을 가진 MC'),
+      'INFJ': const Celebrity(name: '손흥민', reason: '겸손하면서도 목표를 향한 강한 의지를 가진 축구선수'),
+      'ISFJ': const Celebrity(name: '아이유', reason: '타인을 배려하고 완벽주의적인 성향을 가진 가수'),
+      'ISFP': const Celebrity(name: '방탄소년단 지민', reason: '예술적 감각과 섬세한 감성을 가진 아티스트'),
+      'ESFJ': const Celebrity(name: '송혜교', reason: '따뜻하고 사교적인 매력으로 사랑받는 배우'),
+      'ESFP': const Celebrity(name: '박나래', reason: '활발하고 재미있는 성격으로 분위기를 이끄는 연예인'),
+      'ESTJ': const Celebrity(name: '정우성', reason: '책임감 있고 신뢰할 수 있는 리더십을 보여주는 배우'),
+      'ESTP': const Celebrity(name: '강호동', reason: '즉흥적이고 에너지 넘치는 매력을 가진 MC'),
+      'ISTJ': const Celebrity(name: '김연아', reason: '완벽을 추구하고 성실함으로 목표를 달성한 피겨 선수'),
+      'ISTP': const Celebrity(name: '정우성', reason: '조용하지만 확고한 자신만의 철학을 가진 배우'),
+      'ENFJ': const Celebrity(name: '오프라 윈프리', reason: '사람들에게 영감을 주고 이끄는 카리스마적 리더'),
+      'INTP': const Celebrity(name: '빌 게이츠', reason: '논리적 사고와 혁신적 아이디어로 세상을 바꾼 기업가'),
     };
     
     return celebrities[mbti] ?? Celebrity(

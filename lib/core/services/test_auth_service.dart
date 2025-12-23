@@ -8,17 +8,52 @@ final testAuthServiceProvider = Provider<TestAuthService>((ref) {
   return TestAuthService();
 });
 
+/// Cached URL test mode flag (checked once at startup for web)
+bool? _urlTestModeCache;
+
 class TestAuthService {
   static const String _testUserIdKey = 'test_user_id';
   static const String _testSessionKey = 'test_session';
+  static const String _testModeUrlParam = 'test_mode';
 
   final _supabase = Supabase.instance.client;
 
-  /// Check if app is running in test mode
+  /// Check if app is running in test mode (compile-time OR URL param for web)
   static bool isTestMode() {
-    return const String.fromEnvironment('FLUTTER_TEST_MODE') == 'true' ||
-           const String.fromEnvironment('TEST_MODE') == 'true' ||
-           kDebugMode && _shouldBypassAuth();
+    // Check compile-time environment variables first
+    if (const String.fromEnvironment('FLUTTER_TEST_MODE') == 'true' ||
+        const String.fromEnvironment('TEST_MODE') == 'true') {
+      return true;
+    }
+
+    // Check URL parameter for web (cached for performance)
+    if (kIsWeb) {
+      _urlTestModeCache ??= _checkUrlTestMode();
+      if (_urlTestModeCache == true) return true;
+    }
+
+    return kDebugMode && _shouldBypassAuth();
+  }
+
+  /// Check URL parameters for test_mode=true (web only)
+  static bool _checkUrlTestMode() {
+    if (!kIsWeb) return false;
+    try {
+      final uri = Uri.base;
+      final testMode = uri.queryParameters[_testModeUrlParam];
+      if (testMode == 'true' || testMode == '1') {
+        debugPrint('🔧 [TestAuth] URL test mode detected: $uri');
+        return true;
+      }
+    } catch (e) {
+      debugPrint('🔧 [TestAuth] Error checking URL params: $e');
+    }
+    return false;
+  }
+
+  /// Force refresh URL test mode cache (call when URL changes)
+  static void refreshUrlTestMode() {
+    _urlTestModeCache = null;
   }
 
   /// Check if authentication should be bypassed
@@ -27,7 +62,7 @@ class TestAuthService {
   }
 
   /// Public method to check if auth should be bypassed (for testing)
-  static bool shouldBypassAuth() => _shouldBypassAuth();
+  static bool shouldBypassAuth() => _shouldBypassAuth() || isTestMode();
 
   /// Auto-login with test account
   Future<bool> autoLoginTestAccount() async {

@@ -51,6 +51,7 @@ class SoulRates {
     'wish': 3,
     'talisman': 3,
     'talent': 2,
+    'naming': 3,  // 작명 운세
 
     // 이사운 (무료로 변경됨)
     'moving': 3,

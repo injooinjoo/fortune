@@ -120,7 +120,10 @@ class FortuneTypeNames {
     'children': '자녀 운세',
     'parenting': '육아 운세',
     'pregnancy': '태교 운세',
-    'family-harmony': '가족 화합 운세'};
+    'family-harmony': '가족 화합 운세',
+
+    // Naming Fortune (작명 운세)
+    'naming': '작명 운세'};
   
   /// Get the Korean name for a fortune type
   /// Returns the type itself if not found in the mapping
@@ -144,7 +147,7 @@ class FortuneTypeNames {
       return '재물/투자';
     } else if (['health', 'moving', 'moving-date'].contains(fortuneType)) {
       return '건강/라이프';
-    } else if (['pet', 'pet-dog', 'pet-cat', 'pet-compatibility', 'children', 'parenting', 'pregnancy', 'family-harmony'].contains(fortuneType)) {
+    } else if (['pet', 'pet-dog', 'pet-cat', 'pet-compatibility', 'children', 'parenting', 'pregnancy', 'family-harmony', 'naming'].contains(fortuneType)) {
       return '반려/육아';
     } else if (fortuneType.startsWith('lucky-')) {
       if (['lucky-baseball', 'lucky-golf', 'lucky-tennis', 'lucky-running', 'lucky-cycling', 'lucky-swim', 'lucky-fishing', 'lucky-hiking', 'lucky-fitness', 'lucky-yoga'].contains(fortuneType)) {
@@ -245,7 +248,8 @@ class FortuneTypeNames {
       'business': '/fortune/business',
       'wealth': '/fortune/wealth',
       'health': '/fortune/health',
-      'dream': '/fortune/dream'};
+      'dream': '/fortune/dream',
+      'naming': '/naming'};
     
     return routeMap[fortuneType] ?? '/fortune';
   }

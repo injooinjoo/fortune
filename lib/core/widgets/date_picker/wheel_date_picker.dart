@@ -86,7 +86,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
             color: isDark
                 ? TossDesignSystem.grayDark900
                 : TossDesignSystem.white,
-            borderRadius: BorderRadius.vertical(
+            borderRadius: const BorderRadius.vertical(
               top: Radius.circular(AppDimensions.radiusXLarge),
             ),
           ),
@@ -149,7 +149,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                       style: DSTypography.headingSmall,
                     ),
                     if (widget.showAge) ...[
-                      SizedBox(height: AppSpacing.spacing2),
+                      const SizedBox(height: AppSpacing.spacing2),
                       Text(
                         '만 ${DatePickerUtils.calculateAge(_tempDate)}세',
                         style: DSTypography.bodyMedium.copyWith(
@@ -348,7 +348,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                       : TossDesignSystem.tossBlue,
                   size: 20,
                 ),
-                SizedBox(width: AppSpacing.spacing3),
+                const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

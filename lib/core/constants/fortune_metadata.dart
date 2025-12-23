@@ -153,7 +153,7 @@ class FortuneMetadata {
 class FortuneMetadataRepository {
   static final Map<FortuneType, FortuneMetadata> _metadata = {
     // Daily Fortunes
-    FortuneType.daily: FortuneMetadata(
+    FortuneType.daily: const FortuneMetadata(
       type: FortuneType.daily,
       title: '오늘의 운세',
       subtitle: '오늘 하루의 전체적인 운세를 확인하세요',
@@ -164,7 +164,7 @@ class FortuneMetadataRepository {
       description: '오늘 하루 동안의 전반적인 운세와 행운 지수를 확인할 수 있습니다.'
     ),
     
-    FortuneType.tomorrow: FortuneMetadata(
+    FortuneType.tomorrow: const FortuneMetadata(
       type: FortuneType.tomorrow,
       title: '내일의 운세',
       subtitle: '내일의 운세를 미리 확인하세요',
@@ -175,7 +175,7 @@ class FortuneMetadataRepository {
       description: '내일의 운세를 미리 확인하고 준비할 수 있습니다.'
     ),
     
-    FortuneType.weekly: FortuneMetadata(
+    FortuneType.weekly: const FortuneMetadata(
       type: FortuneType.weekly,
       title: '주간 운세',
       subtitle: '이번 주 전체 운세를 확인하세요',
@@ -187,7 +187,7 @@ class FortuneMetadataRepository {
     ),
     
     // Traditional
-    FortuneType.saju: FortuneMetadata(
+    FortuneType.saju: const FortuneMetadata(
       type: FortuneType.saju,
       title: '사주',
       subtitle: '사주팔자로 보는 평생 운명',
@@ -201,7 +201,7 @@ class FortuneMetadataRepository {
     ),
     
     // Love & Relationships
-    FortuneType.love: FortuneMetadata(
+    FortuneType.love: const FortuneMetadata(
       type: FortuneType.love,
       title: '연애운',
       subtitle: '연애 운세와 조언',
@@ -212,7 +212,7 @@ class FortuneMetadataRepository {
       description: '현재의 연애운과 미래의 인연에 대해 알아봅니다.'
     ),
     
-    FortuneType.compatibility: FortuneMetadata(
+    FortuneType.compatibility: const FortuneMetadata(
       type: FortuneType.compatibility,
       title: '궁합',
       subtitle: '두 사람의 궁합을 확인하세요',
@@ -225,7 +225,7 @@ class FortuneMetadataRepository {
     ),
     
     // Career & Wealth
-    FortuneType.career: FortuneMetadata(
+    FortuneType.career: const FortuneMetadata(
       type: FortuneType.career,
       title: '직업운',
       subtitle: '직장과 커리어 운세',
@@ -236,7 +236,7 @@ class FortuneMetadataRepository {
       description: '직장 생활과 커리어 발전에 대한 운세를 확인합니다.'
     ),
     
-    FortuneType.wealth: FortuneMetadata(
+    FortuneType.wealth: const FortuneMetadata(
       type: FortuneType.wealth,
       title: '재물운',
       subtitle: '금전운과 재물 획득 운세',
@@ -248,7 +248,7 @@ class FortuneMetadataRepository {
     ),
     
     // Lucky Items
-    FortuneType.luckyColor: FortuneMetadata(
+    FortuneType.luckyColor: const FortuneMetadata(
       type: FortuneType.luckyColor,
       title: '행운의 색상',
       subtitle: '오늘의 행운을 가져다 줄 색상',
@@ -260,7 +260,7 @@ class FortuneMetadataRepository {
     ),
     
     // Feng Shui (풍수지리)
-    FortuneType.moving: FortuneMetadata(
+    FortuneType.moving: const FortuneMetadata(
       type: FortuneType.moving,
       title: '이사 풍수',
       subtitle: '새로운 보금자리의 풍수를 분석합니다',
@@ -273,7 +273,7 @@ class FortuneMetadataRepository {
       description: '이사할 지역의 방위와 시기를 분석하여 길한 이사운을 알려드립니다.',
     ),
 
-    FortuneType.homeFengshui: FortuneMetadata(
+    FortuneType.homeFengshui: const FortuneMetadata(
       type: FortuneType.homeFengshui,
       title: '집 풍수',
       subtitle: '현재 집의 풍수 기운을 진단합니다',
@@ -300,8 +300,8 @@ class FortuneMetadataRepository {
       title: type.displayName,
       subtitle: '${type.displayName}을 확인하세요',
       icon: Icons.stars,
-      primaryColor: Color(0xFF6C63FF),
-      secondaryColor: Color(0xFF7C73FF),
+      primaryColor: const Color(0xFF6C63FF),
+      secondaryColor: const Color(0xFF7C73FF),
       tokenCost: 2,
       description: '${type.displayName}에 대한 상세 정보를 확인할 수 있습니다.'
     );

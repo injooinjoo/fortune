@@ -168,7 +168,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                       : TossDesignSystem.tossBlue,
                   size: 20,
                 ),
-                SizedBox(width: AppSpacing.spacing3),
+                const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,7 +238,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                             suffix: '년',
                           ),
                         ),
-                        SizedBox(width: AppSpacing.spacing3),
+                        const SizedBox(width: AppSpacing.spacing3),
                         Expanded(
                           child: _buildDropdown(
                             label: '월',
@@ -253,7 +253,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                             suffix: '월',
                           ),
                         ),
-                        SizedBox(width: AppSpacing.spacing3),
+                        const SizedBox(width: AppSpacing.spacing3),
                         Expanded(
                           child: _buildDropdown(
                             label: '일',
@@ -271,7 +271,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                       ],
                     ),
                     if (age != null && age >= 0) ...[
-                      SizedBox(height: AppSpacing.spacing4),
+                      const SizedBox(height: AppSpacing.spacing4),
                       Container(
                         padding: AppSpacing.paddingAll12,
                         decoration: BoxDecoration(
@@ -284,12 +284,12 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.cake_rounded,
                               size: AppDimensions.iconSizeSmall,
                               color: TossDesignSystem.tossBlue,
                             ),
-                            SizedBox(width: AppSpacing.spacing2),
+                            const SizedBox(width: AppSpacing.spacing2),
                             Text(
                               '나이: $age세',
                               style: DSTypography.bodyMedium.copyWith(
@@ -335,9 +335,9 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                 : TossDesignSystem.textSecondaryLight,
           ),
         ),
-        SizedBox(height: AppSpacing.spacing1),
+        const SizedBox(height: AppSpacing.spacing1),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3),
           decoration: BoxDecoration(
             color: isDark
                 ? TossDesignSystem.grayDark800

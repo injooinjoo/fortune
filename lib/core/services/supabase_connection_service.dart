@@ -153,14 +153,14 @@ class SupabaseConnectionService extends ResilientService {
         .from('celebrities')
         .select('id')
         .limit(0)
-        .timeout(Duration(seconds: 5));
+        .timeout(const Duration(seconds: 5));
   }
 
   /// 연결 상태 지속 모니터링
   Future<void> _startHealthMonitoring() async {
     await safeExecute(
       () async {
-        Timer.periodic(Duration(minutes: 5), (timer) async {
+        Timer.periodic(const Duration(minutes: 5), (timer) async {
           // 연결 상태 변화 감지를 위한 이전 상태 저장
         // final wasConnected = _isConnected; // 현재는 사용하지 않지만 향후 연결 상태 변화 감지용
 
@@ -198,8 +198,8 @@ class SupabaseConnectionService extends ResilientService {
 
         final success = await initialize(
           maxRetries: 2,
-          timeout: Duration(seconds: 15),
-          retryDelay: Duration(seconds: 5),
+          timeout: const Duration(seconds: 15),
+          retryDelay: const Duration(seconds: 5),
         );
 
         if (success) {
@@ -228,7 +228,7 @@ class SupabaseConnectionService extends ResilientService {
 
         await initialize(
           maxRetries: 3,
-          timeout: Duration(seconds: 20),
+          timeout: const Duration(seconds: 20),
         );
 
         // 성공 여부만 반환하고 void 함수이므로 return 없음

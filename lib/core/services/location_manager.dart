@@ -175,7 +175,7 @@ class LocationManager {
       }
     } else {
       // 해외 위치인 경우
-      String cityName = place.locality ?? place.administrativeArea ?? 'Unknown';
+      final String cityName = place.locality ?? place.administrativeArea ?? 'Unknown';
       // 영문 → 한글 변환
       return LocationMappings.toKorean(cityName);
     }
@@ -212,7 +212,7 @@ class LocationManager {
       }
 
       // 도시 이름
-      String cityName = place.locality ?? place.administrativeArea ?? '';
+      final String cityName = place.locality ?? place.administrativeArea ?? '';
       if (cityName.isNotEmpty) {
         parts.add(LocationMappings.toKorean(cityName));
       }
@@ -271,7 +271,7 @@ class LocationManager {
       }
 
       // 권한 확인
-      LocationPermission permission = await Geolocator.checkPermission();
+      final LocationPermission permission = await Geolocator.checkPermission();
 
       if (permission == LocationPermission.denied) {
         developer.log('⚠️ 위치 권한이 거부되었습니다');

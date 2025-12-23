@@ -23,7 +23,7 @@ class TossSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    Widget skeleton = Container(
+    final Widget skeleton = Container(
       width: width,
       height: height,
       margin: margin,
@@ -108,7 +108,7 @@ class AppCardSkeleton extends StatelessWidget {
     return Container(
       height: height,
       margin: margin,
-      padding: EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
             ? TossDesignSystem.grayDark100
@@ -126,9 +126,9 @@ class AppCardSkeleton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TossSkeleton.text(width: 120),
-          SizedBox(height: TossDesignSystem.spacingS),
+          const SizedBox(height: TossDesignSystem.spacingS),
           TossSkeleton.text(width: double.infinity, height: 14),
-          SizedBox(height: TossDesignSystem.spacingXS),
+          const SizedBox(height: TossDesignSystem.spacingXS),
           TossSkeleton.text(width: double.infinity, height: 14),
           const Spacer(),
           Row(
@@ -159,19 +159,19 @@ class TossListItemSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin,
-      padding: EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
       child: Row(
         children: [
           if (showAvatar) ...[
             TossSkeleton.circle(size: 48),
-            SizedBox(width: TossDesignSystem.spacingM),
+            const SizedBox(width: TossDesignSystem.spacingM),
           ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TossSkeleton.text(width: 120, height: 16),
-                SizedBox(height: TossDesignSystem.spacingS),
+                const SizedBox(height: TossDesignSystem.spacingS),
                 TossSkeleton.text(width: double.infinity, height: 14),
               ],
             ),
@@ -233,7 +233,7 @@ class TossFullScreenLoading extends StatelessWidget {
           children: [
             const AppLoadingIndicator(size: 48),
             if (message != null) ...[
-              SizedBox(height: TossDesignSystem.spacingM),
+              const SizedBox(height: TossDesignSystem.spacingM),
               Text(
                 message!,
                 style: TossDesignSystem.body2.copyWith(

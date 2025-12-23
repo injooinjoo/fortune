@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../design_system/design_system.dart';
 import '../theme/app_theme_extensions.dart';
 import '../../shared/glassmorphism/glass_container.dart';
 import '../../core/providers/user_settings_provider.dart';
@@ -91,7 +90,7 @@ class FortuneResultWidgets {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.help_outline,
                       color: Colors.white,
                       size: 20,

@@ -584,7 +584,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
     final effectiveEnabled =
         widget.isEnabled && !widget.isLoading && !_isProcessing && widget.onPressed != null;
 
-    Widget child = widget.isLoading
+    final Widget child = widget.isLoading
         ? _buildLoadingIndicator(_getTextColor(colors, isDark, effectiveEnabled))
         : Row(
             mainAxisSize: widget.width != null ? MainAxisSize.max : MainAxisSize.min,

@@ -313,7 +313,7 @@ class _AppToastItemState extends State<_AppToastItem>
                       size: 20,
                       color: colors.iconColor,
                     ),
-                    SizedBox(width: TossDesignSystem.spacingM),
+                    const SizedBox(width: TossDesignSystem.spacingM),
                     Expanded(
                       child: Text(
                         widget.entry.message,
@@ -323,7 +323,7 @@ class _AppToastItemState extends State<_AppToastItem>
                       ),
                     ),
                     if (widget.entry.actionText != null) ...[
-                      SizedBox(width: TossDesignSystem.spacingM),
+                      const SizedBox(width: TossDesignSystem.spacingM),
                       InkWell(
                         onTap: () {
                           widget.entry.onAction?.call();

@@ -98,9 +98,8 @@ class PillTextField extends StatelessWidget {
           readOnly: readOnly,
           style: TextStyle(
             fontSize: 16,
-            color: isDark
-                ? AppColors.textPrimaryDark
-                : AppColors.textPrimaryLight,
+            color:
+                isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
           ),
           decoration: InputDecoration(
             hintText: hintText,
@@ -129,7 +128,7 @@ class PillTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: AppColors.accentGreen,
                 width: 1.5,
               ),
@@ -247,9 +246,7 @@ class ModernCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: padding ?? const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark
-              ? AppColors.surfaceDark
-              : AppColors.backgroundLight,
+          color: isDark ? AppColors.surfaceDark : AppColors.backgroundLight,
           borderRadius: BorderRadius.circular(16),
           // ChatGPT 스타일: 선택 시에만 테두리 표시
           border: isSelected
@@ -374,7 +371,8 @@ class SelectionCard extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
                       color: isDark
                           ? AppColors.textPrimaryDark
                           : AppColors.textPrimaryLight,
@@ -400,15 +398,11 @@ class SelectionCard extends StatelessWidget {
               height: 24,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSelected
-                    ? AppColors.accentGreen
-                    : Colors.transparent,
+                color: isSelected ? AppColors.accentGreen : Colors.transparent,
                 border: Border.all(
                   color: isSelected
                       ? AppColors.accentGreen
-                      : (isDark
-                          ? AppColors.borderDark
-                          : AppColors.borderLight),
+                      : (isDark ? AppColors.borderDark : AppColors.borderLight),
                   width: 2,
                 ),
               ),
@@ -430,6 +424,7 @@ class PageHeaderSection extends StatelessWidget {
   final String? emoji;
   final IconData? icon;
   final Color? iconBackgroundColor;
+  final String? imagePath; // ✅ 추가: 이미지 에셋 지원
 
   const PageHeaderSection({
     super.key,
@@ -438,6 +433,7 @@ class PageHeaderSection extends StatelessWidget {
     this.emoji,
     this.icon,
     this.iconBackgroundColor,
+    this.imagePath,
   });
 
   @override
@@ -446,36 +442,29 @@ class PageHeaderSection extends StatelessWidget {
 
     return Column(
       children: [
-        if (emoji != null || icon != null)
+        if (emoji != null || icon != null || imagePath != null)
           Container(
             width: 72,
             height: 72,
             decoration: BoxDecoration(
               color: iconBackgroundColor ??
-                  (isDark
-                      ? AppColors.surfaceDark
-                      : AppColors.surfaceLight),
+                  (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
               shape: BoxShape.circle,
             ),
+            padding: imagePath != null ? const EdgeInsets.all(12) : null,
             child: Center(
-              child: emoji != null
-                  ? Text(emoji!, style: const TextStyle(fontSize: 32))
-                  : Icon(
-                      icon,
-                      size: 32,
-                      color: AppColors.accentGreen,
-                    ),
+              child: _buildHeaderIcon(),
             ),
           ),
-        if (emoji != null || icon != null) const SizedBox(height: 20),
+        if (emoji != null || icon != null || imagePath != null)
+          const SizedBox(height: 20),
         Text(
           title,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: isDark
-                ? AppColors.textPrimaryDark
-                : AppColors.textPrimaryLight,
+            color:
+                isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
           ),
           textAlign: TextAlign.center,
         ),
@@ -495,6 +484,32 @@ class PageHeaderSection extends StatelessWidget {
         ],
       ],
     );
+  }
+
+  Widget _buildHeaderIcon() {
+    if (imagePath != null) {
+      return Image.asset(
+        imagePath!,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          // 이미지가 없으면 이모지나 아이콘으로 fallback
+          if (emoji != null) {
+            return Text(emoji!, style: const TextStyle(fontSize: 32));
+          }
+          if (icon != null) {
+            return Icon(icon, size: 32, color: AppColors.accentGreen);
+          }
+          return const SizedBox.shrink();
+        },
+      );
+    }
+    if (emoji != null) {
+      return Text(emoji!, style: const TextStyle(fontSize: 32));
+    }
+    if (icon != null) {
+      return Icon(icon, size: 32, color: AppColors.accentGreen);
+    }
+    return const SizedBox.shrink();
   }
 }
 
@@ -529,7 +544,7 @@ class FieldLabel extends StatelessWidget {
           ),
           if (isRequired) ...[
             const SizedBox(width: 4),
-            Text(
+            const Text(
               '*',
               style: TextStyle(
                 fontSize: 15,
@@ -593,7 +608,7 @@ class LabeledSlider extends StatelessWidget {
                 labels != null && value >= min && value <= max
                     ? labels![value - min]
                     : value.toString(),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: AppColors.accentGreen,
@@ -606,9 +621,8 @@ class LabeledSlider extends StatelessWidget {
         SliderTheme(
           data: SliderThemeData(
             activeTrackColor: AppColors.accentGreen,
-            inactiveTrackColor: isDark
-                ? AppColors.borderDark
-                : AppColors.borderLight,
+            inactiveTrackColor:
+                isDark ? AppColors.borderDark : AppColors.borderLight,
             thumbColor: AppColors.accentGreen,
             overlayColor: AppColors.accentGreen.withOpacity(0.2),
             trackHeight: 6,
@@ -662,9 +676,7 @@ class CardCheckbox extends StatelessWidget {
           border: Border.all(
             color: value
                 ? AppColors.accentGreen
-                : (isDark
-                    ? AppColors.borderDark
-                    : AppColors.borderLight),
+                : (isDark ? AppColors.borderDark : AppColors.borderLight),
             width: value ? 1.5 : 1,
           ),
         ),
@@ -679,9 +691,7 @@ class CardCheckbox extends StatelessWidget {
                 border: Border.all(
                   color: value
                       ? AppColors.accentGreen
-                      : (isDark
-                          ? AppColors.borderDark
-                          : AppColors.borderLight),
+                      : (isDark ? AppColors.borderDark : AppColors.borderLight),
                   width: 2,
                 ),
               ),
@@ -824,9 +834,7 @@ class IconSectionCard extends StatelessWidget {
       child: Container(
         padding: padding ?? const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark
-              ? AppColors.surfaceDark
-              : AppColors.backgroundLight,
+          color: isDark ? AppColors.surfaceDark : AppColors.backgroundLight,
           borderRadius: BorderRadius.circular(16),
           boxShadow: isDark
               ? null

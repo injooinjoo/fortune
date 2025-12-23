@@ -32,7 +32,7 @@ class PerformanceCacheService {
     _initialized = true;
     
     // Start preload timer
-    _preloadTimer = Timer.periodic(Duration(seconds: 5), (_) => _processPreloadQueue());
+    _preloadTimer = Timer.periodic(const Duration(seconds: 5), (_) => _processPreloadQueue());
     
     // Clean expired cache on startup
     await _cleanExpiredCache();
@@ -264,7 +264,7 @@ class PerformanceMonitor {
   Timer? _reportTimer;
 
   void startMonitoring() {
-    _reportTimer = Timer.periodic(Duration(minutes: 5), (_) => _reportMetrics());
+    _reportTimer = Timer.periodic(const Duration(minutes: 5), (_) => _reportMetrics());
   }
 
   void recordMetric(String name, int durationMs) {
