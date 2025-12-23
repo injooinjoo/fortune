@@ -122,7 +122,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           padding: const EdgeInsets.all(DSSpacing.lg),
           child: Column(
             children: [
-              SizedBox(height: DSSpacing.xl),
+              const SizedBox(height: DSSpacing.xl),
           
           // 인사말
           Text(
@@ -266,7 +266,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
             ),
           ),
           
-          SizedBox(height: DSSpacing.lg),
+          const SizedBox(height: DSSpacing.lg),
           
           Text(
             _scoreDescription,
@@ -291,7 +291,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           Row(
             children: [
               Text('💡', style: context.displaySmall),
-              SizedBox(width: DSSpacing.sm),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '핵심 조언',
                 style: context.heading3.copyWith(
@@ -303,7 +303,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
             ],
           ),
           
-          SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.md),
           
           Text(
             _mainAdvice,
@@ -328,7 +328,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           Row(
             children: [
               Text('📅', style: context.displaySmall),
-              SizedBox(width: DSSpacing.sm),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '추천 이사 날짜',
                 style: context.heading3.copyWith(
@@ -394,7 +394,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           Row(
             children: [
               Text('🧭', style: context.displaySmall),
-              SizedBox(width: DSSpacing.sm),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '길방향',
                 style: context.heading3.copyWith(
@@ -513,7 +513,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
     
     // 공유 기능 (실제 구현 시)
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('결과가 클립보드에 복사되었습니다'),
         backgroundColor: DSColors.accent,
         behavior: SnackBarBehavior.floating,

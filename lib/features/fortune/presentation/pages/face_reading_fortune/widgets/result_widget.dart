@@ -219,7 +219,7 @@ class _ResultWidgetState extends State<ResultWidget> {
             height: 80,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 colors: [DSColors.accent, DSColors.accent],
               ),
               boxShadow: [
@@ -230,7 +230,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                 ),
               ],
             ),
-            child: Icon(
+            child: const Icon(
               Icons.face,
               size: 48,
               color: Colors.white,
@@ -257,7 +257,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                 style: context.displayLarge.copyWith(
                   fontWeight: FontWeight.w800,
                   foreground: Paint()
-                    ..shader = LinearGradient(
+                    ..shader = const LinearGradient(
                       colors: [DSColors.accent, DSColors.accent],
                     ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
                 ),
@@ -378,7 +378,7 @@ class _ResultWidgetState extends State<ResultWidget> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.linear_scale, color: DSColors.accent, size: 28),
+                    const Icon(Icons.linear_scale, color: DSColors.accent, size: 28),
                     const SizedBox(width: 8),
                     Text(
                       '삼정(三停) 분석',
@@ -433,7 +433,7 @@ class _ResultWidgetState extends State<ResultWidget> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.grid_view, color: DSColors.accent, size: 28),
+                    const Icon(Icons.grid_view, color: DSColors.accent, size: 28),
                     const SizedBox(width: 8),
                     Text(
                       '십이궁(十二宮) 분석',
@@ -758,7 +758,7 @@ class _ResultWidgetState extends State<ResultWidget> {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
           colors: [DSColors.accent, DSColors.accent],
@@ -856,7 +856,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     color: DSColors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.visibility,
                     color: DSColors.accent,
                     size: 24,
@@ -1365,7 +1365,7 @@ class _ResultWidgetState extends State<ResultWidget> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.description, color: DSColors.textSecondary),
+                    const Icon(Icons.description, color: DSColors.textSecondary),
                     const SizedBox(width: 8),
                     Text(
                       '전체 분석',
@@ -1383,7 +1383,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.lock, size: 12, color: DSColors.textSecondary),
+                          const Icon(Icons.lock, size: 12, color: DSColors.textSecondary),
                           const SizedBox(width: 4),
                           Text(
                             '프리미엄',
@@ -1425,7 +1425,7 @@ class _ResultWidgetState extends State<ResultWidget> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.psychology, color: DSColors.warning),
+                  const Icon(Icons.psychology, color: DSColors.warning),
                   const SizedBox(width: 8),
                   Text(
                     '성격 분석',
@@ -1483,7 +1483,7 @@ class _ResultWidgetState extends State<ResultWidget> {
         children: [
           Row(
             children: [
-              Icon(Icons.tips_and_updates, color: DSColors.success),
+              const Icon(Icons.tips_and_updates, color: DSColors.success),
               const SizedBox(width: 8),
               Text(
                 '운세 개선 조언',
@@ -1499,7 +1499,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.check_circle,
                       size: 20,
                       color: DSColors.success,

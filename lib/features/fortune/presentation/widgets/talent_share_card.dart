@@ -57,14 +57,14 @@ class TalentShareCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-            Row(
+            const Row(
               children: [
                 Icon(
                   Icons.stars,
                   color: Colors.white,
                   size: 28,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   '재능 발견',
                   style: TextStyle(

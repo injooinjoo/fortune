@@ -74,12 +74,12 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
+        const Icon(
           Icons.grid_on,
           color: DSColors.accentSecondary,
           size: 24,
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Text(
           '띠별 궁합 매트릭스',
           style: DSTypography.headingMedium.copyWith(
@@ -248,7 +248,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                       Icons.favorite,
                       color: _getCompatibilityColor(compatibility),
                       size: 32),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       '${(compatibility * 100).toInt()}%',
                       style: DSTypography.displaySmall.copyWith(
@@ -288,7 +288,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
         Text(
           _getZodiacEmoji(zodiac),
           style: DSTypography.displayLarge),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           zodiac,
           style: DSTypography.headingSmall.copyWith(
@@ -337,14 +337,14 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
     return Column(
       children: [
         Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 24),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           title,
           style: DSTypography.labelMedium.copyWith(
             color: Colors.white.withValues(alpha: 0.6),
           ),
         ),
-        SizedBox(height: 2),
+        const SizedBox(height: 2),
         Text(
           value,
           style: DSTypography.bodySmall.copyWith(

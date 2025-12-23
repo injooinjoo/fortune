@@ -29,7 +29,7 @@ class ActionPlanCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.flag, color: DSColors.warning, size: 24),
+                  const Icon(Icons.flag, color: DSColors.warning, size: 24),
                   const SizedBox(width: 8),
                   Text(
                     '30일 액션플랜',
@@ -57,7 +57,7 @@ class ActionPlanCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.emoji_events, color: DSColors.success, size: 20),
+                    const Icon(Icons.emoji_events, color: DSColors.success, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(

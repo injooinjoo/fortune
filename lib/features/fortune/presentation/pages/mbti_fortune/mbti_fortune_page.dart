@@ -1,10 +1,11 @@
-// ✅ Phase 16-1: ImageFilter.blur용
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fortune/core/models/fortune_result.dart';
 import 'package:fortune/core/theme/font_config.dart';
 import 'package:fortune/features/fortune/domain/models/conditions/mbti_fortune_conditions.dart';
+import 'package:fortune/features/fortune/domain/models/mbti_dimension_fortune.dart'; // 4차원 모델
 import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
 import 'package:fortune/core/services/unified_fortune_service.dart';
@@ -33,12 +34,10 @@ class MbtiFortunePage extends ConsumerStatefulWidget {
   const MbtiFortunePage({super.key});
 
   @override
-  ConsumerState<MbtiFortunePage> createState() =>
-      _MbtiFortunePageState();
+  ConsumerState<MbtiFortunePage> createState() => _MbtiFortunePageState();
 }
 
-class _MbtiFortunePageState
-    extends ConsumerState<MbtiFortunePage> {
+class _MbtiFortunePageState extends ConsumerState<MbtiFortunePage> {
   // ==================== State ====================
 
   String? _selectedMbti;
@@ -52,7 +51,6 @@ class _MbtiFortunePageState
 
   // GPT 스타일 타이핑 효과 섹션 관리
   int _currentTypingSection = 0;
-
 
   // ==================== MBTI Data ====================
 
@@ -161,7 +159,10 @@ class _MbtiFortunePageState
               ),
 
             // 전체보기 버튼 (블러 상태일 때만 표시, 구독자 제외)
-            if (_showResult && _fortuneResult != null && _fortuneResult!.isBlurred && !ref.watch(isPremiumProvider))
+            if (_showResult &&
+                _fortuneResult != null &&
+                _fortuneResult!.isBlurred &&
+                !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
                 text: '남은 운세 모두 보기',
                 onPressed: _showAdAndUnblur,
@@ -173,7 +174,6 @@ class _MbtiFortunePageState
       ),
     );
   }
-
 
   Future<void> _handleSubmit() async {
     // ✅ 즉시 결과 화면으로 전환 (스켈레톤 표시)
@@ -195,7 +195,9 @@ class _MbtiFortunePageState
       // 1. 사용자 프로필 가져오기
       final userProfile = ref.read(userProfileProvider).value;
       final userName = userProfile?.name ?? 'Unknown';
-      final birthDateStr = userProfile?.birthDate?.toIso8601String().split('T')[0] ?? DateTime.now().toIso8601String().split('T')[0];
+      final birthDateStr =
+          userProfile?.birthDate?.toIso8601String().split('T')[0] ??
+              DateTime.now().toIso8601String().split('T')[0];
       debugPrint('🧠 [MbtiPage] 프로필: name=$userName, birthDate=$birthDateStr');
 
       // 2. Premium 상태 확인
@@ -229,7 +231,8 @@ class _MbtiFortunePageState
         isPremium: isPremium, // ✅ Premium 상태 전달
       );
 
-      debugPrint('🧠 [MbtiPage] API 응답: type=${result.type}, score=${result.score}, isBlurred=${result.isBlurred}');
+      debugPrint(
+          '🧠 [MbtiPage] API 응답: type=${result.type}, score=${result.score}, isBlurred=${result.isBlurred}');
       debugPrint('🧠 [MbtiPage] data keys: ${result.data.keys.toList()}');
       Logger.info('[MbtiFortunePage] 운세 생성 완료: ${result.id}');
 
@@ -372,9 +375,12 @@ class _MbtiFortunePageState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
-          const MbtiTitleSection(),
-          const SizedBox(height: 32),
+          // Title (선택 후 축소)
+          MbtiTitleSection(isCollapsed: _selectedMbti != null),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: _selectedMbti != null ? 16 : 32,
+          ),
 
           // MBTI 선택
           MbtiGroupsSection(
@@ -460,7 +466,15 @@ class _MbtiFortunePageState
     }
 
     final data = result.data as Map<String, dynamic>? ?? {};
-    final score = result.score ?? (data['score'] as int?) ?? 50;
+    final score = result.score ??
+        (data['overallScore'] as int?) ??
+        (data['score'] as int?) ??
+        50;
+
+    // 4차원 데이터 파싱
+    final dimensionsJson = data['dimensions'] as List<dynamic>?;
+    final dimensions = parseDimensions(dimensionsJson);
+    final hasDimensions = dimensions.isNotEmpty;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -470,7 +484,16 @@ class _MbtiFortunePageState
           _buildScoreCard(score),
           const SizedBox(height: 16),
 
-          // 1. Main Fortune Card - todayFortune (무료)
+          // 1. 4차원 운세 그리드 (점수는 무료, 텍스트는 프리미엄)
+          if (hasDimensions) ...[
+            DimensionsGridCard(
+              dimensions: dimensions,
+              isBlurred: result.isBlurred,
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // 2. Main Fortune Card - todayFortune (무료)
           MainFortuneCard(
             fortuneResult: result,
             selectedMbti: _selectedMbti!,
@@ -602,7 +625,7 @@ class _MbtiFortunePageState
                 ).createShader(bounds),
                 child: Text(
                   '$score',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: FontConfig.displayLarge,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,

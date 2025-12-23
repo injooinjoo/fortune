@@ -1,5 +1,4 @@
-// ✅ ImageFilter.blur용 (deprecated - UnifiedBlurWrapper 사용)
-
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -45,10 +44,12 @@ class DailyCalendarFortunePage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<DailyCalendarFortunePage> createState() => _DailyCalendarFortunePageState();
+  ConsumerState<DailyCalendarFortunePage> createState() =>
+      _DailyCalendarFortunePageState();
 }
 
-class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortunePage> {
+class _DailyCalendarFortunePageState
+    extends ConsumerState<DailyCalendarFortunePage> {
   DateTime _selectedDate = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -63,7 +64,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
   // 운세 결과 상태
   bool _isLoading = false;
-  bool _showResultView = false;  // 결과 화면 표시 여부 (API 완료 전에도 true)
+  bool _showResultView = false; // 결과 화면 표시 여부 (API 완료 전에도 true)
   FortuneResult? _fortuneResult;
   String? _error;
 
@@ -72,7 +73,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   List<String> _blurredSections = [];
 
   // ✅ 타이핑 효과 상태 관리
-  int _currentTypingSection = 0;  // 0: AI 인사이트, 1: 카테고리, 2: 조언, 3: AI 팁, 4: 주의사항
+  int _currentTypingSection = 0; // 0: AI 인사이트, 1: 카테고리, 2: 조언, 3: AI 팁, 4: 주의사항
 
   // 캘린더 연동 상태 (통합 서비스)
   final UnifiedCalendarService _calendarService = UnifiedCalendarService();
@@ -98,7 +99,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
       await _calendarService.initialize();
 
       if (_calendarService.isGoogleConnected) {
-        debugPrint('[Calendar] ✅ Google Calendar 연동됨: ${_calendarService.googleEmail}');
+        debugPrint(
+            '[Calendar] ✅ Google Calendar 연동됨: ${_calendarService.googleEmail}');
         if (mounted) {
           setState(() {
             _showCalendarBanner = false;
@@ -109,14 +111,15 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         return;
       }
 
-      final hasDevicePermission = await _calendarService.requestDevicePermission();
+      final hasDevicePermission =
+          await _calendarService.requestDevicePermission();
 
       if (hasDevicePermission) {
         debugPrint('[Calendar] ✅ 디바이스 캘린더 권한 확인됨 - 자동 동기화 시작');
         if (mounted) {
           setState(() {
             _isCalendarSynced = true;
-            _showCalendarBanner = false;  // 권한 허용 시 항상 배너 숨김
+            _showCalendarBanner = false; // 권한 허용 시 항상 배너 숨김
           });
         }
         await _syncAllCalendars();
@@ -141,7 +144,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         _selectedDate = DateTime.parse(selectedDateStr);
       }
 
-      final fortuneParams = widget.initialParams?['fortuneParams'] as Map<String, dynamic>? ?? {};
+      final fortuneParams =
+          widget.initialParams?['fortuneParams'] as Map<String, dynamic>? ?? {};
       _isHoliday = fortuneParams['isHoliday'] as bool? ?? false;
       _holidayName = fortuneParams['holidayName'] as String?;
       _specialName = fortuneParams['specialName'] as String?;
@@ -265,7 +269,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Google Calendar 연동 완료: ${_calendarService.googleEmail}'),
+              content: Text(
+                  'Google Calendar 연동 완료: ${_calendarService.googleEmail}'),
               backgroundColor: DSColors.success,
             ),
           );
@@ -308,7 +313,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           _selectedDate = selectedDay;
           _focusedDay = focusedDay;
 
-          final eventInfo = _events[DateTime(selectedDay.year, selectedDay.month, selectedDay.day)];
+          final eventInfo = _events[
+              DateTime(selectedDay.year, selectedDay.month, selectedDay.day)];
           _isHoliday = eventInfo?.isHoliday ?? false;
           _holidayName = eventInfo?.holidayName;
           _specialName = eventInfo?.specialName;
@@ -334,10 +340,10 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     if (mounted) {
       setState(() {
         _isLoading = true;
-        _showResultView = true;  // 즉시 결과 화면으로 전환 (커서 깜빡임 표시)
+        _showResultView = true; // 즉시 결과 화면으로 전환 (커서 깜빡임 표시)
         _error = null;
-        _fortuneResult = null;  // 이전 결과 초기화
-        _currentTypingSection = 0;  // 타이핑 섹션 초기화
+        _fortuneResult = null; // 이전 결과 초기화
+        _currentTypingSection = 0; // 타이핑 섹션 초기화
       });
     }
 
@@ -367,14 +373,16 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         'is_holiday': _isHoliday,
         'holiday_name': _holidayName,
         'special_name': _specialName,
-        'calendar_events': _selectedEvents.map((e) => {
-          'title': e.title,
-          'description': e.description,
-          'start_time': e.startTime?.toIso8601String(),
-          'end_time': e.endTime?.toIso8601String(),
-          'location': e.location,
-          'is_all_day': e.isAllDay,
-        }).toList(),
+        'calendar_events': _selectedEvents
+            .map((e) => {
+                  'title': e.title,
+                  'description': e.description,
+                  'start_time': e.startTime?.toIso8601String(),
+                  'end_time': e.endTime?.toIso8601String(),
+                  'location': e.location,
+                  'is_all_day': e.isAllDay,
+                })
+            .toList(),
         'has_calendar_events': _selectedEvents.isNotEmpty,
         'event_count': _selectedEvents.length,
       };
@@ -382,7 +390,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
       debugPrint('');
       debugPrint('2️⃣ 운세 조건 준비');
       debugPrint('   - 선택 날짜: $_selectedDate');
-      debugPrint('   - 캘린더 이벤트: ${_selectedEvents.isEmpty ? "없음" : "${_selectedEvents.length}개"}');
+      debugPrint(
+          '   - 캘린더 이벤트: ${_selectedEvents.isEmpty ? "없음" : "${_selectedEvents.length}개"}');
 
       debugPrint('');
       debugPrint('3️⃣ UnifiedFortuneService.getFortune() 호출');
@@ -515,7 +524,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
           // NEW: 게이지 증가 호출
           if (mounted) {
-            FortuneCompletionHelper.onFortuneViewed(context, ref, 'daily-calendar');
+            FortuneCompletionHelper.onFortuneViewed(
+                context, ref, 'daily-calendar');
           }
 
           if (mounted) {
@@ -575,22 +585,22 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
               onTap: _showCalendarOptionsDialog,
               onClose: () => setState(() => _showCalendarBanner = false),
             ),
-          if (_showCalendarBanner && !_isCalendarSynced) const SizedBox(height: 12),
-
+          if (_showCalendarBanner && !_isCalendarSynced)
+            const SizedBox(height: 12),
           if (_showGoogleCalendarOption)
             GoogleCalendarBanner(
               onTap: _connectGoogleCalendar,
               onClose: () => setState(() => _showGoogleCalendarOption = false),
             ),
           if (_showGoogleCalendarOption) const SizedBox(height: 12),
-
           CalendarViewWidget(
             focusedDay: _focusedDay,
             selectedDate: _selectedDate,
             calendarFormat: _calendarFormat,
             events: _events,
             onDaySelected: _onDaySelected,
-            onFormatChanged: (format) => setState(() => _calendarFormat = format),
+            onFormatChanged: (format) =>
+                setState(() => _calendarFormat = format),
             onPageChanged: _onPageChanged,
           ),
           const SizedBox(height: 12),
@@ -674,11 +684,13 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             child: _isLoading && _fortuneResult == null
-                ? _buildLoadingContent(colors)  // API 대기 중: 커서 깜빡임
-                : _buildFortuneResultContent(colors),  // 결과 수신: 타이핑 시작
+                ? _buildLoadingContent(colors) // API 대기 중: 커서 깜빡임
+                : _buildFortuneResultContent(colors), // 결과 수신: 타이핑 시작
           ),
           // ✅ FloatingBottomButton (블러 상태일 때만, 구독자 제외)
-          if (_isBlurred && _fortuneResult != null && !ref.watch(isPremiumProvider))
+          if (_isBlurred &&
+              _fortuneResult != null &&
+              !ref.watch(isPremiumProvider))
             UnifiedButton.floating(
               text: '광고 보고 전체 내용 확인하기',
               onPressed: _showAdAndUnblur,
@@ -717,7 +729,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   }
 
   Widget _buildFortuneResultContent(DSColorScheme colors) {
-    final fortuneData = _fortuneResult!.data['fortune'] as Map<String, dynamic>? ?? {};
+    final fortuneData =
+        _fortuneResult!.data['fortune'] as Map<String, dynamic>? ?? {};
     final categories = fortuneData['categories'] as Map<String, dynamic>? ?? {};
     final totalFortune = categories['total'] as Map<String, dynamic>?;
     final score = totalFortune?['score'] as int?;
@@ -768,7 +781,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           TypingFortuneSectionCard(
             icon: Icons.lightbulb_outline,
             title: '신의 통찰',
-            content: FortuneTextCleaner.clean(fortuneData['ai_insight'] as String),
+            content:
+                FortuneTextCleaner.clean(fortuneData['ai_insight'] as String),
             isDark: isDark,
             startTyping: _currentTypingSection >= 1,
             onTypingComplete: () {
@@ -785,7 +799,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           TypingCategoriesSection(
             categories: categories,
             isDark: isDark,
-            showTotal: false,  // 총운은 위에서 이미 표시
+            showTotal: false, // 총운은 위에서 이미 표시
             startTyping: _currentTypingSection >= 2,
             onTypingComplete: () {
               if (mounted) {
@@ -805,7 +819,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
             child: TypingFortuneSectionCard(
               icon: Icons.tips_and_updates,
               title: '조언',
-              content: FortuneTextCleaner.clean(fortuneData['advice'] as String),
+              content:
+                  FortuneTextCleaner.clean(fortuneData['advice'] as String),
               isDark: isDark,
               startTyping: _currentTypingSection >= 3,
               onTypingComplete: () {
@@ -847,7 +862,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
             child: TypingFortuneSectionCard(
               icon: Icons.warning_amber_rounded,
               title: '주의사항',
-              content: FortuneTextCleaner.clean(fortuneData['caution'] as String),
+              content:
+                  FortuneTextCleaner.clean(fortuneData['caution'] as String),
               isDark: isDark,
               isWarning: true,
               startTyping: _currentTypingSection >= 5,

@@ -42,7 +42,7 @@ class MentalModelSection extends StatelessWidget {
               color: colors.accent,
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             thinkingStyle,
             style: DSTypography.bodySmall.copyWith(
@@ -60,7 +60,7 @@ class MentalModelSection extends StatelessWidget {
               color: DSColors.success,
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             decisionPattern,
             style: DSTypography.bodySmall.copyWith(
@@ -78,7 +78,7 @@ class MentalModelSection extends StatelessWidget {
               color: DSColors.warning,
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             learningStyle,
             style: DSTypography.bodySmall.copyWith(

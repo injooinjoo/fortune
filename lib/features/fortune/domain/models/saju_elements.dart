@@ -436,7 +436,7 @@ class WuxingDetailCard extends StatelessWidget {
               size: 220,
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
 
           // 균형 점수
           Row(
@@ -462,7 +462,7 @@ class WuxingDetailCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
 
           // 설명
           Text(

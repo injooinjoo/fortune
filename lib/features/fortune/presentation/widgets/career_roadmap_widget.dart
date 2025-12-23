@@ -51,7 +51,7 @@ class CareerRoadmapWidget extends StatelessWidget {
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             '당신의 재능에 맞는 직업과 환경을 추천합니다',
             style: context.bodySmall.copyWith(
@@ -181,7 +181,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                   '💡',
                   style: context.labelMedium,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     reason,
@@ -210,7 +210,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                 '🏢',
                 style: context.displaySmall,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 '추천 업무 환경',
                 style: context.heading3.copyWith(
@@ -252,7 +252,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                             color: Colors.green,
                             size: 16,
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Text(
                             'Best',
                             style: context.labelMedium.copyWith(
@@ -265,7 +265,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
                   primaryTalent.bestEnvironment,
                   style: context.bodySmall.copyWith(
@@ -308,7 +308,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                             color: Colors.red,
                             size: 16,
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Text(
                             'Worst',
                             style: context.labelMedium.copyWith(
@@ -321,7 +321,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
                   primaryTalent.worstEnvironment,
                   style: context.bodySmall.copyWith(
@@ -348,7 +348,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                 '⚠️',
                 style: context.displaySmall,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 '주의사항 & 보완점',
                 style: context.heading3.copyWith(

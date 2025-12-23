@@ -124,7 +124,7 @@ class _CompatibilityCard extends StatelessWidget {
                 ),
                 child: Text(
                   mbti,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: FontConfig.primary,
                     fontSize: FontConfig.labelSmall,
                     fontWeight: FontWeight.w700,

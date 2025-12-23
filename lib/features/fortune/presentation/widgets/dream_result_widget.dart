@@ -6,6 +6,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 
 /// ChatGPT 스타일 대화형 꿈 해몽 결과 위젯
 class DreamResultWidget extends StatefulWidget {
@@ -48,7 +49,8 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
 
   void _showNextMessage() {
     if (_currentMessageIndex < _visibleMessages.length) {
-      Future.delayed(Duration(milliseconds: _currentMessageIndex == 0 ? 300 : 800), () {
+      Future.delayed(
+          Duration(milliseconds: _currentMessageIndex == 0 ? 300 : 800), () {
         if (mounted) {
           setState(() {
             _visibleMessages[_currentMessageIndex] = true;
@@ -72,10 +74,16 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
     // 데이터 추출
 
     final interpretation = data['interpretation'] as String? ?? '';
-    final mainTheme = (data['analysis'] as Map<String, dynamic>?)?['mainTheme'] as String? ?? '';
-    final psychologicalInsight = (data['analysis'] as Map<String, dynamic>?)?['psychologicalInsight'] as String? ?? '';
+    final mainTheme =
+        (data['analysis'] as Map<String, dynamic>?)?['mainTheme'] as String? ??
+            '';
+    final psychologicalInsight = (data['analysis']
+            as Map<String, dynamic>?)?['psychologicalInsight'] as String? ??
+        '';
     final todayGuidance = data['todayGuidance'] as String? ?? '';
-    final symbolAnalysis = (data['analysis'] as Map<String, dynamic>?)?['symbolAnalysis'] as List<dynamic>? ?? [];
+    final symbolAnalysis = (data['analysis']
+            as Map<String, dynamic>?)?['symbolAnalysis'] as List<dynamic>? ??
+        [];
     final actionAdvice = data['actionAdvice'] as List<dynamic>? ?? [];
 
     return Column(
@@ -96,7 +104,8 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
           _buildBotMessage(
             isDark: isDark,
             title: '기본 해몽',
-            content: interpretation.isNotEmpty ? interpretation : '꿈의 메시지를 해석하였습니다.',
+            content:
+                interpretation.isNotEmpty ? interpretation : '꿈의 메시지를 해석하였습니다.',
           ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
 
         const SizedBox(height: 12),
@@ -106,8 +115,11 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
           _buildBotMessage(
             isDark: isDark,
             title: '심리 분석',
-            content: psychologicalInsight.isNotEmpty ? psychologicalInsight : '분석 중...',
-            isBlurred: widget.isBlurred && widget.blurredSections.contains('psychologicalInsight'),
+            content: psychologicalInsight.isNotEmpty
+                ? psychologicalInsight
+                : '분석 중...',
+            isBlurred: widget.isBlurred &&
+                widget.blurredSections.contains('psychologicalInsight'),
           ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
 
         const SizedBox(height: 12),
@@ -117,28 +129,36 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
           _buildBotMessage(
             isDark: isDark,
             title: '오늘의 조언',
-            content: todayGuidance.isNotEmpty ? todayGuidance : '오늘 하루를 긍정적으로 보내세요.',
-            isBlurred: widget.isBlurred && widget.blurredSections.contains('todayGuidance'),
+            content:
+                todayGuidance.isNotEmpty ? todayGuidance : '오늘 하루를 긍정적으로 보내세요.',
+            isBlurred: widget.isBlurred &&
+                widget.blurredSections.contains('todayGuidance'),
           ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
 
         const SizedBox(height: 12),
 
         // 4. 상징 분석 (블러)
-        if (_visibleMessages.length > 4 && _visibleMessages[4] && symbolAnalysis.isNotEmpty)
+        if (_visibleMessages.length > 4 &&
+            _visibleMessages[4] &&
+            symbolAnalysis.isNotEmpty)
           _buildSymbolMessage(
             isDark: isDark,
             symbolAnalysis: symbolAnalysis,
-            isBlurred: widget.isBlurred && widget.blurredSections.contains('symbolAnalysis'),
+            isBlurred: widget.isBlurred &&
+                widget.blurredSections.contains('symbolAnalysis'),
           ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
 
         if (symbolAnalysis.isNotEmpty) const SizedBox(height: 12),
 
         // 5. 행동 조언 (블러)
-        if (_visibleMessages.length > 5 && _visibleMessages[5] && actionAdvice.isNotEmpty)
+        if (_visibleMessages.length > 5 &&
+            _visibleMessages[5] &&
+            actionAdvice.isNotEmpty)
           _buildActionMessage(
             isDark: isDark,
             actionAdvice: actionAdvice,
-            isBlurred: widget.isBlurred && widget.blurredSections.contains('actionAdvice'),
+            isBlurred: widget.isBlurred &&
+                widget.blurredSections.contains('actionAdvice'),
           ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
 
         const SizedBox(height: 100), // 버튼 여유 공간
@@ -189,7 +209,9 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                   GptStyleTypingText(
                     text: content,
                     style: context.bodyMedium.copyWith(
-                      color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.87)
+                          : Colors.black.withValues(alpha: 0.87),
                       height: 1.6,
                     ),
                     startTyping: startTyping,
@@ -237,34 +259,17 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
             ),
             const SizedBox(height: 12),
             if (isBlurred)
-              // 내용만 블러 처리
-              Stack(
-                children: [
-                  ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Text(
-                      symbolAnalysis.map((s) => '${s['symbol']}: ${s['meaning']}').join('\n'),
-                      style: context.bodyMedium.copyWith(color: Colors.grey),
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Center(
-                      child: Icon(
-                        Icons.lock_outline,
-                        size: 48,
-                        color: Colors.white.withValues(alpha: 0.9),
-                      ),
-                    ),
-                  ),
-                ],
+              UnifiedBlurWrapper(
+                isBlurred: true,
+                blurredSections: const ['symbolAnalysis'],
+                sectionKey: 'symbolAnalysis',
+                fortuneType: widget.fortuneResult.type,
+                child: Text(
+                  symbolAnalysis
+                      .map((s) => '${s['symbol']}: ${s['meaning']}')
+                      .join('\n'),
+                  style: context.bodyMedium.copyWith(color: Colors.grey),
+                ),
               )
             else
               ...symbolAnalysis.map((symbol) {
@@ -276,7 +281,8 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: DSColors.accent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
@@ -294,7 +300,9 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                         child: Text(
                           meaning,
                           style: context.bodyMedium.copyWith(
-                            color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.87),
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.7)
+                                : Colors.black.withValues(alpha: 0.87),
                             height: 1.5,
                           ),
                         ),
@@ -404,7 +412,9 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                         child: Text(
                           advice,
                           style: context.bodyMedium.copyWith(
-                            color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.87),
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.7)
+                                : Colors.black.withValues(alpha: 0.87),
                             height: 1.5,
                           ),
                         ),
@@ -429,8 +439,10 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
     // 제목에 따른 색상 결정
     Color getTitleColor() {
       if (title == null) return DSColors.accent;
-      if (title.contains('심리')) return isDark ? Colors.purple.shade300 : Colors.purple;
-      if (title.contains('조언')) return isDark ? Colors.orange.shade300 : Colors.orange;
+      if (title.contains('심리'))
+        return isDark ? Colors.purple.shade300 : Colors.purple;
+      if (title.contains('조언'))
+        return isDark ? Colors.orange.shade300 : Colors.orange;
       return isDark ? Colors.white : Colors.black;
     }
 
@@ -448,40 +460,18 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
           ),
           const SizedBox(height: 12),
         ],
-        // 내용만 블러 처리
-        Stack(
-          children: [
-            // 블러된 텍스트
-            ImageFiltered(
-              imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Text(
-                content,
-                style: context.bodyMedium.copyWith(
-                  color: Colors.grey,
-                  height: 1.6,
-                ),
-              ),
+        UnifiedBlurWrapper(
+          isBlurred: true,
+          blurredSections: const ['bot'],
+          sectionKey: 'bot',
+          fortuneType: widget.fortuneResult.type,
+          child: Text(
+            content,
+            style: context.bodyMedium.copyWith(
+              color: Colors.grey,
+              height: 1.6,
             ),
-            // 반투명 오버레이
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            // 잠금 아이콘
-            Positioned.fill(
-              child: Center(
-                child: Icon(
-                  Icons.lock_outline,
-                  size: 48,
-                  color: Colors.white.withValues(alpha: 0.9),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );

@@ -41,7 +41,7 @@ class MbtiEnergyGauge extends StatelessWidget {
                   color: DSColors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.battery_charging_full,
                   color: DSColors.accent,
                   size: 24,
@@ -100,7 +100,7 @@ class MbtiEnergyGauge extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.lightbulb_outline,
                   color: DSColors.warning,
                   size: 20,

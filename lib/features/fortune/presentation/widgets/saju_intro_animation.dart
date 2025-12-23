@@ -100,7 +100,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -109,7 +109,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
               DSColors.backgroundSecondary,
               DSColors.background,
             ],
-            stops: const [0.0, 0.5, 1.0],
+            stops: [0.0, 0.5, 1.0],
           ),
         ),
         child: Stack(

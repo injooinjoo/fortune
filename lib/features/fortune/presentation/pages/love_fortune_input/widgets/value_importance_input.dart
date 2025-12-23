@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/services/fortune_haptic_service.dart';
 
 /// Section 3: 중요한 가치 (5개 슬라이더)
-class ValueImportanceInput extends StatelessWidget {
+class ValueImportanceInput extends ConsumerWidget {
   final Map<String, double> valueImportance;
   final ValueChanged<MapEntry<String, double>> onValueChanged;
 
@@ -13,7 +15,7 @@ class ValueImportanceInput extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
 
     return Column(
@@ -42,13 +44,13 @@ class ValueImportanceInput extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         ...valueImportance.entries.map((entry) {
-          return _buildValueSlider(entry.key, entry.value, colors);
+          return _buildValueSlider(entry.key, entry.value, colors, ref);
         }),
       ],
     );
   }
 
-  Widget _buildValueSlider(String label, double value, DSColorScheme colors) {
+  Widget _buildValueSlider(String label, double value, DSColorScheme colors, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -96,6 +98,9 @@ class ValueImportanceInput extends StatelessWidget {
               max: 5,
               divisions: 4,
               onChanged: (newValue) {
+                if (newValue.round() != value.round()) {
+                  ref.read(fortuneHapticServiceProvider).sliderSnap();
+                }
                 onValueChanged(MapEntry(label, newValue));
               },
             ),

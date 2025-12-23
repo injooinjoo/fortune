@@ -302,12 +302,12 @@ class _CompatibilityInputViewState
 
   /// 로딩 스켈레톤 UI
   Widget _buildLoadingSkeleton(bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+    return const SingleChildScrollView(
+      padding: EdgeInsets.all(20),
       child: FortuneLoadingSkeleton(
         itemCount: 4,
         showHeader: true,
-        loadingMessages: const [
+        loadingMessages: [
           '두 분의 궁합을 분석하고 있어요...',
           '사주팔자를 확인하는 중...',
           '운명의 연결고리를 찾는 중...',

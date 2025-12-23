@@ -187,7 +187,7 @@ class CategoryCard extends StatelessWidget {
                       color: isSelected ? colors.accent : colors.textPrimary,
                     ),
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
                     description,
                     style: DSTypography.bodySmall.copyWith(

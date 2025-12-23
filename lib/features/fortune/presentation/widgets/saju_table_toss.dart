@@ -63,7 +63,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                 opacity: _titleAnimation,
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.table_chart_outlined,
                       color: DSColors.accent,
                       size: 24,
@@ -127,9 +127,9 @@ class _SajuTableTossState extends State<SajuTableToss> {
         children: [
           // 헤더
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: DSColors.backgroundSecondary,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(DSRadius.md),
                 topRight: Radius.circular(DSRadius.md),
               ),
@@ -146,7 +146,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                     decoration: BoxDecoration(
                       border: Border(
                         right: index < pillars.length - 1 
-                          ? BorderSide(color: DSColors.border, width: 1)
+                          ? const BorderSide(color: DSColors.border, width: 1)
                           : BorderSide.none,
                       ),
                     ),
@@ -166,7 +166,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
           
           // 천간 행
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(color: DSColors.border, width: 1),
               ),
@@ -191,7 +191,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                         decoration: BoxDecoration(
                           border: Border(
                             right: index < pillars.length - 1 
-                              ? BorderSide(color: DSColors.border, width: 1)
+                              ? const BorderSide(color: DSColors.border, width: 1)
                               : BorderSide.none,
                           ),
                           color: isDay 
@@ -228,7 +228,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                       decoration: BoxDecoration(
                         border: Border(
                           right: index < pillars.length - 1 
-                            ? BorderSide(color: DSColors.border, width: 1)
+                            ? const BorderSide(color: DSColors.border, width: 1)
                             : BorderSide.none,
                         ),
                         color: isDay 
@@ -413,7 +413,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
               color: color,
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.star,
               color: Colors.white,
               size: 16,

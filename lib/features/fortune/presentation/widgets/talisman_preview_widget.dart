@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/talisman_models.dart';
 
 class TalismanPreviewWidget extends StatefulWidget {

@@ -56,7 +56,7 @@ class CognitiveFunctionWeather extends StatelessWidget {
                   color: DSColors.accentSecondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.wb_cloudy_outlined,
                   color: DSColors.accentSecondary,
                   size: 24,

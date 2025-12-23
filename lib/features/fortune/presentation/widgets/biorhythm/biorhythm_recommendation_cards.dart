@@ -26,7 +26,7 @@ class TodayRecommendationCard extends StatelessWidget {
     final textColor = DSBiorhythmColors.getInkBleed(isDark);
 
     // 점수에 따른 추천 활동
-    List<Map<String, dynamic>> recommendations = _getRecommendations(isDark);
+    final List<Map<String, dynamic>> recommendations = _getRecommendations(isDark);
 
     return BiorhythmHanjiCard(
       style: HanjiCardStyle.standard,

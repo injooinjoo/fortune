@@ -148,7 +148,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          const Icon(
             Icons.auto_awesome,
             color: DSColors.accentTertiary,
             size: 16,

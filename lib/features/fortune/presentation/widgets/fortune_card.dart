@@ -90,7 +90,7 @@ class FortuneCard extends StatelessWidget {
             )
           : null,
       trailing: isSelected 
-          ? Icon(
+          ? const Icon(
               Icons.check_circle,
               color: DSColors.accent,
               size: 24,
@@ -172,7 +172,7 @@ class FortuneCard extends StatelessWidget {
             ),
           ),
           if (showArrow)
-            Icon(
+            const Icon(
               Icons.arrow_forward_ios,
               color: DSColors.textTertiary,
               size: 16,
@@ -186,7 +186,7 @@ class FortuneCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    Widget cardContent = Container(
+    final Widget cardContent = Container(
       margin: margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
         color: backgroundColor ?? (isDark ? DSColors.surface : Colors.white),

@@ -161,7 +161,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
       children: [
         // Deep space gradient background
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: RadialGradient(
               center: Alignment.topCenter,
               radius: 1.5,
@@ -169,7 +169,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
                 FortuneColors.tarotDarkest, // Deep purple
                 FortuneColors.tarotDarkest, // Darker purple
                 Colors.black],
-              stops: const [0.0, 0.7, 1.0]))),
+              stops: [0.0, 0.7, 1.0]))),
         
         // Animated nebulae
         if (widget.showNebula)

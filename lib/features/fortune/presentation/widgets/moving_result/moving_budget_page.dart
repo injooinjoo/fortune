@@ -151,7 +151,7 @@ class MovingBudgetPage extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.savings_rounded,
                   color: DSColors.warning,
                   size: 24,

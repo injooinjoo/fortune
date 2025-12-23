@@ -42,13 +42,13 @@ class RelationshipAdviceCard extends StatelessWidget {
                     color: DSColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.lightbulb,
                     color: DSColors.success,
                     size: 20,
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Text(
                   '관계 개선 조언',
                   style: DSTypography.headingSmall.copyWith(
@@ -59,7 +59,7 @@ class RelationshipAdviceCard extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             GptStyleTypingText(
               text: fortune.advice!,

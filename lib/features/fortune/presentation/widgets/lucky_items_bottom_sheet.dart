@@ -189,7 +189,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                         color: context.colors.textPrimary,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       '당신만을 위한 특별한 행운을 찾아보세요',
                       style: DSTypography.labelMedium.copyWith(
@@ -230,12 +230,12 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                     children: [
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.auto_awesome,
                             color: DSColors.accent,
                             size: 24,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
                             '오늘만의 특별한 행운',
                             style: DSTypography.headingSmall.copyWith(
@@ -257,7 +257,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                   ),
                 ),
                 
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 
                 // 카테고리 미리보기
                 Text(
@@ -355,7 +355,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
               onPressed: _isLoadingAd ? null : _handleFortuneView,
               style: UnifiedButtonStyle.primary,
               size: UnifiedButtonSize.large,
-              icon: _isLoadingAd ? null : Icon(Icons.auto_awesome),
+              icon: _isLoadingAd ? null : const Icon(Icons.auto_awesome),
               isLoading: _isLoadingAd,
             ),
           ),

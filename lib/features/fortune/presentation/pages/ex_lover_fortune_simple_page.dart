@@ -472,7 +472,7 @@ class _ExLoverFortuneSimplePageState
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.check_circle,
+                              const Icon(Icons.check_circle,
                                   color: DSColors.success, size: 20),
                               const SizedBox(width: 8),
                               Expanded(

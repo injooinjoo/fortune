@@ -206,7 +206,7 @@ class _SajuInputFormState extends State<SajuInputForm>
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.person_outline,
                 color: DSColors.accent,
                 size: 20,
@@ -251,7 +251,7 @@ class _SajuInputFormState extends State<SajuInputForm>
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.calendar_today_outlined,
                 color: DSColors.accent,
                 size: 20,
@@ -292,7 +292,7 @@ class _SajuInputFormState extends State<SajuInputForm>
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.access_time_outlined,
                 color: DSColors.accent,
                 size: 20,
@@ -330,7 +330,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                     color: DSColors.textTertiary,
                   ),
                 ),
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   color: DSColors.textTertiary,
                 ),
@@ -358,7 +358,7 @@ class _SajuInputFormState extends State<SajuInputForm>
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.info_outline,
                     size: 16,
                     color: DSColors.warning,
@@ -389,7 +389,7 @@ class _SajuInputFormState extends State<SajuInputForm>
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.wc_outlined,
                 color: DSColors.accent,
                 size: 20,
@@ -517,7 +517,7 @@ class _SajuInputFormState extends State<SajuInputForm>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
+          const Icon(
             Icons.info_outline,
             color: DSColors.accent,
             size: 20,

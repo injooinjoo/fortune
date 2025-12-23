@@ -56,13 +56,13 @@ class SummaryHeader extends StatelessWidget {
                     ),
                   ),
                   // Center icon
-                  Icon(
+                  const Icon(
                     Icons.auto_awesome,
                     size: 60,
                     color: Colors.white,
                     shadows: [
                       Shadow(
-                        color: const Color(0xFF9333EA),
+                        color: Color(0xFF9333EA),
                         blurRadius: 20,
                       ),
                     ],
@@ -71,7 +71,7 @@ class SummaryHeader extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '리딩이 완료되었습니다',
             style: DSTypography.displayMedium.copyWith(
@@ -80,7 +80,7 @@ class SummaryHeader extends StatelessWidget {
             ),
           ),
           if (question != null) ...[
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               question!,
               style: DSTypography.bodyLarge.copyWith(

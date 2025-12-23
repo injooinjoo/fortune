@@ -52,53 +52,54 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
   }
 
   // 8개 메인 카테고리 - ChatGPT 미니멀 스타일 (Material Icons)
+  // 8개 메인 카테고리 - Hanji/Ink Wash 스타일 이미지 적용
   static const List<CategoryModel> _categories = [
     CategoryModel(
       id: 'shopping',
       title: '쇼핑/구매',
-      icon: Icons.shopping_bag_outlined,
+      imagePath: 'assets/images/fortune/categories/lucky_shopping.png',
       description: '쇼핑 운과 구매 타이밍',
     ),
     CategoryModel(
       id: 'game',
       title: '게임/엔터',
-      icon: Icons.videogame_asset_outlined,
+      imagePath: 'assets/images/fortune/categories/lucky_game.png',
       description: '게임과 엔터테인먼트',
     ),
     CategoryModel(
       id: 'food',
       title: '음식/맛집',
-      icon: Icons.restaurant_outlined,
+      imagePath: 'assets/images/fortune/categories/lucky_food.png',
       description: '행운의 음식과 맛집',
     ),
     CategoryModel(
       id: 'travel',
       title: '여행/장소',
-      icon: Icons.flight_outlined,
+      imagePath: 'assets/images/fortune/categories/lucky_travel.png',
       description: '행운의 장소와 여행지',
     ),
     CategoryModel(
       id: 'health',
       title: '운동/건강',
-      icon: Icons.fitness_center_outlined,
+      imagePath: 'assets/images/fortune/categories/lucky_health.png',
       description: '건강 운과 운동 가이드',
     ),
     CategoryModel(
       id: 'fashion',
       title: '패션/뷰티',
-      icon: Icons.checkroom_outlined,
+      imagePath: 'assets/images/fortune/categories/lucky_fashion.png',
       description: '오늘의 스타일링',
     ),
     CategoryModel(
       id: 'lifestyle',
       title: '라이프',
-      icon: Icons.auto_awesome_outlined,
+      imagePath: 'assets/images/fortune/categories/lucky_lifestyle.png',
       description: '일상 속 행운 가이드',
     ),
     CategoryModel(
       id: 'today_color',
       title: '오늘의 색상',
-      icon: Icons.palette_outlined,
+      imagePath: 'assets/images/fortune/categories/lucky_color.png',
       description: '행운을 부르는 오늘의 컬러',
     ),
   ];
@@ -124,25 +125,29 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
         id: 'birthDate',
         title: '생년월일',
         icon: Icons.cake,
-        inputWidgetBuilder: (context, onValueChanged) => _buildDatePicker(onValueChanged),
+        inputWidgetBuilder: (context, onValueChanged) =>
+            _buildDatePicker(onValueChanged),
       ),
       AccordionInputSection(
         id: 'birthTime',
         title: '태어난 시간',
         icon: Icons.access_time,
-        inputWidgetBuilder: (context, onValueChanged) => _buildTimePicker(onValueChanged),
+        inputWidgetBuilder: (context, onValueChanged) =>
+            _buildTimePicker(onValueChanged),
       ),
       AccordionInputSection(
         id: 'gender',
         title: '성별',
         icon: Icons.person,
-        inputWidgetBuilder: (context, onValueChanged) => _buildGenderSelect(onValueChanged),
+        inputWidgetBuilder: (context, onValueChanged) =>
+            _buildGenderSelect(onValueChanged),
       ),
       AccordionInputSection(
         id: 'interests',
         title: '관심사',
         icon: Icons.favorite,
-        inputWidgetBuilder: (context, onValueChanged) => _buildInterestsSelect(onValueChanged),
+        inputWidgetBuilder: (context, onValueChanged) =>
+            _buildInterestsSelect(onValueChanged),
         isMultiSelect: true,
       ),
     ];
@@ -155,21 +160,25 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
       setState(() {
         if (profile.birthDate != null) {
           _selectedBirthDate = profile.birthDate;
-          final birthDateIndex = _sections.indexWhere((s) => s.id == 'birthDate');
+          final birthDateIndex =
+              _sections.indexWhere((s) => s.id == 'birthDate');
           if (birthDateIndex != -1) {
             _sections[birthDateIndex].isCompleted = true;
             _sections[birthDateIndex].value = profile.birthDate;
-            _sections[birthDateIndex].displayValue = '생년월일: ${profile.birthDate!.year}.${profile.birthDate!.month}.${profile.birthDate!.day}';
+            _sections[birthDateIndex].displayValue =
+                '생년월일: ${profile.birthDate!.year}.${profile.birthDate!.month}.${profile.birthDate!.day}';
           }
         }
 
         if (profile.birthTime != null) {
           _selectedBirthTime = profile.birthTime;
-          final birthTimeIndex = _sections.indexWhere((s) => s.id == 'birthTime');
+          final birthTimeIndex =
+              _sections.indexWhere((s) => s.id == 'birthTime');
           if (birthTimeIndex != -1) {
             _sections[birthTimeIndex].isCompleted = true;
             _sections[birthTimeIndex].value = profile.birthTime;
-            _sections[birthTimeIndex].displayValue = '태어난 시간: ${profile.birthTime}';
+            _sections[birthTimeIndex].displayValue =
+                '태어난 시간: ${profile.birthTime}';
           }
         }
 
@@ -179,7 +188,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
           if (genderIndex != -1) {
             _sections[genderIndex].isCompleted = true;
             _sections[genderIndex].value = profile.gender;
-            _sections[genderIndex].displayValue = '성별: ${profile.gender == "male" ? "남성" : "여성"}';
+            _sections[genderIndex].displayValue =
+                '성별: ${profile.gender == "male" ? "남성" : "여성"}';
           }
         }
       });
@@ -247,24 +257,26 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
         if (_canGenerate())
           UnifiedButton.floating(
             text: '🍀 행운 아이템 확인하기',
-            onPressed: _canGenerate() && !_isGenerating ? () async {
-              // 로딩 상태 시작
-              setState(() {
-                _isGenerating = true;
-              });
+            onPressed: _canGenerate() && !_isGenerating
+                ? () async {
+                    // 로딩 상태 시작
+                    setState(() {
+                      _isGenerating = true;
+                    });
 
-              // 실제 운세 생성 호출
-              onSubmit();
+                    // 실제 운세 생성 호출
+                    onSubmit();
 
-              // 2초 후 로딩 해제 (운세 생성이 완료되면 자동으로 결과 화면으로 전환됨)
-              Future.delayed(const Duration(seconds: 2), () {
-                if (mounted) {
-                  setState(() {
-                    _isGenerating = false;
-                  });
-                }
-              });
-            } : null,
+                    // 2초 후 로딩 해제 (운세 생성이 완료되면 자동으로 결과 화면으로 전환됨)
+                    Future.delayed(const Duration(seconds: 2), () {
+                      if (mounted) {
+                        setState(() {
+                          _isGenerating = false;
+                        });
+                      }
+                    });
+                  }
+                : null,
             isEnabled: _canGenerate() && !_isGenerating,
             showProgress: _isGenerating,
             isLoading: _isGenerating,
@@ -300,9 +312,20 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
 
   /// 태어난 시간 선택기
   Widget _buildTimePicker(Function(dynamic) onValueChanged) {
-    final times = ['자시 (23:00-01:00)', '축시 (01:00-03:00)', '인시 (03:00-05:00)', '묘시 (05:00-07:00)',
-                   '진시 (07:00-09:00)', '사시 (09:00-11:00)', '오시 (11:00-13:00)', '미시 (13:00-15:00)',
-                   '신시 (15:00-17:00)', '유시 (17:00-19:00)', '술시 (19:00-21:00)', '해시 (21:00-23:00)'];
+    final times = [
+      '자시 (23:00-01:00)',
+      '축시 (01:00-03:00)',
+      '인시 (03:00-05:00)',
+      '묘시 (05:00-07:00)',
+      '진시 (07:00-09:00)',
+      '사시 (09:00-11:00)',
+      '오시 (11:00-13:00)',
+      '미시 (13:00-15:00)',
+      '신시 (15:00-17:00)',
+      '유시 (17:00-19:00)',
+      '술시 (19:00-21:00)',
+      '해시 (21:00-23:00)'
+    ];
 
     return Column(
       children: times.map((time) {
@@ -408,7 +431,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
                     _selectedInterests.add(interest);
                   }
 
-                  final index = _sections.indexWhere((s) => s.id == 'interests');
+                  final index =
+                      _sections.indexWhere((s) => s.id == 'interests');
                   if (index != -1) {
                     _sections[index] = _sections[index].copyWith(
                       isCompleted: _selectedInterests.isNotEmpty,
@@ -423,7 +447,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
               },
               borderRadius: BorderRadius.circular(12),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? colors.accent.withValues(alpha: 0.1)
@@ -446,8 +471,10 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
                       child: Text(
                         interest,
                         style: DSTypography.bodyMedium.copyWith(
-                          color: isSelected ? colors.accent : colors.textPrimary,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          color:
+                              isSelected ? colors.accent : colors.textPrimary,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.w500,
                         ),
                       ),
                     ),
@@ -464,7 +491,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
                         ),
                       ),
                       child: isSelected
-                          ? const Icon(Icons.check, size: 16, color: Colors.white)
+                          ? const Icon(Icons.check,
+                              size: 16, color: Colors.white)
                           : null,
                     ),
                   ],
@@ -490,7 +518,9 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
   /// 결과 화면 (원페이지 스크롤 + 블러 적용)
   Widget _buildResult(BuildContext context, FortuneResult result) {
     // ✅ 사용자가 블러를 해제하지 않았을 때만 result.isBlurred와 동기화
-    if (!_hasUserUnlockedBlur && (_isBlurred != result.isBlurred || _blurredSections.length != result.blurredSections.length)) {
+    if (!_hasUserUnlockedBlur &&
+        (_isBlurred != result.isBlurred ||
+            _blurredSections.length != result.blurredSections.length)) {
       // 즉시 상태 업데이트
       _isBlurred = result.isBlurred;
       _blurredSections = List<String>.from(result.blurredSections);
@@ -510,7 +540,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
       children: [
         // ✅ 원페이지 스크롤 (모든 카테고리 세로로 배치)
         SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), // bottom padding for button
+          padding: const EdgeInsets.fromLTRB(
+              16, 16, 16, 100), // bottom padding for button
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -602,7 +633,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
 
           // NEW: 게이지 증가 호출
           if (mounted) {
-            FortuneCompletionHelper.onFortuneViewed(context, ref, 'lucky-items');
+            FortuneCompletionHelper.onFortuneViewed(
+                context, ref, 'lucky-items');
           }
 
           if (mounted) {

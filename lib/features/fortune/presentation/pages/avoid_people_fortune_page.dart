@@ -13,7 +13,6 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
@@ -129,85 +128,30 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
       },
 
       resultBuilder: (context, result) {
-        Logger.info('');
-        Logger.info('🔍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        Logger.info('🔍 [resultBuilder] 호출됨!');
-        Logger.info('🔍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        Logger.info('   📥 result.isBlurred: ${result.isBlurred}');
-        Logger.info('   📦 result.blurredSections: ${result.blurredSections}');
-        Logger.info('   📱 페이지 _isBlurred: $_isBlurred');
-        Logger.info('   📱 페이지 _blurredSections: $_blurredSections');
-        Logger.info('   🔒 _hasInitializedBlur: $_hasInitializedBlur');
-        Logger.info('');
-
-        // ✅ Blur 상태 초기화 (최초 한 번만!)
-        // 조건: 아직 초기화되지 않았고 && result가 블러 상태일 때
+        // ✅ Blur 상태 초기화 (최초 한 번만)
         if (!_hasInitializedBlur && result.isBlurred == true) {
-          Logger.info('   ✅ 조건 만족: !_hasInitializedBlur && result.isBlurred=true');
-          Logger.info('   → 블러 상태를 result에서 가져옴 (최초 초기화)');
-          Logger.info('   → PostFrameCallback 등록 중...');
-
-          // 운세 생성 직후에만 result의 블러 상태를 가져옴
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Logger.info('');
-            Logger.info('   🔄 [PostFrameCallback] 실행됨');
-            Logger.info('      - mounted: $mounted');
-
             if (mounted) {
-              // ✅ 피해야 할 사람 결과 공개 시 햅틱 피드백
               final score = result.score ?? 70;
               ref.read(fortuneHapticServiceProvider).scoreReveal(score);
-
-              Logger.info('      → setState 호출 중...');
-              Logger.info('         이전 _isBlurred: $_isBlurred');
-              Logger.info('         이전 _blurredSections: $_blurredSections');
-              Logger.info('         이전 _hasInitializedBlur: $_hasInitializedBlur');
 
               setState(() {
                 _isBlurred = result.isBlurred;
                 _blurredSections = result.isBlurred
-                    ? ['people_types', 'situation_tips', 'advice']
+                    ? ['cautionPeople', 'cautionObjects', 'cautionColors', 'cautionNumbers',
+                       'cautionAnimals', 'cautionPlaces', 'cautionTimes', 'cautionDirections',
+                       'luckyElements', 'timeStrategy', 'dailyAdvice']
                     : [];
-                _hasInitializedBlur = true; // ✅ 초기화 완료 플래그
+                _hasInitializedBlur = true;
               });
-
-              Logger.info('         새 _isBlurred: $_isBlurred');
-              Logger.info('         새 _blurredSections: $_blurredSections');
-              Logger.info('         새 _hasInitializedBlur: $_hasInitializedBlur');
-              Logger.info('      ✅ setState 완료!');
-            } else {
-              Logger.warning('      ⚠️ Widget이 이미 dispose됨. setState 스킵.');
             }
-            Logger.info('');
           });
-
-          Logger.info('   ✅ PostFrameCallback 등록 완료');
-        } else {
-          Logger.info('   ❌ 조건 불만족: _isBlurred를 변경하지 않음');
-          Logger.info('      - _hasInitializedBlur=$_hasInitializedBlur');
-          Logger.info('      - _isBlurred=$_isBlurred 유지 (사용자가 광고로 해제했을 수 있음)');
-          Logger.info('      - result.isBlurred=${result.isBlurred} (DB에 저장된 원본 상태)');
-          Logger.info('');
-          Logger.info('   💡 해석:');
-          if (_hasInitializedBlur) {
-            Logger.info('      → 이미 초기화됨. 사용자 액션(광고 해제) 보호!');
-          } else if (result.isBlurred == false) {
-            Logger.info('      → 프리미엄 사용자 OR DB에 이미 블러 해제된 결과 저장됨');
-          }
         }
 
-        Logger.info('🔍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        Logger.info('');
-
-        // ❌ result.isBlurred로 _isBlurred를 계속 덮어쓰지 않음!
-        // _hasInitializedBlur 플래그로 최초 1회만 동기화
-        // 사용자가 광고를 보고 블러를 해제하면 _isBlurred는 false로 유지됨
-
-        final content = FortuneTextCleaner.cleanNullable(result.data['content'] as String?);
+        final summary = result.data['summary'] as String? ?? '오늘의 경계대상을 확인하세요.';
 
         return Stack(
           children: [
-            // ✅ 중앙 정렬 + 반응형 레이아웃
             Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 600),
@@ -215,41 +159,137 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                   padding: const EdgeInsets.all(24).copyWith(bottom: 100),
                   child: Column(
                     children: [
-                      // 섹션 1: 주의 지수 + 종합 요약 (무료)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 📊 경계지수 카드 (무료)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                       GlassCard(
                         padding: const EdgeInsets.all(24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '피해야 할 사람 분석 결과',
-                              style: DSTypography.headingMedium,
+                            Row(
+                              children: [
+                                const Text('⚠️', style: TextStyle(fontSize: 28)),
+                                const SizedBox(width: 12),
+                                Text('오늘의 경계 지수', style: DSTypography.headingMedium),
+                              ],
                             ),
                             if (result.score != null) ...[
                               const SizedBox(height: 16),
-                              Text(
-                                '주의 지수: ${result.score}/100',
-                                style: DSTypography.headingSmall.copyWith(
-                                  color: DSColors.warning,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              _buildScoreIndicator(result.score!),
                             ],
                             const SizedBox(height: 16),
-                            Text(
-                              content.split('\n\n').first,
-                              style: DSTypography.bodyMedium,
-                            ),
+                            Text(summary, style: DSTypography.bodyMedium),
                           ],
                         ),
                       ),
                       const SizedBox(height: 16),
 
-                      // 섹션 2: 피해야 할 사람 유형 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 👤 경계인물 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildCautionCard(
+                        sectionKey: 'cautionPeople',
+                        icon: '👤',
+                        title: '경계인물',
+                        subtitle: '오늘 피해야 할 사람 유형',
+                        items: _parseCautionPeople(result.data['cautionPeople']),
+                      ),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 📦 경계사물 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildCautionCard(
+                        sectionKey: 'cautionObjects',
+                        icon: '📦',
+                        title: '경계사물',
+                        subtitle: '오늘 조심해야 할 물건',
+                        items: _parseCautionObjects(result.data['cautionObjects']),
+                      ),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 🎨 경계색상 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildCautionCard(
+                        sectionKey: 'cautionColors',
+                        icon: '🎨',
+                        title: '경계색상',
+                        subtitle: '오늘 피해야 할 색상',
+                        items: _parseCautionColors(result.data['cautionColors']),
+                      ),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 🔢 경계숫자 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildCautionCard(
+                        sectionKey: 'cautionNumbers',
+                        icon: '🔢',
+                        title: '경계숫자',
+                        subtitle: '오늘 피해야 할 숫자',
+                        items: _parseCautionNumbers(result.data['cautionNumbers']),
+                      ),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 🐾 경계동물 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildCautionCard(
+                        sectionKey: 'cautionAnimals',
+                        icon: '🐾',
+                        title: '경계동물',
+                        subtitle: '오늘 조심해야 할 동물/띠',
+                        items: _parseCautionAnimals(result.data['cautionAnimals']),
+                      ),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 📍 경계장소 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildCautionCard(
+                        sectionKey: 'cautionPlaces',
+                        icon: '📍',
+                        title: '경계장소',
+                        subtitle: '오늘 피해야 할 장소',
+                        items: _parseCautionPlaces(result.data['cautionPlaces']),
+                      ),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // ⏰ 경계시간 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildCautionCard(
+                        sectionKey: 'cautionTimes',
+                        icon: '⏰',
+                        title: '경계시간',
+                        subtitle: '오늘 조심해야 할 시간대',
+                        items: _parseCautionTimes(result.data['cautionTimes']),
+                      ),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 🧭 경계방향 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildCautionCard(
+                        sectionKey: 'cautionDirections',
+                        icon: '🧭',
+                        title: '경계방향',
+                        subtitle: '오늘 피해야 할 방위',
+                        items: _parseCautionDirections(result.data['cautionDirections']),
+                      ),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // ✨ 행운요소 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildLuckyElementsCard(result.data['luckyElements']),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 📅 시간대별 전략 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      _buildTimeStrategyCard(result.data['timeStrategy']),
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 💡 종합 조언 카드 (Premium)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                       UnifiedBlurWrapper(
                         isBlurred: _isBlurred,
                         blurredSections: _blurredSections,
-                        sectionKey: 'people_types',
+                        sectionKey: 'dailyAdvice',
                         child: GlassCard(
                           padding: const EdgeInsets.all(24),
                           child: Column(
@@ -257,79 +297,14 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.person_off, color: DSColors.error, size: 28),
+                                  const Text('💡', style: TextStyle(fontSize: 24)),
                                   const SizedBox(width: 12),
-                                  Text(
-                                    '피해야 할 사람 유형',
-                                    style: DSTypography.headingSmall,
-                                  ),
+                                  Text('오늘의 종합 조언', style: DSTypography.headingSmall),
                                 ],
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                FortuneTextCleaner.clean(result.data['people_types'] as String? ?? '오늘 특별히 주의해야 할 사람 유형 정보'),
-                                style: DSTypography.bodyMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // 섹션 3: 상황별 대처 방법 (Premium)
-                      UnifiedBlurWrapper(
-                        isBlurred: _isBlurred,
-                        blurredSections: _blurredSections,
-                        sectionKey: 'situation_tips',
-                        child: GlassCard(
-                          padding: const EdgeInsets.all(24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.lightbulb, color: DSColors.accent, size: 28),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    '상황별 대처 방법',
-                                    style: DSTypography.headingSmall,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                FortuneTextCleaner.clean(result.data['situation_tips'] as String? ?? '상황별 대처 방법 정보'),
-                                style: DSTypography.bodyMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // 섹션 4: 오늘의 조언 (Premium)
-                      UnifiedBlurWrapper(
-                        isBlurred: _isBlurred,
-                        blurredSections: _blurredSections,
-                        sectionKey: 'advice',
-                        child: GlassCard(
-                          padding: const EdgeInsets.all(24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.tips_and_updates, color: DSColors.success, size: 28),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    '오늘의 조언',
-                                    style: DSTypography.headingSmall,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                FortuneTextCleaner.clean(result.data['advice'] as String? ?? '오늘의 조언 정보'),
+                                result.data['dailyAdvice'] as String? ?? '오늘 하루 경계대상에 주의하세요.',
                                 style: DSTypography.bodyMedium,
                               ),
                             ],
@@ -337,14 +312,14 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                         ),
                       ),
 
-                      const SizedBox(height: 100), // 버튼 공간
+                      const SizedBox(height: 100),
                     ],
                   ),
                 ),
               ),
             ),
 
-            // ✅ FloatingBottomButton (블러 상태일 때만 표시, 구독자 제외)
+            // ✅ FloatingBottomButton (블러 상태일 때만 표시)
             if (_isBlurred && !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
                 text: '🎁 광고 보고 전체 내용 보기',
@@ -734,4 +709,414 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
       }
     }
   }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 📊 경계지수 점수 표시기
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _buildScoreIndicator(int score) {
+    final color = score >= 70 ? DSColors.error
+        : score >= 40 ? DSColors.warning
+        : DSColors.success;
+
+    final label = score >= 70 ? '매우 주의'
+        : score >= 40 ? '주의 필요'
+        : '안전';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              '$score',
+              style: DSTypography.displayLarge.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text('/100', style: DSTypography.bodySmall.copyWith(color: DSColors.textSecondary)),
+            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(label, style: DSTypography.labelMedium.copyWith(color: color)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: score / 100,
+            backgroundColor: DSColors.surface,
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+            minHeight: 8,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 🃏 경계대상 카드 위젯 (공통)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _buildCautionCard({
+    required String sectionKey,
+    required String icon,
+    required String title,
+    required String subtitle,
+    required List<CautionItem> items,
+  }) {
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: UnifiedBlurWrapper(
+        isBlurred: _isBlurred,
+        blurredSections: _blurredSections,
+        sectionKey: sectionKey,
+        child: GlassCard(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 헤더
+              Row(
+                children: [
+                  Text(icon, style: const TextStyle(fontSize: 24)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title, style: DSTypography.headingSmall),
+                        Text(subtitle, style: DSTypography.bodySmall.copyWith(color: DSColors.textSecondary)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Divider(height: 1),
+              const SizedBox(height: 16),
+              // 항목 리스트
+              ...items.map((item) => _buildCautionItemTile(item)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCautionItemTile(CautionItem item) {
+    final severityColor = item.severity == 'high' ? DSColors.error
+        : item.severity == 'medium' ? DSColors.warning
+        : DSColors.textSecondary;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            margin: const EdgeInsets.only(top: 6, right: 12),
+            decoration: BoxDecoration(
+              color: severityColor,
+              shape: BoxShape.circle,
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item.title, style: DSTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                if (item.description.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(item.description, style: DSTypography.bodySmall.copyWith(color: DSColors.textSecondary)),
+                ],
+                if (item.tip.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text('💡 ${item.tip}', style: DSTypography.bodySmall.copyWith(color: DSColors.accent)),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ✨ 행운요소 카드
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _buildLuckyElementsCard(dynamic luckyData) {
+    if (luckyData == null) return const SizedBox.shrink();
+
+    final Map<String, dynamic> lucky = luckyData is Map<String, dynamic>
+        ? luckyData
+        : {};
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: UnifiedBlurWrapper(
+        isBlurred: _isBlurred,
+        blurredSections: _blurredSections,
+        sectionKey: 'luckyElements',
+        child: GlassCard(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Text('✨', style: TextStyle(fontSize: 24)),
+                  const SizedBox(width: 12),
+                  Text('오늘의 행운 요소', style: DSTypography.headingSmall),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  if (lucky['color'] != null) _buildLuckyChip('🎨', lucky['color']),
+                  if (lucky['number'] != null) _buildLuckyChip('🔢', lucky['number']),
+                  if (lucky['direction'] != null) _buildLuckyChip('🧭', lucky['direction']),
+                  if (lucky['time'] != null) _buildLuckyChip('⏰', lucky['time']),
+                  if (lucky['item'] != null) _buildLuckyChip('🎁', lucky['item']),
+                  if (lucky['person'] != null) _buildLuckyChip('👤', lucky['person']),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLuckyChip(String icon, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: DSColors.success.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: DSColors.success.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 6),
+          Text(value, style: DSTypography.labelMedium.copyWith(color: DSColors.success)),
+        ],
+      ),
+    );
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 📅 시간대별 전략 카드
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _buildTimeStrategyCard(dynamic strategyData) {
+    if (strategyData == null) return const SizedBox.shrink();
+
+    final Map<String, dynamic> strategy = strategyData is Map<String, dynamic>
+        ? strategyData
+        : {};
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: UnifiedBlurWrapper(
+        isBlurred: _isBlurred,
+        blurredSections: _blurredSections,
+        sectionKey: 'timeStrategy',
+        child: GlassCard(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Text('📅', style: TextStyle(fontSize: 24)),
+                  const SizedBox(width: 12),
+                  Text('시간대별 전략', style: DSTypography.headingSmall),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildTimeSlot('🌅', '오전', strategy['morning']),
+              _buildTimeSlot('☀️', '오후', strategy['afternoon']),
+              _buildTimeSlot('🌙', '저녁', strategy['evening']),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeSlot(String icon, String label, dynamic data) {
+    if (data == null) return const SizedBox.shrink();
+
+    final Map<String, dynamic> slotData = data is Map<String, dynamic> ? data : {};
+    final caution = slotData['caution'] as String? ?? '';
+    final advice = slotData['advice'] as String? ?? '';
+
+    if (caution.isEmpty && advice.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 20)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: DSTypography.labelMedium.copyWith(fontWeight: FontWeight.w600)),
+                if (caution.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text('⚠️ $caution', style: DSTypography.bodySmall.copyWith(color: DSColors.warning)),
+                ],
+                if (advice.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text('💡 $advice', style: DSTypography.bodySmall.copyWith(color: DSColors.accent)),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 🔄 데이터 파싱 헬퍼 메서드
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  List<CautionItem> _parseCautionPeople(dynamic data) {
+    if (data == null || data is! List) return [];
+    return data.map<CautionItem>((item) {
+      final map = item as Map<String, dynamic>;
+      return CautionItem(
+        title: map['type'] as String? ?? '',
+        description: map['reason'] as String? ?? '',
+        tip: map['tip'] as String? ?? '',
+        severity: map['severity'] as String? ?? 'medium',
+      );
+    }).toList();
+  }
+
+  List<CautionItem> _parseCautionObjects(dynamic data) {
+    if (data == null || data is! List) return [];
+    return data.map<CautionItem>((item) {
+      final map = item as Map<String, dynamic>;
+      return CautionItem(
+        title: map['item'] as String? ?? '',
+        description: '${map['reason'] ?? ''} ${map['situation'] != null ? '(${map['situation']})' : ''}',
+        tip: map['tip'] as String? ?? '',
+        severity: 'medium',
+      );
+    }).toList();
+  }
+
+  List<CautionItem> _parseCautionColors(dynamic data) {
+    if (data == null || data is! List) return [];
+    return data.map<CautionItem>((item) {
+      final map = item as Map<String, dynamic>;
+      return CautionItem(
+        title: '${map['color'] ?? ''}',
+        description: '${map['avoid'] ?? ''} - ${map['reason'] ?? ''}',
+        tip: map['alternative'] != null ? '대신 ${map['alternative']}' : '',
+        severity: 'medium',
+      );
+    }).toList();
+  }
+
+  List<CautionItem> _parseCautionNumbers(dynamic data) {
+    if (data == null || data is! List) return [];
+    return data.map<CautionItem>((item) {
+      final map = item as Map<String, dynamic>;
+      return CautionItem(
+        title: '숫자 ${map['number'] ?? ''}',
+        description: '${map['avoid'] ?? ''} - ${map['reason'] ?? ''}',
+        tip: map['luckyNumber'] != null ? '대신 ${map['luckyNumber']}' : '',
+        severity: 'medium',
+      );
+    }).toList();
+  }
+
+  List<CautionItem> _parseCautionAnimals(dynamic data) {
+    if (data == null || data is! List) return [];
+    return data.map<CautionItem>((item) {
+      final map = item as Map<String, dynamic>;
+      return CautionItem(
+        title: map['animal'] as String? ?? '',
+        description: '${map['context'] ?? ''} - ${map['reason'] ?? ''}',
+        tip: map['tip'] as String? ?? '',
+        severity: 'medium',
+      );
+    }).toList();
+  }
+
+  List<CautionItem> _parseCautionPlaces(dynamic data) {
+    if (data == null || data is! List) return [];
+    return data.map<CautionItem>((item) {
+      final map = item as Map<String, dynamic>;
+      return CautionItem(
+        title: map['place'] as String? ?? '',
+        description: '${map['timeSlot'] != null ? '(${map['timeSlot']}) ' : ''}${map['reason'] ?? ''}',
+        tip: map['alternative'] != null ? '대신 ${map['alternative']}' : '',
+        severity: 'medium',
+      );
+    }).toList();
+  }
+
+  List<CautionItem> _parseCautionTimes(dynamic data) {
+    if (data == null || data is! List) return [];
+    return data.map<CautionItem>((item) {
+      final map = item as Map<String, dynamic>;
+      return CautionItem(
+        title: map['time'] as String? ?? '',
+        description: '${map['activity'] ?? ''} - ${map['reason'] ?? ''}',
+        tip: map['betterTime'] != null ? '대신 ${map['betterTime']}' : '',
+        severity: 'high',
+      );
+    }).toList();
+  }
+
+  List<CautionItem> _parseCautionDirections(dynamic data) {
+    if (data == null || data is! List) return [];
+    return data.map<CautionItem>((item) {
+      final map = item as Map<String, dynamic>;
+      return CautionItem(
+        title: '${map['direction'] ?? ''} 방향',
+        description: '${map['avoid'] ?? ''} - ${map['reason'] ?? ''}',
+        tip: map['goodDirection'] != null ? '대신 ${map['goodDirection']} 방향' : '',
+        severity: 'medium',
+      );
+    }).toList();
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 📦 CautionItem 데이터 클래스
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+class CautionItem {
+  final String title;
+  final String description;
+  final String tip;
+  final String severity; // high, medium, low
+
+  CautionItem({
+    required this.title,
+    required this.description,
+    required this.tip,
+    required this.severity,
+  });
 }

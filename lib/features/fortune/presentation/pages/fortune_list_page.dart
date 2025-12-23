@@ -15,6 +15,8 @@ import '../../../../presentation/providers/fortune_recommendation_provider.dart'
 import '../providers/fortune_order_provider.dart';
 import '../providers/fortune_categories_provider.dart';
 import '../widgets/fortune_list_tile.dart';
+import '../widgets/fortune_entry_section.dart';
+import '../widgets/fortune_search_overlay.dart';
 import '../../domain/entities/fortune_category.dart';
 
 enum FortuneCategoryType {
@@ -250,6 +252,14 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
           ],
         ),
         actions: [
+          // 검색 버튼
+          TraditionalIconButton(
+            icon: Icons.search_rounded,
+            colorScheme: TraditionalButtonColorScheme.fortune,
+            size: 40,
+            showBorder: false,
+            onPressed: () => _showSearchOverlay(context, categories),
+          ),
           // 전통 스타일 정렬 버튼
           Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -275,6 +285,11 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: CommonAdPlacements.listBottomAd()),
               ),
+
+            // 관상/전통운세 진입 카드 (상단 고정)
+            SliverToBoxAdapter(
+              child: FortuneEntrySection(isDark: isDark),
+            ),
 
             // 즐겨찾기 섹션 (즐겨찾기 우선 정렬일 때만)
             if (showFavoriteSection) ...[
@@ -348,6 +363,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     );
   }
 
+
+  // 검색 오버레이 표시
+  void _showSearchOverlay(BuildContext context, List<FortuneCategory> categories) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FortuneSearchOverlay(categories: categories),
+      ),
+    );
+  }
 
   // 정렬 옵션 선택 바텀시트 (Korean Traditional style)
   void _showSortOptions(BuildContext context) {
@@ -556,7 +580,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   // 카테고리 탭 처리
   void _handleCategoryTap(FortuneCategory category) {
     ref.read(fortuneHapticServiceProvider).buttonTap();
-    String fortuneType = category.type;
+    final String fortuneType = category.type;
 
     // Record visit for recommendation system
     ref.read(fortuneRecommendationProvider.notifier).recordVisit(

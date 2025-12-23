@@ -33,7 +33,7 @@ class FortuneSectionWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Widget cardContent = AppCard(
+    final Widget cardContent = AppCard(
       style: AppCardStyle.outlined,
       padding: const EdgeInsets.all(20),
       child: Column(

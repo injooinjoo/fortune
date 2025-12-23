@@ -526,7 +526,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
           const SizedBox(height: 20),
 
           // 다음 분석 예약
-          NextAnalysisCard(),
+          const NextAnalysisCard(),
           const SizedBox(height: 120), // 버튼 공간 확보
         ],
       ),

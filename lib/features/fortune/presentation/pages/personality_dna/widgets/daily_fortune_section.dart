@@ -95,7 +95,7 @@ class DailyFortuneSection extends StatelessWidget {
                 child: _FortuneInfoCard(
                   title: '행운 번호',
                   content: '${dailyFortune.luckyNumber}',
-                  leading: Text(
+                  leading: const Text(
                     '🎯',
                     style: TextStyle(fontSize: FontConfig.heading4),
                   ),
@@ -315,7 +315,7 @@ class _FortuneDetailRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(icon, style: TextStyle(fontSize: FontConfig.buttonMedium)),
+        Text(icon, style: const TextStyle(fontSize: FontConfig.buttonMedium)),
         const SizedBox(width: 10),
         Expanded(
           child: Column(

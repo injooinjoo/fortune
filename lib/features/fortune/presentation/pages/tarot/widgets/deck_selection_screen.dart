@@ -43,12 +43,12 @@ class DeckSelectionScreen extends StatelessWidget {
                     Container(
                       width: 36,
                       height: 36,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
                           colors: [
-                            const Color(0xFF7C3AED),
-                            const Color(0xFF3B82F6),
+                            Color(0xFF7C3AED),
+                            Color(0xFF3B82F6),
                           ],
                         ),
                       ),

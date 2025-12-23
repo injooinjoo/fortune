@@ -254,14 +254,14 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(DSRadius.md),
-            gradient: RadialGradient(
+            gradient: const RadialGradient(
               center: Alignment.center,
               radius: 1.2,
               colors: [
                 FortuneColors.tarotDark,
                 FortuneColors.tarotDarker,
                 FortuneColors.tarotDarkest],
-              stops: const [0.0, 0.6, 1.0]),
+              stops: [0.0, 0.6, 1.0]),
             boxShadow: [
               if (widget.showGlow)
                 BoxShadow(
@@ -328,7 +328,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 ),
                 
                 // Mystical particles overlay
-                Positioned.fill(
+                const Positioned.fill(
                   child: _FloatingParticlesOverlay(
                     particleCount: 30),
                 ),

@@ -40,12 +40,12 @@ class InitialScreen extends ConsumerWidget {
                   Container(
                     width: 48,
                     height: 48,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFF7C3AED),
-                          const Color(0xFF3B82F6),
+                          Color(0xFF7C3AED),
+                          Color(0xFF3B82F6),
                         ],
                       ),
                     ),
@@ -102,13 +102,13 @@ class InitialScreen extends ConsumerWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            const Color(0xFF1E3A5F),
-                            const Color(0xFF0D1B2A),
+                            Color(0xFF1E3A5F),
+                            Color(0xFF0D1B2A),
                           ],
                         ),
                       ),

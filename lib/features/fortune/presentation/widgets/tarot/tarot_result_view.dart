@@ -436,7 +436,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 onPressed: widget.onNewReading,
                 style: UnifiedButtonStyle.ghost,
                 size: UnifiedButtonSize.medium,
-                icon: Icon(Icons.refresh),
+                icon: const Icon(Icons.refresh),
               ),
             ),
           if (widget.onShare != null) ...[
@@ -447,7 +447,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 onPressed: widget.onShare,
                 style: UnifiedButtonStyle.primary,
                 size: UnifiedButtonSize.medium,
-                icon: Icon(Icons.share),
+                icon: const Icon(Icons.share),
               ),
             ),
           ],

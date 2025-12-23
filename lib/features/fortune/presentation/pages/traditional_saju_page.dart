@@ -150,10 +150,10 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     final colors = context.colors;
 
     if (sajuState.isLoading) {
-      return FortuneLoadingSkeleton(
+      return const FortuneLoadingSkeleton(
         itemCount: 3,
         showHeader: true,
-        loadingMessages: const [
+        loadingMessages: [
           '사주 데이터를 불러오는 중...',
           '오행의 균형을 분석하고 있어요',
           '팔자를 해석하고 있어요...',
@@ -200,10 +200,10 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
 
       // 자동 계산 중
       if (_isAutoCalculating) {
-        return FortuneLoadingSkeleton(
+        return const FortuneLoadingSkeleton(
           itemCount: 3,
           showHeader: true,
-          loadingMessages: const [
+          loadingMessages: [
             '사주를 계산하고 있어요...',
             '만세력을 분석하는 중...',
             '팔자를 정리하고 있어요...',
@@ -248,10 +248,10 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       }
 
       // 기본 로딩 상태
-      return FortuneLoadingSkeleton(
+      return const FortuneLoadingSkeleton(
         itemCount: 3,
         showHeader: true,
-        loadingMessages: const [
+        loadingMessages: [
           '사주 데이터를 확인하고 있어요...',
         ],
       );

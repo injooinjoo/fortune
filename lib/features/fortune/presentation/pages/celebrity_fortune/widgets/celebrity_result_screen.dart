@@ -429,9 +429,9 @@ class _CelebrityHeader extends StatelessWidget {
 
   Color _getCelebrityColor(String name) {
     final colors = [
-      Color(0xFFFF6B6B), Color(0xFF4ECDC4), Color(0xFF45B7D1),
-      Color(0xFF96CEB4), Color(0xFFDDA0DD), Color(0xFFFFD93D),
-      Color(0xFF6C5CE7), Color(0xFFFD79A8), Color(0xFF00B894),
+      const Color(0xFFFF6B6B), const Color(0xFF4ECDC4), const Color(0xFF45B7D1),
+      const Color(0xFF96CEB4), const Color(0xFFDDA0DD), const Color(0xFFFFD93D),
+      const Color(0xFF6C5CE7), const Color(0xFFFD79A8), const Color(0xFF00B894),
     ];
     return colors[name.hashCode % colors.length];
   }
@@ -459,15 +459,15 @@ class _CelebrityHeader extends StatelessWidget {
   List<Color> _getGradeGradient(String grade) {
     switch (grade) {
       case '천생연분':
-        return [Color(0xFFFF6B6B), Color(0xFFFF8E53)];
+        return [const Color(0xFFFF6B6B), const Color(0xFFFF8E53)];
       case '좋음':
-        return [Color(0xFF4ECDC4), Color(0xFF44B09E)];
+        return [const Color(0xFF4ECDC4), const Color(0xFF44B09E)];
       case '보통':
-        return [Color(0xFFFFD93D), Color(0xFFFF9F43)];
+        return [const Color(0xFFFFD93D), const Color(0xFFFF9F43)];
       case '노력필요':
-        return [Color(0xFFA0A0A0), Color(0xFF808080)];
+        return [const Color(0xFFA0A0A0), const Color(0xFF808080)];
       default:
-        return [Color(0xFF6C5CE7), Color(0xFF8A7EFF)];
+        return [const Color(0xFF6C5CE7), const Color(0xFF8A7EFF)];
     }
   }
 
@@ -569,7 +569,7 @@ class _FortuneMessage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.auto_awesome,
             color: DSColors.accentSecondary,
             size: 32,
@@ -619,7 +619,7 @@ class _StrengthsSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.star, color: DSColors.warning, size: 24),
+              const Icon(Icons.star, color: DSColors.warning, size: 24),
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '궁합의 장점',
@@ -647,7 +647,7 @@ class _StrengthsSection extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check_circle, color: DSColors.success, size: 16),
+                  const Icon(Icons.check_circle, color: DSColors.success, size: 16),
                   const SizedBox(width: 6),
                   Flexible(
                     child: Text(
@@ -798,7 +798,7 @@ class _ChallengesSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.warning_amber, color: DSColors.warning, size: 24),
+              const Icon(Icons.warning_amber, color: DSColors.warning, size: 24),
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '함께 극복해야 할 점',
@@ -822,7 +822,7 @@ class _ChallengesSection extends StatelessWidget {
                     color: DSColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.flash_on,
                     color: DSColors.warning,
                     size: 14,
@@ -883,7 +883,7 @@ class _LuckyFactorsSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome, color: DSColors.accentSecondary, size: 24),
+              const Icon(Icons.auto_awesome, color: DSColors.accentSecondary, size: 24),
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '행운 요소',

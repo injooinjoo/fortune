@@ -80,7 +80,7 @@ class TalentInsightsSection extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           talent,
@@ -127,7 +127,7 @@ class TalentInsightsSection extends StatelessWidget {
                               color: colors.accent,
                             ),
                           ),
-                          SizedBox(height: 6),
+                          const SizedBox(height: 6),
                           Text(
                             developmentPath,
                             style: context.bodySmall.copyWith(
@@ -148,7 +148,7 @@ class TalentInsightsSection extends StatelessWidget {
                         color: DSColors.warning,
                       ),
                     ),
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     ...practicalApplications.map((app) => Padding(
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Row(
@@ -185,7 +185,7 @@ class TalentInsightsSection extends StatelessWidget {
                               color: DSColors.success,
                             ),
                           ),
-                          SizedBox(height: 6),
+                          const SizedBox(height: 6),
                           Text(
                             monetizationStrategy,
                             style: context.bodySmall.copyWith(
@@ -215,7 +215,7 @@ class TalentInsightsSection extends StatelessWidget {
                               color: DSColors.warning,
                             ),
                           ),
-                          SizedBox(height: 6),
+                          const SizedBox(height: 6),
                           Text(
                             portfolioBuilding,
                             style: context.bodySmall.copyWith(
@@ -236,7 +236,7 @@ class TalentInsightsSection extends StatelessWidget {
                         color: colors.accent,
                       ),
                     ),
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     ...recommendedResources.map((resource) => Padding(
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Row(

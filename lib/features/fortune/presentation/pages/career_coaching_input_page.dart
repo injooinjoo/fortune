@@ -249,7 +249,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
         child: Stack(
           children: [
             _accordionSections.isEmpty
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : AccordionInputFormWithHeader(
                     header: _buildTitleSection(isDark),
                     sections: _accordionSections,
@@ -327,7 +327,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(field.emoji, style: TextStyle(fontSize: FontConfig.heading3)),
+                Text(field.emoji, style: const TextStyle(fontSize: FontConfig.heading3)),
                 const SizedBox(height: 4),
                 Text(
                   field.title,
@@ -429,7 +429,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(position.emoji, style: TextStyle(fontSize: FontConfig.buttonMedium)),
+                Text(position.emoji, style: const TextStyle(fontSize: FontConfig.buttonMedium)),
                 const SizedBox(width: 8),
                 Text(
                   position.title,
@@ -493,7 +493,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(role.emoji, style: TextStyle(fontSize: FontConfig.heading3)),
+                Text(role.emoji, style: const TextStyle(fontSize: FontConfig.heading3)),
                 const SizedBox(height: 4),
                 Text(
                   role.title,

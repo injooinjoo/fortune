@@ -185,10 +185,10 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   /// 스켈레톤 로딩 화면
   Widget _buildLoadingSkeleton() {
-    return FortuneLoadingSkeleton(
+    return const FortuneLoadingSkeleton(
       itemCount: 3,
       showHeader: true,
-      loadingMessages: const [
+      loadingMessages: [
         '가족 운세를 분석하고 있어요...',
         '사주 데이터를 확인하고 있어요...',
         '맞춤 조언을 준비하고 있어요...',

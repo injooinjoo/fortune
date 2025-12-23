@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/design_system.dart';
 
 /// Fortune 기능의 버튼 위치 및 간격 표준 상수
 class FortuneButtonSpacing {

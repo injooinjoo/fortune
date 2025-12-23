@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'fortune_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 
 /// 운세 결과 카드 - 토스 디자인 시스템 적용
-class FortuneResultCard extends StatelessWidget {
+class FortuneResultCard extends ConsumerWidget {
   final Fortune fortune;
   final String fortuneTitle;
   final VoidCallback? onShare;
@@ -37,9 +39,9 @@ class FortuneResultCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -89,7 +91,7 @@ class FortuneResultCard extends StatelessWidget {
                 .slideY(begin: 0.1, end: 0),
           
           // 액션 버튼
-          _buildActionButtons(context)
+          _buildActionButtons(context, ref)
               .animate()
               .fadeIn(duration: 600.ms, delay: 1200.ms)
               .slideY(begin: 0.2, end: 0),
@@ -381,7 +383,7 @@ class FortuneResultCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
+                const Icon(
                   Icons.check_circle,
                   color: DSColors.success,
                   size: 20,
@@ -416,7 +418,7 @@ class FortuneResultCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
+                const Icon(
                   Icons.warning_amber,
                   color: DSColors.warning,
                   size: 20,
@@ -439,7 +441,7 @@ class FortuneResultCard extends StatelessWidget {
     );
   }
   
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -448,6 +450,9 @@ class FortuneResultCard extends StatelessWidget {
             UnifiedButton(
               text: '공유하기',
               onPressed: () {
+                // 공유 액션 햅틱 피드백
+                ref.read(fortuneHapticServiceProvider).shareAction();
+
                 if (onShare != null) {
                   onShare!();
                 } else {

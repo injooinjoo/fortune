@@ -42,7 +42,7 @@ class MovingTimingPage extends StatelessWidget {
                         drawVerticalLine: false,
                         horizontalInterval: 20,
                         getDrawingHorizontalLine: (value) {
-                          return FlLine(
+                          return const FlLine(
                             color: DSColors.border,
                             strokeWidth: 1,
                           );
@@ -50,8 +50,8 @@ class MovingTimingPage extends StatelessWidget {
                       ),
                       titlesData: FlTitlesData(
                         show: true,
-                        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
@@ -97,7 +97,7 @@ class MovingTimingPage extends StatelessWidget {
                           ),
                           barWidth: 3,
                           isStrokeCapRound: true,
-                          dotData: FlDotData(show: false),
+                          dotData: const FlDotData(show: false),
                           belowBarData: BarAreaData(
                             show: true,
                             gradient: LinearGradient(
@@ -183,7 +183,7 @@ class MovingTimingPage extends StatelessWidget {
                       ),
                     ),
                     if (index == 0)
-                      Icon(
+                      const Icon(
                         Icons.star_rounded,
                         color: DSColors.warning,
                         size: 24,

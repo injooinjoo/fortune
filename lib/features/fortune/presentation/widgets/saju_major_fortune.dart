@@ -68,7 +68,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                 opacity: _titleAnimation,
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.timeline_outlined,
                       color: DSColors.accent,
                       size: 24,
@@ -291,7 +291,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.info_outline,
                   color: DSColors.accent,
                   size: 20,
@@ -333,7 +333,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
               width: 4,
               height: 4,
               margin: const EdgeInsets.only(top: 8),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: DSColors.accent,
                 shape: BoxShape.circle,
               ),

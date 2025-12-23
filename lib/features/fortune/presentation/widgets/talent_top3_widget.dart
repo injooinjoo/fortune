@@ -49,7 +49,7 @@ class TalentTop3Widget extends StatelessWidget {
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             '사주팔자 십성 분석 결과, 당신에게 가장 강한 3가지 재능입니다',
             style: DSTypography.bodySmall.copyWith(
@@ -141,7 +141,7 @@ class _TalentRankCard extends StatelessWidget {
                       _getRankBadge(rank),
                       style: DSTypography.labelMedium,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
                       'TOP $rank',
                       style: DSTypography.labelMedium.copyWith(
@@ -234,7 +234,7 @@ class _TalentRankCard extends StatelessWidget {
                 icon,
                 style: DSTypography.labelMedium,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 title,
                 style: DSTypography.bodySmall.copyWith(
@@ -244,7 +244,7 @@ class _TalentRankCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             content,
             style: DSTypography.bodySmall.copyWith(
@@ -332,7 +332,7 @@ class TalentTop3Summary extends StatelessWidget {
                     talent.emoji,
                     style: DSTypography.headingSmall,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       talent.title,

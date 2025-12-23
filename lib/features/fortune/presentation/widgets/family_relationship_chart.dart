@@ -33,12 +33,12 @@ class FamilyRelationshipChart extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.account_tree,
                 color: DSColors.accent,
                 size: 24,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 '우리 가족 관계도',
                 style: context.heading3.copyWith(
@@ -139,7 +139,7 @@ class FamilyRelationshipChart extends StatelessWidget {
               delay: Duration(milliseconds: members.indexOf(member) * 100),
             ),
         
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         
         Text(
           member.name,
@@ -450,7 +450,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                         return Container(
                           padding: const EdgeInsets.all(8),
                           color: DSColors.backgroundSecondary.withValues(alpha: 0.3),
-                          child: Center(
+                          child: const Center(
                             child: Text('-'),
                           ),
                         );
@@ -510,7 +510,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        SizedBox(width: 4),
+        const SizedBox(width: 4),
         Text(
           label,
           style: context.labelSmall.copyWith(

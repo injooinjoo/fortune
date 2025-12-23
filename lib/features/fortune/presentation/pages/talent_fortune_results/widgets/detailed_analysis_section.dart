@@ -68,7 +68,7 @@ class DetailedAnalysisSection extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, size: 20, color: colors.accent),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,7 +92,7 @@ class DetailedAnalysisSection extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(

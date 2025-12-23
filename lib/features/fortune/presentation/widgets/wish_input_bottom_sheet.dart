@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -41,6 +42,9 @@ class WishInputBottomSheet extends ConsumerStatefulWidget {
 
     // 네비게이션 바 숨기기
     container.read(navigationVisibilityProvider.notifier).hide();
+
+    // 바텀시트 열림 햅틱
+    container.read(fortuneHapticServiceProvider).sheetOpen();
 
     await showModalBottomSheet(
       context: context,
@@ -210,6 +214,7 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
                   setState(() {
                     _selectedCategory = category;
                   });
+                  ref.read(fortuneHapticServiceProvider).selection();
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -314,8 +319,12 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
                   divisions: 4,
                   activeColor: colors.accent,
                   onChanged: (value) {
+                    final newLevel = value.round();
+                    if (newLevel != _urgencyLevel) {
+                      ref.read(fortuneHapticServiceProvider).sliderSnap();
+                    }
                     setState(() {
-                      _urgencyLevel = value.round();
+                      _urgencyLevel = newLevel;
                     });
                   },
                 ),

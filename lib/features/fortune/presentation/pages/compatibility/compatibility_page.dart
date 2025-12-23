@@ -172,10 +172,10 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       debugPrint('  └─ metadata keys: ${fortune.metadata?.keys.toList()}');
 
       // Parse scores from fortune response
-      Map<String, double> scores = {};
+      final Map<String, double> scores = {};
 
       // Extract overall score
-      double overallScore = (fortune.overallScore ?? 75) / 100.0;
+      final double overallScore = (fortune.overallScore ?? 75) / 100.0;
       scores['전체 궁합'] = overallScore;
 
       // Parse detailed scores from fortune content or metadata

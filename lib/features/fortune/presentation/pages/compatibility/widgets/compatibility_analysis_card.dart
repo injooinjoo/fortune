@@ -48,7 +48,7 @@ class CompatibilityAnalysisCard extends StatelessWidget {
                     size: 20,
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Text(
                   '궁합 분석 결과',
                   style: DSTypography.headingSmall.copyWith(
@@ -59,7 +59,7 @@ class CompatibilityAnalysisCard extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             GptStyleTypingText(
               text: fortune.content,

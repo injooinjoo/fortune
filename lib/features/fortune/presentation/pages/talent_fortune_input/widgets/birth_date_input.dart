@@ -30,7 +30,7 @@ class BirthDateInput extends StatelessWidget {
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
             hintText: 'YYYY-MM-DD',
-            prefixIcon: Icon(Icons.calendar_today),
+            prefixIcon: const Icon(Icons.calendar_today),
             filled: true,
             fillColor: colors.backgroundSecondary,
             border: OutlineInputBorder(

@@ -45,7 +45,7 @@ class PersonalityTraitsChips extends StatelessWidget {
               label: Text(trait),
               selected: isSelected,
               onSelected: (selected) {
-                List<String> newTraits = List.from(selectedTraits);
+                final List<String> newTraits = List.from(selectedTraits);
                 
                 if (selected) {
                   if (newTraits.length < maxSelection) {

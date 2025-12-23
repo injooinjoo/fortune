@@ -38,7 +38,7 @@ class OverallScoreCard extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               if (fortune.metadata?['name_compatibility'] != null) ...[
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -88,7 +88,7 @@ class OverallScoreCard extends StatelessWidget {
             animationDuration: 1200,
           ),
 
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           Text(
             fortune.summary ?? '궁합 분석 결과',

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 /// 스타일링 추천 위젯

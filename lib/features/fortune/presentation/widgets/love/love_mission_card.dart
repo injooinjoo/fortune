@@ -27,7 +27,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
 
   double get _completionPercentage {
     if (_completedMissions.isEmpty) return 0;
-    int completed = _completedMissions.where((mission) => mission).length;
+    final int completed = _completedMissions.where((mission) => mission).length;
     return completed / _completedMissions.length;
   }
 
@@ -67,7 +67,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
                   color: DSColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.task_alt,
                   color: DSColors.success,
                   size: 20,
@@ -159,7 +159,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.celebration,
                     color: DSColors.success,
                     size: 20,
@@ -217,7 +217,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: isCompleted
-                  ? Icon(
+                  ? const Icon(
                       Icons.check,
                       color: Colors.white,
                       size: 16,
@@ -251,7 +251,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
                   color: DSColors.success,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.favorite,
                   color: Colors.white,
                   size: 12,

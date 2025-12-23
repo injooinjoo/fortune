@@ -39,7 +39,7 @@ class DnaHeaderWidget extends StatelessWidget {
             child: Opacity(
               opacity: isDark ? 0.06 : 0.10,
               child: Image.asset(
-                'assets/images/minhwa/minhwa_saju_yin_yang.png',
+                'assets/images/minhwa/minhwa_saju_yin_yang.webp',
                 width: 140,
                 height: 140,
                 fit: BoxFit.contain,
@@ -59,7 +59,7 @@ class DnaHeaderWidget extends StatelessWidget {
                 // 이모지
                 Text(
                   dna.emoji,
-                  style: TextStyle(fontSize: FontConfig.emojiMedium),
+                  style: const TextStyle(fontSize: FontConfig.emojiMedium),
                 ),
                 const SizedBox(height: 16),
                 // 타이틀
@@ -141,7 +141,7 @@ class DnaHeaderWidget extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             dna.popularityText,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: FontConfig.primary,
               fontSize: FontConfig.labelMedium,
               fontWeight: FontWeight.w600,
@@ -181,7 +181,7 @@ class DnaHeaderWidget extends StatelessWidget {
               color: DSFortuneColors.getGold(isDark).withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 '🧬',
                 style: TextStyle(fontSize: FontConfig.labelTiny),

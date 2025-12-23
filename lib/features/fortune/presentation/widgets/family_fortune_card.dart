@@ -115,7 +115,7 @@ class FamilyFortuneCard extends StatelessWidget {
               
               // Selection indicator or arrow
               if (isSelected)
-                Icon(
+                const Icon(
                   Icons.check_circle,
                   color: DSColors.accent,
                   size: 24,
@@ -317,7 +317,7 @@ class FamilyActivityCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.auto_awesome,
                     size: 16,
                     color: DSColors.success,
@@ -458,7 +458,7 @@ class FamilyMemberFortuneCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.bolt,
                       size: 14,
                       color: DSColors.warning,
@@ -472,7 +472,7 @@ class FamilyMemberFortuneCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Icon(
+                    const Icon(
                       Icons.schedule,
                       size: 14,
                       color: DSColors.accentSecondary,

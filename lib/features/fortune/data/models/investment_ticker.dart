@@ -18,6 +18,24 @@ enum InvestmentCategory {
 
   const InvestmentCategory(this.label, this.description, this.iconName);
 
+  /// 이미지 경로 반환
+  String get imagePath {
+    switch (this) {
+      case InvestmentCategory.crypto:
+        return 'assets/images/fortune/categories/investment_crypto.png';
+      case InvestmentCategory.krStock:
+        return 'assets/images/fortune/categories/investment_kr_stock.png';
+      case InvestmentCategory.usStock:
+        return 'assets/images/fortune/categories/investment_us_stock.png';
+      case InvestmentCategory.etf:
+        return 'assets/images/fortune/categories/investment_etf.png';
+      case InvestmentCategory.commodity:
+        return 'assets/images/fortune/categories/investment_commodity.png';
+      case InvestmentCategory.realEstate:
+        return 'assets/images/fortune/categories/investment_real_estate.png';
+    }
+  }
+
   /// 카테고리 코드로부터 enum 반환
   static InvestmentCategory fromCode(String code) {
     return InvestmentCategory.values.firstWhere(

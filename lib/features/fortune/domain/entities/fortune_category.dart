@@ -154,6 +154,7 @@ class FortuneCategory {
       'celebrity': Icons.star_rounded,
       'pet': Icons.pets_rounded,
       'family': Icons.family_restroom_rounded,
+      'naming': Icons.child_care_rounded,
     };
     return iconMap[type] ?? Icons.auto_awesome_rounded;
   }
@@ -497,6 +498,19 @@ const List<FortuneCategory> _defaultCategories = [
     iconAsset: 'assets/icons/fortune/family.png',
     gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
     description: '자녀/육아/태교/가족화합',
+    category: 'petFamily',
+    isNew: true,
+  ),
+
+  // ==================== Naming Fortune (작명 운세) ====================
+  FortuneCategory(
+    title: '작명',
+    route: '/naming',
+    type: 'naming',
+    icon: Icons.child_care_rounded,
+    iconAsset: 'assets/icons/fortune/naming.png',
+    gradientColors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+    description: '사주 기반 아기 이름 추천',
     category: 'petFamily',
     isNew: true,
   ),

@@ -77,7 +77,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
       // 결과 표시 UI
       resultBuilder: (context, result) {
         // ✅ result.isBlurred 동기화 + 햅틱 피드백
-        if (_isBlurred != result.isBlurred || _blurredSections.length != result.blurredSections.length) {
+        if (_isBlurred != result.isBlurred ||
+            _blurredSections.length != result.blurredSections.length) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               // ✅ 이사운 결과 공개 시 햅틱 피드백 (최초 1회)
@@ -101,47 +102,73 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
         final data = result.data;
 
         // API에서 받은 데이터 추출 (새 응답 구조에 맞게)
-        final title = FortuneTextCleaner.clean(data['title'] as String? ?? '이사운');
-        final overallFortune = FortuneTextCleaner.cleanNullable(data['overall_fortune'] as String?);
+        final title =
+            FortuneTextCleaner.clean(data['title'] as String? ?? '이사운');
+        final overallFortune = FortuneTextCleaner.cleanNullable(
+            data['overall_fortune'] as String?);
         final score = result.score ?? 50;
 
         // 방위 분석 (객체)
-        final directionAnalysis = data['direction_analysis'] as Map<String, dynamic>?;
+        final directionAnalysis =
+            data['direction_analysis'] as Map<String, dynamic>?;
         final directionContent = directionAnalysis != null
             ? '${FortuneTextCleaner.cleanNullable(directionAnalysis['direction_meaning'] as String?)}\n\n'
-              '오행: ${FortuneTextCleaner.cleanNullable(directionAnalysis['element'] as String?)} - '
-              '${FortuneTextCleaner.cleanNullable(directionAnalysis['element_effect'] as String?)}\n\n'
-              '궁합도: ${directionAnalysis['compatibility'] ?? 0}점\n'
-              '${FortuneTextCleaner.cleanNullable(directionAnalysis['compatibility_reason'] as String?)}'
+                '오행: ${FortuneTextCleaner.cleanNullable(directionAnalysis['element'] as String?)} - '
+                '${FortuneTextCleaner.cleanNullable(directionAnalysis['element_effect'] as String?)}\n\n'
+                '궁합도: ${directionAnalysis['compatibility'] ?? 0}점\n'
+                '${FortuneTextCleaner.cleanNullable(directionAnalysis['compatibility_reason'] as String?)}'
             : '';
 
         // 시기 분석 (객체)
         final timingAnalysis = data['timing_analysis'] as Map<String, dynamic>?;
         final timingContent = timingAnalysis != null
             ? '${FortuneTextCleaner.cleanNullable(timingAnalysis['season_meaning'] as String?)}\n\n'
-              '이달의 운: ${timingAnalysis['month_luck'] ?? 0}점\n'
-              '${FortuneTextCleaner.cleanNullable(timingAnalysis['recommendation'] as String?)}'
+                '이달의 운: ${timingAnalysis['month_luck'] ?? 0}점\n'
+                '${FortuneTextCleaner.cleanNullable(timingAnalysis['recommendation'] as String?)}'
             : '';
 
         // 주의사항 (객체 안의 배열)
         final cautionsData = data['cautions'] as Map<String, dynamic>?;
         final cautions = <String>[];
         if (cautionsData != null) {
-          final movingDay = (cautionsData['moving_day'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
-          final firstWeek = (cautionsData['first_week'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
-          final thingsToAvoid = (cautionsData['things_to_avoid'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+          final movingDay = (cautionsData['moving_day'] as List<dynamic>?)
+                  ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                  .toList() ??
+              [];
+          final firstWeek = (cautionsData['first_week'] as List<dynamic>?)
+                  ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                  .toList() ??
+              [];
+          final thingsToAvoid =
+              (cautionsData['things_to_avoid'] as List<dynamic>?)
+                      ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                      .toList() ??
+                  [];
           cautions.addAll(movingDay);
           cautions.addAll(firstWeek);
           cautions.addAll(thingsToAvoid);
         }
 
         // 추천사항 (객체 안의 배열)
-        final recommendationsData = data['recommendations'] as Map<String, dynamic>?;
+        final recommendationsData =
+            data['recommendations'] as Map<String, dynamic>?;
         final recommendations = <String>[];
         if (recommendationsData != null) {
-          final beforeMoving = (recommendationsData['before_moving'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
-          final movingDayRitual = (recommendationsData['moving_day_ritual'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
-          final afterMoving = (recommendationsData['after_moving'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+          final beforeMoving =
+              (recommendationsData['before_moving'] as List<dynamic>?)
+                      ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                      .toList() ??
+                  [];
+          final movingDayRitual =
+              (recommendationsData['moving_day_ritual'] as List<dynamic>?)
+                      ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                      .toList() ??
+                  [];
+          final afterMoving =
+              (recommendationsData['after_moving'] as List<dynamic>?)
+                      ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                      .toList() ??
+                  [];
           recommendations.addAll(beforeMoving);
           recommendations.addAll(movingDayRitual);
           recommendations.addAll(afterMoving);
@@ -149,31 +176,61 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
 
         // 행운의 날 (객체 안의 배열)
         final luckyDatesData = data['lucky_dates'] as Map<String, dynamic>?;
-        final luckyDates = (luckyDatesData?['recommended_dates'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+        final luckyDates =
+            (luckyDatesData?['recommended_dates'] as List<dynamic>?)
+                    ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                    .toList() ??
+                [];
 
         // 풍수 조언 (객체 안의 문자열)
-        final fengShuiTipsData = data['feng_shui_tips'] as Map<String, dynamic>?;
-        final fengShuiEntrance = FortuneTextCleaner.cleanNullable(fengShuiTipsData?['entrance'] as String?);
-        final fengShuiLivingRoom = FortuneTextCleaner.cleanNullable(fengShuiTipsData?['living_room'] as String?);
-        final fengShuiBedroom = FortuneTextCleaner.cleanNullable(fengShuiTipsData?['bedroom'] as String?);
-        final fengShuiKitchen = FortuneTextCleaner.cleanNullable(fengShuiTipsData?['kitchen'] as String?);
+        final fengShuiTipsData =
+            data['feng_shui_tips'] as Map<String, dynamic>?;
+        final fengShuiEntrance = FortuneTextCleaner.cleanNullable(
+            fengShuiTipsData?['entrance'] as String?);
+        final fengShuiLivingRoom = FortuneTextCleaner.cleanNullable(
+            fengShuiTipsData?['living_room'] as String?);
+        final fengShuiBedroom = FortuneTextCleaner.cleanNullable(
+            fengShuiTipsData?['bedroom'] as String?);
+        final fengShuiKitchen = FortuneTextCleaner.cleanNullable(
+            fengShuiTipsData?['kitchen'] as String?);
 
         // 행운 아이템 (객체 안의 배열)
         final luckyItemsData = data['lucky_items'] as Map<String, dynamic>?;
-        final luckyItems = (luckyItemsData?['items'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
-        final luckyColors = (luckyItemsData?['colors'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
-        final luckyPlants = (luckyItemsData?['plants'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+        final luckyItems = (luckyItemsData?['items'] as List<dynamic>?)
+                ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                .toList() ??
+            [];
+        final luckyColors = (luckyItemsData?['colors'] as List<dynamic>?)
+                ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                .toList() ??
+            [];
+        final luckyPlants = (luckyItemsData?['plants'] as List<dynamic>?)
+                ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                .toList() ??
+            [];
 
         // 지형 분석 (배산임수, 사신사)
-        final terrainAnalysis = data['terrain_analysis'] as Map<String, dynamic>?;
-        final terrainType = FortuneTextCleaner.cleanNullable(terrainAnalysis?['terrain_type'] as String?);
-        final fengShuiQuality = terrainAnalysis?['feng_shui_quality'] as int? ?? 75;
-        final qualityDescription = FortuneTextCleaner.cleanNullable(terrainAnalysis?['quality_description'] as String?);
-        final fourGuardians = terrainAnalysis?['four_guardians'] as Map<String, dynamic>?;
-        final waterEnergy = FortuneTextCleaner.cleanNullable(terrainAnalysis?['water_energy'] as String?);
-        final mountainEnergy = FortuneTextCleaner.cleanNullable(terrainAnalysis?['mountain_energy'] as String?);
-        final energyFlow = FortuneTextCleaner.cleanNullable(terrainAnalysis?['energy_flow'] as String?);
-        final terrainRecommendations = (terrainAnalysis?['recommendations'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+        final terrainAnalysis =
+            data['terrain_analysis'] as Map<String, dynamic>?;
+        final terrainType = FortuneTextCleaner.cleanNullable(
+            terrainAnalysis?['terrain_type'] as String?);
+        final fengShuiQuality =
+            terrainAnalysis?['feng_shui_quality'] as int? ?? 75;
+        final qualityDescription = FortuneTextCleaner.cleanNullable(
+            terrainAnalysis?['quality_description'] as String?);
+        final fourGuardians =
+            terrainAnalysis?['four_guardians'] as Map<String, dynamic>?;
+        final waterEnergy = FortuneTextCleaner.cleanNullable(
+            terrainAnalysis?['water_energy'] as String?);
+        final mountainEnergy = FortuneTextCleaner.cleanNullable(
+            terrainAnalysis?['mountain_energy'] as String?);
+        final energyFlow = FortuneTextCleaner.cleanNullable(
+            terrainAnalysis?['energy_flow'] as String?);
+        final terrainRecommendations =
+            (terrainAnalysis?['recommendations'] as List<dynamic>?)
+                    ?.map((e) => FortuneTextCleaner.clean(e.toString()))
+                    .toList() ??
+                [];
 
         // 요약 키워드
         final summaryData = data['summary'] as Map<String, dynamic>?;
@@ -226,7 +283,9 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         colors: colors,
                         sectionIndex: 1,
                         onTypingComplete: () {
-                          if (mounted) setState(() => _currentTypingSection = 2);
+                          if (mounted) {
+                            setState(() => _currentTypingSection = 2);
+                          }
                         },
                       ),
                     ),
@@ -246,7 +305,9 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         sectionIndex: 2,
                         onTypingComplete: () {
                           // 마지막 섹션 완료
-                          if (mounted) setState(() => _currentTypingSection = 3);
+                          if (mounted) {
+                            setState(() => _currentTypingSection = 3);
+                          }
                         },
                       ),
                     ),
@@ -290,12 +351,17 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                       isBlurred: _isBlurred,
                       blurredSections: _blurredSections,
                       sectionKey: 'lucky_dates',
-                      child: _buildLuckyDatesCard(luckyDates, colors),
+                      child: _buildLuckyDatesCard(
+                        luckyDates,
+                        colors,
+                      ),
                     ),
                   const SizedBox(height: 16),
 
                   // 풍수 조언 (블러)
-                  if (fengShuiTipsData != null && (fengShuiEntrance.isNotEmpty || fengShuiLivingRoom.isNotEmpty))
+                  if (fengShuiTipsData != null &&
+                      (fengShuiEntrance.isNotEmpty ||
+                          fengShuiLivingRoom.isNotEmpty))
                     UnifiedBlurWrapper(
                       isBlurred: _isBlurred,
                       blurredSections: _blurredSections,
@@ -311,7 +377,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   const SizedBox(height: 16),
 
                   // 행운 아이템 (블러)
-                  if (luckyItemsData != null && (luckyItems.isNotEmpty || luckyColors.isNotEmpty))
+                  if (luckyItemsData != null &&
+                      (luckyItems.isNotEmpty || luckyColors.isNotEmpty))
                     UnifiedBlurWrapper(
                       isBlurred: _isBlurred,
                       blurredSections: _blurredSections,
@@ -516,6 +583,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
     required DSColorScheme colors,
     int? sectionIndex,
     VoidCallback? onTypingComplete,
+    String? imagePath,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -530,11 +598,23 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   color: DSColors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  color: DSColors.accent,
-                  size: 20,
-                ),
+                child: imagePath != null
+                    ? Image.asset(
+                        imagePath,
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          icon,
+                          color: DSColors.accent,
+                          size: 20,
+                        ),
+                      )
+                    : Icon(
+                        icon,
+                        color: DSColors.accent,
+                        size: 20,
+                      ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -577,6 +657,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
     required List<String> items,
     required Color color,
     required DSColorScheme colors,
+    String? imagePath,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -591,11 +672,23 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 20,
-                ),
+                child: imagePath != null
+                    ? Image.asset(
+                        imagePath,
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          icon,
+                          color: color,
+                          size: 20,
+                        ),
+                      )
+                    : Icon(
+                        icon,
+                        color: color,
+                        size: 20,
+                      ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -611,7 +704,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             final index = entry.key;
             final item = entry.value;
             return Padding(
-              padding: EdgeInsets.only(bottom: index < items.length - 1 ? 12 : 0),
+              padding:
+                  EdgeInsets.only(bottom: index < items.length - 1 ? 12 : 0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -644,7 +738,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
   }
 
   /// 행운의 날 카드
-  Widget _buildLuckyDatesCard(List<String> dates, DSColorScheme colors) {
+  Widget _buildLuckyDatesCard(List<String> dates, DSColorScheme colors,
+      {String? imagePath}) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
@@ -666,11 +761,24 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   color: DSColors.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  Icons.event_available,
-                  color: DSColors.accent,
-                  size: 20,
-                ),
+                child: imagePath != null
+                    ? Image.asset(
+                        imagePath,
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                          Icons.event_available,
+                          color: DSColors.accent,
+                          size: 20,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.event_available,
+                        color: DSColors.accent,
+                        size: 20,
+                      ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -687,7 +795,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             runSpacing: 8,
             children: dates.map((date) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: DSColors.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -718,6 +827,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
     required String bedroom,
     required String kitchen,
     required DSColorScheme colors,
+    String? imagePath,
   }) {
     final tips = [
       {'icon': '🚪', 'title': '현관', 'content': entrance},
@@ -741,11 +851,24 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   color: DSColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  Icons.home_rounded,
-                  color: DSColors.success,
-                  size: 20,
-                ),
+                child: imagePath != null
+                    ? Image.asset(
+                        imagePath,
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                          Icons.home_rounded,
+                          color: DSColors.success,
+                          size: 20,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.home_rounded,
+                        color: DSColors.success,
+                        size: 20,
+                      ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -761,7 +884,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             final index = entry.key;
             final tip = entry.value;
             return Padding(
-              padding: EdgeInsets.only(bottom: index < tips.length - 1 ? 16 : 0),
+              padding:
+                  EdgeInsets.only(bottom: index < tips.length - 1 ? 16 : 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -826,7 +950,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   color: DSColors.warning.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.auto_awesome_rounded,
                   color: DSColors.warning,
                   size: 20,
@@ -854,32 +978,32 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             ),
             const SizedBox(height: 12),
             ...items.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 6),
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: DSColors.warning,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      item,
-                      style: context.bodyLarge.copyWith(
-                        color: colors.textPrimary,
-                        height: 1.6,
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 6),
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: DSColors.warning,
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          item,
+                          style: context.bodyLarge.copyWith(
+                            color: colors.textPrimary,
+                            height: 1.6,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
 
           // 행운의 색상
@@ -896,24 +1020,27 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: luckyColors.map((color) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: DSColors.warning.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: DSColors.warning.withValues(alpha: 0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  color,
-                  style: context.bodyLarge.copyWith(
-                    color: DSColors.warning,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              )).toList(),
+              children: luckyColors
+                  .map((color) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: DSColors.warning.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: DSColors.warning.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          color,
+                          style: context.bodyLarge.copyWith(
+                            color: DSColors.warning,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ))
+                  .toList(),
             ),
           ],
 
@@ -931,24 +1058,27 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: plants.map((plant) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: DSColors.success.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: DSColors.success.withValues(alpha: 0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  plant,
-                  style: context.bodyLarge.copyWith(
-                    color: DSColors.success,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              )).toList(),
+              children: plants
+                  .map((plant) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: DSColors.success.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: DSColors.success.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          plant,
+                          style: context.bodyLarge.copyWith(
+                            color: DSColors.success,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ))
+                  .toList(),
             ),
           ],
         ],
@@ -967,6 +1097,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
     required String energyFlow,
     required List<String> recommendations,
     required DSColorScheme colors,
+    String? imagePath,
   }) {
     // 지형 점수 색상
     Color qualityColor;
@@ -993,11 +1124,24 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   color: const Color(0xFF8B7355).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
-                  Icons.landscape_rounded,
-                  color: Color(0xFF8B7355),
-                  size: 20,
-                ),
+                child: imagePath != null
+                    ? Image.asset(
+                        imagePath,
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                          Icons.landscape_rounded,
+                          color: Color(0xFF8B7355),
+                          size: 20,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.landscape_rounded,
+                        color: Color(0xFF8B7355),
+                        size: 20,
+                      ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -1066,21 +1210,50 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               ),
             ),
             const SizedBox(height: 12),
-            _buildGuardianItem('🐉', '좌청룡', FortuneTextCleaner.cleanNullable(fourGuardians['left_azure_dragon'] as String?), const Color(0xFF2196F3), colors),
-            _buildGuardianItem('🐯', '우백호', FortuneTextCleaner.cleanNullable(fourGuardians['right_white_tiger'] as String?), const Color(0xFF9E9E9E), colors),
-            _buildGuardianItem('🦅', '전주작', FortuneTextCleaner.cleanNullable(fourGuardians['front_red_phoenix'] as String?), const Color(0xFFF44336), colors),
-            _buildGuardianItem('🐢', '후현무', FortuneTextCleaner.cleanNullable(fourGuardians['back_black_turtle'] as String?), const Color(0xFF424242), colors),
+            _buildGuardianItem(
+                '🐉',
+                '좌청룡',
+                FortuneTextCleaner.cleanNullable(
+                    fourGuardians['left_azure_dragon'] as String?),
+                const Color(0xFF2196F3),
+                colors),
+            _buildGuardianItem(
+                '🐯',
+                '우백호',
+                FortuneTextCleaner.cleanNullable(
+                    fourGuardians['right_white_tiger'] as String?),
+                const Color(0xFF9E9E9E),
+                colors),
+            _buildGuardianItem(
+                '🦅',
+                '전주작',
+                FortuneTextCleaner.cleanNullable(
+                    fourGuardians['front_red_phoenix'] as String?),
+                const Color(0xFFF44336),
+                colors),
+            _buildGuardianItem(
+                '🐢',
+                '후현무',
+                FortuneTextCleaner.cleanNullable(
+                    fourGuardians['back_black_turtle'] as String?),
+                const Color(0xFF424242),
+                colors),
           ],
 
           // 수기/산기/기의 흐름
-          if (waterEnergy.isNotEmpty || mountainEnergy.isNotEmpty || energyFlow.isNotEmpty) ...[
+          if (waterEnergy.isNotEmpty ||
+              mountainEnergy.isNotEmpty ||
+              energyFlow.isNotEmpty) ...[
             const SizedBox(height: 20),
             if (waterEnergy.isNotEmpty)
-              _buildEnergySection('💧', '수기(水氣)', waterEnergy, const Color(0xFF2196F3), colors),
+              _buildEnergySection(
+                  '💧', '수기(水氣)', waterEnergy, const Color(0xFF2196F3), colors),
             if (mountainEnergy.isNotEmpty)
-              _buildEnergySection('⛰️', '산기(山氣)', mountainEnergy, const Color(0xFF66BB6A), colors),
+              _buildEnergySection('⛰️', '산기(山氣)', mountainEnergy,
+                  const Color(0xFF66BB6A), colors),
             if (energyFlow.isNotEmpty)
-              _buildEnergySection('🌀', '기의 흐름', energyFlow, const Color(0xFFAB47BC), colors),
+              _buildEnergySection(
+                  '🌀', '기의 흐름', energyFlow, const Color(0xFFAB47BC), colors),
           ],
 
           // 지형 보완 방법
@@ -1095,32 +1268,32 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             ),
             const SizedBox(height: 12),
             ...recommendations.map((rec) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 6),
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF8B7355),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      rec,
-                      style: context.bodyLarge.copyWith(
-                        color: colors.textPrimary,
-                        height: 1.6,
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 6),
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF8B7355),
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          rec,
+                          style: context.bodyLarge.copyWith(
+                            color: colors.textPrimary,
+                            height: 1.6,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
         ],
       ),
@@ -1128,7 +1301,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
   }
 
   /// 사신사 개별 항목
-  Widget _buildGuardianItem(String emoji, String title, String description, Color color, DSColorScheme colors) {
+  Widget _buildGuardianItem(String emoji, String title, String description,
+      Color color, DSColorScheme colors) {
     if (description.isEmpty) return const SizedBox.shrink();
 
     return Padding(
@@ -1177,7 +1351,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
   }
 
   /// 에너지 섹션 (수기/산기/기의 흐름)
-  Widget _buildEnergySection(String emoji, String title, String content, Color color, DSColorScheme colors) {
+  Widget _buildEnergySection(String emoji, String title, String content,
+      Color color, DSColorScheme colors) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(

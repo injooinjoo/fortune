@@ -74,7 +74,8 @@ class BiorhythmHanjiCard extends StatelessWidget {
                     bottom: 12,
                     child: _SealStamp(
                       text: sealText ?? '운',
-                      color: accentColor ?? DSBiorhythmColors.getGoldAccent(isDark),
+                      color: accentColor ??
+                          DSBiorhythmColors.getGoldAccent(isDark),
                     ),
                   ),
               ],
@@ -293,7 +294,7 @@ class HanjiCardPainter extends CustomPainter {
 
     // Top scroll rod
     canvas.drawLine(
-      Offset(20, 4),
+      const Offset(20, 4),
       Offset(size.width - 20, 4),
       Paint()
         ..color = rodColor
@@ -319,7 +320,7 @@ class HanjiCardPainter extends CustomPainter {
 
     // Top hanging rod
     canvas.drawLine(
-      Offset(10, 2),
+      const Offset(10, 2),
       Offset(size.width - 10, 2),
       Paint()
         ..color = rodColor.withValues(alpha: 0.6)
@@ -388,7 +389,7 @@ class _SealStamp extends StatelessWidget {
   const _SealStamp({
     required this.text,
     required this.color,
-    this.size = 32,
+    this.size = 24.0,
   });
 
   @override

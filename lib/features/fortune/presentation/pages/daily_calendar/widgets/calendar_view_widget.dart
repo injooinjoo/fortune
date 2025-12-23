@@ -56,7 +56,7 @@ class CalendarViewWidget extends StatelessWidget {
           outsideDaysVisible: false,
           weekendTextStyle: const TextStyle(color: DSColors.error, fontFamily: FontConfig.primary),
           holidayTextStyle: const TextStyle(color: DSColors.error, fontFamily: FontConfig.primary),
-          selectedDecoration: BoxDecoration(
+          selectedDecoration: const BoxDecoration(
             color: AppTheme.primaryColor,
             shape: BoxShape.circle,
           ),
@@ -74,8 +74,8 @@ class CalendarViewWidget extends StatelessWidget {
         headerStyle: HeaderStyle(
           formatButtonVisible: false,
           titleCentered: true,
-          leftChevronIcon: Icon(Icons.chevron_left, color: AppTheme.primaryColor),
-          rightChevronIcon: Icon(Icons.chevron_right, color: AppTheme.primaryColor),
+          leftChevronIcon: const Icon(Icons.chevron_left, color: AppTheme.primaryColor),
+          rightChevronIcon: const Icon(Icons.chevron_right, color: AppTheme.primaryColor),
           titleTextStyle: (theme.textTheme.titleLarge ?? const TextStyle()).copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -193,7 +193,7 @@ class CalendarViewWidget extends StatelessWidget {
                   ),
                   child: Text(
                     '${eventInfo!.deviceEventCount}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 8, // 예외: 초소형 배지 숫자
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

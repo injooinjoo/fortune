@@ -44,7 +44,7 @@ class DetailedScoresCard extends StatelessWidget {
                     size: 20,
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Text(
                   '세부 궁합 분석',
                   style: DSTypography.headingSmall.copyWith(

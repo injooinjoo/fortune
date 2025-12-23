@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import '../../../../core/constants/tarot_metadata.dart';
@@ -242,10 +241,10 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
             widthFactor: progress,
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
-                    const Color(0xFF9333EA),
-                    const Color(0xFF7C3AED)]),
+                    Color(0xFF9333EA),
+                    Color(0xFF7C3AED)]),
                 borderRadius: BorderRadius.circular(3),
                 boxShadow: [
                   BoxShadow(
@@ -318,13 +317,13 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                       ),
                     ),
                     // Center icon
-                    Icon(
+                    const Icon(
                       Icons.auto_awesome,
                       size: 80,
                       color: Colors.white,
                       shadows: [
                         Shadow(
-                          color: const Color(0xFF9333EA),
+                          color: Color(0xFF9333EA),
                           blurRadius: 20),
                       ],
                     ),

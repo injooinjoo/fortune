@@ -119,7 +119,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
               children: [
                 // Main bubble
                 GlassContainer(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   gradient: LinearGradient(
                     colors: widget.isCurrentCard
                         ? [
@@ -267,7 +267,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
       final text = line.substring(2).trim();
       
       return Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: _getCalloutColor(emoji).withValues(alpha:0.1),
           borderRadius: BorderRadius.circular(DSRadius.sm),

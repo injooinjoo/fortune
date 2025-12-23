@@ -91,7 +91,7 @@ class SajuHapchungWidget extends StatelessWidget {
   Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.swap_horizontal_circle_outlined,
           color: DSColors.accent,
           size: 20,

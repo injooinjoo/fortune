@@ -70,11 +70,11 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
+        const Icon(
           Icons.stars,
           color: DSColors.accentTertiary,
           size: 24),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Text(
           '띠별 궁합 관계도',
           style: DSTypography.headingMedium.copyWith(
@@ -253,7 +253,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
           children: [
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold)),
             Text(

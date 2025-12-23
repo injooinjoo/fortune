@@ -40,7 +40,7 @@ class DateInfoWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.calendar_today, color: AppTheme.primaryColor, size: 20),
+              const Icon(Icons.calendar_today, color: AppTheme.primaryColor, size: 20),
               const SizedBox(width: 8),
               Text(
                 DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR').format(selectedDate),

@@ -162,7 +162,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
       debugPrint('💎 [FaceReadingFortunePage] Premium 상태: $isPremium (real: $realPremium)');
 
-      Map<String, dynamic> inputConditions = {
+      final Map<String, dynamic> inputConditions = {
         'analysis_type': 'comprehensive',
         'include_character': true,
         'include_fortune': true,

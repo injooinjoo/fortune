@@ -22,10 +22,10 @@ class CategoryHeader extends StatelessWidget {
             color: colors.backgroundSecondary,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            category.icon,
-            size: 20,
-            color: colors.textSecondary,
+          padding: const EdgeInsets.all(8),
+          child: Image.asset(
+            category.imagePath,
+            fit: BoxFit.contain,
           ),
         ),
         const SizedBox(width: 14),

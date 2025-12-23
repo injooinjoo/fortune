@@ -79,7 +79,7 @@ class EventDetailInputForm extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
 
           // 감정 상태 선택
           Text(
@@ -122,7 +122,7 @@ class EventDetailInputForm extends StatelessWidget {
                             ? emotion.color
                             : (isDark ? DSColors.textSecondary : DSColors.textSecondary),
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         emotion.label,
                         style: DSTypography.bodySmall.copyWith(
@@ -177,7 +177,7 @@ class EventDetailInputForm extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             '궁합 분석을 받을 수 있어요',
                             style: DSTypography.bodySmall.copyWith(

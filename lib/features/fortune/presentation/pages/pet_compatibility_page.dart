@@ -37,10 +37,12 @@ class PetCompatibilityPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<PetCompatibilityPage> createState() => _PetCompatibilityPageState();
+  ConsumerState<PetCompatibilityPage> createState() =>
+      _PetCompatibilityPageState();
 }
 
-class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> with TickerProviderStateMixin {
+class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage>
+    with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -132,7 +134,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               : _buildPetSelection(petState),
 
           // ✅ FloatingBottomButton (블러 상태일 때만, 구독자 제외)
-          if (_fortune != null && _fortune!.isBlurred && !ref.watch(isPremiumProvider))
+          if (_fortune != null &&
+              _fortune!.isBlurred &&
+              !ref.watch(isPremiumProvider))
             Positioned(
               left: 20,
               right: 20,
@@ -142,7 +146,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 onPressed: _showAdAndUnblur,
                 style: UnifiedButtonStyle.primary,
                 size: UnifiedButtonSize.large,
-                icon: Icon(Icons.play_arrow, color: Colors.white),
+                icon: const Icon(Icons.play_arrow, color: Colors.white),
                 width: double.infinity,
               ),
             ),
@@ -153,7 +157,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
   Widget _buildPetSelection(PetState petState) {
     if (!_isInitialized) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     return AnimatedBuilder(
@@ -162,8 +166,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         return Opacity(
           opacity: _fadeAnimation.value,
           child: petState.hasPets
-            ? _buildPetList(petState.pets)
-            : _buildEmptyState(),
+              ? _buildPetList(petState.pets)
+              : _buildEmptyState(),
         );
       },
     );
@@ -192,23 +196,25 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         if (petId.isEmpty) return false;
 
         final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('반려동물 삭제'),
-            content: Text('${pet.name}을(를) 삭제하시겠습니까?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('취소'),
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('반려동물 삭제'),
+                content: Text('${pet.name}을(를) 삭제하시겠습니까?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: const Text('취소'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    style:
+                        TextButton.styleFrom(foregroundColor: DSColors.error),
+                    child: const Text('삭제'),
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: TextButton.styleFrom(foregroundColor: DSColors.error),
-                child: const Text('삭제'),
-              ),
-            ],
-          ),
-        ) ?? false;
+            ) ??
+            false;
 
         if (confirmed) {
           await ref.read(petProvider.notifier).deletePet(petId);
@@ -253,7 +259,15 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Center(
-                    child: Text(species.emoji, style: context.displaySmall),
+                    child: species.imagePath != null
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              species.imagePath!,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                        : Text(species.emoji, style: context.displaySmall),
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -274,13 +288,15 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                             Text(
                               PetGender.fromString(pet.gender).symbol,
                               style: context.bodyMedium.copyWith(
-                                color: pet.gender == '수컷' ? colors.accent : DSColors.error,
+                                color: pet.gender == '수컷'
+                                    ? colors.accent
+                                    : DSColors.error,
                               ),
                             ),
                           ],
                         ],
                       ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Text(
                         '${species.displayName} • ${pet.age}세${pet.breed != null ? ' • ${pet.breed}' : ''}',
                         style: context.bodyMedium.copyWith(
@@ -290,7 +306,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                       if (pet.personality != null) ...[
                         const SizedBox(height: 4),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: colors.accent.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
@@ -312,16 +329,18 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.arrow_forward_ios, size: 16, color: colors.accent),
+                  child: Icon(Icons.arrow_forward_ios,
+                      size: 16, color: colors.accent),
                 ),
               ],
             ),
           ),
         ),
       ),
-    ).animate(delay: Duration(milliseconds: 100 * index))
-     .slideX(begin: 0.3)
-     .fadeIn(duration: 600.ms);
+    )
+        .animate(delay: Duration(milliseconds: 100 * index))
+        .slideX(begin: 0.3)
+        .fadeIn(duration: 600.ms);
   }
 
   Widget _buildEmptyState() {
@@ -353,14 +372,14 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               ),
               child: Icon(Icons.pets, size: 40, color: colors.accent),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             Text(
               '등록된 반려동물이 없어요',
               style: context.heading2.copyWith(
                 color: colors.textPrimary,
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               '오른쪽 위 + 버튼을 눌러\n반려동물을 등록해보세요',
               textAlign: TextAlign.center,
@@ -379,9 +398,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           ],
         ),
       ),
-    ).animate()
-     .scale(begin: const Offset(0.8, 0.8))
-     .fadeIn(duration: 800.ms);
+    ).animate().scale(begin: const Offset(0.8, 0.8)).fadeIn(duration: 800.ms);
   }
 
   void _showAddPetBottomSheet() {
@@ -407,7 +424,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: StatefulBuilder(
         builder: (context, setModalState) {
@@ -432,7 +449,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     ),
                   ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 // Header
                 Text(
@@ -441,7 +458,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     color: colors.textPrimary,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   '반려동물의 정보를 입력해주세요',
                   style: context.bodyLarge.copyWith(
@@ -463,7 +480,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                         _buildFieldLabel('종류', colors),
                         const SizedBox(height: 8),
                         _buildSpeciesSelector(setModalState),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Name input
                         _buildFieldLabel('이름', colors),
@@ -474,7 +491,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                           colors: colors,
                           onChanged: (_) => setModalState(() {}),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Age input
                         _buildFieldLabel('나이', colors),
@@ -487,7 +504,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                           suffix: '세',
                           onChanged: (_) => setModalState(() {}),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Gender selection
                         _buildFieldLabel('성별', colors),
@@ -497,20 +514,21 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                         const SizedBox(height: 32),
 
                         // === 선택 정보 섹션 ===
-                        _buildSectionTitle('선택 정보', colors, subtitle: '더 정확한 운세를 위해'),
+                        _buildSectionTitle('선택 정보', colors,
+                            subtitle: '더 정확한 운세를 위해'),
                         const SizedBox(height: 12),
 
                         // Breed selection
                         _buildFieldLabel('품종', colors, isOptional: true),
                         const SizedBox(height: 8),
                         _buildBreedSelector(setModalState, colors),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Personality selection
                         _buildFieldLabel('성격', colors, isOptional: true),
                         const SizedBox(height: 8),
                         _buildPersonalitySelector(setModalState, colors),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Neutered selection
                         _buildFieldLabel('중성화 여부', colors, isOptional: true),
@@ -529,7 +547,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     final petState = ref.watch(petProvider);
                     return UnifiedButton(
                       text: '등록하기',
-                      onPressed: _canRegisterPet() ? () => _registerPet(context) : null,
+                      onPressed: _canRegisterPet()
+                          ? () => _registerPet(context)
+                          : null,
                       isLoading: petState.isCreating,
                       size: UnifiedButtonSize.large,
                       width: double.infinity,
@@ -544,7 +564,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
-  Widget _buildSectionTitle(String title, DSColorScheme colors, {String? subtitle}) {
+  Widget _buildSectionTitle(String title, DSColorScheme colors,
+      {String? subtitle}) {
     return Row(
       children: [
         Text(
@@ -566,7 +587,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
-  Widget _buildFieldLabel(String label, DSColorScheme colors, {bool isOptional = false}) {
+  Widget _buildFieldLabel(String label, DSColorScheme colors,
+      {bool isOptional = false}) {
     return Row(
       children: [
         Text(
@@ -620,7 +642,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: colors.accent, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       ),
       onChanged: onChanged,
     );
@@ -628,7 +651,14 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
   Widget _buildSpeciesSelector(StateSetter setModalState) {
     final colors = context.colors;
-    final mainSpecies = [PetSpecies.dog, PetSpecies.cat, PetSpecies.rabbit, PetSpecies.hamster, PetSpecies.bird, PetSpecies.other];
+    final mainSpecies = [
+      PetSpecies.dog,
+      PetSpecies.cat,
+      PetSpecies.rabbit,
+      PetSpecies.hamster,
+      PetSpecies.bird,
+      PetSpecies.other
+    ];
 
     return Wrap(
       spacing: 10,
@@ -644,8 +674,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: isSelected
-                ? colors.accent.withValues(alpha: 0.1)
-                : (colors.surfaceSecondary),
+                  ? colors.accent.withValues(alpha: 0.1)
+                  : (colors.surfaceSecondary),
               border: Border.all(
                 color: isSelected ? colors.accent : (colors.border),
                 width: isSelected ? 2 : 1,
@@ -655,8 +685,22 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(species.emoji, style: context.bodyLarge),
-                SizedBox(width: 6),
+                if (species.imagePath != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: Image.asset(
+                      species.imagePath!,
+                      width: 24,
+                      height: 24,
+                      fit: BoxFit.contain,
+                    ),
+                  )
+                else
+                  Text(species.emoji, style: context.bodyLarge),
+                if (species.imagePath != null)
+                  const SizedBox(width: 0)
+                else
+                  const SizedBox(width: 6),
                 Text(
                   species.displayName,
                   style: context.bodyMedium.copyWith(
@@ -680,12 +724,13 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           child: GestureDetector(
             onTap: () => setModalState(() => _selectedGender = gender),
             child: Container(
-              margin: EdgeInsets.only(right: gender != PetGender.unknown ? 10 : 0),
+              margin:
+                  EdgeInsets.only(right: gender != PetGender.unknown ? 10 : 0),
               padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
                 color: isSelected
-                  ? colors.accent.withValues(alpha: 0.1)
-                  : (colors.surfaceSecondary),
+                    ? colors.accent.withValues(alpha: 0.1)
+                    : (colors.surfaceSecondary),
                 border: Border.all(
                   color: isSelected ? colors.accent : (colors.border),
                   width: isSelected ? 2 : 1,
@@ -699,16 +744,22 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     style: TextStyle(
                       fontSize: FontConfig.heading4,
                       color: isSelected
-                        ? (gender == PetGender.male ? colors.accent : gender == PetGender.female ? DSColors.error : colors.textTertiary)
-                        : colors.textTertiary,
+                          ? (gender == PetGender.male
+                              ? colors.accent
+                              : gender == PetGender.female
+                                  ? DSColors.error
+                                  : colors.textTertiary)
+                          : colors.textTertiary,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     gender.displayName,
                     style: context.bodySmall.copyWith(
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                      color: isSelected ? colors.accent : (colors.textSecondary),
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
+                      color:
+                          isSelected ? colors.accent : (colors.textSecondary),
                     ),
                   ),
                 ],
@@ -754,7 +805,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
-  Widget _buildPersonalitySelector(StateSetter setModalState, DSColorScheme colors) {
+  Widget _buildPersonalitySelector(
+      StateSetter setModalState, DSColorScheme colors) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -768,8 +820,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
-                ? colors.accent.withValues(alpha: 0.1)
-                : (colors.surfaceSecondary),
+                  ? colors.accent.withValues(alpha: 0.1)
+                  : (colors.surfaceSecondary),
               border: Border.all(
                 color: isSelected ? colors.accent : (colors.border),
                 width: isSelected ? 2 : 1,
@@ -780,7 +832,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(personality.emoji, style: context.bodySmall),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
                   personality.displayName,
                   style: context.bodySmall.copyWith(
@@ -796,7 +848,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
-  Widget _buildNeuteredSelector(StateSetter setModalState, DSColorScheme colors) {
+  Widget _buildNeuteredSelector(
+      StateSetter setModalState, DSColorScheme colors) {
     return Row(
       children: [
         _buildNeuteredOption(setModalState, colors, true, '완료'),
@@ -808,7 +861,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
-  Widget _buildNeuteredOption(StateSetter setModalState, DSColorScheme colors, bool? value, String label) {
+  Widget _buildNeuteredOption(StateSetter setModalState, DSColorScheme colors,
+      bool? value, String label) {
     final isSelected = _isNeutered == value;
     return Expanded(
       child: GestureDetector(
@@ -817,8 +871,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
-              ? colors.accent.withValues(alpha: 0.1)
-              : (colors.surfaceSecondary),
+                ? colors.accent.withValues(alpha: 0.1)
+                : (colors.surfaceSecondary),
             border: Border.all(
               color: isSelected ? colors.accent : (colors.border),
               width: isSelected ? 2 : 1,
@@ -841,8 +895,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
   bool _canRegisterPet() {
     return _nameController.text.trim().isNotEmpty &&
-           _ageController.text.trim().isNotEmpty &&
-           int.tryParse(_ageController.text) != null;
+        _ageController.text.trim().isNotEmpty &&
+        int.tryParse(_ageController.text) != null;
   }
 
   Future<void> _registerPet(BuildContext bottomSheetContext) async {
@@ -855,18 +909,19 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     }
 
     final age = int.tryParse(_ageController.text) ?? 1;
-    Logger.info('📝 Pet info - Name: ${_nameController.text.trim()}, Species: ${_selectedSpecies.displayName}, Age: $age');
+    Logger.info(
+        '📝 Pet info - Name: ${_nameController.text.trim()}, Species: ${_selectedSpecies.displayName}, Age: $age');
 
     final pet = await ref.read(petProvider.notifier).createPet(
-      userId: user.id,
-      species: _selectedSpecies.displayName,
-      name: _nameController.text.trim(),
-      age: age,
-      gender: _selectedGender.displayName,
-      breed: _selectedBreed,
-      personality: _selectedPersonality?.displayName,
-      isNeutered: _isNeutered,
-    );
+          userId: user.id,
+          species: _selectedSpecies.displayName,
+          name: _nameController.text.trim(),
+          age: age,
+          gender: _selectedGender.displayName,
+          breed: _selectedBreed,
+          personality: _selectedPersonality?.displayName,
+          isNeutered: _isNeutered,
+        );
 
     if (!mounted) return;
 
@@ -879,11 +934,14 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       final petState = ref.read(petProvider);
       if (petState.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(petState.error!), backgroundColor: DSColors.error),
+          SnackBar(
+              content: Text(petState.error!), backgroundColor: DSColors.error),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('반려동물 등록에 실패했습니다. 다시 시도해주세요.'), backgroundColor: DSColors.error),
+          const SnackBar(
+              content: Text('반려동물 등록에 실패했습니다. 다시 시도해주세요.'),
+              backgroundColor: DSColors.error),
         );
       }
     }
@@ -924,13 +982,15 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
       // ✅ 새로운 블러 섹션 목록
       final isBlurred = !isPremium;
-      final blurredSections = isBlurred ? [
-        'pets_voice',
-        'health_insight',
-        'activity_recommendation',
-        'emotional_care',
-        'special_tips',
-      ] : <String>[];
+      final blurredSections = isBlurred
+          ? [
+              'pets_voice',
+              'health_insight',
+              'activity_recommendation',
+              'emotional_care',
+              'special_tips',
+            ]
+          : <String>[];
 
       final fortuneWithBlur = fortune.copyWith(
         isBlurred: isBlurred,
@@ -947,7 +1007,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       Logger.error('Failed to generate pet fortune', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('운세 생성에 실패했습니다. 다시 시도해주세요.'), backgroundColor: DSColors.error),
+          const SnackBar(
+              content: Text('운세 생성에 실패했습니다. 다시 시도해주세요.'),
+              backgroundColor: DSColors.error),
         );
       }
     }
@@ -970,7 +1032,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         if (!adService.isRewardedAdReady) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'), backgroundColor: DSColors.error),
+              const SnackBar(
+                  content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                  backgroundColor: DSColors.error),
             );
           }
           return;
@@ -984,12 +1048,14 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
           // NEW: 게이지 증가 호출
           if (mounted) {
-            FortuneCompletionHelper.onFortuneViewed(context, ref, 'pet-compatibility');
+            FortuneCompletionHelper.onFortuneViewed(
+                context, ref, 'pet-compatibility');
           }
 
           if (mounted) {
             setState(() {
-              _fortune = _fortune!.copyWith(isBlurred: false, blurredSections: []);
+              _fortune =
+                  _fortune!.copyWith(isBlurred: false, blurredSections: []);
             });
             // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
             final tokenState = ref.read(tokenProvider);
@@ -1007,7 +1073,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           _fortune = _fortune!.copyWith(isBlurred: false, blurredSections: []);
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'), backgroundColor: DSColors.warning),
+          const SnackBar(
+              content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+              backgroundColor: DSColors.warning),
         );
       }
     }
@@ -1036,8 +1104,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           const SizedBox(height: 20),
 
           // ✅ 육각형 차트
-          if (data['hexagonScores'] != null)
-            _buildHexagonChart(data, colors),
+          if (data['hexagonScores'] != null) _buildHexagonChart(data, colors),
           const SizedBox(height: 20),
 
           // ✅ 무료 섹션: 오늘의 컨디션
@@ -1127,7 +1194,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     ).animate().fadeIn(duration: 800.ms);
   }
 
-  Widget _buildPetInfoHeader(PetProfile pet, PetSpecies species, DSColorScheme colors) {
+  Widget _buildPetInfoHeader(
+      PetProfile pet, PetSpecies species, DSColorScheme colors) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -1151,7 +1219,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               color: colors.accent.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Center(child: Text(species.emoji, style: context.displayMedium)),
+            child: Center(
+                child: Text(species.emoji, style: context.displayMedium)),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -1172,7 +1241,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                         PetGender.fromString(pet.gender).symbol,
                         style: TextStyle(
                           fontSize: FontConfig.buttonMedium,
-                          color: pet.gender == '수컷' ? colors.accent : DSColors.error,
+                          color: pet.gender == '수컷'
+                              ? colors.accent
+                              : DSColors.error,
                         ),
                       ),
                     ],
@@ -1202,16 +1273,23 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: Column(
         children: [
-          Text('오늘의 운세 지수', style: context.heading3.copyWith(color: colors.textPrimary)),
+          Text('오늘의 운세 지수',
+              style: context.heading3.copyWith(color: colors.textPrimary)),
           const SizedBox(height: 16),
           SizedBox(
             height: 200,
             child: HexagonChart(
-              scores: hexagonData.map((k, v) => MapEntry(k, (v as num).toInt())),
+              scores:
+                  hexagonData.map((k, v) => MapEntry(k, (v as num).toInt())),
             ),
           ),
         ],
@@ -1219,7 +1297,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
-  Widget _buildDailyConditionCard(Map<String, dynamic> data, DSColorScheme colors) {
+  Widget _buildDailyConditionCard(
+      Map<String, dynamic> data, DSColorScheme colors) {
     final condition = data['daily_condition'] as Map<String, dynamic>?;
     if (condition == null) return const SizedBox.shrink();
 
@@ -1231,7 +1310,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1244,18 +1328,21 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   color: DSColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.favorite, color: DSColors.success, size: 20),
+                child: const Icon(Icons.favorite, color: DSColors.success, size: 20),
               ),
               const SizedBox(width: 12),
-              Text('오늘의 컨디션', style: context.heading3.copyWith(color: colors.textPrimary)),
+              Text('오늘의 컨디션',
+                  style: context.heading3.copyWith(color: colors.textPrimary)),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: colors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text('$score점', style: context.heading3.copyWith(color: colors.accent)),
+                child: Text('$score점',
+                    style: context.heading3.copyWith(color: colors.accent)),
               ),
             ],
           ),
@@ -1275,7 +1362,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               Expanded(
                 child: Text(
                   condition['energy_description'] as String? ?? '',
-                  style: context.bodySmall.copyWith(color: colors.textSecondary),
+                  style:
+                      context.bodySmall.copyWith(color: colors.textSecondary),
                 ),
               ),
             ],
@@ -1286,8 +1374,16 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   }
 
   Widget _buildEnergyBadge(String level) {
-    final color = level == 'high' ? DSColors.success : level == 'medium' ? DSColors.warning : DSColors.textTertiary;
-    final label = level == 'high' ? '활발' : level == 'medium' ? '보통' : '차분';
+    final color = level == 'high'
+        ? DSColors.success
+        : level == 'medium'
+            ? DSColors.warning
+            : DSColors.textTertiary;
+    final label = level == 'high'
+        ? '활발'
+        : level == 'medium'
+            ? '보통'
+            : '차분';
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -1300,7 +1396,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         children: [
           Icon(Icons.bolt, color: color, size: 14),
           const SizedBox(width: 4),
-          Text(label, style: context.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600)),
+          Text(label,
+              style: context.labelSmall
+                  .copyWith(color: color, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -1315,7 +1413,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1328,25 +1431,30 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   color: DSColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.favorite_border, color: DSColors.error, size: 20),
+                child: const Icon(Icons.favorite_border,
+                    color: DSColors.error, size: 20),
               ),
               const SizedBox(width: 12),
-              Text('주인과의 궁합', style: context.heading3.copyWith(color: colors.textPrimary)),
+              Text('주인과의 궁합',
+                  style: context.heading3.copyWith(color: colors.textPrimary)),
               const Spacer(),
-              Text('${bond['bond_score'] ?? 0}점', style: context.heading3.copyWith(color: DSColors.error)),
+              Text('${bond['bond_score'] ?? 0}점',
+                  style: context.heading3.copyWith(color: DSColors.error)),
             ],
           ),
           const SizedBox(height: 16),
           Text(
             bond['bonding_tip'] as String? ?? '',
-            style: context.bodyLarge.copyWith(color: colors.textPrimary, height: 1.5),
+            style: context.bodyLarge
+                .copyWith(color: colors.textPrimary, height: 1.5),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
               Icon(Icons.access_time, color: colors.accent, size: 16),
               const SizedBox(width: 6),
-              Text('최적 시간: ${bond['best_time'] ?? ''}', style: context.bodySmall.copyWith(color: colors.accent)),
+              Text('최적 시간: ${bond['best_time'] ?? ''}',
+                  style: context.bodySmall.copyWith(color: colors.accent)),
             ],
           ),
         ],
@@ -1363,7 +1471,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1376,10 +1489,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.stars, color: DSColors.warning, size: 20),
+                child: const Icon(Icons.stars, color: DSColors.warning, size: 20),
               ),
               const SizedBox(width: 12),
-              Text('행운 아이템', style: context.heading3.copyWith(color: colors.textPrimary)),
+              Text('행운 아이템',
+                  style: context.heading3.copyWith(color: colors.textPrimary)),
             ],
           ),
           const SizedBox(height: 16),
@@ -1412,13 +1526,15 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         children: [
           Text(emoji, style: context.bodySmall),
           const SizedBox(width: 6),
-          Text(text, style: context.bodySmall.copyWith(fontWeight: FontWeight.w500)),
+          Text(text,
+              style: context.bodySmall.copyWith(fontWeight: FontWeight.w500)),
         ],
       ),
     );
   }
 
-  Widget _buildPetsVoiceCard(Map<String, dynamic> data, PetSpecies species, DSColorScheme colors) {
+  Widget _buildPetsVoiceCard(
+      Map<String, dynamic> data, PetSpecies species, DSColorScheme colors) {
     final voice = data['pets_voice'] as Map<String, dynamic>?;
     if (voice == null) return const SizedBox.shrink();
 
@@ -1450,7 +1566,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 child: Text(species.emoji, style: context.heading2),
               ),
               const SizedBox(width: 12),
-              Text("Pet's Voice", style: context.heading3.copyWith(color: const Color(0xFF8B5CF6))),
+              Text("Pet's Voice",
+                  style: context.heading3
+                      .copyWith(color: const Color(0xFF8B5CF6))),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -1461,9 +1579,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.mic, size: 12, color: const Color(0xFF8B5CF6)),
+                    const Icon(Icons.mic, size: 12, color: Color(0xFF8B5CF6)),
                     const SizedBox(width: 4),
-                    Text('프리미엄', style: context.labelSmall.copyWith(color: const Color(0xFF8B5CF6), fontWeight: FontWeight.w600)),
+                    Text('프리미엄',
+                        style: context.labelSmall.copyWith(
+                            color: const Color(0xFF8B5CF6),
+                            fontWeight: FontWeight.w600)),
                   ],
                 ),
               ),
@@ -1484,7 +1605,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: context.labelSmall.copyWith(color: colors.textTertiary)),
+        Text(label,
+            style: context.labelSmall.copyWith(color: colors.textTertiary)),
         const SizedBox(height: 6),
         Container(
           width: double.infinity,
@@ -1492,7 +1614,10 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           decoration: BoxDecoration(
             color: colors.surface,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)
+            ],
           ),
           child: Text(
             '"$message"',
@@ -1507,18 +1632,25 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
-  Widget _buildHealthInsightCard(Map<String, dynamic> data, DSColorScheme colors) {
+  Widget _buildHealthInsightCard(
+      Map<String, dynamic> data, DSColorScheme colors) {
     final health = data['health_insight'] as Map<String, dynamic>?;
     if (health == null) return const SizedBox.shrink();
 
-    final checkPoints = (health['check_points'] as List<dynamic>?)?.cast<String>() ?? [];
+    final checkPoints =
+        (health['check_points'] as List<dynamic>?)?.cast<String>() ?? [];
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1531,26 +1663,34 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   color: DSColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.health_and_safety, color: DSColors.success, size: 20),
+                child: const Icon(Icons.health_and_safety,
+                    color: DSColors.success, size: 20),
               ),
               const SizedBox(width: 12),
-              Text('건강 인사이트', style: context.heading3.copyWith(color: colors.textPrimary)),
+              Text('건강 인사이트',
+                  style: context.heading3.copyWith(color: colors.textPrimary)),
             ],
           ),
           const SizedBox(height: 16),
-          Text(health['overall'] ?? '', style: context.bodyMedium.copyWith(color: colors.textPrimary, height: 1.5)),
+          Text(health['overall'] ?? '',
+              style: context.bodyMedium
+                  .copyWith(color: colors.textPrimary, height: 1.5)),
           const SizedBox(height: 12),
           ...checkPoints.map((point) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.check_circle_outline, color: DSColors.success, size: 16),
-                const SizedBox(width: 8),
-                Expanded(child: Text(point, style: context.bodySmall.copyWith(color: colors.textSecondary))),
-              ],
-            ),
-          )),
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.check_circle_outline,
+                        color: DSColors.success, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                        child: Text(point,
+                            style: context.bodySmall
+                                .copyWith(color: colors.textSecondary))),
+                  ],
+                ),
+              )),
           if (health['seasonal_tip'] != null) ...[
             const SizedBox(height: 8),
             Container(
@@ -1561,9 +1701,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               ),
               child: Row(
                 children: [
-                  Icon(Icons.wb_sunny, color: DSColors.warning, size: 16),
+                  const Icon(Icons.wb_sunny, color: DSColors.warning, size: 16),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(health['seasonal_tip'], style: context.bodySmall.copyWith(color: DSColors.warning))),
+                  Expanded(
+                      child: Text(health['seasonal_tip'],
+                          style: context.bodySmall
+                              .copyWith(color: DSColors.warning))),
                 ],
               ),
             ),
@@ -1582,7 +1725,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1595,10 +1743,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   color: colors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.directions_run, color: colors.accent, size: 20),
+                child:
+                    Icon(Icons.directions_run, color: colors.accent, size: 20),
               ),
               const SizedBox(width: 12),
-              Text('활동 추천', style: context.heading3.copyWith(color: colors.textPrimary)),
+              Text('활동 추천',
+                  style: context.heading3.copyWith(color: colors.textPrimary)),
             ],
           ),
           const SizedBox(height: 16),
@@ -1616,7 +1766,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               children: [
                 Icon(Icons.star, color: colors.accent, size: 16),
                 const SizedBox(width: 8),
-                Expanded(child: Text(activity['special_activity'] ?? '', style: context.bodySmall.copyWith(color: colors.accent, fontWeight: FontWeight.w500))),
+                Expanded(
+                    child: Text(activity['special_activity'] ?? '',
+                        style: context.bodySmall.copyWith(
+                            color: colors.accent,
+                            fontWeight: FontWeight.w500))),
               ],
             ),
           ),
@@ -1633,13 +1787,17 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         children: [
           Text(time, style: context.bodySmall),
           const SizedBox(width: 12),
-          Expanded(child: Text(activity, style: context.bodySmall.copyWith(color: colors.textPrimary))),
+          Expanded(
+              child: Text(activity,
+                  style:
+                      context.bodySmall.copyWith(color: colors.textPrimary))),
         ],
       ),
     );
   }
 
-  Widget _buildEmotionalCareCard(Map<String, dynamic> data, DSColorScheme colors) {
+  Widget _buildEmotionalCareCard(
+      Map<String, dynamic> data, DSColorScheme colors) {
     final emotion = data['emotional_care'] as Map<String, dynamic>?;
     if (emotion == null) return const SizedBox.shrink();
 
@@ -1648,7 +1806,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1661,23 +1824,30 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   color: DSColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.psychology, color: DSColors.error, size: 20),
+                child: const Icon(Icons.psychology, color: DSColors.error, size: 20),
               ),
               const SizedBox(width: 12),
-              Text('감정 케어', style: context.heading3.copyWith(color: colors.textPrimary)),
+              Text('감정 케어',
+                  style: context.heading3.copyWith(color: colors.textPrimary)),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(emotion['primary_emotion'] ?? '', style: context.labelSmall.copyWith(color: const Color(0xFF8B5CF6), fontWeight: FontWeight.w600)),
+                child: Text(emotion['primary_emotion'] ?? '',
+                    style: context.labelSmall.copyWith(
+                        color: const Color(0xFF8B5CF6),
+                        fontWeight: FontWeight.w600)),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          Text(emotion['bonding_tip'] ?? '', style: context.bodyMedium.copyWith(color: colors.textPrimary, height: 1.5)),
+          Text(emotion['bonding_tip'] ?? '',
+              style: context.bodyMedium
+                  .copyWith(color: colors.textPrimary, height: 1.5)),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
@@ -1688,9 +1858,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             ),
             child: Row(
               children: [
-                Icon(Icons.warning_amber, color: DSColors.error, size: 16),
+                const Icon(Icons.warning_amber, color: DSColors.error, size: 16),
                 const SizedBox(width: 8),
-                Expanded(child: Text('스트레스 신호: ${emotion['stress_indicator'] ?? ''}', style: context.bodySmall.copyWith(color: DSColors.error))),
+                Expanded(
+                    child: Text('스트레스 신호: ${emotion['stress_indicator'] ?? ''}',
+                        style:
+                            context.bodySmall.copyWith(color: DSColors.error))),
               ],
             ),
           ),
@@ -1699,7 +1872,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
-  Widget _buildSpecialTipsCard(Map<String, dynamic> data, DSColorScheme colors) {
+  Widget _buildSpecialTipsCard(
+      Map<String, dynamic> data, DSColorScheme colors) {
     final tips = (data['special_tips'] as List<dynamic>?)?.cast<String>() ?? [];
     if (tips.isEmpty) return const SizedBox.shrink();
 
@@ -1708,7 +1882,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1721,32 +1900,41 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.lightbulb_outline, color: DSColors.warning, size: 20),
+                child: const Icon(Icons.lightbulb_outline,
+                    color: DSColors.warning, size: 20),
               ),
               const SizedBox(width: 12),
-              Text('특별 조언', style: context.heading3.copyWith(color: colors.textPrimary)),
+              Text('특별 조언',
+                  style: context.heading3.copyWith(color: colors.textPrimary)),
             ],
           ),
           const SizedBox(height: 16),
           ...tips.asMap().entries.map((entry) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: DSColors.warning.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(child: Text('${entry.key + 1}', style: context.labelSmall.copyWith(color: DSColors.warning, fontWeight: FontWeight.w700))),
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: DSColors.warning.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                          child: Text('${entry.key + 1}',
+                              style: context.labelSmall.copyWith(
+                                  color: DSColors.warning,
+                                  fontWeight: FontWeight.w700))),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                        child: Text(entry.value,
+                            style: context.bodyMedium.copyWith(
+                                color: colors.textPrimary, height: 1.4))),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(child: Text(entry.value, style: context.bodyMedium.copyWith(color: colors.textPrimary, height: 1.4))),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     );

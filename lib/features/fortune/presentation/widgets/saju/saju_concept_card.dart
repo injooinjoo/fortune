@@ -166,9 +166,9 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                       children: [
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.lightbulb_outline,
-                              color: const Color(0xFF3B82F6),
+                              color: Color(0xFF3B82F6),
                               size: 16,
                             ),
                             const SizedBox(width: 6),
@@ -212,9 +212,9 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                       children: [
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.tips_and_updates_outlined,
-                              color: const Color(0xFF10B981),
+                              color: Color(0xFF10B981),
                               size: 16,
                             ),
                             const SizedBox(width: 6),
@@ -1784,7 +1784,7 @@ void showHapchungExplanationSheet({
                       children: [
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.lightbulb_outline,
                               size: 18,
                               color: Colors.blue,
@@ -1830,7 +1830,7 @@ void showHapchungExplanationSheet({
                       children: [
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.tips_and_updates_outlined,
                               size: 18,
                               color: Colors.green,

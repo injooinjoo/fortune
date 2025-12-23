@@ -66,7 +66,7 @@ class CollaborationSection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.check_circle, size: 16, color: DSColors.success),
+                const Icon(Icons.check_circle, size: 16, color: DSColors.success),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -95,7 +95,7 @@ class CollaborationSection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.warning, size: 16, color: DSColors.warning),
+                const Icon(Icons.warning, size: 16, color: DSColors.warning),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(

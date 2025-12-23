@@ -62,9 +62,9 @@ class LottoLuckyComboCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.stars,
-                color: const Color(0xFFFFD700),
+                color: Color(0xFFFFD700),
                 size: 20,
               ),
               const SizedBox(width: 8),

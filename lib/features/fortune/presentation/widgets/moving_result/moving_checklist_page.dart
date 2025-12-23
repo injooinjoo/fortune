@@ -55,7 +55,7 @@ class MovingChecklistPage extends StatelessWidget {
                       ),
                       child: Center(
                         child: item.isCompleted
-                            ? Icon(Icons.check, color: Colors.white, size: 20)
+                            ? const Icon(Icons.check, color: Colors.white, size: 20)
                             : Text(
                                 '${index + 1}',
                                 style: DSTypography.bodyMedium.copyWith(

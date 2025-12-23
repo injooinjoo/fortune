@@ -24,10 +24,10 @@ class TimelineSection extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.schedule,
             size: 36,
-            color: const Color(0xFF3182F6),
+            color: Color(0xFF3182F6),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -42,7 +42,7 @@ class TimelineSection extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   timeline,
                   style: DSTypography.bodySmall.copyWith(

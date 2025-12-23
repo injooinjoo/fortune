@@ -309,7 +309,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildExpandedEmpathyCard(DSColorScheme colors) {
     return Column(
       children: [
-        Text('💝', style: TextStyle(fontSize: FontConfig.emojiLarge)),
+        const Text('💝', style: TextStyle(fontSize: FontConfig.emojiLarge)),
         const SizedBox(height: 24),
         Text(
           '당신의 마음이 느껴져요',
@@ -334,7 +334,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildExpandedHopeCard(DSColorScheme colors) {
     return Column(
       children: [
-        Text('✨', style: TextStyle(fontSize: FontConfig.emojiLarge)),
+        const Text('✨', style: TextStyle(fontSize: FontConfig.emojiLarge)),
         const SizedBox(height: 24),
         Text(
           '당신은 할 수 있어요',
@@ -359,7 +359,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildExpandedAdviceCard(DSColorScheme colors) {
     return Column(
       children: [
-        Text('💡', style: TextStyle(fontSize: FontConfig.emojiLarge)),
+        const Text('💡', style: TextStyle(fontSize: FontConfig.emojiLarge)),
         const SizedBox(height: 24),
         Text(
           '이렇게 해보세요',
@@ -420,7 +420,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildExpandedEncouragementCard(DSColorScheme colors) {
     return Column(
       children: [
-        Text('🙌', style: TextStyle(fontSize: FontConfig.emojiLarge)),
+        const Text('🙌', style: TextStyle(fontSize: FontConfig.emojiLarge)),
         const SizedBox(height: 24),
         Text(
           '힘내세요!',
@@ -458,7 +458,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
       ),
       child: Column(
         children: [
-          Text('🔮', style: TextStyle(fontSize: FontConfig.emojiLarge)),
+          const Text('🔮', style: TextStyle(fontSize: FontConfig.emojiLarge)),
           const SizedBox(height: 24),
           Text(
             '신이 전하는 한마디',
@@ -529,7 +529,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         const Spacer(flex: 2),
 
         // 하트 이모지
-        Text(
+        const Text(
           '💝',
           style: TextStyle(fontSize: FontConfig.emojiMedium),
         )
@@ -580,7 +580,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         const Spacer(flex: 2),
 
         // 별 이모지
-        Text(
+        const Text(
           '✨',
           style: TextStyle(fontSize: FontConfig.emojiMedium),
         )
@@ -631,7 +631,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         const Spacer(flex: 1),
 
         // 전구 이모지
-        Text(
+        const Text(
           '💡',
           style: TextStyle(fontSize: FontConfig.emojiSmall),
         )
@@ -726,7 +726,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         const Spacer(flex: 2),
 
         // 응원 이모지
-        Text(
+        const Text(
           '🙌',
           style: TextStyle(fontSize: FontConfig.emojiMedium),
         )
@@ -789,7 +789,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           const Spacer(flex: 2),
 
           // 신비로운 이모지
-          Text(
+          const Text(
             '🔮',
             style: TextStyle(fontSize: FontConfig.emojiMedium),
           )
@@ -859,8 +859,8 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           debugPrint('[소원운세] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
                 backgroundColor: DSColors.error,
               ),
             );
@@ -906,8 +906,8 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
             backgroundColor: DSColors.warning,
           ),
         );

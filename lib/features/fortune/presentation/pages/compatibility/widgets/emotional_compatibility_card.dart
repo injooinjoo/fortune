@@ -34,7 +34,7 @@ class EmotionalCompatibilityCard extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 '감성 궁합',
                 style: DSTypography.headingSmall.copyWith(
@@ -45,7 +45,7 @@ class EmotionalCompatibilityCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // 계절 궁합
           if (fortune.metadata?['season'] != null) ...[
@@ -61,7 +61,7 @@ class EmotionalCompatibilityCard extends StatelessWidget {
                         color: colors.textSecondary,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       '${fortune.metadata!['season']['person1']} × ${fortune.metadata!['season']['person2']}',
                       style: DSTypography.bodyMedium.copyWith(
@@ -73,7 +73,7 @@ class EmotionalCompatibilityCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               fortune.metadata!['season']['message'],
               style: DSTypography.bodyMedium.copyWith(
@@ -85,9 +85,9 @@ class EmotionalCompatibilityCard extends StatelessWidget {
 
           // 나이차 분석
           if (fortune.metadata?['age_difference'] != null) ...[
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Divider(color: colors.border),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -100,7 +100,7 @@ class EmotionalCompatibilityCard extends StatelessWidget {
                         color: colors.textSecondary,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       fortune.metadata!['age_difference']['years'] == 0
                           ? '동갑'
@@ -114,7 +114,7 @@ class EmotionalCompatibilityCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               fortune.metadata!['age_difference']['message'],
               style: DSTypography.bodyMedium.copyWith(

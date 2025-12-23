@@ -39,7 +39,7 @@ class MovingResultHeader extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.arrow_back_ios_rounded,
                   size: 20,
                   color: DSColors.textPrimary,

@@ -121,7 +121,7 @@ class _LoveScoreCircleState extends State<LoveScoreCircle>
                   emoji,
                   style: DSTypography.numberLarge,
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   '$currentScore',
                   style: DSTypography.headingLarge.copyWith(

@@ -38,20 +38,20 @@ class FaceReadingResultWidget extends StatelessWidget {
           // Header
           Container(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [DSColors.accent, DSColors.textSecondary],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
               ),
             ),
             child: Column(
               children: [
-                Icon(
+                const Icon(
                   Icons.face,
                   size: 48,
                   color: DSColors.surface,

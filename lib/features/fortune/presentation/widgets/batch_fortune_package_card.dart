@@ -31,7 +31,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
         onTap: isLoading ? null : (onTap ?? () => _generatePackage(context, ref)),
         borderRadius: BorderRadius.circular(DSRadius.lg),
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -269,7 +269,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -299,7 +299,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
                       const SizedBox(height: 16)],
                     if (result.fortune.summary != null) ...[
                       Container(
-                        padding: EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(DSRadius.sm)),

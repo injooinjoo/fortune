@@ -1,4 +1,5 @@
 /// Barrel file for compatibility widgets
+library;
 export 'compatibility_input_view.dart';
 export 'compatibility_result_view.dart';
 export 'overall_score_card.dart';

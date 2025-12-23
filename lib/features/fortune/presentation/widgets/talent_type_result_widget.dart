@@ -171,7 +171,7 @@ class TalentStrengthCards extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.emoji_events_rounded,
                 color: DSColors.accent,
                 size: 24,
@@ -268,7 +268,7 @@ class RecommendedCareersWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.work_rounded,
                 color: DSColors.accent,
                 size: 24,
@@ -333,7 +333,7 @@ class ActionPlanWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.rocket_launch_rounded,
                 color: DSColors.accent,
                 size: 24,

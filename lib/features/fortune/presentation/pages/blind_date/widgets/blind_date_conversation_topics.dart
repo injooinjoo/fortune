@@ -106,7 +106,7 @@ class BlindDateConversationTopics extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.warning_amber_rounded,
                         size: 16,
                         color: DSColors.error,

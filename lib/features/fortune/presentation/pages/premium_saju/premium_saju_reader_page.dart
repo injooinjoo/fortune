@@ -4,7 +4,6 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../../../../core/design_system/tokens/ds_colors.dart';
 import '../../../../../core/design_system/tokens/ds_typography.dart';
-import '../../../../fortune/domain/models/premium_saju_result.dart';
 
 /// 프리미엄 사주명리서 리더 페이지
 class PremiumSajuReaderPage extends ConsumerStatefulWidget {
@@ -28,7 +27,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
   bool _isLoading = true;
   Map<String, dynamic>? _result;
   List<dynamic> _chapters = [];
-  List<dynamic> _bookmarks = [];
+  final List<dynamic> _bookmarks = [];
 
   @override
   void initState() {
@@ -123,20 +122,19 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: DSColors.backgroundPrimary,
+        backgroundColor: DSColors.background,
         body: const Center(
           child: CircularProgressIndicator(),
         ),
       );
     }
 
-    final currentChapter = _chapters.isNotEmpty
-        ? _chapters[_currentChapterIndex]
-        : null;
+    final currentChapter =
+        _chapters.isNotEmpty ? _chapters[_currentChapterIndex] : null;
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: DSColors.backgroundPrimary,
+      backgroundColor: DSColors.background,
       appBar: _buildAppBar(currentChapter),
       drawer: _buildTableOfContentsDrawer(),
       body: currentChapter != null
@@ -148,7 +146,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
 
   PreferredSizeWidget _buildAppBar(Map<String, dynamic>? chapter) {
     return AppBar(
-      backgroundColor: DSColors.backgroundPrimary,
+      backgroundColor: DSColors.background,
       elevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -156,7 +154,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
       ),
       title: Text(
         '프리미엄 사주명리서',
-        style: DSTypography.subtitle1,
+        style: DSTypography.fortuneSubtitle,
       ),
       actions: [
         IconButton(
@@ -173,43 +171,67 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
 
   Widget _buildTableOfContentsDrawer() {
     final parts = [
-      ('Part 1', '사주 기초', [
-        '사주팔자 해석',
-        '천간/지지 분석',
-        '오행 분포',
-        '격국 분석',
-        '용신 결정',
-      ]),
-      ('Part 2', '성격과 운명', [
-        '핵심 성격 특성',
-        '숨겨진 성향',
-        '인생 목적과 사명',
-        '강점과 성장 영역',
-      ]),
-      ('Part 3', '재물과 직업', [
-        '재물 패턴 분석',
-        '직업 적성',
-        '사업/창업 잠재력',
-        '투자 성향',
-      ]),
-      ('Part 4', '애정과 가정', [
-        '연애 스타일',
-        '결혼 궁합',
-        '가족 관계',
-        '자녀운',
-      ]),
-      ('Part 5', '건강과 수명', [
-        '체질 건강 분석',
-        '취약점과 예방',
-        '장수 지표',
-      ]),
-      ('Part 6', '인생 타임라인', [
-        '대운 6주기 분석',
-      ]),
+      (
+        'Part 1',
+        '사주 기초',
+        [
+          '사주팔자 해석',
+          '천간/지지 분석',
+          '오행 분포',
+          '격국 분석',
+          '용신 결정',
+        ]
+      ),
+      (
+        'Part 2',
+        '성격과 운명',
+        [
+          '핵심 성격 특성',
+          '숨겨진 성향',
+          '인생 목적과 사명',
+          '강점과 성장 영역',
+        ]
+      ),
+      (
+        'Part 3',
+        '재물과 직업',
+        [
+          '재물 패턴 분석',
+          '직업 적성',
+          '사업/창업 잠재력',
+          '투자 성향',
+        ]
+      ),
+      (
+        'Part 4',
+        '애정과 가정',
+        [
+          '연애 스타일',
+          '결혼 궁합',
+          '가족 관계',
+          '자녀운',
+        ]
+      ),
+      (
+        'Part 5',
+        '건강과 수명',
+        [
+          '체질 건강 분석',
+          '취약점과 예방',
+          '장수 지표',
+        ]
+      ),
+      (
+        'Part 6',
+        '인생 타임라인',
+        [
+          '대운 6주기 분석',
+        ]
+      ),
     ];
 
     return Drawer(
-      backgroundColor: DSColors.backgroundPrimary,
+      backgroundColor: DSColors.background,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,7 +244,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
                   const SizedBox(width: 12),
                   Text(
                     '목차',
-                    style: DSTypography.heading3.copyWith(
+                    style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -245,13 +267,13 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: DSColors.primary.withOpacity(0.1),
+                            color: DSColors.accent.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             part.$1,
-                            style: DSTypography.caption.copyWith(
-                              color: DSColors.primary,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: DSColors.accent,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -259,7 +281,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
                         const SizedBox(width: 8),
                         Text(
                           part.$2,
-                          style: DSTypography.body2.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -272,7 +294,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
                         contentPadding: const EdgeInsets.only(left: 48),
                         title: Text(
                           chapterTitle,
-                          style: DSTypography.body2,
+                          style: DSTypography.bodyMedium,
                         ),
                         onTap: () => _goToChapter(0), // TODO: 실제 인덱스 계산
                       );
@@ -288,7 +310,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
               title: const Text('북마크'),
               trailing: Text(
                 '${_bookmarks.length}개',
-                style: DSTypography.caption.copyWith(
+                style: DSTypography.labelSmall.copyWith(
                   color: DSColors.textTertiary,
                 ),
               ),
@@ -328,14 +350,14 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
                         children: [
                           Text(
                             'Part ${chapter['partNumber'] ?? 1}',
-                            style: DSTypography.caption.copyWith(
-                              color: DSColors.primary,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: DSColors.accent,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
                             chapter['title'] ?? '',
-                            style: DSTypography.heading2.copyWith(
+                            style: DSTypography.headingMedium.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -347,13 +369,13 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: (_currentChapterIndex + 1) / _chapters.length,
-                  backgroundColor: DSColors.borderPrimary,
-                  valueColor: AlwaysStoppedAnimation(DSColors.primary),
+                  backgroundColor: DSColors.border,
+                  valueColor: AlwaysStoppedAnimation(DSColors.accent),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${_currentChapterIndex + 1} / ${_chapters.length} 챕터',
-                  style: DSTypography.caption.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: DSColors.textTertiary,
                   ),
                 ),
@@ -369,30 +391,30 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
               child: MarkdownBody(
                 data: section['content'] ?? '',
                 styleSheet: MarkdownStyleSheet(
-                  h2: DSTypography.heading2.copyWith(
+                  h2: DSTypography.headingMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     height: 2,
                   ),
-                  h3: DSTypography.heading3.copyWith(
+                  h3: DSTypography.headingSmall.copyWith(
                     fontWeight: FontWeight.w600,
                     height: 2,
                   ),
-                  p: DSTypography.body1.copyWith(
+                  p: DSTypography.bodyLarge.copyWith(
                     height: 1.8,
                     color: DSColors.textPrimary,
                   ),
-                  strong: DSTypography.body1.copyWith(
+                  strong: DSTypography.bodyLarge.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: DSColors.primary,
+                    color: DSColors.accent,
                   ),
-                  blockquote: DSTypography.body1.copyWith(
+                  blockquote: DSTypography.bodyLarge.copyWith(
                     fontStyle: FontStyle.italic,
                     color: DSColors.textSecondary,
                   ),
                   blockquoteDecoration: BoxDecoration(
                     border: Border(
                       left: BorderSide(
-                        color: DSColors.primary,
+                        color: DSColors.accent,
                         width: 3,
                       ),
                     ),
@@ -414,9 +436,9 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: DSColors.backgroundPrimary,
+        color: DSColors.background,
         border: Border(
-          top: BorderSide(color: DSColors.borderPrimary),
+          top: BorderSide(color: DSColors.border),
         ),
       ),
       child: SafeArea(
@@ -441,7 +463,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
               onPressed: _openTableOfContents,
               icon: const Icon(Icons.menu_book),
               style: IconButton.styleFrom(
-                backgroundColor: DSColors.surfacePrimary,
+                backgroundColor: DSColors.surface,
               ),
             ),
             const SizedBox(width: 12),
@@ -454,7 +476,7 @@ class _PremiumSajuReaderPageState extends ConsumerState<PremiumSajuReaderPage> {
                 icon: const Icon(Icons.chevron_right),
                 label: const Text('다음'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: DSColors.primary,
+                  backgroundColor: DSColors.accent,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),

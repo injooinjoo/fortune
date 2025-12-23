@@ -137,7 +137,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
             color: Colors.white,
           ),
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Text(
           '간절한 마음으로 소원을 빌고\n분수대에 동전을 던져보세요',
           style: DSTypography.bodyMedium.copyWith(
@@ -217,7 +217,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
               onPressed: widget.onWriteWish,
               style: UnifiedButtonStyle.primary,
               size: UnifiedButtonSize.large,
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
             ),
           ),
           
@@ -232,7 +232,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                 onPressed: widget.isThrowingCoin ? null : widget.onThrowCoin,
                 style: UnifiedButtonStyle.primary,
                 size: UnifiedButtonSize.large,
-                icon: widget.isThrowingCoin ? null : Icon(Icons.toll),
+                icon: widget.isThrowingCoin ? null : const Icon(Icons.toll),
               ),
             ),
           ],
@@ -258,7 +258,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                       color: Colors.white.withValues(alpha: 0.8),
                       size: 20,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       '소원 빌기 가이드',
                       style: DSTypography.bodyMedium.copyWith(
@@ -396,12 +396,12 @@ class FountainPainter extends CustomPainter {
 
   void _drawFloatingCoins(Canvas canvas, Offset center, Paint paint) {
     final coinPositions = [
-      Offset(-40, -20),
-      Offset(50, -30),
-      Offset(-60, 40),
-      Offset(35, 45),
-      Offset(-20, 60),
-      Offset(70, 10),
+      const Offset(-40, -20),
+      const Offset(50, -30),
+      const Offset(-60, 40),
+      const Offset(35, 45),
+      const Offset(-20, 60),
+      const Offset(70, 10),
     ];
     
     for (int i = 0; i < coinPositions.length; i++) {

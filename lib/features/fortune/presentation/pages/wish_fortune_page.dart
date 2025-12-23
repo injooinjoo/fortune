@@ -325,7 +325,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
         ],
       ),
       body: _accordionSections.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
                 // ✅ Accordion 폼
@@ -549,7 +549,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text('확인', style: DSTypography.buttonMedium),
+            child: const Text('확인', style: DSTypography.buttonMedium),
           ),
         ],
       ),

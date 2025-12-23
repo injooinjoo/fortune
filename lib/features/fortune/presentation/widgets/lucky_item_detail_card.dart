@@ -103,7 +103,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.auto_awesome,
                       size: 16,
                       color: DSColors.accentSecondary),
@@ -137,7 +137,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
             return Padding(
               padding: const EdgeInsets.only(right: 8),
               child: FilterChip(
-                label: Text('전체'),
+                label: const Text('전체'),
                 selected: isSelected,
                 onSelected: (_) {
                   setState(() {
@@ -302,7 +302,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                               color: DSColors.accentSecondary,
                               fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
                       const SizedBox(width: 4),
-                      Icon(
+                      const Icon(
                         Icons.arrow_forward_ios,
                         size: 12,
                         color: DSColors.accentSecondary)
@@ -437,7 +437,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                 Container(
                   width: 8,
                   height: 8,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: DSColors.accentSecondary,
                     shape: BoxShape.circle)),
                 const SizedBox(width: 12),
@@ -544,7 +544,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                                           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))),
                               if (item.timeRange != null) ...[
                                 if (item.priority != null) const SizedBox(width: 8),
-                                Icon(
+                                const Icon(
                                   Icons.access_time,
                                   size: 14,
                                   color: DSColors.textSecondary),
@@ -560,7 +560,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                         ]
                       )
                     ),
-                    Icon(
+                    const Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
                       color: DSColors.textTertiary)
@@ -645,7 +645,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.access_time,
                         size: 18,
                         color: DSColors.accent),
@@ -668,7 +668,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     borderRadius: BorderRadius.circular(DSRadius.md)),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.tips_and_updates,
                         size: 18,
                         color: DSColors.warning),

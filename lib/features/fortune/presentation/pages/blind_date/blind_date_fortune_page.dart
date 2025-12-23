@@ -196,7 +196,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
                     onAdFailed: () async => await _generateFortune(),
                   );
                 },
-                icon: Icon(Icons.auto_awesome_rounded, color: Colors.white),
+                icon: const Icon(Icons.auto_awesome_rounded, color: Colors.white),
               ),
           ],
         ),

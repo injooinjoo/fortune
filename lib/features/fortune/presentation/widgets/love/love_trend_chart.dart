@@ -59,7 +59,7 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                 drawVerticalLine: false,
                 horizontalInterval: 20,
                 getDrawingHorizontalLine: (value) {
-                  return FlLine(
+                  return const FlLine(
                     color: DSColors.border,
                     strokeWidth: 1,
                   );

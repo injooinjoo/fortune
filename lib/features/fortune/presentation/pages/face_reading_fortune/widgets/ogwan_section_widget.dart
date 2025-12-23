@@ -68,7 +68,7 @@ class OgwanSectionWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Row(
             children: [
-              Icon(Icons.face_retouching_natural, color: DSColors.accent, size: 32),
+              const Icon(Icons.face_retouching_natural, color: DSColors.accent, size: 32),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

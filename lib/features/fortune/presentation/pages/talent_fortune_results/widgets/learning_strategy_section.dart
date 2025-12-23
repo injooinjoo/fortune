@@ -48,7 +48,7 @@ class LearningStrategySection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.lightbulb_outline, size: 16, color: DSColors.warning),
+                const Icon(Icons.lightbulb_outline, size: 16, color: DSColors.warning),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -77,7 +77,7 @@ class LearningStrategySection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.book_outlined, size: 16, color: DSColors.success),
+                const Icon(Icons.book_outlined, size: 16, color: DSColors.success),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(

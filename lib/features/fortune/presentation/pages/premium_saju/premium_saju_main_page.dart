@@ -6,18 +6,20 @@ import '../../../../../core/design_system/tokens/ds_colors.dart';
 import '../../../../../core/design_system/tokens/ds_typography.dart';
 import '../../../../../core/constants/in_app_products.dart';
 import '../../../../../services/in_app_purchase_service.dart';
+import '../../../../../presentation/providers/subscription_provider.dart';
 
 /// 프리미엄 사주명리서 메인 페이지 (구매/진입)
 class PremiumSajuMainPage extends ConsumerStatefulWidget {
   const PremiumSajuMainPage({super.key});
 
   @override
-  ConsumerState<PremiumSajuMainPage> createState() => _PremiumSajuMainPageState();
+  ConsumerState<PremiumSajuMainPage> createState() =>
+      _PremiumSajuMainPageState();
 }
 
 class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
   bool _isPurchasing = false;
-  bool _hasOwnership = false;
+  final bool _hasOwnership = false;
   String? _existingResultId;
 
   @override
@@ -64,7 +66,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DSColors.backgroundPrimary,
+      backgroundColor: DSColors.background,
       appBar: AppBar(
         title: const Text('프리미엄 사주명리서'),
         backgroundColor: Colors.transparent,
@@ -146,7 +148,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
                 const SizedBox(height: 12),
                 Text(
                   '프리미엄 사주명리서',
-                  style: DSTypography.heading2.copyWith(
+                  style: DSTypography.headingMedium.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -154,7 +156,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
                 const SizedBox(height: 8),
                 Text(
                   '215페이지 · 60년 대운 분석 · 평생 소유',
-                  style: DSTypography.body2.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: Colors.white70,
                   ),
                 ),
@@ -172,7 +174,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
       children: [
         Text(
           '당신만을 위한 사주 분석서',
-          style: DSTypography.heading3.copyWith(
+          style: DSTypography.headingSmall.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -181,7 +183,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
           '전문 명리학 이론을 바탕으로 작성된 215페이지 분량의 상세한 사주 분석서입니다. '
           '타고난 성격, 재물운, 애정운, 건강운, 그리고 60년간의 대운 흐름까지 '
           '당신의 인생을 깊이 있게 분석합니다.',
-          style: DSTypography.body1.copyWith(
+          style: DSTypography.bodyLarge.copyWith(
             color: DSColors.textSecondary,
             height: 1.6,
           ),
@@ -206,7 +208,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
           const SizedBox(width: 12),
           Text(
             text,
-            style: DSTypography.body1.copyWith(
+            style: DSTypography.bodyLarge.copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -230,16 +232,16 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
       children: [
         Text(
           '목차',
-          style: DSTypography.heading3.copyWith(
+          style: DSTypography.headingSmall.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: DSColors.surfacePrimary,
+            color: DSColors.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: DSColors.borderPrimary),
+            border: Border.all(color: DSColors.border),
           ),
           child: Column(
             children: parts.asMap().entries.map((entry) {
@@ -253,18 +255,18 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
                 decoration: BoxDecoration(
                   border: index < parts.length - 1
                       ? Border(
-                          bottom: BorderSide(color: DSColors.borderPrimary),
+                          bottom: BorderSide(color: DSColors.border),
                         )
                       : null,
                 ),
                 child: Row(
                   children: [
-                    Container(
+                    SizedBox(
                       width: 60,
                       child: Text(
                         part.$1,
-                        style: DSTypography.caption.copyWith(
-                          color: DSColors.primary,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: DSColors.accent,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -272,12 +274,12 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
                     Expanded(
                       child: Text(
                         part.$2,
-                        style: DSTypography.body2,
+                        style: DSTypography.bodyMedium,
                       ),
                     ),
                     Text(
                       part.$3,
-                      style: DSTypography.caption.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         color: DSColors.textTertiary,
                       ),
                     ),
@@ -297,16 +299,17 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
         width: double.infinity,
         height: 56,
         child: ElevatedButton(
-          onPressed: () => context.push('/premium-saju/reader/$_existingResultId'),
+          onPressed: () =>
+              context.push('/premium-saju/reader/$_existingResultId'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: DSColors.primary,
+            backgroundColor: DSColors.accent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
           ),
           child: Text(
             '내 사주명리서 열기',
-            style: DSTypography.button.copyWith(
+            style: DSTypography.buttonMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
@@ -339,7 +342,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
                   )
                 : Text(
                     '₩39,000 구매하기',
-                    style: DSTypography.button.copyWith(
+                    style: DSTypography.buttonMedium.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 18, // 예외: CTA 버튼 강조
@@ -350,7 +353,7 @@ class _PremiumSajuMainPageState extends ConsumerState<PremiumSajuMainPage> {
         const SizedBox(height: 8),
         Text(
           '일회 결제 · 평생 소유 · 환불 가능',
-          style: DSTypography.caption.copyWith(
+          style: DSTypography.labelSmall.copyWith(
             color: DSColors.textTertiary,
           ),
         ),

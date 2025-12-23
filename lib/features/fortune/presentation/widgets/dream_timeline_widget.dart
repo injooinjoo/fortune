@@ -69,7 +69,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
   Widget _buildHeader() {
     return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.timeline,
           color: DSColors.accent,
           size: 24,
@@ -112,10 +112,10 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               ),
               titlesData: FlTitlesData(
                 show: true,
-                rightTitles: AxisTitles(
+                rightTitles: const AxisTitles(
                   sideTitles: SideTitles(showTitles: false),
                 ),
-                topTitles: AxisTitles(
+                topTitles: const AxisTitles(
                   sideTitles: SideTitles(showTitles: false),
                 ),
                 bottomTitles: AxisTitles(
@@ -245,7 +245,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                       
                       return LineTooltipItem(
                         '장면 ${spot.x.toInt() + 1}\n$emotionText',
-                        TextStyle(
+                        const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),

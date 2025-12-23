@@ -214,7 +214,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
   Widget _buildGenerationAnimation(BuildContext context, WidgetRef ref) {
     return TalismanLoadingSkeleton(
       category: _selectedCategory!,
-      wishText: _selectedWish ?? "소원을 이루어보세요",
+      wishText: _selectedWish ?? '소원을 이루어보세요',
     );
   }
 
@@ -384,7 +384,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.error_outline,
             size: 64,
             color: DSColors.error,

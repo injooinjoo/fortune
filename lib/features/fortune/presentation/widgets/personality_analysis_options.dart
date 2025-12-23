@@ -160,7 +160,7 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
             scale: _scaleAnimation.value,
             child: AnimatedContainer(
               duration: DSAnimation.durationMedium,
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: widget.value
                     ? LinearGradient(

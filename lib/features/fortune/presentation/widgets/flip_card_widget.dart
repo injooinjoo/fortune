@@ -226,7 +226,7 @@ class _FlipCardWidgetState extends ConsumerState<FlipCardWidget>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.star,
             size: 36,
             color: Colors.white,
@@ -235,7 +235,7 @@ class _FlipCardWidgetState extends ConsumerState<FlipCardWidget>
           Container(
             width: 24,
             height: 24,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
             ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/services/fortune_haptic_service.dart';
 
 /// Section 4: 선호 나이대 (RangeSlider)
-class PreferredAgeRangeInput extends StatelessWidget {
+class PreferredAgeRangeInput extends ConsumerWidget {
   final RangeValues preferredAgeRange;
   final ValueChanged<RangeValues> onAgeRangeChanged;
 
@@ -13,7 +15,7 @@ class PreferredAgeRangeInput extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
 
     return Column(
@@ -51,7 +53,13 @@ class PreferredAgeRangeInput extends StatelessWidget {
             min: 18,
             max: 45,
             divisions: 27,
-            onChanged: onAgeRangeChanged,
+            onChanged: (newValues) {
+              if (newValues.start.round() != preferredAgeRange.start.round() ||
+                  newValues.end.round() != preferredAgeRange.end.round()) {
+                ref.read(fortuneHapticServiceProvider).sliderSnap();
+              }
+              onAgeRangeChanged(newValues);
+            },
           ),
         ),
         const SizedBox(height: 8),

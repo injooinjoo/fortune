@@ -63,7 +63,7 @@ class BlindDateDosDonts extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.check_circle,
                           size: 20,
                           color: DSColors.success,
@@ -113,7 +113,7 @@ class BlindDateDosDonts extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.cancel,
                           size: 20,
                           color: DSColors.error,
@@ -162,7 +162,7 @@ class BlindDateDosDonts extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.auto_awesome,
                       color: DSColors.warning,
                     ),

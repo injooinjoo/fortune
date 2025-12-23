@@ -212,7 +212,7 @@ class CategoriesSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.auto_awesome,
                   color: AppTheme.primaryColor,
                   size: 24,
@@ -297,7 +297,7 @@ class AITipsList extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.auto_awesome,
                 color: AppTheme.primaryColor,
                 size: 24,
@@ -765,7 +765,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.auto_awesome,
                   color: AppTheme.primaryColor,
                   size: 24,
@@ -875,7 +875,7 @@ class _TypingAITipsListState extends State<TypingAITipsList> {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.auto_awesome,
                 color: AppTheme.primaryColor,
                 size: 24,

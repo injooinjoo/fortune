@@ -30,13 +30,13 @@ class MovingFortuneGenerator {
     };
 
     // 최고 방향 찾기
-    String bestDirection = directions.entries
+    final String bestDirection = directions.entries
         .reduce((a, b) => a.value > b.value ? a : b)
         .key;
 
     // 월별 운세 데이터 (3개월)
     final monthlyScores = List.generate(90, (day) {
-      double baseValue = 50 + math.sin(day * 0.1) * 30;
+      final double baseValue = 50 + math.sin(day * 0.1) * 30;
       return baseValue + random.nextInt(20);
     });
 

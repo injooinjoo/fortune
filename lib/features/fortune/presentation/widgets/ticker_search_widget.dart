@@ -275,7 +275,7 @@ class _TickerSearchWidgetState extends ConsumerState<TickerSearchWidget> {
       child: Center(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 32,
               height: 32,
               child: CircularProgressIndicator(

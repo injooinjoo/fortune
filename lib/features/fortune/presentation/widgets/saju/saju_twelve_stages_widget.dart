@@ -65,7 +65,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
   Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.loop_outlined,
           color: DSColors.accent,
           size: 20,

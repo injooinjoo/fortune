@@ -644,23 +644,96 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     final compatibilityInsights = detailedAnalysis['compatibilityInsights'] as Map<String, dynamic>? ?? {};
 
     final bestMatch = FortuneTextCleaner.clean(compatibilityInsights['bestMatch'] as String? ?? '');
+    final goodMatch = FortuneTextCleaner.clean(compatibilityInsights['goodMatch'] as String? ?? '');
+    final challengingMatch = FortuneTextCleaner.clean(compatibilityInsights['challengingMatch'] as String? ?? '');
     final avoidTypes = FortuneTextCleaner.clean(compatibilityInsights['avoidTypes'] as String? ?? '');
     final tips = List<String>.from(compatibilityInsights['relationshipTips'] ?? []).map((t) => FortuneTextCleaner.clean(t.toString())).toList();
 
-    final content = '''
-💖 최고 궁합: $bestMatch
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildInsightItem(
+          '💖',
+          '최고 궁합',
+          bestMatch.isNotEmpty ? bestMatch : '진실하고 따뜻한 마음을 가진 파트너가 잘 맞습니다.',
+          colors,
+        ),
+        const SizedBox(height: 12),
+        _buildInsightItem(
+          '💕',
+          '좋은 궁합',
+          goodMatch.isNotEmpty ? goodMatch : '서로를 존중하고 이해하는 관계가 좋습니다.',
+          colors,
+        ),
+        const SizedBox(height: 12),
+        _buildInsightItem(
+          '⚡',
+          '도전적 궁합',
+          challengingMatch.isNotEmpty ? challengingMatch : '서로 다른 가치관에 대한 열린 대화가 필요합니다.',
+          colors,
+        ),
+        const SizedBox(height: 12),
+        _buildInsightItem(
+          '🚫',
+          '피해야 할 유형',
+          avoidTypes.isNotEmpty ? avoidTypes : '진실하지 못하거나 감정 기복이 심한 사람',
+          colors,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          '💡 관계 팁',
+          style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        ...tips.isEmpty
+            ? [_buildTipItem('서로를 존중하고 이해하는 관계를 만들어가세요.', colors)]
+            : tips.map((tip) => _buildTipItem(tip, colors)),
+      ],
+    );
+  }
 
-⚠️ 피해야 할 유형: $avoidTypes
+  /// 궁합 인사이트 항목 위젯
+  Widget _buildInsightItem(String emoji, String label, String content, DSColorScheme colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$emoji $label',
+          style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          content,
+          style: context.bodyMedium.copyWith(
+            color: colors.textSecondary,
+            height: 1.5,
+          ),
+        ),
+      ],
+    );
+  }
 
-💡 관계 팁:
-${tips.isNotEmpty ? '• ${tips.join('\n• ')}' : '서로를 존중하고 이해하는 관계를 만들어가세요.'}
-''';
-
-    return Text(
-      content,
-      style: context.bodyMedium.copyWith(
-        color: colors.textSecondary,
-        height: 1.6,
+  /// 관계 팁 항목 위젯
+  Widget _buildTipItem(String tip, DSColorScheme colors) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '• ',
+            style: context.bodyMedium.copyWith(color: colors.textSecondary),
+          ),
+          Expanded(
+            child: Text(
+              tip,
+              style: context.bodyMedium.copyWith(
+                color: colors.textSecondary,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -672,20 +745,86 @@ ${tips.isNotEmpty ? '• ${tips.join('\n• ')}' : '서로를 존중하고 이�
     final thisWeek = FortuneTextCleaner.clean(predictions['thisWeek'] as String? ?? '');
     final thisMonth = FortuneTextCleaner.clean(predictions['thisMonth'] as String? ?? '');
     final nextThreeMonths = FortuneTextCleaner.clean(predictions['nextThreeMonths'] as String? ?? '');
+    final keyDates = List<String>.from(predictions['keyDates'] ?? [])
+        .map((d) => FortuneTextCleaner.clean(d.toString()))
+        .toList();
 
-    final content = '''
-📅 이번 주: $thisWeek
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildPredictionItem(
+          '📅',
+          '이번 주',
+          thisWeek.isNotEmpty ? thisWeek : '새로운 만남의 기회가 있을 수 있습니다.',
+          colors,
+        ),
+        const SizedBox(height: 12),
+        _buildPredictionItem(
+          '📆',
+          '이번 달',
+          thisMonth.isNotEmpty ? thisMonth : '연애운이 상승하는 시기입니다.',
+          colors,
+        ),
+        const SizedBox(height: 12),
+        _buildPredictionItem(
+          '🔮',
+          '앞으로 3개월',
+          nextThreeMonths.isNotEmpty ? nextThreeMonths : '좋은 인연을 만날 가능성이 높습니다.',
+          colors,
+        ),
+        if (keyDates.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(
+            '📌 주목할 날짜',
+            style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: keyDates.map((date) => _buildDateChip(date, colors)).toList(),
+          ),
+        ],
+      ],
+    );
+  }
 
-📅 이번 달: $thisMonth
+  /// 미래 예측 항목 위젯
+  Widget _buildPredictionItem(String emoji, String label, String content, DSColorScheme colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$emoji $label',
+          style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          content,
+          style: context.bodyMedium.copyWith(
+            color: colors.textSecondary,
+            height: 1.5,
+          ),
+        ),
+      ],
+    );
+  }
 
-📅 앞으로 3개월: $nextThreeMonths
-''';
-
-    return Text(
-      content,
-      style: context.bodyMedium.copyWith(
-        color: colors.textSecondary,
-        height: 1.6,
+  /// 중요 날짜 칩 위젯
+  Widget _buildDateChip(String date, DSColorScheme colors) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: colors.accent.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+      ),
+      child: Text(
+        date,
+        style: context.labelMedium.copyWith(
+          color: colors.accent,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -725,7 +864,7 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
 
     return Text(
       warningArea,
-      style: context.bodyMedium.copyWith(
+      style: context.bodySmall.copyWith(
         color: colors.textSecondary,
         height: 1.6,
       ),
@@ -811,8 +950,8 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
           debugPrint('[연애운] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
                 backgroundColor: DSColors.error,
               ),
             );
@@ -862,8 +1001,8 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
             backgroundColor: DSColors.warning,
           ),
         );

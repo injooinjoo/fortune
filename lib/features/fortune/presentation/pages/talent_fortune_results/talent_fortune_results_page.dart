@@ -206,8 +206,8 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
           debugPrint('[TalentFortune] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
                 backgroundColor: DSColors.error,
               ),
             );
@@ -252,8 +252,8 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
             backgroundColor: DSColors.warning,
           ),
         );
@@ -550,10 +550,10 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
   /// 로딩 상태 UI
   Widget _buildLoadingState() {
-    return FortuneLoadingSkeleton(
+    return const FortuneLoadingSkeleton(
       itemCount: 4,
       showHeader: true,
-      loadingMessages: const [
+      loadingMessages: [
         '재능을 분석하고 있어요...',
         'LLM이 당신의 사주를 분석 중입니다',
         '맞춤형 성장 로드맵을 작성하고 있어요',
@@ -572,7 +572,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 64,
               color: DSColors.error,

@@ -135,7 +135,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                     ),
                   ),
 
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
 
                   // 부제목
                   Text(
@@ -307,7 +307,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                               ),
                             ],
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             spread.description,
                             style: typography.bodySmall.copyWith(
@@ -349,7 +349,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                         size: 14,
                         color: color,
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         recommended,
                         style: typography.labelMedium.copyWith(

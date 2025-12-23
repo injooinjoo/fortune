@@ -266,7 +266,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                                       margin: const EdgeInsets.only(top: 1),
                                       width: 5,
                                       height: 5,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: DSColors.success,
                                         shape: BoxShape.circle,
                                       ),
@@ -331,7 +331,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.keyboard_arrow_up,
                     color: DSColors.accentSecondary,
                     size: 18,

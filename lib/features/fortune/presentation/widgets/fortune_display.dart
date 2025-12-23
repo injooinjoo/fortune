@@ -113,7 +113,7 @@ class FortuneDisplay extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.stars,
                 color: DSColors.warning,
                 size: 24),
@@ -223,7 +223,7 @@ class FortuneDisplay extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.lightbulb,
                 color: DSColors.success,
                 size: 24),
@@ -249,7 +249,7 @@ class FortuneDisplay extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.warning_amber,
                 color: DSColors.warning,
                 size: 24),

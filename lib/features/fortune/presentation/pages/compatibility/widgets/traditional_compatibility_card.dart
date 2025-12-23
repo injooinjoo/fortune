@@ -35,7 +35,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 '전통 궁합',
                 style: DSTypography.headingSmall.copyWith(
@@ -46,7 +46,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // 띠 궁합
           if (fortune.metadata?['zodiac_animal'] != null) ...[
@@ -63,7 +63,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
                           color: colors.textSecondary,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         '${fortune.metadata!['zodiac_animal']['person1']} × ${fortune.metadata!['zodiac_animal']['person2']}',
                         style: DSTypography.bodyMedium.copyWith(
@@ -90,7 +90,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               fortune.metadata!['zodiac_animal']['message'],
               style: DSTypography.bodyMedium.copyWith(
@@ -102,9 +102,9 @@ class TraditionalCompatibilityCard extends StatelessWidget {
 
           // 별자리 궁합
           if (fortune.metadata?['star_sign'] != null) ...[
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Divider(color: colors.border),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -118,7 +118,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
                           color: colors.textSecondary,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         '${fortune.metadata!['star_sign']['person1']} × ${fortune.metadata!['star_sign']['person2']}',
                         style: DSTypography.bodyMedium.copyWith(
@@ -145,7 +145,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               fortune.metadata!['star_sign']['message'],
               style: DSTypography.bodyMedium.copyWith(

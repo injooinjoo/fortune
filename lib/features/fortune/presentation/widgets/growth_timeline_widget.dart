@@ -52,7 +52,7 @@ class GrowthTimelineWidget extends StatelessWidget {
               color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             '대운(大運)으로 보는 당신의 생애 주기와 성장 방향',
             style: context.bodySmall.copyWith(
@@ -94,7 +94,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                 '🍀',
                 style: context.displaySmall,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 '성장을 도와줄 행운의 요소',
                 style: context.heading3.copyWith(
@@ -134,7 +134,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                       color: DSColors.accent,
                       size: 16,
                     ),
-                    SizedBox(width: 6),
+                    const SizedBox(width: 6),
                     Text(
                       element,
                       style: context.bodySmall.copyWith(
@@ -189,7 +189,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                     color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   primaryTalent.growthAdvice,
                   style: context.bodySmall.copyWith(
@@ -216,7 +216,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                 '📅',
                 style: context.displaySmall,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 '대운(大運) 타임라인',
                 style: context.heading3.copyWith(
@@ -226,7 +226,7 @@ class GrowthTimelineWidget extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             '10년 주기로 변화하는 인생의 흐름',
             style: context.bodySmall.copyWith(
@@ -346,7 +346,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       '$gan$zhi',
                       style: context.bodySmall.copyWith(
@@ -356,7 +356,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
                   _getDaeunDescription(wuxing, isActive),
                   style: context.labelMedium.copyWith(
@@ -496,7 +496,7 @@ class DaeunSummaryWidget extends StatelessWidget {
                     color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   '$age세 · $gan$zhi ($wuxing 운)',
                   style: context.heading3.copyWith(

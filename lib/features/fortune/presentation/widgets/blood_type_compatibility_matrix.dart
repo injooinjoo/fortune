@@ -80,7 +80,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
+        const Icon(
           Icons.bloodtype,
           color: DSColors.error,
           size: 24),
@@ -411,7 +411,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             borderRadius: BorderRadius.circular(DSRadius.sm)),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.lightbulb,
                 color: DSColors.warning,
                 size: 20),

@@ -212,7 +212,7 @@ class PermissionDeniedDialog extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.lock_outline, color: DSColors.error, size: 24),
+            const Icon(Icons.lock_outline, color: DSColors.error, size: 24),
             const SizedBox(width: 8),
             Expanded(
               child: Text(

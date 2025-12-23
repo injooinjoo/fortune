@@ -32,13 +32,13 @@ class NumericCompatibilityCard extends StatelessWidget {
                   color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.calculate,
                   color: DSColors.warning,
                   size: 20,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 '숫자 궁합',
                 style: DSTypography.headingSmall.copyWith(
@@ -49,7 +49,7 @@ class NumericCompatibilityCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // 이름 궁합
           if (fortune.metadata?['name_compatibility'] != null) ...[
@@ -65,7 +65,7 @@ class NumericCompatibilityCard extends StatelessWidget {
                         color: colors.textSecondary,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       '$person1Name ♥ $person2Name',
                       style: DSTypography.bodyMedium.copyWith(
@@ -95,9 +95,9 @@ class NumericCompatibilityCard extends StatelessWidget {
 
           // 운명수
           if (fortune.metadata?['destiny_number'] != null) ...[
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Divider(color: colors.border),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -107,7 +107,7 @@ class NumericCompatibilityCard extends StatelessWidget {
                     color: colors.textSecondary,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   children: [
                     Container(
@@ -127,7 +127,7 @@ class NumericCompatibilityCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         fortune.metadata!['destiny_number']['meaning'],

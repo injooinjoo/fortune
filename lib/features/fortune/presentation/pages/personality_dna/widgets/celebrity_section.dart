@@ -56,7 +56,7 @@ class CelebritySection extends StatelessWidget {
                   width: 1.5,
                 ),
               ),
-              child: Center(
+              child: const Center(
                 child: Text('⭐', style: TextStyle(fontSize: FontConfig.heading3)),
               ),
             ),

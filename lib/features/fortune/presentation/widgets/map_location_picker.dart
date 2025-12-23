@@ -56,7 +56,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
     setState(() => _isLoading = true);
     
     try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         _showSnackBar('위치 서비스를 활성화해주세요');
         setState(() => _isLoading = false);
@@ -79,8 +79,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         return;
       }
 
-      Position position = await Geolocator.getCurrentPosition();
-      LatLng currentLocation = LatLng(position.latitude, position.longitude);
+      final Position position = await Geolocator.getCurrentPosition();
+      final LatLng currentLocation = LatLng(position.latitude, position.longitude);
       
       _mapController.move(currentLocation, 15);
       await _updateLocationAndAddress(currentLocation);
@@ -97,9 +97,9 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
     setState(() => _isLoading = true);
     
     try {
-      List<Location> locations = await locationFromAddress(query);
+      final List<Location> locations = await locationFromAddress(query);
       if (locations.isNotEmpty) {
-        LatLng newLocation = LatLng(locations.first.latitude, locations.first.longitude);
+        final LatLng newLocation = LatLng(locations.first.latitude, locations.first.longitude);
         _mapController.move(newLocation, 15);
         await _updateLocationAndAddress(newLocation);
       } else {
@@ -118,16 +118,16 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
     });
     
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
+      final List<Placemark> placemarks = await placemarkFromCoordinates(
         location.latitude,
         location.longitude
       );
       
       if (placemarks.isNotEmpty) {
-        Placemark place = placemarks.first;
+        final Placemark place = placemarks.first;
 
         // 광역시/도 단위로 간소화된 주소 생성
-        String simplifiedAddress = _getSimplifiedKoreanAddress(place);
+        final String simplifiedAddress = _getSimplifiedKoreanAddress(place);
         
         setState(() {
           _selectedAddress = simplifiedAddress;
@@ -194,7 +194,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
       children: [
         // 검색 바
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Expanded(
@@ -270,7 +270,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
               if (_isLoading)
                 Container(
                   color: Colors.black.withValues(alpha: 0.26),
-                  child: Center(
+                  child: const Center(
                     child: CircularProgressIndicator(),
                   ),
                 ),
@@ -282,7 +282,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         if (_selectedAddress.isNotEmpty)
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: DSColors.textTertiary.withValues(alpha:0.9),
               border: Border(

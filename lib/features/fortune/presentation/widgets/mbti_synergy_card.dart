@@ -42,7 +42,7 @@ class MbtiSynergyCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [
                       DSColors.accentSecondary,
                       DSColors.accent,
@@ -50,7 +50,7 @@ class MbtiSynergyCard extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.people,
                   color: Colors.white,
                   size: 24,
@@ -112,7 +112,7 @@ class MbtiSynergyCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
+                const Icon(
                   Icons.tips_and_updates,
                   color: DSColors.accent,
                   size: 20,
@@ -173,7 +173,7 @@ class MbtiSynergyCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.auto_awesome,
                 color: Colors.white,
                 size: 20,

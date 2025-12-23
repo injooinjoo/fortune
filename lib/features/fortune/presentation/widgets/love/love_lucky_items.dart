@@ -72,7 +72,7 @@ class LoveLuckyItems extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   '🎁 이번 달 행운 아이템',
@@ -99,7 +99,7 @@ class LoveLuckyItems extends StatelessWidget {
             ],
           ),
           
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           
           Text(
             '이 아이템들이 연애 운을 높여줄 거예요!',
@@ -149,12 +149,12 @@ class LoveLuckyItems extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.lightbulb_outline,
                   color: DSColors.accent,
                   size: 20,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '💡 데이트나 중요한 만남 전에 이 아이템들을 활용해보세요!',
@@ -202,7 +202,7 @@ class LoveLuckyItems extends StatelessWidget {
                 emoji,
                 style: DSTypography.buttonMedium,
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   category,
@@ -214,7 +214,7 @@ class LoveLuckyItems extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             item,
             style: DSTypography.labelSmall.copyWith(

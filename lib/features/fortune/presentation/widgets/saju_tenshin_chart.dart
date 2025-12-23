@@ -142,7 +142,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                 opacity: _titleAnimation,
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.psychology_outlined,
                       color: DSColors.accent,
                       size: 24,
@@ -417,7 +417,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.lightbulb_outline,
             color: DSColors.warning,
             size: 16,

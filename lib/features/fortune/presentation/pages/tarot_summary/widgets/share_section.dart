@@ -41,7 +41,7 @@ class ShareSection extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.9),
                 size: 20,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '친구와 공유하기',
                 style: DSTypography.labelLarge.copyWith(
@@ -112,7 +112,7 @@ class ShareSection extends StatelessWidget {
               color: color,
               size: 24,
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               label,
               style: DSTypography.labelMedium.copyWith(

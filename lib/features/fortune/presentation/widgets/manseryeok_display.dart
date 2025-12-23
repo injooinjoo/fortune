@@ -48,7 +48,7 @@ class ManseryeokDisplay extends StatelessWidget {
             color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
           ),
         ),
-        SizedBox(height: DSSpacing.xs),
+        const SizedBox(height: DSSpacing.xs),
         // 한글 부제
         Text(
           '당신의 타고난 사주팔자입니다',
@@ -167,7 +167,7 @@ class ManseryeokDisplay extends StatelessWidget {
               letterSpacing: 2,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             korean,
             style: DSTypography.labelSmall.copyWith(
@@ -237,7 +237,7 @@ class ManseryeokDisplay extends StatelessWidget {
               height: 1,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           // 한글
           Text(
             korean,
@@ -301,7 +301,7 @@ class ManseryeokDisplay extends StatelessWidget {
             color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             size: 16,
           ),
-          SizedBox(width: DSSpacing.xs),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             '위 사주는 만세력 기준으로 계산되었습니다',
             style: DSTypography.labelSmall.copyWith(

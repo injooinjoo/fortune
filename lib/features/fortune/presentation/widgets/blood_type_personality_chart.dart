@@ -342,7 +342,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodyMedium),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 content,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -368,7 +368,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.science,
                 color: DSColors.accentSecondary,
                 size: 20),
@@ -416,7 +416,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   width: 1)),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.info,
                     color: DSColors.accentTertiary,
                     size: 16,
@@ -608,7 +608,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.star,
                   color: DSColors.accentTertiary,
                   size: 16),

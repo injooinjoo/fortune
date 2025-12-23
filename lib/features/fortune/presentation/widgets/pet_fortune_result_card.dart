@@ -121,7 +121,7 @@ class PetFortuneResultCard extends StatelessWidget {
             emoji,
             style: context.displayLarge,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             '$petName의 오늘 운세',
             style: context.heading1.copyWith(
@@ -187,7 +187,7 @@ class PetFortuneResultCard extends StatelessWidget {
             progressColor: scoreColor,
             backgroundColor: scoreColor.withValues(alpha: 0.1),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Text(
             compatibilityResult['level'] ?? '좋은 궁합',
             style: context.heading2.copyWith(
@@ -195,7 +195,7 @@ class PetFortuneResultCard extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             compatibilityResult['message'] ?? fortune.content,
             style: context.bodySmall.copyWith(
@@ -215,7 +215,7 @@ class PetFortuneResultCard extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.lightbulb_outline,
                     color: DSColors.accent,
                     size: 20,
@@ -265,12 +265,12 @@ class PetFortuneResultCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
+                const Icon(
                   Icons.health_and_safety,
                   color: DSColors.success,
                   size: 20,
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     healthFortune['mainAdvice'] ?? '',
@@ -292,12 +292,12 @@ class PetFortuneResultCard extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.check_circle_outline,
                     color: DSColors.textTertiary,
                     size: 16,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       point.toString(),
@@ -341,7 +341,7 @@ class PetFortuneResultCard extends StatelessWidget {
               padding: EdgeInsets.zero,
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Text(
             '$score',
             style: context.bodySmall.copyWith(
@@ -372,12 +372,12 @@ class PetFortuneResultCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.schedule,
                       color: DSColors.accentSecondary,
                       size: 20,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       '${activityFortune['bestTime'] ?? '지금'} 추천',
                       style: context.labelSmall.copyWith(
@@ -387,7 +387,7 @@ class PetFortuneResultCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   activityFortune['recommended'] ?? '',
                   style: context.bodyMedium.copyWith(
@@ -415,12 +415,12 @@ class PetFortuneResultCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.star,
                     color: DSColors.warning,
                     size: 20,
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       activityFortune['special'],
@@ -479,7 +479,7 @@ class PetFortuneResultCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       emotionalState['advice'] ?? '',
                       style: context.labelSmall.copyWith(
@@ -568,7 +568,7 @@ class PetFortuneResultCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   event['advice'] ?? '',
                   style: context.labelSmall.copyWith(
@@ -594,12 +594,12 @@ class PetFortuneResultCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
+              const Icon(
                 Icons.pets,
                 color: DSColors.warning,
                 size: 16,
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   point.toString(),
@@ -668,7 +668,7 @@ class PetFortuneResultCard extends StatelessWidget {
                     color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   value.toString(),
                   style: context.bodyMedium.copyWith(

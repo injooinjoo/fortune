@@ -43,7 +43,7 @@ class QuestionTypeStep extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
 
           // Connection type
           Text(
@@ -82,7 +82,7 @@ class QuestionTypeStep extends StatelessWidget {
             onTap: () => onConnectionTypeChanged('career_advice'),
           ),
 
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
 
           // Question type
           Text(
@@ -293,7 +293,7 @@ class QuestionOption extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle, color: accentColor, size: 20),
+              const Icon(Icons.check_circle, color: accentColor, size: 20),
           ],
         ),
       ),

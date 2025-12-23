@@ -213,7 +213,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 4,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -249,7 +249,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
             errorBuilder: (context, error, stackTrace) {
               // 폴백: 기존 플레이스홀더 디자인
               return Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

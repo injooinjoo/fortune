@@ -77,7 +77,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
           ),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.info_outline,
                 color: DSColors.accentSecondary,
                 size: 20,
@@ -107,7 +107,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
             },
             style: UnifiedButtonStyle.secondary,
             size: UnifiedButtonSize.large,
-            icon: Icon(Icons.arrow_forward),
+            icon: const Icon(Icons.arrow_forward),
           ),
         ),
       ],

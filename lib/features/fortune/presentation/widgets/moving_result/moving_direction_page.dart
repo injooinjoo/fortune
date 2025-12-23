@@ -38,7 +38,7 @@ class MovingDirectionPage extends StatelessWidget {
                   child: RadarChart(
                     RadarChartData(
                       radarShape: RadarShape.polygon,
-                      radarBorderData: BorderSide(color: DSColors.border),
+                      radarBorderData: const BorderSide(color: DSColors.border),
                       gridBorderData: BorderSide(color: DSColors.border.withValues(alpha: 0.5)),
                       tickBorderData: BorderSide(color: DSColors.border.withValues(alpha: 0.5)),
                       titleTextStyle: DSTypography.bodyMedium,
@@ -86,7 +86,7 @@ class MovingDirectionPage extends StatelessWidget {
                           color: DSColors.accent,
                           borderRadius: BorderRadius.circular(24),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.navigation_rounded,
                           color: Colors.white,
                           size: 24,

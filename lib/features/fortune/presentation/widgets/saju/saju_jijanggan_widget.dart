@@ -52,7 +52,7 @@ class SajuJijangganWidget extends StatelessWidget {
   Widget _buildTitle(bool isDark) {
     return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.layers_outlined,
           color: DSColors.accent,
           size: 20,

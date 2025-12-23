@@ -65,7 +65,7 @@ class OverviewSection extends StatelessWidget {
                           color: colors.textPrimary,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         'LLM이 분석한 당신의 재능과 잠재력',
                         style: DSTypography.bodySmall.copyWith(
@@ -122,7 +122,7 @@ class OverviewSection extends StatelessWidget {
                           color: colors.accent,
                           size: 24,
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
                           '신령의 재능 풀이',
                           style: DSTypography.headingMedium.copyWith(
@@ -165,12 +165,12 @@ class OverviewSection extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.stars,
                           color: DSColors.warning,
                           size: 24,
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
                           '행운 아이템',
                           style: DSTypography.headingMedium.copyWith(
@@ -208,7 +208,7 @@ class OverviewSection extends StatelessWidget {
             ),
             child: Icon(icon, size: 20, color: colors.accent),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

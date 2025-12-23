@@ -113,7 +113,7 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                                 : DSTypography.bodyMedium.copyWith(color: DSColors.textTertiary),
                           ),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.chevron_right,
                           color: DSColors.textTertiary,
                         ),
@@ -152,7 +152,7 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                                 : DSTypography.bodyMedium.copyWith(color: DSColors.textTertiary),
                           ),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.chevron_right,
                           color: DSColors.textTertiary,
                         ),

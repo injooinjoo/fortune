@@ -97,7 +97,7 @@ class _MatchingCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: Text(emoji, style: TextStyle(fontSize: FontConfig.buttonMedium)),
+              child: Text(emoji, style: const TextStyle(fontSize: FontConfig.buttonMedium)),
             ),
           ),
           const SizedBox(width: 12),

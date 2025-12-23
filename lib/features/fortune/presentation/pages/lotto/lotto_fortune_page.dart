@@ -241,7 +241,8 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
         if (_canGenerate())
           UnifiedButton.floating(
             text: '🎰 행운 번호 확인하기',
-            onPressed: _canGenerate() && !_isGenerating ? _generateNumbers : null,
+            onPressed:
+                _canGenerate() && !_isGenerating ? _generateNumbers : null,
             isEnabled: _canGenerate() && !_isGenerating,
             showProgress: _isGenerating,
             isLoading: _isGenerating,
@@ -265,7 +266,7 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
               child: Opacity(
                 opacity: isDark ? 0.06 : 0.10,
                 child: Image.asset(
-                  'assets/images/minhwa/minhwa_overall_dragon.png',
+                  'assets/images/minhwa/minhwa_overall_dragon.webp',
                   width: 160,
                   height: 160,
                   fit: BoxFit.contain,
@@ -297,10 +298,18 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
                         ),
                       ],
                     ),
-                    child: const Icon(
-                      Icons.casino_rounded,
-                      size: 48,
-                      color: Colors.white,
+                    child: Image.asset(
+                      'assets/images/fortune/categories/lotto_main.png',
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.casino_rounded,
+                          size: 48,
+                          color: Colors.white,
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -348,7 +357,8 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
           child: LottoResultContainer(
             result: _result!,
             isPremiumUnlocked: _isPremiumUnlocked || isPremium,
-            onUnlockPressed: (!_isPremiumUnlocked && !isPremium) ? _showAdAndUnlock : null,
+            onUnlockPressed:
+                (!_isPremiumUnlocked && !isPremium) ? _showAdAndUnlock : null,
             currentLocationName: _currentLocationName,
           ),
         ),
@@ -482,9 +492,7 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
           title: Text(
             time,
             style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark
-                  ? ObangseokColors.baekDark
-                  : ObangseokColors.meok,
+              color: isDark ? ObangseokColors.baekDark : ObangseokColors.meok,
             ),
           ),
           value: time,
@@ -518,9 +526,7 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
           title: Text(
             '남성',
             style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark
-                  ? ObangseokColors.baekDark
-                  : ObangseokColors.meok,
+              color: isDark ? ObangseokColors.baekDark : ObangseokColors.meok,
             ),
           ),
           value: 'male',
@@ -545,9 +551,7 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
           title: Text(
             '여성',
             style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark
-                  ? ObangseokColors.baekDark
-                  : ObangseokColors.meok,
+              color: isDark ? ObangseokColors.baekDark : ObangseokColors.meok,
             ),
           ),
           value: 'female',

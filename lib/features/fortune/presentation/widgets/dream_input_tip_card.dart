@@ -17,7 +17,7 @@ class DreamInputTipCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.tips_and_updates,
                 color: DSColors.accent,
                 size: 24,

@@ -702,16 +702,16 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
 
     return Scaffold(
       backgroundColor: colors.background,
-      appBar: StandardFortuneAppBar(
+      appBar: const StandardFortuneAppBar(
         title: '재능',
       ),
       body: SafeArea(
         child: Stack(
           children: [
             _accordionSections.isEmpty
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : AccordionInputFormWithHeader(
-                    header: TalentInputTitle(),
+                    header: const TalentInputTitle(),
                     sections: _accordionSections,
                     onAllCompleted: null,
                     completionButtonText: '🔮 재능 분석 시작하기',

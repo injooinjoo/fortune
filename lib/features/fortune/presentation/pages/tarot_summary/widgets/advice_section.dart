@@ -24,12 +24,12 @@ class AdviceSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.lightbulb,
             size: 36,
             color: DSColors.success,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             '조언',
             style: DSTypography.headingSmall.copyWith(

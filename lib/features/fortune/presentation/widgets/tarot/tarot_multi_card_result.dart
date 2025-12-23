@@ -361,8 +361,8 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                 Container(
                   width: 28,
                   height: 28,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF7C3AED),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF7C3AED),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -375,7 +375,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Text(
                   positionName,
                   style: context.typography.labelLarge.copyWith(
@@ -447,9 +447,9 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.auto_awesome,
-                                        color: const Color(0xFF7C3AED),
+                                        color: Color(0xFF7C3AED),
                                         size: 64,
                                       ),
                                       const SizedBox(height: 16),
@@ -578,8 +578,8 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
   }
 
   Widget _buildCardItem(TarotCard card, int index, bool isDark, {bool large = false, bool small = false}) {
-    double width = large ? 220 : (small ? 90 : 120);
-    double height = large ? 320 : (small ? 135 : 180);
+    final double width = large ? 220 : (small ? 90 : 120);
+    final double height = large ? 320 : (small ? 135 : 180);
 
     final cardWidget = GestureDetector(
       onTap: () {
@@ -636,13 +636,13 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    const Color(0xFFF5F5F5),
-                                    const Color(0xFFE0E0E0),
+                                    Color(0xFFF5F5F5),
+                                    Color(0xFFE0E0E0),
                                   ],
                                 ),
                               ),
@@ -652,16 +652,16 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                                   children: [
                                     Icon(
                                       Icons.auto_awesome,
-                                      color: Color(0xFF7C3AED),
+                                      color: const Color(0xFF7C3AED),
                                       size: large ? 48 : 32,
                                     ),
-                                    SizedBox(height: 12),
+                                    const SizedBox(height: 12),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8),
                                       child: Text(
                                         card.cardNameKr,
                                         style: context.typography.labelMedium.copyWith(
-                                          color: Color(0xFF7C3AED),
+                                          color: const Color(0xFF7C3AED),
                                           fontWeight: FontWeight.w600,
                                         ),
                                         textAlign: TextAlign.center,
@@ -772,7 +772,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                 color: Color(0xFF7C3AED),
                 size: 20,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '종합 해석',
                 style: typography.labelLarge.copyWith(
@@ -782,7 +782,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           GptStyleTypingText(
             text: widget.result.overallInterpretation,
             style: typography.bodySmall.copyWith(
@@ -862,12 +862,12 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                           '${index + 1}',
                           style: typography.labelMedium.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF7C3AED),
+                            color: const Color(0xFF7C3AED),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       card.fullName,
                       style: typography.bodySmall.copyWith(
@@ -877,7 +877,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   entry.value,
                   style: typography.bodySmall.copyWith(

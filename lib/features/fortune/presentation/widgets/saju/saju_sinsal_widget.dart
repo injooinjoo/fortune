@@ -90,7 +90,7 @@ class SajuSinsalWidget extends StatelessWidget {
   Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.stars_outlined,
           color: DSColors.accent,
           size: 20,
@@ -327,7 +327,7 @@ class SajuSinsalWidget extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.lightbulb_outline,
                     color: DSColors.warning,
                     size: 12,

@@ -116,7 +116,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
       },
       child: Container(
         height: widget.cardHeight * 2.2, // 카드가 짤리지 않도록 높이 증가
-        padding: EdgeInsets.symmetric(vertical: 20), // 상하 패딩 추가
+        padding: const EdgeInsets.symmetric(vertical: 20), // 상하 패딩 추가
         child: Stack(
           alignment: Alignment.center,
           clipBehavior: Clip.none, // 카드가 컨테이너 밖으로 나갈 수 있도록 허용
@@ -195,7 +195,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
           },
           behavior: HitTestBehavior.opaque,
           child: AnimatedContainer(
-            duration: isDragging ? Duration.zero : Duration(milliseconds: 200),
+            duration: isDragging ? Duration.zero : const Duration(milliseconds: 200),
             child: Transform(
               alignment: Alignment.center,
               transform: Matrix4.identity()

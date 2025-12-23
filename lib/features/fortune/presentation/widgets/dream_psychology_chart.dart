@@ -67,7 +67,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
   Widget _buildHeader() {
     return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.psychology,
           color: DSColors.accentSecondary,
           size: 24),
@@ -85,7 +85,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       builder: (context, child) {
         return GlassContainer(
           height: 96 * 3.125,
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Stack(
             children: [
               CustomPaint(
@@ -213,7 +213,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     final rightPercent = (rightValue / total * 100).toInt();
     
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(DSRadius.md),
@@ -250,13 +250,13 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
 
   Widget _buildInsightSection() {
     return GlassContainer(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.lightbulb_outline,
                 color: DSColors.warning,
                 size: 20),
@@ -266,7 +266,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                 style: Theme.of(context).textTheme.bodyMedium),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             _generateInsight(),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -321,7 +321,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 '• ',
                 style: TextStyle(color: DSColors.warning),
               ),

@@ -105,7 +105,7 @@ class CareerFortuneSelector extends StatelessWidget {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -168,7 +168,7 @@ class _CareerTypeCard extends StatelessWidget {
       onTap: () => context.push(careerType.route),
       borderRadius: BorderRadius.circular(20),
       child: GlassContainer(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -182,7 +182,7 @@ class _CareerTypeCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: careerType.gradientColors),

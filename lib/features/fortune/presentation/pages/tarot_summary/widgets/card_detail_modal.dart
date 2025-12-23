@@ -59,7 +59,7 @@ class CardDetailModal extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               position,
               style: DSTypography.bodyLarge.copyWith(
@@ -79,14 +79,14 @@ class CardDetailModal extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               '해석',
               style: DSTypography.headingSmall.copyWith(
                 color: Colors.white,
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               interpretation,
               style: DSTypography.bodySmall.copyWith(

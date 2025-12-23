@@ -22,7 +22,7 @@ class RecommendationsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.school, color: DSColors.warning, size: 24),
+              const Icon(Icons.school, color: DSColors.warning, size: 24),
               const SizedBox(width: 8),
               Text(
                 '추천 스킬',

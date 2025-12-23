@@ -166,7 +166,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
+        const Icon(
           Icons.grid_on,
           color: DSColors.accentSecondary,
           size: 24),
@@ -470,7 +470,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                 width: 1)),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.sync,
                   color: DSColors.success,
                   size: 16,

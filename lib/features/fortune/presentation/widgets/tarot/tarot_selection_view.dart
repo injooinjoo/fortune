@@ -110,7 +110,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
             child: _isShuffling
                 ? _buildShufflingAnimation()
                 : TarotDeckSpreadWidget(
-                    key: ValueKey('spread'),
+                    key: const ValueKey('spread'),
                     cardCount: 22, // Major Arcana only for simplicity
                     selectedDeck: widget.selectedDeck,
                     onCardSelected: _handleCardSelection,
@@ -236,7 +236,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
               onPressed: _isShuffling ? null : _shuffleCards,
               style: UnifiedButtonStyle.ghost,
               size: UnifiedButtonSize.medium,
-              icon: Icon(Icons.shuffle),
+              icon: const Icon(Icons.shuffle),
             ),
           ),
           const SizedBox(width: 16),
@@ -250,7 +250,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
               },
               style: UnifiedButtonStyle.primary,
               size: UnifiedButtonSize.medium,
-              icon: Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh),
             ),
           ),
         ],

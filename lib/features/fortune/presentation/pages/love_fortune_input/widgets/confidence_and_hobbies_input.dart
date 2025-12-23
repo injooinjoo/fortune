@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/services/fortune_haptic_service.dart';
 
 /// Section 8: 외모 자신감 & 취미
-class ConfidenceAndHobbiesInput extends StatelessWidget {
+class ConfidenceAndHobbiesInput extends ConsumerWidget {
   final double appearanceConfidence;
   final Set<String> selectedHobbies;
   final ValueChanged<double> onConfidenceChanged;
@@ -18,7 +19,7 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
 
     final hobbyOptions = [
@@ -63,7 +64,12 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
             min: 1,
             max: 10,
             divisions: 9,
-            onChanged: onConfidenceChanged,
+            onChanged: (newValue) {
+              if (newValue.round() != appearanceConfidence.round()) {
+                ref.read(fortuneHapticServiceProvider).sliderSnap();
+              }
+              onConfidenceChanged(newValue);
+            },
           ),
         ),
         Center(
@@ -121,7 +127,7 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
             return InkWell(
               onTap: () {
                 onHobbyToggled(hobbyId);
-                HapticFeedback.lightImpact();
+                ref.read(fortuneHapticServiceProvider).selection();
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

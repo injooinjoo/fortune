@@ -80,7 +80,7 @@ class FortuneContentCard extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.check_circle,
                         size: 20,
                         color: DSColors.success,
@@ -116,7 +116,7 @@ class FortuneContentCard extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.warning_amber,
                         size: 20,
                         color: DSColors.warning,

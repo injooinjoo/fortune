@@ -139,7 +139,7 @@ class _InputStep1WidgetState extends ConsumerState<InputStep1Widget> {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             else
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
                 color: DSColors.accent,
@@ -202,7 +202,7 @@ class _InputStep1WidgetState extends ConsumerState<InputStep1Widget> {
   Widget _buildDividerWithText(String text) {
     return Row(
       children: [
-        Expanded(
+        const Expanded(
           child: Divider(
             color: DSColors.border,
             thickness: 1,
@@ -217,7 +217,7 @@ class _InputStep1WidgetState extends ConsumerState<InputStep1Widget> {
             ),
           ),
         ),
-        Expanded(
+        const Expanded(
           child: Divider(
             color: DSColors.border,
             thickness: 1,

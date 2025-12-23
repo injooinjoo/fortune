@@ -274,12 +274,12 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                 children: [
                   Text(
                     rank <= 10 ? '🥇' : rank <= 50 ? '🥈' : '🎖️',
-                    style: TextStyle(fontSize: FontConfig.emojiSmall),
+                    style: const TextStyle(fontSize: FontConfig.emojiSmall),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '$rank위',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: FontConfig.primary,
                       fontSize: FontConfig.scoreMedium,
                       fontWeight: FontWeight.w700,
@@ -382,9 +382,9 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
       children: [
         Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-              child: const TitleSection(),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 16),
+              child: TitleSection(),
             ),
             Expanded(
               child: AccordionInputForm(
@@ -734,8 +734,8 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
           debugPrint('[성격DNA] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
                 backgroundColor: DSColors.error,
               ),
             );
@@ -783,8 +783,8 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
             backgroundColor: DSColors.warning,
           ),
         );

@@ -106,7 +106,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           
           // Description
           Text(
@@ -209,7 +209,7 @@ class FamilyCategoryChart extends StatelessWidget {
                         size: 18,
                         color: color,
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(
                         label,
                         style: context.bodySmall.copyWith(
@@ -238,7 +238,7 @@ class FamilyCategoryChart extends StatelessWidget {
                     animation: true,
                     animationDuration: 1000,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     advice,
                     style: context.labelSmall.copyWith(
@@ -377,7 +377,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                       ),
                     ),
                     
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       '$score',
                       style: context.labelSmall.copyWith(
@@ -385,7 +385,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                         color: color,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       keyword,
                       style: context.labelSmall.copyWith(

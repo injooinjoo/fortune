@@ -248,7 +248,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                                             margin: const EdgeInsets.only(top: 4),
                                             width: 8,
                                             height: 8,
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               color: DSColors.success,
                                               shape: BoxShape.circle,
                                             ),
@@ -279,7 +279,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.lock_outline,
                                     size: 48,
                                     color: DSColors.accentSecondary,

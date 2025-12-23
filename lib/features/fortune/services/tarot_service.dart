@@ -207,7 +207,7 @@ class TarotService {
       final positionKey = card.positionKey ?? 'card_$i';
 
       // 카드와 포지션에 따른 해석 생성
-      String interpretation = _generateCardInterpretation(
+      final String interpretation = _generateCardInterpretation(
         card,
         spreadType,
         i,
@@ -268,7 +268,7 @@ class TarotService {
     }
 
     // 포지션에 따른 해석 추가
-    String positionContext = _getPositionContext(spreadType, position);
+    final String positionContext = _getPositionContext(spreadType, position);
 
     return '$positionContext: ${card.fullName}\n$baseMeaning';
   }

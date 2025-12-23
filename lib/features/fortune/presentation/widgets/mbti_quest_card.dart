@@ -58,7 +58,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                   color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.emoji_events,
                   color: DSColors.warning,
                   size: 24,
@@ -76,7 +76,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       '완료하고 성장 포인트를 획득하세요',
                       style: DSTypography.labelSmall.copyWith(
@@ -127,7 +127,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                   child: LinearProgressIndicator(
                     value: progress,
                     backgroundColor: DSColors.accent.withValues(alpha: 0.1),
-                    valueColor: AlwaysStoppedAnimation(DSColors.accent),
+                    valueColor: const AlwaysStoppedAnimation(DSColors.accent),
                     minHeight: 8,
                   ),
                 ),
@@ -221,7 +221,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                       _buildDifficultyBadge(difficulty),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     description,
                     style: DSTypography.labelSmall.copyWith(
@@ -234,7 +234,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
             ),
             const SizedBox(width: 12),
             if (isCompleted)
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: DSColors.success,
                 size: 24,
@@ -298,7 +298,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 12, color: color),
-          SizedBox(width: 3),
+          const SizedBox(width: 3),
           Text(
             label,
             style: DSTypography.labelSmall.copyWith(

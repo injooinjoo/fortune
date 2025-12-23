@@ -139,12 +139,12 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
+        const Icon(
           Icons.category,
           color: DSColors.warning,
           size: 24,
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Text(
           '오행 분석',
           style: context.heading3.copyWith(
@@ -301,7 +301,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             style: context.heading3.copyWith(
               fontWeight: FontWeight.bold,
               color: Colors.white)),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             _selectedElement!,
             style: context.labelMedium.copyWith(
@@ -364,7 +364,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             data.description,
             style: context.labelMedium.copyWith(
@@ -414,7 +414,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   color: data.color,
                   size: 20,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   '띠: ',
                   style: context.bodySmall.copyWith(
@@ -450,12 +450,12 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.sync_alt,
                 color: DSColors.warning,
                 size: 24,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '오행 상생상극',
                 style: context.heading3.copyWith(

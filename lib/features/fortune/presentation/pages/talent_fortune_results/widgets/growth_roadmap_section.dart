@@ -88,7 +88,7 @@ class GrowthRoadmapSection extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.check_circle_outline, size: 14, color: DSColors.success),
+                          const Icon(Icons.check_circle_outline, size: 14, color: DSColors.success),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(

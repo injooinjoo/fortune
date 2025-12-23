@@ -150,7 +150,7 @@ class _DirectionCompassState extends State<DirectionCompass>
                     ),
                   ],
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.explore,
                   color: Colors.white,
                   size: 30,

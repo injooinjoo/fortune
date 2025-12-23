@@ -1033,7 +1033,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.lightbulb_outline, size: 16, color: DSColors.success),
+                const Icon(Icons.lightbulb_outline, size: 16, color: DSColors.success),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(

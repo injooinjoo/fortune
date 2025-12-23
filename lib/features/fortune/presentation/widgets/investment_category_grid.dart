@@ -17,8 +17,6 @@ class InvestmentCategoryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -67,43 +65,20 @@ class _CategoryCard extends StatelessWidget {
     required this.onTap,
   });
 
-  IconData _getIcon() {
-    switch (category) {
-      case InvestmentCategory.crypto:
-        return Icons.currency_bitcoin_rounded;
-      case InvestmentCategory.krStock:
-        return Icons.trending_up_rounded;
-      case InvestmentCategory.usStock:
-        return Icons.show_chart_rounded;
-      case InvestmentCategory.etf:
-        return Icons.pie_chart_rounded;
-      case InvestmentCategory.commodity:
-        return Icons.diamond_rounded;
-      case InvestmentCategory.realEstate:
-        return Icons.home_rounded;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // ChatGPT 스타일 색상
     final backgroundColor = isSelected
-        ? (isDark ? DSColors.accent.withValues(alpha: 0.15) : DSColors.accent.withValues(alpha: 0.08))
+        ? (isDark
+            ? DSColors.accent.withValues(alpha: 0.15)
+            : DSColors.accent.withValues(alpha: 0.08))
         : (isDark ? DSColors.surface : Colors.white);
 
-    final borderColor = isSelected
-        ? DSColors.accent
-        : DSColors.border;
+    final borderColor = isSelected ? DSColors.accent : DSColors.border;
 
-    final iconColor = isSelected
-        ? DSColors.accent
-        : DSColors.textSecondary;
-
-    final textColor = isSelected
-        ? DSColors.accent
-        : DSColors.textPrimary;
+    final textColor = isSelected ? DSColors.accent : DSColors.textPrimary;
 
     final descColor = DSColors.textTertiary;
 
@@ -127,17 +102,18 @@ class _CategoryCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  _getIcon(),
-                  size: 24,
-                  color: iconColor,
+                Image.asset(
+                  category.imagePath,
+                  width: 32,
+                  height: 32,
+                  fit: BoxFit.contain,
                 ),
                 if (isSelected) ...[
                   const Spacer(),
                   Container(
                     width: 20,
                     height: 20,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: DSColors.accent,
                       shape: BoxShape.circle,
                     ),

@@ -71,7 +71,7 @@ class SajuPillarTablePro extends StatelessWidget {
   Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.grid_view_rounded,
           color: DSColors.accent,
           size: 20,

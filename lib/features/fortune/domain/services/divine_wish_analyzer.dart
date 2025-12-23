@@ -64,7 +64,7 @@ class DivineWishAnalyzer {
     
     // 소원 텍스트와 긴급도를 바탕으로 응답 선택
     final responseIndex = _calculateResponseIndex(wishText, urgency, responses.length);
-    String baseResponse = responses[responseIndex];
+    final String baseResponse = responses[responseIndex];
     
     // 긴급도에 따른 추가 메시지
     final urgencyMessage = _getUrgencyMessage(urgency);

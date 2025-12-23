@@ -69,7 +69,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
               return Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(DSRadius.lg),
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
@@ -231,7 +231,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              const Icon(
                 Icons.auto_awesome_rounded,
                 size: 14,
                 color: Colors.white),

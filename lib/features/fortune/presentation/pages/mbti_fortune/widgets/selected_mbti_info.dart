@@ -30,33 +30,53 @@ class SelectedMbtiInfo extends StatelessWidget {
     required this.colors,
   });
 
+  String get _imagePath =>
+      'assets/images/mbti/${selectedMbti.toLowerCase()}.webp';
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: colors),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            selectedMbti,
-            style: DSTypography.headingLarge.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 1:1 이미지
+        AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.first.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                _imagePath,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            mbtiDescriptions[selectedMbti] ?? '',
-            style: DSTypography.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
+        ),
+        const SizedBox(height: 16),
+        // 텍스트 (이미지 아래)
+        Text(
+          selectedMbti,
+          style: DSTypography.headingLarge.copyWith(
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          mbtiDescriptions[selectedMbti] ?? '',
+          style: DSTypography.bodyMedium.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
     );
   }
 }

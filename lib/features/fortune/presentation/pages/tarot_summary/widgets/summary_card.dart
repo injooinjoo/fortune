@@ -44,7 +44,7 @@ class SummaryCard extends StatelessWidget {
                 ],
               ),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.auto_stories,
               size: 48,
               color: DSColors.warning,
@@ -56,7 +56,7 @@ class SummaryCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '전체 해석',
             style: DSTypography.headingMedium.copyWith(
@@ -64,7 +64,7 @@ class SummaryCard extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             summary,
             style: DSTypography.bodyLarge.copyWith(

@@ -72,7 +72,7 @@ class ElementBalanceSection extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text(
                     '$percentage%',
                     style: DSTypography.bodySmall.copyWith(
@@ -85,7 +85,7 @@ class ElementBalanceSection extends StatelessWidget {
             );
           }),
           if (dominantElement != null) ...[
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               '$dominantElement 원소가 우세합니다',
               style: DSTypography.bodySmall.copyWith(

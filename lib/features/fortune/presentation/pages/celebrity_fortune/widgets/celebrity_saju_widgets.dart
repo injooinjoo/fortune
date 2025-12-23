@@ -34,7 +34,7 @@ class SajuAnalysisSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome, color: DSColors.accentSecondary, size: 24),
+              const Icon(Icons.auto_awesome, color: DSColors.accentSecondary, size: 24),
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '사주 심층 분석',
@@ -412,7 +412,7 @@ class _HapAnalysisCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.check_circle, size: 14, color: DSColors.success),
+                      const Icon(Icons.check_circle, size: 14, color: DSColors.success),
                       const SizedBox(width: 4),
                       Text(
                         hapType,
@@ -539,10 +539,10 @@ class PastLifeSection extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.star,
                     size: 14,
-                    color: const Color(0xFF6B5CE7),
+                    color: Color(0xFF6B5CE7),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -596,7 +596,7 @@ class DestinedTimingSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.calendar_month, color: DSColors.warning, size: 24),
+              const Icon(Icons.calendar_month, color: DSColors.warning, size: 24),
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '운명의 시기',
@@ -775,7 +775,7 @@ class IntimateCompatibilitySection extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.auto_awesome, size: 14, color: const Color(0xFFE91E63)),
+                const Icon(Icons.auto_awesome, size: 14, color: Color(0xFFE91E63)),
                 const SizedBox(width: 4),
                 Text(
                   chemistryType,
@@ -821,9 +821,9 @@ class IntimateCompatibilitySection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
+                const Icon(
                   Icons.lightbulb_outline,
-                  color: const Color(0xFFE91E63),
+                  color: Color(0xFFE91E63),
                   size: 20,
                 ),
                 const SizedBox(width: DSSpacing.sm),

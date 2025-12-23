@@ -93,7 +93,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                 color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               '${widget.mbtiType} - ${typeInfo['title']}의 오늘 상태',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -348,7 +348,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                           ),
                         ],
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         info['nameEn'],
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -414,7 +414,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               _buildStackLegend('열등기능', DSColors.warning, 'Inferior'),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             '* 주기능부터 열등기능까지 4개가 의식적으로 사용되는 기능입니다',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -441,7 +441,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             shape: BoxShape.circle,
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           name,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -518,14 +518,14 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                 borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               info['icon'],
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               '$function - ${info['name']}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -541,7 +541,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                 
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               info['description'],
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(

@@ -32,7 +32,7 @@ class PassPossibilitySection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.check_circle, color: DSColors.success, size: 24),
+                const Icon(Icons.check_circle, color: DSColors.success, size: 24),
                 const SizedBox(width: 8),
                 Text(
                   '합격 가능성',
@@ -132,7 +132,7 @@ class StudyMethodsSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.auto_stories, color: DSColors.warning, size: 24),
+                const Icon(Icons.auto_stories, color: DSColors.warning, size: 24),
                 const SizedBox(width: 8),
                 Text(
                   '추천 학습법',
@@ -154,7 +154,7 @@ class StudyMethodsSection extends StatelessWidget {
                       width: 6,
                       height: 6,
                       margin: const EdgeInsets.only(top: 8, right: 12),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: DSColors.warning,
                         shape: BoxShape.circle,
                       ),
@@ -203,7 +203,7 @@ class CautionsSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.warning_amber, color: DSColors.error, size: 24),
+                const Icon(Icons.warning_amber, color: DSColors.error, size: 24),
                 const SizedBox(width: 8),
                 Text(
                   '주의사항',
@@ -225,7 +225,7 @@ class CautionsSection extends StatelessWidget {
                       width: 6,
                       height: 6,
                       margin: const EdgeInsets.only(top: 8, right: 12),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: DSColors.error,
                         shape: BoxShape.circle,
                       ),
@@ -324,7 +324,7 @@ class LuckyHoursSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.access_time, color: DSColors.warning, size: 24),
+                const Icon(Icons.access_time, color: DSColors.warning, size: 24),
                 const SizedBox(width: 8),
                 Text(
                   '행운의 시간',
@@ -374,7 +374,7 @@ class StrengthsSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.stars, color: DSColors.success, size: 24),
+                const Icon(Icons.stars, color: DSColors.success, size: 24),
                 const SizedBox(width: 8),
                 Text(
                   '당신의 강점',
@@ -441,7 +441,7 @@ class PositiveMessageSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.favorite, color: DSColors.error, size: 24),
+                const Icon(Icons.favorite, color: DSColors.error, size: 24),
                 const SizedBox(width: 8),
                 Text(
                   '응원 메시지',

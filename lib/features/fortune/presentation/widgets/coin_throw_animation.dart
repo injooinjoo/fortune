@@ -233,7 +233,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                         width: 2,
                       ),
                     ),
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         '¥',
                         style: TextStyle(
@@ -296,7 +296,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                     _showSplash ? '🌊 소원이 분수대에 담겼습니다!' : '🪙 동전을 던지고 있어요...',
                     style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E3A8A),
+                      color: const Color(0xFF1E3A8A),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -350,13 +350,13 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                     size: 20,
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     '당신의 소원',
                     style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E3A8A),
+                      color: const Color(0xFF1E3A8A),
                     ),
                   ),
                 ),
@@ -376,11 +376,11 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               widget.wishText,
               style: DSTypography.bodySmall.copyWith(
-                color: Color(0xFF374151),
+                color: const Color(0xFF374151),
                 height: 1.5,
               ),
               maxLines: 3,

@@ -107,8 +107,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
   Future<void> _analyzeExam() async {
     if (_selectedCategory.isEmpty || _examDate.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('시험 카테고리와 예정일을 선택해주세요'),
+        const SnackBar(
+          content: Text('시험 카테고리와 예정일을 선택해주세요'),
           backgroundColor: DSColors.error,
         ),
       );
@@ -180,8 +180,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('서버 연결 중 오류가 발생했습니다. 샘플 데이터를 표시합니다.'),
+          const SnackBar(
+            content: Text('서버 연결 중 오류가 발생했습니다. 샘플 데이터를 표시합니다.'),
             backgroundColor: DSColors.warning,
           ),
         );
@@ -379,8 +379,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             _blurredSections = [];
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('광고 로드에 실패했습니다. 전체 내용을 확인하세요.'),
+            const SnackBar(
+              content: Text('광고 로드에 실패했습니다. 전체 내용을 확인하세요.'),
               backgroundColor: DSColors.success,
             ),
           );
@@ -680,7 +680,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.tips_and_updates, color: DSColors.warning, size: 24),
+                  const Icon(Icons.tips_and_updates, color: DSColors.warning, size: 24),
                   const SizedBox(width: 8),
                   Text(
                     '합격 전략',
@@ -701,7 +701,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                         width: 6,
                         height: 6,
                         margin: const EdgeInsets.only(top: 8, right: 12),
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: DSColors.warning,
                           shape: BoxShape.circle,
                         ),
@@ -741,7 +741,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.star, color: DSColors.warning, size: 24),
+                  const Icon(Icons.star, color: DSColors.warning, size: 24),
                   const SizedBox(width: 8),
                   Text(
                     '행운 아이템',
@@ -768,7 +768,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.palette, size: 16, color: DSColors.warning),
+                            const Icon(Icons.palette, size: 16, color: DSColors.warning),
                             const SizedBox(width: 4),
                             Text(
                               color,

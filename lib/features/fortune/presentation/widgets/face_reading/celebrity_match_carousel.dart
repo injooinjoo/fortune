@@ -277,7 +277,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                         if (similarityScore > 0) ...[
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.auto_awesome,
                                 size: 16,
                                 color: DSColors.warning,

@@ -339,7 +339,7 @@ class _TarotResultCardState extends State<TarotResultCard>
                       onPressed: _shareResult,
                       style: UnifiedButtonStyle.primary,
                       size: UnifiedButtonSize.large,
-                      icon: Icon(Icons.share),
+                      icon: const Icon(Icons.share),
                     ),
                   ),
                 ],
@@ -414,13 +414,13 @@ class _TarotResultCardState extends State<TarotResultCard>
                 return Container(
                   width: 200,
                   height: 280,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF7C3AED),
-                        const Color(0xFF3B82F6),
+                        Color(0xFF7C3AED),
+                        Color(0xFF3B82F6),
                       ],
                     ),
                   ),

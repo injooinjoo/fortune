@@ -88,8 +88,8 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
@@ -235,7 +235,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                 ),
               ),
               
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               
               Text(
                 '당신의 간절한 소원이 하늘에 닿았습니다',
@@ -273,7 +273,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                 color: Colors.white.withValues(alpha:0.9),
                 size: 20,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '당신의 소원',
                 style: DSTypography.headingSmall.copyWith(
@@ -283,7 +283,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           Text(
             widget.wishText,
@@ -462,23 +462,23 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.stars,
-                color: const Color(0xFFFFD700),
+                color: Color(0xFFFFD700),
                 size: 24,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 '행운의 메시지',
                 style: DSTypography.headingSmall.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFFFFD700),
+                  color: const Color(0xFFFFD700),
                 ),
               ),
             ],
           ),
           
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           
           Text(
             _getLuckyMessage(),
@@ -503,7 +503,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
         },
         style: UnifiedButtonStyle.primary,
         size: UnifiedButtonSize.large,
-        icon: Icon(Icons.share),
+        icon: const Icon(Icons.share),
       ),
     );
   }

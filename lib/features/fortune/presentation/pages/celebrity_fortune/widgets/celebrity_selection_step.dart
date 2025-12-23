@@ -163,7 +163,7 @@ class _CelebritySelectionStepState extends ConsumerState<CelebritySelectionStep>
   }
 
   Widget _buildLoadingState() {
-    return FortuneLoadingSkeleton(
+    return const FortuneLoadingSkeleton(
       itemCount: 2,
       showHeader: false,
       loadingMessages: [
@@ -187,7 +187,7 @@ class _CelebritySelectionStepState extends ConsumerState<CelebritySelectionStep>
               size: 64,
               color: colors.textSecondary,
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             Text(
               '유명인 정보를 불러올 수 없어요',
               style: DSTypography.headingSmall.copyWith(
@@ -196,7 +196,7 @@ class _CelebritySelectionStepState extends ConsumerState<CelebritySelectionStep>
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               '잠시 후 다시 시도해주세요',
               style: DSTypography.bodySmall.copyWith(
@@ -288,7 +288,7 @@ class CelebrityGridItem extends StatelessWidget {
                       right: 8,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                         ),
@@ -327,7 +327,7 @@ class CelebrityGridItem extends StatelessWidget {
                       ),
                     ),
                     ...[
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       '${celebrity.age}세',
                       style: DSTypography.labelMedium.copyWith(
@@ -347,9 +347,9 @@ class CelebrityGridItem extends StatelessWidget {
 
   Color _getCelebrityColor(String name) {
     final colors = [
-      Color(0xFFFF6B6B), Color(0xFF4ECDC4), Color(0xFF45B7D1),
-      Color(0xFF96CEB4), Color(0xFFDDA0DD), Color(0xFFFFD93D),
-      Color(0xFF6C5CE7), Color(0xFFFD79A8), Color(0xFF00B894),
+      const Color(0xFFFF6B6B), const Color(0xFF4ECDC4), const Color(0xFF45B7D1),
+      const Color(0xFF96CEB4), const Color(0xFFDDA0DD), const Color(0xFFFFD93D),
+      const Color(0xFF6C5CE7), const Color(0xFFFD79A8), const Color(0xFF00B894),
     ];
     return colors[name.hashCode % colors.length];
   }

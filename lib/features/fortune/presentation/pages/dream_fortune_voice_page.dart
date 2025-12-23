@@ -171,10 +171,10 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
 
   /// 처리 중 화면 (스켈레톤 로딩)
   Widget _buildProcessingScreen(DSColorScheme colors) {
-    return FortuneLoadingSkeleton(
+    return const FortuneLoadingSkeleton(
       itemCount: 3,
       showHeader: true,
-      loadingMessages: const [
+      loadingMessages: [
         '꿈을 해몽하고 있어요...',
         '신령이 꿈의 의미를 풀이하고 있어요',
         '심층적인 해석을 준비하고 있어요...',
