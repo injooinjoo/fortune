@@ -329,6 +329,18 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // 자기발견 컨셉 강조 메시지
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 32.0),
+                      child: Text(
+                        '나를 더 깊이 알아가는 여정',
+                        style: typography.bodyMedium.copyWith(
+                          color: colors.textSecondary,
+                          letterSpacing: 0.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                     // TextField for name input - 테두리 완전 제거, 배경 투명
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),

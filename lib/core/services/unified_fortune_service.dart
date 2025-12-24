@@ -271,25 +271,25 @@ class UnifiedFortuneService {
     const titles = {
       'avoid-people': '피해야 할 사람',
       'avoid_people': '피해야 할 사람',
-      'daily': '오늘의 운세',
-      'tarot': '타로 운세',
-      'mbti': 'MBTI 운세',
-      'love': '연애 운세',
-      'career': '직장 운세',
-      'health': '건강 운세',
-      'investment': '투자 운세',
-      'exam': '시험 운세',
-      'talent': '재능 운세',
-      'dream': '꿈 해몽',
-      'face-reading': '관상 분석',
-      'compatibility': '궁합 운세',
-      'blind-date': '소개팅 운세',
-      'ex-lover': '전 애인 운세',
+      'daily': '오늘의 인사이트',
+      'tarot': 'Insight Cards',
+      'mbti': 'MBTI 분석',
+      'love': '연애 분석',
+      'career': '직장 분석',
+      'health': '건강 체크',
+      'investment': '투자 인사이트',
+      'exam': '시험 가이드',
+      'talent': '재능 발견',
+      'dream': '꿈 분석',
+      'face-reading': 'Face AI',
+      'compatibility': '성향 매칭',
+      'blind-date': '소개팅 가이드',
+      'ex-lover': '재회 분석',
       'lucky-series': '럭키 시리즈',
-      'fortune-celebrity': '연예인 운세',
-      'fortune-pet': '반려동물 운세',
+      'fortune-celebrity': '연예인 분석',
+      'fortune-pet': '반려동물 가이드',
     };
-    return titles[fortuneType] ?? '운세 결과';
+    return titles[fortuneType] ?? '분석 결과';
   }
 
   /// ==================== Step 1: 중복 체크 ====================
@@ -673,7 +673,7 @@ class UnifiedFortuneService {
           final faceData = faceResponse.data as Map<String, dynamic>;
           return FortuneResult(
             type: 'face-reading',
-            title: faceData['title'] as String? ?? '관상 분석',
+            title: faceData['title'] as String? ?? 'Face AI',
             summary: faceData['summary'] as Map<String, dynamic>? ?? {'message': '분석 완료'},
             data: faceData,
             createdAt: DateTime.now(),

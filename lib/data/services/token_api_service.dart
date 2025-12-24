@@ -261,10 +261,10 @@ class TokenApiService {
         lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
         hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 400 && 
+      if (e.response?.statusCode == 400 &&
           e.response?.data['code'] == 'ALREADY_CLAIMED') {
         throw AlreadyClaimedException(
-          e.response?.data['message'] ?? '이미 오늘의 무료 영혼을 받으셨습니다'
+          e.response?.data['message'] ?? '이미 오늘의 무료 복주머니를 받으셨습니다'
         );
       }
       throw _handleDioError(e);

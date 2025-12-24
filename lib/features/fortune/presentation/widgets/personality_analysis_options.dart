@@ -49,8 +49,8 @@ class PersonalityAnalysisOptions extends StatelessWidget {
       },
       {
         'key': 'compatibility',
-        'title': '궁합 분석',
-        'description': '다른 성격 유형과의 궁합',
+        'title': '성향 매칭',
+        'description': '다른 성격 유형과의 케미',
         'icon': Icons.favorite_rounded,
         'color': DSColors.error,
         'value': wantCompatibility,

@@ -348,6 +348,17 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                   style: typography.headingSmall.copyWith(color: colors.textSecondary),
                 ).animate().fadeIn(duration: 500.ms),
 
+                const SizedBox(height: 8),
+
+                Text(
+                  '당신만의 인사이트를 준비하기 위해 필요해요',
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textTertiary,
+                    letterSpacing: 0.3,
+                  ),
+                  textAlign: TextAlign.center,
+                ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+
                 const SizedBox(height: 48),
 
                 // Date Input - Progressive reveal
@@ -597,7 +608,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                         elevation: 0,
                       ),
                       child: Text(
-                        '다음',
+                        '나를 알아가기 시작',
                         style: typography.labelLarge.copyWith(
                           fontWeight: FontWeight.w600,
                           color: colors.ctaForeground,

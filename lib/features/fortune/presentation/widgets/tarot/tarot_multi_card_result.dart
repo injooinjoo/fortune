@@ -391,11 +391,11 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
           // 큰 카드 이미지
           GestureDetector(
             onTap: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) => TarotCardDetailModal(card: card),
+              TarotCardDetailModal.show(
+                context,
+                card: card,
+                question: widget.result.question,
+                interpretation: {'interpretation': interpretation},
               );
             },
             child: Container(
@@ -581,14 +581,21 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
     final double width = large ? 220 : (small ? 90 : 120);
     final double height = large ? 320 : (small ? 135 : 180);
 
+    // 카드 해석 데이터 가져오기
+    final interpretation = card.positionKey != null
+        ? widget.result.positionInterpretations[card.positionKey]
+        : null;
+
     final cardWidget = GestureDetector(
       onTap: () {
         // 카드 상세 모달 열기
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (context) => TarotCardDetailModal(card: card),
+        TarotCardDetailModal.show(
+          context,
+          card: card,
+          question: widget.result.question,
+          interpretation: interpretation != null
+              ? {'interpretation': interpretation}
+              : null,
         );
       },
       child: Container(

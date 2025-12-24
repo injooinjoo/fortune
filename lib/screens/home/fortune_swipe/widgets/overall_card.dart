@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
-/// 📊 총운 카드 - ChatGPT Pulse 스타일
+/// 📊 오늘의 인사이트 카드 - ChatGPT Pulse 스타일
 class OverallCard extends StatefulWidget {
   final int score;
   final bool isDark;
@@ -25,7 +25,7 @@ class OverallCard extends StatefulWidget {
 }
 
 class _OverallCardState extends State<OverallCard> {
-  /// 총운 민화 이미지 목록 (6개)
+  /// 인사이트 민화 이미지 목록 (6개)
   static const List<Map<String, String>> _overallImages = [
     {'image': 'assets/images/minhwa/minhwa_overall_tiger.webp', 'emoji': '🐅', 'label': '호랑이 민화'},
     {'image': 'assets/images/minhwa/minhwa_overall_dragon.webp', 'emoji': '🐉', 'label': '용 민화'},
@@ -200,7 +200,7 @@ class _OverallCardState extends State<OverallCard> {
             ),
             const SizedBox(width: 10),
             Text(
-              '오늘의 총운',
+              '오늘의 인사이트',
               style: context.calligraphyTitle.copyWith(
                 color: widget.isDark ? Colors.white : Colors.black87,
               ),

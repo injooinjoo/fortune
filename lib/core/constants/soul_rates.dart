@@ -157,9 +157,9 @@ class SoulRates {
   static String getActionDescription(String fortuneType) {
     final amount = getSoulAmount(fortuneType);
     if (amount > 0) {
-      return '+$amount 영혼 획득';
+      return '+$amount 복주머니 획득';
     } else if (amount < 0) {
-      return '${-amount} 영혼 필요';
+      return '${-amount} 복주머니 필요';
     } else {
       return '조건부 운세';
     }

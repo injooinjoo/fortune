@@ -1,0 +1,266 @@
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 85.0.0 (92.0.0 available)
+  _flutterfire_internals 1.3.58 (1.3.65 available)
+  analyzer 7.7.1 (9.0.0 available)
+  app_links 6.4.0 (7.0.0 available)
+  build 2.5.4 (4.0.3 available)
+  build_config 1.1.1 (1.2.0 available)
+  build_daemon 4.0.2 (4.1.1 available)
+  build_resolvers 2.5.4 (3.0.4 available)
+  build_runner 2.5.4 (2.10.4 available)
+  build_runner_core 9.1.2 (9.3.2 available)
+  built_value 8.10.1 (8.12.1 available)
+  characters 1.4.0 (1.4.1 available)
+  checked_yaml 2.0.3 (2.0.4 available)
+  code_builder 4.10.1 (4.11.0 available)
+  connectivity_plus 6.1.4 (7.0.0 available)
+  cross_file 0.3.4+2 (0.3.5+1 available)
+  dart_style 3.1.1 (3.1.3 available)
+  device_info_plus 11.3.0 (12.3.0 available)
+  extension_google_sign_in_as_googleapis_auth 2.0.13 (3.0.0 available)
+  ffi 2.1.3 (2.1.4 available)
+  file_picker 8.3.7 (10.3.8 available)
+  file_selector_linux 0.9.3+2 (0.9.4 available)
+  file_selector_macos 0.9.4+2 (0.9.5 available)
+  file_selector_platform_interface 2.6.2 (2.7.0 available)
+  file_selector_windows 0.9.3+4 (0.9.3+5 available)
+  firebase_analytics 11.5.2 (12.1.0 available)
+  firebase_analytics_platform_interface 4.4.2 (5.0.5 available)
+  firebase_analytics_web 0.5.10+15 (0.6.1+1 available)
+  firebase_core 3.15.1 (4.3.0 available)
+  firebase_core_platform_interface 6.0.0 (6.0.2 available)
+  firebase_core_web 2.24.1 (3.3.1 available)
+  firebase_messaging 15.2.9 (16.1.0 available)
+  firebase_messaging_platform_interface 4.6.9 (4.7.5 available)
+  firebase_messaging_web 3.10.9 (4.1.1 available)
+  firebase_remote_config 5.4.7 (6.1.3 available)
+  firebase_remote_config_platform_interface 1.5.7 (2.0.6 available)
+  firebase_remote_config_web 1.8.7 (1.10.2 available)
+  fl_chart 0.69.2 (1.1.1 available)
+  flutter_app_badger 1.5.0 (discontinued)
+  flutter_dotenv 5.2.1 (6.0.0 available)
+  flutter_dynamic_icon_plus 1.3.1 (1.4.0 available)
+  flutter_form_builder 10.1.0 (10.2.0 available)
+  flutter_lints 5.0.0 (6.0.0 available)
+  flutter_local_notifications 18.0.1 (19.5.0 available)
+  flutter_local_notifications_linux 5.0.0 (6.0.0 available)
+  flutter_local_notifications_platform_interface 8.0.0 (9.1.0 available)
+  flutter_map 7.0.2 (8.2.2 available)
+  flutter_markdown 0.7.7+1 (discontinued replaced by flutter_markdown_plus)
+  flutter_native_splash 2.4.6 (2.4.7 available)
+  flutter_plugin_android_lifecycle 2.0.26 (2.0.33 available)
+  flutter_riverpod 2.6.1 (3.0.3 available)
+  flutter_secure_storage 9.2.4 (10.0.0 available)
+  flutter_secure_storage_linux 1.2.3 (3.0.0 available)
+  flutter_secure_storage_macos 3.1.3 (4.0.0 available)
+  flutter_secure_storage_platform_interface 1.1.2 (2.0.1 available)
+  flutter_secure_storage_web 1.2.1 (2.1.0 available)
+  flutter_secure_storage_windows 3.1.2 (4.1.0 available)
+  flutter_slidable 3.1.2 (4.0.3 available)
+  flutter_stripe 11.5.0 (12.1.1 available)
+  freezed 2.5.8 (3.2.3 available)
+  freezed_annotation 2.4.4 (3.1.0 available)
+  functions_client 2.4.3 (2.5.0 available)
+  geocoding 3.0.0 (4.0.0 available)
+  geocoding_android 3.3.1 (4.0.1 available)
+  geocoding_platform_interface 3.2.0 (5.0.0 available)
+  geolocator 13.0.4 (14.0.2 available)
+  geolocator_android 4.6.2 (5.0.2 available)
+  glass_kit 3.0.0 (4.0.2 available)
+  go_router 15.1.3 (17.0.1 available)
+  google_mobile_ads 6.0.0 (7.0.0 available)
+  google_sign_in 6.2.2 (7.2.0 available)
+  google_sign_in_android 6.1.35 (7.2.7 available)
+  google_sign_in_ios 5.9.0 (6.2.4 available)
+  google_sign_in_platform_interface 2.5.0 (3.1.0 available)
+  google_sign_in_web 0.12.4+4 (1.1.0 available)
+  googleapis 13.2.0 (15.0.0 available)
+  gotrue 2.13.0 (2.18.0 available)
+  haptic_feedback 0.5.1+1 (0.6.4+3 available)
+  health 13.1.4 (13.2.1 available)
+  home_widget 0.8.0 (0.8.1 available)
+  http_parser 4.0.2 (4.1.2 available)
+  image 4.5.4 (4.7.2 available)
+  image_cropper 9.1.0 (11.0.0 available)
+  image_cropper_for_web 6.1.0 (7.0.0 available)
+  image_cropper_platform_interface 7.1.0 (8.0.0 available)
+  image_picker 1.1.2 (1.2.1 available)
+  image_picker_android 0.8.12+21 (0.8.13+10 available)
+  image_picker_for_web 3.0.6 (3.1.1 available)
+  image_picker_ios 0.8.12+2 (0.8.13+3 available)
+  image_picker_linux 0.2.1+2 (0.2.2 available)
+  image_picker_macos 0.2.1+2 (0.2.2+1 available)
+  image_picker_platform_interface 2.10.1 (2.11.1 available)
+  image_picker_windows 0.2.1+1 (0.2.2 available)
+  in_app_purchase 3.2.2 (3.2.3 available)
+  in_app_purchase_android 0.4.0 (0.4.0+8 available)
+  in_app_purchase_storekit 0.3.22+1 (0.4.7 available)
+  js 0.6.7 (0.7.2 available)
+  json_serializable 6.9.5 (6.11.3 available)
+  kakao_flutter_sdk_auth 1.9.7+3 (1.10.0 available)
+  kakao_flutter_sdk_common 1.9.7+3 (1.10.0 available)
+  kakao_flutter_sdk_user 1.9.7+3 (1.10.0 available)
+  lints 5.0.0 (6.0.0 available)
+  location 7.0.1 (8.0.1 available)
+  location_platform_interface 5.0.0 (6.0.1 available)
+  location_web 5.0.4 (6.0.1 available)
+  logger 2.6.1 (2.6.2 available)
+  matcher 0.12.17 (0.12.18 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  mgrs_dart 2.0.0 (3.0.0 available)
+  package_info_plus 8.3.0 (9.0.0 available)
+  package_info_plus_platform_interface 3.2.0 (3.2.1 available)
+  path_provider_android 2.2.15 (2.2.22 available)
+  path_provider_foundation 2.4.1 (2.5.1 available)
+  pay 2.0.0 (3.3.0 available)
+  pay_android 2.0.0 (3.2.0 available)
+  pay_ios 1.0.11 (1.1.0 available)
+  pay_platform_interface 1.0.4 (2.0.0 available)
+  permission_handler 11.4.0 (12.0.1 available)
+  permission_handler_android 12.1.0 (13.0.1 available)
+  petitparser 6.0.2 (7.0.1 available)
+  pointycastle 3.9.1 (4.0.0 available)
+  pool 1.5.1 (1.5.2 available)
+  postgrest 2.4.2 (2.6.0 available)
+  process 5.0.3 (5.0.5 available)
+  proj4dart 2.1.0 (3.0.0 available)
+  provider 6.1.5 (6.1.5+1 available)
+  pubspec_parse 1.4.0 (1.5.0 available)
+  realtime_client 2.5.1 (2.7.0 available)
+  riverpod 2.6.1 (3.0.3 available)
+  share_plus 10.1.4 (12.0.1 available)
+  share_plus_platform_interface 5.0.2 (6.1.0 available)
+  shared_preferences 2.5.3 (2.5.4 available)
+  shared_preferences_android 2.4.7 (2.4.18 available)
+  shared_preferences_foundation 2.5.4 (2.5.6 available)
+  shelf 1.4.1 (1.4.2 available)
+  shelf_web_socket 2.0.1 (3.0.0 available)
+  sign_in_with_apple 6.1.4 (7.0.1 available)
+  sign_in_with_apple_platform_interface 1.1.0 (2.0.0 available)
+  sign_in_with_apple_web 2.1.1 (3.0.0 available)
+  source_gen 2.0.0 (4.1.1 available)
+  source_helper 1.3.5 (1.3.9 available)
+  speech_to_text 7.2.0 (7.3.0 available)
+  sqflite 2.4.1 (2.4.2 available)
+  sqflite_android 2.4.0 (2.4.2+2 available)
+  sqflite_common 2.5.4+6 (2.5.6 available)
+  sqflite_darwin 2.4.1+1 (2.4.2 available)
+  storage_client 2.4.0 (2.4.1 available)
+  stripe_android 11.5.0 (12.1.0 available)
+  stripe_ios 11.5.0 (12.1.0 available)
+  stripe_platform_interface 11.5.0 (12.1.1 available)
+  supabase 2.8.0 (2.10.2 available)
+  supabase_flutter 2.9.1 (2.12.0 available)
+  synchronized 3.3.0+3 (3.4.0 available)
+  test 1.26.3 (1.28.0 available)
+  test_api 0.7.7 (0.7.8 available)
+  test_core 0.6.12 (0.6.14 available)
+  timezone 0.9.4 (0.10.1 available)
+  unicode 0.3.1 (1.1.8 available)
+  url_launcher_android 6.3.14 (6.3.28 available)
+  url_launcher_ios 6.3.3 (6.3.6 available)
+  url_launcher_linux 3.2.1 (3.2.2 available)
+  url_launcher_macos 3.2.2 (3.2.5 available)
+  url_launcher_web 2.3.3 (2.4.1 available)
+  url_launcher_windows 3.1.4 (3.1.5 available)
+  uuid 4.5.1 (4.5.2 available)
+  vector_graphics 1.1.18 (1.1.19 available)
+  vector_graphics_compiler 1.1.16 (1.1.19 available)
+  video_player_android 2.9.0 (2.9.1 available)
+  vm_service 15.0.0 (15.0.2 available)
+  watcher 1.1.2 (1.2.0 available)
+  webview_flutter_android 4.8.2 (4.10.11 available)
+  webview_flutter_platform_interface 2.13.0 (2.14.0 available)
+  webview_flutter_wkwebview 3.22.1 (3.23.5 available)
+  win32 5.10.1 (5.15.0 available)
+  win32_registry 1.1.5 (2.1.0 available)
+  workmanager 0.8.0 (0.9.0+3 available)
+  workmanager_android 0.8.0 (0.9.0+2 available)
+  workmanager_apple 0.8.0 (0.9.1+2 available)
+  workmanager_platform_interface 0.8.0 (0.9.1+1 available)
+  xml 6.5.0 (6.6.1 available)
+Got dependencies!
+2 packages are discontinued.
+178 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing lib...                                                
+
+   info • The type parameter name 'Type' matches a visible type name • lib/core/usecases/usecase.dart:9:24 • avoid_types_as_parameter_names
+   info • The type parameter name 'Type' matches a visible type name • lib/core/usecases/usecase.dart:23:30 • avoid_types_as_parameter_names
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/app_widgets.dart:604:46 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/app_widgets.dart:627:49 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/app_widgets.dart:673:39 • deprecated_member_use
+   info • Don't use 'BuildContext's across async gaps • lib/features/fortune/presentation/pages/ex_lover_fortune_simple_page.dart:82:11 • use_build_context_synchronously
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/face_reading_fortune/face_reading_result_page.dart:460:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/face_reading_fortune/face_reading_result_page.dart:536:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/face_reading_fortune/face_reading_result_page.dart:576:30 • deprecated_member_use
+   info • Don't use 'BuildContext's across async gaps • lib/features/fortune/presentation/pages/family_fortune_page.dart:886:11 • use_build_context_synchronously
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lotto/lotto_fortune_page.dart:499:11 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lotto/lotto_fortune_page.dart:501:11 • deprecated_member_use
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lotto/lotto_fortune_page.dart:533:11 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lotto/lotto_fortune_page.dart:535:11 • deprecated_member_use
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lotto/lotto_fortune_page.dart:558:11 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lotto/lotto_fortune_page.dart:560:11 • deprecated_member_use
+   info • Don't use 'BuildContext's across async gaps • lib/features/fortune/presentation/pages/lucky_exam_fortune/lucky_exam_fortune_page.dart:348:11 • use_build_context_synchronously
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lucky_items/lucky_items_page.dart:335:11 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lucky_items/lucky_items_page.dart:336:11 • deprecated_member_use
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lucky_items/lucky_items_page.dart:362:11 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lucky_items/lucky_items_page.dart:363:11 • deprecated_member_use
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lucky_items/lucky_items_page.dart:381:11 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/fortune/presentation/pages/lucky_items/lucky_items_page.dart:382:11 • deprecated_member_use
+warning • Unused import: '../../../../../services/in_app_purchase_service.dart' • lib/features/fortune/presentation/pages/premium_saju/premium_saju_main_page.dart:8:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/premium_saju/premium_saju_main_page.dart:118:33 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_main_page.dart:257:25 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_main_page.dart:258:35 • prefer_const_constructors
+warning • The value of the field '_result' isn't used • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:28:25 • unused_field
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:124:14 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:270:52 • deprecated_member_use
+warning • The value of the local variable 'chapterIndex' isn't used • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:291:29 • unused_local_variable
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:373:31 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:414:41 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:415:29 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:416:29 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:438:19 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:440:17 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/fortune/presentation/pages/premium_saju/premium_saju_reader_page.dart:441:16 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/tarot/widgets/deck_flash_layer.dart:115:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/tarot/widgets/deck_flash_layer.dart:116:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/tarot/widgets/deck_flash_layer.dart:128:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/tarot/widgets/deck_flash_layer.dart:184:31 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/tarot/widgets/deck_flash_layer.dart:216:50 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/fortune/presentation/pages/tarot/widgets/deck_flash_layer.dart:242:49 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/fortune/presentation/pages/tarot_deck_selection_page.dart:308:42 • deprecated_member_use
+warning • The value of the local variable 'colors' isn't used • lib/features/fortune/presentation/pages/tarot_storytelling_page.dart:225:11 • unused_local_variable
+warning • The value of the local variable 'colors' isn't used • lib/features/fortune/presentation/pages/tarot_storytelling_page.dart:393:11 • unused_local_variable
+warning • A value for optional parameter 'size' isn't ever given • lib/features/fortune/presentation/widgets/biorhythm/components/biorhythm_hanji_card.dart:392:10 • unused_element_parameter
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/features/fortune/presentation/widgets/biorhythm/painters/ink_flow_animation_painter.dart:154:9 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/fortune/presentation/widgets/biorhythm/painters/ink_flow_animation_painter.dart:155:9 • deprecated_member_use
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/features/fortune/presentation/widgets/biorhythm/painters/ink_flow_animation_painter.dart:156:9 • deprecated_member_use
+   info • Statements in an if should be enclosed in a block • lib/features/fortune/presentation/widgets/dream_result_widget.dart:443:9 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block • lib/features/fortune/presentation/widgets/dream_result_widget.dart:445:9 • curly_braces_in_flow_control_structures
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/features/fortune/presentation/widgets/tarot/tarot_animations.dart:138:9 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/fortune/presentation/widgets/tarot/tarot_animations.dart:141:9 • deprecated_member_use
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/features/fortune/presentation/widgets/tarot/tarot_animations.dart:223:15 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/fortune/presentation/widgets/tarot/tarot_animations.dart:224:15 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/fortune/presentation/widgets/tarot/tarot_card_widget.dart:97:13 • deprecated_member_use
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/features/fortune/presentation/widgets/tarot/tarot_deck_spread_widget.dart:202:19 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/fortune/presentation/widgets/tarot/tarot_deck_spread_widget.dart:207:19 • deprecated_member_use
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/features/fortune/presentation/widgets/tarot/tarot_deck_spread_widget.dart:279:21 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/fortune/presentation/widgets/tarot/tarot_deck_spread_widget.dart:280:21 • deprecated_member_use
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/features/fortune/presentation/widgets/tarot_card_reveal_widget.dart:215:21 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/fortune/presentation/widgets/tarot_card_reveal_widget.dart:216:21 • deprecated_member_use
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/features/interactive/presentation/widgets/bottom_tarot_deck_widget.dart:157:13 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/interactive/presentation/widgets/bottom_tarot_deck_widget.dart:159:13 • deprecated_member_use
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/features/interactive/presentation/widgets/tarot_deck_fan_widget.dart:125:25 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/interactive/presentation/widgets/tarot_deck_fan_widget.dart:127:25 • deprecated_member_use
+   info • The member 'key' overrides an inherited member but isn't annotated with '@override' • lib/models/cache_entry.dart:6:16 • annotate_overrides
+   info • 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead • lib/screens/home/fortune_story_viewer.dart:246:13 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/screens/home/fortune_story_viewer.dart:247:13 • deprecated_member_use
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/screens/profile/profile_verification_page.dart:126:17 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/screens/profile/profile_verification_page.dart:127:17 • deprecated_member_use
+   info • Don't use 'BuildContext's across async gaps • lib/screens/subscription/subscription_page.dart:56:22 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/screens/subscription/subscription_page.dart:57:24 • use_build_context_synchronously
+warning • The value of the local variable 'colors' isn't used • lib/shared/components/token_insufficient_modal.dart:334:11 • unused_local_variable
+
+76 issues found. (ran in 6.2s)

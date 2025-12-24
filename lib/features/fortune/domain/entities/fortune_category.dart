@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/soul_rates.dart';
 
-/// 운세 카테고리 엔티티
+/// 인사이트 카테고리 엔티티
 /// Remote Config에서 동적으로 로드 가능
 class FortuneCategory {
   final String title;
   final String route;
   final String type; // Fortune type for image mapping
   final IconData icon;
-  final String? iconAsset; // 커스텀 아이콘 에셋 경로 (한국 전통 수묵화 스타일)
+  final String? iconAsset; // 커스텀 아이콘 에셋 경로
   final List<Color> gradientColors;
   final String description;
   final String category;
@@ -37,7 +37,7 @@ class FortuneCategory {
   String get soulDescription => SoulRates.getActionDescription(type);
   int get soulCost => soulAmount.abs(); // Convert to positive cost value
 
-  // 빨간 dot 표시 여부 (오늘 안 본 운세만 표시, 조회하면 제거)
+  // 빨간 dot 표시 여부 (오늘 안 본 인사이트만 표시, 조회하면 제거)
   bool get shouldShowRedDot => !hasViewedToday;
 
   // copyWith 메서드 (hasViewedToday 업데이트용)
@@ -165,7 +165,7 @@ class FortuneCategory {
 
 /// 기본 하드코딩된 카테고리 (Remote Config 실패 시 fallback)
 const List<FortuneCategory> _defaultCategories = [
-  // ==================== Time-based Fortunes (통합) ====================
+  // ==================== Time-based Insights ====================
   FortuneCategory(
     title: '달력',
     route: '/time',
@@ -173,26 +173,26 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.schedule_rounded,
     iconAsset: 'assets/icons/fortune/daily.png',
     gradientColors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
-    description: '오늘/내일/주간/월간/연간 운세',
+    description: '오늘/내일/주간/월간/연간 인사이트',
     category: 'lifestyle',
     isNew: true,
   ),
 
-  // ==================== Traditional Fortunes (통합) ====================
+  // ==================== Traditional Analysis ====================
   FortuneCategory(
-    title: '전통',
+    title: '전통 분석',
     route: '/traditional',
     type: 'traditional_saju',
     icon: Icons.auto_awesome_rounded,
     iconAsset: 'assets/icons/fortune/traditional.png',
     gradientColors: [Color(0xFFEF4444), Color(0xFFEC4899)],
-    description: '사주/토정비결',
+    description: '생년월일 기반 전통 분석',
     category: 'traditional',
   ),
 
-  // ==================== Tarot Fortune ====================
+  // ==================== Insight Cards ====================
   FortuneCategory(
-    title: '타로',
+    title: 'Insight Cards',
     route: '/tarot',
     type: 'tarot',
     icon: Icons.style_rounded,
@@ -203,44 +203,44 @@ const List<FortuneCategory> _defaultCategories = [
     isNew: true,
   ),
 
-  // ==================== Dream Interpretation ====================
+  // ==================== Dream Analysis ====================
   FortuneCategory(
-    title: '해몽',
+    title: '꿈 분석',
     route: '/dream',
     type: 'dream',
     icon: Icons.bedtime_rounded,
     iconAsset: 'assets/icons/fortune/dream.png',
     gradientColors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-    description: '꿈이 전하는 숨겨진 의미',
+    description: '꿈 내용 AI 분석',
     category: 'traditional',
     isNew: true,
   ),
 
-  // ==================== Physiognomy ====================
+  // ==================== Face AI ====================
   FortuneCategory(
-    title: '관상',
+    title: 'Face AI',
     route: '/face-reading',
     type: 'face-reading',
     icon: Icons.face_rounded,
     iconAsset: 'assets/icons/fortune/face_reading.png',
     gradientColors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-    description: '얼굴에 나타난 운명의 징표',
+    description: '얼굴 특징 기반 성격 분석',
     category: 'traditional',
   ),
 
-  // ==================== Talisman ====================
+  // ==================== Lucky Card ====================
   FortuneCategory(
-    title: '부적',
+    title: '행운 카드',
     route: '/lucky-talisman',
     type: 'talisman',
     icon: Icons.shield_rounded,
     iconAsset: 'assets/icons/fortune/talisman.png',
     gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-    description: '액운을 막고 행운을 부르는 부적',
+    description: '오늘의 럭키 카드',
     category: 'traditional',
   ),
 
-  // ==================== Personal/Character-based Fortunes (통합) ====================
+  // ==================== Personal/Character-based Analysis ====================
   FortuneCategory(
     title: '나의 성격 탐구',
     route: '/personality-dna',
@@ -259,7 +259,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.psychology_rounded,
     iconAsset: 'assets/icons/fortune/mbti.png',
     gradientColors: [Color(0xFF7C3AED), Color(0xFF5B21B6)],
-    description: 'MBTI 성격별 오늘의 운세',
+    description: 'MBTI 성격별 오늘의 인사이트',
     category: 'lifestyle',
     isNew: true,
   ),
@@ -275,7 +275,7 @@ const List<FortuneCategory> _defaultCategories = [
     isNew: true,
   ),
 
-  // ==================== Relationship/Love Fortunes ====================
+  // ==================== Relationship Analysis ====================
   FortuneCategory(
     title: '연애',
     route: '/love',
@@ -283,17 +283,17 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.favorite_rounded,
     iconAsset: 'assets/icons/fortune/love.png',
     gradientColors: [Color(0xFFEC4899), Color(0xFFDB2777)],
-    description: '사랑과 연애의 운세',
+    description: '사랑과 연애 이야기',
     category: 'love',
   ),
   FortuneCategory(
-    title: '궁합',
+    title: '성향 매칭',
     route: '/compatibility',
     type: 'compatibility',
     icon: Icons.people_rounded,
     iconAsset: 'assets/icons/fortune/compatibility.png',
     gradientColors: [Color(0xFFBE185D), Color(0xFF9333EA)],
-    description: '두 사람의 궁합 보기',
+    description: '두 사람의 성향 분석',
     category: 'love',
   ),
   FortuneCategory(
@@ -303,7 +303,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.person_off_rounded,
     iconAsset: 'assets/icons/fortune/avoid_people.png',
     gradientColors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
-    description: '오늘 피해야 할 사람의 특징',
+    description: '오늘 조심할 상황',
     category: 'love',
     isNew: true,
   ),
@@ -325,12 +325,12 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.waving_hand_rounded,
     iconAsset: 'assets/icons/fortune/blind_date.png',
     gradientColors: [Color(0xFFFF6B9D), Color(0xFFE91E63)],
-    description: '오늘의 소개팅 성공 가능성',
+    description: '오늘의 소개팅 인사이트',
     category: 'love',
     isNew: true,
   ),
 
-  // ==================== Career/Work Fortunes (통합) ====================
+  // ==================== Career Analysis ====================
   FortuneCategory(
     title: '직업',
     route: '/career',
@@ -338,7 +338,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.work_rounded,
     iconAsset: 'assets/icons/fortune/career.png',
     gradientColors: [Color(0xFF2563EB), Color(0xFF1D4ED8)],
-    description: '취업/직업/사업/창업 종합',
+    description: '취업/직업/사업/창업 인사이트',
     category: 'career',
     isNew: true,
   ),
@@ -349,11 +349,11 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.school_rounded,
     iconAsset: 'assets/icons/fortune/study.png',
     gradientColors: [Color(0xFF03A9F4), Color(0xFF0288D1)],
-    description: '시험과 자격증 합격 운세',
+    description: '시험과 자격증 정보',
     category: 'career',
   ),
 
-  // ==================== Investment/Money Fortunes (통합) ====================
+  // ==================== Investment Analysis ====================
   FortuneCategory(
     title: '재물',
     route: '/investment',
@@ -367,7 +367,7 @@ const List<FortuneCategory> _defaultCategories = [
     isNew: true,
   ),
 
-  // ==================== Lifestyle/Lucky Items (통합) ====================
+  // ==================== Lifestyle/Lucky Items ====================
   FortuneCategory(
     title: '행운아이템',
     route: '/lucky-items',
@@ -396,7 +396,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.stars_rounded,
     iconAsset: 'assets/icons/fortune/talent.png',
     gradientColors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
-    description: '사주팔자 기반 재능 분석',
+    description: '생년월일 기반 재능 분석',
     category: 'lifestyle',
   ),
   FortuneCategory(
@@ -406,11 +406,11 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.star_rounded,
     iconAsset: 'assets/icons/fortune/wish.png',
     gradientColors: [Color(0xFFFF4081), Color(0xFFF50057)],
-    description: '신에게 소원을 빌어보세요',
+    description: '소원을 빌어보세요',
     category: 'lifestyle',
   ),
 
-  // ==================== Health & Sports Fortunes (분리) ====================
+  // ==================== Health & Sports ====================
   FortuneCategory(
     title: '건강',
     route: '/health-toss',
@@ -418,7 +418,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.favorite_rounded,
     iconAsset: 'assets/icons/fortune/health.png',
     gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
-    description: '오늘의 건강 상태와 신체 부위별 운세',
+    description: '오늘의 건강 상태 분석',
     category: 'health',
     isNew: true,
   ),
@@ -429,7 +429,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.fitness_center_rounded,
     iconAsset: 'assets/icons/fortune/exercise.png',
     gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-    description: '피트니스, 요가, 런닝 운세',
+    description: '피트니스, 요가, 런닝 정보',
     category: 'health',
   ),
   FortuneCategory(
@@ -439,7 +439,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.sports_rounded,
     iconAsset: 'assets/icons/fortune/sports_game.png',
     gradientColors: [Color(0xFFEA580C), Color(0xFFDC2626)],
-    description: '골프, 야구, 테니스 등 경기 운세',
+    description: '골프, 야구, 테니스 등 경기 분석',
     category: 'health',
   ),
   FortuneCategory(
@@ -449,13 +449,13 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.home_work_rounded,
     iconAsset: 'assets/icons/fortune/moving.png',
     gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
-    description: '이사 길일과 방향, 손없는날 분석',
+    description: '이사 날짜 정보',
     category: 'lifestyle',
   ),
 
-  // ==================== Interactive Fortunes ====================
+  // ==================== Interactive ====================
   FortuneCategory(
-    title: '포춘쿠키',
+    title: '오늘의 메시지',
     route: '/fortune-cookie',
     type: 'fortune-cookie',
     icon: Icons.cookie_rounded,
@@ -472,12 +472,12 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.star_rounded,
     iconAsset: 'assets/icons/fortune/celebrity.png',
     gradientColors: [Color(0xFFFF1744), Color(0xFFE91E63)],
-    description: '좋아하는 유명인과 나의 오늘 운세',
+    description: '좋아하는 유명인과 나의 인사이트',
     category: 'interactive',
     isNew: true,
   ),
 
-  // ==================== Pet Fortunes (통합) ====================
+  // ==================== Pet ====================
   FortuneCategory(
     title: '반려동물',
     route: '/pet',
@@ -485,11 +485,11 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.pets_rounded,
     iconAsset: 'assets/icons/fortune/pet.png',
     gradientColors: [Color(0xFFE11D48), Color(0xFFBE123C)],
-    description: '반려동물/반려견/반려묘/궁합',
+    description: '반려동물과 나의 성향 매칭',
     category: 'petFamily',
     isNew: true,
   ),
-  // ==================== Family Fortunes (통합) ====================
+  // ==================== Family ====================
   FortuneCategory(
     title: '가족',
     route: '/family',
@@ -502,7 +502,7 @@ const List<FortuneCategory> _defaultCategories = [
     isNew: true,
   ),
 
-  // ==================== Naming Fortune (작명 운세) ====================
+  // ==================== Naming ====================
   FortuneCategory(
     title: '작명',
     route: '/naming',
@@ -510,7 +510,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.child_care_rounded,
     iconAsset: 'assets/icons/fortune/naming.png',
     gradientColors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-    description: '사주 기반 아기 이름 추천',
+    description: 'AI 기반 아기 이름 추천',
     category: 'petFamily',
     isNew: true,
   ),

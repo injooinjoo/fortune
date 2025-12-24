@@ -1,5 +1,5 @@
 name: fortune
-description: "AI 기반 운세 서비스 - Fortune Flutter 앱"
+description: "AI 기반 셀프 케어 & 자기발견 엔터테인먼트 앱"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -120,6 +120,8 @@ dependencies:
   image_cropper: ^9.1.0
   file_picker: ^8.1.2 # PDF/문서 선택용
   screenshot: ^3.0.0
+  camera: ^0.11.0+2 # 실시간 카메라 프리뷰
+  image: ^4.3.0 # 이미지 처리
   # image_gallery_saver: ^2.0.3  # AGP 8.x compatibility issue
   path_provider: ^2.1.5
 

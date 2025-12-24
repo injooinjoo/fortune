@@ -124,7 +124,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
 
                 // Description
                 Text(
-                  '이 프리미엄 운세를 보려면 ${widget.requiredTokens}개의 영혼이 필요합니다.',
+                  '이 프리미엄 운세를 보려면 ${widget.requiredTokens}개의 복주머니가 필요합니다.',
                   style: typography.bodyMedium.copyWith(
                     color: colors.textSecondary,
                   ),
@@ -143,7 +143,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildTokenInfo(
-                        label: '보유 영혼',
+                        label: '보유 복주머니',
                         value: '$remainingTokens개',
                         color: colors.accent,
                       ),
@@ -153,7 +153,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                         color: colors.divider,
                       ),
                       _buildTokenInfo(
-                        label: '필요 영혼',
+                        label: '필요 복주머니',
                         value: '${widget.requiredTokens}개',
                         color: colors.error,
                       ),
@@ -174,7 +174,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
 
                 // Options
                 Text(
-                  '영혼을 얻으시겠습니까?',
+                  '복주머니를 얻으시겠습니까?',
                   style: typography.bodyMedium.copyWith(
                     color: colors.textPrimary,
                   ),
@@ -187,7 +187,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                     Expanded(
                       child: _buildActionButton(
                         icon: Icons.shopping_cart_rounded,
-                        label: '영혼 상점',
+                        label: '복주머니 상점',
                         color: colors.accent,
                         onTap: () {
                           context.pop();
@@ -199,7 +199,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                     Expanded(
                       child: _buildActionButton(
                         icon: Icons.card_giftcard_rounded,
-                        label: '무료 영혼',
+                        label: '무료 복주머니',
                         color: colors.textSecondary,
                         onTap: () async {
                           final result = await ref.read(tokenProvider.notifier).claimDailyTokens();
@@ -379,8 +379,8 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
       SnackBar(
         content: Text(
           tokenError == 'ALREADY_CLAIMED'
-              ? '오늘은 이미 무료 영혼을 받으셨습니다'
-              : '무료 영혼 받기에 실패했습니다',
+              ? '오늘은 이미 무료 복주머니를 받으셨습니다'
+              : '무료 복주머니 받기에 실패했습니다',
         ),
         backgroundColor: colors.error,
         behavior: SnackBarBehavior.floating,

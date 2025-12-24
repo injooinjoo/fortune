@@ -106,7 +106,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
       if (mounted) {
         Toast.show(
           context: context,
-          message: '일일 영혼 50개를 받았습니다!',
+          message: '일일 복주머니 50개를 받았습니다!',
           type: ToastType.success,
         );
       }
@@ -118,7 +118,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
       if (mounted) {
         Toast.show(
           context: context,
-          message: '영혼 지급에 실패했습니다. 다시 시도해주세요.',
+          message: '복주머니 지급에 실패했습니다. 다시 시도해주세요.',
           type: ToastType.error,
         );
       }
@@ -149,7 +149,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
             ),
             const SizedBox(height: DSSpacing.sm),
             Text(
-              '일일 영혼',
+              '일일 복주머니',
               style: typography.headingSmall.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.bold,
@@ -157,7 +157,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
             ),
             const SizedBox(height: DSSpacing.xs),
             Text(
-              _canClaim ? '오늘의 영혼을 받아보세요!' : '내일 다시 받을 수 있어요',
+              _canClaim ? '오늘의 복주머니를 받아보세요!' : '내일 다시 받을 수 있어요',
               style: typography.bodySmall.copyWith(
                 color: colors.textTertiary,
               ),
@@ -220,7 +220,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                   ),
                   const SizedBox(width: DSSpacing.xs),
                   Text(
-                    _canClaim ? '영혼 받기 (+50)' : '내일 다시',
+                    _canClaim ? '복주머니 받기 (+50)' : '내일 다시',
                     style: typography.labelLarge.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: widget.showCompact ? 14 : 16,

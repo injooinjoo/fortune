@@ -10,10 +10,12 @@ import { PromptManager } from './manager.ts'
 
 // 모든 템플릿 import
 import { investmentPrompt } from './templates/investment.ts'
+import { faceReadingPrompt } from './templates/face-reading.ts'
 
 // 템플릿 목록
 const allTemplates = [
   investmentPrompt,
+  faceReadingPrompt,
   // 새 템플릿 추가 시 여기에 추가
 ]
 

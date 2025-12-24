@@ -114,7 +114,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '영혼 잔액',
+                  '복주머니 잔액',
                   style: typography.headingSmall.copyWith(
                     color: colors.textPrimary)),
                 Icon(
@@ -159,7 +159,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                         style: typography.numberLarge.copyWith(
                           color: colors.textPrimary)),
                       Text(
-                        '영혼',
+                        '복주머니',
                         style: typography.bodySmall.copyWith(
                           color: colors.textSecondary))])]),
 
@@ -167,7 +167,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
 
             // Action Button - Using gold accent for premium feel
             DSButton.gold(
-              text: '영혼 충전하기',
+              text: '복주머니 충전하기',
               fullWidth: true,
               onPressed: () {
                 DSHaptics.light();
@@ -196,7 +196,7 @@ class TokenBalanceStats extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '영혼 사용 통계',
+            '복주머니 사용 통계',
             style: typography.headingSmall.copyWith(
               color: colors.textPrimary)),
           const SizedBox(height: DSSpacing.sm),

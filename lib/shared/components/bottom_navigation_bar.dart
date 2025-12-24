@@ -20,7 +20,7 @@ class FortuneBottomNavigationBar extends ConsumerWidget {
     _NavItem(
       icon: Icons.auto_awesome_outlined,
       selectedIcon: Icons.auto_awesome,
-      label: '운세',
+      label: '탐구',
       route: '/fortune'),
     _NavItem(
       icon: Icons.trending_up_outlined,
@@ -77,10 +77,10 @@ class FortuneBottomNavigationBar extends ConsumerWidget {
               (index) => _NavItemWidget(
                 item: _items[index],
                 isSelected: index == activeIndex,
-                showBadge: index == 1 && showFortuneBadge, // 운세 탭(index 1)에만 배지 표시
+                showBadge: index == 1 && showFortuneBadge, // 탐구 탭(index 1)에만 배지 표시
                 onTap: () {
                   DSHaptics.light();
-                  // 운세 탭 클릭 시 배지 제거
+                  // 탐구 탭 클릭 시 배지 제거
                   if (index == 1) {
                     ref.read(fortuneBadgeProvider.notifier).markAsRead();
                   }

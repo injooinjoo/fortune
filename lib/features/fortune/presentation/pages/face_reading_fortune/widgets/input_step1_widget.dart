@@ -259,7 +259,7 @@ class _InputStep1WidgetState extends ConsumerState<InputStep1Widget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '관상 분석',
+                'Face AI',
                 style: DSTypography.headingMedium.copyWith(
                   color: widget.isDark ? Colors.white : DSColors.textPrimary,
                   fontWeight: FontWeight.w700,
@@ -267,7 +267,7 @@ class _InputStep1WidgetState extends ConsumerState<InputStep1Widget> {
               ),
               const SizedBox(height: 2),
               Text(
-                '얼굴 특징 정밀 분석',
+                'AI 얼굴 특징 분석',
                 style: DSTypography.labelSmall.copyWith(
                   color: widget.isDark ? const Color(0xFFCE93D8) : DSColors.accent,
                   fontWeight: FontWeight.w500,

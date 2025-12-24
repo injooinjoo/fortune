@@ -1,109 +1,109 @@
 import 'package:flutter/material.dart';
 
-/// Fortune type definitions
+/// Fortune type definitions (Entertainment-focused terminology)
 enum FortuneType {
-  // Daily Fortunes
-  daily('daily', '오늘의 운세'),
-  today('today', '오늘의 운세'),
-  tomorrow('tomorrow', '내일의 운세'),
-  hourly('hourly', '시간별 운세'),
-  weekly('weekly', '주간 운세'),
-  monthly('monthly', '월간 운세'),
-  yearly('yearly', '연간 운세'),
-  
-  // Traditional
-  saju('saju', '사주'),
-  traditionalSaju('traditional-saju', '전통 사주'),
-  sajuPsychology('saju-psychology', '사주 심리학'),
-  tojeong('tojeong', '토정비결'),
-  palmistry('palmistry', '손금'),
-  physiognomy('physiognomy', '관상'),
-  nameAnalysis('name-analysis', '이름 풀이'),
-  bloodType('blood-type', '혈액형 운세'),
-  
+  // Daily Insights
+  daily('daily', '오늘의 인사이트'),
+  today('today', '오늘의 메시지'),
+  tomorrow('tomorrow', '내일의 인사이트'),
+  hourly('hourly', '시간별 가이드'),
+  weekly('weekly', '주간 인사이트'),
+  monthly('monthly', '월간 인사이트'),
+  yearly('yearly', '연간 인사이트'),
+
+  // Traditional Analysis
+  saju('saju', '생년월일 분석'),
+  traditionalSaju('traditional-saju', '전통 분석'),
+  sajuPsychology('saju-psychology', '성격 심리 분석'),
+  tojeong('tojeong', '전통 해석'),
+  palmistry('palmistry', '손금 분석'),
+  physiognomy('physiognomy', 'Face AI'),
+  nameAnalysis('name-analysis', '이름 분석'),
+  bloodType('blood-type', '혈액형 분석'),
+
   // Zodiac & Stars
-  zodiac('zodiac', '별자리 운세'),
-  zodiacAnimal('zodiac-animal', '띠별 운세'),
+  zodiac('zodiac', '별자리 분석'),
+  zodiacAnimal('zodiac-animal', '띠별 분석'),
   constellation('constellation', '별자리'),
-  birthstone('birthstone', '탄생석 운세'),
-  
+  birthstone('birthstone', '탄생석 가이드'),
+
   // Personality
-  mbti('mbti', 'MBTI 운세'),
-  personality('personality', '성격 운세'),
-  talent('talent', '재능 운세'),
-  destiny('destiny', '운명'),
-  pastLife('past-life', '전생'),
-  
+  mbti('mbti', 'MBTI 분석'),
+  personality('personality', '성격 분석'),
+  talent('talent', '재능 발견'),
+  destiny('destiny', '인생 분석'),
+  pastLife('past-life', '전생 이야기'),
+
   // Love & Relationships
-  love('love', '연애운'),
-  marriage('marriage', '결혼운'),
-  compatibility('compatibility', '궁합'),
-  chemistry('chemistry', '케미'),
+  love('love', '연애 분석'),
+  marriage('marriage', '결혼 분석'),
+  compatibility('compatibility', '성향 매칭'),
+  chemistry('chemistry', '케미 분석'),
   coupleMatch('couple-match', '커플 매칭'),
-  blindDate('blind-date', '소개팅 운세'),
-  exLover('ex-lover', '전애인 운세'),
-  relationshipFortuneWeekly('relationship-fortune-weekly', '주간 연애운'),
+  blindDate('blind-date', '소개팅 가이드'),
+  exLover('ex-lover', '재회 분석'),
+  relationshipFortuneWeekly('relationship-fortune-weekly', '주간 연애 인사이트'),
   soulmate('soulmate', '소울메이트'),
-  
+
   // Career & Wealth
-  career('career', '직업운'),
-  employment('employment', '취업운'),
-  business('business', '사업운'),
-  wealth('wealth', '재물운'),
-  startup('startup', '창업운'),
-  luckyJob('lucky-job', '행운의 직업'),
-  luckySidejob('lucky-sidejob', '행운의 부업'),
-  investment('investment', '투자운'),
-  
+  career('career', '직업 분석'),
+  employment('employment', '취업 가이드'),
+  business('business', '사업 분석'),
+  wealth('wealth', '재물 분석'),
+  startup('startup', '창업 인사이트'),
+  luckyJob('lucky-job', '추천 직업'),
+  luckySidejob('lucky-sidejob', '부업 가이드'),
+  investment('investment', '투자 인사이트'),
+
   // Lucky Items & Activities
-  luckyColor('lucky-color', '행운의 색상'),
-  luckyNumber('lucky-number', '행운의 숫자'),
-  luckyItems('lucky-items', '행운의 아이템'),
-  luckyFood('lucky-food', '행운의 음식'),
-  luckyPlace('lucky-place', '행운의 장소'),
-  luckyOutfit('lucky-outfit', '행운의 의상'),
-  luckyDirection('lucky-direction', '행운의 방향'),
-  
+  luckyColor('lucky-color', '오늘의 색깔'),
+  luckyNumber('lucky-number', '행운 숫자'),
+  luckyItems('lucky-items', '럭키 아이템'),
+  luckyFood('lucky-food', '추천 음식'),
+  luckyPlace('lucky-place', '추천 장소'),
+  luckyOutfit('lucky-outfit', '스타일 가이드'),
+  luckyDirection('lucky-direction', '추천 방향'),
+
   // Sports & Activities
-  sports('sports', '스포츠 운세'),
-  luckyGolf('lucky-golf', '골프 운세'),
-  luckyTennis('lucky-tennis', '테니스 운세'),
-  luckyRunning('lucky-running', '러닝 운세'),
-  luckyHiking('lucky-hiking', '등산 운세'),
-  luckyFishing('lucky-fishing', '낚시 운세'),
-  luckyGaming('lucky-gaming', '게임 운세'),
-  luckyKaraoke('lucky-karaoke', '노래방 운세'),
-  luckyCamping('lucky-camping', '캠핑 운세'),
-  luckyYoga('lucky-yoga', '요가 운세'),
-  eSports('esports', 'e스포츠 운세'),
-  
+  sports('sports', '스포츠 가이드'),
+  luckyGolf('lucky-golf', '골프 가이드'),
+  luckyTennis('lucky-tennis', '테니스 가이드'),
+  luckyRunning('lucky-running', '런닝 가이드'),
+  luckyHiking('lucky-hiking', '등산 가이드'),
+  luckyFishing('lucky-fishing', '낚시 가이드'),
+  luckyGaming('lucky-gaming', '게임 가이드'),
+  luckyKaraoke('lucky-karaoke', '노래방 가이드'),
+  luckyCamping('lucky-camping', '캠핑 가이드'),
+  luckyYoga('lucky-yoga', '요가 가이드'),
+  eSports('esports', 'e스포츠 가이드'),
+
   // Investment & Crypto
-  luckyStock('lucky-stock', '주식 운세'),
-  luckyCrypto('lucky-crypto', '암호화폐 운세'),
-  luckyLottery('lucky-lottery', '로또 운세'),
-  realEstate('real-estate', '부동산 운세'),
-  
-  // Feng Shui (풍수지리)
-  moving('moving', '이사 풍수'),
-  homeFengshui('home-fengshui', '집 풍수'),
+  luckyStock('lucky-stock', '주식 가이드'),
+  luckyCrypto('lucky-crypto', '암호화폐 가이드'),
+  luckyLottery('lucky-lottery', '로또 번호 생성'),
+  realEstate('real-estate', '부동산 인사이트'),
+
+  // Lifestyle (라이프스타일)
+  moving('moving', '이사 가이드'),
+  homeFengshui('home-fengshui', '인테리어 가이드'),
 
   // Special
   biorhythm('biorhythm', '바이오리듬'),
-  tarot('tarot', '타로'),
-  dream('dream', '꿈해몽'),
-  health('health', '건강운'),
-  exam('exam', '시험운'),
-  study('study', '학업운'),
-  travel('travel', '여행운'),
-  parenting('parenting', '육아운'),
-  pet('pet', '반려동물 운세'),
-  talisman('talisman', '부적'),
-  salpuli('salpuli', '살풀이'),
-  fiveBlessings('five-blessings', '오복'),
+  tarot('tarot', 'Insight Cards'),
+  dream('dream', '꿈 분석'),
+  health('health', '건강 체크'),
+  exam('exam', '시험 가이드'),
+  study('study', '학업 분석'),
+  travel('travel', '여행 가이드'),
+  parenting('parenting', '육아 가이드'),
+  pet('pet', '반려동물 가이드'),
+  talisman('talisman', '행운 카드'),
+  salpuli('salpuli', '기운 정화'),
+  fiveBlessings('five-blessings', '오복 분석'),
   sameBirthdayCelebrity('same-birthday-celebrity', '같은 생일 연예인'),
   dailyInspiration('daily-inspiration', '오늘의 영감'),
-  lifestyle('lifestyle', '라이프스타일 운세'),
-  crypto('crypto', '크립토 운세');
+  lifestyle('lifestyle', '라이프스타일 가이드'),
+  crypto('crypto', '크립토 가이드');
 
   final String key;
   final String displayName;

@@ -60,7 +60,7 @@ class DeckSelectionScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '타로 카드 선택',
+                      '카드 선택',
                       style: DSTypography.headingMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: colors.textPrimary,
@@ -68,7 +68,7 @@ class DeckSelectionScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '당신에게 맞는 타로 카드를 선택하세요',
+                      '당신에게 맞는 카드 덱을 선택하세요',
                       style: DSTypography.labelMedium.copyWith(
                         color: colors.textSecondary,
                       ),
@@ -385,7 +385,7 @@ class _DailyTarotCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '오늘의 타로',
+                        '오늘의 카드',
                         style: DSTypography.labelLarge.copyWith(
                           fontWeight: FontWeight.w700,
                           color: Colors.white,

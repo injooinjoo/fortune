@@ -445,7 +445,7 @@ class _CelebrityHeader extends StatelessWidget {
       case 'career_advice':
         return '조언 구하기';
       default:
-        return '궁합 분석';
+        return '케미 분석';
     }
   }
 

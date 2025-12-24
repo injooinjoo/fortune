@@ -77,6 +77,7 @@ import 'routes/auth_routes.dart';
 import 'routes/fortune_routes.dart';
 import 'routes/interactive_routes.dart';
 import 'routes/trend_routes.dart';
+import 'routes/wellness_routes.dart';
 
 import '../core/utils/page_transitions.dart';
 import '../core/utils/route_observer_logger.dart';
@@ -242,6 +243,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       // Fortune routes (outside shell - no navigation bar for consistent UX)
       ...fortuneRoutes,
+
+      // Wellness routes (outside shell - for focused wellness experience)
+      ...wellnessRoutes,
 
       // Fortune history detail route (outside shell)
       GoRoute(

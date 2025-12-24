@@ -357,8 +357,48 @@ CREATE INDEX idx_user_fortune_date
 
 ---
 
+## 관상 (Face Reading) 시스템
+
+관상 운세는 별도의 V2 시스템으로 운영됩니다.
+
+### 핵심 특징
+
+| 항목 | 설명 |
+|------|------|
+| 타겟 | 2-30대 여성 |
+| 핵심 가치 | 위로·공감·공유 (자기계발 X) |
+| 말투 | 친근한 대화형 (~예요, ~해 보세요) |
+| 성별 분기 | 여성: 연애/메이크업, 남성: 리더십/커리어 |
+
+### App Store 컴플라이언스
+
+**외부 표현 (심사용)**:
+- "AI 얼굴 분석"
+- "자기발견"
+- "성격 분석"
+
+**사용 금지 단어**:
+- ~~운세~~, ~~점술~~, ~~fortune~~, ~~horoscope~~
+
+### V2 무료/프리미엄 분기
+
+| 무료 | 프리미엄 |
+|------|----------|
+| 우선순위 인사이트 3가지 | 상세 분석 전체 |
+| 컨디션/감정 요약 | 컨디션/감정 상세 |
+| 요약형 오관/십이궁 | 전체 오관/십이궁 |
+| Watch 데이터 | 관계 인상 분석 |
+| - | 스타일 추천 (성별별) |
+
+### 상세 문서
+
+**전체 가이드**: [17-face-reading-system.md](17-face-reading-system.md)
+
+---
+
 ## 관련 문서
 
 - [06-llm-module.md](06-llm-module.md) - Edge Function & LLM
 - [03-ui-design-system.md](03-ui-design-system.md) - 블러 UI 시스템
+- [17-face-reading-system.md](17-face-reading-system.md) - 관상 시스템 전체 가이드
 - [docs/data/FORTUNE_OPTIMIZATION_GUIDE.md](/docs/data/FORTUNE_OPTIMIZATION_GUIDE.md) - 상세 최적화

@@ -68,7 +68,7 @@ class InitialScreen extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          '타로 운세',
+                          'Insight Cards',
                           style: DSTypography.displaySmall.copyWith(
                             fontWeight: FontWeight.w700,
                             color: colors.textPrimary,

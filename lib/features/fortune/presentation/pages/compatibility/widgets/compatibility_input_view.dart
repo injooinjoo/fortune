@@ -132,7 +132,7 @@ class _CompatibilityInputViewState
             right: 20,
             bottom: 32,
             child: TraditionalButton(
-              text: '궁합 분석하기',
+              text: '성향 매칭하기',
               hanja: '宮合',
               style: TraditionalButtonStyle.filled,
               colorScheme: TraditionalButtonColorScheme.love,

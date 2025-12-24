@@ -83,39 +83,39 @@
 		<key>NSApplicationGroupIdentifier</key>
 		<string>group.com.beyond.fortune</string>
 		<key>NSCameraUsageDescription</key>
-		<string>Fortune AI가 관상 분석을 위해 카메라 접근 권한이 필요합니다.</string>
+		<string>AI가 얼굴 특성을 분석하여 맞춤형 인사이트를 제공하기 위해 카메라 접근 권한이 필요합니다.</string>
 		<key>NSMicrophoneUsageDescription</key>
-		<string>Fortune AI가 음성으로 꿈 내용을 입력받기 위해 마이크 접근 권한이 필요합니다.</string>
+		<string>음성으로 내용을 입력하기 위해 마이크 접근 권한이 필요합니다.</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
-		<string>Fortune AI가 운세 이미지를 저장하려면 사진 보관함 접근 권한이 필요합니다.</string>
+		<string>분석 결과 이미지를 저장하려면 사진 보관함 접근 권한이 필요합니다.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Fortune AI가 관상 분석을 위해 사진 보관함 접근 권한이 필요합니다.</string>
+		<string>AI가 얼굴 특성을 분석하기 위해 사진 보관함 접근 권한이 필요합니다.</string>
 		<key>NSUserTrackingUsageDescription</key>
 		<string>맞춤형 광고와 더 나은 서비스 제공을 위해 앱 활동 추적 권한이 필요합니다. 추적을 허용하지 않아도 앱 사용에는 제한이 없습니다.</string>
 		<key>NSSpeechRecognitionUsageDescription</key>
-		<string>Fortune AI가 음성을 텍스트로 변환하여 꿈 해몽을 제공하기 위해 음성 인식 권한이 필요합니다.</string>
+		<string>음성을 텍스트로 변환하여 입력을 편리하게 하기 위해 음성 인식 권한이 필요합니다.</string>
 		<key>NSCalendarsFullAccessUsageDescription</key>
-		<string>Fortune AI가 일정을 분석하여 맞춤형 운세를 제공하고, 중요한 운세 날짜를 저장하기 위해 캘린더 접근 권한이 필요합니다.</string>
+		<string>일정을 분석하여 맞춤형 인사이트를 제공하고, 중요한 날짜를 저장하기 위해 캘린더 접근 권한이 필요합니다.</string>
 		<key>NSCalendarsUsageDescription</key>
-		<string>Fortune AI가 중요한 운세 날짜를 캘린더에 저장하기 위해 접근 권한이 필요합니다.</string>
+		<string>중요한 날짜를 캘린더에 저장하기 위해 접근 권한이 필요합니다.</string>
 		<key>NSHealthShareUsageDescription</key>
-		<string>Fortune AI가 걸음 수, 수면, 심박수 등 건강 데이터를 분석하여 맞춤형 건강운세를 제공하기 위해 건강 앱 접근 권한이 필요합니다. (프리미엄 기능)</string>
+		<string>걸음 수, 수면, 심박수 등 건강 데이터를 분석하여 맞춤형 건강 인사이트를 제공하기 위해 건강 앱 접근 권한이 필요합니다. (프리미엄 기능)</string>
 		<key>NSHealthUpdateUsageDescription</key>
-		<string>Fortune AI가 건강 목표 달성 현황을 기록하기 위해 건강 앱 쓰기 권한이 필요합니다.</string>
+		<string>건강 목표 달성 현황을 기록하기 위해 건강 앱 쓰기 권한이 필요합니다.</string>
 		<key>NSSupportsLiveActivities</key>
 		<true/>
 		<key>NSSupportsLiveActivitiesFrequentUpdates</key>
 		<true/>
 		<key>NSUserActivityTypes</key>
 		<array>
-			<string>com.fortune.fortune.checkDailyFortune</string>
-			<string>com.fortune.fortune.checkCompatibility</string>
-			<string>com.fortune.fortune.checkLuckyNumbers</string>
+			<string>com.fortune.fortune.dailyInsight</string>
+			<string>com.fortune.fortune.personalityMatch</string>
+			<string>com.fortune.fortune.luckyGuide</string>
 		</array>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Fortune AI가 현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
+		<string>현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>Fortune AI가 위치 기반 맞춤 운세를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
+		<string>위치 기반 맞춤 인사이트를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
 		<key>NSWidgetExtensionBundleIdentifiers</key>
 		<array>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
@@ -190,21 +190,21 @@
 				<key>UIApplicationShortcutItemIconType</key>
 				<string>UIApplicationShortcutIconTypeDate</string>
 				<key>UIApplicationShortcutItemSubtitle</key>
-				<string>오늘의 운세를 확인하세요</string>
+				<string>오늘의 인사이트를 확인하세요</string>
 				<key>UIApplicationShortcutItemTitle</key>
-				<string>오늘의 운세</string>
+				<string>오늘의 인사이트</string>
 				<key>UIApplicationShortcutItemType</key>
-				<string>com.fortune.fortune.dailyFortune</string>
+				<string>com.fortune.fortune.dailyInsight</string>
 			</dict>
 			<dict>
 				<key>UIApplicationShortcutItemIconType</key>
 				<string>UIApplicationShortcutIconTypeLove</string>
 				<key>UIApplicationShortcutItemSubtitle</key>
-				<string>상대방과의 궁합을 확인하세요</string>
+				<string>상대방과의 관계를 분석하세요</string>
 				<key>UIApplicationShortcutItemTitle</key>
-				<string>궁합 보기</string>
+				<string>관계 분석</string>
 				<key>UIApplicationShortcutItemType</key>
-				<string>com.fortune.fortune.compatibility</string>
+				<string>com.fortune.fortune.personalityMatch</string>
 			</dict>
 		</array>
 		<key>UIApplicationSupportsIndirectInputEvents</key>

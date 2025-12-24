@@ -71,7 +71,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
       await Share.shareXFiles(
         [XFile(file.path)],
         text: _getShareText(),
-        subject: '오늘의 운세',
+        subject: '오늘의 인사이트',
       );
     } catch (e) {
       _shareTextFallback();
@@ -84,19 +84,19 @@ class _ShareCardState extends ConsumerState<ShareCard> {
 
   String _getShareText() {
     return '''
-🔮 오늘의 운세
+✨ 오늘의 인사이트
 
-📊 총운 점수: ${widget.score}점
+📊 오늘 점수: ${widget.score}점
 💬 ${widget.message}
 
 오늘도 좋은 하루 되세요! ✨
 
-#오늘의운세 #일일운세 #행운
+#오늘의메시지 #데일리인사이트 #행운
 ''';
   }
 
   void _shareTextFallback() {
-    Share.share(_getShareText(), subject: '오늘의 운세');
+    Share.share(_getShareText(), subject: '오늘의 인사이트');
   }
 
   @override
@@ -114,14 +114,14 @@ class _ShareCardState extends ConsumerState<ShareCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '오늘의 운세 공유하기',
+                    '오늘의 인사이트 공유하기',
                     style: context.calligraphyTitle.copyWith(
                       color: widget.isDark ? Colors.white : Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '친구들과 함께 운세를 나눠보세요',
+                    '친구들과 함께 나눠보세요',
                     style: context.bodySmall.copyWith(
                       color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
                     ),
@@ -314,7 +314,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          '⊹ 오늘의 운세 ⊹',
+          '⊹ 오늘의 인사이트 ⊹',
           style: context.labelLarge.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -327,7 +327,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
 
   Widget _buildDateUserRow(BuildContext context) {
     final dateStr = '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
-    final displayName = userName != null && userName!.isNotEmpty ? '$userName님의 운세' : '오늘의 운세';
+    final displayName = userName != null && userName!.isNotEmpty ? '$userName님의 인사이트' : '오늘의 인사이트';
 
     return Text(
       '$dateStr  $displayName',
@@ -583,7 +583,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         const Text(
-          'Fortune 신점 · 행운이 가득하길',
+          'Face AI · 행운이 가득하길',
           style: TextStyle(
             color: _lightBrown,
             fontSize: 10, // 예외: 공유 카드 푸터

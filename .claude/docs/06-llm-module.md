@@ -260,6 +260,104 @@ export const dailyUserPrompt = (params: DailyParams) => `
 
 ---
 
+## 관상 (Face Reading) V2 프롬프트
+
+### 개요
+
+관상 분석 프롬프트는 **V2 스키마**로 운영되며, 성별/연령 기반 분기와 App Store 심사 대응이 필수입니다.
+
+### 템플릿 위치
+
+```
+supabase/functions/_shared/prompts/templates/face-reading.ts
+```
+
+### 핵심 특징
+
+| 항목 | 설명 |
+|------|------|
+| fortuneType | `face-reading-v2` (V1과 별도 등록) |
+| 타겟 | 2-30대 여성 중심 |
+| 말투 | 친근한 대화형 (~예요, ~해 보세요) |
+| 성별 분기 | Handlebars 조건부 렌더링 |
+
+### 말투 가이드 (CRITICAL)
+
+프롬프트 작성 시 **반드시 친근한 말투** 사용:
+
+| 변경 전 ❌ | 변경 후 ✅ |
+|-----------|-----------|
+| ~입니다 | ~예요, ~이에요 |
+| ~됩니다 | ~돼요, ~해 보세요 |
+| 분석 결과... | 당신의 눈에서 느껴지는 건... |
+| ~해야 합니다 | ~하면 좋을 것 같아요 |
+| 결론적으로 | 정리하면 |
+
+### 성별 기반 분기
+
+```handlebars
+{{#if isFemale}}
+  <!-- 여성: 연애운, 배우자운, 메이크업 추천 -->
+  "makeupStyleRecommendations": {...}
+{{else}}
+  <!-- 남성: 리더십, 커리어, 재물운 -->
+  "leadershipAnalysis": {...}
+{{/if}}
+```
+
+### PromptManager 사용법
+
+```typescript
+// Edge Function에서 V2 프롬프트 사용
+import { PromptManager } from '../_shared/prompts/manager.ts'
+
+const promptContext = {
+  userName: '홍길동',
+  userGender: 'female',      // 성별 분기용
+  userAgeGroup: '20s',       // 연령대
+  today: '2025-01-15',
+  isFemale: true             // Handlebars 조건부 렌더링용
+}
+
+// 정적 메서드 사용
+const systemPrompt = PromptManager.getSystemPrompt('face-reading-v2', promptContext)
+const userPrompt = PromptManager.getUserPrompt('face-reading-v2', promptContext)
+const genConfig = PromptManager.getGenerationConfig('face-reading-v2')
+```
+
+### App Store 심사 대응
+
+**프롬프트 내부에서도 외부 노출 단어 제한**:
+
+| 사용 O (내부) | 사용 X (절대 금지) |
+|--------------|------------------|
+| 분석 결과 | 운세, 점술 |
+| 인사이트 | fortune, horoscope |
+| 특성 분석 | 예언, prediction |
+| 셀프케어 팁 | 팔자, 사주 |
+
+### V2 응답 스키마 (요약)
+
+```typescript
+// 무료 섹션
+priorityInsights: PriorityInsight[]      // 핵심 포인트 3가지
+faceCondition_preview: { score, message }
+emotionAnalysis_preview: { dominantEmotion, message }
+watchData: WatchData                      // Watch 경량 데이터
+
+// 프리미엄 섹션
+faceCondition: FaceCondition             // 상세 컨디션
+emotionAnalysis: EmotionAnalysis         // 감정 분석 전체
+makeupStyleRecommendations: {...}        // 여성 전용
+leadershipAnalysis: {...}                // 남성 전용
+```
+
+### 상세 문서
+
+전체 관상 시스템 가이드: [17-face-reading-system.md](17-face-reading-system.md)
+
+---
+
 ## 주요 파일
 
 | 용도 | 파일 |
@@ -268,6 +366,8 @@ export const dailyUserPrompt = (params: DailyParams) => `
 | LLM Config | `supabase/functions/_shared/llm/config.ts` |
 | Prompt Manager | `supabase/functions/_shared/prompts/manager.ts` |
 | 일일운세 Function | `supabase/functions/fortune-daily/index.ts` |
+| 관상 V2 템플릿 | `supabase/functions/_shared/prompts/templates/face-reading.ts` |
+| 관상 Edge Function | `supabase/functions/fortune-face-reading/index.ts` |
 
 ---
 
@@ -284,6 +384,7 @@ export const dailyUserPrompt = (params: DailyParams) => `
 ## 관련 문서
 
 - [05-fortune-system.md](05-fortune-system.md) - 운세 시스템 전체
+- [17-face-reading-system.md](17-face-reading-system.md) - 관상 V2 시스템 전체 가이드
 - [docs/data/LLM_MODULE_GUIDE.md](/docs/data/LLM_MODULE_GUIDE.md) - 상세 가이드
 - [docs/data/LLM_PROVIDER_MIGRATION.md](/docs/data/LLM_PROVIDER_MIGRATION.md) - Provider 전환
 - [docs/data/PROMPT_ENGINEERING_GUIDE.md](/docs/data/PROMPT_ENGINEERING_GUIDE.md) - 프롬프트 작성

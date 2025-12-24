@@ -9,7 +9,7 @@ import '../../../domain/models/fortune_result.dart';
 import '../../widgets/face_reading/celebrity_match_carousel.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
 
-/// 관상운세 결과 페이지 - 세분화된 관상 분석
+/// Face AI 결과 페이지 - 세분화된 얼굴 분석
 class FaceReadingResultPage extends ConsumerStatefulWidget {
   final FortuneResult result;
   final VoidCallback? onUnlockRequested;
@@ -34,7 +34,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
   void initState() {
     super.initState();
 
-    // 관상 분석 결과 공개 햅틱 (신비로운 공개)
+    // Face AI 분석 결과 공개 햅틱 (신비로운 공개)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && !_hapticTriggered) {
         _hapticTriggered = true;
@@ -261,7 +261,7 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '관상 분석 결과',
+                      'Face AI 분석 결과',
                       style: context.labelSmall.copyWith(
                         color: textSecondary,
                       ),

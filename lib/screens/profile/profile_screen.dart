@@ -610,8 +610,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 },
               ),
 
-              // 운세 활동 섹션
-              const SectionHeader(title: '운세 활동'),
+              // 탐구 활동 섹션
+              const SectionHeader(title: '탐구 활동'),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
@@ -633,7 +633,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   children: [
                     SettingsListTile(
                       icon: Icons.today_outlined,
-                      title: '오늘의 운세',
+                      title: '오늘의 인사이트',
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -673,7 +673,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     SettingsListTile(
                       icon: Icons.visibility_outlined,
-                      title: '총 운세 본 수',
+                      title: '총 탐구 횟수',
                       trailing: Text(
                         '${userStats?['total_fortunes_viewed'] ?? 0}회',
                         style: context.bodyMedium.copyWith(
@@ -866,6 +866,62 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
               ],
+
+              // 웰니스 섹션
+              const SectionHeader(title: '웰니스'),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                  border: Border.all(
+                    color: context.colors.border,
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    SettingsListTile(
+                      icon: Icons.self_improvement_outlined,
+                      title: '명상 & 호흡',
+                      subtitle: '마음을 진정시키는 호흡 운동',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () => context.push('/wellness/meditation'),
+                    ),
+                    SettingsListTile(
+                      icon: Icons.mood_outlined,
+                      title: '무드 트래커',
+                      subtitle: '오늘의 기분 기록하기',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () => context.push('/wellness'),
+                    ),
+                    SettingsListTile(
+                      icon: Icons.favorite_outline,
+                      title: '감사 일기',
+                      subtitle: '매일 감사한 것 3가지',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () => context.push('/wellness'),
+                      isLast: true,
+                    ),
+                  ],
+                ),
+              ),
 
               // 도구 섹션
               const SectionHeader(title: '도구'),

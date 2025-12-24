@@ -68,7 +68,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   bool _isScrollingDown = false;
   double _lastScrollPosition = 0;
 
-  // 오늘 조회한 운세 타입 목록
+  // 오늘 조회한 탐구 타입 목록
   Set<String> _viewedTodayTypes = {};
 
   @override
@@ -103,7 +103,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     }
   }
 
-  // 오늘 조회한 운세 타입 로드 (SharedPreferences 기반 - 진입만 해도 체크됨)
+  // 오늘 조회한 탐구 타입 로드 (SharedPreferences 기반 - 진입만 해도 체크됨)
   Future<void> _loadViewedTodayTypes() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -117,7 +117,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
         setState(() {
           _viewedTodayTypes = viewedTypes.toSet();
         });
-        debugPrint('[FortuneList] 오늘 진입한 운세: $_viewedTodayTypes');
+        debugPrint('[FortuneList] 오늘 진입한 탐구: $_viewedTodayTypes');
       }
     } catch (e) {
       debugPrint('[FortuneList] 오늘 진입 여부 로드 실패: $e');
@@ -230,7 +230,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '運勢',
+              '探求',
               style: TextStyle(
                 fontFamily: FontConfig.primary,
                 fontSize: FontConfig.labelTiny,
@@ -240,7 +240,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               ),
             ),
             Text(
-              '운세',
+              '탐구',
               style: TextStyle(
                 fontFamily: FontConfig.primary,
                 fontSize: FontConfig.heading3,
@@ -462,21 +462,21 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               _buildSortOption(
                 context,
                 '최근 조회순',
-                '최근에 본 운세가 위로',
+                '최근에 본 항목이 위로',
                 SortOption.recentlyViewed,
                 currentSort == SortOption.recentlyViewed,
               ),
               _buildSortOption(
                 context,
                 '조회 가능순',
-                '오늘 아직 안 본 운세가 위로',
+                '오늘 아직 안 본 항목이 위로',
                 SortOption.availableFirst,
                 currentSort == SortOption.availableFirst,
               ),
               _buildSortOption(
                 context,
                 '즐겨찾기 우선',
-                '즐겨찾기한 운세를 상단에 고정',
+                '즐겨찾기한 항목을 상단에 고정',
                 SortOption.favoriteFirst,
                 currentSort == SortOption.favoriteFirst,
               ),
@@ -600,11 +600,11 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       _saveViewedType(fortuneType);
     }
 
-    // 모든 운세를 직접 페이지로 라우팅 (bottomsheet 제거)
+    // 모든 탐구를 직접 페이지로 라우팅 (bottomsheet 제거)
     context.push(category.route);
   }
 
-  // 진입한 운세 타입을 SharedPreferences에 저장
+  // 진입한 탐구 타입을 SharedPreferences에 저장
   Future<void> _saveViewedType(String fortuneType) async {
     try {
       final prefs = await SharedPreferences.getInstance();

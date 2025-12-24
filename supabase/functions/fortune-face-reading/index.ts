@@ -1,7 +1,8 @@
 /**
- * 관상 운세 (Face Reading Fortune) Edge Function
+ * 관상 운세 (Face Reading Fortune) Edge Function V2
  *
  * @description 사진 기반 AI 관상 분석을 제공합니다.
+ * V2: 성별/연령 기반 분기, 감정 분석, 컨디션 분석, Watch 데이터 포함
  *
  * @endpoint POST /fortune-face-reading
  *
@@ -10,13 +11,15 @@
  * - imageUrl?: string - 사진 URL
  * - imageBase64?: string - 사진 Base64
  * - instagramUsername?: string - 인스타그램 계정
+ * - userGender: string - 성별 (male/female)
+ * - userAgeGroup?: string - 연령대 (20s/30s/40s+)
  *
- * @response FaceReadingResponse
- * - face_analysis: { forehead, eyes, nose, mouth, chin } - 부위별 분석
- * - personality: string[] - 성격 특성
- * - fortune_areas: { wealth, career, relationship } - 운세 영역
- * - lucky_features: string[] - 복 있는 특징
- * - advice: string - 조언
+ * @response FaceReadingResponseV2
+ * - priorityInsights: 핵심 인사이트 3가지
+ * - faceCondition: 오늘의 안색 분석
+ * - emotionAnalysis: 표정 감정 분석
+ * - makeupStyleRecommendations (여성) / leadershipAnalysis (남성)
+ * - watchData: Apple Watch 경량 데이터
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
@@ -24,6 +27,7 @@ import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { extractUsername, fetchInstagramProfileImage, downloadAndEncodeImage } from '../_shared/instagram/scraper.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { initializePrompts, PromptManager } from '../_shared/prompts/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -141,6 +145,128 @@ interface FaceReadingResponse {
       description: string       // 설명
     }
   }
+}
+
+// =====================================================
+// V2 추가 타입 정의 (2-30대 여성 타겟 리디자인)
+// =====================================================
+interface PriorityInsight {
+  category: 'first_impression' | 'charm_point' | 'today_advice'
+  icon: string
+  title: string
+  description: string
+  score: number
+}
+
+interface FaceCondition {
+  bloodCirculation: number      // 혈색 0-100
+  puffiness: number             // 붓기 0-100 (낮을수록 좋음)
+  fatigueLevel: number          // 피로도 0-100 (낮을수록 좋음)
+  overallConditionScore: number // 전체 컨디션 0-100
+  conditionMessage: string      // 위로하는 메시지
+  tips: string[]                // 피부 관리 팁
+}
+
+interface EmotionAnalysis {
+  smilePercentage: number       // 미소 비율
+  tensionPercentage: number     // 긴장 비율
+  neutralPercentage: number     // 무표정 비율
+  relaxedPercentage: number     // 편안함 비율
+  dominantEmotion: 'smile' | 'tension' | 'neutral' | 'relaxed'
+  emotionMessage: string
+  impressionAnalysis: {
+    trustScore: number
+    approachabilityScore: number
+    charismaScore: number
+    overallImpression: string
+  }
+}
+
+interface SimplifiedOgwanItem {
+  part: 'ear' | 'eyebrow' | 'eye' | 'nose' | 'mouth'
+  name: string
+  hanjaName: string
+  score: number
+  summary: string
+  icon: string
+}
+
+interface SimplifiedSibigungItem {
+  palace: string
+  name: string
+  hanjaName: string
+  score: number
+  summary: string
+  icon: string
+}
+
+interface MyeonggungAnalysis {
+  score: number
+  summary: string
+  detailedAnalysis: string
+  destinyTraits: string[]
+  strengths: string[]
+  weaknesses: string[]
+  advice: string
+}
+
+interface MiganAnalysis {
+  score: number
+  summary: string
+  detailedAnalysis: string
+  characterTraits: string[]
+  strengths: string[]
+  weaknesses: string[]
+  advice: string
+}
+
+interface RelationshipImpression {
+  howOthersSeeYou: string
+  firstMeetingImpact: string
+  socialStrength: string
+  socialTip: string
+}
+
+interface MakeupStyleRecommendations {
+  charmFeature: string
+  charmDescription: string
+  recommendedStyle: string
+  colorRecommendations: {
+    lip: string
+    eye: string
+    cheek: string
+  }
+  hairStyleTip: string
+}
+
+interface LeadershipAnalysis {
+  leadershipType: string
+  leadershipDescription: string
+  trustScore: number
+  teamRoleRecommendation: string
+  careerAdvice: string
+}
+
+interface WatchData {
+  luckyDirection: string
+  luckyColor: string
+  luckyColorHex: string
+  luckyTimePeriods: string[]
+  dailyReminderMessage: string
+}
+
+interface FaceReadingResponseV2 extends FaceReadingResponse {
+  priorityInsights: PriorityInsight[]
+  faceCondition: FaceCondition
+  emotionAnalysis: EmotionAnalysis
+  myeonggung: MyeonggungAnalysis
+  migan: MiganAnalysis
+  simplifiedOgwan: SimplifiedOgwanItem[]
+  simplifiedSibigung: SimplifiedSibigungItem[]
+  relationshipImpression: RelationshipImpression
+  makeupStyleRecommendations?: MakeupStyleRecommendations  // 여성 전용
+  leadershipAnalysis?: LeadershipAnalysis                   // 남성 전용
+  watchData: WatchData
 }
 
 // =====================================================
@@ -419,21 +545,33 @@ function calculateTotalScore(response: FaceReadingResponse): { total: number; br
 // =====================================================
 // 메인 서버 핸들러
 // =====================================================
+// 프롬프트 시스템 초기화 (한 번만)
+let promptsInitialized = false
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    // 프롬프트 시스템 초기화
+    if (!promptsInitialized) {
+      await initializePrompts()
+      promptsInitialized = true
+    }
+
     const requestBody = await req.json()
 
-    console.log('📸 [FaceReading] Request received:', {
+    console.log('📸 [FaceReading V2] Request received:', {
       hasImage: !!requestBody.image,
       imageLength: requestBody.image?.length || 0,
       hasInstagramUrl: !!requestBody.instagram_url,
       analysisSource: requestBody.analysis_source,
       userId: requestBody.userId,
-      isPremium: requestBody.isPremium
+      isPremium: requestBody.isPremium,
+      userGender: requestBody.userGender,
+      userAgeGroup: requestBody.userAgeGroup,
+      useV2: requestBody.useV2
     })
 
     const {
@@ -443,7 +581,9 @@ serve(async (req) => {
       userId,
       userName,
       userGender,
-      isPremium = false
+      userAgeGroup,
+      isPremium = false,
+      useV2 = true  // V2가 기본값
     } = requestBody
 
     // Initialize Supabase client
@@ -480,12 +620,46 @@ serve(async (req) => {
     // =====================================================
     const llm = await LLMFactory.createFromConfigAsync('face-reading')
 
+    // V2 프롬프트 또는 레거시 프롬프트 선택
+    let systemPrompt = FACE_READING_SYSTEM_PROMPT
+    let userPrompt = createUserPrompt(userName, userGender)
+    let temperature = 0.8
+    let maxTokens = 6000
+
+    if (useV2) {
+      console.log('🆕 [FaceReading] Using V2 prompt template')
+      const template = PromptManager.getTemplate('face-reading-v2')
+
+      if (template) {
+        const today = new Date().toISOString().split('T')[0]
+        const isFemale = userGender === 'female'
+
+        const promptContext = {
+          userName: userName || '',
+          userGender: userGender || 'female',
+          userAgeGroup: userAgeGroup || '20s',
+          today,
+          isFemale
+        }
+
+        systemPrompt = PromptManager.getSystemPrompt('face-reading-v2', promptContext)
+        userPrompt = PromptManager.getUserPrompt('face-reading-v2', promptContext)
+
+        const genConfig = PromptManager.getGenerationConfig('face-reading-v2')
+        temperature = genConfig.temperature || 0.85
+        maxTokens = genConfig.maxTokens || 8192
+        console.log(`✅ [FaceReading] V2 template loaded - temp: ${temperature}, tokens: ${maxTokens}`)
+      } else {
+        console.warn('⚠️ [FaceReading] V2 template not found, using legacy prompt')
+      }
+    }
+
     const response = await llm.generate([
-      { role: "system", content: FACE_READING_SYSTEM_PROMPT },
+      { role: "system", content: systemPrompt },
       {
         role: "user",
         content: [
-          { type: "text", text: createUserPrompt(userName, userGender) },
+          { type: "text", text: userPrompt },
           {
             type: "image_url",
             image_url: {
@@ -496,8 +670,8 @@ serve(async (req) => {
         ]
       }
     ], {
-      temperature: 0.8,
-      maxTokens: 6000,
+      temperature,
+      maxTokens,
       jsonMode: true  // ✅ JSON Mode 활성화
     })
 
@@ -606,7 +780,19 @@ serve(async (req) => {
     // =====================================================
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['personality', 'wealth_fortune', 'love_fortune', 'health_fortune', 'career_fortune', 'special_features', 'advice', 'full_analysis', 'first_impression_detail', 'compatibility', 'marriage_prediction']
+      ? [
+          // 기존 블러 섹션
+          'personality', 'wealth_fortune', 'love_fortune', 'health_fortune',
+          'career_fortune', 'special_features', 'advice', 'full_analysis',
+          'first_impression_detail', 'compatibility', 'marriage_prediction',
+          // V2 블러 섹션 (프리미엄 전용)
+          ...(useV2 ? [
+            'faceCondition', 'emotionAnalysis',
+            'myeonggung', 'migan',
+            'relationshipImpression',
+            'makeupStyleRecommendations', 'leadershipAnalysis'
+          ] : [])
+        ]
       : []
 
     const fortuneResponse = {
@@ -662,8 +848,96 @@ serve(async (req) => {
         compatibility: analysisResult.compatibility,
 
         // 🔒 프리미엄: 결혼 적령기 예측
-        marriagePrediction: analysisResult.marriagePrediction
+        marriagePrediction: analysisResult.marriagePrediction,
+
+        // =====================================================
+        // V2 신규 필드 (useV2=true인 경우)
+        // =====================================================
+
+        // ✅ 무료: 우선순위 인사이트 (3가지 핵심 포인트)
+        ...(useV2 && analysisResult.priorityInsights && {
+          priorityInsights: analysisResult.priorityInsights
+        }),
+
+        // ✅ 무료: 오늘의 얼굴 컨디션 (미리보기)
+        ...(useV2 && analysisResult.faceCondition && {
+          faceCondition_preview: {
+            overallConditionScore: analysisResult.faceCondition.overallConditionScore,
+            conditionMessage: analysisResult.faceCondition.conditionMessage
+          }
+        }),
+
+        // 🔒 프리미엄: 얼굴 컨디션 상세
+        ...(useV2 && analysisResult.faceCondition && {
+          faceCondition: analysisResult.faceCondition
+        }),
+
+        // ✅ 무료: 표정 감정 분석 (요약)
+        ...(useV2 && analysisResult.emotionAnalysis && {
+          emotionAnalysis_preview: {
+            dominantEmotion: analysisResult.emotionAnalysis.dominantEmotion,
+            emotionMessage: analysisResult.emotionAnalysis.emotionMessage
+          }
+        }),
+
+        // 🔒 프리미엄: 표정 감정 상세
+        ...(useV2 && analysisResult.emotionAnalysis && {
+          emotionAnalysis: analysisResult.emotionAnalysis
+        }),
+
+        // ✅ 무료: 명궁/미간 요약
+        ...(useV2 && analysisResult.myeonggung && {
+          myeonggung_preview: {
+            score: analysisResult.myeonggung.score,
+            summary: analysisResult.myeonggung.summary
+          }
+        }),
+        ...(useV2 && analysisResult.migan && {
+          migan_preview: {
+            score: analysisResult.migan.score,
+            summary: analysisResult.migan.summary
+          }
+        }),
+
+        // 🔒 프리미엄: 명궁/미간 상세
+        ...(useV2 && analysisResult.myeonggung && {
+          myeonggung: analysisResult.myeonggung
+        }),
+        ...(useV2 && analysisResult.migan && {
+          migan: analysisResult.migan
+        }),
+
+        // ✅ 무료: 요약형 오관/십이궁 (요약 버전이므로 무료)
+        ...(useV2 && analysisResult.simplifiedOgwan && {
+          simplifiedOgwan: analysisResult.simplifiedOgwan
+        }),
+        ...(useV2 && analysisResult.simplifiedSibigung && {
+          simplifiedSibigung: analysisResult.simplifiedSibigung
+        }),
+
+        // 🔒 프리미엄: 관계 인상 분석
+        ...(useV2 && analysisResult.relationshipImpression && {
+          relationshipImpression: analysisResult.relationshipImpression
+        }),
+
+        // 🔒 프리미엄: 성별별 맞춤 분석
+        ...(useV2 && userGender === 'female' && analysisResult.makeupStyleRecommendations && {
+          makeupStyleRecommendations: analysisResult.makeupStyleRecommendations
+        }),
+        ...(useV2 && userGender === 'male' && analysisResult.leadershipAnalysis && {
+          leadershipAnalysis: analysisResult.leadershipAnalysis
+        }),
+
+        // ✅ 무료: Watch 경량 데이터
+        ...(useV2 && analysisResult.watchData && {
+          watchData: analysisResult.watchData
+        })
       },
+
+      // V2 메타데이터
+      version: useV2 ? 2 : 1,
+      userGender: userGender || null,
+      userAgeGroup: userAgeGroup || null,
 
       timestamp: new Date().toISOString(),
       isBlurred,
@@ -688,7 +962,16 @@ serve(async (req) => {
             analysis_source,
             has_image: true,
             face_features: analysisResult.userFaceFeatures,
-            similar_celebrities_count: similarCelebrities.length
+            similar_celebrities_count: similarCelebrities.length,
+            // V2 메타데이터
+            version: useV2 ? 2 : 1,
+            user_gender: userGender || null,
+            user_age_group: userAgeGroup || null,
+            has_v2_features: useV2 && !!(
+              analysisResult.priorityInsights ||
+              analysisResult.faceCondition ||
+              analysisResult.emotionAnalysis
+            )
           }
         })
 

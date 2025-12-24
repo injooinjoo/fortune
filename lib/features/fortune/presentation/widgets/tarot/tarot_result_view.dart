@@ -8,7 +8,9 @@ import '../../../../../core/providers/user_settings_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/loading_states.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../domain/models/tarot_card_model.dart';
 import 'tarot_card_widget.dart';
+import 'tarot_card_detail_modal.dart';
 
 /// Simplified tarot reading result view
 class TarotResultView extends ConsumerStatefulWidget {
@@ -38,7 +40,6 @@ class TarotResultView extends ConsumerStatefulWidget {
 
 class _TarotResultViewState extends ConsumerState<TarotResultView>
     with TickerProviderStateMixin {
-  final Map<int, bool> _flippedCards = {};
   late AnimationController _entranceController;
   late Animation<double> _entranceAnimation;
 
@@ -60,10 +61,38 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     super.dispose();
   }
 
-  void _flipCard(int index) {
-    setState(() {
-      _flippedCards[index] = !(_flippedCards[index] ?? false);
-    });
+  /// 카드 상세 모달 표시
+  void _showCardDetail(int index) {
+    final cardIndex = widget.selectedCards[index];
+    final cardInfo = TarotMetadata.majorArcana[cardIndex % 22];
+
+    // TarotCard 객체 생성
+    final card = TarotCard(
+      deckType: TarotDeckType.values.firstWhere(
+        (d) => d.path == widget.selectedDeck.id,
+        orElse: () => TarotDeckType.riderWaite,
+      ),
+      category: CardCategory.major,
+      number: cardIndex % 22,
+      cardName: cardInfo?.name.split(' (').last.replaceAll(')', '') ?? 'Unknown',
+      cardNameKr: cardInfo?.name.split(' (').first ?? '알 수 없는 카드',
+      isReversed: false, // TODO: 역방향 정보가 있으면 여기 반영
+      positionKey: _getPositionLabel(index),
+      positionMeaning: _getPositionLabel(index),
+    );
+
+    // API 해석 결과 가져오기
+    final interpretation = widget.readingResult != null &&
+        widget.readingResult!['cardInterpretations'] != null
+        ? widget.readingResult!['cardInterpretations'][index] as Map<String, dynamic>?
+        : _generateCardInterpretation(cardIndex, index);
+
+    TarotCardDetailModal.show(
+      context,
+      card: card,
+      question: widget.question,
+      interpretation: interpretation,
+    );
   }
 
   @override
@@ -129,8 +158,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
         itemCount: widget.selectedCards.length,
         itemBuilder: (context, index) {
           final cardIndex = widget.selectedCards[index];
-          final isFlipped = _flippedCards[index] ?? false;
-          
+
           return Padding(
             padding: EdgeInsets.only(
               left: index == 0 ? 16 : 8,
@@ -142,8 +170,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   deck: widget.selectedDeck,
                   width: 100,
                   height: 150,
-                  showFront: isFlipped,
-                  onTap: () => _flipCard(index)),
+                  showFront: true, // 항상 앞면 표시
+                  onTap: () => _showCardDetail(index)),
                 const SizedBox(height: 8),
                 Text(
                   _getPositionLabel(index),

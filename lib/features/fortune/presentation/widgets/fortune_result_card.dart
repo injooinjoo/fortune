@@ -11,7 +11,7 @@ import 'fortune_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 
-/// 운세 결과 카드 - 토스 디자인 시스템 적용
+/// 인사이트 결과 카드 - 토스 디자인 시스템 적용
 class FortuneResultCard extends ConsumerWidget {
   final Fortune fortune;
   final String fortuneTitle;
@@ -46,7 +46,7 @@ class FortuneResultCard extends ConsumerWidget {
       physics: const BouncingScrollPhysics(),
       child: Column(
         children: [
-          // 헤더 - 운세 제목과 날짜
+          // 헤더 - 인사이트 제목과 날짜
           _buildHeader(context, isDark),
           
           // 점수 표시 (옵션)
@@ -229,7 +229,7 @@ class FortuneResultCard extends ConsumerWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            '오늘 운세 본 사람 중 상위 $percentile%',
+            '오늘 분석 본 사람 중 상위 $percentile%',
             style: DSTypography.labelSmall.copyWith(
               color: badgeColor,
               fontWeight: FontWeight.w600,
@@ -242,7 +242,7 @@ class FortuneResultCard extends ConsumerWidget {
 
   Widget _buildMainContent(BuildContext context, bool isDark) {
     return FortuneCard(
-      title: '오늘의 운세',
+      title: '오늘의 인사이트',
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -457,7 +457,7 @@ class FortuneResultCard extends ConsumerWidget {
                   onShare!();
                 } else {
                   Share.share(
-                    '$fortuneTitle\n\n${fortune.content}\n\n운세 점수: ${fortune.overallScore}점',
+                    '$fortuneTitle\n\n${fortune.content}\n\n인사이트 점수: ${fortune.overallScore}점',
                   );
                 }
               },
@@ -494,11 +494,11 @@ class FortuneResultCard extends ConsumerWidget {
   }
   
   String _getScoreMessage(int score) {
-    if (score >= 90) return '최상의 운세!';
-    if (score >= 80) return '아주 좋은 운세';
-    if (score >= 70) return '좋은 운세';
-    if (score >= 60) return '무난한 운세';
-    if (score >= 50) return '평범한 운세';
+    if (score >= 90) return '최상의 하루!';
+    if (score >= 80) return '아주 좋은 하루';
+    if (score >= 70) return '좋은 하루';
+    if (score >= 60) return '무난한 하루';
+    if (score >= 50) return '평범한 하루';
     if (score >= 40) return '조심이 필요한 날';
     return '신중한 하루를 보내세요';
   }

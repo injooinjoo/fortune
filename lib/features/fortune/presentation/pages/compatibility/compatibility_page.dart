@@ -216,9 +216,9 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         _isLoading = false;
       });
       if (mounted) {
-        String errorMessage = '궁합 분석 중 오류가 발생했습니다';
+        String errorMessage = '성향 분석 중 오류가 발생했습니다';
         if (e.toString().contains('404')) {
-          errorMessage = '궁합 분석 서비스를 사용할 수 없습니다';
+          errorMessage = '성향 분석 서비스를 사용할 수 없습니다';
         } else if (e.toString().contains('network')) {
           errorMessage = '네트워크 연결을 확인해주세요';
         }
@@ -279,7 +279,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
               ),
             ),
             Text(
-              '궁합 분석',
+              '성향 매칭',
               style: context.heading3.copyWith(
                 fontFamily: FontConfig.primary,
                 color: inkColor,
