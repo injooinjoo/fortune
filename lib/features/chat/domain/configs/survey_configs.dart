@@ -170,6 +170,26 @@ const _loveConcernOptions = [
   SurveyOption(id: 'breakup', label: '이별/재회', emoji: '🍂'),
 ];
 
+/// 연애 스타일 옵션
+const _datingStyleOptions = [
+  SurveyOption(id: 'active', label: '적극적', emoji: '🔥'),
+  SurveyOption(id: 'passive', label: '수동적', emoji: '🌙'),
+  SurveyOption(id: 'romantic', label: '로맨틱', emoji: '🌹'),
+  SurveyOption(id: 'practical', label: '현실적', emoji: '💼'),
+  SurveyOption(id: 'clingy', label: '애정 표현 많이', emoji: '🤗'),
+  SurveyOption(id: 'independent', label: '개인 시간 중요', emoji: '🧘'),
+];
+
+/// 이상형 스타일 옵션
+const _idealTypeOptions = [
+  SurveyOption(id: 'kind', label: '따뜻한', emoji: '🥰'),
+  SurveyOption(id: 'funny', label: '유머러스', emoji: '😄'),
+  SurveyOption(id: 'smart', label: '똑똒한', emoji: '🧠'),
+  SurveyOption(id: 'stable', label: '안정적인', emoji: '🏠'),
+  SurveyOption(id: 'passionate', label: '열정적인', emoji: '🔥'),
+  SurveyOption(id: 'calm', label: '차분한', emoji: '🌊'),
+];
+
 /// Love 설문 설정
 final loveSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.love,
@@ -180,15 +200,30 @@ final loveSurveyConfig = FortuneSurveyConfig(
   steps: [
     const SurveyStep(
       id: 'status',
-      question: '현재 연애 상태는 어떠세요?',
+      question: '지금 연애 상태가 어때? 💕',
       inputType: SurveyInputType.chips,
       options: _relationshipStatusOptions,
     ),
     const SurveyStep(
       id: 'concern',
-      question: '가장 궁금한 게 뭔가요?',
+      question: '가장 궁금한 게 뭐야? 🤔',
       inputType: SurveyInputType.chips,
       options: _loveConcernOptions,
+    ),
+    const SurveyStep(
+      id: 'datingStyle',
+      question: '연애할 때 어떤 스타일이야? 💝',
+      inputType: SurveyInputType.multiSelect,
+      options: _datingStyleOptions,
+      isRequired: false,
+    ),
+    const SurveyStep(
+      id: 'idealType',
+      question: '이상형은 어떤 스타일이야? ✨',
+      inputType: SurveyInputType.multiSelect,
+      options: _idealTypeOptions,
+      isRequired: false,
+      showWhen: {'status': ['single', 'crush']},
     ),
   ],
 );
@@ -355,9 +390,10 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   // 시간 기반 (2개)
   FortuneSurveyType.yearly: yearlySurveyConfig,
   FortuneSurveyType.newYear: newYearSurveyConfig,
-  // 전통 분석 (2개)
+  // 전통 분석 (3개)
   FortuneSurveyType.traditional: traditionalSurveyConfig,
   FortuneSurveyType.faceReading: faceReadingSurveyConfig,
+  FortuneSurveyType.talisman: talismanSurveyConfig,
   // 성격/개성 (2개)
   FortuneSurveyType.personalityDna: personalityDnaSurveyConfig,
   FortuneSurveyType.biorhythm: biorhythmSurveyConfig,
@@ -384,6 +420,11 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   FortuneSurveyType.pet: petSurveyConfig,
   FortuneSurveyType.family: familySurveyConfig,
   FortuneSurveyType.naming: namingSurveyConfig,
+  // 스타일/패션 (1개)
+  FortuneSurveyType.ootdEvaluation: ootdEvaluationSurveyConfig,
+  // 실용/결정 (2개)
+  FortuneSurveyType.exam: examSurveyConfig,
+  FortuneSurveyType.moving: movingSurveyConfig,
 };
 
 /// 분야별 포지션 가져오기
@@ -469,6 +510,16 @@ const _traditionalTypeOptions = [
   SurveyOption(id: 'relationship', label: '대인관계', emoji: '🤝'),
 ];
 
+/// 구체적 질문 옵션 (기존 페이지 질문 기능)
+const _traditionalQuestionOptions = [
+  SurveyOption(id: 'money_timing', label: '언제 돈이 들어올까?', emoji: '💰'),
+  SurveyOption(id: 'career_fit', label: '어떤 일이 나한테 맞을까?', emoji: '💼'),
+  SurveyOption(id: 'marriage_timing', label: '언제 결혼하면 좋을까?', emoji: '💒'),
+  SurveyOption(id: 'health_caution', label: '건강 주의사항 있어?', emoji: '🏥'),
+  SurveyOption(id: 'direction', label: '어느 방향으로 가면 좋아?', emoji: '🧭'),
+  SurveyOption(id: 'custom', label: '직접 질문할래', emoji: '✏️'),
+];
+
 /// Traditional 설문 설정
 const traditionalSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.traditional,
@@ -479,9 +530,22 @@ const traditionalSurveyConfig = FortuneSurveyConfig(
   steps: [
     SurveyStep(
       id: 'analysisType',
-      question: '어떤 분석이 궁금하세요?',
+      question: '어떤 분석이 궁금하세요? 📜',
       inputType: SurveyInputType.chips,
       options: _traditionalTypeOptions,
+    ),
+    SurveyStep(
+      id: 'specificQuestion',
+      question: '특별히 알고 싶은 게 있어? 🤔',
+      inputType: SurveyInputType.chips,
+      options: _traditionalQuestionOptions,
+      isRequired: false,
+    ),
+    SurveyStep(
+      id: 'customQuestion',
+      question: '궁금한 점을 자유롭게 적어줘! ✍️',
+      inputType: SurveyInputType.text,
+      showWhen: {'specificQuestion': 'custom'},
     ),
   ],
 );
@@ -489,6 +553,15 @@ const traditionalSurveyConfig = FortuneSurveyConfig(
 // ============================================================
 // FaceReading (AI 관상 분석) 설문 설정
 // ============================================================
+
+/// 분석 포커스 옵션
+const _faceReadingFocusOptions = [
+  SurveyOption(id: 'overall', label: '종합 관상', emoji: '✨'),
+  SurveyOption(id: 'personality', label: '성격/기질', emoji: '🎭'),
+  SurveyOption(id: 'fortune', label: '재물/복', emoji: '💰'),
+  SurveyOption(id: 'love', label: '연애/결혼운', emoji: '💕'),
+  SurveyOption(id: 'career', label: '직업/적성', emoji: '💼'),
+];
 
 /// FaceReading 설문 설정 (AI 관상 분석 플로우)
 const faceReadingSurveyConfig = FortuneSurveyConfig(
@@ -499,10 +572,63 @@ const faceReadingSurveyConfig = FortuneSurveyConfig(
   accentColor: FortuneColors.mystical,
   steps: [
     SurveyStep(
+      id: 'focus',
+      question: '어떤 관상이 궁금해? 👀',
+      inputType: SurveyInputType.chips,
+      options: _faceReadingFocusOptions,
+      isRequired: false,
+    ),
+    SurveyStep(
       id: 'photo',
-      question: 'AI 관상 분석을 위해 얼굴 사진을 올려주세요',
+      question: '얼굴 사진을 올려줘! 📸\n정면 사진이 가장 정확해',
       inputType: SurveyInputType.faceReading,
-      options: [],
+    ),
+  ],
+);
+
+// ============================================================
+// Talisman (부적) 설문 설정
+// ============================================================
+
+/// 부적 목적 옵션
+const _talismanPurposeOptions = [
+  SurveyOption(id: 'wealth', label: '재물/금전운', emoji: '💰'),
+  SurveyOption(id: 'love', label: '연애/결혼운', emoji: '💕'),
+  SurveyOption(id: 'health', label: '건강/장수', emoji: '💪'),
+  SurveyOption(id: 'success', label: '성공/합격', emoji: '🏆'),
+  SurveyOption(id: 'protection', label: '액막이/보호', emoji: '🛡️'),
+  SurveyOption(id: 'family', label: '가정화목', emoji: '👨‍👩‍👧‍👦'),
+];
+
+/// 특별한 상황 옵션
+const _talismanSituationOptions = [
+  SurveyOption(id: 'exam', label: '시험/면접 앞두고', emoji: '📝'),
+  SurveyOption(id: 'business', label: '사업/창업 중', emoji: '💼'),
+  SurveyOption(id: 'moving', label: '이사/이직 예정', emoji: '🏠'),
+  SurveyOption(id: 'relationship', label: '관계 문제', emoji: '💔'),
+  SurveyOption(id: 'none', label: '딱히 없어', emoji: '✨'),
+];
+
+/// Talisman 설문 설정
+const talismanSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.talisman,
+  title: '부적',
+  description: '당신을 위한 맞춤 부적',
+  emoji: '🧧',
+  accentColor: FortuneColors.mystical,
+  steps: [
+    SurveyStep(
+      id: 'purpose',
+      question: '어떤 부적이 필요하세요? 🧧',
+      inputType: SurveyInputType.chips,
+      options: _talismanPurposeOptions,
+    ),
+    SurveyStep(
+      id: 'situation',
+      question: '특별한 상황이 있으세요? 🤔',
+      inputType: SurveyInputType.chips,
+      options: _talismanSituationOptions,
+      isRequired: false,
     ),
   ],
 );
@@ -602,6 +728,21 @@ const profileCreationSurveyConfig = FortuneSurveyConfig(
 // ============================================================
 
 /// Compatibility 설문 설정
+/// 입력 방식 옵션
+const _compatibilityInputMethodOptions = [
+  SurveyOption(id: 'profile', label: '저장된 프로필에서', emoji: '📋'),
+  SurveyOption(id: 'new', label: '새로 입력할래', emoji: '✏️'),
+];
+
+/// 관계 유형 옵션
+const _compatibilityRelationshipOptions = [
+  SurveyOption(id: 'lover', label: '애인/배우자', emoji: '💕'),
+  SurveyOption(id: 'crush', label: '짝사랑/썸', emoji: '💘'),
+  SurveyOption(id: 'friend', label: '친구', emoji: '👥'),
+  SurveyOption(id: 'colleague', label: '동료/지인', emoji: '💼'),
+  SurveyOption(id: 'family', label: '가족', emoji: '👨‍👩‍👧‍👦'),
+];
+
 const compatibilitySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.compatibility,
   title: '궁합',
@@ -610,10 +751,34 @@ const compatibilitySurveyConfig = FortuneSurveyConfig(
   accentColor: FortuneColors.love,
   steps: [
     SurveyStep(
+      id: 'inputMethod',
+      question: '상대방 정보를 어떻게 입력할래? 💞',
+      inputType: SurveyInputType.chips,
+      options: _compatibilityInputMethodOptions,
+    ),
+    SurveyStep(
       id: 'partner',
-      question: '궁합을 볼 상대를 선택해주세요',
+      question: '궁합 볼 상대를 선택해줘! 💕',
       inputType: SurveyInputType.profile,
-      options: [],
+      showWhen: {'inputMethod': 'profile'},
+    ),
+    SurveyStep(
+      id: 'partnerName',
+      question: '상대방 이름이 뭐야? ✨',
+      inputType: SurveyInputType.text,
+      showWhen: {'inputMethod': 'new'},
+    ),
+    SurveyStep(
+      id: 'partnerBirth',
+      question: '상대방 생년월일을 알려줘! 📅',
+      inputType: SurveyInputType.birthDateTime,
+      showWhen: {'inputMethod': 'new'},
+    ),
+    SurveyStep(
+      id: 'relationship',
+      question: '어떤 관계야? 🤔',
+      inputType: SurveyInputType.chips,
+      options: _compatibilityRelationshipOptions,
     ),
   ],
 );
@@ -670,6 +835,15 @@ const _breakupReasonOptions = [
   SurveyOption(id: 'unknown', label: '잘 모르겠어요', emoji: '❓'),
 ];
 
+/// 현재 마음 상태 옵션
+const _currentFeelingOptions = [
+  SurveyOption(id: 'miss', label: '많이 그리워', emoji: '😢'),
+  SurveyOption(id: 'curious', label: '궁금해', emoji: '🤔'),
+  SurveyOption(id: 'regret', label: '후회돼', emoji: '😔'),
+  SurveyOption(id: 'conflicted', label: '복잡해', emoji: '🌀'),
+  SurveyOption(id: 'hopeful', label: '다시 만나고 싶어', emoji: '🙏'),
+];
+
 /// ExLover 설문 설정
 const exLoverSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.exLover,
@@ -680,15 +854,21 @@ const exLoverSurveyConfig = FortuneSurveyConfig(
   steps: [
     SurveyStep(
       id: 'breakupTime',
-      question: '언제 헤어지셨나요?',
+      question: '언제 헤어졌어? 💔',
       inputType: SurveyInputType.chips,
       options: _breakupTimeOptions,
     ),
     SurveyStep(
       id: 'breakupReason',
-      question: '이별 이유가 뭐였나요?',
+      question: '헤어진 이유가 뭐였어? 🤔',
       inputType: SurveyInputType.chips,
       options: _breakupReasonOptions,
+    ),
+    SurveyStep(
+      id: 'currentFeeling',
+      question: '지금 마음은 어때? 💭',
+      inputType: SurveyInputType.chips,
+      options: _currentFeelingOptions,
     ),
   ],
 );
@@ -880,6 +1060,13 @@ const _lottoMethodOptions = [
   SurveyOption(id: 'dream', label: '꿈 해석', emoji: '💭'),
 ];
 
+/// 게임 수 옵션
+const _lottoGameCountOptions = [
+  SurveyOption(id: '1', label: '1게임', emoji: '1️⃣'),
+  SurveyOption(id: '3', label: '3게임', emoji: '3️⃣'),
+  SurveyOption(id: '5', label: '5게임', emoji: '5️⃣'),
+];
+
 /// Lotto 설문 설정
 const lottoSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.lotto,
@@ -890,9 +1077,16 @@ const lottoSurveyConfig = FortuneSurveyConfig(
   steps: [
     SurveyStep(
       id: 'method',
-      question: '어떤 방식으로 번호를 생성할까요?',
+      question: '어떤 방식으로 번호를 생성할까? 🎲',
       inputType: SurveyInputType.chips,
       options: _lottoMethodOptions,
+    ),
+    SurveyStep(
+      id: 'gameCount',
+      question: '몇 게임 뽑을까? 🎫',
+      inputType: SurveyInputType.chips,
+      options: _lottoGameCountOptions,
+      isRequired: false,
     ),
   ],
 );
@@ -1046,15 +1240,20 @@ const sportsGameSurveyConfig = FortuneSurveyConfig(
   steps: [
     SurveyStep(
       id: 'sport',
-      question: '어떤 종목인가요?',
+      question: '어떤 종목이야? ⚽',
       inputType: SurveyInputType.chips,
       options: _sportTypeOptions,
     ),
     SurveyStep(
       id: 'gameDate',
-      question: '경기 날짜를 선택해주세요',
+      question: '경기 날짜가 언제야? 📅',
       inputType: SurveyInputType.calendar,
-      options: [],
+    ),
+    SurveyStep(
+      id: 'favoriteTeam',
+      question: '응원하는 팀 이름을 알려줘! 📣',
+      inputType: SurveyInputType.text,
+      isRequired: false,
     ),
   ],
 );
@@ -1100,6 +1299,14 @@ const dreamSurveyConfig = FortuneSurveyConfig(
 // Celebrity (유명인 궁합) 설문 설정
 // ============================================================
 
+/// Celebrity 관심포인트 옵션
+const _celebrityInterestOptions = [
+  SurveyOption(id: 'overall', label: '전체 궁합', emoji: '💫'),
+  SurveyOption(id: 'personality', label: '성격 궁합', emoji: '🧠'),
+  SurveyOption(id: 'love', label: '연애 궁합', emoji: '💕'),
+  SurveyOption(id: 'work', label: '케미/협업', emoji: '🤝'),
+];
+
 /// Celebrity 설문 설정
 const celebritySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.celebrity,
@@ -1114,12 +1321,27 @@ const celebritySurveyConfig = FortuneSurveyConfig(
       inputType: SurveyInputType.text,
       options: [],
     ),
+    SurveyStep(
+      id: 'interest',
+      question: '특히 궁금한 부분이 있어? 💫',
+      inputType: SurveyInputType.chips,
+      options: _celebrityInterestOptions,
+      isRequired: false,
+    ),
   ],
 );
 
 // ============================================================
 // Pet (반려동물 궁합) 설문 설정
 // ============================================================
+
+/// Pet 관심포인트 옵션
+const _petInterestOptions = [
+  SurveyOption(id: 'overall', label: '전체 궁합', emoji: '💫'),
+  SurveyOption(id: 'personality', label: '성격 궁합', emoji: '🧠'),
+  SurveyOption(id: 'activity', label: '활동 궁합', emoji: '🏃'),
+  SurveyOption(id: 'care', label: '케어 스타일', emoji: '💕'),
+];
 
 /// Pet 설문 설정
 const petSurveyConfig = FortuneSurveyConfig(
@@ -1134,6 +1356,13 @@ const petSurveyConfig = FortuneSurveyConfig(
       question: '반려동물을 선택해주세요',
       inputType: SurveyInputType.petProfile,
       options: [],
+    ),
+    SurveyStep(
+      id: 'interest',
+      question: '특히 궁금한 부분이 있어? 🐾',
+      inputType: SurveyInputType.chips,
+      options: _petInterestOptions,
+      isRequired: false,
     ),
   ],
 );
@@ -1235,6 +1464,145 @@ const namingSurveyConfig = FortuneSurveyConfig(
       question: '원하는 이름 스타일은요?',
       inputType: SurveyInputType.chips,
       options: _namingStyleOptions,
+    ),
+  ],
+);
+
+// ============================================================
+// OOTD Evaluation (OOTD 평가) 설문 설정
+// ============================================================
+
+/// TPO (Time, Place, Occasion) 옵션
+const _ootdTpoOptions = [
+  SurveyOption(id: 'date', label: '데이트', emoji: '💕'),
+  SurveyOption(id: 'interview', label: '면접', emoji: '💼'),
+  SurveyOption(id: 'work', label: '출근', emoji: '🏢'),
+  SurveyOption(id: 'casual', label: '일상', emoji: '☕'),
+  SurveyOption(id: 'party', label: '파티/모임', emoji: '🎉'),
+  SurveyOption(id: 'wedding', label: '경조사', emoji: '💒'),
+  SurveyOption(id: 'travel', label: '여행', emoji: '✈️'),
+  SurveyOption(id: 'sports', label: '운동', emoji: '🏃'),
+];
+
+/// OOTD 평가 설문 설정
+const ootdEvaluationSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.ootdEvaluation,
+  title: 'OOTD 평가',
+  description: 'AI가 오늘의 패션을 평가해드려요!',
+  emoji: '👔',
+  accentColor: FortuneColors.career,
+  steps: [
+    SurveyStep(
+      id: 'tpo',
+      question: '오늘 어디 가시나요?',
+      inputType: SurveyInputType.chips,
+      options: _ootdTpoOptions,
+    ),
+    SurveyStep(
+      id: 'photo',
+      question: 'OOTD 사진을 올려주세요! 📸',
+      inputType: SurveyInputType.image,
+      options: [],
+    ),
+  ],
+);
+
+// ============================================================
+// Exam (시험운) 설문 설정
+// ============================================================
+
+/// 시험 종류 옵션
+const _examTypeOptions = [
+  SurveyOption(id: 'license', label: '자격증', emoji: '📜'),
+  SurveyOption(id: 'job', label: '취업/입사', emoji: '💼'),
+  SurveyOption(id: 'promotion', label: '승진/진급', emoji: '📈'),
+  SurveyOption(id: 'school', label: '입시/편입', emoji: '🎓'),
+  SurveyOption(id: 'language', label: '어학시험', emoji: '🌍'),
+  SurveyOption(id: 'other', label: '기타', emoji: '✏️'),
+];
+
+/// 준비 상태 옵션
+const _examPreparationOptions = [
+  SurveyOption(id: 'perfect', label: '완벽 준비', emoji: '💯'),
+  SurveyOption(id: 'good', label: '잘 되고 있어', emoji: '😊'),
+  SurveyOption(id: 'normal', label: '보통이야', emoji: '😐'),
+  SurveyOption(id: 'worried', label: '좀 걱정돼', emoji: '😟'),
+  SurveyOption(id: 'panic', label: '급하게 준비중', emoji: '😰'),
+];
+
+/// Exam 설문 설정
+const examSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.exam,
+  title: '시험운',
+  description: '시험 합격 운세를 봐드릴게요!',
+  emoji: '📝',
+  accentColor: FortuneColors.career,
+  steps: [
+    SurveyStep(
+      id: 'examType',
+      question: '어떤 시험을 준비하고 있어요? 📝',
+      inputType: SurveyInputType.chips,
+      options: _examTypeOptions,
+    ),
+    SurveyStep(
+      id: 'examDate',
+      question: '시험 날짜가 언제예요? 📅',
+      inputType: SurveyInputType.calendar,
+    ),
+    SurveyStep(
+      id: 'preparation',
+      question: '준비 상태는 어떠세요? 💪',
+      inputType: SurveyInputType.chips,
+      options: _examPreparationOptions,
+    ),
+  ],
+);
+
+// ============================================================
+// Moving (이사/이직운) 설문 설정
+// ============================================================
+
+/// 이동 유형 옵션
+const _movingTypeOptions = [
+  SurveyOption(id: 'home', label: '이사', emoji: '🏠'),
+  SurveyOption(id: 'job', label: '이직', emoji: '💼'),
+  SurveyOption(id: 'both', label: '둘 다', emoji: '🔄'),
+];
+
+/// 이사 방향 옵션
+const _movingDirectionOptions = [
+  SurveyOption(id: 'east', label: '동쪽', emoji: '🌅'),
+  SurveyOption(id: 'west', label: '서쪽', emoji: '🌇'),
+  SurveyOption(id: 'south', label: '남쪽', emoji: '☀️'),
+  SurveyOption(id: 'north', label: '북쪽', emoji: '❄️'),
+  SurveyOption(id: 'unknown', label: '아직 모름', emoji: '🤔'),
+];
+
+/// Moving 설문 설정
+const movingSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.moving,
+  title: '이사/이직운',
+  description: '좋은 방향을 찾아드릴게요!',
+  emoji: '🏠',
+  accentColor: FortuneColors.career,
+  steps: [
+    SurveyStep(
+      id: 'movingType',
+      question: '어떤 이동을 계획하고 있어요? 🚚',
+      inputType: SurveyInputType.chips,
+      options: _movingTypeOptions,
+    ),
+    SurveyStep(
+      id: 'movingDate',
+      question: '예정일이 언제예요? 📅',
+      inputType: SurveyInputType.calendar,
+    ),
+    SurveyStep(
+      id: 'direction',
+      question: '이동 방향이 정해졌나요? 🧭',
+      inputType: SurveyInputType.chips,
+      options: _movingDirectionOptions,
+      showWhen: {'movingType': ['home', 'both']},
     ),
   ],
 );

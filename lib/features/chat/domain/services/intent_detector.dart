@@ -236,6 +236,14 @@ class IntentDetector {
         return '가족 운세를 봐드릴까요?';
       case FortuneSurveyType.naming:
         return '아이 이름을 지어드릴까요?';
+      case FortuneSurveyType.ootdEvaluation:
+        return '오늘의 코디를 평가해드릴까요?';
+      case FortuneSurveyType.talisman:
+        return '나만의 부적을 만들어드릴까요?';
+      case FortuneSurveyType.exam:
+        return '시험운을 봐드릴까요?';
+      case FortuneSurveyType.moving:
+        return '이사/이직 길일을 알려드릴까요?';
     }
   }
 }

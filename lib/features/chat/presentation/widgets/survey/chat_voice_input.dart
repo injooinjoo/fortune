@@ -43,7 +43,6 @@ class _ChatVoiceInputState extends State<ChatVoiceInput> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasText = _controller.text.trim().isNotEmpty;
 
     return Container(
@@ -52,14 +51,7 @@ class _ChatVoiceInputState extends State<ChatVoiceInput> {
         horizontal: DSSpacing.md,
         vertical: DSSpacing.sm,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        border: Border(
-          top: BorderSide(
-            color: colors.textPrimary.withValues(alpha: 0.1),
-          ),
-        ),
-      ),
+      // 투명 배경 - 하단 입력 영역과 일관성 유지
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

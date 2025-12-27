@@ -239,6 +239,15 @@ const List<RecommendationChip> defaultChips = [
     icon: Icons.edit_note,
     color: Color(0xFF8B5CF6),
   ),
+
+  // ============ 스타일/패션 ============
+  RecommendationChip(
+    id: 'ootdEvaluation',
+    label: 'OOTD 평가',
+    fortuneType: 'ootdEvaluation',
+    icon: Icons.checkroom,
+    color: Color(0xFF10B981),
+  ),
 ];
 
 /// 추가 추천 칩 (컨텍스트 기반 선택용) - deprecated, defaultChips에 통합됨

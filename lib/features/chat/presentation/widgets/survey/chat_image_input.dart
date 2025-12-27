@@ -76,7 +76,6 @@ class _ChatImageInputState extends State<ChatImageInput> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: double.infinity,
@@ -84,14 +83,7 @@ class _ChatImageInputState extends State<ChatImageInput> {
         horizontal: DSSpacing.md,
         vertical: DSSpacing.sm,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        border: Border(
-          top: BorderSide(
-            color: colors.textPrimary.withValues(alpha: 0.1),
-          ),
-        ),
-      ),
+      // 투명 배경 - 하단 입력 영역과 일관성 유지
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

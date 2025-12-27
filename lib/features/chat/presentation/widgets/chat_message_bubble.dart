@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/chat_message.dart';
 import 'chat_fortune_result_card.dart';
+import 'chat_ootd_result_card.dart';
+import 'chat_saju_result_card.dart';
 
 /// 채팅 메시지 버블
 class ChatMessageBubble extends StatelessWidget {
@@ -18,6 +20,46 @@ class ChatMessageBubble extends StatelessWidget {
     final typography = context.typography;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isUser = message.type == ChatMessageType.user;
+
+    // 사주 분석 결과 카드 표시
+    if (message.type == ChatMessageType.sajuResult && message.sajuData != null) {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatSajuResultCard(
+          sajuData: message.sajuData!,
+          fortuneResult: message.sajuFortuneResult,
+          isBlurred: message.isBlurred,
+          blurredSections: message.blurredSections,
+        ),
+      );
+    }
+
+    // OOTD 평가 결과 카드 표시
+    if (message.fortune != null &&
+        message.type == ChatMessageType.fortuneResult &&
+        message.fortuneType == 'ootd-evaluation') {
+      // Fortune의 additionalInfo에서 OOTD 결과 추출
+      final additionalInfo = message.fortune!.additionalInfo ?? {};
+      final ootdData = {
+        'score': message.fortune!.overallScore?.toDouble() ??
+            additionalInfo['score'] ??
+            0.0,
+        'tpo': additionalInfo['tpo'] ?? '',
+        'details': additionalInfo['details'] ?? {},
+      };
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatOotdResultCard(
+          ootdData: ootdData,
+          isBlurred: message.isBlurred,
+          blurredSections: message.blurredSections,
+        ),
+      );
+    }
 
     // 운세 결과 카드 표시 (Fortune 객체가 있는 경우)
     // 전체 너비 사용, 중앙 정렬 (자석효과 제거)

@@ -78,19 +78,11 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        border: Border(
-          top: BorderSide(
-            color: colors.textPrimary.withValues(alpha: 0.1),
-          ),
-        ),
-      ),
+      // 투명 배경 - 하단 입력 영역과 일관성 유지
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

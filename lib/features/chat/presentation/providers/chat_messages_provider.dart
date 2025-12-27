@@ -61,6 +61,30 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     );
   }
 
+  /// 사주 분석 결과 메시지 추가
+  void addSajuResultMessage({
+    String? text,
+    required Map<String, dynamic> sajuData,
+    Map<String, dynamic>? sajuFortuneResult,
+    bool isBlurred = false,
+    List<String> blurredSections = const [],
+  }) {
+    final message = ChatMessage(
+      id: _uuid.v4(),
+      type: ChatMessageType.sajuResult,
+      text: text,
+      timestamp: DateTime.now(),
+      sajuData: sajuData,
+      sajuFortuneResult: sajuFortuneResult,
+      isBlurred: isBlurred,
+      blurredSections: blurredSections,
+    );
+    state = state.copyWith(
+      messages: [...state.messages, message],
+      isTyping: false,
+    );
+  }
+
   /// 시스템 메시지 추가 (추천 칩)
   void addSystemMessage({List<String>? chipIds}) {
     final message = ChatMessage(

@@ -151,6 +151,14 @@ class _FortuneTypeChip extends StatelessWidget {
         return const Color(0xFFFFB800); // 골드
       case FortuneSurveyType.avoidPeople:
         return const Color(0xFFFF5252); // 레드
+      case FortuneSurveyType.ootdEvaluation:
+        return const Color(0xFFE91E63); // 핑크
+      case FortuneSurveyType.talisman:
+        return const Color(0xFF9C27B0); // 퍼플
+      case FortuneSurveyType.exam:
+        return const Color(0xFF4A90D9); // 블루
+      case FortuneSurveyType.moving:
+        return const Color(0xFF4CAF50); // 그린
     }
   }
 
@@ -216,6 +224,14 @@ class _FortuneTypeChip extends StatelessWidget {
         return '가족 운세';
       case FortuneSurveyType.naming:
         return '작명';
+      case FortuneSurveyType.ootdEvaluation:
+        return 'OOTD 평가';
+      case FortuneSurveyType.talisman:
+        return '부적';
+      case FortuneSurveyType.exam:
+        return '시험운';
+      case FortuneSurveyType.moving:
+        return '이사/이직운';
     }
   }
 
@@ -281,6 +297,14 @@ class _FortuneTypeChip extends StatelessWidget {
         return '👨‍👩‍👧‍👦';
       case FortuneSurveyType.naming:
         return '📝';
+      case FortuneSurveyType.ootdEvaluation:
+        return '👗';
+      case FortuneSurveyType.talisman:
+        return '🧿';
+      case FortuneSurveyType.exam:
+        return '📚';
+      case FortuneSurveyType.moving:
+        return '🏠';
     }
   }
 }

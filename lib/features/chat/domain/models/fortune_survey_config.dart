@@ -101,9 +101,10 @@ enum FortuneSurveyType {
   yearly,       // 연간 운세
   newYear,      // 새해 운세
 
-  // 전통 분석 (2개)
+  // 전통 분석 (3개)
   traditional,  // 전통 사주 분석
   faceReading,  // AI 관상 분석
+  talisman,     // 부적
 
   // 성격/개성 (2개)
   personalityDna, // 성격 DNA
@@ -137,6 +138,13 @@ enum FortuneSurveyType {
   pet,            // 반려동물 궁합
   family,         // 가족 운세
   naming,         // 작명
+
+  // 스타일/패션 (1개)
+  ootdEvaluation, // OOTD 평가
+
+  // 실용/결정 (2개)
+  exam,           // 시험운
+  moving,         // 이사/이직운
 }
 
 /// 설문 설정

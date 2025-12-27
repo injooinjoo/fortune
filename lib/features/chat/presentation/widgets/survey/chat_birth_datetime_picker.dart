@@ -108,13 +108,7 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(DSRadius.lg)),
-        border: Border(
-          top: BorderSide(color: colors.textPrimary.withValues(alpha: 0.1)),
-        ),
-      ),
+      // 투명 배경 - 하단 입력 영역과 일관성 유지
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

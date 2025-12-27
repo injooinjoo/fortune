@@ -1,4 +1,3 @@
-import '../../../fortune/domain/models/fortune_result.dart';
 import '../../../../domain/entities/fortune.dart';
 
 /// 채팅 메시지 유형
@@ -11,6 +10,9 @@ enum ChatMessageType {
 
   /// 운세 결과 (섹션별)
   fortuneResult,
+
+  /// 사주 분석 결과 (풍부한 위젯 표시)
+  sajuResult,
 
   /// 로딩 표시
   loading,
@@ -44,6 +46,12 @@ class ChatMessage {
   /// 운세 결과 데이터 (리치 카드 표시용)
   final Fortune? fortune;
 
+  /// 사주 분석 결과: 사주 데이터 (명식, 오행, 지장간 등)
+  final Map<String, dynamic>? sajuData;
+
+  /// 사주 분석 결과: LLM 운세 응답 (질문 탭 답변)
+  final Map<String, dynamic>? sajuFortuneResult;
+
   const ChatMessage({
     required this.id,
     required this.type,
@@ -55,6 +63,8 @@ class ChatMessage {
     this.sectionKey,
     this.chipIds,
     this.fortune,
+    this.sajuData,
+    this.sajuFortuneResult,
   });
 
   ChatMessage copyWith({
@@ -68,6 +78,8 @@ class ChatMessage {
     String? sectionKey,
     List<String>? chipIds,
     Fortune? fortune,
+    Map<String, dynamic>? sajuData,
+    Map<String, dynamic>? sajuFortuneResult,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -80,6 +92,8 @@ class ChatMessage {
       sectionKey: sectionKey ?? this.sectionKey,
       chipIds: chipIds ?? this.chipIds,
       fortune: fortune ?? this.fortune,
+      sajuData: sajuData ?? this.sajuData,
+      sajuFortuneResult: sajuFortuneResult ?? this.sajuFortuneResult,
     );
   }
 }

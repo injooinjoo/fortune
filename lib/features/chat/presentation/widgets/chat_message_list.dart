@@ -26,6 +26,10 @@ class ChatMessageList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       controller: scrollController,
+      // 부드러운 스크롤 physics
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       // 수직 패딩만 적용 (수평 패딩은 개별 메시지에서 처리)
       // 운세 결과 카드가 전체 너비를 사용할 수 있도록 함
       // bottomPadding: 떠다니는 입력란 공간 확보

@@ -19,23 +19,13 @@ class ChatSurveyChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.md,
         vertical: DSSpacing.sm,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        border: Border(
-          top: BorderSide(
-            color: colors.textPrimary.withValues(alpha: 0.1),
-          ),
-        ),
-      ),
+      // 투명 배경 - 하단 입력 영역과 일관성 유지
       child: Wrap(
         spacing: DSSpacing.xs,
         runSpacing: DSSpacing.xs,

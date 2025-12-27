@@ -77,10 +77,8 @@ class FortuneCategory {
             .toList() ??
         [const Color(0xFF7C3AED), const Color(0xFF3B82F6)];
 
-    // icon 파싱 (codePoint → IconData)
-    final iconData = json['iconCodePoint'] != null
-        ? IconData(json['iconCodePoint'] as int, fontFamily: 'MaterialIcons')
-        : _getDefaultIcon(json['type'] as String? ?? '');
+    // type 기반 정적 아이콘 매핑 (tree-shaking 활성화)
+    final iconData = _getDefaultIcon(json['type'] as String? ?? '');
 
     return FortuneCategory(
       title: json['title'] as String? ?? '',
@@ -102,7 +100,6 @@ class FortuneCategory {
       'title': title,
       'route': route,
       'type': type,
-      'iconCodePoint': icon.codePoint,
       'iconAsset': iconAsset,
       'gradientColors': gradientColors.map((c) => '0x${c.toARGB32().toRadixString(16).toUpperCase()}').toList(),
       'description': description,
