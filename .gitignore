@@ -106,3 +106,9 @@ ios/Runner.ipa
 ios/Runner.app.dSYM.zip
 ios/*.ipa
 ios/*.dSYM.zip
+
+# iOS build artifacts
+ios/build/
+
+# Claude local settings
+.claude/settings.local.json
