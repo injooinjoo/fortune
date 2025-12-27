@@ -710,30 +710,30 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
 
   String _getFortuneRoute(String fortuneType) {
     const routes = {
-      'hourly': '/fortune/hourly',
-      'today': '/fortune/today',
-      'daily': '/fortune/daily',
-      'tomorrow': '/fortune/tomorrow',
-      'weekly': '/fortune/weekly',
-      'monthly': '/fortune/monthly',
-      'yearly': '/fortune/yearly',
-      'love': '/fortune/love',
-      'career': '/fortune/career',
-      'money': '/fortune/money',
-      'health': '/fortune/health',
-      'tarot': '/fortune/tarot',
-      'saju': '/fortune/saju',
-      'dream': '/fortune/dream',
-      'compatibility': '/fortune/compatibility',
-      'lucky-number': '/fortune/lucky-number',
-      'lucky-color': '/fortune/lucky-color',
-      'zodiac': '/fortune/zodiac',
-      'palmistry': '/fortune/palmistry',
-      'naming': '/fortune/naming',
-      'moving': '/fortune/moving',
-      'investment': '/fortune/investment',
+      'hourly': '/daily-calendar',
+      'today': '/daily-calendar',
+      'daily': '/daily-calendar',
+      'tomorrow': '/daily-calendar',
+      'weekly': '/daily-calendar',
+      'monthly': '/daily-calendar',
+      'yearly': '/yearly',
+      'love': '/love',
+      'career': '/career',
+      'money': '/investment',
+      'health': '/health-toss',
+      'tarot': '/tarot',
+      'saju': '/traditional-saju',
+      'dream': '/interactive/dream',
+      'compatibility': '/compatibility',
+      'lucky-number': '/lucky-items',
+      'lucky-color': '/lucky-items',
+      'zodiac': '/daily-calendar',
+      'palmistry': '/traditional',
+      'naming': '/naming',
+      'moving': '/moving',
+      'investment': '/investment',
     };
-    return routes[fortuneType] ?? '/fortune/$fortuneType';
+    return routes[fortuneType] ?? '/fortune';
   }
 
   IconData _getFortuneIcon(String fortuneType) {

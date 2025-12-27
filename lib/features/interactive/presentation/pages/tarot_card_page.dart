@@ -167,7 +167,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       if (selectedDeck == null) {
         // Navigate to deck selection
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.push('/fortune/tarot-deck-selection').then((result) {
+          context.push('/interactive/tarot/deck-selection').then((result) {
             if (mounted && result != null) {
               setState(() {
                 selectedDeck = result as TarotDeck;

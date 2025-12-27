@@ -1,0 +1,62 @@
+# Architecture Rules - Quality Check
+# Fortune App 아키텍처 규칙 정의
+
+layer_dependencies:
+  description: "레이어 간 의존성 규칙"
+
+  allowed:
+    - pattern: "presentation → domain"
+      description: "Presentation 레이어는 Domain 레이어 참조 가능"
+
+    - pattern: "data → domain"
+      description: "Data 레이어는 Domain 레이어 참조 가능"
+
+    - pattern: "core → any"
+      description: "Core는 모든 레이어에서 참조 가능"
+
+  forbidden:
+    - pattern: "presentation → data"
+      description: "Presentation에서 Data 직접 참조 금지"
+      grep_pattern: "import.*data/services"
+      search_path: "lib/features/*/presentation/"
+
+    - pattern: "domain → presentation"
+      description: "Domain에서 Presentation 역참조 금지"
+      grep_pattern: "import.*presentation/"
+      search_path: "lib/features/*/domain/"
+
+    - pattern: "feature → feature"
+      description: "Feature 간 직접 참조 금지"
+      grep_pattern: "import.*features/(?!fortune)"
+      search_path: "lib/features/fortune/"
+
+state_management:
+  description: "상태 관리 패턴 규칙"
+
+  required:
+    - pattern: "StateNotifier"
+      description: "모든 상태 관리는 StateNotifier 사용"
+      example: "class FortuneNotifier extends StateNotifier<FortuneState>"
+
+  forbidden:
+    - pattern: "@riverpod"
+      description: "@riverpod 어노테이션 사용 금지"
+      grep_pattern: "@riverpod"
+      search_path: "lib/"
+
+    - pattern: "extends _$"
+      description: "riverpod_generator 패턴 사용 금지"
+      grep_pattern: "extends _\\$"
+      search_path: "lib/"
+
+models:
+  description: "모델 정의 규칙"
+
+  required:
+    - pattern: "@freezed"
+      description: "모든 도메인 모델은 @freezed 사용"
+      search_path: "lib/features/*/domain/models/"
+
+    - pattern: "copyWith"
+      description: "State 클래스는 copyWith 메서드 필수"
+      search_path: "lib/features/*/presentation/providers/"

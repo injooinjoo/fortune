@@ -322,8 +322,15 @@ ${Array.from({ length: 7 }, (_, i) => {
       JSON.stringify({
         success: true,
         data: {
+          // ✅ 표준화된 필드명: score, content, summary, advice
+          fortuneType: 'biorhythm',
+          score: result.overall_score,
+          content: result.status_message || '바이오리듬 분석 결과입니다.',
+          summary: result.greeting || '오늘의 바이오리듬을 확인하세요',
+          advice: result.today_recommendation?.energy_management || '에너지를 효율적으로 관리하세요',
+          // 기존 필드 유지 (하위 호환성)
           title: '바이오리듬 분석',
-          summary: {
+          biorhythm_summary: {
             overall_score: result.overall_score,
             status_message: result.status_message,
             greeting: result.greeting,

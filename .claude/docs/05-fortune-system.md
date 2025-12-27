@@ -396,9 +396,159 @@ CREATE INDEX idx_user_fortune_date
 
 ---
 
+## 채팅 기반 운세 조회 (Chat-First)
+
+### 개요
+
+채팅 인터페이스를 통한 운세 조회 프로세스. 기존 6단계 프로세스를 채팅 흐름으로 확장.
+
+### 채팅 운세 조회 흐름
+
+```
+사용자 입력 (채팅/칩 탭)
+    ↓
+1️⃣ 의도 분석 (로컬)
+    ├─ 운세 유형 감지? → YES → 해당 유형으로 진행
+    └─ 불명확? → 추천 칩 표시
+    ↓
+2️⃣ 기존 6단계 프로세스 실행
+    └─ (캐시 → DB풀 → 랜덤 → API → 결과)
+    ↓
+3️⃣ FortuneResult → ChatMessage 변환
+    ├─ 요약 메시지 (공개)
+    ├─ 상세 섹션들 (블러 적용)
+    └─ 후속 추천 칩
+    ↓
+4️⃣ 순차적 채팅 UI 표시
+    └─ 500ms 간격 애니메이션
+```
+
+### 의도 분석 (Intent Analysis)
+
+```dart
+String? analyzeIntent(String message) {
+  final lower = message.toLowerCase();
+
+  final patterns = {
+    'daily': ['오늘', '운세', '하루', '데일리'],
+    'love': ['연애', '사랑', '애인', '결혼', '썸'],
+    'money': ['재물', '돈', '금전', '투자', '재테크'],
+    'tarot': ['타로', '카드', '점'],
+    'dream': ['꿈', '해몽'],
+    'career': ['직업', '취업', '이직', '승진'],
+    'faceReading': ['얼굴', '관상', '인상'],
+    'mbti': ['mbti', '엠비티아이', '성격'],
+    'compatibility': ['궁합', '상성'],
+  };
+
+  for (final entry in patterns.entries) {
+    if (entry.value.any((k) => lower.contains(k))) {
+      return entry.key;
+    }
+  }
+
+  return null; // 불명확 → 추천 칩 표시
+}
+```
+
+### FortuneResult → ChatMessage 변환
+
+```dart
+class FortuneResultConverter {
+  static List<ChatMessage> convert(FortuneResult result) {
+    final messages = <ChatMessage>[];
+
+    // 1. 요약 메시지 (항상 공개)
+    messages.add(ChatMessage(
+      type: ChatMessageType.fortuneResult,
+      sectionKey: 'summary',
+      text: _buildSummaryText(result),
+      isBlurred: false,
+    ));
+
+    // 2. 상세 섹션들 (블러 적용)
+    final sections = _getSections(result.type, result.data);
+    for (final section in sections) {
+      final isBlurred = result.isBlurred &&
+                       result.blurredSections.contains(section.key);
+
+      messages.add(ChatMessage(
+        type: ChatMessageType.fortuneResult,
+        sectionKey: section.key,
+        text: section.content,
+        isBlurred: isBlurred,
+      ));
+    }
+
+    // 3. 후속 추천 칩
+    messages.add(ChatMessage(
+      type: ChatMessageType.system,
+      chips: _generateFollowUpChips(result),
+    ));
+
+    return messages;
+  }
+}
+```
+
+### 채팅 내 블러/광고 처리
+
+```dart
+// 채팅 메시지에서 블러 해제
+void unblurMessage(String messageId) {
+  final updated = state.messages.map((m) {
+    if (m.id == messageId) {
+      return m.copyWith(isBlurred: false);
+    }
+    return m;
+  }).toList();
+
+  state = state.copyWith(messages: updated);
+}
+
+// 전체 대화 블러 해제
+void unblurAllMessages() {
+  final updated = state.messages.map((m) {
+    return m.copyWith(isBlurred: false);
+  }).toList();
+
+  state = state.copyWith(messages: updated);
+}
+```
+
+### 토큰 소비 (채팅)
+
+채팅에서도 기존 토큰 소비율 동일 적용:
+
+```dart
+Future<void> requestFortuneInChat(String fortuneType) async {
+  // 토큰 확인 & 소비
+  final tokenNotifier = ref.read(tokenProvider.notifier);
+  final success = await tokenNotifier.consumeTokens(
+    amount: getTokenCost(fortuneType),
+    fortuneType: fortuneType,
+  );
+
+  if (!success) {
+    _showTokenPurchaseDialog();
+    return;
+  }
+
+  // 운세 요청 진행
+  await _processFortuneRequest(fortuneType);
+}
+```
+
+### 상세 문서
+
+→ [18-chat-first-architecture.md](18-chat-first-architecture.md)
+
+---
+
 ## 관련 문서
 
 - [06-llm-module.md](06-llm-module.md) - Edge Function & LLM
+- [18-chat-first-architecture.md](18-chat-first-architecture.md) - Chat-First 아키텍처
 - [03-ui-design-system.md](03-ui-design-system.md) - 블러 UI 시스템
 - [17-face-reading-system.md](17-face-reading-system.md) - 관상 시스템 전체 가이드
 - [docs/data/FORTUNE_OPTIMIZATION_GUIDE.md](/docs/data/FORTUNE_OPTIMIZATION_GUIDE.md) - 상세 최적화

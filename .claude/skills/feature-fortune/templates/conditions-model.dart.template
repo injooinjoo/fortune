@@ -1,0 +1,15 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part '{{type}}_conditions.freezed.dart';
+part '{{type}}_conditions.g.dart';
+
+/// {{typeName}} 운세 입력 조건
+@freezed
+class {{typePascal}}Conditions with _${{typePascal}}Conditions {
+  const factory {{typePascal}}Conditions({
+    {{conditionsFields}}
+  }) = _{{typePascal}}Conditions;
+
+  factory {{typePascal}}Conditions.fromJson(Map<String, dynamic> json) =>
+      _${{typePascal}}ConditionsFromJson(json);
+}

@@ -327,7 +327,11 @@
       "Bash(./scripts/build_ios_release.sh:*)",
       "Skill(sc:spawn)",
       "Skill(sc:spawn:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nrefactor: rebrand fortune terminology to entertainment focus\n\n- Change \"운세\" → \"인사이트\" across all UI components\n- Update \"타로\" → \"Insight Cards\"\n- Update \"관상\" → \"Face AI\"  \n- Update \"궁합\" → \"성향 매칭\"\n- Update score messages from \"운세\" to \"하루\"\n- Update share card hashtags and footer text\n- Bump build number to 20 for TestFlight\n\nApp Store 4.3 \\(Fortune/Astrology Spam\\) 리젝 회피를 위한 엔터테인먼트 앱 리브랜딩\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nrefactor: rebrand fortune terminology to entertainment focus\n\n- Change \"운세\" → \"인사이트\" across all UI components\n- Update \"타로\" → \"Insight Cards\"\n- Update \"관상\" → \"Face AI\"  \n- Update \"궁합\" → \"성향 매칭\"\n- Update score messages from \"운세\" to \"하루\"\n- Update share card hashtags and footer text\n- Bump build number to 20 for TestFlight\n\nApp Store 4.3 \\(Fortune/Astrology Spam\\) 리젝 회피를 위한 엔터테인먼트 앱 리브랜딩\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(for file in career daily mbti biorhythm talent compatibility blind-date ex-lover dream health investment lucky-items avoid-people)",
+      "Bash(do echo \"=== fortune-$file ===\" grep -A5 \"requiredFields\\\\|필수 필드\" /Users/jacobmac/Desktop/Dev/fortune/supabase/functions/fortune-$file/index.ts)",
+      "Bash(supabase db push:*)",
+      "Bash(npx supabase migration repair:*)"
     ],
     "deny": [],
     "ask": [],

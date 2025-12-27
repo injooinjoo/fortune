@@ -6,14 +6,19 @@ class NavigationHelper {
   /// Determines if the navigation bar should be visible for a given route
   static bool shouldShowNavigationBar(GoRouterState state) {
     final location = state.matchedLocation;
-    
+
+    // 홈(/chat)에서는 네비게이션 바 숨김
+    if (location == '/chat') {
+      return false;
+    }
+
     // Main routes that should show navigation bar
+    // Chat-First 4탭 구조: Home/Chat(숨김), 인사이트, 탐구, 트렌드
+    // 프로필은 각 페이지 상단 ProfileHeaderIcon → 바텀시트로 접근
     const mainRoutes = [
       '/home',
       '/fortune',
-      '/trend',
-      '/premium',
-      '/profile'];
+      '/trend'];
 
     // Check if current location is exactly a main route
     if (mainRoutes.contains(location)) {
@@ -67,11 +72,6 @@ class NavigationHelper {
       return false;
     }
 
-    // Premium sub-routes should hide navigation
-    if (location.startsWith('/premium/') && location != '/premium') {
-      return false;
-    }
-
     // All other routes hide navigation bar
     if (kDebugMode) {
       debugPrint('Fortune cached');
@@ -89,12 +89,12 @@ class NavigationHelper {
 
   /// Check if this is a first-depth route
   static bool isFirstDepthRoute(String location) {
+    // Chat-First 4탭 구조 (프로필은 바텀시트로 접근)
     const mainRoutes = [
+      '/chat',
       '/home',
       '/fortune',
-      '/trend',
-      '/premium',
-      '/profile'];
+      '/trend'];
 
     return mainRoutes.contains(location);
   }

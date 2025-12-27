@@ -537,12 +537,24 @@ serve(async (req) => {
 
       console.log('🔍 [Step 13.1] Blur logic:', { isPremium, isBlurred, blurredSections })
 
+      // 점수 계산 (emotionalBalance 기반, 1-10 → 0-100 스케일)
+      const emotionalBalanceScore = Math.round((analysis.scenes.reduce((sum, scene) => sum + scene.emotionLevel, 0) / Math.max(analysis.scenes.length, 1)))
+      const dreamScore = Math.min(100, Math.max(0, emotionalBalanceScore * 10))
+      const interpretationText = parsedResponse.종합해석 || parsedResponse.interpretation || '꿈의 메시지를 해석하였습니다.'
+
       fortuneData = {
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        fortuneType: 'dream',
+        score: dreamScore,
+        content: interpretationText,
+        summary: parsedResponse.오늘의지침?.substring(0, 50) || '꿈이 전하는 메시지를 확인하세요',
+        advice: parsedResponse.행동조언?.[0] || '오늘은 긍정적인 마음가짐을 유지하세요',
+        // 기존 필드 유지 (하위 호환성)
         dream,
         inputType,
         date: date || new Date().toISOString(),
         dreamType,
-        interpretation: parsedResponse.종합해석 || parsedResponse.interpretation || '꿈의 메시지를 해석하였습니다.', // ✅ 무료: 공개
+        interpretation: interpretationText, // ✅ 무료: 공개
         analysis, // ✅ 서버는 모든 데이터 반환, 블러는 Flutter UI에서 처리
         todayGuidance: parsedResponse.오늘의지침 || parsedResponse.todayGuidance || '오늘 하루를 긍정적으로 보내세요.',
         psychologicalState: parsedResponse.심리적상태 || parsedResponse.psychologicalState || analysis.psychologicalInsight,
@@ -573,8 +585,8 @@ serve(async (req) => {
       console.log('✅ [Step 16] Result cached')
     }
 
-    // ✅ 퍼센타일 계산
-    const percentileData = await calculatePercentile(supabase, 'dream', fortuneData.emotionalBalance * 10) // 1-10 → 10-100 변환
+    // ✅ 퍼센타일 계산 (표준 score 필드 사용)
+    const percentileData = await calculatePercentile(supabase, 'dream', fortuneData.score)
     const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
 
     // 성공 응답

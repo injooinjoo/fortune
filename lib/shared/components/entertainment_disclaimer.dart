@@ -57,7 +57,7 @@ class EntertainmentDisclaimer extends StatelessWidget {
         vertical: DSSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: colors.surfaceVariant.withValues(alpha: 0.5),
+        color: colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
@@ -104,7 +104,7 @@ class EntertainmentDisclaimerBanner extends StatelessWidget {
         vertical: DSSpacing.md,
       ),
       decoration: BoxDecoration(
-        color: colors.surfaceVariant.withValues(alpha: 0.3),
+        color: colors.surfaceSecondary.withValues(alpha: 0.3),
         border: Border(
           top: BorderSide(
             color: colors.border,

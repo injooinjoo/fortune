@@ -1,0 +1,63 @@
+/**
+ * @endpoint POST /functions/v1/{{functionName}}
+ * @description {{description}}
+ * @requestBody {
+ *   {{requestFields}}
+ * }
+ * @response {
+ *   {{responseFields}}
+ * }
+ */
+
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
+const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+interface {{pascalName}}Request {
+  {{requestInterface}}
+}
+
+interface {{pascalName}}Response {
+  {{responseInterface}}
+}
+
+serve(async (req) => {
+  // CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
+  try {
+    const startTime = Date.now()
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+    const requestData: {{pascalName}}Request = await req.json()
+
+    // TODO: 비즈니스 로직 구현
+    const result: {{pascalName}}Response = {
+      // ...
+    }
+
+    // 성능 로깅
+    const duration = Date.now() - startTime
+    console.log(`[{{functionName}}] completed in ${duration}ms`)
+
+    return new Response(
+      JSON.stringify(result),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  } catch (error) {
+    console.error('[{{functionName}}] Error:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+})

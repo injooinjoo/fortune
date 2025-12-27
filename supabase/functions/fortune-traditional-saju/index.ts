@@ -190,12 +190,23 @@ serve(async (req) => {
     console.log(`   - sections: analysis(${sections.analysis?.length || 0}), answer(${sections.answer?.length || 0}), advice(${sections.advice?.length || 0}), supplement(${sections.supplement?.length || 0})`);
     console.log('');
 
-    const fortuneResponse: TraditionalSajuResponse = {
-      question,
-      sections,
-      summary,
-      isBlurred,
-      blurredSections
+    const fortuneResponse = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      success: true,
+      data: {
+        fortuneType: 'traditional-saju',
+        score: 75, // 전통 사주는 점수 없음, 기본값 사용
+        content: sections.analysis || '사주 분석 결과입니다.',
+        summary: summary,
+        advice: sections.advice || '오행의 균형을 유지하세요.',
+
+        // 기존 필드 유지 (하위 호환성)
+        question,
+        sections,
+        saju_summary: summary,
+        isBlurred,
+        blurredSections
+      }
     }
 
     return new Response(

@@ -327,8 +327,16 @@ ${environment === '모임' ? '- 모임: 술자리 주의, 충동적 약속 경�
     console.log(`[AvoidPeople] 🔒 Blurred Sections: ${blurredSections.join(', ')}`)
 
     const result = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'avoid-people',
+      score: fortuneData.overallScore || 70,
+      content: fortuneData.summary || '오늘의 경계대상을 확인하세요.',
+      summary: `오늘의 경계 지수는 ${fortuneData.overallScore || 70}점입니다.`,
+      advice: fortuneData.dailyAdvice || '오늘 하루 경계대상에 주의하세요.',
+
+      // 기존 필드 유지 (하위 호환성)
       overallScore: fortuneData.overallScore || 70,
-      summary: fortuneData.summary || '오늘의 경계대상을 확인하세요.',
+      avoid_summary: fortuneData.summary || '오늘의 경계대상을 확인하세요.',
 
       // ✅ 8가지 경계대상 카테고리
       cautionPeople: fortuneData.cautionPeople || [],

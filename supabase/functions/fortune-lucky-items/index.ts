@@ -233,21 +233,28 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
 
     // 응답 데이터 구성
     const resultData = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'lucky-items',
+      score: fortuneData.score || 75,
+      content: fortuneData.summary || '오늘의 행운 아이템을 확인하세요.',
+      summary: `오늘의 행운 키워드: ${fortuneData.keyword || '행운'}`,
+      advice: fortuneData.advice || '',
+
+      // 기존 필드 유지 (하위 호환성)
       title: fortuneData.title || `행운 아이템 - ${name}님`,
-      summary: fortuneData.summary || '', // ✅ 무료: 공개
+      lucky_summary: fortuneData.summary || '', // ✅ 무료: 공개
       keyword: fortuneData.keyword || '', // ✅ 무료: 공개
       color: fortuneData.color || '', // ✅ 무료: 공개
       numbers: fortuneData.numbers || [3, 7, 21], // ✅ 무료: 공개
       direction: fortuneData.direction || '동쪽', // ✅ 무료: 공개
       element: fortuneData.element || '금', // ✅ 무료: 공개
-      score: fortuneData.score || 75, // ✅ 무료: 공개
       fashion: fortuneData.fashion || [],
       food: fortuneData.food || [],
       jewelry: fortuneData.jewelry || [],
       material: fortuneData.material || [],
       places: fortuneData.places || [],
       relationships: fortuneData.relationships || [],
-      advice: fortuneData.advice || '',
+      lucky_advice: fortuneData.advice || '',
       timestamp: new Date().toISOString(),
       isBlurred, // ✅ 블러 상태
       blurredSections, // ✅ 블러된 섹션 목록

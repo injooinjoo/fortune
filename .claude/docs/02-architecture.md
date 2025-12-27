@@ -29,6 +29,7 @@ lib/
 │   ├── utils/                  # 유틸리티 (날짜, 로거 등)
 │   └── widgets/                # 재사용 위젯 (UnifiedFortuneBaseWidget 등)
 ├── features/                   # Feature Slice 모듈
+│   ├── chat/                   # 채팅 중심 진입점 (Chat-First)
 │   ├── fortune/                # 운세 기능
 │   ├── talisman/               # 부적 기능
 │   ├── interactive/            # 타로, 심리테스트
@@ -142,6 +143,65 @@ Presentation → Domain ← Data
 - `domain` → `presentation` (역방향 참조 금지)
 - `domain` → `data` (역방향 참조 금지)
 - `feature A` → `feature B` (크로스 Feature 참조 금지, core 통해서만)
+
+---
+
+## Chat-First 아키텍처
+
+### 개요
+
+앱의 핵심 진입점을 채팅 인터페이스로 전환하는 아키텍처. 모든 운세 기능을 대화형으로 접근.
+
+**네비게이션 (5탭)**:
+```
+Home(채팅) | 인사이트 | 탐구 | 트렌드 | 프로필
+```
+
+### Chat Feature 구조
+
+```
+lib/features/chat/
+├── domain/
+│   └── models/
+│       ├── chat_message.dart           # ChatMessage, ChatMessageType
+│       ├── chat_state.dart             # ChatState
+│       └── recommendation_chip.dart    # 추천 칩 모델
+├── presentation/
+│   ├── providers/
+│   │   ├── chat_messages_provider.dart # ChatMessagesNotifier
+│   │   └── chat_recommendations_provider.dart
+│   ├── pages/
+│   │   └── chat_home_page.dart         # 메인 채팅 페이지
+│   └── widgets/
+│       ├── chat_message_bubble.dart    # 메시지 버블
+│       ├── fortune_chip_grid.dart      # 추천 칩 그리드
+│       ├── chat_fortune_section.dart   # 운세 결과 in 채팅
+│       └── chat_welcome_view.dart      # 환영 화면
+```
+
+### 핵심 흐름
+
+```
+사용자 입력/칩 탭
+       ↓
+ChatMessagesNotifier
+       ↓
+1. addUserMessage()
+2. showTypingIndicator()
+3. FortuneApiService 호출
+       ↓
+FortuneResult
+       ↓
+FortuneResultConverter.convert()
+       ↓
+List<ChatMessage> (섹션별 분리)
+       ↓
+순차적 채팅 UI 표시
+```
+
+### 상세 문서
+
+→ [18-chat-first-architecture.md](18-chat-first-architecture.md)
 
 ---
 

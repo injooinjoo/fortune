@@ -447,9 +447,226 @@ DSRadius.full   // 9999px (완전 둥근)
 
 ---
 
+## 채팅 UI 표준 (Chat-First)
+
+### 채팅 버블
+
+**사용자 메시지**: 오른쪽 정렬, 먹색 배경
+**AI 메시지**: 왼쪽 정렬, 한지 배경
+
+```dart
+// 사용자 버블
+Container(
+  alignment: Alignment.centerRight,
+  child: Container(
+    padding: EdgeInsets.all(DSSpacing.md),
+    decoration: BoxDecoration(
+      color: ObangseokColors.meok,
+      borderRadius: BorderRadius.circular(DSRadius.lg),
+    ),
+    child: Text(
+      message.text,
+      style: context.bodyMedium.copyWith(
+        color: ObangseokColors.baek,
+      ),
+    ),
+  ),
+)
+
+// AI 버블
+Container(
+  alignment: Alignment.centerLeft,
+  child: Container(
+    padding: EdgeInsets.all(DSSpacing.md),
+    decoration: BoxDecoration(
+      color: isDark
+          ? ObangseokColors.hanjiBackgroundDark
+          : ObangseokColors.hanjiBackground,
+      borderRadius: BorderRadius.circular(DSRadius.lg),
+      border: Border.all(
+        color: ObangseokColors.getMeok(context).withOpacity(0.15),
+      ),
+    ),
+    child: Text(
+      message.text,
+      style: context.bodyMedium.copyWith(
+        color: ObangseokColors.getMeok(context),
+      ),
+    ),
+  ),
+)
+```
+
+### 추천 칩 (RecommendationChip)
+
+```dart
+// 칩 그리드
+Wrap(
+  spacing: DSSpacing.sm,
+  runSpacing: DSSpacing.sm,
+  alignment: WrapAlignment.center,
+  children: chips.map((chip) => _buildChip(chip)).toList(),
+)
+
+// 개별 칩
+Widget _buildChip(RecommendationChip chip) {
+  return ActionChip(
+    avatar: Icon(chip.icon, size: 18, color: chip.color),
+    label: Text(
+      chip.label,
+      style: context.labelMedium.copyWith(
+        color: ObangseokColors.getMeok(context),
+      ),
+    ),
+    backgroundColor: isDark
+        ? ObangseokColors.heukLight
+        : ObangseokColors.misaek,
+    side: BorderSide(
+      color: chip.color.withOpacity(0.3),
+    ),
+    onPressed: () => onChipTap(chip),
+  );
+}
+```
+
+### 채팅 내 운세 결과 (ChatFortuneSection)
+
+```dart
+// 채팅 내 운세 섹션
+Container(
+  margin: EdgeInsets.symmetric(vertical: DSSpacing.sm),
+  child: HanjiCard(
+    style: HanjiCardStyle.minimal,
+    child: UnifiedBlurWrapper(
+      isBlurred: message.isBlurred,
+      sectionKey: message.sectionKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _getSectionTitle(message.sectionKey),
+            style: context.labelMedium.copyWith(
+              color: ObangseokColors.inju,
+            ),
+          ),
+          SizedBox(height: DSSpacing.xs),
+          Text(
+            message.text,
+            style: context.bodyMedium,
+          ),
+        ],
+      ),
+    ),
+  ),
+)
+```
+
+### 타이핑 인디케이터
+
+```dart
+// 로딩 표시
+Container(
+  alignment: Alignment.centerLeft,
+  child: Container(
+    padding: EdgeInsets.all(DSSpacing.md),
+    decoration: BoxDecoration(
+      color: ObangseokColors.getMisaek(context),
+      borderRadius: BorderRadius.circular(DSRadius.lg),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: ObangseokColors.inju,
+          ),
+        ),
+        SizedBox(width: DSSpacing.sm),
+        Text(
+          '운세를 살펴보고 있어요...',
+          style: context.labelMedium.copyWith(
+            color: ObangseokColors.getMeok(context).withOpacity(0.7),
+          ),
+        ),
+      ],
+    ),
+  ),
+)
+```
+
+### 환영 화면 (WelcomeView)
+
+```dart
+Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    // AI 아바타
+    Container(
+      width: 80,
+      height: 80,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: ObangseokColors.inju.withOpacity(0.1),
+      ),
+      child: Icon(
+        Icons.auto_awesome,
+        size: 40,
+        color: ObangseokColors.inju,
+      ),
+    ),
+    SizedBox(height: DSSpacing.lg),
+
+    // 환영 텍스트
+    Text(
+      '오늘 무엇이 궁금하세요?',
+      style: context.heading2.copyWith(
+        color: ObangseokColors.getMeok(context),
+      ),
+    ),
+    SizedBox(height: DSSpacing.xl),
+
+    // 추천 칩 그리드
+    FortuneChipGrid(
+      chips: defaultChips,
+      onChipTap: (chip) => _handleChipTap(chip),
+    ),
+  ],
+)
+```
+
+### 채팅 입력 영역
+
+```dart
+// UnifiedVoiceTextField 사용 (기존 컴포넌트)
+Container(
+  padding: EdgeInsets.all(DSSpacing.md),
+  decoration: BoxDecoration(
+    color: isDark
+        ? ObangseokColors.hanjiBackgroundDark
+        : ObangseokColors.hanjiBackground,
+    border: Border(
+      top: BorderSide(
+        color: ObangseokColors.getMeok(context).withOpacity(0.1),
+      ),
+    ),
+  ),
+  child: UnifiedVoiceTextField(
+    hintText: '무엇이든 물어보세요...',
+    onSubmitted: (text) => _sendMessage(text),
+    onVoiceComplete: (text) => _sendMessage(text),
+  ),
+)
+```
+
+---
+
 ## 관련 문서
 
 - [docs/design/DESIGN_SYSTEM.md](/docs/design/DESIGN_SYSTEM.md) - 전체 디자인 철학
+- [18-chat-first-architecture.md](18-chat-first-architecture.md) - Chat-First 아키텍처
 - [docs/design/KOREAN_TALISMAN_DESIGN_GUIDE.md](/docs/design/KOREAN_TALISMAN_DESIGN_GUIDE.md) - 부적/민화 가이드
 - [docs/design/BLUR_SYSTEM_GUIDE.md](/docs/design/BLUR_SYSTEM_GUIDE.md) - 블러 시스템 상세
 - [docs/design/TOSS_DESIGN_SYSTEM.md](/docs/design/TOSS_DESIGN_SYSTEM.md) - Toss 보조 참조

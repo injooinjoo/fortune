@@ -296,6 +296,14 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     const wealthImagePrompt = generateWealthImagePrompt(fortuneData.overallScore, categoryLabel)
 
     const result = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'investment',
+      score: fortuneData.overallScore,
+      content: fortuneData.content,
+      summary: `${tickerName}(${tickerSymbol}) 투자운 ${fortuneData.overallScore}점`,
+      advice: fortuneData.advice || '신중한 투자 결정을 하세요.',
+
+      // 기존 필드 유지 (하위 호환성)
       id: `investment-${Date.now()}`,
       type: 'investment',
       version: 'v2',
@@ -308,7 +316,7 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       },
       overallScore: fortuneData.overallScore,
       overall_score: fortuneData.overallScore,
-      content: fortuneData.content,
+      investment_content: fortuneData.content,
 
       // ✅ 실제 데이터 반환 (클라이언트에서 블러 처리)
       timing: fortuneData.timing,
@@ -352,7 +360,8 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
 
     return new Response(
       JSON.stringify({
-        fortune: resultWithPercentile,
+        success: true,
+        data: resultWithPercentile,
         cached: false,
         tokensUsed: response.usage?.totalTokens || 0
       }),

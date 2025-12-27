@@ -226,16 +226,17 @@ serve(async (req) => {
 
   try {
     // 요청 데이터 파싱
-    const requestData: CompatibilityFortuneRequest = await req.json()
-    const {
-      person1_name = '',
-      person1_birth_date = '',
-      person2_name = '',
-      person2_birth_date = '',
-      isPremium = false
-    } = requestData
+    const requestData = await req.json()
+
+    // 두 가지 형식 지원: flat fields (person1_name) 또는 nested objects (person1.name)
+    const person1_name = requestData.person1_name || requestData.person1?.name || ''
+    const person1_birth_date = requestData.person1_birth_date || requestData.person1?.birth_date || ''
+    const person2_name = requestData.person2_name || requestData.person2?.name || ''
+    const person2_birth_date = requestData.person2_birth_date || requestData.person2?.birth_date || ''
+    const isPremium = requestData.isPremium ?? false
 
     console.log(`[Compatibility] Request - Premium: ${isPremium}`)
+    console.log(`[Compatibility] Parsed - person1: ${person1_name}, person2: ${person2_name}`)
 
     if (!person1_name || !person2_name) {
       throw new Error('두 사람의 이름을 모두 입력해주세요.')
@@ -383,13 +384,22 @@ serve(async (req) => {
 
       // 응답 데이터 구조화
       const overallCompatibilityText = parsedResponse.전반적인궁합 || parsedResponse.overall_compatibility || '좋은 궁합입니다.'
+      const compatibilityScore = parsedResponse.궁합점수 || Math.floor(Math.random() * 30) + 70
+
+      // 조언 데이터 처리 (List → String 변환) - 위에서 이미 처리됨
 
       fortuneData = {
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        fortuneType: 'compatibility',
+        score: compatibilityScore,
+        content: overallCompatibilityText,
+        summary: parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '천생연분',
+        advice: parsedResponse.조언?.[0] || parsedResponse.advice?.[0] || '서로를 존중하고 배려하세요',
+        // 기존 필드 유지 (하위 호환성)
         title: `${person1_name}♥${person2_name} 궁합`,
         fortune_type: 'compatibility',
         person1: { name: person1_name, birth_date: person1_birth_date },
         person2: { name: person2_name, birth_date: person2_birth_date },
-        content: overallCompatibilityText, // ✅ Flutter의 fortune.content에 매핑됨
         overall_compatibility: overallCompatibilityText, // ✅ 무료: 공개
         // ✅ 블러 처리: 빈 문자열 대신 실제 데이터 저장 (UnifiedBlurWrapper가 처리)
         personality_match: parsedResponse.성격궁합 || parsedResponse.personality_match || '성격이 잘 맞습니다.',
@@ -398,9 +408,9 @@ serve(async (req) => {
         communication_match: parsedResponse.소통궁합 || parsedResponse.communication_match || '소통이 원활합니다.',
         strengths: parsedResponse.강점 || parsedResponse.strengths || ['서로 이해', '존중', '배려'],
         cautions: parsedResponse.주의점 || parsedResponse.cautions || ['작은 갈등 주의', '대화 중요', '서로 존중'],
-        advice: `• ${adviceString}`,
+        detailed_advice: `• ${adviceString}`, // 상세 조언 (블러 대상)
         compatibility_keyword: parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '천생연분', // ✅ 무료: 공개
-        score: parsedResponse.궁합점수 || Math.floor(Math.random() * 30) + 70, // ✅ 무료: 공개 (70-100)
+        // score는 위에서 표준 필드로 이미 설정됨
         love_style: parsedResponse.연애스타일 || parsedResponse.love_style || null, // 연애 스타일 (LLM 생성)
         // ✅ 새로운 궁합 항목들 (무료 공개)
         name_compatibility: nameCompatibility, // 이름 궁합 숫자 (0-99)

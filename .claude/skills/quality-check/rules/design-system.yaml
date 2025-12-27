@@ -1,0 +1,80 @@
+# Design System Rules - Quality Check
+# Toss Design System 준수 규칙 정의
+
+colors:
+  description: "색상 사용 규칙"
+
+  required:
+    - pattern: "TossDesignSystem.*"
+      description: "모든 색상은 TossDesignSystem 토큰 사용"
+      example: "TossDesignSystem.backgroundDark"
+
+    - pattern: "isDark"
+      description: "다크모드 분기 처리"
+      example: "final isDark = Theme.of(context).brightness == Brightness.dark"
+
+  forbidden:
+    - pattern: "Color(0x"
+      description: "하드코딩 색상 금지"
+      grep_pattern: "Color\\(0x"
+      search_path: "lib/"
+      exclude: "toss_design_system.dart"
+
+    - pattern: "Colors."
+      description: "Material Colors 직접 사용 금지"
+      grep_pattern: "Colors\\."
+      search_path: "lib/"
+      exclude: ["toss_design_system.dart", "test/"]
+      allowed_exceptions: ["Colors.white", "Colors.black", "Colors.transparent"]
+
+typography:
+  description: "타이포그래피 사용 규칙"
+
+  required:
+    - pattern: "context.heading"
+      description: "TypographyUnified extension 사용"
+      example: "Text('제목', style: context.heading1)"
+
+    - pattern: "context.body"
+      description: "본문 스타일은 context.body* 사용"
+      example: "Text('내용', style: context.bodyMedium)"
+
+  forbidden:
+    - pattern: "fontSize:"
+      description: "하드코딩 fontSize 금지"
+      grep_pattern: "fontSize:"
+      search_path: "lib/"
+      exclude: ["typography_unified.dart", "toss_design_system.dart"]
+
+    - pattern: "TossDesignSystem.heading"
+      description: "deprecated 폰트 스타일 사용 금지"
+      grep_pattern: "TossDesignSystem\\.heading"
+      search_path: "lib/"
+
+    - pattern: "TossDesignSystem.body"
+      description: "deprecated 폰트 스타일 사용 금지"
+      grep_pattern: "TossDesignSystem\\.body"
+      search_path: "lib/"
+
+components:
+  description: "컴포넌트 사용 규칙"
+
+  required:
+    - pattern: "UnifiedBlurWrapper"
+      description: "블러 처리는 UnifiedBlurWrapper 사용"
+      search_path: "lib/features/fortune/"
+
+    - pattern: "Icons.arrow_back_ios"
+      description: "뒤로가기는 iOS 스타일 아이콘"
+      search_path: "lib/"
+
+  forbidden:
+    - pattern: "ImageFilter.blur"
+      description: "ImageFilter.blur 직접 사용 금지"
+      grep_pattern: "ImageFilter\\.blur"
+      search_path: "lib/"
+
+    - pattern: "Icons.arrow_back[^_]"
+      description: "Android 스타일 뒤로가기 금지"
+      grep_pattern: "Icons\\.arrow_back[^_]"
+      search_path: "lib/"

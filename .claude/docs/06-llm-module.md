@@ -181,6 +181,139 @@ serve(async (req) => {
 
 ---
 
+## 표준 응답 형식 (CRITICAL)
+
+모든 Edge Function은 **반드시** 아래 표준 형식을 따라야 합니다.
+
+### 표준 응답 스키마
+
+```typescript
+interface StandardFortuneResponse {
+  success: boolean;
+  data: {
+    // === 필수 필드 (모든 운세 공통) ===
+    fortuneType: string;        // "love" | "career" | "health" | "daily" | "blind-date" | ...
+    score: number;              // 0-100 (점수) - 반드시 "score" 사용!
+    content: string;            // 메인 메시지/분석 결과 - 반드시 "content" 사용!
+    summary: string;            // 한줄 요약
+    advice: string;             // 조언/추천 행동
+
+    // === 선택 필드 ===
+    sections?: FortuneSection[];  // 세부 섹션들
+    luckyItems?: LuckyItems;      // 행운 아이템
+    metadata?: object;            // 추가 메타데이터
+
+    // === Premium 블러 관련 ===
+    isBlurred: boolean;           // 블러 처리 여부
+    blurredSections?: string[];   // 블러된 섹션 목록
+    percentile?: Percentile;      // 백분위 정보
+
+    timestamp: string;            // ISO 8601 형식
+  };
+  meta?: {
+    provider: string;
+    model: string;
+    latency: number;
+  };
+}
+
+interface FortuneSection {
+  title: string;
+  score?: number;
+  content: string;
+  icon?: string;
+}
+
+interface LuckyItems {
+  color?: string;
+  number?: number;
+  direction?: string;
+  time?: string;
+  item?: string;
+}
+
+interface Percentile {
+  rank: number;
+  total: number;
+  percentage: number;
+}
+```
+
+### 필드명 통일 규칙 (CRITICAL)
+
+| 표준 필드명 | ❌ 사용 금지 | 설명 |
+|------------|-------------|------|
+| `score` | `loveScore`, `careerScore`, `healthScore`, `overallScore`, `overall_score`, `compatibilityScore` | 모든 점수는 `score` 사용 |
+| `content` | `mainMessage`, `overallOutlook`, `overall_health`, `detailedAnalysis`, `message` | 메인 메시지는 `content` 사용 |
+| `summary` | `shortSummary`, `brief`, `one_liner` | 한줄 요약은 `summary` 사용 |
+| `advice` | `recommendation`, `suggestion`, `actionItem` | 조언은 `advice` 사용 |
+| `sections` | `categories`, `details`, `breakdown` | 세부 섹션은 `sections` 사용 |
+| `luckyItems` | `lucky_items`, `luckyThings`, `fortune_items` | 행운 아이템은 `luckyItems` 사용 |
+
+### 표준 응답 예시
+
+```json
+{
+  "success": true,
+  "data": {
+    "fortuneType": "love",
+    "score": 85,
+    "content": "오늘은 사랑에 있어 매우 좋은 기운이 흐르고 있어요. 평소에 마음에 두고 있던 사람이 있다면 적극적으로 다가가 보세요.",
+    "summary": "사랑의 기운이 충만한 하루",
+    "advice": "용기를 내어 먼저 연락해 보세요. 좋은 결과가 있을 거예요.",
+    "sections": [
+      {
+        "title": "연애 성향",
+        "score": 88,
+        "content": "배려심이 깊고 상대방을 이해하려는 노력이 돋보입니다.",
+        "icon": "heart"
+      },
+      {
+        "title": "인연 시기",
+        "content": "이번 달 중순경 좋은 만남이 예상됩니다.",
+        "icon": "calendar"
+      }
+    ],
+    "luckyItems": {
+      "color": "핑크",
+      "number": 7,
+      "direction": "남쪽",
+      "time": "오후 3시"
+    },
+    "isBlurred": false,
+    "blurredSections": [],
+    "percentile": {
+      "rank": 15,
+      "total": 100,
+      "percentage": 85
+    },
+    "timestamp": "2025-01-15T09:30:00.000Z"
+  },
+  "meta": {
+    "provider": "gemini",
+    "model": "gemini-2.0-flash-exp",
+    "latency": 1234
+  }
+}
+```
+
+### Edge Function 수정 체크리스트
+
+기존 Edge Function 수정 시:
+
+- [ ] `loveScore` → `score`
+- [ ] `careerScore` → `score`
+- [ ] `healthScore` → `score`
+- [ ] `overallScore` → `score`
+- [ ] `overall_score` → `score`
+- [ ] `mainMessage` → `content`
+- [ ] `overallOutlook` → `content`
+- [ ] `overall_health` → `content`
+- [ ] 응답 wrapper: `{ success: true, data: {...} }` 형식 확인
+- [ ] `isBlurred`, `blurredSections` 필드 포함
+
+---
+
 ## 디버깅 가이드
 
 ### LLM 호출 실패 시 체크 순서

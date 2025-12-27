@@ -379,12 +379,16 @@ ${category ? `- 카테고리: ${category}` : ''}
 
     // 전체 운세 데이터 구성
     const fortune = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'celebrity',
+      score: fortuneData.overall_score,
+      content: fortuneData.main_message,
+      summary: fortuneData.compatibility_grade || '특별한 인연',
+      advice: fortuneData.recommendations?.[0] || '이 특별한 인연을 소중히 간직하세요',
+      // 기존 필드 유지 (하위 호환성)
       id: `celebrity-${Date.now()}`,
       userId: userId,
       type: 'celebrity',
-      content: fortuneData.main_message,
-      summary: fortuneData.main_message,
-      score: fortuneData.overall_score,
       overallScore: fortuneData.overall_score,
       compatibilityGrade: fortuneData.compatibility_grade,
 

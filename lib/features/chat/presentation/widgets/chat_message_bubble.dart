@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+import '../../../../core/design_system/design_system.dart';
+import '../../domain/models/chat_message.dart';
+import 'chat_fortune_result_card.dart';
+
+/// 채팅 메시지 버블
+class ChatMessageBubble extends StatelessWidget {
+  final ChatMessage message;
+
+  const ChatMessageBubble({
+    super.key,
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isUser = message.type == ChatMessageType.user;
+
+    // 운세 결과 카드 표시 (Fortune 객체가 있는 경우)
+    // 전체 너비 사용, 중앙 정렬 (자석효과 제거)
+    if (message.fortune != null && message.type == ChatMessageType.fortuneResult) {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatFortuneResultCard(
+          fortune: message.fortune!,
+          fortuneType: message.fortuneType ?? 'default',
+          typeName: message.text ?? '운세 결과',
+          isBlurred: message.isBlurred,
+        ),
+      );
+    }
+
+    // 일반 텍스트 메시지 (수평 패딩 포함)
+    return Container(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(
+        vertical: DSSpacing.xs,
+        horizontal: DSSpacing.md, // ListView에서 제거된 수평 패딩을 여기서 적용
+      ),
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          color: isUser
+              ? colors.textPrimary
+              : (isDark
+                  ? colors.backgroundSecondary
+                  : colors.surface),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          border: isUser
+              ? null
+              : Border.all(
+                  color: colors.textPrimary.withValues(alpha: 0.15),
+                ),
+        ),
+        child: Text(
+          message.text ?? '',
+          style: typography.bodyMedium.copyWith(
+            color: isUser
+                ? colors.background
+                : colors.textPrimary,
+          ),
+        ),
+      ),
+    );
+  }
+}

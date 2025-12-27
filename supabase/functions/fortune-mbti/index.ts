@@ -459,6 +459,13 @@ serve(async (req) => {
 
     // ==================== 6. 응답 구성 ====================
     const result = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'mbti',
+      score: overallScore,
+      content: todayFortune,
+      summary: `${upperMbti}의 오늘 종합 점수는 ${overallScore}점입니다.`,
+      advice: `오늘의 조언: ${userDimensions.find(d => d.score === Math.max(...userDimensions.map(x => x.score)))?.tip || '자신을 믿으세요.'}`,
+
       // 새로운 4차원 데이터
       dimensions: userDimensions,
       overallScore,
@@ -471,7 +478,7 @@ serve(async (req) => {
       healthFortune: `${upperMbti}의 건강 운세: 무리하지 말고 충분한 휴식을 취하세요.`,
       luckyColor: meta.luckyColor,
       luckyNumber: meta.luckyNumber,
-      advice: `오늘의 조언: ${userDimensions.find(d => d.score === Math.max(...userDimensions.map(x => x.score)))?.tip || '자신을 믿으세요.'}`,
+      mbti_advice: `오늘의 조언: ${userDimensions.find(d => d.score === Math.max(...userDimensions.map(x => x.score)))?.tip || '자신을 믿으세요.'}`,
       compatibility: mbtiCharacteristics.compatibility,
       energyLevel: overallScore,
       cognitiveStrengths: mbtiCharacteristics.cognitiveStrengths,

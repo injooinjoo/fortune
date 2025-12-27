@@ -55,10 +55,11 @@ class EdgeFunctionsEndpoints {
   static const String fortuneRecommendations = '/fortune-recommendations';
 
   // ============================================================
-  // 운세 함수 (22개) - 실제 존재하는 Edge Function
+  // 운세 함수 (23개) - 실제 존재하는 Edge Function
   // ============================================================
   // 일상 운세
   static const String dailyFortune = '/fortune-daily';
+  static const String yearlyFortune = '/fortune-yearly';
   static const String timeFortune = '/fortune-time';
   static const String biorhythmFortune = '/fortune-biorhythm';
   static const String dreamFortune = '/fortune-dream';
@@ -110,6 +111,7 @@ class EdgeFunctionsEndpoints {
       // 일상 운세
       'daily': dailyFortune,
       'today': dailyFortune,
+      'yearly': yearlyFortune,
       'time': timeFortune,
       'time_based': timeFortune,
       'biorhythm': biorhythmFortune,

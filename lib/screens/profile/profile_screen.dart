@@ -25,7 +25,17 @@ import '../../shared/components/premium_membership_card.dart';
 import 'widgets/profile_list_sheet.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+  /// 외부에서 전달받은 스크롤 컨트롤러 (바텀시트 드래그용)
+  final ScrollController? scrollController;
+
+  /// 바텀시트 모드 여부 (true일 경우 Scaffold/AppBar 없이 콘텐츠만 렌더링)
+  final bool isInBottomSheet;
+
+  const ProfileScreen({
+    super.key,
+    this.scrollController,
+    this.isInBottomSheet = false,
+  });
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -42,7 +52,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool isLoadingHistory = false;
 
   // Scroll controller and variables for navigation bar hiding
-  late ScrollController _scrollController;
+  ScrollController? _internalScrollController;
+  ScrollController get _scrollController =>
+      widget.scrollController ?? _internalScrollController!;
   double _lastScrollOffset = 0.0;
   bool _isScrollingDown = false;
 
@@ -213,35 +225,42 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.initState();
 
     // Initialize scroll controller with navigation bar hiding logic
-    _scrollController = ScrollController();
+    // 외부에서 전달받지 않은 경우에만 내부 컨트롤러 생성
+    if (widget.scrollController == null) {
+      _internalScrollController = ScrollController();
+    }
     _scrollController.addListener(_onScroll);
-    
+
     _loadUserData();
   }
   
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
+    // 내부에서 생성한 컨트롤러만 dispose
+    _internalScrollController?.dispose();
     super.dispose();
   }
   
   void _onScroll() {
+    // 바텀시트 모드에서는 네비게이션 바 관련 로직 스킵
+    if (widget.isInBottomSheet) return;
+
     final currentScrollOffset = _scrollController.offset;
     const scrollThreshold = 10.0; // 매우 민감하게 반응하도록 임계값 감소
-    
+
     // 스크롤 방향 감지
     final scrollDelta = currentScrollOffset - _lastScrollOffset;
-    
+
     // 임계값 이상 스크롤했을 때만 처리
     if (scrollDelta.abs() > scrollThreshold) {
       final isScrollingDown = scrollDelta > 0;
-      
+
       // 방향이 바뀌었거나, 같은 방향으로 계속 스크롤 중일 때
       if (isScrollingDown != _isScrollingDown || scrollDelta.abs() > scrollThreshold) {
         _isScrollingDown = isScrollingDown;
         _lastScrollOffset = currentScrollOffset;
-        
+
         // Update navigation visibility
         final navigationNotifier = ref.read(navigationVisibilityProvider.notifier);
         if (isScrollingDown && currentScrollOffset > 50) {
@@ -253,7 +272,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         }
       }
     }
-    
+
     // 최상단에 도달하면 항상 네비게이션 표시
     if (currentScrollOffset <= 0) {
       ref.read(navigationVisibilityProvider.notifier).show();
@@ -396,9 +415,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final themeMode = ref.watch(themeModeProvider);
     final isDarkMode = themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
-         MediaQuery.of(context).platformBrightness == Brightness.dark);
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
 
+    // 로딩 중
     if (isLoading) {
+      // 바텀시트 모드에서는 Scaffold 없이 로딩 표시
+      if (widget.isInBottomSheet) {
+        return Center(
+          child: CircularProgressIndicator(
+            color: context.colors.accent,
+          ),
+        );
+      }
       return Scaffold(
         backgroundColor: _getBackgroundColor(context),
         body: Center(
@@ -409,6 +437,593 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
     }
 
+    // 콘텐츠 빌드
+    final content = SingleChildScrollView(
+      controller: _scrollController,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 바텀시트 모드에서 헤더 표시
+          if (widget.isInBottomSheet)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.pageHorizontal,
+                vertical: DSSpacing.md,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    '내 프로필',
+                    style: context.heading2.copyWith(
+                      color: context.colors.textPrimary,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: Icon(
+                      isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                      color: context.colors.textPrimary,
+                    ),
+                    onPressed: () {
+                      ref.read(fortuneHapticServiceProvider).selection();
+                      ref.read(themeModeProvider.notifier).toggleTheme();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.settings_outlined,
+                      color: context.colors.textPrimary,
+                    ),
+                    onPressed: () {
+                      ref.read(fortuneHapticServiceProvider).buttonTap();
+                      Navigator.of(context).pop(); // 바텀시트 닫기
+                      context.push('/settings');
+                    },
+                  ),
+                ],
+              ),
+            )
+          else
+            const SizedBox(height: DSSpacing.md),
+
+          // 프로필 요약 카드
+          if (userProfile != null || localProfile != null)
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+              decoration: BoxDecoration(
+                color: context.colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                  color: context.colors.border,
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: SettingsListTile(
+                leading: CircleAvatar(
+                  radius: 24,
+                  backgroundImage: (userProfile ?? localProfile)?['profile_image_url'] != null
+                      ? NetworkImage((userProfile ?? localProfile)!['profile_image_url'])
+                      : null,
+                  child: (userProfile ?? localProfile)?['profile_image_url'] == null
+                      ? const Icon(Icons.person, size: 24)
+                      : null,
+                ),
+                // 로컬 스토리지 이름 우선 (사용자가 직접 입력한 이름), DB 이름 폴백
+                title: localProfile?['name'] ?? userProfile?['name'] ?? '사용자',
+                subtitle: _formatProfileSubtitle(),
+                trailing: Icon(
+                  Icons.chevron_right,
+                  color: _getSecondaryTextColor(context),
+                ),
+                onTap: _navigateToProfileEdit,
+                isLast: true,
+              ),
+            ),
+
+          // 다른 프로필 보기 텍스트 링크
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => _showProfileList(context),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Text(
+                  '다른 프로필 보기',
+                  style: context.bodySmall.copyWith(
+                    color: context.colors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // 프리미엄 & 복주머니 통합 카드
+          const PremiumMembershipCard(),
+
+          // 테스트 계정 섹션 (간소화)
+          FutureBuilder<UserProfile?>(
+            future: ref.watch(userProfileProvider.future),
+            builder: (context, snapshot) {
+              final profile = snapshot.data;
+              if (profile != null && profile.isTestAccount) {
+                return FutureBuilder<bool?>(
+                  future: DebugPremiumService.getOverrideValue(),
+                  builder: (context, overrideSnapshot) {
+                    final tokenState = ref.watch(tokenProvider);
+                    final premiumOverride = overrideSnapshot.data;
+                    final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionHeader(title: '테스트 계정'),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                          decoration: BoxDecoration(
+                            color: context.colors.surface,
+                            borderRadius: BorderRadius.circular(DSRadius.md),
+                            border: Border.all(
+                              color: context.colors.border,
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              SettingsListTile(
+                                icon: Icons.bug_report_outlined,
+                                title: '무제한 복주머니',
+                                trailing: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: context.colors.success.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    '활성화',
+                                    style: context.labelSmall.copyWith(
+                                      color: context.colors.success,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SettingsListTile(
+                                icon: Icons.star_outline,
+                                title: '프리미엄 기능',
+                                trailing: Switch(
+                                  value: isPremium,
+                                  onChanged: (value) async {
+                                    // 디버그 프리미엄 토글
+                                    await DebugPremiumService.togglePremium();
+                                    setState(() {});
+                                  },
+                                  activeThumbColor: context.colors.accent,
+                                ),
+                              ),
+                              SettingsListTile(
+                                icon: Icons.refresh_outlined,
+                                title: '초기화 및 온보딩 재시작',
+                                subtitle: '모든 데이터 삭제 후 처음부터',
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: context.colors.textSecondary,
+                                ),
+                                onTap: () => _showResetConfirmationDialog(context),
+                                isLast: true,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+
+          // 탐구 활동 섹션
+          const SectionHeader(title: '탐구 활동'),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: BorderRadius.circular(DSRadius.md),
+              border: Border.all(
+                color: context.colors.border,
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                SettingsListTile(
+                  icon: Icons.today_outlined,
+                  title: '오늘의 인사이트',
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (userStats?['today_score'] != null) ...[
+                        Text(
+                          '${userStats!['today_score']}',
+                          style: context.heading3.copyWith(
+                            color: _getTextColor(context),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          '점',
+                          style: context.bodyMedium.copyWith(
+                            color: _getSecondaryTextColor(context),
+                          ),
+                        ),
+                      ] else
+                        Text(
+                          '미확인',
+                          style: context.bodyMedium.copyWith(
+                            color: _getSecondaryTextColor(context),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                SettingsListTile(
+                  icon: Icons.local_fire_department_outlined,
+                  title: '연속 접속일',
+                  trailing: Text(
+                    '${userStats?['consecutive_days'] ?? 0}일',
+                    style: context.bodyMedium.copyWith(
+                      color: _getSecondaryTextColor(context),
+                    ),
+                  ),
+                ),
+                SettingsListTile(
+                  icon: Icons.visibility_outlined,
+                  title: '총 탐구 횟수',
+                  trailing: Text(
+                    '${userStats?['total_fortunes_viewed'] ?? 0}회',
+                    style: context.bodyMedium.copyWith(
+                      color: _getSecondaryTextColor(context),
+                    ),
+                  ),
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+
+          // 복주머니 획득 안내
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.pageHorizontal + 4,
+              vertical: 8,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  size: 14,
+                  color: context.colors.textTertiary,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    '오늘의 운세 10개 이상 보면 복주머니 1개를 받아요!',
+                    style: context.bodySmall.copyWith(
+                      color: context.colors.textTertiary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 정보 섹션
+          if (userProfile != null || localProfile != null) ...[
+            const SectionHeader(title: '정보'),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+              decoration: BoxDecoration(
+                color: context.colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                  color: context.colors.border,
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  SettingsListTile(
+                    icon: Icons.cake_outlined,
+                    title: '생년월일',
+                    trailing: Text(
+                      _formatBirthDate((userProfile ?? localProfile)?['birth_date']),
+                      style: context.bodyMedium.copyWith(
+                        color: _getSecondaryTextColor(context),
+                      ),
+                    ),
+                    onTap: _navigateToProfileEdit,
+                  ),
+                  SettingsListTile(
+                    icon: Icons.access_time_outlined,
+                    title: '출생시간',
+                    trailing: Text(
+                      (userProfile ?? localProfile)?['birth_time'] ?? '미입력',
+                      style: context.bodyMedium.copyWith(
+                        color: _getSecondaryTextColor(context),
+                      ),
+                    ),
+                    onTap: _navigateToProfileEdit,
+                  ),
+                  SettingsListTile(
+                    icon: Icons.pets_outlined,
+                    title: '띠',
+                    trailing: Text(
+                      (userProfile ?? localProfile)?['chinese_zodiac'] ?? '미입력',
+                      style: context.bodyMedium.copyWith(
+                        color: _getSecondaryTextColor(context),
+                      ),
+                    ),
+                  ),
+                  SettingsListTile(
+                    icon: Icons.stars_outlined,
+                    title: '별자리',
+                    trailing: Text(
+                      (userProfile ?? localProfile)?['zodiac_sign'] ?? '미입력',
+                      style: context.bodyMedium.copyWith(
+                        color: _getSecondaryTextColor(context),
+                      ),
+                    ),
+                  ),
+                  SettingsListTile(
+                    icon: Icons.water_drop_outlined,
+                    title: '혈액형',
+                    trailing: Text(
+                      (userProfile ?? localProfile)?['blood_type'] != null
+                          ? '${(userProfile ?? localProfile)!['blood_type']}형'
+                          : '미입력',
+                      style: context.bodyMedium.copyWith(
+                        color: _getSecondaryTextColor(context),
+                      ),
+                    ),
+                    onTap: _navigateToProfileEdit,
+                  ),
+                  SettingsListTile(
+                    icon: Icons.psychology_outlined,
+                    title: 'MBTI',
+                    trailing: Text(
+                      (userProfile ?? localProfile)?['mbti']?.toUpperCase() ?? '미입력',
+                      style: context.bodyMedium.copyWith(
+                        color: _getSecondaryTextColor(context),
+                      ),
+                    ),
+                    onTap: _navigateToProfileEdit,
+                    isLast: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // 사주 & 분석 섹션
+          if (userProfile != null || localProfile != null) ...[
+            const SectionHeader(title: '사주 & 분석'),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+              decoration: BoxDecoration(
+                color: context.colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                  color: context.colors.border,
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  SettingsListTile(
+                    icon: Icons.auto_awesome,
+                    title: '사주 종합',
+                    subtitle: '한 장의 인포그래픽으로 보기',
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: _getSecondaryTextColor(context),
+                    ),
+                    onTap: () {
+                      context.push('/profile/saju-summary');
+                    },
+                  ),
+                  SettingsListTile(
+                    icon: Icons.wb_sunny_outlined,
+                    title: '오행 분석',
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: _getSecondaryTextColor(context),
+                    ),
+                    onTap: () {
+                      context.push('/profile/elements');
+                    },
+                  ),
+                  SettingsListTile(
+                    icon: Icons.history,
+                    title: '운세 기록',
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: _getSecondaryTextColor(context),
+                    ),
+                    onTap: () => context.push('/profile/history'),
+                    isLast: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // 웰니스 섹션
+          const SectionHeader(title: '웰니스'),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: BorderRadius.circular(DSRadius.md),
+              border: Border.all(
+                color: context.colors.border,
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                SettingsListTile(
+                  icon: Icons.self_improvement_outlined,
+                  title: '명상 & 호흡',
+                  subtitle: '마음을 진정시키는 호흡 운동',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/wellness/meditation'),
+                ),
+                SettingsListTile(
+                  icon: Icons.mood_outlined,
+                  title: '무드 트래커',
+                  subtitle: '오늘의 기분 기록하기',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/wellness'),
+                ),
+                SettingsListTile(
+                  icon: Icons.favorite_outline,
+                  title: '감사 일기',
+                  subtitle: '매일 감사한 것 3가지',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/wellness'),
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+
+          // 도구 섹션
+          const SectionHeader(title: '도구'),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: BorderRadius.circular(DSRadius.md),
+              border: Border.all(
+                color: context.colors.border,
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                SettingsListTile(
+                  icon: Icons.share_outlined,
+                  title: '친구와 공유',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () async {
+                    await _inviteFriend();
+                  },
+                ),
+                SettingsListTile(
+                  icon: Icons.star_outline,
+                  title: '프리미엄 체험',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/subscription'),
+                ),
+                SettingsListTile(
+                  icon: Icons.verified_outlined,
+                  title: '프로필 인증',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/profile/verification'),
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+
+          // 네비게이션 바 높이(56) + SafeArea 하단 여백 확보
+          // 바텀시트 모드에서는 하단 패딩 줄임
+          SizedBox(height: widget.isInBottomSheet ? 40 : 100),
+        ],
+      ),
+    );
+
+
+    // 바텀시트 모드에서는 콘텐츠만 반환
+    if (widget.isInBottomSheet) {
+      return content;
+    }
+
+    // 일반 모드에서는 Scaffold로 래핑
     return Scaffold(
       backgroundColor: context.colors.backgroundSecondary,
       appBar: AppBar(
@@ -446,543 +1061,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
       body: SafeArea(
-        bottom: false, // 하단 네비게이션 바는 침범 허용
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: DSSpacing.md),
-
-              // 프로필 요약 카드
-              if (userProfile != null || localProfile != null)
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                  decoration: BoxDecoration(
-                    color: context.colors.surface,
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    border: Border.all(
-                      color: context.colors.border,
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: SettingsListTile(
-                      leading: CircleAvatar(
-                        radius: 24,
-                        backgroundImage: (userProfile ?? localProfile)?['profile_image_url'] != null
-                            ? NetworkImage((userProfile ?? localProfile)!['profile_image_url'])
-                            : null,
-                        child: (userProfile ?? localProfile)?['profile_image_url'] == null
-                            ? const Icon(Icons.person, size: 24)
-                            : null,
-                      ),
-                      // 로컬 스토리지 이름 우선 (사용자가 직접 입력한 이름), DB 이름 폴백
-                      title: localProfile?['name'] ?? userProfile?['name'] ?? '사용자',
-                      subtitle: _formatProfileSubtitle(),
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: _getSecondaryTextColor(context),
-                      ),
-                      onTap: _navigateToProfileEdit,
-                      isLast: true,
-                    ),
-                ),
-
-              // 다른 프로필 보기 텍스트 링크
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => _showProfileList(context),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      '다른 프로필 보기',
-                      style: context.bodySmall.copyWith(
-                        color: context.colors.textSecondary,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // 프리미엄 & 복주머니 통합 카드
-              const PremiumMembershipCard(),
-
-              // 테스트 계정 섹션 (간소화)
-              FutureBuilder<UserProfile?>(
-                future: ref.watch(userProfileProvider.future),
-                builder: (context, snapshot) {
-                  final profile = snapshot.data;
-                  if (profile != null && profile.isTestAccount) {
-                    return FutureBuilder<bool?>(
-                      future: DebugPremiumService.getOverrideValue(),
-                      builder: (context, overrideSnapshot) {
-                        final tokenState = ref.watch(tokenProvider);
-                        final premiumOverride = overrideSnapshot.data;
-                        final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SectionHeader(title: '테스트 계정'),
-                            Container(
-                              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                              decoration: BoxDecoration(
-                                color: context.colors.surface,
-                                borderRadius: BorderRadius.circular(DSRadius.md),
-                                border: Border.all(
-                                  color: context.colors.border,
-                                  width: 1,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.04),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  SettingsListTile(
-                                    icon: Icons.bug_report_outlined,
-                                    title: '무제한 복주머니',
-                                    trailing: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: context.colors.success.withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        '활성화',
-                                        style: context.labelSmall.copyWith(
-                                          color: context.colors.success,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SettingsListTile(
-                                    icon: Icons.star_outline,
-                                    title: '프리미엄 기능',
-                                    trailing: Switch(
-                                      value: isPremium,
-                                      onChanged: (value) async {
-                                        // 디버그 프리미엄 토글
-                                        await DebugPremiumService.togglePremium();
-                                        setState(() {});
-                                      },
-                                      activeThumbColor: context.colors.accent,
-                                    ),
-                                  ),
-                                  SettingsListTile(
-                                    icon: Icons.refresh_outlined,
-                                    title: '초기화 및 온보딩 재시작',
-                                    subtitle: '모든 데이터 삭제 후 처음부터',
-                                    trailing: Icon(
-                                      Icons.chevron_right,
-                                      color: context.colors.textSecondary,
-                                    ),
-                                    onTap: () => _showResetConfirmationDialog(context),
-                                    isLast: true,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
-
-              // 탐구 활동 섹션
-              const SectionHeader(title: '탐구 활동'),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: Border.all(
-                    color: context.colors.border,
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    SettingsListTile(
-                      icon: Icons.today_outlined,
-                      title: '오늘의 인사이트',
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (userStats?['today_score'] != null) ...[
-                            Text(
-                              '${userStats!['today_score']}',
-                              style: context.heading3.copyWith(
-                                color: _getTextColor(context),
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              '점',
-                              style: context.bodyMedium.copyWith(
-                                color: _getSecondaryTextColor(context),
-                              ),
-                            ),
-                          ] else
-                            Text(
-                              '미확인',
-                              style: context.bodyMedium.copyWith(
-                                color: _getSecondaryTextColor(context),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.local_fire_department_outlined,
-                      title: '연속 접속일',
-                      trailing: Text(
-                        '${userStats?['consecutive_days'] ?? 0}일',
-                        style: context.bodyMedium.copyWith(
-                          color: _getSecondaryTextColor(context),
-                        ),
-                      ),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.visibility_outlined,
-                      title: '총 탐구 횟수',
-                      trailing: Text(
-                        '${userStats?['total_fortunes_viewed'] ?? 0}회',
-                        style: context.bodyMedium.copyWith(
-                          color: _getSecondaryTextColor(context),
-                        ),
-                      ),
-                      isLast: true,
-                    ),
-                  ],
-                ),
-              ),
-
-              // 복주머니 획득 안내
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: DSSpacing.pageHorizontal + 4,
-                  vertical: 8,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      size: 14,
-                      color: context.colors.textTertiary,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        '오늘의 운세 10개 이상 보면 복주머니 1개를 받아요!',
-                        style: context.bodySmall.copyWith(
-                          color: context.colors.textTertiary,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // 정보 섹션
-              if (userProfile != null || localProfile != null) ...[
-                const SectionHeader(title: '정보'),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                  decoration: BoxDecoration(
-                    color: context.colors.surface,
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    border: Border.all(
-                      color: context.colors.border,
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      SettingsListTile(
-                        icon: Icons.cake_outlined,
-                        title: '생년월일',
-                        trailing: Text(
-                          _formatBirthDate((userProfile ?? localProfile)?['birth_date']),
-                          style: context.bodyMedium.copyWith(
-                            color: _getSecondaryTextColor(context),
-                          ),
-                        ),
-                        onTap: _navigateToProfileEdit,
-                      ),
-                      SettingsListTile(
-                        icon: Icons.access_time_outlined,
-                        title: '출생시간',
-                        trailing: Text(
-                          (userProfile ?? localProfile)?['birth_time'] ?? '미입력',
-                          style: context.bodyMedium.copyWith(
-                            color: _getSecondaryTextColor(context),
-                          ),
-                        ),
-                        onTap: _navigateToProfileEdit,
-                      ),
-                      SettingsListTile(
-                        icon: Icons.pets_outlined,
-                        title: '띠',
-                        trailing: Text(
-                          (userProfile ?? localProfile)?['chinese_zodiac'] ?? '미입력',
-                          style: context.bodyMedium.copyWith(
-                            color: _getSecondaryTextColor(context),
-                          ),
-                        ),
-                      ),
-                      SettingsListTile(
-                        icon: Icons.stars_outlined,
-                        title: '별자리',
-                        trailing: Text(
-                          (userProfile ?? localProfile)?['zodiac_sign'] ?? '미입력',
-                          style: context.bodyMedium.copyWith(
-                            color: _getSecondaryTextColor(context),
-                          ),
-                        ),
-                      ),
-                      SettingsListTile(
-                        icon: Icons.water_drop_outlined,
-                        title: '혈액형',
-                        trailing: Text(
-                          (userProfile ?? localProfile)?['blood_type'] != null
-                              ? '${(userProfile ?? localProfile)!['blood_type']}형'
-                              : '미입력',
-                          style: context.bodyMedium.copyWith(
-                            color: _getSecondaryTextColor(context),
-                          ),
-                        ),
-                        onTap: _navigateToProfileEdit,
-                      ),
-                      SettingsListTile(
-                        icon: Icons.psychology_outlined,
-                        title: 'MBTI',
-                        trailing: Text(
-                          (userProfile ?? localProfile)?['mbti']?.toUpperCase() ?? '미입력',
-                          style: context.bodyMedium.copyWith(
-                            color: _getSecondaryTextColor(context),
-                          ),
-                        ),
-                        onTap: _navigateToProfileEdit,
-                        isLast: true,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-
-              // 사주 & 분석 섹션
-              if (userProfile != null || localProfile != null) ...[
-                const SectionHeader(title: '사주 & 분석'),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                  decoration: BoxDecoration(
-                    color: context.colors.surface,
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    border: Border.all(
-                      color: context.colors.border,
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      SettingsListTile(
-                        icon: Icons.auto_awesome,
-                        title: '사주 종합',
-                        subtitle: '한 장의 인포그래픽으로 보기',
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: _getSecondaryTextColor(context),
-                        ),
-                        onTap: () {
-                          context.push('/profile/saju-summary');
-                        },
-                      ),
-                      SettingsListTile(
-                        icon: Icons.wb_sunny_outlined,
-                        title: '오행 분석',
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: _getSecondaryTextColor(context),
-                        ),
-                        onTap: () {
-                          context.push('/profile/elements');
-                        },
-                      ),
-                      SettingsListTile(
-                        icon: Icons.history,
-                        title: '운세 기록',
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: _getSecondaryTextColor(context),
-                        ),
-                        onTap: () => context.push('/profile/history'),
-                        isLast: true,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-
-              // 웰니스 섹션
-              const SectionHeader(title: '웰니스'),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: Border.all(
-                    color: context.colors.border,
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    SettingsListTile(
-                      icon: Icons.self_improvement_outlined,
-                      title: '명상 & 호흡',
-                      subtitle: '마음을 진정시키는 호흡 운동',
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: _getSecondaryTextColor(context),
-                      ),
-                      onTap: () => context.push('/wellness/meditation'),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.mood_outlined,
-                      title: '무드 트래커',
-                      subtitle: '오늘의 기분 기록하기',
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: _getSecondaryTextColor(context),
-                      ),
-                      onTap: () => context.push('/wellness'),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.favorite_outline,
-                      title: '감사 일기',
-                      subtitle: '매일 감사한 것 3가지',
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: _getSecondaryTextColor(context),
-                      ),
-                      onTap: () => context.push('/wellness'),
-                      isLast: true,
-                    ),
-                  ],
-                ),
-              ),
-
-              // 도구 섹션
-              const SectionHeader(title: '도구'),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: Border.all(
-                    color: context.colors.border,
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    SettingsListTile(
-                      icon: Icons.share_outlined,
-                      title: '친구와 공유',
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: _getSecondaryTextColor(context),
-                      ),
-                      onTap: () async {
-                        await _inviteFriend();
-                      },
-                    ),
-                    SettingsListTile(
-                      icon: Icons.star_outline,
-                      title: '프리미엄 체험',
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: _getSecondaryTextColor(context),
-                      ),
-                      onTap: () => context.push('/subscription'),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.verified_outlined,
-                      title: '프로필 인증',
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: _getSecondaryTextColor(context),
-                      ),
-                      onTap: () => context.push('/profile/verification'),
-                      isLast: true,
-                    ),
-                  ],
-                ),
-              ),
-
-              // 네비게이션 바 높이(56) + SafeArea 하단 여백 확보
-              const SizedBox(height: 100),
-            ],
-          ),
-        ),
+        bottom: false,
+        child: content,
       ),
     );
   }

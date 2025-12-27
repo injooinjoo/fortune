@@ -1,0 +1,85 @@
+import '../../../fortune/domain/models/fortune_result.dart';
+import '../../../../domain/entities/fortune.dart';
+
+/// 채팅 메시지 유형
+enum ChatMessageType {
+  /// 사용자 입력
+  user,
+
+  /// AI 텍스트 응답
+  ai,
+
+  /// 운세 결과 (섹션별)
+  fortuneResult,
+
+  /// 로딩 표시
+  loading,
+
+  /// 시스템 메시지 (추천 칩 등)
+  system,
+}
+
+/// 채팅 메시지 모델
+class ChatMessage {
+  final String id;
+  final ChatMessageType type;
+  final String? text;
+  final DateTime timestamp;
+
+  /// 블러 처리 여부
+  final bool isBlurred;
+
+  /// 블러 처리된 섹션 키 목록
+  final List<String> blurredSections;
+
+  /// 운세 결과용: 운세 유형
+  final String? fortuneType;
+
+  /// 운세 결과용: 섹션 키 (summary, content, advice 등)
+  final String? sectionKey;
+
+  /// 시스템 메시지용: 추천 칩 목록
+  final List<String>? chipIds;
+
+  /// 운세 결과 데이터 (리치 카드 표시용)
+  final Fortune? fortune;
+
+  const ChatMessage({
+    required this.id,
+    required this.type,
+    this.text,
+    required this.timestamp,
+    this.isBlurred = false,
+    this.blurredSections = const [],
+    this.fortuneType,
+    this.sectionKey,
+    this.chipIds,
+    this.fortune,
+  });
+
+  ChatMessage copyWith({
+    String? id,
+    ChatMessageType? type,
+    String? text,
+    DateTime? timestamp,
+    bool? isBlurred,
+    List<String>? blurredSections,
+    String? fortuneType,
+    String? sectionKey,
+    List<String>? chipIds,
+    Fortune? fortune,
+  }) {
+    return ChatMessage(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      text: text ?? this.text,
+      timestamp: timestamp ?? this.timestamp,
+      isBlurred: isBlurred ?? this.isBlurred,
+      blurredSections: blurredSections ?? this.blurredSections,
+      fortuneType: fortuneType ?? this.fortuneType,
+      sectionKey: sectionKey ?? this.sectionKey,
+      chipIds: chipIds ?? this.chipIds,
+      fortune: fortune ?? this.fortune,
+    );
+  }
+}

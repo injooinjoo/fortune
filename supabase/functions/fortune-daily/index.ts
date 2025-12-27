@@ -1347,9 +1347,18 @@ serve(async (req) => {
       ? ['categories', 'personalActions', 'sajuInsight', 'fortuneSummary', 'lucky_outfit', 'celebrities_same_day', 'celebrities_similar_saju', 'lucky_numbers', 'age_fortune', 'daily_predictions', 'ai_insight', 'ai_tips', 'advice', 'caution', 'special_tip']
       : []
 
+    const dynamicSummary = generateDynamicSummary()
+    const dynamicAdvice = generateDynamicAdvice()
+
     const fortune = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'daily',
+      score: score,
+      content: `${name}님, 오늘은 ${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${dayOfWeek}요일입니다. ${dynamicSummary}`,
+      summary: dynamicSummary,
+      advice: dynamicAdvice,
+      // 기존 필드 유지 (하위 호환성)
       overall_score: score,
-      summary: generateDynamicSummary(),
       greeting: `${name}님, 오늘은 ${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${dayOfWeek}요일, ${processedLocation}의 맑고 활기찬 기운이 가득한 하루입니다.`,
       description: generateDynamicDescription(),
       lucky_items: {
@@ -1361,7 +1370,7 @@ serve(async (req) => {
         item: sajuInsight.lucky_item || '작은 장신구'
       },
       // ✅ 항상 실제 데이터 생성 (블러는 클라이언트에서만 처리)
-      advice: generateDynamicAdvice(),
+      // advice는 위에서 표준화된 필드로 이미 정의됨
       caution: generateDynamicCaution(),
       special_tip: generateDynamicSpecialTip(),
       fortuneSummary: fortuneSummary,

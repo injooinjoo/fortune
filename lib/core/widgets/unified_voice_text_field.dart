@@ -353,13 +353,31 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
           const SizedBox(width: 8),
         ],
 
-        // 가운데: pill 모양 입력 영역
+        // 가운데: pill 모양 입력 영역 (떠다니는 느낌)
         Expanded(
           child: Container(
             height: 48,
             decoration: BoxDecoration(
-              color: isDark ? Colors.grey[800] : Colors.grey[200],
+              color: isDark
+                  ? const Color(0xFF2A2A2A).withValues(alpha: 0.9)
+                  : Colors.white.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.12)
+                    : Colors.black.withValues(alpha: 0.06),
+                width: 0.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark
+                      ? Colors.black.withValues(alpha: 0.4)
+                      : Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                  spreadRadius: 0,
+                ),
+              ],
             ),
             child: Row(
               children: [

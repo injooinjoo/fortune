@@ -11,32 +11,29 @@ class FortuneBottomNavigationBar extends ConsumerWidget {
     super.key,
     required this.currentIndex});
 
+  // Chat-First 4탭 구조: Home(채팅) | 인사이트 | 탐구 | 트렌드
+  // 프로필은 각 페이지 상단의 ProfileHeaderIcon을 통해 바텀시트로 접근
   static const List<_NavItem> _items = [
     _NavItem(
-      icon: Icons.home_outlined,
-      selectedIcon: Icons.home,
-      label: '홈',
-      route: '/home'),
+      icon: Icons.chat_bubble_outline,
+      selectedIcon: Icons.chat_bubble,
+      label: 'Home',
+      route: '/chat'),
     _NavItem(
       icon: Icons.auto_awesome_outlined,
       selectedIcon: Icons.auto_awesome,
+      label: '인사이트',
+      route: '/home'),
+    _NavItem(
+      icon: Icons.explore_outlined,
+      selectedIcon: Icons.explore,
       label: '탐구',
       route: '/fortune'),
     _NavItem(
       icon: Icons.trending_up_outlined,
       selectedIcon: Icons.trending_up,
       label: '트렌드',
-      route: '/trend'),
-    _NavItem(
-      icon: Icons.workspace_premium_outlined,
-      selectedIcon: Icons.workspace_premium,
-      label: '프리미엄',
-      route: '/premium'),
-    _NavItem(
-      icon: Icons.person_outline,
-      selectedIcon: Icons.person,
-      label: '프로필',
-      route: '/profile')];
+      route: '/trend')];
 
   int _getIndexFromPath(String path) {
     for (int i = 0; i < _items.length; i++) {
@@ -77,11 +74,11 @@ class FortuneBottomNavigationBar extends ConsumerWidget {
               (index) => _NavItemWidget(
                 item: _items[index],
                 isSelected: index == activeIndex,
-                showBadge: index == 1 && showFortuneBadge, // 탐구 탭(index 1)에만 배지 표시
+                showBadge: index == 2 && showFortuneBadge, // 탐구 탭(index 2)에만 배지 표시
                 onTap: () {
                   DSHaptics.light();
                   // 탐구 탭 클릭 시 배지 제거
-                  if (index == 1) {
+                  if (index == 2) {
                     ref.read(fortuneBadgeProvider.notifier).markAsRead();
                   }
                   // Only navigate if not already on the same route

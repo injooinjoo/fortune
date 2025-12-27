@@ -412,11 +412,17 @@ serve(async (req) => {
 
     // 운세 데이터 구성
     const fortune = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'time',
+      score: overallScore,
+      content: generateAIInsight(),
+      summary: overallScore >= 80 ? '긍정적이고 활기찬 시기' : '안정적이고 차분한 시기',
+      advice: generatePeriodAdvice(),
+      // 기존 필드 유지 (하위 호환성)
       id: `${Date.now()}-${period}`,
       userId: userId,
       type: 'time_based',
       period: period,
-      score: overallScore,
       overall_score: overallScore,
       message: `${name}님의 ${getPeriodTitle()}입니다.`,
       content: generateAIInsight(),

@@ -105,15 +105,48 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
             .maybeSingle();
 
         if (sajuResponse != null) {
-          sajuData = sajuResponse;
           debugPrint('✅ Saju data found for user');
           debugPrint('🔮 [SAJU] user_saju 테이블 데이터:');
-          debugPrint('🔮 [SAJU] - year_pillar: ${sajuResponse['year_pillar']}');
-          debugPrint('🔮 [SAJU] - month_pillar: ${sajuResponse['month_pillar']}');
-          debugPrint('🔮 [SAJU] - day_pillar: ${sajuResponse['day_pillar']}');
-          debugPrint('🔮 [SAJU] - hour_pillar: ${sajuResponse['hour_pillar']}');
-          debugPrint('🔮 [SAJU] - day_master: ${sajuResponse['day_master']}');
-          debugPrint('🔮 [SAJU] - five_elements: ${sajuResponse['five_elements']}');
+          // 실제 DB 컬럼명 사용 (stem/branch)
+          debugPrint('🔮 [SAJU] - year_stem: ${sajuResponse['year_stem']}');
+          debugPrint('🔮 [SAJU] - year_branch: ${sajuResponse['year_branch']}');
+          debugPrint('🔮 [SAJU] - month_stem: ${sajuResponse['month_stem']}');
+          debugPrint('🔮 [SAJU] - month_branch: ${sajuResponse['month_branch']}');
+          debugPrint('🔮 [SAJU] - day_stem: ${sajuResponse['day_stem']}');
+          debugPrint('🔮 [SAJU] - day_branch: ${sajuResponse['day_branch']}');
+          debugPrint('🔮 [SAJU] - hour_stem: ${sajuResponse['hour_stem']}');
+          debugPrint('🔮 [SAJU] - hour_branch: ${sajuResponse['hour_branch']}');
+          debugPrint('🔮 [SAJU] - weak_element: ${sajuResponse['weak_element']}');
+          debugPrint('🔮 [SAJU] - strong_element: ${sajuResponse['strong_element']}');
+
+          // Edge Function 호환을 위해 pillar 형태로 변환하여 sajuData 구성
+          sajuData = {
+            ...sajuResponse,
+            // 천간(stem) + 지지(branch) 결합하여 pillar 형태 추가
+            'year_pillar': '${sajuResponse['year_stem'] ?? ''}${sajuResponse['year_branch'] ?? ''}',
+            'month_pillar': '${sajuResponse['month_stem'] ?? ''}${sajuResponse['month_branch'] ?? ''}',
+            'day_pillar': '${sajuResponse['day_stem'] ?? ''}${sajuResponse['day_branch'] ?? ''}',
+            'hour_pillar': '${sajuResponse['hour_stem'] ?? ''}${sajuResponse['hour_branch'] ?? ''}',
+            // 일간 (day master) = 일주의 천간
+            'day_master': sajuResponse['day_stem'],
+            // 오행 균형 데이터 매핑
+            'five_elements': {
+              '목': sajuResponse['element_wood'] ?? 0,
+              '화': sajuResponse['element_fire'] ?? 0,
+              '토': sajuResponse['element_earth'] ?? 0,
+              '금': sajuResponse['element_metal'] ?? 0,
+              '수': sajuResponse['element_water'] ?? 0,
+            },
+            // 부족/강한 오행
+            'weak_element': sajuResponse['weak_element'],
+            'strong_element': sajuResponse['strong_element'],
+          };
+
+          debugPrint('🔮 [SAJU] 변환된 pillar 데이터:');
+          debugPrint('🔮 [SAJU] - year_pillar: ${sajuData['year_pillar']}');
+          debugPrint('🔮 [SAJU] - day_pillar: ${sajuData['day_pillar']}');
+          debugPrint('🔮 [SAJU] - day_master: ${sajuData['day_master']}');
+          debugPrint('🔮 [SAJU] - five_elements: ${sajuData['five_elements']}');
         } else {
           debugPrint('⚠️ No saju data found in user_saju table for user: $userId');
         }
@@ -165,8 +198,11 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       if (requestData['sajuData'] != null) {
         final saju = requestData['sajuData'] as Map<String, dynamic>;
         debugPrint('📤 [API REQUEST] - sajuData.year_pillar: ${saju['year_pillar']}');
+        debugPrint('📤 [API REQUEST] - sajuData.month_pillar: ${saju['month_pillar']}');
         debugPrint('📤 [API REQUEST] - sajuData.day_pillar: ${saju['day_pillar']}');
         debugPrint('📤 [API REQUEST] - sajuData.hour_pillar: ${saju['hour_pillar']}');
+        debugPrint('📤 [API REQUEST] - sajuData.day_master: ${saju['day_master']}');
+        debugPrint('📤 [API REQUEST] - sajuData.five_elements: ${saju['five_elements']}');
       }
       debugPrint('📤 [API REQUEST] - date: ${requestData['date']}');
       debugPrint('📤 [API REQUEST] - period: ${requestData['period']}');
@@ -225,59 +261,310 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       debugPrint('📥 [API RESPONSE] Edge Function 응답 받음 (${stopwatch.elapsedMilliseconds}ms)');
       debugPrint('📥 [API RESPONSE] - status: ${response.statusCode}');
 
-      // Edge Functions return a slightly different format
+      // 📥 RAW 응답 데이터 로깅 (디버깅용)
+      debugPrint('📥 [API RESPONSE RAW] 전체 응답 키: ${response.data?.keys?.toList()}');
+      if (response.data != null && response.data is Map) {
+        final rawData = response.data as Map<String, dynamic>;
+        debugPrint('📥 [API RESPONSE RAW] success: ${rawData['success']}');
+        if (rawData['data'] != null) {
+          final data = rawData['data'];
+          debugPrint('📥 [API RESPONSE RAW] data 키: ${data is Map ? data.keys.toList() : 'Not a Map'}');
+          if (data is Map) {
+            debugPrint('📥 [API RESPONSE RAW] data.overallScore: ${data['overallScore']}');
+            debugPrint('📥 [API RESPONSE RAW] data.content: ${(data['content'] ?? '').toString().substring(0, (data['content']?.toString().length ?? 0).clamp(0, 100))}...');
+          }
+        }
+        if (rawData['fortune'] != null) {
+          final fortune = rawData['fortune'];
+          debugPrint('📥 [API RESPONSE RAW] fortune 키: ${fortune is Map ? fortune.keys.toList() : 'Not a Map'}');
+        }
+        if (rawData['error'] != null) {
+          debugPrint('📥 [API RESPONSE RAW] ❌ error: ${rawData['error']}');
+        }
+      }
+
+      // Edge Functions return different formats depending on the function
       // Extracting fortune data from response...
-      
+
       if (response.data == null) {
         debugPrint('❌ [_getFortuneFromEdgeFunction] Response data is null!');
         throw Exception('Empty response from Edge Function');
       }
-      
+
       if (response.data is! Map) {
         debugPrint('❌ [_getFortuneFromEdgeFunction] Response data is not a Map! Type: ${response.data.runtimeType}');
         throw Exception('Invalid response format from Edge Function');
       }
-      
-      final fortuneData = response.data['fortune'];
-      final tokensUsed = response.data['tokensUsed'] ?? 0;
-      
-      // Fortune data validated
-      
-      // Debug info
-      // Debug info
-      
-      // Convert to FortuneResponseModel format
-      // Converting to FortuneData model...
-      
-      if (fortuneData == null) {
-        debugPrint('❌ [_getFortuneFromEdgeFunction] Fortune data is null!');
-        throw Exception('No fortune data in response');
+
+      // Edge Functions return different formats:
+      // 1. { success: true, data: {...} } - Standard format
+      // 2. { fortune: {...} } - Legacy format
+      // 3. Direct data: { sections, summary, ... } - New format (no wrapper)
+      Map<String, dynamic> fortuneData;
+      int tokensUsed = 0;
+
+      final responseMap = response.data as Map<String, dynamic>;
+
+      if (responseMap.containsKey('fortune')) {
+        // Format 2: { fortune: {...} }
+        fortuneData = responseMap['fortune'] as Map<String, dynamic>;
+        tokensUsed = responseMap['tokensUsed'] ?? 0;
+        debugPrint('✅ [_getFortuneFromEdgeFunction] Fortune data extracted with key: fortune');
+      } else if (responseMap.containsKey('success') && responseMap.containsKey('data')) {
+        // Format 1: { success: true, data: {...} }
+        fortuneData = responseMap['data'] as Map<String, dynamic>;
+        tokensUsed = responseMap['tokensUsed'] ?? 0;
+        debugPrint('✅ [_getFortuneFromEdgeFunction] Fortune data extracted with key: data');
+      } else if (responseMap.containsKey('sections') || responseMap.containsKey('summary') ||
+                 responseMap.containsKey('overallScore') || responseMap.containsKey('content')) {
+        // Format 3: Direct data (response itself is the fortune data)
+        fortuneData = responseMap;
+        tokensUsed = responseMap['tokensUsed'] ?? 0;
+        debugPrint('✅ [_getFortuneFromEdgeFunction] Fortune data is direct response (no wrapper)');
+      } else {
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Unknown response format!');
+        debugPrint('📥 [_getFortuneFromEdgeFunction] Response keys: ${responseMap.keys.toList()}');
+        throw Exception('Unknown response format from Edge Function');
       }
 
       // 📥 운세 응답 데이터 상세 로깅
       debugPrint('📥 [API RESPONSE] 운세 데이터 상세:');
-      debugPrint('📥 [API RESPONSE] - score: ${fortuneData['score'] ?? fortuneData['overall_score'] ?? fortuneData['overallScore']}');
-      debugPrint('📥 [API RESPONSE] - content 길이: ${(fortuneData['content'] ?? fortuneData['description'] ?? '').toString().length}');
+      final extractedScore = fortuneData['score'] ?? fortuneData['overall_score'] ?? fortuneData['overallScore'];
+      final extractedContent = fortuneData['content'] ?? fortuneData['description'] ?? '';
+      debugPrint('📥 [API RESPONSE] - score: $extractedScore');
+      debugPrint('📥 [API RESPONSE] - content 길이: ${extractedContent.toString().length}');
+      debugPrint('📥 [API RESPONSE] - content 미리보기: ${extractedContent.toString().substring(0, extractedContent.toString().length.clamp(0, 100))}...');
       debugPrint('📥 [API RESPONSE] - sajuPillars 존재: ${fortuneData['sajuPillars'] != null}');
       debugPrint('📥 [API RESPONSE] - todaySaju 존재: ${fortuneData['todaySaju'] != null}');
       debugPrint('📥 [API RESPONSE] - fiveElements 존재: ${fortuneData['fiveElements'] != null}');
+      debugPrint('📥 [API RESPONSE] - successPrediction 존재: ${fortuneData['successPrediction'] != null}');
+      debugPrint('📥 [API RESPONSE] - firstImpressionTips 존재: ${fortuneData['firstImpressionTips'] != null}');
       if (fortuneData['sajuPillars'] != null) {
         debugPrint('📥 [API RESPONSE] - sajuPillars: ${fortuneData['sajuPillars']}');
       }
       if (fortuneData['todaySaju'] != null) {
         debugPrint('📥 [API RESPONSE] - todaySaju: ${fortuneData['todaySaju']}');
       }
+      if (fortuneData['successPrediction'] != null) {
+        debugPrint('📥 [API RESPONSE] - successPrediction: ${fortuneData['successPrediction']}');
+      }
 
       // Fortune data extracted and validated
-      
+      // ✅ 표준화됨: 모든 Edge Function은 이제 'score' 필드 사용
+      // 하위 호환성을 위한 fallback 유지 (캐시된 데이터용)
+      final extractedScoreValue = fortuneData['score']  // ✅ 표준 필드
+          ?? fortuneData['overall_score']  // 하위 호환: fortune-daily 레거시
+          ?? fortuneData['overallScore']   // 하위 호환: fortune-blind-date 레거시
+          ?? fortuneData['loveScore']      // 하위 호환: fortune-love 레거시
+          ?? fortuneData['careerScore']    // 하위 호환: fortune-career 레거시
+          ?? fortuneData['healthScore']    // 하위 호환: fortune-health 레거시
+          ?? fortuneData['compatibilityScore']
+          ?? fortuneData['successScore'];
+
+      // Convert sections/detailedAnalysis to content if needed
+      String contentText = fortuneData['content']
+          ?? fortuneData['description']
+          ?? fortuneData['mainMessage']  // fortune-love
+          ?? '';
+
+      if (contentText.isEmpty && fortuneData['detailedAnalysis'] != null) {
+        // detailedAnalysis를 content로 변환 (fortune-love 등)
+        final analysis = fortuneData['detailedAnalysis'];
+        if (analysis is Map) {
+          contentText = analysis.entries.map((e) => '${e.key}: ${e.value}').join('\n');
+        } else if (analysis is String) {
+          contentText = analysis;
+        }
+        debugPrint('📝 [_getFortuneFromEdgeFunction] Converted detailedAnalysis to content');
+      }
+
+      if (contentText.isEmpty && fortuneData['sections'] != null) {
+        // sections를 content로 변환
+        final sections = fortuneData['sections'];
+        if (sections is List) {
+          contentText = sections.map((s) {
+            if (s is Map) {
+              return '${s['title'] ?? ''}\n${s['content'] ?? s['description'] ?? ''}';
+            }
+            return s.toString();
+          }).join('\n\n');
+        }
+        debugPrint('📝 [_getFortuneFromEdgeFunction] Converted sections to content (${contentText.length} chars)');
+      }
+
+      // Use summary as fallback
+      if (contentText.isEmpty && fortuneData['summary'] != null) {
+        contentText = fortuneData['summary'].toString();
+        debugPrint('📝 [_getFortuneFromEdgeFunction] Using summary as content fallback');
+      }
+
+      // Compatibility fortune: build rich content from detailed fields
+      if (fortuneType == 'compatibility' && fortuneData['overall_compatibility'] != null) {
+        final contentParts = <String>[];
+
+        if (fortuneData['overall_compatibility'] != null) {
+          contentParts.add('💕 전반적인 궁합\n${fortuneData['overall_compatibility']}');
+        }
+
+        final zodiacAnimal = fortuneData['zodiac_animal'];
+        if (zodiacAnimal != null && zodiacAnimal is Map) {
+          contentParts.add('\n\n🐉 띠 궁합\n${zodiacAnimal['person1']} ♥ ${zodiacAnimal['person2']}: ${zodiacAnimal['message']} (${zodiacAnimal['score']}점)');
+        }
+
+        final starSign = fortuneData['star_sign'];
+        if (starSign != null && starSign is Map) {
+          contentParts.add('\n\n⭐ 별자리 궁합\n${starSign['person1']} ♥ ${starSign['person2']}: ${starSign['message']} (${starSign['score']}점)');
+        }
+
+        final destinyNumber = fortuneData['destiny_number'];
+        if (destinyNumber != null && destinyNumber is Map) {
+          contentParts.add('\n\n🔮 운명수: ${destinyNumber['number']} - ${destinyNumber['meaning']}');
+        }
+
+        final ageDiff = fortuneData['age_difference'];
+        if (ageDiff != null && ageDiff is Map) {
+          contentParts.add('\n\n👫 나이 차이: ${ageDiff['years']}살 - ${ageDiff['message']}');
+        }
+
+        if (fortuneData['personality_match'] != null) {
+          contentParts.add('\n\n💜 성격 궁합\n${fortuneData['personality_match']}');
+        }
+
+        if (fortuneData['love_match'] != null) {
+          contentParts.add('\n\n💘 애정 궁합\n${fortuneData['love_match']}');
+        }
+
+        if (fortuneData['marriage_match'] != null) {
+          contentParts.add('\n\n💍 결혼 궁합\n${fortuneData['marriage_match']}');
+        }
+
+        if (fortuneData['communication_match'] != null) {
+          contentParts.add('\n\n💬 소통 궁합\n${fortuneData['communication_match']}');
+        }
+
+        final loveStyle = fortuneData['love_style'];
+        if (loveStyle != null && loveStyle is Map) {
+          contentParts.add('\n\n💝 연애 스타일\n${loveStyle['person1']} × ${loveStyle['person2']}\n${loveStyle['조합분석'] ?? ''}');
+        }
+
+        final strengths = fortuneData['strengths'];
+        if (strengths != null && strengths is List && strengths.isNotEmpty) {
+          contentParts.add('\n\n✨ 강점\n• ${strengths.join('\n• ')}');
+        }
+
+        final cautions = fortuneData['cautions'];
+        if (cautions != null && cautions is List && cautions.isNotEmpty) {
+          contentParts.add('\n\n⚠️ 주의점\n• ${cautions.join('\n• ')}');
+        }
+
+        if (fortuneData['detailed_advice'] != null) {
+          contentParts.add('\n\n💡 조언\n${fortuneData['detailed_advice']}');
+        }
+
+        if (contentParts.isNotEmpty) {
+          contentText = contentParts.join('');
+          debugPrint('📝 [_getFortuneFromEdgeFunction] Built compatibility content (${contentText.length} chars)');
+        }
+      }
+
+      // Blind-date fortune: build rich content from detailed fields
+      if (fortuneType == 'blind-date' && fortuneData['successPrediction'] != null) {
+        final contentParts = <String>[];
+
+        // successPrediction - object에서 추출
+        final successPred = fortuneData['successPrediction'];
+        if (successPred != null) {
+          if (successPred is Map) {
+            final message = successPred['message'] ?? '';
+            final advice = successPred['advice'] ?? '';
+            contentParts.add('🎯 성공 예측\n$message${advice.isNotEmpty ? '\n💡 $advice' : ''}');
+          } else {
+            contentParts.add('🎯 성공 예측\n$successPred');
+          }
+        }
+
+        // firstImpressionTips - array 처리
+        final tips = fortuneData['firstImpressionTips'];
+        if (tips != null) {
+          if (tips is List && tips.isNotEmpty) {
+            contentParts.add('\n\n✨ 첫인상 팁\n• ${tips.join('\n• ')}');
+          } else if (tips is String && tips.isNotEmpty) {
+            contentParts.add('\n\n✨ 첫인상 팁\n$tips');
+          }
+        }
+
+        // conversationTopics - object 또는 array 처리
+        final topics = fortuneData['conversationTopics'];
+        if (topics != null) {
+          if (topics is Map) {
+            final recommended = topics['recommended'];
+            final avoid = topics['avoid'];
+            if (recommended is List && recommended.isNotEmpty) {
+              contentParts.add('\n\n💬 추천 대화 주제\n• ${recommended.join('\n• ')}');
+            }
+            if (avoid is List && avoid.isNotEmpty) {
+              contentParts.add('\n\n🚫 피해야 할 주제\n• ${avoid.join('\n• ')}');
+            }
+          } else if (topics is List && topics.isNotEmpty) {
+            contentParts.add('\n\n💬 대화 주제\n• ${topics.join('\n• ')}');
+          }
+        }
+
+        // outfitAdvice - object에서 추출
+        final outfit = fortuneData['outfitAdvice'];
+        if (outfit != null) {
+          if (outfit is Map) {
+            final style = outfit['style'] ?? '';
+            final colors = outfit['colors'];
+            final colorText = colors is List && colors.isNotEmpty ? ' (추천 색상: ${colors.join(', ')})' : '';
+            if (style.toString().isNotEmpty) {
+              contentParts.add('\n\n👔 패션 조언\n$style$colorText');
+            }
+          } else if (outfit is String && outfit.isNotEmpty) {
+            contentParts.add('\n\n👔 패션 조언\n$outfit');
+          }
+        }
+
+        // locationAdvice - array 처리
+        final locations = fortuneData['locationAdvice'];
+        if (locations != null) {
+          if (locations is List && locations.isNotEmpty) {
+            contentParts.add('\n\n📍 장소 추천\n• ${locations.join('\n• ')}');
+          } else if (locations is String && locations.isNotEmpty) {
+            contentParts.add('\n\n📍 장소 추천\n$locations');
+          }
+        }
+
+        final dosList = fortuneData['dosList'];
+        if (dosList != null && dosList is List && dosList.isNotEmpty) {
+          contentParts.add('\n\n✅ 이렇게 하세요\n• ${dosList.join('\n• ')}');
+        }
+
+        final dontsList = fortuneData['dontsList'];
+        if (dontsList != null && dontsList is List && dontsList.isNotEmpty) {
+          contentParts.add('\n\n❌ 이건 피하세요\n• ${dontsList.join('\n• ')}');
+        }
+
+        if (fortuneData['finalMessage'] != null) {
+          contentParts.add('\n\n💝 마무리 메시지\n${fortuneData['finalMessage']}');
+        }
+
+        if (contentParts.isNotEmpty) {
+          contentText = contentParts.join('');
+          debugPrint('📝 [_getFortuneFromEdgeFunction] Built blind-date content (${contentText.length} chars)');
+        }
+      }
+
+      debugPrint('📝 [_getFortuneFromEdgeFunction] Final content length: ${contentText.length}, score: $extractedScoreValue');
+
       final fortuneDataModel = FortuneData(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: userId,
         type: fortuneType,
-        content: fortuneData['content'] ?? fortuneData['description'] ?? '',
+        content: contentText,
         createdAt: DateTime.now(),
         metadata: fortuneData,
-        score: fortuneData['score']?.toInt() ?? fortuneData['overall_score']?.toInt() ?? fortuneData['overallScore'],
+        score: extractedScoreValue is int ? extractedScoreValue : (extractedScoreValue is num ? extractedScoreValue.toInt() : null),
         summary: fortuneData['summary'],
         luckyColor: fortuneData['luckyColor'] ?? fortuneData['lucky_items']?['color'] ?? fortuneData['luckyItems']?['color'],
         luckyNumber: fortuneData['luckyNumber']?.toInt() ?? fortuneData['lucky_items']?['number'] ?? fortuneData['luckyItems']?['number'],

@@ -111,7 +111,8 @@ serve(async (req) => {
     if (cachedResult) {
       return new Response(
         JSON.stringify({
-          fortune: cachedResult.result,
+          success: true,
+          data: cachedResult.result,
           cached: true,
           tokensUsed: 0
         }),
@@ -319,6 +320,14 @@ serve(async (req) => {
 
     // ✅ 모든 데이터를 실제 LLM 분석 결과로 반환 (프리미엄 플레이스홀더 제거)
     const result = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'talent',
+      score: fortuneData.overallScore,
+      content: fortuneData.content,
+      summary: `${talentArea} 재능 개발 운세 ${fortuneData.overallScore}점`,
+      advice: fortuneData.advice || '지속적인 노력으로 재능을 발전시켜 보세요.',
+
+      // 기존 필드 유지 (하위 호환성)
       id: `talent-${Date.now()}`,
       type: 'talent',
       userId: userId,
@@ -326,7 +335,7 @@ serve(async (req) => {
       goals: goals,
       overallScore: fortuneData.overallScore, // ✅ 무료: 공개
       overall_score: fortuneData.overallScore, // ✅ 무료: 공개
-      content: fortuneData.content, // ✅ 무료: 공개 (재능 분석)
+      talent_content: fortuneData.content, // ✅ 무료: 공개 (재능 분석)
       description: fortuneData.description, // ✅ 실제 데이터 (블러 처리는 클라이언트에서)
       luckyItems: fortuneData.luckyItems, // ✅ 무료: 공개
       lucky_items: fortuneData.luckyItems, // ✅ 무료: 공개
@@ -383,7 +392,8 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        fortune: resultWithPercentile,
+        success: true,
+        data: resultWithPercentile,
         cached: false,
         tokensUsed: response.usage?.totalTokens || 0
       }),

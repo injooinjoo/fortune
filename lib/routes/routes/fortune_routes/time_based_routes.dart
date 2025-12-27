@@ -19,9 +19,9 @@ final timeBasedRoutes = [
     redirect: (_, state) {
       final tabParam = state.uri.queryParameters['tab'];
       if (tabParam != null) {
-        return '/fortune/time?period=$tabParam';
+        return '/time?period=$tabParam';
       }
-      return '/fortune/time';
+      return '/time';
     }),
   
   

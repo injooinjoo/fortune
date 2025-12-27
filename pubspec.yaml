@@ -121,6 +121,7 @@ dependencies:
   file_picker: ^8.1.2 # PDF/문서 선택용
   screenshot: ^3.0.0
   camera: ^0.11.0+2 # 실시간 카메라 프리뷰
+  google_mlkit_face_mesh_detection: ^0.3.0 # Face Mesh 시각화
   image: ^4.3.0 # 이미지 처리
   # image_gallery_saver: ^2.0.3  # AGP 8.x compatibility issue
   path_provider: ^2.1.5

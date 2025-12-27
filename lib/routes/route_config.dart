@@ -5,6 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/home/home_screen.dart';
+import '../features/chat/presentation/pages/chat_home_page.dart';
+import '../features/face_ai/presentation/pages/face_ai_home_screen.dart';
+import '../features/face_ai/presentation/pages/face_ai_camera_page.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/profile_edit_page.dart';
 import '../screens/profile/saju_detail_page.dart';
@@ -89,7 +92,7 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: '/',
+    initialLocation: '/chat',  // Chat-First 아키텍처: 채팅이 기본 진입점
     debugLogDiagnostics: false, // Disabled to prevent freezing on real devices
     observers: kDebugMode ? [RouteObserverLogger()] : [],
     errorBuilder: (context, state) => Scaffold(
@@ -118,6 +121,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const FortuneCookiePage(),
       ),
 
+      // Face AI Camera (outside shell - full screen camera with Face Mesh)
+      GoRoute(
+        path: '/face-ai/camera',
+        name: 'face-ai-camera',
+        builder: (context, state) => const FaceAiCameraPage(),
+      ),
+
+      // Face AI Home (탐구 탭에서 진입 - Chat-First 아키텍처)
+      GoRoute(
+        path: '/fortune/face-ai',
+        name: 'fortune-face-ai',
+        builder: (context, state) => const FaceAiHomeScreen(),
+      ),
+
       // Shell route that provides persistent navigation
       ShellRoute(
         builder: (context, state, child) => MainShell(
@@ -125,7 +142,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           child: child,
         ),
         routes: [
-          // Home route
+          // Chat route (Chat-First 홈 - 0번 탭)
+          GoRoute(
+            path: '/chat',
+            name: 'chat',
+            pageBuilder: (context, state) => PageTransitions.tabTransition(
+              context,
+              state,
+              const ChatHomePage(),
+            ),
+          ),
+
+          // Home route (인사이트 - 1번 탭)
           GoRoute(
             path: '/home',
             name: 'home',

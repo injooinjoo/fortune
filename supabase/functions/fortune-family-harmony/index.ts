@@ -398,10 +398,18 @@ serve(async (req) => {
 
     // 운세 데이터 구성
     const fortune = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'family-harmony',
+      score: calculateHarmonyScore(),
+      content: generateMainMessage(),
+      summary: `오늘의 가족 화합도는 ${harmonyScore}%입니다.`,
+      advice: relationshipAdvice,
+
+      // 기존 필드 유지 (하위 호환성)
       id: `family-${Date.now()}`,
       userId: userId,
       type: 'family-harmony',
-      content: generateMainMessage(),
+      harmony_content: generateMainMessage(),
       
       // 가족 운세 정보
       family_info: {
@@ -494,7 +502,8 @@ serve(async (req) => {
     // Edge Function 응답
     return new Response(
       JSON.stringify({
-        fortune: fortuneWithPercentile,
+        success: true,
+        data: fortuneWithPercentile,
         tokensUsed: 0
       }),
       { 

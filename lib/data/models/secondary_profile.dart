@@ -112,10 +112,14 @@ class SecondaryProfile extends Equatable {
   /// 관계 표시 텍스트
   String get relationshipText {
     switch (relationship) {
+      case 'lover':
+        return '애인';
       case 'family':
         return '가족';
       case 'friend':
         return '친구';
+      case 'crush':
+        return '짝사랑';
       case 'other':
         return '기타';
       default:

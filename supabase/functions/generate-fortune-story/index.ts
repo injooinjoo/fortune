@@ -571,9 +571,17 @@ ${userProfile?.birthDate ? `- 생년월일: ${userProfile.birthDate}` : ''}
     }
     
     console.log(`🎉 Returning ${segments.length} story segments with enhanced data`)
-    
+
     // 확장된 응답 데이터
     const responseData = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'fortune-story',
+      score: overall?.score || 75,
+      content: overall?.summary || '오늘의 운세 스토리를 확인해보세요.',
+      summary: `${userName}님의 오늘 운세 ${overall?.grade || 'A-'}등급`,
+      advice: personalActions?.[0]?.title || '오늘 하루도 화이팅하세요!',
+
+      // 기존 필드 유지 (하위 호환성)
       segments,
       sajuAnalysis: sajuAnalysis,
       meta,
@@ -585,12 +593,16 @@ ${userProfile?.birthDate ? `- 생년월일: ${userProfile.birthDate}` : ''}
       notification,
       shareCard
     }
-    
+
     return new Response(
-      JSON.stringify(responseData),
-      { 
+      JSON.stringify({
+        success: true,
+        data: responseData,
+        cached: false
+      }),
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
+        status: 200
       }
     )
 

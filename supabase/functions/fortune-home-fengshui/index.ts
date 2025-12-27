@@ -284,6 +284,14 @@ ${address} 지역의 지형적 특성과 ${homeType || '일반 주거'}의 구�
 
       // 응답 데이터 구조화
       fortuneData = {
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        fortuneType: 'home-fengshui',
+        score: parsedResponse.score || Math.floor(Math.random() * 25) + 65,
+        content: parsedResponse.overall_analysis || '집 풍수 분석 중입니다.',
+        summary: `집 풍수 점수 ${parsedResponse.score || 75}점 - ${parsedResponse.title || '집 풍수 진단'}`,
+        advice: parsedResponse.summary?.final_message || '집안에 좋은 기운이 가득하길 바랍니다.',
+
+        // 기존 필드 유지 (하위 호환성)
         title: parsedResponse.title || '집 풍수 진단',
         fortune_type: 'home-fengshui',
         address,
@@ -292,7 +300,7 @@ ${address} 지역의 지형적 특성과 ${homeType || '일반 주거'}의 구�
         doorDirection,
 
         // 공개 섹션
-        score: parsedResponse.score || Math.floor(Math.random() * 25) + 65,
+        fengshui_score: parsedResponse.score || Math.floor(Math.random() * 25) + 65,
         overall_analysis: parsedResponse.overall_analysis || '집 풍수 분석 중입니다.',
 
         // 배산임수 분석

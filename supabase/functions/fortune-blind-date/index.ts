@@ -349,8 +349,10 @@ ${chatAnalysisResult.redFlags && Array.isArray(chatAnalysisResult.redFlags) && c
 
 다음 JSON 형식으로 응답해주세요:
 {
-  "overallScore": 0-100 사이의 점수 (소개팅 성공 확률),
-  "content": "전체 분석 (100자 이내)",
+  "score": 0-100 사이의 점수 (소개팅 성공 확률),
+  "content": "전체 분석 (100자 이상)",
+  "summary": "한줄 요약 (30자 이내)",
+  "advice": "핵심 조언 (50자 이상)",
   "successPrediction": {
     "score": 0-100,
     "message": "예측 메시지 (30자 이내)",
@@ -429,8 +431,12 @@ ${photoAnalysisText}${chatAnalysisText}
         : []
 
       const result = {
-        overallScore: fortuneData.overallScore,
-        content: fortuneData.content,
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        score: fortuneData.score || fortuneData.overallScore || 75,
+        content: fortuneData.content || '소개팅 분석 결과입니다.',
+        summary: fortuneData.summary || '좋은 인연이 기대됩니다',
+        advice: fortuneData.advice || fortuneData.successPrediction?.advice || '자신감을 가지고 임하세요',
+        fortuneType: 'blind-date',
         successPrediction: fortuneData.successPrediction,
         firstImpressionTips: fortuneData.firstImpressionTips,
         conversationTopics: fortuneData.conversationTopics,
@@ -463,7 +469,7 @@ ${photoAnalysisText}${chatAnalysisText}
         })
 
       // ✅ 퍼센타일 계산
-      const percentileData = await calculatePercentile(supabaseClient, 'blind-date', result.overallScore)
+      const percentileData = await calculatePercentile(supabaseClient, 'blind-date', result.score)
       const resultWithPercentile = addPercentileToResult(result, percentileData)
 
       return new Response(

@@ -1,0 +1,46 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part '{{type}}_result.freezed.dart';
+part '{{type}}_result.g.dart';
+
+/// {{typeName}} 운세 결과
+@freezed
+class {{typePascal}}Result with _${{typePascal}}Result {
+  const factory {{typePascal}}Result({
+    @JsonKey(name: 'overall_score') required int overallScore,
+    required List<FortuneSection> sections,
+    required String advice,
+    String? warnings,
+    @JsonKey(name: 'luck_items') LuckItems? luckItems,
+    int? percentile,
+    @JsonKey(name: 'is_blurred') @Default(false) bool isBlurred,
+    @JsonKey(name: 'blurred_sections') @Default([]) List<String> blurredSections,
+  }) = _{{typePascal}}Result;
+
+  factory {{typePascal}}Result.fromJson(Map<String, dynamic> json) =>
+      _${{typePascal}}ResultFromJson(json);
+}
+
+@freezed
+class FortuneSection with _$FortuneSection {
+  const factory FortuneSection({
+    required String title,
+    required String content,
+    int? score,
+  }) = _FortuneSection;
+
+  factory FortuneSection.fromJson(Map<String, dynamic> json) =>
+      _$FortuneSectionFromJson(json);
+}
+
+@freezed
+class LuckItems with _$LuckItems {
+  const factory LuckItems({
+    String? color,
+    int? number,
+    String? direction,
+  }) = _LuckItems;
+
+  factory LuckItems.fromJson(Map<String, dynamic> json) =>
+      _$LuckItemsFromJson(json);
+}

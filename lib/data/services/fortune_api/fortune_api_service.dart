@@ -343,10 +343,14 @@ class FortuneApiService {
           'paramKeys': params?.keys.toList()});
       }
 
+      // userId를 params에 병합하여 Edge Function 호출
+      final apiParams = {
+        'userId': userId,
+        ...?params,
+      };
+
       final apiStopwatch = Logger.startTimer('API Call - $fortuneType');
-      final response = params != null
-          ? await _apiClient.post(endpoint, data: params)
-          : await _apiClient.get(endpoint);
+      final response = await _apiClient.post(endpoint, data: apiParams);
       Logger.endTimer('API Call - $fortuneType', apiStopwatch);
 
       Logger.info('🔍 [FortuneApiService] API response received', {

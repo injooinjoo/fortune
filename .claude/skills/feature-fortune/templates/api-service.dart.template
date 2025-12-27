@@ -1,0 +1,36 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../domain/models/{{type}}_conditions.dart';
+import '../../domain/models/{{type}}_result.dart';
+import '../../../../core/constants/edge_functions_endpoints.dart';
+
+/// {{typeName}} API 서비스 Provider
+final {{typeCamel}}ApiServiceProvider = Provider<{{typePascal}}ApiService>((ref) {
+  return {{typePascal}}ApiService();
+});
+
+/// {{typeName}} API 서비스
+class {{typePascal}}ApiService {
+  final _supabase = Supabase.instance.client;
+
+  /// {{typeName}} 운세 조회
+  Future<{{typePascal}}Result> get{{typePascal}}(
+    {{typePascal}}Conditions conditions,
+  ) async {
+    try {
+      final response = await _supabase.functions.invoke(
+        EdgeFunctionsEndpoints.fortune{{typePascal}},
+        body: conditions.toJson(),
+      );
+
+      if (response.status != 200) {
+        throw Exception('API 호출 실패: ${response.status}');
+      }
+
+      return {{typePascal}}Result.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+}

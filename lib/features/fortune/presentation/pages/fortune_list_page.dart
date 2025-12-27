@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
@@ -18,6 +17,7 @@ import '../widgets/fortune_list_tile.dart';
 import '../widgets/fortune_entry_section.dart';
 import '../widgets/fortune_search_overlay.dart';
 import '../../domain/entities/fortune_category.dart';
+import '../../../../shared/components/profile_header_icon.dart';
 
 enum FortuneCategoryType {
   
@@ -88,19 +88,14 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(navigationVisibilityProvider.notifier).show();
       _loadViewedTodayTypes(); // 오늘 조회 여부 로드
-      _triggerStaggeredHaptics(); // 카드 등장 햅틱
+      _triggerEntryHaptic(); // 진입 햅틱 (1회)
     });
   }
 
-  /// 카드가 순차적으로 올라올 때 가벼운 햅틱 피드백
-  Future<void> _triggerStaggeredHaptics() async {
+  /// 페이지 진입 시 가벼운 햅틱 피드백 (1회만)
+  void _triggerEntryHaptic() {
     final haptic = ref.read(fortuneHapticServiceProvider);
-    // 처음 5개 카드 등장 시 가벼운 햅틱 (stagger 간격에 맞춤)
-    for (int i = 0; i < 5; i++) {
-      await Future.delayed(Duration(milliseconds: 80 * i));
-      if (!mounted) return;
-      haptic.selection(); // 가벼운 선택 햅틱
-    }
+    haptic.selection(); // 진입 시 1회만
   }
 
   // 오늘 조회한 탐구 타입 로드 (SharedPreferences 기반 - 진입만 해도 체크됨)
@@ -226,6 +221,10 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
+        leading: const Padding(
+          padding: EdgeInsets.only(left: 8),
+          child: Center(child: ProfileHeaderIcon()),
+        ),
         title: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -286,7 +285,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   child: CommonAdPlacements.listBottomAd()),
               ),
 
-            // 관상/전통운세 진입 카드 (상단 고정)
+            // 소개팅/직업 진입 카드 (상단 고정)
             SliverToBoxAdapter(
               child: FortuneEntrySection(isDark: isDark),
             ),
@@ -329,26 +328,17 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               ),
             ],
 
-            // 정렬된 리스트 (일반)
+            // 정렬된 리스트 (일반) - 스크롤 성능을 위해 애니메이션 제거
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final categories = showFavoriteSection ? otherCategories : sortedCategories;
                   final category = categories[index];
 
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(milliseconds: 100),
-                    child: SlideAnimation(
-                      verticalOffset: 20.0,
-                      child: FadeInAnimation(
-                        child: FortuneListTile(
-                          key: ValueKey(category.type),
-                          category: category,
-                          onTap: () => _handleCategoryTap(category),
-                        ),
-                      ),
-                    ),
+                  return FortuneListTile(
+                    key: ValueKey(category.type),
+                    category: category,
+                    onTap: () => _handleCategoryTap(category),
                   );
                 },
                 childCount: showFavoriteSection ? otherCategories.length : sortedCategories.length,

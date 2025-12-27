@@ -473,6 +473,14 @@ serve(async (req) => {
       const reunionScore = parsedResponse.reunion_possibility?.score ?? 50
 
       fortuneData = {
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        fortuneType: 'ex-lover',
+        score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
+        content: parsedResponse.overall_fortune || '이별은 끝이 아닌 새로운 시작입니다.',
+        summary: `재회 가능성 ${reunionScore}% - ${parsedResponse.title || '새로운 시작을 응원합니다'}`,
+        advice: parsedResponse.comfort_message || '지금의 아픔은 반드시 지나갑니다.',
+
+        // 기존 필드 유지 (하위 호환성)
         title: parsedResponse.title || `${name}님, 새로운 시작을 응원합니다`,
         fortune_type: 'ex_lover',
         name,
@@ -482,7 +490,7 @@ serve(async (req) => {
         // ✅ 헤더 이미지 프롬프트 (감정 + 재회점수 + 궁금증 기반)
         headerImagePrompt: generateReunionImagePrompt(current_emotion, reunionScore, main_curiosity),
         // ✅ 무료: 공개 섹션
-        score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
+        ex_score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
         overall_fortune: parsedResponse.overall_fortune || '이별은 끝이 아닌 새로운 시작입니다.',
         comfort_message: parsedResponse.comfort_message || '지금의 아픔은 반드시 지나갑니다.',
 

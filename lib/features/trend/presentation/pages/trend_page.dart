@@ -6,6 +6,7 @@ import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/models.dart';
 import '../providers/trend_providers.dart';
+import '../../../../shared/components/profile_header_icon.dart';
 
 class TrendPage extends ConsumerStatefulWidget {
   const TrendPage({super.key});
@@ -154,6 +155,9 @@ class _TrendPageState extends ConsumerState<TrendPage> {
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal, vertical: DSSpacing.sm),
       child: Row(
         children: [
+          // 좌측: 프로필 아이콘
+          const ProfileHeaderIcon(),
+          const SizedBox(width: DSSpacing.sm),
           Text(
             '트렌드',
             style: typography.headingMedium.copyWith(

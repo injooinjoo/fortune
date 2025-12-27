@@ -14,7 +14,8 @@ class FortuneCardImages {
     'breakup': '${basePath}breakup_fortune.png',
     'crush': '${basePath}crush_fortune.png',
     'relationship': '${basePath}people_to_avoid_fortune.png',
-    'compatibility': '${basePath}compatibility_fortune.png',
+    'compatibility': 'assets/images/minhwa/minhwa_love_mandarin.webp',
+    'blind-date': 'assets/images/minhwa/minhwa_love_mandarin.webp',
     'ex-lover': '${basePath}ex_lover_fortune.png',
 
     // Career & Money
@@ -43,8 +44,10 @@ class FortuneCardImages {
     'talisman': '${basePath}talisman_fortune.png',
 
     // Daily & Personal
-    'daily': '${basePath}time_fortune.png',
-    'time': '${basePath}time_fortune.png',
+    'daily': 'assets/images/minhwa/minhwa_overall_tiger.webp',
+    'yearly': 'assets/images/minhwa/minhwa_overall_dragon.webp',
+    'new-year': 'assets/images/minhwa/minhwa_overall_sunrise.webp',
+    'time': 'assets/images/hanji_texture.png',
     'health': '${basePath}health_sports_fortune.png',
     'health_sports': '${basePath}health_sports_fortune.png',
     'sports': '${basePath}health_sports_fortune.png',
@@ -119,6 +122,7 @@ class FortuneCardImages {
     'crush': [const Color(0xFFEC4899), const Color(0xFFF472B6)],
     'relationship': [const Color(0xFFDC2626), const Color(0xFFB91C1C)],
     'compatibility': [const Color(0xFFBE185D), const Color(0xFF9333EA)],
+    'blind-date': [const Color(0xFFEC4899), const Color(0xFF9333EA)],
     'ex-lover': [const Color(0xFF6B7280), const Color(0xFF374151)],
 
     // Career & Money
@@ -148,6 +152,8 @@ class FortuneCardImages {
 
     // Daily & Personal
     'daily': [const Color(0xFF7C3AED), const Color(0xFF3B82F6)],
+    'yearly': [const Color(0xFFEF4444), const Color(0xFFDC2626)],
+    'new-year': [const Color(0xFFF59E0B), const Color(0xFFEF4444)],
     'time': [const Color(0xFF7C3AED), const Color(0xFF3B82F6)],
     'health': [const Color(0xFF10B981), const Color(0xFF059669)],
     'health_sports': [const Color(0xFF10B981), const Color(0xFF059669)],
@@ -196,6 +202,7 @@ class FortuneCardImages {
     'crush': '짝사랑, 이뤄질 수 있을까?',
     'relationship': '오늘 우리 사이 온도는?',
     'ex-lover': '그 사람과의 인연, 아직 끝나지 않았을까?',
+    'blind-date': '오늘의 소개팅, 성공할까?',
 
     // Career & Money - 성공과 풍요를 암시하는 문구
     'career': '승진과 성공의 타이밍',
@@ -220,6 +227,8 @@ class FortuneCardImages {
 
     // Daily & Personal - 일상의 관심사
     'daily': '오늘 나에게 일어날 일',
+    'yearly': '올해 나에게 펼쳐질 운명',
+    'new-year': '새해, 새로운 시작의 기운',
     'health': '몸이 보내는 신호 체크',
     'travel': '떠나기 좋은 날일까?',
     'moving': '새 둥지 찾기 좋은 때',

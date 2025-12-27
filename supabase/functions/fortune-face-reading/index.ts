@@ -796,9 +796,14 @@ serve(async (req) => {
       : []
 
     const fortuneResponse = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
       fortuneType: 'face-reading',
+      score: scoreResult.total,
+      content: analysisResult.overview.firstImpression,
+      summary: `관상 종합 점수 ${scoreResult.total}점 - ${analysisResult.faceTypeClassification?.animalType?.primary || analysisResult.overview.faceType}`,
+      advice: analysisResult.improvements?.daily?.[0] || analysisResult.fortunes?.overall?.advice || '긍정적인 마음으로 하루를 시작하세요.',
 
-      // ✅ 무료 공개
+      // 기존 필드 유지 (하위 호환성)
       mainFortune: analysisResult.overview.firstImpression,
       luckScore: scoreResult.total,
       scoreBreakdown: scoreResult.breakdown,
@@ -981,7 +986,12 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify(fortuneResponseWithPercentile),
+      JSON.stringify({
+        success: true,
+        data: fortuneResponseWithPercentile,
+        cached: false,
+        tokensUsed: response.usage?.totalTokens || 0
+      }),
       {
         headers: {
           ...corsHeaders,

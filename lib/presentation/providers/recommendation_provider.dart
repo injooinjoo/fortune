@@ -80,7 +80,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
         id: 'mbti',
         title: 'MBTI 주간 운세',
         description: '${userProfile.mbti} 유형에 맞는 조언',
-        route: '/fortune/mbti',
+        route: '/mbti',
         reason: '${userProfile.mbti} 성격 유형 맞춤',
         relevanceScore: 0.95));
     }
@@ -91,7 +91,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
         id: 'zodiac-animal',
         title: '띠 운세',
         description: '${userProfile.zodiacAnimal}띠의 이달 운세',
-        route: '/fortune/zodiac-animal',
+        route: '/daily-calendar',
         reason: '${userProfile.zodiacAnimal}띠 맞춤',
         relevanceScore: 0.9));
     }
@@ -102,7 +102,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
         id: 'zodiac',
         title: '별자리 월간 운세',
         description: '${userProfile.zodiacSign}자리의 흐름',
-        route: '/fortune/zodiac',
+        route: '/daily-calendar',
         reason: '${userProfile.zodiacSign}자리 맞춤',
         relevanceScore: 0.85));
     }
@@ -127,7 +127,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       id: 'chemistry',
       title: '케미 운세',
       description: '상대방과의 특별한 연결',
-      route: '/fortune/chemistry',
+      route: '/compatibility',
         reason: '연애 운세에 관심',
         relevanceScore: 0.8));
   }
@@ -138,7 +138,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       id: 'lucky-job',
       title: '천직 운세',
       description: '나에게 맞는 직업 찾기',
-      route: '/fortune/lucky-job',
+      route: '/career',
         reason: '직업 운세에 관심',
         relevanceScore: 0.75));
   }
@@ -152,7 +152,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       id: 'new-year',
       title: '신년 운세',
       description: '새해의 전체적인 흐름',
-      route: '/fortune/yearly',
+      route: '/yearly',
         reason: '새해 특별 운세',
         relevanceScore: 0.7));
   }
@@ -164,21 +164,21 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
         id: 'saju',
         title: '사주팔자',
         description: '정통 사주 풀이',
-        route: '/fortune/saju',
+        route: '/traditional-saju',
         reason: '인기 운세',
         relevanceScore: 0.6),
       const RecommendedFortune(
         id: 'love',
         title: '연애운',
         description: '사랑과 인연의 흐름',
-        route: '/fortune/love',
+        route: '/love',
         reason: '인기 운세',
         relevanceScore: 0.6),
       const RecommendedFortune(
         id: 'wealth',
         title: '금전운',
         description: '재물과 투자의 운',
-        route: '/fortune/wealth',
+        route: '/investment',
         reason: '인기 운세',
         relevanceScore: 0.6)];
     

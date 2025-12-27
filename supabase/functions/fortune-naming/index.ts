@@ -385,10 +385,20 @@ serve(async (req) => {
     const blurredSections = isBlurred ? ['names4to10', 'detailedAnalysis'] : []
 
     // 응답 데이터 구조화
+    // 첫 번째 추천 이름의 점수를 전체 점수로 사용
+    const topScore = fortuneData.recommendedNames?.[0]?.totalScore || 85
+
     const response: NamingFortuneResponse = {
       success: true,
       data: {
+        // ✅ 표준화된 필드명: score, content, summary, advice
         fortuneType: 'naming',
+        score: topScore,
+        content: fortuneData.ohaengAnalysis?.recommendation || '사주 오행을 기반으로 아기 이름을 추천합니다.',
+        summary: `${params.familyName}씨 ${getGenderLabel(params.babyGender)} 이름 추천 - ${topScore}점`,
+        advice: fortuneData.namingTips?.[0] || '아기가 태어난 후 실제 사주로 최종 확정하세요.',
+
+        // 기존 필드 유지 (하위 호환성)
         ohaengAnalysis: fortuneData.ohaengAnalysis || {
           distribution: { 木: 2, 火: 1, 土: 2, 金: 2, 水: 1 },
           missing: ['火', '水'],

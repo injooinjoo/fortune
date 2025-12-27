@@ -246,13 +246,22 @@ ${healthAppSection}
         ? ['body_part_advice', 'cautions', 'recommended_activities', 'diet_advice', 'exercise_advice', 'health_keyword']
         : []
 
+      // ✅ 표준화된 필드명 사용
+      const overallHealthText = parsedResponse.전반적인건강운 || parsedResponse.overall_health || '건강하십니다.'
+
       fortuneData = {
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        fortuneType: 'health',
+        score: Math.floor(Math.random() * 30) + 70,
+        content: overallHealthText,
+        summary: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강 관리',
+        advice: parsedResponse.운동조언 || parsedResponse.exercise_advice || '규칙적인 운동을 하세요',
+        // 기존 필드 유지 (하위 호환성)
         title: '건강운',
         fortune_type: 'health',
         current_condition,
         concerned_body_parts,
-        score: Math.floor(Math.random() * 30) + 70, // 공개
-        overall_health: parsedResponse.전반적인건강운 || parsedResponse.overall_health || '건강하십니다.', // 공개
+        overall_health: overallHealthText,
         body_part_advice: parsedResponse.부위별건강 || parsedResponse.body_part_advice || '주의가 필요합니다.', // 블러 대상
         cautions: parsedResponse.주의사항 || parsedResponse.cautions || ['규칙적 생활', '충분한 휴식', '정기 검진'], // 블러 대상
         recommended_activities: parsedResponse.추천활동 || parsedResponse.recommended_activities || ['산책', '요가', '스트레칭'], // 블러 대상

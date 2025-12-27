@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/components/image_upload_selector.dart';
@@ -23,7 +26,9 @@ import 'face_reading_fortune/index.dart';
 import 'face_reading_fortune/face_reading_result_page.dart';
 
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
-  const FaceReadingFortunePage({super.key});
+  final Map<String, dynamic>? initialParams;
+
+  const FaceReadingFortunePage({super.key, this.initialParams});
 
   @override
   ConsumerState<FaceReadingFortunePage> createState() => _FaceReadingFortunePageState();
@@ -41,7 +46,73 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     // 페이지 진입 시 전면 광고 표시 (프리미엄 사용자 제외, frequency cap 적용)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showEntryAd();
+      _handleInitialParams();
     });
+  }
+
+  /// Face AI에서 전달된 초기 파라미터 처리
+  Future<void> _handleInitialParams() async {
+    final params = widget.initialParams;
+    if (params == null) return;
+
+    // Face AI 카메라에서 촬영한 이미지
+    if (params['capturedImageFile'] != null) {
+      final file = params['capturedImageFile'] as File;
+      setState(() {
+        _uploadResult = ImageUploadResult(
+          type: ImageUploadType.camera,
+          imageFile: file,
+        );
+      });
+      // 자동으로 두 번째 단계로 이동
+      await Future.delayed(const Duration(milliseconds: 300));
+      if (mounted) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+      return;
+    }
+
+    // 프로필 사진 URL로 분석
+    if (params['profileImageUrl'] != null) {
+      final imageUrl = params['profileImageUrl'] as String;
+      await _loadProfileImage(imageUrl);
+    }
+  }
+
+  /// 프로필 이미지 URL을 파일로 다운로드
+  Future<void> _loadProfileImage(String imageUrl) async {
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode == 200) {
+        final tempDir = await getTemporaryDirectory();
+        final file = File(
+          '${tempDir.path}/profile_face_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+        await file.writeAsBytes(response.bodyBytes);
+
+        if (mounted) {
+          setState(() {
+            _uploadResult = ImageUploadResult(
+              type: ImageUploadType.gallery,
+              imageFile: file,
+            );
+          });
+          // 자동으로 두 번째 단계로 이동
+          await Future.delayed(const Duration(milliseconds: 300));
+          if (mounted) {
+            _pageController.nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ [FaceReadingFortunePage] 프로필 이미지 로드 실패: $e');
+    }
   }
 
   /// 페이지 진입 시 전면 광고 표시

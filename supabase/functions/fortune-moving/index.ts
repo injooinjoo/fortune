@@ -291,6 +291,14 @@ serve(async (req) => {
 
       // ✅ 응답 데이터 구조화 (항상 실제 데이터 반환, 클라이언트에서 블러 처리)
       fortuneData = {
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        fortuneType: 'moving',
+        score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
+        content: parsedResponse.overall_fortune || '새로운 터전에서 좋은 기운이 함께 합니다.',
+        summary: `${current_area} → ${target_area} 이사운 ${parsedResponse.score || 75}점`,
+        advice: parsedResponse.summary?.final_message || '새로운 터전에서 행복한 나날 되세요.',
+
+        // 기존 필드 유지 (하위 호환성)
         title: parsedResponse.title || `${current_area} → ${target_area} 이사운`,
         fortune_type: 'moving',
         current_area,
@@ -298,7 +306,7 @@ serve(async (req) => {
         moving_period,
         purpose,
         // 공개 섹션
-        score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
+        moving_score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
         overall_fortune: parsedResponse.overall_fortune || '새로운 터전에서 좋은 기운이 함께 합니다.',
 
         // 방위 분석

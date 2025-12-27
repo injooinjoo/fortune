@@ -1,0 +1,233 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
+import '../../../../shared/widgets/unified_blur_wrapper.dart';
+import '../../../../shared/widgets/entertainment_disclaimer.dart';
+import '../../../../shared/widgets/cross_platform_ad_widget.dart';
+import '../../domain/models/{{type}}_conditions.dart';
+import '../../domain/models/{{type}}_result.dart';
+import '../providers/{{type}}_provider.dart';
+
+/// {{typeName}} 운세 페이지
+class {{typePascal}}FortunePage extends ConsumerStatefulWidget {
+  const {{typePascal}}FortunePage({super.key});
+
+  @override
+  ConsumerState<{{typePascal}}FortunePage> createState() => _{{typePascal}}FortunePageState();
+}
+
+class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}FortunePage> {
+  final _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final state = ref.watch({{typeCamel}}Provider);
+
+    return Scaffold(
+      backgroundColor: isDark
+          ? TossDesignSystem.backgroundDark
+          : TossDesignSystem.backgroundLight,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          '{{typeName}}',
+          style: context.heading2,
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: state.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error) => _buildErrorView(error, isDark),
+          data: (result) => _buildResultView(result, isDark),
+          initial: () => _buildInputView(isDark),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputView(bool isDark) {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '{{typeName}} 정보 입력',
+            style: context.heading2,
+          ),
+          const SizedBox(height: 24),
+          // TODO: 입력 폼 위젯 추가
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _onSubmit,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TossDesignSystem.tossBlue,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: Text(
+                '결과 보기',
+                style: context.buttonMedium.copyWith(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultView({{typePascal}}Result result, bool isDark) {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 종합 점수
+          _buildScoreCard(result.overallScore, isDark),
+          const SizedBox(height: 16),
+
+          // 섹션별 결과
+          ...result.sections.map((section) => Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _buildSectionCard(section, result.isBlurred, isDark),
+          )),
+
+          // 조언
+          UnifiedBlurWrapper(
+            isBlurred: result.isBlurred && result.blurredSections.contains('advice'),
+            child: _buildAdviceCard(result.advice, isDark),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 면책조항
+          const EntertainmentDisclaimer(),
+
+          const SizedBox(height: 16),
+
+          // 광고
+          const CrossPlatformAdWidget(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScoreCard(int score, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark
+            ? TossDesignSystem.cardDark
+            : TossDesignSystem.cardLight,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Text(
+            '종합 점수',
+            style: context.bodyMedium.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossDesignSystem.textSecondaryLight,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '$score점',
+            style: context.heading1.copyWith(
+              color: TossDesignSystem.tossBlue,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard(FortuneSection section, bool isBlurred, bool isDark) {
+    return UnifiedBlurWrapper(
+      isBlurred: isBlurred,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark
+              ? TossDesignSystem.cardDark
+              : TossDesignSystem.cardLight,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(section.title, style: context.heading3),
+            const SizedBox(height: 8),
+            Text(section.content, style: context.bodyMedium),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdviceCard(String advice, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: TossDesignSystem.tossBlue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('조언', style: context.heading3),
+          const SizedBox(height: 8),
+          Text(advice, style: context.bodyMedium),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorView(String error, bool isDark) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: TossDesignSystem.errorColor,
+          ),
+          const SizedBox(height: 16),
+          Text(error, style: context.bodyMedium),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => ref.read({{typeCamel}}Provider.notifier).reset(),
+            child: const Text('다시 시도'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onSubmit() {
+    // TODO: 조건 수집 후 호출
+    final conditions = {{typePascal}}Conditions(
+      // 입력 필드 매핑
+    );
+    ref.read({{typeCamel}}Provider.notifier).load{{typePascal}}(conditions);
+  }
+}

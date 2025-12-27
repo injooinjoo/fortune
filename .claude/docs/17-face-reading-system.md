@@ -8,6 +8,117 @@ AI 기반 얼굴 분석 시스템의 2-30대 여성 타겟 리디자인 문서.
 
 ---
 
+## 네비게이션 (Chat-First 아키텍처)
+
+### 변경 사항
+
+| 항목 | Before | After |
+|------|--------|-------|
+| 탭 위치 | 1번 탭 "Face AI" 독립 | 탐구 탭 내 카테고리 |
+| 라우트 | `/face-ai` | `/fortune/face-ai` |
+| 카메라 라우트 | `/face-ai/camera` | `/fortune/face-ai/camera` |
+| 진입점 | 네비게이션 바 탭 | 탐구 → AI 분석 카드 |
+
+### 진입 방식 (3가지)
+
+1. **탐구 탭 진입 (Primary)**
+   ```
+   탐구 탭 (/fortune)
+       ↓
+   FortuneListPage
+       ↓
+   "AI 분석" 카테고리
+       ↓
+   Face AI 카드 탭
+       ↓
+   /fortune/face-ai
+   ```
+
+2. **채팅 진입 (Chat-First)**
+   ```
+   채팅 탭 (/chat)
+       ↓
+   "얼굴 분석해줘" 입력
+       ↓
+   의도 분석 → faceReading
+       ↓
+   /fortune/face-ai 라우팅
+   ```
+
+3. **홈 추천 진입**
+   ```
+   인사이트 탭 (/home)
+       ↓
+   Face AI 추천 카드
+       ↓
+   /fortune/face-ai
+   ```
+
+### 코드 변경
+
+**FortuneEntrySection에 Face AI 카드 추가**:
+
+```dart
+// lib/features/fortune/presentation/widgets/fortune_entry_section.dart
+
+class FortuneEntrySection extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        // Face AI 진입 카드 (상단 배치)
+        _FaceAIEntryCard(isDark: isDark),
+        const SizedBox(height: 16),
+
+        // 기존 카드들
+        Row(
+          children: [
+            Expanded(child: _BlindDateCard(isDark: isDark)),
+            const SizedBox(width: 12),
+            Expanded(child: _CareerCard(isDark: isDark)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+```
+
+**라우트 설정**:
+
+```dart
+// route_config.dart
+
+GoRoute(
+  path: '/fortune/face-ai',
+  pageBuilder: (context, state) => PageTransitions.fade(
+    key: state.pageKey,
+    child: const FaceAiHomeScreen(),  // 기존 페이지 재사용
+  ),
+),
+GoRoute(
+  path: '/fortune/face-ai/camera',
+  pageBuilder: (context, state) => PageTransitions.slide(
+    key: state.pageKey,
+    child: const FaceAiCameraPage(),  // 기존 카메라 재사용
+  ),
+),
+```
+
+### 코드 재사용
+
+기존 Face AI 코드를 그대로 재사용:
+- `lib/features/face_ai/` → 전체 유지
+- `lib/core/widgets/face_mesh/` → 전체 유지
+- `lib/core/services/face_mesh_service.dart` → 전체 유지
+
+**변경 사항**:
+- 라우트 경로만 변경
+- 네비게이션 바에서 Face AI 탭 제거
+- FortuneEntrySection에 진입점 추가
+
+---
+
 ## 앱 스토어 컴플라이언스
 
 ### 외부 포지셔닝 (App Store Review 대응)

@@ -47,13 +47,15 @@ class _MainShellState extends ConsumerState<MainShell>
       end: 0.0).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut));
-    
-    // Set initial animation state based on current route
+
+    // Set initial animation state AND provider state based on current route
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final shouldShow = NavigationHelper.shouldShowNavigationBar(widget.state);
       if (!shouldShow) {
         _animationController.value = 1.0;
       }
+      // Sync provider state with initial route visibility
+      ref.read(navigationVisibilityProvider.notifier).setVisibility(shouldShow);
     });
   }
 
@@ -65,18 +67,18 @@ class _MainShellState extends ConsumerState<MainShell>
 
   int _calculateSelectedIndex(String location) {
     // Determine which navigation item should be selected based on the current route
-    if (location.startsWith('/home')) {
+    // Chat-First 4탭 구조: Home/Chat(0), 인사이트(1), 탐구(2), 트렌드(3)
+    // 프로필은 각 페이지 상단 ProfileHeaderIcon → 바텀시트로 접근
+    if (location.startsWith('/chat')) {
       return 0;
-    } else if (location.startsWith('/fortune')) {
+    } else if (location.startsWith('/home')) {
       return 1;
-    } else if (location.startsWith('/trend')) {
+    } else if (location.startsWith('/fortune')) {
       return 2;
-    } else if (location.startsWith('/premium')) {
+    } else if (location.startsWith('/trend')) {
       return 3;
-    } else if (location.startsWith('/profile')) {
-      return 4;
     }
-    return 0; // Default to home
+    return 0; // Default to Chat
   }
 
   void _updateNavigationVisibility() {

@@ -218,8 +218,19 @@ serve(async (req) => {
     // =====================================================
     const response = {
       success: true,
-      data: watchData,
+      data: {
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        fortuneType: 'face-reading-watch',
+        score: watchData.conditionScore,
+        content: watchData.briefFortune,
+        summary: `오늘의 컨디션 ${watchData.conditionScore}점`,
+        advice: watchData.dailyReminderMessage,
+
+        // 기존 필드 유지 (하위 호환성)
+        ...watchData
+      },
       source: recentFortune ? 'cached' : 'generated',
+      cached: !!recentFortune,
       timestamp: new Date().toISOString(),
     }
 

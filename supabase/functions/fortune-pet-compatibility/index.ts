@@ -196,7 +196,7 @@ serve(async (req) => {
       // 블러 처리 적용
       const processedFortune = applyBlurring(fortune, isPremium)
       return new Response(
-        JSON.stringify({ fortune: processedFortune, tokensUsed: 0 }),
+        JSON.stringify({ success: true, data: processedFortune, cached: true, tokensUsed: 0 }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -365,15 +365,20 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
 
     // 전체 운세 데이터 구성
     const fortune = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'pet-compatibility',
+      score: fortuneData.daily_condition.overall_score,
+      content: `${name}님과 ${pet_name}(${pet_species}, ${pet_age}세)의 오늘 운세입니다.`,
+      summary: fortuneData.summary || `${pet_name} 컨디션 ${fortuneData.daily_condition.overall_score}점`,
+      advice: fortuneData.owner_bond?.bonding_tip || '오늘도 반려동물과 함께 행복한 하루 되세요.',
+
+      // 기존 필드 유지 (하위 호환성)
       id: `pet-${Date.now()}`,
       userId: userId,
       type: 'pet-compatibility',
-
-      // 기본 정보
-      content: `${name}님과 ${pet_name}(${pet_species}, ${pet_age}세)의 오늘 운세입니다.`,
-      summary: fortuneData.summary,
+      pet_content: `${name}님과 ${pet_name}(${pet_species}, ${pet_age}세)의 오늘 운세입니다.`,
+      pet_summary: fortuneData.summary,
       greeting: fortuneData.greeting,
-      score: fortuneData.daily_condition.overall_score,
       overallScore: fortuneData.daily_condition.overall_score,
 
       // 반려동물 정보
@@ -437,7 +442,9 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
 
     return new Response(
       JSON.stringify({
-        fortune: fortuneWithPercentile,
+        success: true,
+        data: fortuneWithPercentile,
+        cached: false,
         tokensUsed: response.usage?.total_tokens || 0
       }),
       {

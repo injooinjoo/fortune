@@ -73,8 +73,10 @@ interface LoveFortuneResponse {
       gender: string;
       relationshipStatus: string;
     };
-    loveScore: number;
-    mainMessage: string;
+    score: number;           // ✅ 표준화: loveScore → score
+    content: string;         // ✅ 표준화: mainMessage → content
+    summary: string;         // ✅ 표준화: 한줄 요약 추가
+    advice: string;          // ✅ 표준화: 조언 추가
     loveProfile: {
       dominantStyle: string;
       personalityType: string;
@@ -249,8 +251,10 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 
 # 출력 형식 (반드시 JSON 형식으로)
 {
-  "loveScore": 60-95 사이 정수 (연애운 종합 점수),
-  "mainMessage": "핵심 메시지 (50자 이상, 따뜻하고 희망적)",
+  "score": 60-95 사이 정수 (연애운 종합 점수),
+  "content": "핵심 메시지/상세 분석 내용 (100자 이상, 따뜻하고 희망적)",
+  "summary": "한줄 요약 (30자 이내)",
+  "advice": "핵심 조언 (50자 이상)",
   "loveProfile": {
     "dominantStyle": "지배적 연애 스타일 (헌신형/열정형/친구형/독립형 중 택1)",
     "attachmentType": "애착 유형 (안정형/불안형/회피형/혼란형 중 택1)",
@@ -613,7 +617,7 @@ serve(async (req) => {
       )
     };
 
-    // 응답 데이터 구조화
+    // 응답 데이터 구조화 (✅ 표준화된 필드명 사용)
     const response: LoveFortuneResponse = {
       success: true,
       data: {
@@ -623,9 +627,11 @@ serve(async (req) => {
           gender: params.gender,
           relationshipStatus: params.relationshipStatus
         },
-        // ✅ 무료: 공개 섹션
-        loveScore: fortuneData.loveScore || Math.floor(Math.random() * 35) + 60,
-        mainMessage: fortuneData.mainMessage || '새로운 사랑의 기회가 찾아올 것입니다.',
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        score: fortuneData.score || fortuneData.loveScore || Math.floor(Math.random() * 35) + 60,
+        content: fortuneData.content || fortuneData.mainMessage || '새로운 사랑의 기회가 찾아올 것입니다.',
+        summary: fortuneData.summary || '연애운이 상승하는 시기입니다',
+        advice: fortuneData.advice || fortuneData.todaysAdvice?.general || '자신의 매력을 자연스럽게 표현해보세요',
 
         // 연애 프로필
         loveProfile: {
@@ -714,7 +720,7 @@ serve(async (req) => {
     console.log(`✅ [연애운] isPremium: ${isPremium}, isBlurred: ${!isPremium}`)
 
     // ✅ 퍼센타일 계산
-    const percentileData = await calculatePercentile(supabase, 'love', response.data.loveScore)
+    const percentileData = await calculatePercentile(supabase, 'love', response.data.score)
     response.data = addPercentileToResult(response.data, percentileData) as typeof response.data
 
     // 캐시 저장

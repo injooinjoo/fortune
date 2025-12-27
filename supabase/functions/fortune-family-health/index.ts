@@ -270,12 +270,20 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
       : []
 
     const result = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'family-health',
+      score: fortuneData.overallScore,
+      content: fortuneData.content,
+      summary: `오늘의 가족 건강운 점수는 ${fortuneData.overallScore}점입니다.`,
+      advice: fortuneData.recommendations?.[0] || '가족과 함께 건강을 챙기세요.',
+
+      // 기존 필드 유지 (하위 호환성)
       id: `family-health-${Date.now()}`,
       type: 'family-health',
       userId: userId,
       overallScore: fortuneData.overallScore,
       overall_score: fortuneData.overallScore,
-      content: fortuneData.content,
+      health_content: fortuneData.content,
 
       // 건강 카테고리 점수
       healthCategories: fortuneData.healthCategories,
@@ -336,7 +344,8 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
 
     return new Response(
       JSON.stringify({
-        fortune: resultWithPercentile,
+        success: true,
+        data: resultWithPercentile,
         cached: false,
         tokensUsed: response.usage?.totalTokens || 0
       }),

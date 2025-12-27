@@ -16,7 +16,10 @@ final traditionalFortuneRoutes = [
   GoRoute(
     path: '/face-reading',
     name: 'fortune-face-reading',
-    builder: (context, state) => const FaceReadingFortunePage()),
+    builder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>?;
+      return FaceReadingFortunePage(initialParams: extra);
+    }),
 
   // Tarot (타로)
   GoRoute(

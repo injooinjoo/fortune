@@ -121,18 +121,20 @@ interface SkillAnalysis {
   importanceScore: number // 1-10
 }
 
-// 응답 인터페이스
+// 응답 인터페이스 (✅ 표준화된 필드명 사용)
 interface CareerFortuneResponse {
   success: boolean
   data: {
     fortuneType: string
+    score: number           // ✅ 표준화: careerScore → score
+    content: string         // ✅ 표준화: overallOutlook → content
+    summary: string         // ✅ 표준화: 한줄 요약 추가
+    advice: string          // ✅ 표준화: 조언 추가
     currentRole: string
     timeHorizon: string
     careerPath: string
     predictions: CareerPrediction[]
     skillAnalysis: SkillAnalysis[]
-    overallOutlook: string
-    careerScore: number // 0-100
     strengthsAssessment: string[]
     improvementAreas: string[]
     actionPlan: {
@@ -405,14 +407,17 @@ serve(async (req) => {
         ? ['predictions', 'skillAnalysis', 'strengthsAssessment', 'improvementAreas', 'actionPlan', 'industryInsights', 'networkingAdvice', 'luckyPeriods', 'cautionPeriods', 'careerKeywords', 'mentorshipAdvice']
         : []
 
-      // 응답 데이터 구조화 (블러 없이 전체 데이터)
+      // 응답 데이터 구조화 (✅ 표준화된 필드명 사용)
       fortuneData = {
         fortuneType,
+        // ✅ 표준화된 필드명: score, content, summary, advice
+        score: Math.floor(predictions[0]?.probability || 75),
+        content: parsedResponse.전반적인전망 || parsedResponse.overallOutlook || '긍정적인 커리어 발전이 예상됩니다.',
+        summary: `${timeHorizon} 커리어 전망: ${careerPath}`,
+        advice: parsedResponse.멘토링조언 || parsedResponse.mentorshipAdvice || '전문성을 지속적으로 강화하세요',
         currentRole,
         timeHorizon,
         careerPath,
-        careerScore: Math.floor(predictions[0]?.probability || 75),
-        overallOutlook: parsedResponse.전반적인전망 || parsedResponse.overallOutlook || '긍정적인 커리어 발전이 예상됩니다.',
         predictions: predictions,
         skillAnalysis: skillAnalysis,
         strengthsAssessment: parsedResponse.강점평가 || parsedResponse.strengthsAssessment || ['전문성', '책임감', '학습능력'],
@@ -445,7 +450,7 @@ serve(async (req) => {
     }
 
     // ✅ 퍼센타일 계산
-    const percentileData = await calculatePercentile(supabase, 'career', fortuneData.careerScore)
+    const percentileData = await calculatePercentile(supabase, 'career', fortuneData.score)
     const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
 
     // 성공 응답

@@ -270,12 +270,20 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
       : []
 
     const result = {
+      // ✅ 표준화된 필드명: score, content, summary, advice
+      fortuneType: 'family-relationship',
+      score: fortuneData.overallScore,
+      content: fortuneData.content,
+      summary: `오늘의 가족 관계운 점수는 ${fortuneData.overallScore}점입니다.`,
+      advice: fortuneData.recommendations?.[0] || '가족과 소통하는 시간을 가져보세요.',
+
+      // 기존 필드 유지 (하위 호환성)
       id: `family-relationship-${Date.now()}`,
       type: 'family-relationship',
       userId: userId,
       overallScore: fortuneData.overallScore,
       overall_score: fortuneData.overallScore,
-      content: fortuneData.content,
+      relationship_content: fortuneData.content,
 
       // 관계 카테고리 점수
       relationshipCategories: fortuneData.relationshipCategories,
@@ -336,7 +344,8 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
 
     return new Response(
       JSON.stringify({
-        fortune: resultWithPercentile,
+        success: true,
+        data: resultWithPercentile,
         cached: false,
         tokensUsed: response.usage?.totalTokens || 0
       }),

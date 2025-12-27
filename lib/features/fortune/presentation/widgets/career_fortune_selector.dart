@@ -38,7 +38,7 @@ class CareerFortuneSelector extends StatelessWidget {
       description: '새로운 직장을 찾고 있는 분들을 위한 운세',
       icon: Icons.work_outline_rounded,
       gradientColors: [FortuneColors.career, FortuneColors.career],
-      route: '/fortune/career/seeker',
+      route: '/career',
       targetAudience: ['신입', '구직자', '이직 준비']),
     CareerFortuneType(
       id: 'change',
@@ -47,7 +47,7 @@ class CareerFortuneSelector extends StatelessWidget {
       description: '더 나은 기회를 찾는 분들을 위한 운세',
       icon: Icons.swap_horiz_rounded,
       gradientColors: [FortuneColors.career, FortuneColors.careerDark],
-      route: '/fortune/career/change',
+      route: '/career',
       targetAudience: ['경력직', '이직 고민', '커리어 체인지']),
     CareerFortuneType(
       id: 'future',
@@ -56,7 +56,7 @@ class CareerFortuneSelector extends StatelessWidget {
       description: '현재 직장에서의 미래가 궁금한 분들을 위한 운세',
       icon: Icons.trending_up_rounded,
       gradientColors: [FortuneColors.career, FortuneColors.career],
-      route: '/fortune/career/future',
+      route: '/career',
       targetAudience: ['재직자', '승진 대상', '연봉 협상']),
     CareerFortuneType(
       id: 'freelance',
@@ -65,7 +65,7 @@ class CareerFortuneSelector extends StatelessWidget {
       description: '독립적인 커리어를 꿈꾸는 분들을 위한 운세',
       icon: Icons.laptop_mac_rounded,
       gradientColors: [FortuneColors.wealth, FortuneColors.wealthDark],
-      route: '/fortune/career/freelance',
+      route: '/career',
       targetAudience: ['프리랜서', '1인 기업', 'N잡러'],
       isNew: true),
     CareerFortuneType(
@@ -75,7 +75,7 @@ class CareerFortuneSelector extends StatelessWidget {
       description: '새로운 사업을 시작하려는 분들을 위한 운세',
       icon: Icons.rocket_launch_rounded,
       gradientColors: [DSColors.textSecondary, DSColors.textSecondary],
-      route: '/fortune/career/startup',
+      route: '/career',
       targetAudience: ['예비 창업자', '스타트업', '사업가']),
     CareerFortuneType(
       id: 'crisis',
@@ -84,7 +84,7 @@ class CareerFortuneSelector extends StatelessWidget {
       description: '커리어 위기를 겪고 있는 분들을 위한 운세',
       icon: Icons.support_rounded,
       gradientColors: [FortuneColors.mystical, FortuneColors.mysticalLight],
-      route: '/fortune/career/crisis',
+      route: '/career',
       targetAudience: ['번아웃', '구조조정', '커리어 전환'],
       isNew: true),
   ];

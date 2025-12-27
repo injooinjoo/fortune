@@ -1,0 +1,48 @@
+import '../models/chat_message.dart';
+import '../../../fortune/domain/models/{{type}}_result.dart';
+
+/// {{typeName}} 결과 → 채팅 메시지 변환기
+class {{typePascal}}Converter {
+  /// {{typePascal}}Result를 ChatMessage 리스트로 변환
+  static List<ChatMessage> convert({{typePascal}}Result result) {
+    return [
+      ChatMessage.fortuneResult(
+        fortuneType: '{{typeName}}',
+        title: '{{typeName}} 결과',
+        overallScore: result.overallScore,
+        sections: result.sections.map((s) => {
+          'title': s.title,
+          'content': s.content,
+          'score': s.score,
+        }).toList(),
+        advice: result.advice,
+        warnings: result.warnings,
+        luckItems: result.luckItems?.toJson(),
+        percentile: result.percentile,
+        isBlurred: result.isBlurred,
+        blurredSections: result.blurredSections,
+      ),
+    ];
+  }
+
+  /// 블러 해제된 결과로 업데이트
+  static ChatMessage updateWithUnblurred(
+    ChatMessage original,
+    {{typePascal}}Result unblurredResult,
+  ) {
+    return original.copyWith(
+      isBlurred: false,
+      blurredSections: [],
+      data: {
+        ...original.data,
+        'sections': unblurredResult.sections.map((s) => {
+          'title': s.title,
+          'content': s.content,
+          'score': s.score,
+        }).toList(),
+        'advice': unblurredResult.advice,
+        'warnings': unblurredResult.warnings,
+      },
+    );
+  }
+}

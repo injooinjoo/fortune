@@ -1,6 +1,5 @@
 // Import all fortune route categories
 import 'fortune_routes/basic_fortune_routes.dart';
-import 'fortune_routes/love_fortune_routes.dart';
 import 'fortune_routes/career_fortune_routes.dart';
 import 'fortune_routes/lucky_item_routes.dart';
 import 'fortune_routes/traditional_fortune_routes.dart';
@@ -12,7 +11,6 @@ import 'fortune_routes/special_fortune_routes.dart';
 final fortuneRoutes = [
   // Include all categorized fortune routes
   ...basicFortuneRoutes,
-  ...loveFortuneRoutes,
   ...careerFortuneRoutes,
   ...luckyItemRoutes,
   ...traditionalFortuneRoutes,

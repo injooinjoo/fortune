@@ -1,0 +1,12 @@
+import 'package:go_router/go_router.dart';
+
+import '../../../features/fortune/presentation/pages/{{type}}_fortune_page.dart';
+
+/// {{typeName}} 라우트 정의
+final {{typeCamel}}Routes = [
+  GoRoute(
+    path: '/fortune/{{typeKebab}}',
+    name: 'fortune-{{typeKebab}}',
+    builder: (context, state) => const {{typePascal}}FortunePage(),
+  ),
+];
