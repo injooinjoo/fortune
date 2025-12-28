@@ -7,7 +7,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>관상은 과학</string>
+		<string>my morrow</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
-		<string>관상은 과학</string>
+		<string>my morrow</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
@@ -259,13 +259,13 @@
 		<key>naverConsumerKey</key>
 		<string>QMEfy6U82j8nKG3HSE8y</string>
 		<key>naverServiceAppName</key>
-		<string>관상은 과학</string>
+		<string>my morrow</string>
 		<key>naverServiceAppUrlScheme</key>
 		<string>naverQMEfy6U82j8nKG3HSE8y</string>
 		<key>NidClientID</key>
 		<string>QMEfy6U82j8nKG3HSE8y</string>
 		<key>NidAppName</key>
-		<string>관상은 과학</string>
+		<string>my morrow</string>
 		<key>NidUrlScheme</key>
 		<string>naverQMEfy6U82j8nKG3HSE8y</string>
 		<key>UIStatusBarHidden</key>

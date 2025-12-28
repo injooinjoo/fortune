@@ -1,4 +1,4 @@
-# App Store Review Note - 관상은 과학이야
+# App Store Review Note - my morrow
 
 ## Re: Guideline 2.1 - In-App Purchase Issue (Fixed)
 
@@ -21,11 +21,11 @@ We have fixed the in-app purchase receipt validation issue.
 
 ## Re: Guideline 4.3(b) - Spam / Design Differentiation
 
-We understand your concern about app differentiation. Here's what makes "관상은 과학이야" (Face Reading is Science) unique:
+We understand your concern about app differentiation. Here's what makes "my morrow" (Meet Tomorrow's You) unique:
 
 ### Core Differentiator: Scientific Approach to Physiognomy
 
-Our app's name "관상은 과학이야" (Face Reading is Science) reflects our unique approach - treating traditional Korean physiognomy (관상학) as an accumulated wisdom system rather than mere superstition.
+Our app's name "my morrow" (Meet Tomorrow's You) reflects our unique approach - treating traditional Korean physiognomy (관상학) as an accumulated wisdom system rather than mere superstition.
 
 ### Unique Features:
 

@@ -248,6 +248,22 @@ const List<RecommendationChip> defaultChips = [
     icon: Icons.checkroom,
     color: Color(0xFF10B981),
   ),
+
+  // ============ 웰니스 ============
+  RecommendationChip(
+    id: 'breathing',
+    label: '숨쉬기',
+    fortuneType: 'breathing',
+    icon: Icons.self_improvement_outlined,
+    color: Color(0xFF26A69A),
+  ),
+  RecommendationChip(
+    id: 'gratitude',
+    label: '감사일기',
+    fortuneType: 'gratitude',
+    icon: Icons.favorite_outline,
+    color: Color(0xFFFFC107),
+  ),
 ];
 
 /// 추가 추천 칩 (컨텍스트 기반 선택용) - deprecated, defaultChips에 통합됨

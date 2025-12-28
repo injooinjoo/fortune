@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/design_system/design_system.dart';
@@ -21,6 +22,7 @@ import '../../domain/models/recommendation_chip.dart';
 import '../../domain/models/fortune_survey_config.dart';
 import '../../domain/configs/survey_configs.dart';
 import '../../domain/services/intent_detector.dart';
+import '../../data/services/fortune_recommend_service.dart';
 import '../providers/chat_messages_provider.dart';
 import '../providers/chat_survey_provider.dart';
 import '../widgets/chat_welcome_view.dart';
@@ -52,6 +54,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   final TextEditingController _textController = TextEditingController();
   List<DetectedIntent> _detectedIntents = [];
 
+  /// AI 추천 서비스
+  late final FortuneRecommendService _recommendService;
+
+  /// AI 추천 로딩 상태
+  bool _isLoadingRecommendations = false;
+
   /// 프로필 생성 완료 후 궁합 진행해야 할지 여부
   bool _pendingCompatibilityAfterProfileCreation = false;
 
@@ -61,12 +69,14 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   @override
   void initState() {
     super.initState();
+    _recommendService = FortuneRecommendService();
     _textController.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
     _textController.removeListener(_onTextChanged);
+    _recommendService.dispose();
     _scrollController.dispose();
     _textController.dispose();
     super.dispose();
@@ -75,16 +85,45 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   void _onTextChanged() {
     final text = _textController.text;
     if (text.length >= 2) {
-      final intents = IntentDetector.detectIntents(text);
+      // 1. 즉시 키워드 기반 결과 표시 (빠른 피드백)
+      final keywordIntents = IntentDetector.detectIntents(text);
       if (mounted) {
         setState(() {
-          _detectedIntents = intents.where((i) => i.isConfident).toList();
+          _detectedIntents = keywordIntents.where((i) => i.isConfident).toList();
         });
       }
+
+      // 2. AI 추천 비동기 호출 (디바운싱)
+      if (mounted) {
+        setState(() => _isLoadingRecommendations = true);
+      }
+
+      _recommendService.getRecommendationsDebounced(
+        text,
+        onSuccess: (response) {
+          if (mounted && response.recommendations.isNotEmpty) {
+            // AI 결과를 우선 표시 (키워드 결과 교체)
+            setState(() {
+              _detectedIntents = response.toDetectedIntents();
+              _isLoadingRecommendations = false;
+            });
+          } else if (mounted) {
+            setState(() => _isLoadingRecommendations = false);
+          }
+        },
+        onError: () {
+          // 에러 시 키워드 결과 유지
+          if (mounted) {
+            setState(() => _isLoadingRecommendations = false);
+          }
+        },
+      );
     } else {
-      if (_detectedIntents.isNotEmpty && mounted) {
+      if ((_detectedIntents.isNotEmpty || _isLoadingRecommendations) && mounted) {
+        _recommendService.cancelDebounce();
         setState(() {
           _detectedIntents = [];
+          _isLoadingRecommendations = false;
         });
       }
     }
@@ -117,6 +156,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   void _handleChipTap(RecommendationChip chip) {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
     final surveyNotifier = ref.read(chatSurveyProvider.notifier);
+
+    // 숨쉬기: 웰니스 페이지로 직접 이동
+    if (chip.fortuneType == 'breathing') {
+      context.push('/wellness/meditation');
+      return;
+    }
 
     // chip.fortuneType을 FortuneSurveyType으로 매핑
     final surveyType = _mapChipToSurveyType(chip.fortuneType);
@@ -297,6 +342,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // 스타일/패션
       case 'ootdEvaluation':
         return FortuneSurveyType.ootdEvaluation;
+      // 웰니스
+      case 'gratitude':
+        return FortuneSurveyType.gratitude;
       default:
         return null;
     }
@@ -553,6 +601,13 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       return;
     }
 
+    // 감사일기 특별 처리 (API 호출 없이 로컬 표시)
+    if (completedType == FortuneSurveyType.gratitude) {
+      _handleGratitudeComplete(completedData);
+      surveyNotifier.clearCompleted();
+      return;
+    }
+
     chatNotifier.showTypingIndicator();
     _scrollToBottom();
 
@@ -593,6 +648,37 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           '다른 운세를 봐볼까요?',
         );
         surveyNotifier.clearCompleted();
+        _scrollToBottom();
+      });
+    });
+  }
+
+  /// 감사일기 완료 처리 (API 호출 없이 로컬 표시)
+  void _handleGratitudeComplete(Map<String, dynamic> data) {
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
+
+    final gratitude1 = data['gratitude1'] as String? ?? '';
+    final gratitude2 = data['gratitude2'] as String? ?? '';
+    final gratitude3 = data['gratitude3'] as String? ?? '';
+
+    chatNotifier.showTypingIndicator();
+    _scrollToBottom();
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      final today = DateFormat('M월 d일').format(DateTime.now());
+      chatNotifier.addAiMessage(
+        '✨ $today의 감사일기\n\n'
+        '1. $gratitude1\n'
+        '2. $gratitude2\n'
+        '3. $gratitude3\n\n'
+        '오늘도 감사한 마음으로 하루를 보내셨네요! 💛\n'
+        '작은 것에 감사하는 습관이 행복을 키워줘요.',
+      );
+      _scrollToBottom();
+
+      // 완료 후 추천 칩 표시
+      Future.delayed(const Duration(milliseconds: 500), () {
+        chatNotifier.addSystemMessage();
         _scrollToBottom();
       });
     });
@@ -1397,6 +1483,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // profileCreation은 운세 API 호출이 아닌 프로필 저장 용도
         // _handleProfileCreationComplete에서 별도 처리됨
         throw UnsupportedError('profileCreation은 운세 API를 사용하지 않습니다');
+
+      case FortuneSurveyType.gratitude:
+        // gratitude는 API 호출 없이 로컬에서 처리
+        // _handleGratitudeComplete에서 별도 처리됨
+        throw UnsupportedError('gratitude는 운세 API를 사용하지 않습니다');
     }
   }
 
@@ -1482,6 +1573,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return '이사/이직운';
       case FortuneSurveyType.profileCreation:
         return '프로필 생성';
+      case FortuneSurveyType.gratitude:
+        return '감사일기';
     }
   }
 
@@ -1555,6 +1648,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return 'moving';
       case FortuneSurveyType.profileCreation:
         return 'default'; // 프로필 생성은 운세 이미지 불필요
+      case FortuneSurveyType.gratitude:
+        return 'gratitude'; // 감사일기
     }
   }
 
@@ -1825,11 +1920,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                         : const SizedBox.shrink(),
                   ),
 
-                  // 추천 운세 칩 (텍스트 입력 시)
-                  if (!surveyState.isActive && _detectedIntents.isNotEmpty)
+                  // 추천 운세 칩 (텍스트 입력 시 - 키워드 기반 + AI 추천)
+                  if (!surveyState.isActive && (_detectedIntents.isNotEmpty || _isLoadingRecommendations))
                     FortuneTypeChips(
                       intents: _detectedIntents,
                       onSelect: _handleFortuneTypeSelect,
+                      isLoading: _isLoadingRecommendations,
                     ),
 
                   // 텍스트 입력란 (선택형 설문 시 슬라이드 아웃)

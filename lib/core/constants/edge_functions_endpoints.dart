@@ -99,6 +99,9 @@ class EdgeFunctionsEndpoints {
   // 반려동물
   static const String petCompatibilityFortune = '/fortune-pet-compatibility';
 
+  // AI 추천
+  static const String fortuneRecommend = '/fortune-recommend';
+
   // Helper method to construct full URL
   static String getFullUrl(String endpoint) {
     return '$currentBaseUrl$endpoint';

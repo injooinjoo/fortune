@@ -3,7 +3,7 @@
 
 // Debug Configuration
 PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune.debug
-PRODUCT_NAME = Fortune Debug
+PRODUCT_NAME = my morrow Debug
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 
 // Code Signing

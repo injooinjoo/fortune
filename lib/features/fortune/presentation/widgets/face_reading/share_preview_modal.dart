@@ -305,7 +305,7 @@ class _SharePreviewModalState extends State<SharePreviewModal> {
           const Spacer(),
           if (_includeAppLogo)
             Text(
-              '관상은 과학이다',
+              'my morrow',
               style: TextStyle(
                 fontSize: 10,
                 color: DSColors.textSecondary.withValues(alpha: 0.5),

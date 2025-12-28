@@ -7,11 +7,13 @@ import '../../../domain/services/intent_detector.dart';
 class FortuneTypeChips extends StatelessWidget {
   final List<DetectedIntent> intents;
   final void Function(FortuneSurveyType type) onSelect;
+  final bool isLoading;
 
   const FortuneTypeChips({
     super.key,
     required this.intents,
     required this.onSelect,
+    this.isLoading = false,
   });
 
   @override
@@ -19,7 +21,11 @@ class FortuneTypeChips extends StatelessWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    if (intents.isEmpty) return const SizedBox.shrink();
+    if (intents.isEmpty && !isLoading) return const SizedBox.shrink();
+
+    // AI 추천인지 확인
+    final isAiRecommendation =
+        intents.isNotEmpty && intents.first.isAiGenerated;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -30,23 +36,45 @@ class FortuneTypeChips extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '이런 운세가 궁금하신가요?',
-            style: typography.labelSmall.copyWith(
-              color: colors.textSecondary,
-            ),
+          Row(
+            children: [
+              Text(
+                isAiRecommendation
+                    ? '✨ AI 추천'
+                    : '이런 운세가 궁금하신가요?',
+                style: typography.labelSmall.copyWith(
+                  color: isAiRecommendation
+                      ? colors.accent
+                      : colors.textSecondary,
+                  fontWeight:
+                      isAiRecommendation ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
+              if (isLoading) ...[
+                const SizedBox(width: DSSpacing.xs),
+                SizedBox(
+                  width: 12,
+                  height: 12,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation(colors.textTertiary),
+                  ),
+                ),
+              ],
+            ],
           ),
           const SizedBox(height: DSSpacing.xs),
-          Wrap(
-            spacing: DSSpacing.xs,
-            runSpacing: DSSpacing.xs,
-            children: intents.take(3).map((intent) {
-              return _FortuneTypeChip(
-                intent: intent,
-                onTap: () => onSelect(intent.type),
-              );
-            }).toList(),
-          ),
+          if (intents.isNotEmpty)
+            Wrap(
+              spacing: DSSpacing.xs,
+              runSpacing: DSSpacing.xs,
+              children: intents.take(3).map((intent) {
+                return _FortuneTypeChip(
+                  intent: intent,
+                  onTap: () => onSelect(intent.type),
+                );
+              }).toList(),
+            ),
         ],
       ),
     );
@@ -159,6 +187,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return const Color(0xFF4A90D9); // 블루
       case FortuneSurveyType.moving:
         return const Color(0xFF4CAF50); // 그린
+      case FortuneSurveyType.gratitude:
+        return const Color(0xFFFFC107); // 앰버
     }
   }
 
@@ -232,6 +262,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '시험운';
       case FortuneSurveyType.moving:
         return '이사/이직운';
+      case FortuneSurveyType.gratitude:
+        return '감사일기';
     }
   }
 
@@ -305,6 +337,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '📚';
       case FortuneSurveyType.moving:
         return '🏠';
+      case FortuneSurveyType.gratitude:
+        return '✨';
     }
   }
 }

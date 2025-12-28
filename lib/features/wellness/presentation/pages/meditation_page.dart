@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/services/meditation_sound_service.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/meditation_session.dart';
 import '../providers/wellness_providers.dart';
@@ -17,6 +18,8 @@ class MeditationPage extends ConsumerStatefulWidget {
 }
 
 class _MeditationPageState extends ConsumerState<MeditationPage> {
+  bool _wasRunning = false;
+
   @override
   void initState() {
     super.initState();
@@ -30,9 +33,46 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
   }
 
   @override
+  void dispose() {
+    // 페이지 나갈 때 음악 정지
+    ref.read(meditationSoundServiceProvider).stop();
+    super.dispose();
+  }
+
+  /// 타이머 상태에 따라 배경 음악 제어
+  void _handleTimerStateChange(BreathingTimerState? previous, BreathingTimerState current) {
+    final soundService = ref.read(meditationSoundServiceProvider);
+
+    // 시작: 재생
+    if (current.isRunning && !_wasRunning) {
+      soundService.play();
+    }
+    // 일시정지: 일시정지
+    else if (!current.isRunning && _wasRunning && current.totalSecondsRemaining > 0) {
+      soundService.pause();
+    }
+    // 종료/리셋: 정지
+    else if (!current.isRunning && current.totalSecondsRemaining == current.totalDurationSeconds) {
+      soundService.stop();
+    }
+    // 시간 끝남: 정지
+    else if (current.totalSecondsRemaining <= 0) {
+      soundService.stop();
+    }
+
+    _wasRunning = current.isRunning;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final timerState = ref.watch(breathingTimerProvider);
+
+    // 타이머 상태 변화 감지하여 배경 음악 제어
+    ref.listen<BreathingTimerState>(
+      breathingTimerProvider,
+      _handleTimerStateChange,
+    );
 
     return Scaffold(
       backgroundColor: isDark ? DSColors.backgroundDark : DSColors.background,
@@ -207,6 +247,7 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
           ),
           TextButton(
             onPressed: () {
+              ref.read(meditationSoundServiceProvider).stop();
               ref.read(breathingTimerProvider.notifier).reset();
               Navigator.pop(dialogContext);
               context.pop();

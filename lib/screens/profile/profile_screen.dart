@@ -899,62 +899,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ],
 
-          // 웰니스 섹션
-          const SectionHeader(title: '웰니스'),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(DSRadius.md),
-              border: Border.all(
-                color: context.colors.border,
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                SettingsListTile(
-                  icon: Icons.self_improvement_outlined,
-                  title: '명상 & 호흡',
-                  subtitle: '마음을 진정시키는 호흡 운동',
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: _getSecondaryTextColor(context),
-                  ),
-                  onTap: () => context.push('/wellness/meditation'),
-                ),
-                SettingsListTile(
-                  icon: Icons.mood_outlined,
-                  title: '무드 트래커',
-                  subtitle: '오늘의 기분 기록하기',
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: _getSecondaryTextColor(context),
-                  ),
-                  onTap: () => context.push('/wellness'),
-                ),
-                SettingsListTile(
-                  icon: Icons.favorite_outline,
-                  title: '감사 일기',
-                  subtitle: '매일 감사한 것 3가지',
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: _getSecondaryTextColor(context),
-                  ),
-                  onTap: () => context.push('/wellness'),
-                  isLast: true,
-                ),
-              ],
-            ),
-          ),
-
           // 도구 섹션
           const SectionHeader(title: '도구'),
           Container(

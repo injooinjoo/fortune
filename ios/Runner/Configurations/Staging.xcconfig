@@ -3,7 +3,7 @@
 
 // Staging Configuration
 PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune.staging
-PRODUCT_NAME = Fortune Staging
+PRODUCT_NAME = my morrow Staging
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 
 // Code Signing

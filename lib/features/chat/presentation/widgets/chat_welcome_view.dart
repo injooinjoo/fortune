@@ -19,16 +19,15 @@ class ChatWelcomeView extends StatelessWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    return Center(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(
-          DSSpacing.md,
-          DSSpacing.sm,
-          DSSpacing.md,
-          DSSpacing.md + bottomPadding,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        DSSpacing.md,
+        DSSpacing.xxl + DSSpacing.lg, // 상단 여백 추가
+        DSSpacing.md,
+        DSSpacing.md + bottomPadding,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // AI 아바타
             Container(
@@ -73,7 +72,6 @@ class ChatWelcomeView extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }

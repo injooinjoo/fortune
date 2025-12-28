@@ -145,6 +145,9 @@ enum FortuneSurveyType {
   // 실용/결정 (2개)
   exam,           // 시험운
   moving,         // 이사/이직운
+
+  // 웰니스 (1개)
+  gratitude,      // 감사일기
 }
 
 /// 설문 설정

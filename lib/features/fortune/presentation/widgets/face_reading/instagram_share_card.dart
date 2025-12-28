@@ -249,7 +249,7 @@ class InstagramShareCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '관상은 과학이다',
+                'my morrow',
                 style: context.labelSmall.copyWith(
                   color: DSColors.accent,
                   fontWeight: FontWeight.w500,
@@ -384,7 +384,7 @@ class EmotionShareCard extends StatelessWidget {
 
             // 앱 로고
             Text(
-              '관상은 과학이다',
+              'my morrow',
               style: context.labelSmall.copyWith(
                 color: DSColors.textSecondary.withValues(alpha: 0.5),
                 fontSize: 10,
