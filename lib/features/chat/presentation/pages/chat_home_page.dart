@@ -40,6 +40,7 @@ import '../widgets/survey/chat_tarot_flow.dart';
 import '../widgets/survey/chat_face_reading_flow.dart';
 import '../widgets/survey/chat_birth_datetime_picker.dart';
 import '../../../fortune/presentation/providers/saju_provider.dart';
+import '../../../../core/services/fortune_generators/fortune_cookie_generator.dart';
 
 /// Chat-First 메인 홈 페이지
 class ChatHomePage extends ConsumerStatefulWidget {
@@ -204,6 +205,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               fortuneType: fortuneTypeStr,
               fortune: fortune,
               isBlurred: fortune.isBlurred,
+              blurredSections: fortune.blurredSections,
             );
             _scrollToBottom();
 
@@ -632,6 +634,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           fortuneType: fortuneTypeStr,
           fortune: fortune,
           isBlurred: fortune.isBlurred,
+          blurredSections: fortune.blurredSections,
         );
         surveyNotifier.clearCompleted();
         _scrollToBottom();
@@ -924,6 +927,36 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       );
       _scrollToBottom();
     }
+  }
+
+  /// 스포츠 종류에 따른 Edge Function 엔드포인트 반환
+  String _getSportEndpoint(String sport) {
+    return switch (sport.toLowerCase()) {
+      '야구' || 'baseball' => 'lucky-baseball',
+      '골프' || 'golf' => 'lucky-golf',
+      '테니스' || 'tennis' => 'lucky-tennis',
+      '러닝' || '달리기' || 'running' => 'lucky-running',
+      '사이클' || '자전거' || 'cycling' => 'lucky-cycling',
+      '수영' || 'swimming' || 'swim' => 'lucky-swim',
+      '등산' || '하이킹' || 'hiking' => 'lucky-hiking',
+      '낚시' || 'fishing' => 'lucky-fishing',
+      '피트니스' || '헬스' || 'fitness' => 'lucky-fitness',
+      '요가' || 'yoga' => 'lucky-yoga',
+      _ => 'lucky-fitness', // default
+    };
+  }
+
+  /// 가족 관심사에 따른 Edge Function 엔드포인트 반환
+  /// 가족 관심사를 Edge Function 파라미터로 변환
+  String _getFamilyType(String concern) {
+    return switch (concern.toLowerCase()) {
+      '재물' || 'wealth' || '돈' || '재정' => 'wealth',
+      '건강' || 'health' => 'health',
+      '자녀' || 'children' || '아이' || '육아' => 'children',
+      '관계' || 'relationship' || '소통' => 'relationship',
+      '변화' || 'change' || '이사' || '전환' => 'change',
+      _ => 'all', // default - 종합 운세
+    };
   }
 
   /// 운세 API 호출 - Edge Function 요구사항에 맞게 파라미터 매핑
@@ -1293,7 +1326,21 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case FortuneSurveyType.fortuneCookie:
-        return apiService.getDailyFortune(userId: userId);
+        // 로컬 포춘쿠키 생성기 사용 (API 호출 없음, 일일 저장)
+        final cookieResult = await FortuneCookieGenerator.getTodayFortuneCookie();
+        return Fortune(
+          id: 'fortune-cookie-${DateTime.now().toIso8601String().split('T')[0]}',
+          userId: userId,
+          type: 'fortune-cookie',
+          content: cookieResult.data['message'] as String? ?? '',
+          createdAt: DateTime.now(),
+          overallScore: cookieResult.score,
+          luckyItems: {
+            'lucky_number': cookieResult.data['lucky_number'],
+            'lucky_color': cookieResult.data['lucky_color'],
+            'emoji': cookieResult.data['emoji'],
+          },
+        );
 
       // ============================================================
       // Health / Sports
@@ -1310,18 +1357,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case FortuneSurveyType.sportsGame:
-        // Note: lucky-sports Edge Function 없음 → daily 활용
+        // 스포츠별 전용 Edge Function 사용 (fortune-lucky-baseball 등)
+        final sport = answers['sport'] ?? 'fitness';
+        final sportEndpoint = _getSportEndpoint(sport);
         return apiService.getFortune(
           userId: userId,
-          fortuneType: 'daily',
+          fortuneType: sportEndpoint,
           params: {
+            'name': userName,
             'birthDate': birthDateStr,
             'birthTime': userProfile?.birthTime ?? '자시 (23:00 - 01:00)',
             'gender': gender,
-            'zodiacSign': userProfile?.zodiacSign ?? '양자리',
-            'zodiacAnimal': userProfile?.chineseZodiac ?? '용',
-            'category': 'sports',
-            'sport': answers['sport'] ?? 'general',
+            'sport': sport,
           },
         );
 
@@ -1364,16 +1411,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case FortuneSurveyType.family:
-        // Edge Function 요구: name, birthDate, family_type, relationship
+        // 통합 가족 운세 Edge Function 사용 (fortune-family)
         // Survey step ids: 'concern', 'member'
+        final familyConcern = answers['concern'] ?? 'all';
+        final familyType = _getFamilyType(familyConcern);
         return apiService.getFortune(
           userId: userId,
-          fortuneType: 'family-harmony',
+          fortuneType: 'family',
           params: {
             'name': userName,
             'birthDate': birthDateStr,
-            'family_type': answers['concern'] ?? 'nuclear',
-            'relationship': answers['member'] ?? 'spouse',
+            'family_type': familyType,
+            'relationship': answers['member'] ?? 'all',
           },
         );
 
@@ -1607,7 +1656,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case FortuneSurveyType.compatibility:
         return 'compatibility';
       case FortuneSurveyType.avoidPeople:
-        return 'relationship';
+        return 'avoid-people';
       case FortuneSurveyType.exLover:
         return 'ex-lover';
       case FortuneSurveyType.blindDate:
@@ -1804,19 +1853,26 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// 하단 떠다니는 영역의 높이 계산 (설문 + 칩 + 입력란)
   double _calculateBottomPadding(ChatSurveyState surveyState) {
-    double padding = 0;
-
-    // 입력란이 숨겨지지 않을 때만 패딩 추가
-    if (!_shouldHideInputField(surveyState)) {
-      padding += 80; // 기본 입력란 높이
-    }
+    // 기본 입력란 높이
+    double padding = 80;
 
     if (surveyState.isActive) {
-      // 설문이 활성화된 경우 추가 패딩
-      padding += 60;
+      final inputType = surveyState.activeProgress?.currentStep.inputType;
+
+      if (inputType == SurveyInputType.chips ||
+          inputType == SurveyInputType.multiSelect) {
+        // 객관식 선택지
+        padding += 60;
+      } else if (inputType == SurveyInputType.text ||
+                 inputType == SurveyInputType.voice) {
+        // 텍스트/음성 입력
+        padding += 20;
+      } else {
+        // 기타 입력 타입
+        padding += 50;
+      }
     } else if (_detectedIntents.isNotEmpty) {
-      // 추천 칩이 표시되는 경우 추가 패딩
-      padding += 50;
+      padding += 40;
     }
 
     return padding;
@@ -1895,70 +1951,72 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               left: 0,
               right: 0,
               bottom: 0,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // 설문 입력 영역 (inputType에 따라 다른 위젯) - 슬라이드 업 애니메이션
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    transitionBuilder: (child, animation) {
-                      return SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0, 1),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
-                      );
-                    },
-                    child: surveyState.isActive
-                        ? KeyedSubtree(
-                            key: ValueKey(surveyState.activeProgress?.currentStep.id ?? 'survey'),
-                            child: _buildSurveyInputWidget(surveyState, surveyOptions) ?? const SizedBox.shrink(),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-
-                  // 추천 운세 칩 (텍스트 입력 시 - 키워드 기반 + AI 추천)
-                  if (!surveyState.isActive && (_detectedIntents.isNotEmpty || _isLoadingRecommendations))
-                    FortuneTypeChips(
-                      intents: _detectedIntents,
-                      onSelect: _handleFortuneTypeSelect,
-                      isLoading: _isLoadingRecommendations,
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 설문 입력 영역 (inputType에 따라 다른 위젯) - 슬라이드 업 애니메이션
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 1),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                      child: surveyState.isActive
+                          ? KeyedSubtree(
+                              key: ValueKey(surveyState.activeProgress?.currentStep.id ?? 'survey'),
+                              child: _buildSurveyInputWidget(surveyState, surveyOptions) ?? const SizedBox.shrink(),
+                            )
+                          : const SizedBox.shrink(),
                     ),
 
-                  // 텍스트 입력란 (선택형 설문 시 슬라이드 아웃)
-                  ClipRect(
-                    child: AnimatedSlide(
-                      offset: shouldHideInput ? const Offset(0, 1) : Offset.zero,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOutCubic,
-                      child: AnimatedOpacity(
-                        opacity: shouldHideInput ? 0.0 : 1.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: Container(
-                          padding: const EdgeInsets.all(DSSpacing.md),
-                          // 완전 투명 배경 - pill만 보임
-                          child: UnifiedVoiceTextField(
-                            controller: _textController,
-                            hintText: isTextInputStep
-                                ? '텍스트를 입력하세요...'
-                                : surveyState.isActive
-                                    ? '위 선택지에서 골라주세요'
-                                    : '무엇이든 물어보세요...',
-                            onSubmit: isTextInputStep
-                                ? _handleTextSurveySubmit
-                                : surveyState.isActive
-                                    ? (_) {}
-                                    : _handleSendMessage,
-                            enabled: !surveyState.isActive || isTextInputStep,
+                    // 추천 운세 칩 (텍스트 입력 시 - 키워드 기반 + AI 추천)
+                    if (!surveyState.isActive && (_detectedIntents.isNotEmpty || _isLoadingRecommendations))
+                      FortuneTypeChips(
+                        intents: _detectedIntents,
+                        onSelect: _handleFortuneTypeSelect,
+                        isLoading: _isLoadingRecommendations,
+                      ),
+
+                    // 텍스트 입력란 (선택형 설문 시 슬라이드 아웃)
+                    ClipRect(
+                      child: AnimatedSlide(
+                        offset: shouldHideInput ? const Offset(0, 1) : Offset.zero,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                        child: AnimatedOpacity(
+                          opacity: shouldHideInput ? 0.0 : 1.0,
+                          duration: const Duration(milliseconds: 200),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+                            child: UnifiedVoiceTextField(
+                              controller: _textController,
+                              hintText: isTextInputStep
+                                  ? '텍스트를 입력하세요...'
+                                  : surveyState.isActive
+                                      ? '위 선택지에서 골라주세요'
+                                      : '무엇이든 물어보세요...',
+                              onSubmit: isTextInputStep
+                                  ? _handleTextSurveySubmit
+                                  : surveyState.isActive
+                                      ? (_) {}
+                                      : _handleSendMessage,
+                              enabled: !surveyState.isActive || isTextInputStep,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

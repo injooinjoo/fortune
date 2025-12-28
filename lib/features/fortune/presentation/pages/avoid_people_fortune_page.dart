@@ -186,6 +186,14 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                       const SizedBox(height: 16),
 
                       // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      // 👀 무료 미리보기 섹션 (블러 상태일 때만 표시)
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                      if (_isBlurred) ...[
+                        _buildPreviewSection(result.data),
+                        const SizedBox(height: 16),
+                      ],
+
+                      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                       // 👤 경계인물 카드 (Premium)
                       // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                       _buildCautionCard(
@@ -708,6 +716,127 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
         );
       }
     }
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 👀 무료 미리보기 섹션 (Premium 유도)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _buildPreviewSection(Map<String, dynamic> data) {
+    // severity가 'high'인 것 우선으로 정렬
+    final allPeople = _parseCautionPeople(data['cautionPeople']);
+    allPeople.sort((a, b) {
+      const order = {'high': 0, 'medium': 1, 'low': 2};
+      return (order[a.severity] ?? 2).compareTo(order[b.severity] ?? 2);
+    });
+    final previewPeople = allPeople.take(1).toList();
+    final previewObjects = _parseCautionObjects(data['cautionObjects']).take(1).toList();
+
+    if (previewPeople.isEmpty && previewObjects.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
+            children: [
+              const Text('👀', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('오늘의 핵심 경계대상', style: DSTypography.headingSmall),
+                    Text('광고 시청 시 8개 카테고리 전체 공개',
+                        style: DSTypography.bodySmall.copyWith(color: DSColors.textSecondary)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const Divider(height: 1),
+          const SizedBox(height: 16),
+
+          // 경계인물 미리보기
+          if (previewPeople.isNotEmpty) ...[
+            _buildPreviewItem('👤', '경계인물', previewPeople.first),
+            const SizedBox(height: 12),
+          ],
+
+          // 경계사물 미리보기
+          if (previewObjects.isNotEmpty)
+            _buildPreviewItem('📦', '경계사물', previewObjects.first),
+
+          const SizedBox(height: 16),
+
+          // 더 보기 유도
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: DSColors.accent.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: DSColors.accent.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.lock_open, size: 16, color: DSColors.accent),
+                const SizedBox(width: 8),
+                Text(
+                  '색상, 숫자, 장소, 시간 등 6개 카테고리 더 보기',
+                  style: DSTypography.labelMedium.copyWith(color: DSColors.accent),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreviewItem(String icon, String category, CautionItem item) {
+    final severityColor = item.severity == 'high' ? DSColors.error
+        : item.severity == 'medium' ? DSColors.warning
+        : DSColors.textSecondary;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(icon, style: const TextStyle(fontSize: 18)),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 6, height: 6,
+                    decoration: BoxDecoration(color: severityColor, shape: BoxShape.circle),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(item.title, style: DSTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                item.description,
+                style: DSTypography.bodySmall.copyWith(color: DSColors.textSecondary),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

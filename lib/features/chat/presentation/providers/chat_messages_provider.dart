@@ -43,6 +43,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     required String fortuneType,
     String? sectionKey,
     bool isBlurred = false,
+    List<String> blurredSections = const [],
     Fortune? fortune,
   }) {
     final message = ChatMessage(
@@ -53,6 +54,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       fortuneType: fortuneType,
       sectionKey: sectionKey,
       isBlurred: isBlurred,
+      blurredSections: blurredSections,
       fortune: fortune,
     );
     state = state.copyWith(

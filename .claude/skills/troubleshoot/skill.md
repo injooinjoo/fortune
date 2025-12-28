@@ -1,11 +1,24 @@
 ---
 name: "sc:troubleshoot"
 description: "버그 수정 워크플로우. 에러 분석, 근본 원인 추적, 동일 패턴 일괄 수정 시 사용."
+depends_on: ["sc:enforce-rca"]
+auto_call_after: ["sc:enforce-verify"]
 ---
 
 # Troubleshoot Skill
 
 버그와 에러를 체계적으로 분석하고 수정하는 워크플로우 스킬입니다.
+
+---
+
+## ⛔ HARD BLOCK 전제 조건
+
+**이 스킬 실행 전 반드시 `/sc:enforce-rca`가 완료되어야 합니다.**
+
+```
+RCA 보고서 없이 troubleshoot 실행 시:
+⛔ 차단: "/sc:enforce-rca를 먼저 실행해주세요"
+```
 
 ---
 
@@ -159,6 +172,22 @@ try {
 
 ---
 
+## 완료 후 자동 검증
+
+**수정 완료 시 `/sc:enforce-verify`가 자동 호출됩니다.**
+
+```
+수정 완료!
+    │
+    └─ /sc:enforce-verify 자동 호출
+        ├─ flutter analyze
+        ├─ build_runner
+        ├─ quality-guardian
+        └─ 사용자 테스트 요청
+```
+
+---
+
 ## 완료 메시지
 
 ```
@@ -172,5 +201,5 @@ try {
 - FutureBuilder null 체크 추가
 - ConnectionState 확인 로직 추가
 
-🛡️ 품질 검증: ✅ 통과
+➡️ /sc:enforce-verify 실행 중...
 ```

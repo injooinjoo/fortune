@@ -1,14 +1,25 @@
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/fortune_design_system.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
+import '../../../../core/utils/logger.dart';
 import '../../../../domain/entities/fortune.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
+import '../../../../presentation/providers/token_provider.dart';
+import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
 
 /// 채팅용 운세 결과 리치 카드
 ///
 /// 이미지 헤더, 점수 원형, 카테고리 섹션, 행운 아이템 표시
-class ChatFortuneResultCard extends StatelessWidget {
+class ChatFortuneResultCard extends ConsumerStatefulWidget {
   final Fortune fortune;
   final String fortuneType;
   final String typeName;
@@ -21,6 +32,28 @@ class ChatFortuneResultCard extends StatelessWidget {
     required this.typeName,
     this.isBlurred = false,
   });
+
+  @override
+  ConsumerState<ChatFortuneResultCard> createState() => _ChatFortuneResultCardState();
+}
+
+class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
+  late bool _isBlurred;
+  late List<String> _blurredSections;
+
+  @override
+  void initState() {
+    super.initState();
+    _isBlurred = widget.isBlurred;
+    _blurredSections = widget.isBlurred && widget.fortuneType == 'avoid-people'
+        ? ['cautionPeople', 'cautionObjects', 'cautionColors', 'cautionNumbers',
+           'cautionAnimals', 'cautionPlaces', 'cautionTimes', 'cautionDirections']
+        : [];
+  }
+
+  Fortune get fortune => widget.fortune;
+  String get fortuneType => widget.fortuneType;
+  String get typeName => widget.typeName;
 
   /// 오늘의 운세 타입 체크 (설문 기반 아닌 운세)
   bool get _isDailyFortune => fortuneType == 'daily' || fortuneType == 'time';
@@ -35,6 +68,16 @@ class ChatFortuneResultCard extends StatelessWidget {
       fortuneType == 'blind-date' ||
       fortuneType == 'love' ||
       fortuneType == 'career';
+
+  /// 경계 대상 caution 데이터 존재 여부 체크
+  bool get _hasCautionData {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    return metadata['cautionPeople'] != null || metadata['cautionObjects'] != null;
+  }
+
+  /// 경계 대상 caution 데이터 가져오기
+  Map<String, dynamic>? get _cautionData => fortune.metadata ?? fortune.additionalInfo;
 
   /// 인사이트 민화 이미지 목록 (날짜별 랜덤 선택)
   static const List<String> _minhwaImages = [
@@ -75,6 +118,7 @@ class ChatFortuneResultCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isPremium = ref.watch(isPremiumProvider);
 
     return Container(
       width: double.infinity,
@@ -112,8 +156,16 @@ class ChatFortuneResultCard extends StatelessWidget {
           if (fortune.greeting != null || fortune.summary != null)
             _buildSummarySection(context),
 
+          // 경계 대상 미리보기 (avoid-people) - 블러 상태일 때만 표시
+          if (fortuneType == 'avoid-people' && _hasCautionData && _isBlurred)
+            _buildCautionPreviewSection(context),
+
+          // 경계 대상 블러 섹션 (avoid-people)
+          if (fortuneType == 'avoid-people' && _hasCautionData)
+            _buildCautionBlurredSections(context, isDark, isPremium),
+
           // 본문 content 표시 (daily, compatibility, love, career 등)
-          if (_shouldShowContent && fortune.content.isNotEmpty)
+          if (_shouldShowContent && fortune.content.isNotEmpty && fortuneType != 'avoid-people')
             _buildContentSection(context),
 
           // 카테고리/육각형 점수 표시 (content 표시하지 않는 타입만)
@@ -133,6 +185,10 @@ class ChatFortuneResultCard extends StatelessWidget {
           // 행운 아이템
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
             _buildLuckyItemsSection(context),
+
+          // 광고 버튼 (avoid-people 블러 상태일 때만)
+          if (fortuneType == 'avoid-people' && _isBlurred && !isPremium)
+            _buildAdUnlockButton(context),
 
           const SizedBox(height: DSSpacing.sm),
         ],
@@ -568,6 +624,584 @@ class ChatFortuneResultCard extends StatelessWidget {
       'study' => '학업운',
       _ => key,
     };
+  }
+
+  /// 경계 대상 미리보기 섹션 (avoid-people fortune)
+  Widget _buildCautionPreviewSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final data = _cautionData;
+
+    if (data == null) return const SizedBox.shrink();
+
+    final cautionPeople = data['cautionPeople'] as List<dynamic>? ?? [];
+    final cautionObjects = data['cautionObjects'] as List<dynamic>? ?? [];
+
+    // 경계인물/사물 중 severity가 high인 것 우선, 없으면 첫 번째 항목
+    Map<String, dynamic>? previewPerson;
+    Map<String, dynamic>? previewObject;
+
+    // 경계인물 선택 (high severity 우선)
+    for (final person in cautionPeople) {
+      if (person is Map<String, dynamic>) {
+        if (person['severity'] == 'high') {
+          previewPerson = person;
+          break;
+        }
+        previewPerson ??= person;
+      }
+    }
+
+    // 경계사물 선택 (high severity 우선)
+    for (final obj in cautionObjects) {
+      if (obj is Map<String, dynamic>) {
+        if (obj['severity'] == 'high') {
+          previewObject = obj;
+          break;
+        }
+        previewObject ??= obj;
+      }
+    }
+
+    if (previewPerson == null && previewObject == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          color: colors.error.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: colors.error.withValues(alpha: 0.15),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더
+            Row(
+              children: [
+                Text('👀', style: typography.headingSmall),
+                const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '오늘의 핵심 경계대상',
+                        style: typography.labelLarge.copyWith(
+                          color: colors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        '광고 시청 시 8개 카테고리 전체 공개',
+                        style: typography.labelSmall.copyWith(
+                          color: colors.textTertiary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: DSSpacing.sm),
+            Divider(height: 1, color: colors.textPrimary.withValues(alpha: 0.1)),
+            const SizedBox(height: DSSpacing.sm),
+
+            // 경계인물 미리보기
+            if (previewPerson != null)
+              _buildCautionPreviewItem(
+                context,
+                icon: '👤',
+                category: '경계인물',
+                title: previewPerson['type'] as String? ?? '',
+                description: previewPerson['reason'] as String? ?? '',
+                severity: previewPerson['severity'] as String? ?? 'medium',
+              ),
+
+            if (previewPerson != null && previewObject != null)
+              const SizedBox(height: DSSpacing.sm),
+
+            // 경계사물 미리보기
+            if (previewObject != null)
+              _buildCautionPreviewItem(
+                context,
+                icon: '📦',
+                category: '경계사물',
+                title: previewObject['item'] as String? ?? '',
+                description: previewObject['reason'] as String? ?? '',
+                severity: previewObject['severity'] as String? ?? 'medium',
+              ),
+
+            const SizedBox(height: DSSpacing.md),
+
+            // 더 보기 유도 배너
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: colors.accentSecondary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+                border: Border.all(
+                  color: colors.accentSecondary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.lock_open,
+                    size: 14,
+                    color: colors.accentSecondary,
+                  ),
+                  const SizedBox(width: DSSpacing.xs),
+                  Text(
+                    '색상, 숫자, 장소, 시간 등 6개 카테고리 더 보기',
+                    style: typography.labelSmall.copyWith(
+                      color: colors.accentSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 경계 대상 미리보기 개별 아이템
+  Widget _buildCautionPreviewItem(
+    BuildContext context, {
+    required String icon,
+    required String category,
+    required String title,
+    required String description,
+    required String severity,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    final severityColor = severity == 'high'
+        ? colors.error
+        : severity == 'medium'
+            ? colors.warning
+            : colors.textSecondary;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(icon, style: const TextStyle(fontSize: 18)),
+        const SizedBox(width: DSSpacing.sm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: severityColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.xs),
+                  Text(
+                    title,
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 2),
+              Text(
+                description,
+                style: typography.bodySmall.copyWith(
+                  color: colors.textSecondary,
+                  height: 1.4,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 경계 대상 블러 처리된 섹션들 (8개 카테고리)
+  Widget _buildCautionBlurredSections(BuildContext context, bool isDark, bool isPremium) {
+    final data = _cautionData;
+
+    if (data == null) return const SizedBox.shrink();
+
+    // 8개 카테고리 정의
+    final categories = [
+      ('👤', '경계인물', 'cautionPeople', data['cautionPeople']),
+      ('📦', '경계사물', 'cautionObjects', data['cautionObjects']),
+      ('🎨', '경계색상', 'cautionColors', data['cautionColors']),
+      ('🔢', '경계숫자', 'cautionNumbers', data['cautionNumbers']),
+      ('🐾', '경계동물', 'cautionAnimals', data['cautionAnimals']),
+      ('📍', '경계장소', 'cautionPlaces', data['cautionPlaces']),
+      ('⏰', '경계시간', 'cautionTimes', data['cautionTimes']),
+      ('🧭', '경계방향', 'cautionDirections', data['cautionDirections']),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: categories.map((cat) {
+          final icon = cat.$1;
+          final title = cat.$2;
+          final sectionKey = cat.$3;
+          final items = cat.$4 as List<dynamic>? ?? [];
+
+          if (items.isEmpty) return const SizedBox.shrink();
+
+          final shouldBlur = _isBlurred &&
+              _blurredSections.contains(sectionKey) &&
+              !isPremium;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+            child: _buildBlurredCategoryCard(
+              context,
+              icon: icon,
+              title: title,
+              items: items,
+              shouldBlur: shouldBlur,
+              isDark: isDark,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// 블러 처리된 개별 카테고리 카드
+  Widget _buildBlurredCategoryCard(
+    BuildContext context, {
+    required String icon,
+    required String title,
+    required List<dynamic> items,
+    required bool shouldBlur,
+    required bool isDark,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    final Widget content = Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.textPrimary.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: colors.textPrimary.withValues(alpha: 0.08),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
+            children: [
+              Text(icon, style: const TextStyle(fontSize: 20)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                title,
+                style: typography.labelLarge.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colors.accentSecondary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                ),
+                child: Text(
+                  '${items.length}개',
+                  style: typography.labelSmall.copyWith(
+                    color: colors.accentSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          // 아이템 목록 (최대 3개만 표시)
+          ...items.take(3).map((item) {
+            if (item is! Map<String, dynamic>) return const SizedBox.shrink();
+
+            final itemTitle = item['type'] as String? ??
+                              item['item'] as String? ??
+                              item['color'] as String? ??
+                              item['number']?.toString() ??
+                              item['animal'] as String? ??
+                              item['place'] as String? ??
+                              item['time'] as String? ??
+                              item['direction'] as String? ?? '';
+            final itemReason = item['reason'] as String? ?? '';
+            final severity = item['severity'] as String? ?? 'medium';
+
+            final severityColor = severity == 'high'
+                ? colors.error
+                : severity == 'medium'
+                    ? colors.warning
+                    : colors.textSecondary;
+
+            return Padding(
+              padding: const EdgeInsets.only(top: DSSpacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    margin: const EdgeInsets.only(top: 6),
+                    decoration: BoxDecoration(
+                      color: severityColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          itemTitle,
+                          style: typography.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (itemReason.isNotEmpty)
+                          Text(
+                            itemReason,
+                            style: typography.bodySmall.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+          if (items.length > 3)
+            Padding(
+              padding: const EdgeInsets.only(top: DSSpacing.xs),
+              child: Text(
+                '외 ${items.length - 3}개 더...',
+                style: typography.labelSmall.copyWith(
+                  color: colors.textTertiary,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+
+    // 블러 처리
+    if (shouldBlur) {
+      return Stack(
+        children: [
+          // 블러된 컨텐츠
+          ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: content,
+          ),
+          // 반투명 오버레이
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    (isDark
+                        ? TossDesignSystem.backgroundDark
+                        : TossDesignSystem.backgroundLight)
+                        .withValues(alpha: 0.3),
+                    (isDark
+                        ? TossDesignSystem.backgroundDark
+                        : TossDesignSystem.backgroundLight)
+                        .withValues(alpha: 0.7),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // 자물쇠 아이콘
+          Positioned.fill(
+            child: Center(
+              child: Icon(
+                Icons.lock_outline,
+                size: 28,
+                color: colors.textSecondary.withValues(alpha: 0.5),
+              )
+                  .animate(onPlay: (controller) => controller.repeat())
+                  .shimmer(
+                    duration: 2000.ms,
+                    color: colors.accentSecondary.withValues(alpha: 0.2),
+                  ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return content;
+  }
+
+  /// 광고 보고 전체 내용 보기 버튼
+  Widget _buildAdUnlockButton(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Material(
+        color: colors.accentSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        child: InkWell(
+          onTap: _showAdAndUnblur,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.lg,
+              vertical: DSSpacing.md,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.play_circle_outline,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                const SizedBox(width: DSSpacing.sm),
+                Text(
+                  '🎁 광고 보고 전체 내용 보기',
+                  style: typography.labelLarge.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 광고 시청 후 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    try {
+      Logger.info('[ChatFortuneResultCard] 광고 시청 시작');
+
+      final adService = AdService();
+
+      // 광고가 준비되지 않았으면 로드
+      if (!adService.isRewardedAdReady) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중...'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+
+        await adService.loadRewardedAd();
+
+        // 광고 로딩 대기 (최대 5초)
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러오지 못했습니다. 다시 시도해주세요.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      // 광고 표시
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) async {
+          Logger.info('[ChatFortuneResultCard] 광고 시청 완료, 블러 해제');
+
+          // 햅틱 피드백
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+          // 게이지 증가
+          if (mounted) {
+            FortuneCompletionHelper.onFortuneViewed(context, ref, 'avoid-people');
+          }
+
+          // 블러 해제
+          if (mounted) {
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+
+            // 구독 유도 스낵바
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+            );
+          }
+        },
+      );
+    } catch (e) {
+      Logger.error('[ChatFortuneResultCard] 광고 표시 실패: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.')),
+        );
+      }
+    }
   }
 }
 

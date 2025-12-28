@@ -1,11 +1,29 @@
 ---
 name: "sc:feature-chat"
 description: "채팅 기능 통합. 추천 칩 추가, 운세 결과 → 채팅 메시지 변환, 채팅 UI 수정 시 사용."
+depends_on: ["sc:enforce-discovery"]
+auto_call_after: ["sc:enforce-verify"]
 ---
 
 # Chat Feature Builder
 
 채팅 관련 기능을 추가하거나 수정하는 워크플로우 스킬입니다.
+
+---
+
+## ⛔ HARD BLOCK 전제 조건
+
+**이 스킬 실행 전 반드시 `/sc:enforce-discovery`가 완료되어야 합니다.**
+
+```
+Discovery 보고서 없이 feature-chat 실행 시:
+⛔ 차단: "/sc:enforce-discovery를 먼저 실행해주세요"
+
+필수 확인 사항:
+- 기존 추천 칩 목록 확인
+- 기존 변환기 패턴 확인
+- ChatMessagesNotifier 사용 패턴 확인
+```
 
 ---
 
@@ -140,6 +158,22 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
 
 ---
 
+## 완료 후 자동 검증
+
+**수정 완료 시 `/sc:enforce-verify`가 자동 호출됩니다.**
+
+```
+수정 완료!
+    │
+    └─ /sc:enforce-verify 자동 호출
+        ├─ flutter analyze
+        ├─ build_runner
+        ├─ quality-guardian
+        └─ 사용자 테스트 요청
+```
+
+---
+
 ## 완료 메시지
 
 ```
@@ -149,7 +183,5 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
 1. lib/features/chat/domain/models/recommendation_chip.dart
 2. lib/features/chat/presentation/providers/chat_recommendations_provider.dart
 
-🔧 다음 단계:
-- 앱에서 채팅 홈 화면 확인
-- 추천 칩 동작 테스트
+➡️ /sc:enforce-verify 실행 중...
 ```

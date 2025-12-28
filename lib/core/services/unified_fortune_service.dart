@@ -927,6 +927,16 @@ class UnifiedFortuneService {
       case 'career_change':
       case 'startup_career':
         return ['career_path', 'success_factors', 'growth_advice'];
+      case 'career_coaching':
+      case 'career-coaching':
+        // ✅ 커리어 코칭 블러 섹션: Edge Function 응답 구조에 맞춤
+        return [
+          'predictions',          // 커리어 예측
+          'skillAnalysis',        // 스킬 분석
+          'actionPlan',           // 액션 플랜
+          'strengthsAssessment',  // 강점 분석
+          'improvementAreas',     // 개선점
+        ];
       case 'health':
         return ['health_advice', 'precautions', 'wellness_tips'];
       // ✅ 가족운세 블러 섹션

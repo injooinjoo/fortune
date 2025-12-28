@@ -1,11 +1,29 @@
 ---
 name: "sc:feature-fortune"
 description: "운세 기능 전체 생성. Edge Function, 모델, 서비스, 페이지, 라우트를 한 번에 생성합니다. 운세/궁합/타로/사주 등 새 기능 추가 시 사용."
+depends_on: ["sc:enforce-discovery"]
+auto_call_after: ["sc:enforce-verify"]
 ---
 
 # Fortune Feature Builder
 
 운세 관련 기능을 처음부터 끝까지 완전하게 생성하는 워크플로우 스킬입니다.
+
+---
+
+## ⛔ HARD BLOCK 전제 조건
+
+**이 스킬 실행 전 반드시 `/sc:enforce-discovery`가 완료되어야 합니다.**
+
+```
+Discovery 보고서 없이 feature-fortune 실행 시:
+⛔ 차단: "/sc:enforce-discovery를 먼저 실행해주세요"
+
+필수 확인 사항:
+- 유사한 운세 기능이 이미 있는지 확인
+- 재사용 가능한 모델/서비스 확인
+- 기존 패턴 참조 확인
+```
 
 ---
 
@@ -165,6 +183,23 @@ flutter analyze lib/features/fortune/
 2. 앱 테스트: localhost:3000/fortune/pet-compatibility
 
 채팅에 추천 칩도 추가할까요? (Y/n)
+```
+
+---
+
+## 완료 후 자동 검증
+
+**생성 완료 시 `/sc:enforce-verify`가 자동 호출됩니다.**
+
+```
+생성 완료!
+    │
+    └─ /sc:enforce-verify 자동 호출
+        ├─ deno check (Edge Function)
+        ├─ flutter analyze
+        ├─ build_runner
+        ├─ quality-guardian
+        └─ 사용자 테스트 요청
 ```
 
 ---

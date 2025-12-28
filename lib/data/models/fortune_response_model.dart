@@ -138,11 +138,13 @@ class FortuneResponseModel {
       recommendations: recommendations.isNotEmpty ? recommendations : null,
       warnings: data!.caution != null ? [data!.caution!] : null,
       summary: data!.summary,
-      additionalInfo: {
-        if (data!.advice != null) 'advice': null,
-        if (data!.luckyColor != null) 'luckyColor': null,
-        if (data!.luckyNumber != null) 'luckyNumber': null,
-        if (data!.score != null) 'score': null},
+      // ✅ additionalInfo: metadata 전체를 전달하여 커리어/기타 운세 상세 데이터 접근 가능
+      additionalInfo: data!.metadata ?? {
+        if (data!.advice != null) 'advice': data!.advice,
+        if (data!.luckyColor != null) 'luckyColor': data!.luckyColor,
+        if (data!.luckyNumber != null) 'luckyNumber': data!.luckyNumber,
+        if (data!.score != null) 'score': data!.score,
+      },
       detailedLuckyItems: detailedLuckyItems.isNotEmpty ? detailedLuckyItems : null,
       greeting: data!.greeting,
       hexagonScores: data!.hexagonScores,
@@ -504,6 +506,58 @@ class FortuneData {
       }
     }
 
+    // Avoid-people fortune: map caution-specific fields to metadata
+    Map<String, dynamic>? metadata = json['metadata'];
+    if (json['fortuneType'] == 'avoid-people' || json['type'] == 'avoid-people' ||
+        json['fortune_type'] == 'avoid-people') {
+      score ??= json['score'] as int?;
+      summary ??= (json['summary'] is Map)
+          ? json['summary']['text'] as String?
+          : json['summary'] as String?;
+
+      // Store all caution data in metadata for ChatFortuneResultCard access
+      metadata = {
+        ...?metadata,
+        if (json['cautionPeople'] != null) 'cautionPeople': json['cautionPeople'],
+        if (json['cautionObjects'] != null) 'cautionObjects': json['cautionObjects'],
+        if (json['cautionColors'] != null) 'cautionColors': json['cautionColors'],
+        if (json['cautionNumbers'] != null) 'cautionNumbers': json['cautionNumbers'],
+        if (json['cautionAnimals'] != null) 'cautionAnimals': json['cautionAnimals'],
+        if (json['cautionPlaces'] != null) 'cautionPlaces': json['cautionPlaces'],
+        if (json['cautionTimes'] != null) 'cautionTimes': json['cautionTimes'],
+        if (json['cautionDirections'] != null) 'cautionDirections': json['cautionDirections'],
+        if (json['luckyElements'] != null) 'luckyElements': json['luckyElements'],
+        if (json['timeStrategy'] != null) 'timeStrategy': json['timeStrategy'],
+        'fortuneType': 'avoid-people',
+      };
+
+      // Build content preview from caution items
+      final contentParts = <String>[];
+      if (summary != null) contentParts.add(summary);
+
+      // Add first caution person as preview (API uses 'type' and 'reason')
+      if (json['cautionPeople'] != null && (json['cautionPeople'] as List).isNotEmpty) {
+        final firstPerson = json['cautionPeople'][0];
+        contentParts.add('\n\n👤 주요 경계 인물: ${firstPerson['type'] ?? ''}');
+        if (firstPerson['reason'] != null) {
+          contentParts.add('\n${firstPerson['reason']}');
+        }
+      }
+
+      // Add first caution object as preview (API uses 'item' and 'reason')
+      if (json['cautionObjects'] != null && (json['cautionObjects'] as List).isNotEmpty) {
+        final firstObject = json['cautionObjects'][0];
+        contentParts.add('\n\n📦 주요 경계 사물: ${firstObject['item'] ?? ''}');
+        if (firstObject['reason'] != null) {
+          contentParts.add('\n${firstObject['reason']}');
+        }
+      }
+
+      if (contentParts.isNotEmpty) {
+        content = contentParts.join('');
+      }
+    }
+
     return FortuneData(
       id: json['id'],
       userId: json['userId'],
@@ -512,7 +566,7 @@ class FortuneData {
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : null,
-      metadata: json['metadata'],
+      metadata: metadata,
 
       // Daily fortune fields - with fortune-specific mapping
       score: score,

@@ -14,6 +14,7 @@ class FortuneCardImages {
     'breakup': '${basePath}breakup_fortune.png',
     'crush': '${basePath}crush_fortune.png',
     'relationship': '${basePath}people_to_avoid_fortune.png',
+    'avoid-people': '${basePath}people_to_avoid_fortune.png',
     'compatibility': 'assets/images/minhwa/minhwa_love_mandarin.webp',
     'blind-date': 'assets/images/minhwa/minhwa_love_mandarin.webp',
     'ex-lover': '${basePath}ex_lover_fortune.png',
@@ -121,6 +122,7 @@ class FortuneCardImages {
     'breakup': [const Color(0xFF6B7280), const Color(0xFF374151)],
     'crush': [const Color(0xFFEC4899), const Color(0xFFF472B6)],
     'relationship': [const Color(0xFFDC2626), const Color(0xFFB91C1C)],
+    'avoid-people': [const Color(0xFFDC2626), const Color(0xFFB91C1C)],
     'compatibility': [const Color(0xFFBE185D), const Color(0xFF9333EA)],
     'blind-date': [const Color(0xFFEC4899), const Color(0xFF9333EA)],
     'ex-lover': [const Color(0xFF6B7280), const Color(0xFF374151)],
@@ -201,6 +203,7 @@ class FortuneCardImages {
     'breakup': '이별 후 새로운 시작',
     'crush': '짝사랑, 이뤄질 수 있을까?',
     'relationship': '오늘 우리 사이 온도는?',
+    'avoid-people': '오늘 조심해야 할 대상은?',
     'ex-lover': '그 사람과의 인연, 아직 끝나지 않았을까?',
     'blind-date': '오늘의 소개팅, 성공할까?',
 

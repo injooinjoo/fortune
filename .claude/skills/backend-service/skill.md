@@ -1,11 +1,29 @@
 ---
 name: "sc:backend-service"
 description: "Edge Function 전용 생성. Flutter 변경 없이 Supabase Edge Function만 생성/수정 시 사용."
+depends_on: ["sc:enforce-discovery"]
+auto_call_after: ["sc:enforce-verify"]
 ---
 
 # Backend Service Builder
 
 Supabase Edge Function만 생성하거나 수정하는 워크플로우 스킬입니다.
+
+---
+
+## ⛔ HARD BLOCK 전제 조건
+
+**이 스킬 실행 전 반드시 `/sc:enforce-discovery`가 완료되어야 합니다.**
+
+```
+Discovery 보고서 없이 backend-service 실행 시:
+⛔ 차단: "/sc:enforce-discovery를 먼저 실행해주세요"
+
+필수 확인 사항:
+- 기존 Edge Function 목록 확인 (ls supabase/functions/)
+- 유사한 기능 확인
+- LLMFactory, PromptManager 패턴 확인
+```
 
 ---
 
@@ -139,6 +157,21 @@ supabase functions deploy {name}
 
 ---
 
+## 완료 후 자동 검증
+
+**생성 완료 시 `/sc:enforce-verify`가 자동 호출됩니다.**
+
+```
+생성 완료!
+    │
+    └─ /sc:enforce-verify 자동 호출
+        ├─ deno check
+        ├─ 로컬 테스트 안내
+        └─ 배포 확인 요청
+```
+
+---
+
 ## 완료 메시지
 
 ```
@@ -148,9 +181,9 @@ supabase functions deploy {name}
 1. supabase/functions/{name}/index.ts
 2. supabase/functions/_shared/prompts/templates/{name}.ts
 
-🔧 다음 단계:
+➡️ /sc:enforce-verify 실행 중...
+
+🔧 테스트 안내:
 1. 로컬 테스트: supabase functions serve {name}
 2. 배포: supabase functions deploy {name}
-
-지금 배포할까요? (Y/n)
 ```

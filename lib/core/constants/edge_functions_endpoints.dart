@@ -87,7 +87,9 @@ class EdgeFunctionsEndpoints {
 
   // 이사/생활
   static const String movingFortune = '/fortune-moving';
-  static const String familyHarmonyFortune = '/fortune-family-harmony';
+
+  // 가족 운세 (통합)
+  static const String familyFortune = '/fortune-family';
 
   // 행운 아이템
   static const String luckyItemsFortune = '/fortune-lucky-items';
@@ -101,6 +103,31 @@ class EdgeFunctionsEndpoints {
 
   // AI 추천
   static const String fortuneRecommend = '/fortune-recommend';
+
+  // ============================================================
+  // 스포츠 운세 (10개) - 2024.12.28 추가
+  // ============================================================
+  static const String luckyBaseball = '/fortune-lucky-baseball';
+  static const String luckyGolf = '/fortune-lucky-golf';
+  static const String luckyTennis = '/fortune-lucky-tennis';
+  static const String luckyRunning = '/fortune-lucky-running';
+  static const String luckyCycling = '/fortune-lucky-cycling';
+  static const String luckySwim = '/fortune-lucky-swim';
+  static const String luckyHiking = '/fortune-lucky-hiking';
+  static const String luckyFishing = '/fortune-lucky-fishing';
+  static const String luckyFitness = '/fortune-lucky-fitness';
+  static const String luckyYoga = '/fortune-lucky-yoga';
+
+
+  // ============================================================
+  // 기타 운세 (6개) - 2024.12.28 추가
+  // ============================================================
+  static const String luckyLottery = '/fortune-lucky-lottery';
+  static const String luckyStock = '/fortune-lucky-stock';
+  static const String luckyCrypto = '/fortune-lucky-crypto';
+  static const String examFortune = '/fortune-exam';
+  static const String tarotFortune = '/fortune-tarot';
+  static const String homeFengshuiFortune = '/fortune-home-fengshui';
 
   // Helper method to construct full URL
   static String getFullUrl(String endpoint) {
@@ -138,7 +165,8 @@ class EdgeFunctionsEndpoints {
       'investment': investmentFortune,
       // 이사/생활
       'moving': movingFortune,
-      'family-harmony': familyHarmonyFortune,
+      // 가족 운세 (통합)
+      'family': familyFortune,
       // 행운 아이템
       'lucky-items': luckyItemsFortune,
       // 특별 운세
@@ -146,6 +174,24 @@ class EdgeFunctionsEndpoints {
       'celebrity': celebrityFortune,
       // 반려동물
       'pet-compatibility': petCompatibilityFortune,
+      // 스포츠 운세 (10개)
+      'lucky-baseball': luckyBaseball,
+      'lucky-golf': luckyGolf,
+      'lucky-tennis': luckyTennis,
+      'lucky-running': luckyRunning,
+      'lucky-cycling': luckyCycling,
+      'lucky-swim': luckySwim,
+      'lucky-hiking': luckyHiking,
+      'lucky-fishing': luckyFishing,
+      'lucky-fitness': luckyFitness,
+      'lucky-yoga': luckyYoga,
+      // 기타 운세 (6개)
+      'lucky-lottery': luckyLottery,
+      'lucky-stock': luckyStock,
+      'lucky-crypto': luckyCrypto,
+      'exam': examFortune,
+      'tarot': tarotFortune,
+      'home-fengshui': homeFengshuiFortune,
     };
 
     return endpointMap[fortuneType] ?? '/fortune-$fortuneType';

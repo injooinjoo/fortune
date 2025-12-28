@@ -1,11 +1,29 @@
 ---
 name: "sc:feature-ui"
 description: "UI 전용 변경. 레이아웃, 색상, 폰트, 위젯 스타일 수정 시 사용. Presentation 레이어만 변경."
+depends_on: ["sc:enforce-discovery"]
+auto_call_after: ["sc:enforce-verify"]
 ---
 
 # UI Feature Builder
 
 UI/디자인 관련 변경만 수행하는 워크플로우 스킬입니다.
+
+---
+
+## ⛔ HARD BLOCK 전제 조건
+
+**이 스킬 실행 전 반드시 `/sc:enforce-discovery`가 완료되어야 합니다.**
+
+```
+Discovery 보고서 없이 feature-ui 실행 시:
+⛔ 차단: "/sc:enforce-discovery를 먼저 실행해주세요"
+
+필수 확인 사항:
+- 유사한 UI 위젯이 이미 있는지 확인
+- 공통 위젯(core/widgets/) 확인
+- TossDesignSystem 토큰 확인
+```
 
 ---
 
@@ -115,12 +133,28 @@ UI 변경 시 자동 검증:
 
 ---
 
+## 완료 후 자동 검증
+
+**수정 완료 시 `/sc:enforce-verify`가 자동 호출됩니다.**
+
+```
+수정 완료!
+    │
+    └─ /sc:enforce-verify 자동 호출
+        ├─ flutter analyze
+        ├─ build_runner
+        ├─ quality-guardian
+        └─ 사용자 테스트 요청
+```
+
+---
+
 ## 완료 메시지
 
 ```
 ✅ UI가 업데이트되었습니다!
 
-�� 수정된 파일:
+📁 수정된 파일:
 1. lib/features/fortune/presentation/pages/daily_fortune_page.dart
 2. lib/features/fortune/presentation/widgets/fortune_result_card.dart
 

@@ -23,9 +23,8 @@ class ChatSurveyChips extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.md,
-        vertical: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
-      // 투명 배경 - 하단 입력 영역과 일관성 유지
       child: Wrap(
         spacing: DSSpacing.xs,
         runSpacing: DSSpacing.xs,

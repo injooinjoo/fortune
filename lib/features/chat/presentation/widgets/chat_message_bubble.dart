@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/chat_message.dart';
+import 'chat_career_result_card.dart';
 import 'chat_fortune_result_card.dart';
 import 'chat_ootd_result_card.dart';
 import 'chat_saju_result_card.dart';
@@ -55,6 +56,24 @@ class ChatMessageBubble extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
         child: ChatOotdResultCard(
           ootdData: ootdData,
+          isBlurred: message.isBlurred,
+          blurredSections: message.blurredSections,
+        ),
+      );
+    }
+
+    // 커리어 운세 결과 카드 표시
+    if (message.fortune != null &&
+        message.type == ChatMessageType.fortuneResult &&
+        (message.fortuneType == 'career' ||
+            message.fortuneType == 'career_coaching' ||
+            message.fortuneType == 'career-coaching')) {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatCareerResultCard(
+          fortune: message.fortune!,
           isBlurred: message.isBlurred,
           blurredSections: message.blurredSections,
         ),
