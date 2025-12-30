@@ -234,8 +234,8 @@ function generateWinbackMessage(user: DormantUser, daysInactive: number): Notifi
     case 3:
       // 3일: 가벼운 리마인더
       return {
-        title: '오늘의 운세가 기다리고 있어요',
-        body: `${name}, 최근 운세 점수가 많이 올랐어요! 확인해보세요`,
+        title: '오늘의 인사이트가 기다리고 있어요',
+        body: `${name}, 최근 인사이트 점수가 많이 올랐어요! 확인해보세요`,
         payload: {
           type: 'winback',
           route: '/home',
@@ -246,7 +246,7 @@ function generateWinbackMessage(user: DormantUser, daysInactive: number): Notifi
     case 7:
       // 7일: 인센티브 제안
       return {
-        title: '일주일간 운세를 놓치셨어요',
+        title: '일주일간 인사이트를 놓치셨어요',
         body: '오늘 복귀하시면 보너스 영혼 3개를 드려요!',
         payload: {
           type: 'winback',
@@ -260,7 +260,7 @@ function generateWinbackMessage(user: DormantUser, daysInactive: number): Notifi
       // 14일: 특별 혜택
       return {
         title: `${name}, 보고 싶었어요`,
-        body: '특별 복귀 이벤트! 지금 접속하면 프리미엄 운세 1회 무료',
+        body: '특별 복귀 이벤트! 지금 접속하면 프리미엄 인사이트 1회 무료',
         payload: {
           type: 'winback',
           route: '/home',
@@ -273,7 +273,7 @@ function generateWinbackMessage(user: DormantUser, daysInactive: number): Notifi
       // 30일: 마지막 시도
       return {
         title: '한 달 동안 많은 일이 있었어요',
-        body: `${name}의 운세가 크게 변했어요. 새로운 시작을 확인해보세요!`,
+        body: `${name}의 인사이트가 크게 변했어요. 새로운 시작을 확인해보세요!`,
         payload: {
           type: 'winback',
           route: '/home',
@@ -284,7 +284,7 @@ function generateWinbackMessage(user: DormantUser, daysInactive: number): Notifi
     default:
       return {
         title: '오랜만이에요!',
-        body: '오늘의 운세를 확인해보세요',
+        body: '오늘의 인사이트를 확인해보세요',
         payload: {
           type: 'winback',
           route: '/home',

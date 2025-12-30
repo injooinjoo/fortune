@@ -28,13 +28,13 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
   int _currentMessageIndex = 0;
   late List<String> _messages;
 
-  // 운세 타입별 감성 메시지
+  // 인사이트 타입별 감성 메시지
   static final Map<String, List<String>> _fortuneMessages = {
     'default': [
-      '운세를 준비하고 있어요',
+      '인사이트를 준비하고 있어요',
       '오늘의 메시지를 해석하고 있어요',
       '행운의 기운을 모으고 있어요',
-      '당신만을 위한 운세를 만들고 있어요',
+      '당신만을 위한 인사이트를 준비하고 있어요',
       '잠시만 기다려주세요',
     ],
     'daily': [
@@ -81,10 +81,10 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
     ],
     'mbti': [
       '성격 유형을 분석하고 있어요',
-      'MBTI별 운세를 준비해요',
+      'MBTI별 인사이트를 준비해요',
       '당신의 성향을 파악하고 있어요',
       '유형별 행운을 찾고 있어요',
-      '성격과 운세를 매칭해요',
+      '성격과 인사이트를 매칭해요',
     ],
   };
 

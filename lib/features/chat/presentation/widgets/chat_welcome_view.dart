@@ -57,7 +57,7 @@ class ChatWelcomeView extends StatelessWidget {
             const SizedBox(height: DSSpacing.xs),
 
             Text(
-              '운세, 타로, 꿈해몽 등\n다양한 서비스를 채팅으로 이용해보세요',
+              '인사이트, 타로, 꿈해몽 등\n다양한 서비스를 채팅으로 이용해보세요',
               style: typography.bodySmall.copyWith(
                 color: colors.textSecondary,
               ),

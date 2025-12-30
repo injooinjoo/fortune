@@ -430,7 +430,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || '운세 생성 중 오류가 발생했습니다.',
+        error: error.message || '분석 중 오류가 발생했습니다.',
       }),
       {
         status: 500,

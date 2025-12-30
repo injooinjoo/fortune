@@ -56,7 +56,7 @@ class ProfileCompletionDialog extends StatelessWidget {
             
             // Title
             Text(
-              '운세가 정확하려면\n정보가 더 필요합니다',
+              '인사이트가 정확하려면\n정보가 더 필요합니다',
               style: TossDesignSystem.heading3.copyWith(
                 color: TossDesignSystem.gray900,
                 height: 1.4,
@@ -173,11 +173,11 @@ class ProfileCompletionDialog extends StatelessWidget {
   
   String _buildSubtitleText() {
     if (missingFields.length == 1) {
-      return '${missingFields.first}을(를) 입력하면\n더 정확한 운세를 볼 수 있어요';
+      return '${missingFields.first}을(를) 입력하면\n더 정확한 인사이트를 확인할 수 있어요';
     } else if (missingFields.length == 2) {
-      return '${missingFields.join('과 ')}을(를) 입력하면\n더 정확한 운세를 볼 수 있어요';
+      return '${missingFields.join('과 ')}을(를) 입력하면\n더 정확한 인사이트를 확인할 수 있어요';
     } else {
-      return '필요한 정보를 입력하면\n더 정확한 운세를 볼 수 있어요';
+      return '필요한 정보를 입력하면\n더 정확한 인사이트를 확인할 수 있어요';
     }
   }
 }

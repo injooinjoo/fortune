@@ -17,26 +17,26 @@ class RecommendationChip {
   });
 }
 
-/// 기본 추천 칩 목록 (전체 30개 운세)
+/// 기본 추천 칩 목록 (전체 30개 인사이트)
 const List<RecommendationChip> defaultChips = [
   // ============ 시간 기반 ============
   RecommendationChip(
     id: 'daily',
-    label: '오늘 운세',
+    label: '오늘 인사이트',
     fortuneType: 'daily',
     icon: Icons.wb_sunny_outlined,
     color: Color(0xFF7C3AED),
   ),
   RecommendationChip(
     id: 'dailyCalendar',
-    label: '기간별 운세',
+    label: '기간별 인사이트',
     fortuneType: 'daily_calendar',
     icon: Icons.calendar_month_outlined,
     color: Color(0xFF6366F1),
   ),
   RecommendationChip(
     id: 'newYear',
-    label: '새해 운세',
+    label: '새해 인사이트',
     fortuneType: 'newYear',
     icon: Icons.celebration_outlined,
     color: Color(0xFFEF4444),
@@ -66,7 +66,7 @@ const List<RecommendationChip> defaultChips = [
   ),
   RecommendationChip(
     id: 'exLover',
-    label: '재회 운세',
+    label: '재회 인사이트',
     fortuneType: 'exLover',
     icon: Icons.replay_outlined,
     color: Color(0xFF6B7280),
@@ -151,7 +151,7 @@ const List<RecommendationChip> defaultChips = [
   // ============ 성격/개성 ============
   RecommendationChip(
     id: 'mbti',
-    label: 'MBTI 운세',
+    label: 'MBTI 인사이트',
     fortuneType: 'mbti',
     icon: Icons.psychology_outlined,
     color: Color(0xFF8B5CF6),
@@ -188,7 +188,7 @@ const List<RecommendationChip> defaultChips = [
   ),
   RecommendationChip(
     id: 'sportsGame',
-    label: '경기 운세',
+    label: '경기 인사이트',
     fortuneType: 'sportsGame',
     icon: Icons.sports_soccer,
     color: Color(0xFFDC2626),
@@ -227,7 +227,7 @@ const List<RecommendationChip> defaultChips = [
   // ============ 가족/반려동물 ============
   RecommendationChip(
     id: 'family',
-    label: '가족 운세',
+    label: '가족 인사이트',
     fortuneType: 'family',
     icon: Icons.family_restroom,
     color: Color(0xFF3B82F6),

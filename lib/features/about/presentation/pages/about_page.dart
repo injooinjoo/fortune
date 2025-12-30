@@ -101,7 +101,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               color: TossDesignSystem.white)).animate().fadeIn(delay: 200.ms),
           const SizedBox(height: 8),
           Text(
-            '신이 전하는 나만의 운세',
+            '신이 전하는 나만의 인사이트',
             style: DSTypography.headingSmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.9))).animate().fadeIn(delay: 400.ms),
           const SizedBox(height: 16),
@@ -118,11 +118,11 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       {
         'icon': Icons.psychology_rounded,
         'title': '영험한 신점',
-        'description': '신비로운 기운으로 점지되는\n개인 맞춤형 운세',
+        'description': '신비로운 기운으로 점지되는\n개인 맞춤형 인사이트',
         'color': TossDesignSystem.purple},
       {
         'icon': Icons.calendar_today_rounded,
-        'title': '다양한 운세',
+        'title': '다양한 인사이트',
         'description': '일일, 주간, 월간부터\n사주, 타로까지',
         'color': TossDesignSystem.tossBlue},
       {
@@ -132,18 +132,18 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         'color': TossDesignSystem.errorRed},
       {
         'icon': Icons.trending_up_rounded,
-        'title': '재테크 운세',
+        'title': '재테크 인사이트',
         'description': '투자, 부동산, 사업\n재물운 상세 분석',
         'color': TossDesignSystem.successGreen},
       {
         'icon': Icons.sports_soccer_rounded,
-        'title': '스포츠 운세',
+        'title': '스포츠 인사이트',
         'description': '골프, 테니스, 운동\n오늘의 컨디션 체크',
         'color': TossDesignSystem.warningOrange},
       {
         'icon': Icons.offline_bolt_rounded,
         'title': '오프라인 지원',
-        'description': '인터넷 없이도\n저장된 운세 확인',
+        'description': '인터넷 없이도\n저장된 인사이트 확인',
         'color': TossDesignSystem.successGreen}];
 
     return Column(
@@ -227,9 +227,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               color: TossDesignSystem.white)),
           const SizedBox(height: 16),
           Text(
-            'Fortune은 신비로운 기운과 전통적인 운세를 결합하여\n'
+            'Fortune은 신비로운 기운과 전통적인 지혜를 결합하여\n'
             '사용자들에게 긍정적인 에너지와 희망을 전달합니다.\n\n'
-            '매일 아침 운세를 확인하며 하루를 시작하는 것이\n'
+            '매일 아침 인사이트를 확인하며 하루를 시작하는 것이\n'
             '일상의 작은 행복이 되기를 바랍니다.',
             style: TextStyle(
               color: TossDesignSystem.white.withValues(alpha: 0.8),
@@ -239,7 +239,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildStatItem('83+', '운세 종류'),
+              _buildStatItem('83+', '인사이트 종류'),
               const SizedBox(width: 40),
               _buildStatItem('10만+', '활성 사용자'),
               const SizedBox(width: 40),

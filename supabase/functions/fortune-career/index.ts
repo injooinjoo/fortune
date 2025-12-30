@@ -1,7 +1,7 @@
 /**
- * 직업 운세 (Career Fortune) Edge Function
+ * 커리어 인사이트 (Career Fortune) Edge Function
  *
- * @description 사주와 직업 정보를 기반으로 경력/취업 운세를 분석합니다.
+ * @description 사주와 직업 정보를 기반으로 경력/취업 인사이트를 분석합니다.
  *
  * @endpoint POST /fortune-career
  *
@@ -472,7 +472,7 @@ serve(async (req) => {
     const errorResponse: CareerFortuneResponse = {
       success: false,
       data: {} as any,
-      error: error instanceof Error ? error.message : '커리어 운세 생성 중 오류가 발생했습니다.'
+      error: error instanceof Error ? error.message : '커리어 인사이트 생성 중 오류가 발생했습니다.'
     }
 
     return new Response(JSON.stringify(errorResponse), {

@@ -142,8 +142,8 @@ ${sections}
   }
 
   // 시스템 프롬프트
-  const systemPrompt = `당신은 한국 전통 역학(易學)과 현대 시간 관리론을 결합한 시간 운세 전문가입니다.
-사용자의 사주(生年月日時)와 선택한 기간의 천기(天氣)를 분석하여 날짜별 운세를 제공합니다.
+  const systemPrompt = `당신은 한국 전통 역학(易學)과 현대 시간 관리론을 결합한 시간 인사이트 전문가입니다.
+사용자의 사주(生年月日時)와 선택한 기간의 천기(天氣)를 분석하여 날짜별 인사이트를 제공합니다.
 
 **분석 기준**:
 1. 사주팔자의 오행(五行) 균형 분석
@@ -300,8 +300,8 @@ ${calendarSection}
     specialMessage: fortuneData.specialMessage || '',
 
     // 메시지
-    message: `${name}님, ${periodStr} 기간의 운세입니다. ✨`,
-    greeting: `${name}님, 선택하신 ${periodStr} 기간의 운세를 확인해보세요. 🎯`,
+    message: `${name}님, ${periodStr} 기간의 인사이트입니다. ✨`,
+    greeting: `${name}님, 선택하신 ${periodStr} 기간의 인사이트를 확인해보세요. 🎯`,
 
     // 메타데이터
     metadata: {
@@ -725,18 +725,18 @@ ${hasEvents ? `
     const getPeriodTitle = () => {
       // 캘린더에서 특정 날짜를 선택한 경우
       if (eventsForDate.length > 0 || !isToday) {
-        return `${dateDisplayStr}의 운세`
+        return `${dateDisplayStr} 인사이트`
       }
 
       const titles: { [key: string]: string } = {
-        today: '오늘의 운세',
-        tomorrow: '내일의 운세',
-        weekly: '이번 주 운세',
-        monthly: '이번 달 운세',
-        yearly: '올해 운세',
-        hourly: '시간대별 운세'
+        today: '오늘의 인사이트',
+        tomorrow: '내일의 인사이트',
+        weekly: '이번 주 인사이트',
+        monthly: '이번 달 인사이트',
+        yearly: '올해 인사이트',
+        hourly: '시간대별 인사이트'
       }
-      return titles[period] || `${dateDisplayStr}의 운세`
+      return titles[period] || `${dateDisplayStr} 인사이트`
     }
 
     // ✅ Blur 로직 적용 (경계대상 패턴 기반)
@@ -750,7 +750,7 @@ ${hasEvents ? `
       // 표준화된 필드명: score, content, summary, advice
       fortuneType: 'time',
       score: overallScore,
-      content: fortuneData.content || '시간대별 운세를 확인하세요.',
+      content: fortuneData.content || '시간대별 인사이트를 확인하세요.',
       summary: fortuneData.summary || '',
       advice: fortuneData.advice || '',
 
@@ -762,11 +762,11 @@ ${hasEvents ? `
       overall_score: overallScore,
       message: eventsForDate.length > 0
         ? `${name}님, ${eventsForDate.map(e => e.title).join(', ')} 일정이 있는 특별한 날이에요! ✨`
-        : `${name}님의 ${dateDisplayStr} 운세입니다.`,
+        : `${name}님의 ${dateDisplayStr} 인사이트입니다.`,
       description: fortuneData.content || '',
       greeting: eventsForDate.length > 0
-        ? `${name}님, ${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일 ${currentDayName}! ${eventsForDate.map(e => e.title).join(', ')} 일정과 함께하는 특별한 날의 운세를 확인해보세요. 🎯`
-        : `${name}님, ${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일 ${currentDayName}의 운세를 확인해보세요.`,
+        ? `${name}님, ${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일 ${currentDayName}! ${eventsForDate.map(e => e.title).join(', ')} 일정과 함께하는 특별한 날의 인사이트를 확인해보세요. 🎯`
+        : `${name}님, ${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일 ${currentDayName}의 인사이트를 확인해보세요.`,
 
       // ✅ 경계대상 패턴 - 시간대별 운세 (12시진 기반)
       timeSlots: fortuneData.timeSlots || [],

@@ -156,7 +156,7 @@ class TalismanShareService {
     // Share using share_plus
     await Share.shareXFiles(
       [XFile(tempFile.path)],
-      text: '$userName님의 $type이 완성되었습니다! 🎯\n\n#부적 #운세 #FortuneApp'
+      text: '$userName님의 $type이 완성되었습니다! 🎯\n\n#부적 #인사이트 #FortuneApp'
     );
     
     // Clean up
@@ -180,7 +180,7 @@ class TalismanShareService {
       // Android can share directly
       await Share.shareXFiles(
         [XFile(tempFile.path)],
-        text: '오늘의 $type 🎯\n\n#부적 #운세 #행운 #FortuneApp'
+        text: '오늘의 $type 🎯\n\n#부적 #인사이트 #행운 #FortuneApp'
       );
     }
     
@@ -193,7 +193,7 @@ class TalismanShareService {
     
     await Share.shareXFiles(
       [XFile(tempFile.path)],
-      text: '나만의 $type을 만들었어요! 🎯\n\n#부적 #운세 #FortuneApp'
+      text: '나만의 $type을 만들었어요! 🎯\n\n#부적 #인사이트 #FortuneApp'
     );
     
     await tempFile.delete();
@@ -205,7 +205,7 @@ class TalismanShareService {
     
     await Share.shareXFiles(
       [XFile(tempFile.path)],
-      text: '나만의 $type 완성! 🎯\n\n#부적 #운세 #FortuneApp #행운'
+      text: '나만의 $type 완성! 🎯\n\n#부적 #인사이트 #FortuneApp #행운'
     );
     
     await tempFile.delete();

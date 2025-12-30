@@ -47,7 +47,7 @@ class LandingMainContent extends StatelessWidget {
 
           // Subtitle
           Text(
-            '매일 새로운 운세를 만나보세요',
+            '매일 새로운 인사이트를 만나보세요',
             style: context.labelMedium.copyWith(
                 fontWeight: FontWeight.w400,
                 color: context.colors.textSecondary),

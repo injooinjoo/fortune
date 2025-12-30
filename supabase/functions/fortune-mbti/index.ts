@@ -337,8 +337,8 @@ serve(async (req) => {
 
       const llm = await LLMFactory.createFromConfigAsync('mbti')
 
-      const systemPrompt = `당신은 MBTI 운세 전문가입니다.
-오늘의 운세를 MBTI 8개 차원별로 생성해주세요.
+      const systemPrompt = `당신은 MBTI 인사이트 전문가입니다.
+오늘의 인사이트를 MBTI 8개 차원별로 생성해주세요.
 
 각 차원별 특성:
 - E(외향): 사회적 상호작용, 에너지 충전, 활동적 모임, 새로운 만남
@@ -515,7 +515,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: '운세 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+        error: 'MBTI 인사이트 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
         details: Deno.env.get('ENVIRONMENT') === 'development' ? errorMessage : undefined
       }),
       {

@@ -151,8 +151,8 @@ serve(async (req) => {
     // LLM 호출
     const llm = await LLMFactory.createFromConfigAsync('family-children')
 
-    const systemPrompt = `당신은 자녀운 전문 운세 상담사입니다.
-한국의 전통적인 사주/운세 관점과 현대적인 교육/양육 조언을 결합하여 따뜻하고 실용적인 자녀 운세를 제공합니다.
+    const systemPrompt = `당신은 자녀 인사이트 전문 상담사입니다.
+한국의 전통적인 사주 관점과 현대적인 교육/양육 조언을 결합하여 따뜻하고 실용적인 자녀 인사이트를 제공합니다.
 
 다음 JSON 형식으로 응답해주세요:
 {

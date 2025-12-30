@@ -38,7 +38,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('캐시 삭제'),
-        content: const Text('저장된 모든 운세 캐시를 삭제하시겠습니까?\n오프라인에서 운세를 볼 수 없게 됩니다.'),
+        content: const Text('저장된 모든 인사이트 캐시를 삭제하시겠습니까?\n오프라인에서 인사이트를 확인할 수 없게 됩니다.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -82,7 +82,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('오프라인용 운세가 준비되었습니다')),
+          const SnackBar(content: Text('오프라인용 인사이트가 준비되었습니다')),
         );
       }
     } catch (e) {
@@ -136,7 +136,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
             // Actions
             _buildActionButton(
               icon: Icons.cloud_download,
-              label: '오프라인용 운세 준비',
+              label: '오프라인용 인사이트 준비',
               onPressed: _isLoading ? null : _preloadForOffline,
               color: TossDesignSystem.tossBlue,
             ),

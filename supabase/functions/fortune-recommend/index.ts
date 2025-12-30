@@ -1,7 +1,7 @@
 /**
- * 운세 추천 (Fortune Recommend) Edge Function
+ * 인사이트 추천 (Fortune Recommend) Edge Function
  *
- * @description 사용자 입력을 AI가 분석하여 가장 적합한 운세 3개를 추천합니다.
+ * @description 사용자 입력을 AI가 분석하여 가장 적합한 인사이트 3개를 추천합니다.
  *
  * @endpoint POST /fortune-recommend
  *
@@ -40,28 +40,28 @@ interface RecommendResponse {
   error?: string
 }
 
-// 30개 운세 메타데이터 (프롬프트용)
+// 30개 인사이트 메타데이터 (프롬프트용)
 const FORTUNE_METADATA = `
-## 사용 가능한 운세 타입 (30개)
+## 사용 가능한 인사이트 타입 (30개)
 
 ### 시간 기반
-- daily: 오늘 운세, 하루 운, 일진, 오늘의 기운
-- yearly: 연간 운세, 한해 운, 올해 신년, 2024년 2025년
-- newYear: 새해 운세, 정월, 설날, 새해 복
+- daily: 오늘의 인사이트, 하루 분석, 일진, 오늘의 기운
+- yearly: 연간 인사이트, 한해 분석, 올해 신년, 2024년 2025년
+- newYear: 새해 인사이트, 정월, 설날, 새해 복
 
 ### 연애/관계
-- love: 연애운, 사랑, 애인, 커플, 썸, 고백, 짝사랑
+- love: 연애 인사이트, 사랑, 애인, 커플, 썸, 고백, 짝사랑
 - compatibility: 궁합, 상성, 어울림, 맞는 사람
 - blindDate: 소개팅, 첫만남, 미팅, 선보기
 - exLover: 재회, 이별, 헤어짐, 전 남친, 전 여친, 다시 만남
 - avoidPeople: 경계 대상, 조심할 사람, 피해야 할
 
 ### 직업/재능
-- career: 직업운, 취업, 이직, 승진, 퇴사, 직장, 회사
+- career: 커리어 인사이트, 취업, 이직, 승진, 퇴사, 직장, 회사
 - talent: 적성, 재능, 진로, 잘하는 것
 
 ### 재물
-- money: 재물운, 금전, 부자, 돈 운, 수입
+- money: 재물 인사이트, 금전, 부자, 돈 운, 수입
 - luckyItems: 행운 아이템, 럭키, 오늘의 색, 행운의 숫자
 - lotto: 로또, 복권, 당첨, 번호
 
@@ -76,9 +76,9 @@ const FORTUNE_METADATA = `
 - biorhythm: 바이오리듬, 신체 리듬, 컨디션
 
 ### 건강/스포츠
-- health: 건강운, 컨디션, 몸 상태, 건강 체크
+- health: 건강 인사이트, 컨디션, 몸 상태, 건강 체크
 - exercise: 운동 추천, 오늘 운동, 피트니스
-- sportsGame: 경기 운세, 스포츠, 승부, 축구, 야구
+- sportsGame: 경기 인사이트, 스포츠, 승부, 축구, 야구
 
 ### 인터랙티브
 - dream: 꿈해몽, 꿈 분석, 악몽, 길몽, 꿈 풀이
@@ -87,7 +87,7 @@ const FORTUNE_METADATA = `
 - celebrity: 유명인 궁합, 연예인, 아이돌
 
 ### 가족/반려동물
-- family: 가족 운세, 부모, 자녀, 육아
+- family: 가족 인사이트, 부모, 자녀, 육아
 - pet: 반려동물, 강아지, 고양이, 펫 궁합
 - naming: 작명, 이름 짓기, 아기 이름
 
@@ -96,7 +96,9 @@ const FORTUNE_METADATA = `
 `
 
 // 시스템 프롬프트
-const SYSTEM_PROMPT = `당신은 운세 추천 AI입니다. 사용자의 입력을 분석하여 가장 적합한 운세 타입을 추천합니다.
+const SYSTEM_PROMPT = `당신은 사용자의 자기 발견을 돕는 인사이트 추천 AI입니다.
+사용자의 입력을 분석하여 가장 적합한 인사이트 타입을 추천합니다.
+"나를 알면 미래가 보인다"는 철학을 바탕으로, 예측이 아닌 자기 이해를 중심으로 추천합니다.
 
 ${FORTUNE_METADATA}
 

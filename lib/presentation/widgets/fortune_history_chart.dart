@@ -40,7 +40,7 @@ class FortuneHistoryChart extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '운세 히스토리',
+                '인사이트 히스토리',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -58,7 +58,7 @@ class FortuneHistoryChart extends StatelessWidget {
                       ),
                       if (fortuneScores.isEmpty)
                         Text(
-                          '예상 운세',
+                          '예상 인사이트',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.primary.withValues(alpha: 0.7),
                           ),

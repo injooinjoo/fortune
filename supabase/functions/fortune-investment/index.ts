@@ -176,8 +176,8 @@ serve(async (req) => {
     // LLM 호출
     const llm = await LLMFactory.createFromConfigAsync('investment')
 
-    const systemPrompt = `당신은 ${categoryLabel} 투자 운세 전문가입니다.
-사용자가 선택한 종목(${tickerName})에 대해 투자자들이 가장 궁금해하는 정보를 운세 형식으로 제공합니다.
+    const systemPrompt = `당신은 ${categoryLabel} 투자 인사이트 전문가입니다.
+사용자가 선택한 종목(${tickerName})에 대해 투자자들이 가장 궁금해하는 정보를 인사이트 형식으로 제공합니다.
 
 ## 투자자들이 가장 궁금해하는 것 (리서치 기반)
 1. 타이밍: 지금 살 때인가? 팔 때인가? 최적 시점은?

@@ -260,7 +260,7 @@ function generateMessage(
   // 고득점 (85+)
   if (score && score.overall_score >= 85) {
     return {
-      title: `${zodiacEmoji} 오늘 운세 ${score.overall_score}점!`,
+      title: `${zodiacEmoji} 오늘 인사이트 ${score.overall_score}점!`,
       body: '대길한 하루가 예상됩니다. 지금 확인하세요!',
       payload: {
         type: 'daily_fortune',
@@ -274,7 +274,7 @@ function generateMessage(
   if (user.consecutive_days && user.consecutive_days >= 7) {
     return {
       title: `${zodiacEmoji} ${user.consecutive_days}일 연속 접속 중!`,
-      body: '오늘의 운세를 확인하고 연속 기록을 유지하세요',
+      body: '오늘의 인사이트를 확인하고 연속 기록을 유지하세요',
       payload: {
         type: 'daily_fortune',
         route: '/home',
@@ -290,7 +290,7 @@ function generateMessage(
       : ''
 
     return {
-      title: `${zodiacEmoji} 오늘의 운세가 도착했어요`,
+      title: `${zodiacEmoji} 오늘의 인사이트가 도착했어요`,
       body: categoryText
         ? `${categoryText} 운이 좋은 하루! 자세히 확인해보세요`
         : '어떤 행운이 기다리고 있을까요?',
@@ -304,7 +304,7 @@ function generateMessage(
 
   // 기본 메시지
   return {
-    title: `${zodiacEmoji} 오늘의 운세가 도착했어요`,
+    title: `${zodiacEmoji} 오늘의 인사이트가 도착했어요`,
     body: '어떤 행운이 기다리고 있을까요?',
     payload: {
       type: 'daily_fortune',

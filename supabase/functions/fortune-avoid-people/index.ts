@@ -94,7 +94,7 @@ serve(async (req) => {
                    [6, 7, 8].includes(now.getMonth() + 1) ? '여름' : '가을'
     const isWeekend = now.getDay() === 0 || now.getDay() === 6
 
-    const systemPrompt = `당신은 한국 전통 운세와 현대 심리학을 결합한 경계대상 분석 전문가입니다.
+    const systemPrompt = `당신은 한국 전통 지혜와 현대 심리학을 결합한 경계대상 분석 전문가입니다.
 사용자의 현재 상태, 일정, 오늘의 날짜/시간/계절을 종합하여 오늘 조심해야 할 모든 것들을 8가지 카테고리로 상세 분석하세요.
 
 ⚠️ 핵심: 단순히 "사람"만이 아니라, 사물, 색상, 숫자, 동물, 장소, 시간대, 방향까지 모두 분석!
@@ -401,7 +401,7 @@ ${environment === '모임' ? '- 모임: 술자리 주의, 충동적 약속 경�
     return new Response(
       JSON.stringify({
         success: false,
-        error: '운세 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+        error: '분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
         details: errorMessage
       }),
       {

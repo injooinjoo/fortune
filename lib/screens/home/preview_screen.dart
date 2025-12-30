@@ -102,7 +102,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
               children: [
                 // Title
                 Text(
-                  '나만의 운세를 확인하세요',
+                  '나만의 인사이트를 확인하세요',
                   style: DSTypography.displaySmall.copyWith(
                     color: colors.textPrimary,
                   ),
@@ -308,7 +308,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
 
                       // Subtitle
                       Text(
-                        '로그인하고 나만의 맞춤 운세를\n확인해보세요',
+                        '로그인하고 나만의 맞춤 인사이트를\n확인해보세요',
                         style: DSTypography.labelMedium.copyWith(
                           color: colors.textSecondary,
                           height: 1.4,

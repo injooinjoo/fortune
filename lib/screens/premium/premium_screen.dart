@@ -17,7 +17,7 @@ class PremiumScreen extends StatelessWidget {
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
-          '프리미엄운세',
+          '프리미엄 인사이트',
           style: DSTypography.headingSmall.copyWith(
             color: colors.textPrimary,
           ),
@@ -86,7 +86,7 @@ class PremiumScreen extends StatelessWidget {
             context,
             icon: Icons.insights,
             title: '심층 분석',
-            description: '더 깊이 있는 운세 분석 제공',
+            description: '더 깊이 있는 인사이트 분석 제공',
           ),
           const SizedBox(height: 24),
           SizedBox(

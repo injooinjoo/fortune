@@ -486,7 +486,7 @@ ${photoAnalysisText}${chatAnalysisText}
     return new Response(
       JSON.stringify({
         success: false,
-        error: '운세 생성 중 오류가 발생했습니다.',
+        error: '소개팅 인사이트 생성 중 오류가 발생했습니다.',
         details: error instanceof Error ? error.message : String(error)
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }, status: 500 }

@@ -3,7 +3,7 @@ import '../../../../../core/design_system/design_system.dart';
 import '../../../domain/models/fortune_survey_config.dart';
 import '../../../domain/services/intent_detector.dart';
 
-/// 텍스트 입력 시 추천 운세 타입 칩
+/// 텍스트 입력 시 추천 인사이트 타입 칩
 class FortuneTypeChips extends StatelessWidget {
   final List<DetectedIntent> intents;
   final void Function(FortuneSurveyType type) onSelect;
@@ -41,7 +41,7 @@ class FortuneTypeChips extends StatelessWidget {
               Text(
                 isAiRecommendation
                     ? '✨ AI 추천'
-                    : '이런 운세가 궁금하신가요?',
+                    : '이런 인사이트가 궁금하신가요?',
                 style: typography.labelSmall.copyWith(
                   color: isAiRecommendation
                       ? colors.accent
@@ -197,21 +197,21 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.profileCreation:
         return '프로필 생성';
       case FortuneSurveyType.career:
-        return '커리어 운세';
+        return '커리어 인사이트';
       case FortuneSurveyType.love:
-        return '연애 운세';
+        return '연애 인사이트';
       case FortuneSurveyType.talent:
         return '적성 찾기';
       case FortuneSurveyType.daily:
-        return '오늘의 운세';
+        return '오늘의 인사이트';
       case FortuneSurveyType.tarot:
         return '타로';
       case FortuneSurveyType.mbti:
         return 'MBTI';
       case FortuneSurveyType.newYear:
-        return '새해 운세';
+        return '새해 인사이트';
       case FortuneSurveyType.dailyCalendar:
-        return '기간별 운세';
+        return '기간별 인사이트';
       case FortuneSurveyType.traditional:
         return '사주 분석';
       case FortuneSurveyType.faceReading:
@@ -225,9 +225,9 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.avoidPeople:
         return '경계 대상';
       case FortuneSurveyType.exLover:
-        return '재회 운세';
+        return '재회 인사이트';
       case FortuneSurveyType.blindDate:
-        return '소개팅 운세';
+        return '소개팅 인사이트';
       case FortuneSurveyType.money:
         return '재물운';
       case FortuneSurveyType.luckyItems:
@@ -239,7 +239,7 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.fortuneCookie:
         return '오늘의 메시지';
       case FortuneSurveyType.health:
-        return '건강 운세';
+        return '건강 인사이트';
       case FortuneSurveyType.exercise:
         return '운동 추천';
       case FortuneSurveyType.sportsGame:
@@ -251,7 +251,7 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.pet:
         return '반려동물 궁합';
       case FortuneSurveyType.family:
-        return '가족 운세';
+        return '가족 인사이트';
       case FortuneSurveyType.naming:
         return '작명';
       case FortuneSurveyType.ootdEvaluation:

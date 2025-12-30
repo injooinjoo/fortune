@@ -741,7 +741,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: '연애운세 생성 중 오류가 발생했습니다: ' + error.message
+        error: '연애 인사이트 생성 중 오류가 발생했습니다: ' + error.message
       }),
       {
         status: 500,

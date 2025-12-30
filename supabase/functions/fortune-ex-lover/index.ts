@@ -568,7 +568,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       success: false,
       data: {},
-      error: error instanceof Error ? error.message : '전 애인 운세 생성 중 오류가 발생했습니다.'
+      error: error instanceof Error ? error.message : '재회 인사이트 생성 중 오류가 발생했습니다.'
     }), {
       status: 500,
       headers: {

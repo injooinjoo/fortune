@@ -582,7 +582,7 @@ serve(async (req) => {
       try {
         // 카테고리별 프롬프트 생성
         const categoryNames: Record<string, string> = {
-          'total': '전체 운세',
+          'total': '종합 인사이트',
           'love': '애정운',
           'money': '금전운',
           'work': '직장운',
@@ -590,7 +590,7 @@ serve(async (req) => {
           'health': '건강운'
         };
 
-        const categoryName = categoryNames[category] || '운세';
+        const categoryName = categoryNames[category] || '인사이트';
 
         let prompt = '';
         if (category === 'total' && idiom) {
@@ -636,7 +636,7 @@ serve(async (req) => {
         const response = await llm.generate([
           {
             role: 'system',
-            content: `친근하고 따뜻한 운세 전문가.
+            content: `친근하고 따뜻한 인사이트 전문가.
 
 스타일 가이드:
 - 부드러운 존댓말 사용 (~해보세요, ~거예요, ~좋아요)
@@ -713,32 +713,32 @@ serve(async (req) => {
           idiom: totalIdiom,
           description: totalAdvice
         },
-        title: '전체 운세'
+        title: '종합 인사이트'
       },
       love: {
         score: loveScore,
         advice: loveAdvice,
-        title: '애정 운세'
+        title: '애정 인사이트'
       },
       money: {
         score: moneyScore,
         advice: moneyAdvice,
-        title: '금전 운세'
+        title: '금전 인사이트'
       },
       work: {
         score: workScore,
         advice: workAdvice,
-        title: '직장 운세'
+        title: '직장 인사이트'
       },
       study: {
         score: studyScore,
         advice: studyAdvice,
-        title: '학업 운세'
+        title: '학업 인사이트'
       },
       health: {
         score: healthScore,
         advice: healthAdvice,
-        title: '건강 운세'
+        title: '건강 인사이트'
       }
     }
 

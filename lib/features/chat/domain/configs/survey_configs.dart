@@ -1,7 +1,7 @@
 import '../../../../core/theme/fortune_colors.dart';
 import '../models/fortune_survey_config.dart';
 
-/// 운세별 설문 설정 정의
+/// 인사이트별 설문 설정 정의
 
 // ============================================================
 // Career (커리어) 설문 설정
@@ -115,7 +115,7 @@ const _concernOptions = [
 /// Career 설문 설정
 final careerSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.career,
-  title: '커리어 운세',
+  title: '커리어 인사이트',
   description: '당신의 커리어 방향을 알려드릴게요',
   emoji: '💼',
   accentColor: FortuneColors.career,
@@ -193,7 +193,7 @@ const _idealTypeOptions = [
 /// Love 설문 설정
 final loveSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.love,
-  title: '연애 운세',
+  title: '연애 인사이트',
   description: '당신의 사랑 운을 알려드릴게요',
   emoji: '💕',
   accentColor: FortuneColors.love,
@@ -235,7 +235,7 @@ final loveSurveyConfig = FortuneSurveyConfig(
 /// Daily 설문 설정 (설문 스킵 - 바로 운세 조회)
 final dailySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.daily,
-  title: '오늘의 운세',
+  title: '오늘의 인사이트',
   description: '오늘 하루를 미리 살펴볼까요?',
   emoji: '🌅',
   accentColor: FortuneColors.daily,
@@ -302,7 +302,7 @@ final talentSurveyConfig = FortuneSurveyConfig(
 
 /// 타로 목적 옵션
 const _tarotPurposeOptions = [
-  SurveyOption(id: 'general', label: '전체 운세', emoji: '✨'),
+  SurveyOption(id: 'general', label: '전체 인사이트', emoji: '✨'),
   SurveyOption(id: 'love', label: '연애/관계', emoji: '💕'),
   SurveyOption(id: 'career', label: '일/커리어', emoji: '💼'),
   SurveyOption(id: 'decision', label: '결정/선택', emoji: '🤔'),
@@ -358,8 +358,8 @@ const _mbtiTypeOptions = [
 /// MBTI 설문 설정
 const mbtiSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.mbti,
-  title: 'MBTI 운세',
-  description: 'MBTI로 보는 오늘의 운세',
+  title: 'MBTI 인사이트',
+  description: 'MBTI로 보는 오늘의 인사이트',
   emoji: '🧠',
   accentColor: FortuneColors.career,
   steps: [
@@ -376,7 +376,7 @@ const mbtiSurveyConfig = FortuneSurveyConfig(
 // 모든 설문 설정 매핑
 // ============================================================
 
-/// 운세 타입별 설문 설정 매핑 (30개 전체 + 유틸리티)
+/// 인사이트 타입별 설문 설정 매핑 (30개 전체 + 유틸리티)
 final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   // 유틸리티
   FortuneSurveyType.profileCreation: profileCreationSurveyConfig,
@@ -452,7 +452,7 @@ const _newYearGoalOptions = [
 /// NewYear 설문 설정
 const newYearSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.newYear,
-  title: '새해 운세',
+  title: '새해 인사이트',
   description: '새해 복 많이 받으세요!',
   emoji: '🎊',
   accentColor: FortuneColors.wealth,
@@ -481,15 +481,15 @@ const _calendarSyncOptions = [
 /// 플로우: 캘린더 연동 → 날짜 선택 → (동적) 일정 표시 → 운세 생성
 const dailyCalendarSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.dailyCalendar,
-  title: '기간별 운세',
-  description: '날짜를 선택하면 그날의 일정과 운세를 함께 봐드려요!',
+  title: '기간별 인사이트',
+  description: '날짜를 선택하면 그날의 일정과 인사이트를 함께 확인해드려요!',
   emoji: '📅',
   accentColor: FortuneColors.daily,
   steps: [
     // Step 1: 캘린더 연동 여부 (선택적)
     SurveyStep(
       id: 'calendarSync',
-      question: '캘린더를 연동하면 일정과 함께 더 정확한 운세를 볼 수 있어요! 📅',
+      question: '캘린더를 연동하면 일정과 함께 더 정확한 인사이트를 확인할 수 있어요! 📅',
       inputType: SurveyInputType.chips,
       options: _calendarSyncOptions,
       isRequired: false,
@@ -514,7 +514,7 @@ const _traditionalTypeOptions = [
   SurveyOption(id: 'comprehensive', label: '종합 분석', emoji: '📜'),
   SurveyOption(id: 'personality', label: '성격/기질', emoji: '🎭'),
   SurveyOption(id: 'destiny', label: '운명/인생 흐름', emoji: '🌊'),
-  SurveyOption(id: 'luck', label: '올해 운세', emoji: '🍀'),
+  SurveyOption(id: 'luck', label: '올해 인사이트', emoji: '🍀'),
   SurveyOption(id: 'relationship', label: '대인관계', emoji: '🤝'),
 ];
 
@@ -855,7 +855,7 @@ const _currentFeelingOptions = [
 /// ExLover 설문 설정
 const exLoverSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.exLover,
-  title: '재회 운세',
+  title: '재회 인사이트',
   description: '재회 가능성을 살펴볼게요',
   emoji: '🔄',
   accentColor: FortuneColors.love,
@@ -925,8 +925,8 @@ const _blindDatePartnerInfoOptions = [
 /// BlindDate 설문 설정
 final blindDateSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.blindDate,
-  title: '소개팅 운세',
-  description: '소개팅 운세를 봐드릴게요!',
+  title: '소개팅 인사이트',
+  description: '소개팅 인사이트를 확인해드릴게요!',
   emoji: '💘',
   accentColor: FortuneColors.love,
   steps: [
@@ -1167,8 +1167,8 @@ const _healthConcernOptions = [
 /// Health 설문 설정
 const healthSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.health,
-  title: '건강 운세',
-  description: '오늘의 건강 운세를 봐드릴게요',
+  title: '건강 인사이트',
+  description: '오늘의 건강 인사이트를 확인해드릴게요',
   emoji: '💊',
   accentColor: FortuneColors.career,
   steps: [
@@ -1242,7 +1242,7 @@ const _sportTypeOptions = [
 const sportsGameSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.sportsGame,
   title: '스포츠 경기',
-  description: '경기 운세를 봐드릴게요!',
+  description: '경기 인사이트를 확인해드릴게요!',
   emoji: '🏆',
   accentColor: FortuneColors.career,
   steps: [
@@ -1400,8 +1400,8 @@ const _familyMemberOptions = [
 /// Family 설문 설정
 const familySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.family,
-  title: '가족 운세',
-  description: '가족 운세를 살펴볼게요',
+  title: '가족 인사이트',
+  description: '가족 인사이트를 살펴볼게요',
   emoji: '👨‍👩‍👧‍👦',
   accentColor: FortuneColors.love,
   steps: [

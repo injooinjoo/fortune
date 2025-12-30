@@ -494,7 +494,7 @@ serve(async (req) => {
     const errorResponse = {
       success: false,
       data: {},
-      error: error instanceof Error ? error.message : '궁합 운세 생성 중 오류가 발생했습니다.'
+      error: error instanceof Error ? error.message : '궁합 분석 중 오류가 발생했습니다.'
     }
 
     return new Response(JSON.stringify(errorResponse), {
