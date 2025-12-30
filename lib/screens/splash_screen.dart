@@ -23,8 +23,8 @@ class _SplashScreenState extends State<SplashScreen> {
     // Failsafe: If still on splash after 5 seconds (increased for version check), force navigation
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted && !_versionCheckBlocked) {
-        debugPrint('⏰ SplashScreen: Failsafe triggered, forcing navigation to landing');
-        context.go('/');
+        debugPrint('⏰ SplashScreen: Failsafe triggered, forcing navigation to chat');
+        context.go('/chat');
       }
     });
 
@@ -116,35 +116,34 @@ class _SplashScreenState extends State<SplashScreen> {
 
           if (!mounted) return;
 
+          // Chat-First: 모든 경우 /chat으로 이동 (온보딩은 채팅 내에서 처리)
           if (profileResponse == null ||
               profileResponse['onboarding_completed'] != true) {
-            // No profile or onboarding not completed - go to full onboarding
-            debugPrint('➡️ SplashScreen: Redirecting to onboarding');
-            context.go('/onboarding/toss-style');
+            debugPrint('➡️ SplashScreen: Onboarding needed, redirecting to chat');
+            context.go('/chat');
           } else if (profileResponse['name'] == null ||
                      profileResponse['birth_date'] == null) {
-            // Has profile but missing essential fields - go to partial onboarding
-            debugPrint('➡️ SplashScreen: Missing essential fields, redirecting to partial onboarding');
-            context.go('/onboarding/toss-style?partial=true');
+            debugPrint('➡️ SplashScreen: Missing essential fields, redirecting to chat');
+            context.go('/chat');
           } else {
-            // Profile complete - go to home
-            debugPrint('➡️ SplashScreen: Redirecting to home');
-            context.go('/home');
+            // Profile complete - go to chat (Chat-First home)
+            debugPrint('➡️ SplashScreen: Profile complete, redirecting to chat');
+            context.go('/chat');
           }
         } catch (e) {
           debugPrint('❌ SplashScreen: Error checking profile: $e');
-          // If error while logged in, still go to landing for clean start
-          if (mounted) context.go('/');
+          // Chat-First: 에러 시에도 채팅으로 이동
+          if (mounted) context.go('/chat');
         }
       } else {
-        // Always redirect non-logged-in users to landing page
-        debugPrint('➡️ SplashScreen: No session, redirecting to landing page');
-        if (mounted) context.go('/');
+        // Chat-First: 비로그인 사용자도 채팅으로 이동 (게스트 모드)
+        debugPrint('➡️ SplashScreen: No session, redirecting to chat (guest mode)');
+        if (mounted) context.go('/chat');
       }
     } catch (e) {
       debugPrint('❌ SplashScreen: Critical error in auth check: $e');
-      // On any critical error, go to landing page
-      if (mounted) context.go('/');
+      // Chat-First: 에러 시에도 채팅으로 이동
+      if (mounted) context.go('/chat');
     }
   }
 

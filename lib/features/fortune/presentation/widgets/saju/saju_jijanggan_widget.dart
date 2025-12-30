@@ -281,6 +281,13 @@ class SajuJijangganWidget extends StatelessWidget {
                 elementKorean: stemData['elementKorean'] ?? '',
                 meaning: stemData['meaning'] ?? '',
                 description: stemData['description'] ?? '',
+                // 보강된 콘텐츠
+                realLife: stemData['realLife'],
+                love: stemData['love'],
+                career: stemData['career'],
+                health: stemData['health'],
+                tips: stemData['tips'],
+                compatibility: stemData['compatibility'],
               );
             }
           },

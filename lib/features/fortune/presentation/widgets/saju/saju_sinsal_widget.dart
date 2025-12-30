@@ -4,6 +4,7 @@ import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../domain/models/saju/sinsal_data.dart';
+import '../../../domain/models/saju/sinsal_detail_data.dart';
 import 'saju_concept_card.dart';
 
 /// 신살(神殺) 표시 위젯
@@ -192,6 +193,44 @@ class SajuSinsalWidget extends StatelessWidget {
         break;
     }
 
+    // 보강된 신살 데이터 조회
+    final detailData = SinsalDetailDataProvider.sinsalData[sinsal.name];
+
+    // 보강된 콘텐츠 포맷팅
+    String? realLife;
+    String? goodSide;
+    String? tips;
+    String? career;
+
+    if (detailData != null) {
+      // 친근한 설명 + 실생활 예시
+      final examples = detailData['realLifeExamples'] as List<dynamic>?;
+      if (examples != null && examples.isNotEmpty) {
+        realLife =
+            '${detailData['friendlyExplanation'] ?? ''}\n\n📌 이런 분이에요:\n${examples.take(4).map((e) => '• $e').join('\n')}';
+      } else {
+        realLife = detailData['friendlyExplanation'] as String?;
+      }
+
+      // 활용/활성화 팁
+      final activationTips = detailData['activationTips'] as List<dynamic>?;
+      if (activationTips != null && activationTips.isNotEmpty) {
+        goodSide = '✨ 활용법:\n${activationTips.map((e) => '• $e').join('\n')}';
+      }
+
+      // 실용적 조언
+      final seasonalTips = detailData['seasonalTips'] as Map<String, dynamic>?;
+      if (seasonalTips != null) {
+        tips = '📅 시기별 팁:\n• 최적기: ${seasonalTips['best'] ?? ''}\n• 주의: ${seasonalTips['caution'] ?? ''}';
+      }
+
+      // 커리어 팁
+      final careerTips = detailData['careerTips'] as List<dynamic>?;
+      if (careerTips != null && careerTips.isNotEmpty) {
+        career = '💼 커리어:\n${careerTips.map((e) => '• $e').join('\n')}';
+      }
+    }
+
     return GestureDetector(
       onTap: () {
         showSinsalExplanationSheet(
@@ -202,6 +241,11 @@ class SajuSinsalWidget extends StatelessWidget {
           meaning: sinsal.meaning,
           description: '${sinsal.description}\n\n💡 ${sinsal.remedy}',
           sinsalColor: color,
+          // 보강된 콘텐츠
+          realLife: realLife,
+          goodSide: goodSide,
+          tips: tips,
+          career: career,
         );
       },
       child: Container(

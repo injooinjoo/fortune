@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/logger.dart';
+import '../../services/storage_service.dart';
 import '../models/fortune_result.dart';
 import '../models/cached_fortune_result.dart';
 import '../constants/soul_rates.dart';
@@ -57,6 +58,23 @@ class UnifiedFortuneService {
     _optimizationService = FortuneOptimizationService(supabase: _supabase);
   }
 
+  // StorageService 인스턴스 (Guest ID용)
+  final StorageService _storageService = StorageService();
+
+  /// 사용자 ID 조회 (로그인 사용자 또는 게스트 ID)
+  ///
+  /// 로그인된 경우: Supabase UUID 반환
+  /// 비로그인 경우: guest_XXXXXXXX 형식의 게스트 ID 생성/반환
+  Future<String> _getUserId() async {
+    final user = _supabase.auth.currentUser;
+    if (user != null) {
+      return user.id;
+    }
+
+    // 게스트 ID 사용
+    return await _storageService.getOrCreateGuestId();
+  }
+
   /// ==================== 메인 엔트리포인트 ====================
 
   /// 운세 조회 (통합 플로우 + 최적화 + 블러 처리)
@@ -85,7 +103,7 @@ class UnifiedFortuneService {
     bool isPremium = false, // Premium 사용자는 블러 없이 표시
   }) async {
     try {
-      final userId = _supabase.auth.currentUser?.id ?? 'unknown';
+      final userId = await _getUserId();
       final today = DateTime.now().toIso8601String().split('T')[0];
 
       // 🎯 운세 요청 시작
@@ -99,7 +117,9 @@ class UnifiedFortuneService {
       final soulAmount = SoulRates.getSoulAmount(fortuneType);
       Logger.info('[$fortuneType] 💰 영혼 비용: $soulAmount (${soulAmount < 0 ? "프리미엄" : "무료"})');
 
-      if (enableTokenValidation && _tokenService != null && userId != 'unknown') {
+      // 게스트 사용자는 토큰 검증 건너뜀 (guest_ 접두사로 시작)
+      final isGuestUser = userId.startsWith('guest_');
+      if (enableTokenValidation && _tokenService != null && !isGuestUser) {
         try {
           final balance = await _tokenService.getTokenBalance(userId: userId);
 
@@ -832,6 +852,8 @@ class UnifiedFortuneService {
   /// ==================== Step 3: DB 저장 ====================
 
   /// 운세 결과 저장 (fortune_history 테이블)
+  ///
+  /// 게스트 사용자(비로그인)는 DB 저장을 건너뜁니다.
   Future<void> saveFortune({
     required FortuneResult result,
     required String fortuneType,
@@ -840,7 +862,9 @@ class UnifiedFortuneService {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
-        throw Exception('사용자 미인증');
+        // 게스트 사용자는 DB 저장 건너뜀 (로컬에만 결과 표시)
+        Logger.info('[UnifiedFortune] ⏭️ 게스트 사용자 - DB 저장 건너뜀');
+        return;
       }
 
       final now = DateTime.now();
@@ -984,8 +1008,10 @@ class UnifiedFortuneService {
     String fortuneType,
     int soulAmount,
   ) async {
-    if (_tokenService == null || userId == 'unknown') {
-      Logger.info('[$fortuneType] ⏭️ 토큰 처리 건너뜀 (서비스 없음 또는 비로그인)');
+    // 게스트 사용자는 토큰 처리 건너뜀
+    final isGuestUser = userId.startsWith('guest_');
+    if (_tokenService == null || isGuestUser) {
+      Logger.info('[$fortuneType] ⏭️ 토큰 처리 건너뜀 (서비스 없음 또는 게스트)');
       return;
     }
 

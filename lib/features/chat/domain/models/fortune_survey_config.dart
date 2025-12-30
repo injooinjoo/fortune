@@ -97,9 +97,9 @@ enum FortuneSurveyType {
   tarot,    // 타로
   mbti,     // MBTI
 
-  // 시간 기반 (2개 추가)
-  yearly,       // 연간 운세
-  newYear,      // 새해 운세
+  // 시간 기반 (2개)
+  newYear,       // 새해 운세
+  dailyCalendar, // 기간별 운세 (캘린더)
 
   // 전통 분석 (3개)
   traditional,  // 전통 사주 분석

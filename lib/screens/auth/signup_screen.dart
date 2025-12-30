@@ -52,7 +52,8 @@ class _SignupScreenState extends State<SignupScreen> {
               content: const Text('회원가입이 완료되었습니다!'),
               backgroundColor: context.colors.success));
           
-          context.go('/onboarding');
+          // Chat-First: 온보딩은 채팅 내에서 처리
+          context.go('/chat');
         }
       } on AuthException catch (error) {
         if (!mounted) return;
@@ -80,7 +81,7 @@ class _SignupScreenState extends State<SignupScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/')),
+          onPressed: () => context.go('/chat')),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -191,8 +192,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextButton(
-                      onPressed: () => context.go('/'),
-                      child: const Text('이미 계정이 있으신가요? 처음으로'),
+                      onPressed: () => context.go('/chat'),
+                      child: const Text('이미 계정이 있으신가요? 채팅으로'),
                     ),
                   ],
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/models/user_profile.dart';
 import '../../core/utils/logger.dart';
 import '../../core/utils/supabase_helper.dart';
@@ -9,6 +10,19 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
 
   UserProfileNotifier(this._ref) : super(const AsyncValue.loading()) {
     loadProfile();
+    // 로그인 상태 변경 시 프로필 재로드
+    _ref.listen<AsyncValue<AuthState?>>(authStateProvider, (previous, next) {
+      next.whenData((authState) {
+        if (authState?.event == AuthChangeEvent.signedIn ||
+            authState?.event == AuthChangeEvent.tokenRefreshed) {
+          Logger.info('🔄 [UserProfileNotifier] Auth state changed, reloading profile...');
+          loadProfile();
+        } else if (authState?.event == AuthChangeEvent.signedOut) {
+          Logger.info('🔄 [UserProfileNotifier] Signed out, clearing profile');
+          state = const AsyncValue.data(null);
+        }
+      });
+    });
   }
 
   Future<void> loadProfile() async {

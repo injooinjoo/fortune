@@ -38,8 +38,6 @@ class AIRecommendation {
       // 시간 기반
       case 'daily':
         return FortuneSurveyType.daily;
-      case 'yearly':
-        return FortuneSurveyType.yearly;
       case 'newYear':
         return FortuneSurveyType.newYear;
 

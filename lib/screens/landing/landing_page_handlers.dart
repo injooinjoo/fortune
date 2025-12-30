@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/utils/profile_validation.dart';
 import '../../presentation/widgets/social_login_bottom_sheet.dart';
 import 'landing_page_state.dart';
 
@@ -35,8 +34,6 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
       if (result != null) {
         debugPrint('🍎 Native Apple Sign-In successful');
 
-        final needsOnboarding = await ProfileValidation.needsOnboarding();
-
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -45,11 +42,8 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
             ),
           );
 
-          if (needsOnboarding) {
-            context.go('/onboarding');
-          } else {
-            context.go('/home');
-          }
+          // Chat-First: 모든 경우 /chat으로 이동
+          context.go('/chat');
         }
       } else {
         debugPrint('🍎 OAuth flow initiated');
@@ -362,13 +356,10 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
         await syncProfileFromSupabase();
         await updateKakaoProfileName();
 
-        final needsOnboarding = await ProfileValidation.needsOnboarding();
-        if (needsOnboarding && mounted) {
-          debugPrint('🟡 Profile incomplete, redirecting to onboarding...');
-          context.go('/onboarding');
-        } else if (mounted) {
-          debugPrint('🟡 Profile complete, redirecting to home...');
-          context.go('/home');
+        // Chat-First: 모든 경우 /chat으로 이동 (온보딩은 채팅 내에서 처리)
+        if (mounted) {
+          debugPrint('🟡 Redirecting to chat...');
+          context.go('/chat');
         }
       } else {
         debugPrint('🟡 Kakao OAuth flow initiated, waiting for callback...');

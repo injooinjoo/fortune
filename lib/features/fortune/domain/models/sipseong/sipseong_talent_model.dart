@@ -39,6 +39,14 @@ class SipseongTalent {
   final List<String> luckyElements; // 성장을 도와줄 행운의 요소
   final String growthAdvice; // 전반적인 성장 조언
 
+  // Part 5: 친근한 콘텐츠 (BottomSheet 보강용)
+  final String friendlyExplanation; // 쉽게 이해하기
+  final List<String> realLifeExamples; // 실생활 예시
+  final Map<String, String> seasonalTips; // 계절별 활용법 (best, caution, spring, summer, autumn, winter)
+  final Map<String, dynamic> dailyTips; // 시간대별 활용법 (bestTime, bestActivities, caution)
+  final List<String> compatibleSipseong; // 시너지 좋은 십신
+  final List<String> challengingSipseong; // 보완 필요한 십신
+
   const SipseongTalent({
     required this.name,
     required this.emoji,
@@ -57,6 +65,12 @@ class SipseongTalent {
     required this.complements,
     required this.luckyElements,
     required this.growthAdvice,
+    this.friendlyExplanation = '',
+    this.realLifeExamples = const [],
+    this.seasonalTips = const {},
+    this.dailyTips = const {},
+    this.compatibleSipseong = const [],
+    this.challengingSipseong = const [],
   });
 }
 

@@ -12,7 +12,6 @@ class FortuneTypeNames {
     'daily_calendar': '날짜별 인사이트',
     'weekly': '주간 인사이트',
     'monthly': '월간 인사이트',
-    'yearly': '연간 인사이트',
 
     // Traditional Analysis (전통 분석)
     'traditional': '전통 분석',
@@ -134,7 +133,7 @@ class FortuneTypeNames {
 
   /// Get the category name for a fortune type
   static String getCategory(String fortuneType) {
-    if (['daily', 'today', 'tomorrow', 'daily_calendar', 'weekly', 'monthly', 'yearly'].contains(fortuneType)) {
+    if (['daily', 'today', 'tomorrow', 'daily_calendar', 'weekly', 'monthly'].contains(fortuneType)) {
       return '일일 인사이트';
     } else if (['saju', 'traditional-saju', 'saju-psychology', 'tojeong', 'salpuli', 'palmistry', 'physiognomy', 'face-reading', 'five-blessings'].contains(fortuneType)) {
       return '전통 분석';
@@ -234,7 +233,6 @@ class FortuneTypeNames {
       'daily_calendar': '/daily-calendar',
       'weekly': '/daily-calendar',
       'monthly': '/daily-calendar',
-      'yearly': '/yearly',
       'saju': '/traditional-saju',
       'tojeong': '/traditional',
       'palmistry': '/traditional',

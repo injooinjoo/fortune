@@ -7,6 +7,7 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/config/environment.dart';
 import 'core/utils/logger.dart';
@@ -178,6 +179,25 @@ void main() async {
     await SharedPreferences.getInstance();
   } catch (e) {
     Logger.error('SharedPreferences initialization failed', e);
+  }
+
+  // 게스트 모드 자동 활성화: 비로그인 시 게스트로 채팅 사용 가능
+  try {
+    debugPrint('🎭 [STARTUP] Checking guest mode...');
+    final prefs = await SharedPreferences.getInstance();
+    final hasSession = Supabase.instance.client.auth.currentSession != null;
+
+    if (!hasSession) {
+      // 비로그인 상태면 게스트 모드 활성화
+      await prefs.setBool('isGuestMode', true);
+      debugPrint('🎭 [STARTUP] Guest mode enabled (no session)');
+    } else {
+      // 로그인 상태면 게스트 모드 해제
+      await prefs.setBool('isGuestMode', false);
+      debugPrint('🎭 [STARTUP] Guest mode disabled (session exists)');
+    }
+  } catch (e) {
+    debugPrint('⚠️ [STARTUP] Guest mode check failed: $e');
   }
 
   // Initialize test authentication if in test mode

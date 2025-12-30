@@ -23,17 +23,7 @@ final timeBasedRoutes = [
       }
       return '/time';
     }),
-  
-  
-  // Yearly
-  GoRoute(
-    path: '/yearly',
-    name: 'fortune-yearly',
-    builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return DailyCalendarFortunePage(initialParams: extra);
-    }),
-  
+
   // New Year
   GoRoute(
     path: '/new-year',

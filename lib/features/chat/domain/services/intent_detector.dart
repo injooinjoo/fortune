@@ -29,10 +29,7 @@ class IntentDetector {
       'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ',
       'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP',
     ],
-    // 시간 기반 (2개)
-    FortuneSurveyType.yearly: [
-      '연간', '한해', '올해', '내년', '2025년', '2026년', '년운',
-    ],
+    // 시간 기반 (1개)
     FortuneSurveyType.newYear: [
       '새해', '신년', '설날', '연초', '정초',
     ],
@@ -182,10 +179,10 @@ class IntentDetector {
       case FortuneSurveyType.mbti:
         return 'MBTI 기반 분석을 해드릴까요?';
       // 시간 기반
-      case FortuneSurveyType.yearly:
-        return '한 해 운세가 궁금하시군요! 연간 운세를 봐드릴까요?';
       case FortuneSurveyType.newYear:
         return '새해 운세를 미리 확인해볼까요?';
+      case FortuneSurveyType.dailyCalendar:
+        return '특정 날짜의 운세를 확인해볼까요?';
       // 전통 분석
       case FortuneSurveyType.traditional:
         return '사주팔자로 깊이 있는 분석을 해드릴까요?';

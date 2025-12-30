@@ -57,6 +57,11 @@ class ChatMessageList extends StatelessWidget {
           );
         }
 
+        // 온보딩 입력 메시지는 표시하지 않음 (하단 입력란 사용)
+        if (message.type == ChatMessageType.onboardingInput) {
+          return const SizedBox.shrink();
+        }
+
         // 일반 메시지
         return ChatMessageBubble(
           message: message,

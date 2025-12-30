@@ -19,6 +19,36 @@ enum ChatMessageType {
 
   /// 시스템 메시지 (추천 칩 등)
   system,
+
+  /// 온보딩 입력 요청 (이름, 생년월일, 시간 등)
+  onboardingInput,
+}
+
+/// 온보딩 입력 타입
+enum OnboardingInputType {
+  /// 이름 입력 (텍스트)
+  name,
+
+  /// 생년월일 입력 (DatePicker)
+  birthDate,
+
+  /// 태어난 시간 입력 (TimePicker)
+  birthTime,
+
+  /// 성별 선택 (Chips)
+  gender,
+
+  /// MBTI 선택 (16가지 Chips)
+  mbti,
+
+  /// 혈액형 선택 (A/B/O/AB Chips)
+  bloodType,
+
+  /// 정보 확인 화면 (맞아요/처음부터 버튼)
+  confirmation,
+
+  /// 로그인/회원가입 유도 화면
+  loginPrompt,
 }
 
 /// 채팅 메시지 모델
@@ -52,6 +82,9 @@ class ChatMessage {
   /// 사주 분석 결과: LLM 운세 응답 (질문 탭 답변)
   final Map<String, dynamic>? sajuFortuneResult;
 
+  /// 온보딩용: 입력 타입
+  final OnboardingInputType? onboardingInputType;
+
   const ChatMessage({
     required this.id,
     required this.type,
@@ -65,6 +98,7 @@ class ChatMessage {
     this.fortune,
     this.sajuData,
     this.sajuFortuneResult,
+    this.onboardingInputType,
   });
 
   ChatMessage copyWith({
@@ -80,6 +114,7 @@ class ChatMessage {
     Fortune? fortune,
     Map<String, dynamic>? sajuData,
     Map<String, dynamic>? sajuFortuneResult,
+    OnboardingInputType? onboardingInputType,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -94,6 +129,7 @@ class ChatMessage {
       fortune: fortune ?? this.fortune,
       sajuData: sajuData ?? this.sajuData,
       sajuFortuneResult: sajuFortuneResult ?? this.sajuFortuneResult,
+      onboardingInputType: onboardingInputType ?? this.onboardingInputType,
     );
   }
 }

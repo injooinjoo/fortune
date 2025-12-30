@@ -9,7 +9,6 @@ import '../../widgets/icons/fortune_compass_icon.dart';
 import '../../services/storage_service.dart';
 import '../../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
-import '../../core/utils/profile_validation.dart';
 import '../../core/design_system/design_system.dart';
 
 class CallbackPage extends StatefulWidget {
@@ -96,21 +95,14 @@ class _CallbackPageState extends State<CallbackPage> {
         // Continue even if sync fails - will check local storage
       }
       
-      // Now check if user needs onboarding (will use synced data if available,
-      final needsOnboarding = await ProfileValidation.needsOnboarding();
-      debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
-      
-      if (needsOnboarding && mounted) {
-        // User needs to complete onboarding
-        context.go('/onboarding');
-      } else if (mounted) {
-        // User has completed onboarding
-        context.go('/home');
+      // Chat-First: 모든 경우 /chat으로 이동 (온보딩은 채팅 내에서 처리)
+      if (mounted) {
+        context.go('/chat');
       }
     } catch (e) {
       debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
-      // On error, go to onboarding to be safe
-      if (mounted) context.go('/onboarding');
+      // Chat-First: 에러 시에도 /chat으로 이동
+      if (mounted) context.go('/chat');
     }
   }
 
@@ -242,7 +234,7 @@ class _CallbackPageState extends State<CallbackPage> {
               content: Text('로그인 실패: ${errorDescription ?? error}'),
               backgroundColor: context.colors.error,
               duration: const Duration(seconds: 5)));
-          context.go('/');
+          context.go('/chat');
           return;
         }
       }

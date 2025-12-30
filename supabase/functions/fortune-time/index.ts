@@ -1,7 +1,8 @@
 /**
- * 시간 운세 (Time Fortune) Edge Function
+ * 시간 운세 (Time Fortune) Edge Function - LLM 기반 경계대상 패턴 적용
  *
- * @description 사용자의 위치와 사주 정보를 기반으로 시간대별 운세를 분석합니다.
+ * @description 사용자의 사주와 오늘의 천기를 기반으로 시간대별 운세를 LLM으로 분석합니다.
+ * 한국 전통 역학(12시진, 오행, 일진)과 경계대상 패턴(8개 카테고리)을 적용합니다.
  *
  * @endpoint POST /fortune-time
  *
@@ -16,52 +17,322 @@
  * - bloodType?: string - 혈액형
  * - zodiacSign?: string - 별자리
  * - zodiacAnimal?: string - 띠
- * - userLocation?: object - 사용자 위치 정보 (LocationManager)
+ * - userLocation?: object - 사용자 위치 정보
  * - period?: string - 기간 ('today' 기본값)
  * - date?: string - 특정 날짜
+ * - isPremium?: boolean - 프리미엄 사용자 여부
  *
- * @response TimeFortuneResponse
- * - date: string - 날짜
- * - dayOfWeek: string - 요일
- * - timeSlots: object[] - 시간대별 운세
- *   - period: string - 시간대 (아침/오전/점심/오후/저녁/밤)
- *   - score: number - 점수 (0-100)
- *   - description: string - 설명
- *   - activities: string[] - 추천 활동
- * - bestTime: object - 최고의 시간대
- * - worstTime: object - 주의할 시간대
- * - dailySummary: string - 하루 요약
+ * @response TimeFortuneResponse (경계대상 패턴 적용)
+ * - score: number - 전체 점수 (0-100)
+ * - content: string - 핵심 내용
+ * - summary: string - 요약
+ * - advice: string - 조언
+ * - timeSlots: object[] - 시간대별 운세 (12시진 기반)
+ * - cautionTimes: object[] - 주의 시간대
+ * - cautionActivities: object[] - 주의 활동
+ * - cautionPeople: object[] - 주의 인물 유형 (띠 기반)
+ * - cautionDirections: object[] - 주의 방향
+ * - luckyElements: object - 행운 요소 (색상, 숫자, 방향, 아이템)
+ * - timeStrategy: object - 시간대별 전략 (오전/오후/저녁)
+ * - traditionalElements: object - 전통 요소 (오행, 일진, 12시진)
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션
  *
  * @example
- * // Request
- * {
- *   "userId": "user123",
- *   "name": "홍길동",
- *   "birthDate": "1990-05-15",
- *   "userLocation": { "latitude": 37.5665, "longitude": 126.9780 },
- *   "period": "today"
- * }
- *
  * // Response
  * {
- *   "success": true,
- *   "data": {
- *     "date": "2024-01-15",
- *     "timeSlots": [
- *       { "period": "오전", "score": 85, "activities": ["미팅", "계획수립"] },
- *       ...
- *     ],
- *     "bestTime": { "period": "오전", "score": 85 }
+ *   "fortune": {
+ *     "score": 78,
+ *     "cautionTimes": [{ "time": "오후 2-4시", "reason": "...", "severity": "warning" }],
+ *     "luckyElements": { "colors": ["파란색"], "numbers": [3, 7], "direction": "동쪽" },
+ *     "timeStrategy": { "morning": { "caution": "...", "advice": "...", "luckyAction": "..." } }
  *   }
  * }
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+/**
+ * 다중 날짜 운세 처리 함수
+ */
+async function handleMultipleDates(params: {
+  req: Request,
+  supabaseClient: any,
+  requestData: any,
+  targetDatesParam: string[],
+  eventsPerDateParam: Record<string, any[]>,
+  calendarEvents: any[],
+  calendarSynced: boolean,
+  isPremium: boolean,
+  name: string,
+  birthDate: string,
+  birthTime: string,
+  gender: string,
+  isLunar: boolean,
+  zodiacSign: string,
+  zodiacAnimal: string,
+  mbtiType: string,
+  userId: string,
+  processedLocation: string,
+  corsHeaders: Record<string, string>
+}) {
+  const {
+    supabaseClient, targetDatesParam, eventsPerDateParam, calendarEvents,
+    calendarSynced, isPremium, name, birthDate, birthTime, gender, isLunar,
+    zodiacSign, zodiacAnimal, mbtiType, userId, processedLocation, corsHeaders: headers
+  } = params
+
+  console.log(`[fortune-time] 📅 다중 날짜 모드 시작: ${targetDatesParam.length}개 날짜`)
+
+  // 날짜별 정보 구성
+  const datesInfo = targetDatesParam.map(dateStr => {
+    const date = new Date(dateStr)
+    const events = eventsPerDateParam?.[dateStr] || []
+    const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
+
+    return {
+      date,
+      dateStr,
+      displayStr: `${date.getMonth() + 1}월 ${date.getDate()}일 ${dayNames[date.getDay()]}`,
+      events
+    }
+  })
+
+  // 첫 날짜와 마지막 날짜
+  const firstDate = datesInfo[0]
+  const lastDate = datesInfo[datesInfo.length - 1]
+  const periodStr = datesInfo.length === 1
+    ? firstDate.displayStr
+    : `${firstDate.date.getMonth() + 1}/${firstDate.date.getDate()} ~ ${lastDate.date.getMonth() + 1}/${lastDate.date.getDate()} (${datesInfo.length}일)`
+
+  // LLM 모듈 사용
+  const llm = await LLMFactory.createFromConfigAsync('fortune-time')
+
+  // 날짜별 일정 포맷팅
+  const formatMultipleDatesEvents = () => {
+    if (datesInfo.every(d => d.events.length === 0)) return ''
+
+    const sections = datesInfo
+      .filter(d => d.events.length > 0)
+      .map(d => {
+        const eventList = d.events.map((e: any, i: number) => {
+          const title = e.title || '일정'
+          const isAllDay = e.is_all_day || e.isAllDay
+          const location = e.location ? ` (장소: ${e.location})` : ''
+          const time = isAllDay ? '종일' : e.start_time ? new Date(e.start_time).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''
+          return `    ${i + 1}. ${title}${time ? ` - ${time}` : ''}${location}`
+        }).join('\n')
+
+        return `  📅 ${d.displayStr} (${d.events.length}개):\n${eventList}`
+      }).join('\n\n')
+
+    return `
+**📆 선택한 날짜별 일정**:
+${sections}
+
+⚠️ 중요: 각 날짜별 일정을 반드시 해당 날짜 운세 분석에 반영해주세요!`
+  }
+
+  // 시스템 프롬프트
+  const systemPrompt = `당신은 한국 전통 역학(易學)과 현대 시간 관리론을 결합한 시간 운세 전문가입니다.
+사용자의 사주(生年月日時)와 선택한 기간의 천기(天氣)를 분석하여 날짜별 운세를 제공합니다.
+
+**분석 기준**:
+1. 사주팔자의 오행(五行) 균형 분석
+2. 각 날짜의 일진(日辰)과 사용자 사주의 상호작용
+3. 날짜간 기운의 흐름과 변화
+4. 띠 궁합 기반 대인관계 조언
+5. 방위별 길흉 판단
+
+**경계대상 패턴 적용**:
+- 주의 시간대/날짜: 피해야 할 활동과 이유
+- 행운 요소: 색상, 숫자, 방향, 아이템
+
+**응답 규칙**:
+- 각 날짜별로 구분하여 분석
+- 일정이 있는 날은 일정에 맞는 구체적 조언
+- 전체 기간의 흐름과 패턴 분석
+- 가장 좋은 날과 주의할 날 명시`
+
+  // 사용자 프롬프트
+  const calendarSection = formatMultipleDatesEvents()
+  const hasEvents = datesInfo.some(d => d.events.length > 0)
+  const totalEvents = datesInfo.reduce((sum, d) => sum + d.events.length, 0)
+
+  const userPrompt = `다음 정보를 기반으로 선택한 기간(${periodStr})의 운세를 분석해주세요:
+
+**기본 정보**:
+- 이름: ${name}
+- 생년월일: ${birthDate}${isLunar ? ' (음력)' : ''}
+${birthTime ? `- 출생 시간: ${birthTime}` : ''}
+${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
+${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
+${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
+${mbtiType ? `- MBTI: ${mbtiType}` : ''}
+
+**분석 기간**: ${periodStr}
+**분석할 날짜들**:
+${datesInfo.map(d => `  - ${d.displayStr}`).join('\n')}
+${calendarSection}
+
+**응답 형식** (반드시 JSON):
+\`\`\`json
+{
+  "overallScore": 기간 전체 평균 점수 (0-100),
+  "summary": "기간 전체 운세 한 줄 요약 (50자 이내)",
+  "periodAdvice": "기간 전체에 대한 종합 조언 (100자 이내)",
+
+  "bestDate": {
+    "date": "YYYY-MM-DD",
+    "reason": "가장 좋은 날인 이유"
+  },
+  "worstDate": {
+    "date": "YYYY-MM-DD",
+    "reason": "주의할 날인 이유"
+  },
+
+  "dailyFortunes": [
+    {
+      "date": "YYYY-MM-DD",
+      "displayDate": "M월 D일 요일",
+      "score": 점수 (0-100),
+      "summary": "하루 요약 (30자 이내)",
+      "content": "상세 내용 (100자 이내)",
+      "advice": "하루 조언 (50자 이내)",
+      "luckyElements": {
+        "colors": ["색상1", "색상2"],
+        "numbers": [숫자1, 숫자2],
+        "direction": "방향",
+        "items": ["아이템1"]
+      },
+      "cautionTimes": [
+        {
+          "time": "시간대",
+          "reason": "주의 이유",
+          "severity": "high/warning/low"
+        }
+      ],
+      "calendarAdvice": [
+        {
+          "eventTitle": "일정 제목 (해당 날짜에 일정이 있는 경우)",
+          "advice": "일정에 대한 조언",
+          "luckyTip": "행운 팁"
+        }
+      ]
+    }
+  ],
+
+  "periodTheme": "이 기간의 전체 테마/의미",
+  "specialMessage": "기간에 대한 특별 메시지 (100자 이상)"
+}
+\`\`\`
+
+**주의**:
+- dailyFortunes 배열에 선택한 모든 날짜(${datesInfo.length}일)의 운세를 포함해주세요
+- 반드시 유효한 JSON 형식으로만 응답하세요`
+
+  console.log(`[fortune-time] 🔄 다중 날짜 LLM 호출 시작...`)
+
+  const response = await llm.generate([
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: userPrompt }
+  ], {
+    temperature: 1,
+    maxTokens: 12000,  // 다중 날짜는 더 많은 토큰 필요
+    jsonMode: true
+  })
+
+  console.log(`[fortune-time] ✅ 다중 날짜 LLM 응답 수신 (${response.latency}ms, ${response.usage?.totalTokens || 0} tokens)`)
+
+  // LLM 사용량 로깅
+  await UsageLogger.log({
+    fortuneType: 'time_multiple',
+    userId: userId,
+    provider: response.provider,
+    model: response.model,
+    response: response,
+    metadata: { name, birthDate, gender, zodiacAnimal, datesCount: datesInfo.length, isPremium }
+  })
+
+  // JSON 파싱
+  let fortuneData: any
+  try {
+    fortuneData = typeof response.content === 'string'
+      ? JSON.parse(response.content)
+      : response.content
+  } catch (parseError) {
+    console.error(`[fortune-time] ❌ 다중 날짜 JSON 파싱 실패:`, parseError)
+    throw new Error('다중 날짜 LLM 응답을 파싱할 수 없습니다')
+  }
+
+  const overallScore = fortuneData.overallScore || 75
+
+  // Blur 로직
+  const isBlurred = !isPremium
+  const blurredSections = isBlurred
+    ? ['luckyElements', 'cautionTimes', 'calendarAdvice', 'bestDate', 'worstDate']
+    : []
+
+  // 응답 구성
+  const fortune = {
+    fortuneType: 'time_multiple',
+    score: overallScore,
+    content: fortuneData.summary || '',
+    summary: fortuneData.summary || '',
+    advice: fortuneData.periodAdvice || '',
+
+    // 다중 날짜 전용 필드
+    isMultipleDates: true,
+    dateCount: datesInfo.length,
+    periodStr: periodStr,
+    dailyFortunes: fortuneData.dailyFortunes || [],
+    bestDate: fortuneData.bestDate || null,
+    worstDate: fortuneData.worstDate || null,
+    periodTheme: fortuneData.periodTheme || '',
+    specialMessage: fortuneData.specialMessage || '',
+
+    // 메시지
+    message: `${name}님, ${periodStr} 기간의 운세입니다. ✨`,
+    greeting: `${name}님, 선택하신 ${periodStr} 기간의 운세를 확인해보세요. 🎯`,
+
+    // 메타데이터
+    metadata: {
+      targetDates: targetDatesParam,
+      eventsPerDate: eventsPerDateParam,
+      totalEvents: totalEvents,
+      generatedAt: new Date().toISOString()
+    },
+
+    // 블러 상태
+    isBlurred,
+    blurredSections
+  }
+
+  // Percentile 계산
+  const percentileData = await calculatePercentile(supabaseClient, 'time', overallScore)
+  const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
+
+  console.log(`[fortune-time] ✅ 다중 날짜 응답 생성 완료`)
+
+  return new Response(
+    JSON.stringify({
+      fortune: fortuneWithPercentile,
+      cached: false,
+      tokensUsed: response.usage?.totalTokens || 0
+    }),
+    {
+      headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' },
+      status: 200
+    }
+  )
 }
 
 serve(async (req) => {
@@ -74,6 +345,11 @@ serve(async (req) => {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: req.headers.get('Authorization')! },
+        },
+      }
     )
 
     const requestData = await req.json()
@@ -88,312 +364,371 @@ serve(async (req) => {
       bloodType,
       zodiacSign,
       zodiacAnimal,
-      location,  // 옵셔널 위치 정보 (deprecated)
-      userLocation,  // ✅ LocationManager에서 전달받은 실제 사용자 위치
+      location,
+      userLocation,
       period = 'today',
       date,
-      isPremium = false  // ✅ 프리미엄 사용자 여부
+      targetDate: targetDateParam,
+      targetDates: targetDatesParam,  // 다중 날짜 배열
+      eventsPerDate: eventsPerDateParam,  // 날짜별 이벤트 맵
+      isMultipleDates = false,  // 다중 날짜 모드
+      calendarEvents = [],
+      calendarSynced = false,
+      hasCalendarEvents = false,
+      isPremium = false
     } = requestData
 
     console.log('💎 [Time] Premium 상태:', isPremium)
+    console.log(`[fortune-time] 🎯 Request received:`, { userId, name, birthDate, period, isMultipleDates })
+    console.log(`[fortune-time] 📅 Calendar info:`, { calendarSynced, hasCalendarEvents, eventsCount: calendarEvents?.length || 0 })
+    if (isMultipleDates) {
+      console.log(`[fortune-time] 📅 Multiple dates mode:`, { datesCount: targetDatesParam?.length || 0 })
+    }
 
-    console.log('📍 [Time] 사용자 위치:', userLocation || location || '미제공')
+    // 한국 시간대로 현재 날짜 생성 (targetDateParam 우선)
+    let targetDate: Date
+    let eventsForDate: any[] = []
 
-    // 클라이언트에서 전달받은 날짜 또는 한국 시간대로 현재 날짜 생성
-    const targetDate = date
-      ? new Date(date)
-      : new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}))
+    // targetDateParam 디버깅
+    console.log(`[fortune-time] 📅 targetDateParam raw:`, JSON.stringify(targetDateParam))
+    console.log(`[fortune-time] 📅 date raw:`, date)
+    console.log(`[fortune-time] 📅 calendarEvents raw:`, JSON.stringify(calendarEvents))
+
+    // targetDateParam이 문자열인 경우 (ISO string으로 전송된 경우)
+    if (typeof targetDateParam === 'string') {
+      targetDate = new Date(targetDateParam)
+      eventsForDate = calendarEvents || []
+      console.log(`[fortune-time] 📅 Using targetDateParam as string:`, targetDateParam)
+    }
+    // targetDateParam이 객체이고 date 필드가 있는 경우
+    else if (targetDateParam?.date) {
+      // date가 문자열인 경우
+      if (typeof targetDateParam.date === 'string') {
+        targetDate = new Date(targetDateParam.date)
+      } else {
+        targetDate = new Date(targetDateParam.date)
+      }
+      eventsForDate = targetDateParam.events || calendarEvents || []
+      console.log(`[fortune-time] 📅 Using targetDateParam.date:`, { date: targetDateParam.date, eventsCount: eventsForDate.length })
+    }
+    // date 필드가 직접 전달된 경우
+    else if (date) {
+      targetDate = new Date(date)
+      eventsForDate = calendarEvents || []
+      console.log(`[fortune-time] 📅 Using date field:`, date)
+    }
+    // calendarEvents에서 날짜 추출 (fallback)
+    else if (calendarEvents?.length > 0 && calendarEvents[0]?.start_time) {
+      targetDate = new Date(calendarEvents[0].start_time)
+      eventsForDate = calendarEvents
+      console.log(`[fortune-time] 📅 Extracted date from calendarEvents:`, calendarEvents[0].start_time)
+    }
+    // 기본값: 오늘 날짜
+    else {
+      targetDate = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}))
+      eventsForDate = calendarEvents || []
+      console.log(`[fortune-time] 📅 Using today's date (default)`)
+    }
+
+    console.log(`[fortune-time] 📅 Final targetDate:`, targetDate.toISOString())
 
     const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][targetDate.getDay()]
+    const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
+    const currentDayName = dayNames[targetDate.getDay()]
+
+    // 오늘 날짜인지 확인
+    const todayKST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}))
+    const isToday = targetDate.getFullYear() === todayKST.getFullYear() &&
+                    targetDate.getMonth() === todayKST.getMonth() &&
+                    targetDate.getDate() === todayKST.getDate()
+
+    // 날짜 표시 문자열 생성
+    const dateDisplayStr = isToday
+      ? '오늘'
+      : `${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일`
+
+    console.log(`[fortune-time] 📅 isToday:`, isToday, `dateDisplayStr:`, dateDisplayStr)
 
     // 지역 정보 처리
-    // ✅ userLocation 우선 사용, 없으면 location, 둘 다 없으면 기본값 (강남구)
-    const rawLocation = userLocation || location || '강남구'
-    const processedLocation = rawLocation
-    
-    // 기간별 기본 점수 생성
-    const generateBaseScore = () => {
-      const baseScore = 70 + Math.floor(Math.random() * 20)
-      return Math.min(100, baseScore + (mbtiType === 'ENTJ' ? 5 : 0))
+    const processedLocation = userLocation || location || '서울'
+
+    // ✅ 다중 날짜 모드 처리
+    if (isMultipleDates && targetDatesParam && targetDatesParam.length > 0) {
+      return await handleMultipleDates({
+        req,
+        supabaseClient,
+        requestData,
+        targetDatesParam,
+        eventsPerDateParam,
+        calendarEvents,
+        calendarSynced,
+        isPremium,
+        name,
+        birthDate,
+        birthTime,
+        gender,
+        isLunar,
+        zodiacSign,
+        zodiacAnimal,
+        mbtiType,
+        userId,
+        processedLocation,
+        corsHeaders
+      })
     }
 
-    const overallScore = generateBaseScore()
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('fortune-time')
 
-    // 6각형 차트용 점수 생성
-    const generateHexagonScores = () => {
-      return {
-        love: Math.min(100, overallScore + Math.floor(Math.random() * 10) - 5),
-        money: Math.min(100, overallScore + Math.floor(Math.random() * 15) - 7),
-        health: Math.min(100, overallScore + Math.floor(Math.random() * 12) - 6),
-        work: Math.min(100, overallScore + Math.floor(Math.random() * 8) - 4),
-        family: Math.min(100, overallScore + Math.floor(Math.random() * 10) - 5),
-        study: Math.min(100, overallScore + Math.floor(Math.random() * 12) - 6)
-      }
+    // ✅ 경계대상 패턴 적용 - systemPrompt
+    const systemPrompt = `당신은 한국 전통 역학(易學)과 현대 시간 관리론을 결합한 시간 운세 전문가입니다.
+사용자의 사주(生年月日時)와 오늘의 천기(天氣)를 분석하여 시간대별 운세를 제공합니다.
+
+**분석 기준**:
+1. 사주팔자의 오행(五行) 균형 분석
+2. 오늘의 일진(日辰)과 사용자 사주의 상호작용
+3. 12시진(十二時辰) 기반 시간대별 기운 흐름
+4. 띠 궁합 기반 대인관계 조언
+5. 방위별 길흉 판단
+
+**시간대 구분 (12시진 기반)**:
+- 자시(子時): 23:00-01:00 - 수(水)의 시작
+- 축시(丑時): 01:00-03:00 - 토(土)의 안정
+- 인시(寅時): 03:00-05:00 - 목(木)의 시작
+- 묘시(卯時): 05:00-07:00 - 목(木)의 활력
+- 진시(辰時): 07:00-09:00 - 토(土)의 변화
+- 사시(巳時): 09:00-11:00 - 화(火)의 상승
+- 오시(午時): 11:00-13:00 - 화(火)의 절정
+- 미시(未時): 13:00-15:00 - 토(土)의 조화
+- 신시(申時): 15:00-17:00 - 금(金)의 시작
+- 유시(酉時): 17:00-19:00 - 금(金)의 수확
+- 술시(戌時): 19:00-21:00 - 토(土)의 마무리
+- 해시(亥時): 21:00-23:00 - 수(水)의 휴식
+
+**경계대상 패턴 적용**:
+- 주의 시간대: 특정 시간에 피해야 할 활동과 이유
+- 주의 활동: 오늘 피해야 할 행동 (중요 결정, 계약, 여행 등)
+- 주의 인물: 오늘 조심해야 할 띠, 연령대, 성격 유형
+- 주의 방향: 피해야 할 방위와 이유
+- 행운 요소: 색상, 숫자, 방향, 아이템으로 균형 있게 제공
+
+**응답 규칙**:
+- 시간대는 반드시 구체적으로 (예: "오후 2시-4시", "신시(15:00-17:00)")
+- 각 조언에 전통적 근거 제시 (예: "오행상 화(火)의 기운이...")
+- 행운 요소와 주의 요소를 균형 있게 제공
+- 모든 시간 표기는 24시간제와 한국어 병기
+- severity: "high" (매우 주의), "warning" (주의), "low" (참고)`
+
+    // 캘린더 이벤트 포맷팅
+    const formatCalendarEvents = (events: any[]): string => {
+      if (!events || events.length === 0) return ''
+
+      const eventList = events.map((e, i) => {
+        const title = e.title || '일정'
+        const isAllDay = e.is_all_day || e.isAllDay
+        const location = e.location ? ` (장소: ${e.location})` : ''
+        const time = isAllDay ? '종일' : e.start_time ? new Date(e.start_time).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''
+        return `  ${i + 1}. ${title}${time ? ` - ${time}` : ''}${location}`
+      }).join('\n')
+
+      return `
+**📅 해당 날짜의 일정** (${events.length}개):
+${eventList}
+
+⚠️ 중요: 위 일정들을 반드시 운세 분석에 반영해주세요!
+- 각 일정에 맞는 구체적인 조언 제공
+- 일정 시간대의 운세 특별히 분석
+- 일정과 관련된 행운/주의사항 포함`
     }
 
-    // 시간대별 운세 생성 (오늘/내일/hourly용)
-    const generateTimeSpecificFortunes = () => {
-      if (period !== 'today' && period !== 'tomorrow' && period !== 'hourly') return null
-      
-      const timeSlots = [
-        { time: '06:00-09:00', description: '새벽의 기운' },
-        { time: '09:00-12:00', description: '오전의 활력' },
-        { time: '12:00-15:00', description: '점심의 균형' },
-        { time: '15:00-18:00', description: '오후의 집중' },
-        { time: '18:00-21:00', description: '저녁의 휴식' },
-        { time: '21:00-24:00', description: '밤의 성찰' }
-      ]
-      
-      return timeSlots.map(slot => ({
-        time: slot.time,
-        description: slot.description,
-        score: Math.min(100, overallScore + Math.floor(Math.random() * 20) - 10),
-        advice: `${slot.description} 시간에는 ${Math.random() > 0.5 ? '적극적으로' : '신중하게'} 행동하세요.`
-      }))
+    // ✅ userPrompt 구성
+    const calendarSection = eventsForDate.length > 0 ? formatCalendarEvents(eventsForDate) : ''
+    const hasEvents = eventsForDate.length > 0
+
+    const userPrompt = `다음 정보를 기반으로 ${dateDisplayStr}의 시간 운세를 분석해주세요:
+
+**기본 정보**:
+- 이름: ${name}
+- 생년월일: ${birthDate}${isLunar ? ' (음력)' : ''}
+${birthTime ? `- 출생 시간: ${birthTime}` : ''}
+${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
+${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
+${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
+${mbtiType ? `- MBTI: ${mbtiType}` : ''}
+
+**분석 날짜**: ${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일 ${currentDayName}${isToday ? ' (오늘)' : ''}
+**분석 기간**: ${dateDisplayStr} 하루
+${calendarSection}
+
+**응답 형식** (반드시 JSON):
+\`\`\`json
+{
+  "score": 점수 (0-100),
+  "summary": "${dateDisplayStr} 시간 운세 한 줄 요약 (30자 이내)",
+  "content": "상세 분석 내용 (100자 이내)",
+  "advice": "종합 조언 (50자 이내)",
+
+  "timeSlots": [
+    {
+      "period": "오전 (06:00-12:00)",
+      "traditionalName": "묘시~사시",
+      "score": 점수,
+      "element": "오행 (목/화/토/금/수)",
+      "description": "시간대 설명",
+      "activities": ["추천 활동 1", "추천 활동 2"],
+      "caution": "주의사항"
+    }
+  ],
+
+  "cautionTimes": [
+    {
+      "time": "구체적 시간대",
+      "reason": "주의해야 하는 이유 (전통적 근거 포함)",
+      "severity": "high/warning/low",
+      "avoidActivities": ["피해야 할 활동"]
+    }
+  ],
+
+  "cautionActivities": [
+    {
+      "activity": "피해야 할 활동",
+      "reason": "이유 (오행/일진 근거)",
+      "severity": "high/warning/low",
+      "alternativeTime": "대안 시간대"
+    }
+  ],
+
+  "cautionPeople": [
+    {
+      "type": "유형 (띠/연령대/성격)",
+      "description": "구체적 설명",
+      "zodiac": "해당 띠 (있는 경우)",
+      "reason": "전통적 근거"
+    }
+  ],
+
+  "cautionDirections": [
+    {
+      "direction": "방향 (동/서/남/북/동남/동북/서남/서북)",
+      "reason": "피해야 하는 이유",
+      "severity": "high/warning/low"
+    }
+  ],
+
+  "luckyElements": {
+    "colors": ["행운의 색상 1", "행운의 색상 2"],
+    "numbers": [행운의 숫자1, 행운의 숫자2, 행운의 숫자3],
+    "direction": "행운의 방향",
+    "zodiacMatch": ["궁합 좋은 띠 1", "궁합 좋은 띠 2"],
+    "items": ["행운의 아이템 1", "행운의 아이템 2"],
+    "bestTime": "가장 좋은 시간대"
+  },
+
+  "timeStrategy": {
+    "morning": {
+      "caution": "오전 주의사항",
+      "advice": "오전 조언",
+      "luckyAction": "오전 행운 행동"
+    },
+    "afternoon": {
+      "caution": "오후 주의사항",
+      "advice": "오후 조언",
+      "luckyAction": "오후 행운 행동"
+    },
+    "evening": {
+      "caution": "저녁 주의사항",
+      "advice": "저녁 조언",
+      "luckyAction": "저녁 행운 행동"
+    }
+  },
+
+  "traditionalElements": {
+    "element": "주 오행 (목/화/토/금/수)",
+    "dailyGan": "오늘의 천간",
+    "dailyJi": "오늘의 지지",
+    "seasonalAdvice": "계절에 맞는 조언",
+    "twelveTimePeriod": "12시진 중 가장 좋은 시간"
+  },
+
+  "bestTime": {
+    "period": "가장 좋은 시간대",
+    "score": 점수,
+    "reason": "이유"
+  },
+
+  "worstTime": {
+    "period": "가장 주의할 시간대",
+    "score": 점수,
+    "reason": "이유"
+  }${hasEvents ? `,
+
+  "calendarAdvice": [
+    {
+      "eventTitle": "일정 제목",
+      "advice": "해당 일정에 대한 구체적 조언 (50자 이상)",
+      "luckyTip": "일정을 더 잘 보내기 위한 행운 팁",
+      "cautionTip": "주의해야 할 점",
+      "bestPreparation": "추천 준비사항"
+    }
+  ],
+
+  "dayTheme": "이 날의 테마/의미 (일정을 고려한 날의 전체 테마, 예: '새로운 시작의 날', '도약의 기회')",
+  "specialMessage": "일정을 고려한 특별 메시지 (100자 이상, 격려와 조언 포함)"` : ''}
+}
+\`\`\`
+${hasEvents ? `
+**⚠️ 캘린더 일정이 있으므로 반드시**:
+1. "summary"와 "content"에 일정 내용을 언급해주세요
+2. "calendarAdvice"에 각 일정별 구체적 조언을 제공해주세요
+3. "dayTheme"에 이 날의 특별한 의미를 담아주세요
+4. "specialMessage"에 격려와 구체적 조언을 담아주세요
+` : ''}
+**주의**: 반드시 유효한 JSON 형식으로만 응답하세요. 다른 텍스트는 포함하지 마세요.`
+
+    console.log(`[fortune-time] 🔄 LLM 호출 시작...`)
+
+    const response = await llm.generate([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: true
+    })
+
+    console.log(`[fortune-time] ✅ LLM 응답 수신 (${response.latency}ms, ${response.usage?.totalTokens || 0} tokens)`)
+
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'time',
+      userId: userId,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { name, birthDate, gender, zodiacAnimal, period, isPremium }
+    })
+
+    // JSON 파싱
+    let fortuneData: any
+    try {
+      fortuneData = typeof response.content === 'string'
+        ? JSON.parse(response.content)
+        : response.content
+    } catch (parseError) {
+      console.error(`[fortune-time] ❌ JSON 파싱 실패:`, parseError)
+      throw new Error('LLM 응답을 파싱할 수 없습니다')
     }
 
-    // 요일별 운세 생성 (주간용)
-    const generateWeeklyFortunes = () => {
-      if (period !== 'weekly') return null
-      
-      const weekdays = [
-        { day: '월요일', description: '새로운 시작' },
-        { day: '화요일', description: '열정적인 추진' },
-        { day: '수요일', description: '균형과 조화' },
-        { day: '목요일', description: '성장과 발전' },
-        { day: '금요일', description: '완성과 마무리' },
-        { day: '토요일', description: '휴식과 재충전' },
-        { day: '일요일', description: '평온과 성찰' }
-      ]
-      
-      return weekdays.map(day => ({
-        time: day.day,
-        description: day.description,
-        score: Math.min(100, overallScore + Math.floor(Math.random() * 20) - 10),
-        advice: `${day.day}에는 ${day.description}에 집중하세요.`
-      }))
-    }
+    const overallScore = fortuneData.score || 75
 
-    // 월별 운세 생성 (연간용)
-    const generateMonthlyFortunes = () => {
-      if (period !== 'yearly') return null
-      
-      const months = [
-        { month: '1월', description: '새해의 다짐' },
-        { month: '2월', description: '인내와 준비' },
-        { month: '3월', description: '새 출발' },
-        { month: '4월', description: '성장의 시작' },
-        { month: '5월', description: '활기찬 발전' },
-        { month: '6월', description: '균형과 조화' },
-        { month: '7월', description: '열정적 추진' },
-        { month: '8월', description: '강렬한 에너지' },
-        { month: '9월', description: '안정과 수확' },
-        { month: '10월', description: '성숙한 결실' },
-        { month: '11월', description: '차분한 정리' },
-        { month: '12월', description: '마무리와 감사' }
-      ]
-      
-      return months.map(month => ({
-        time: month.month,
-        description: month.description,
-        score: Math.min(100, overallScore + Math.floor(Math.random() * 20) - 10),
-        advice: `${month.month}에는 ${month.description}을 중점적으로 하세요.`
-      }))
-    }
-
-    // 띠별 운세 비교 생성
-    const generateBirthYearFortunes = () => {
-      const animals = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지']
-      
-      return animals.map(animal => ({
-        year: animal,
-        score: Math.min(100, overallScore + Math.floor(Math.random() * 30) - 15),
-        description: `${animal}띠는 ${period === 'today' ? '오늘' : period === 'tomorrow' ? '내일' : '이 기간'} ${Math.random() > 0.5 ? '행운' : '신중함'}이 필요합니다.`,
-        isUserZodiac: animal === zodiacAnimal
-      }))
-    }
-
-    // 기간별 특별 조언 생성 (개인화 포함)
-    const generatePeriodAdvice = () => {
-      const age = birthDate ? calculateAge(birthDate) : null
-      const ageGroup = age ? getAgeGroup(age) : null
-      const userGender = gender || 'male'
-      const demographicKey = age ? `${userGender}_${ageGroup}` : null
-      
-      // 연령대별 맞춤 조언 데이터베이스
-      const personalizedAdvices: { [key: string]: { [key: string]: string } } = {
-        'male_20s_late': {
-          today: `오늘은 새로운 네트워킹 기회를 만들어보세요. 적극적인 자세가 좋은 결과를 가져올 것입니다.`,
-          tomorrow: `내일은 커리어 발전을 위한 구체적인 계획을 세워보는 하루로 만들어보세요.`,
-          weekly: `이번 주는 자기계발에 투자하기 좋은 시기입니다. 새로운 스킬을 배워보세요.`,
-          monthly: `이번 달은 독립과 성장을 위한 기반을 다지는 중요한 시기입니다.`
-        },
-        'male_30s_early': {
-          today: `오늘은 중요한 결정을 내리기에 좋은 날입니다. 경험과 직감을 믿고 행동하세요.`,
-          tomorrow: `내일은 팀워크와 리더십을 발휘할 기회가 있을 것입니다.`,
-          weekly: `이번 주는 투자와 미래 계획에 집중하기 좋은 시기입니다.`,
-          monthly: `이번 달은 책임감 있는 역할을 맡아 성과를 내는 시기입니다.`
-        },
-        'male_30s_late': {
-          today: `오늘은 후배들과의 소통을 통해 새로운 아이디어를 얻을 수 있습니다.`,
-          tomorrow: `내일은 장기적 관점에서 투자 결정을 검토해보세요.`,
-          weekly: `이번 주는 일과 가정의 균형을 맞추는 데 집중하세요.`,
-          monthly: `이번 달은 안정성과 성장성을 모두 고려한 선택이 중요합니다.`
-        },
-        'female_20s_late': {
-          today: `오늘은 자신의 가치를 인정받을 수 있는 기회가 있습니다. 자신감을 가지세요.`,
-          tomorrow: `내일은 전문성 향상을 위한 학습에 시간을 투자해보세요.`,
-          weekly: `이번 주는 같은 관심사를 가진 사람들과의 네트워킹이 도움이 될 것입니다.`,
-          monthly: `이번 달은 자신만의 커리어 로드맵을 그려보는 시기입니다.`
-        },
-        'female_30s_early': {
-          today: `오늘은 워라밸을 개선할 수 있는 방법을 찾아보세요.`,
-          tomorrow: `내일은 자신의 강점을 활용할 수 있는 프로젝트에 집중하세요.`,
-          weekly: `이번 주는 개인적 성장과 커리어 발전의 균형을 맞추기 좋은 시기입니다.`,
-          monthly: `이번 달은 다양한 선택지 중에서 자신에게 맞는 길을 찾는 시기입니다.`
-        },
-        'female_30s_late': {
-          today: `오늘은 경험을 바탕으로 한 조언이 많은 도움이 될 것입니다.`,
-          tomorrow: `내일은 리더십을 발휘하여 팀의 방향성을 제시해보세요.`,
-          weekly: `이번 주는 자신만의 브랜드 가치를 높이는 데 집중하세요.`,
-          monthly: `이번 달은 지혜로운 판단력을 바탕으로 중요한 결정을 내리는 시기입니다.`
-        }
-      }
-      
-      // 기본 조언
-      const defaultAdvices = {
-        today: `오늘은 ${dayOfWeek}요일입니다. 하루의 시작을 긍정적으로 맞이하세요.`,
-        tomorrow: `내일을 위한 준비를 차근차근 해나가세요. 계획적인 접근이 중요합니다.`,
-        weekly: `이번 주는 전체적으로 안정적인 흐름을 보입니다. 꾸준한 노력이 성과로 이어질 것입니다.`,
-        monthly: `이번 달은 변화와 성장의 시기입니다. 새로운 도전을 두려워하지 마세요.`,
-        yearly: `올해는 장기적인 관점에서 목표를 설정하고 실행하는 것이 중요합니다.`,
-        hourly: `시간대별로 에너지가 다르게 흐릅니다. 각 시간의 특성을 활용하여 효율적으로 활동하세요.`
-      }
-      
-      // 개인화된 조언 또는 기본 조언 반환
-      if (demographicKey && personalizedAdvices[demographicKey] && personalizedAdvices[demographicKey][period]) {
-        return personalizedAdvices[demographicKey][period]
-      }
-      
-      return defaultAdvices[period] || '긍정적인 마음으로 앞으로 나아가세요.'
-    }
-
-    // 사용자 나이 계산
-    const calculateAge = (birthDate: string): number => {
-      const birth = new Date(birthDate)
-      const now = new Date()
-      let age = now.getFullYear() - birth.getFullYear()
-      if (now.getMonth() < birth.getMonth() || (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate())) {
-        age--
-      }
-      return age
-    }
-
-    // 연령대 그룹 분류
-    const getAgeGroup = (age: number): string => {
-      if (age < 25) return '20s_early'
-      if (age < 30) return '20s_late'
-      if (age < 35) return '30s_early'
-      if (age < 40) return '30s_late'
-      if (age < 45) return '40s_early'
-      if (age < 50) return '40s_late'
-      if (age < 55) return '50s_early'
-      if (age < 60) return '50s_late'
-      return '60plus'
-    }
-
-    // 개인화된 AI 인사이트 생성
-    const generateAIInsight = () => {
-      const age = birthDate ? calculateAge(birthDate) : null
-      const ageGroup = age ? getAgeGroup(age) : null
-      const userGender = gender || 'male'
-      const demographicKey = age ? `${userGender}_${ageGroup}` : null
-      
-      // 연령대별 맞춤 메시지 데이터베이스
-      const personalizedInsights: { [key: string]: { [key: number]: string } } = {
-        'male_20s_late': {
-          90: `${period === 'today' ? '오늘' : period === 'tomorrow' ? '내일' : '이 기간'}은 새로운 기회를 잡기에 완벽한 타이밍입니다. 망설였던 도전을 시작해보세요.`,
-          80: `커리어 발전에 좋은 흐름이 있습니다. 선배나 멘토와의 대화가 큰 도움이 될 것입니다.`,
-          70: `꾸준한 노력이 결실을 맺을 시기입니다. 작은 성취도 소중히 여기세요.`,
-          60: `급하게 결정하기보다는 신중한 검토가 필요한 시기입니다. 시간을 두고 판단하세요.`,
-          50: `어려운 상황이지만 이것도 성장의 과정입니다. 포기하지 말고 한 걸음씩 나아가세요.`
-        },
-        'male_30s_early': {
-          90: `리더십을 발휘할 절호의 기회입니다. 중요한 프로젝트나 결정을 추진해보세요.`,
-          80: `경험과 역량이 인정받을 때입니다. 자신감을 갖고 의견을 표현해보세요.`,
-          70: `안정적인 성과를 이룰 수 있는 시기입니다. 계획대로 차근차근 진행하세요.`,
-          60: `감정보다는 이성적 판단이 중요합니다. 데이터와 사실을 바탕으로 결정하세요.`,
-          50: `조급해하지 말고 기초를 다지는 시간으로 활용하세요. 준비된 자에게 기회가 옵니다.`
-        },
-        'male_30s_late': {
-          90: `축적된 경험이 빛을 발할 때입니다. 후배들에게 멘토링을 해보는 것도 좋겠습니다.`,
-          80: `장기적 관점에서 투자하고 계획할 좋은 시기입니다. 미래를 위한 준비를 시작하세요.`,
-          70: `균형 잡힌 생활이 더욱 중요해집니다. 일과 가정의 조화를 이루도록 노력하세요.`,
-          60: `성급한 변화보다는 안정성을 우선시하는 것이 현명합니다.`,
-          50: `현재의 어려움은 더 나은 미래를 위한 밑거름입니다. 인내심을 갖고 기다리세요.`
-        },
-        'female_20s_late': {
-          90: `자신만의 색깔을 찾아가는 완벽한 시기입니다. 용기를 내어 새로운 시도를 해보세요.`,
-          80: `전문성을 키우기에 좋은 때입니다. 자기계발에 투자하면 큰 성과를 얻을 수 있어요.`,
-          70: `주변의 조언도 좋지만, 자신의 직감을 믿는 것이 중요합니다.`,
-          60: `완벽을 추구하기보다는 진전에 초점을 맞추세요. 작은 발걸음도 소중합니다.`,
-          50: `힘든 시기이지만 이를 통해 더욱 강해질 수 있습니다. 자신을 믿어주세요.`
-        },
-        'female_30s_early': {
-          90: `워라밸을 실현할 수 있는 기회들이 보입니다. 자신에게 맞는 길을 찾아가세요.`,
-          80: `개인적인 성장과 커리어 발전 모두에 좋은 흐름이 있습니다.`,
-          70: `다양한 선택지가 있는 시기입니다. 신중하지만 과감하게 결정하세요.`,
-          60: `모든 것을 혼자 해결하려 하지 마세요. 도움을 요청하는 것도 지혜입니다.`,
-          50: `현재의 상황이 어렵더라도 당신만의 속도로 나아가면 됩니다.`
-        },
-        'female_30s_late': {
-          90: `지혜롭고 성숙한 판단력이 빛을 발할 때입니다. 리더십을 발휘해보세요.`,
-          80: `경험을 바탕으로 한 조언이 많은 사람들에게 도움이 될 것입니다.`,
-          70: `자신만의 브랜드를 구축해나가기에 좋은 시기입니다.`,
-          60: `급한 변화보다는 점진적인 개선이 더 효과적일 것입니다.`,
-          50: `지금까지의 노력이 헛되지 않습니다. 조금만 더 버티면 전환점이 올 것입니다.`
-        }
-      }
-
-      // 기본 메시지 (연령/성별 정보가 없는 경우)
-      const defaultInsights: { [key: number]: string } = {
-        90: `${period === 'today' ? '오늘' : period === 'tomorrow' ? '내일' : '이 기간'}은 정말 특별한 시간입니다! 모든 일이 순조롭게 풀릴 것이니 적극적으로 도전해보세요.`,
-        80: `${period === 'today' ? '오늘' : period === 'tomorrow' ? '내일' : '이 기간'}은 좋은 기운이 흐르고 있습니다. 이 기회를 놓치지 마세요.`,
-        70: `안정적이고 평온한 시간이 될 것입니다. 꾸준히 노력한다면 좋은 결과를 얻을 수 있어요.`,
-        60: `신중하게 행동한다면 무난한 시간을 보낼 수 있습니다. 급하지 않은 결정은 미뤄두세요.`,
-        50: `조금 어려운 시기이지만 인내심을 갖고 차근차근 해나간다면 분명 좋은 결과가 있을 것입니다.`
-      }
-
-      // 점수대 구간 결정
-      const scoreRange = overallScore >= 90 ? 90 : 
-                        overallScore >= 80 ? 80 : 
-                        overallScore >= 70 ? 70 : 
-                        overallScore >= 60 ? 60 : 50
-
-      // 개인화된 메시지 또는 기본 메시지 반환
-      if (demographicKey && personalizedInsights[demographicKey]) {
-        return personalizedInsights[demographicKey][scoreRange] || defaultInsights[scoreRange]
-      }
-      
-      return defaultInsights[scoreRange]
-    }
-
-    // 행운의 아이템 생성
-    const generateLuckyItems = () => {
-      const colors = ['빨간색', '파란색', '노란색', '초록색', '보라색', '주황색', '분홍색', '하얀색']
-      const directions = ['동쪽', '서쪽', '남쪽', '북쪽', '동남쪽', '동북쪽', '서남쪽', '서북쪽']
-      
-      return {
-        color: colors[Math.floor(Math.random() * colors.length)],
-        number: Math.floor(Math.random() * 9) + 1,
-        direction: directions[Math.floor(Math.random() * directions.length)],
-        time: `${Math.floor(Math.random() * 12) + 1}시-${Math.floor(Math.random() * 12) + 13}시`
-      }
-    }
-
-    // 기간별 제목 생성
+    // 기간별 제목 생성 (선택 날짜 반영)
     const getPeriodTitle = () => {
-      const titles = {
+      // 캘린더에서 특정 날짜를 선택한 경우
+      if (eventsForDate.length > 0 || !isToday) {
+        return `${dateDisplayStr}의 운세`
+      }
+
+      const titles: { [key: string]: string } = {
         today: '오늘의 운세',
         tomorrow: '내일의 운세',
         weekly: '이번 주 운세',
@@ -401,63 +736,117 @@ serve(async (req) => {
         yearly: '올해 운세',
         hourly: '시간대별 운세'
       }
-      return titles[period] || '일일운세'
+      return titles[period] || `${dateDisplayStr}의 운세`
     }
 
-    // ✅ Blur 로직 적용 (프리미엄이 아니면 상세 분석 블러 처리)
+    // ✅ Blur 로직 적용 (경계대상 패턴 기반)
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['timeSpecificFortunes', 'birthYearFortunes', 'hexagonScores', 'luckyItems', 'specialTip', 'advice']
+      ? ['cautionActivities', 'cautionPeople', 'cautionDirections', 'luckyElements', 'timeStrategy', 'traditionalElements', 'bestTime', 'worstTime']
       : []
 
-    // 운세 데이터 구성
+    // ✅ 운세 데이터 구성 (경계대상 패턴 적용)
     const fortune = {
-      // ✅ 표준화된 필드명: score, content, summary, advice
+      // 표준화된 필드명: score, content, summary, advice
       fortuneType: 'time',
       score: overallScore,
-      content: generateAIInsight(),
-      summary: overallScore >= 80 ? '긍정적이고 활기찬 시기' : '안정적이고 차분한 시기',
-      advice: generatePeriodAdvice(),
+      content: fortuneData.content || '시간대별 운세를 확인하세요.',
+      summary: fortuneData.summary || '',
+      advice: fortuneData.advice || '',
+
       // 기존 필드 유지 (하위 호환성)
       id: `${Date.now()}-${period}`,
       userId: userId,
-      type: 'time_based',
+      type: eventsForDate.length > 0 ? 'daily_calendar' : 'time_based',
       period: period,
       overall_score: overallScore,
-      message: `${name}님의 ${getPeriodTitle()}입니다.`,
-      content: generateAIInsight(),
-      description: generateAIInsight(),
-      greeting: `${name}님, ${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일 ${dayOfWeek}요일의 ${getPeriodTitle()}를 확인해보세요.`,
-      advice: generatePeriodAdvice(),
-      caution: period === 'today' || period === 'tomorrow' 
-        ? '감정적인 결정보다는 이성적인 판단을 우선시하세요.' 
-        : '급한 결정보다는 충분한 검토 후 행동하세요.',
-      summary: overallScore >= 80 ? '긍정적이고 활기찬 시기' : '안정적이고 차분한 시기',
-      
-      // 상세 데이터
-      hexagonScores: generateHexagonScores(),
-      timeSpecificFortunes: generateTimeSpecificFortunes() || generateWeeklyFortunes() || generateMonthlyFortunes(),
-      birthYearFortunes: generateBirthYearFortunes(),
-      
-      // 행운의 아이템
-      luckyItems: generateLuckyItems(),
-      lucky_items: generateLuckyItems(),
-      luckyColor: generateLuckyItems().color,
-      luckyNumber: generateLuckyItems().number,
-      luckyDirection: generateLuckyItems().direction,
-      bestTime: generateLuckyItems().time,
-      
-      // 특별 팁
-      specialTip: `${getPeriodTitle()}에는 ${zodiacAnimal}띠의 특성을 살려 ${Math.random() > 0.5 ? '적극적으로' : '신중하게'} 행동하는 것이 좋겠습니다.`,
-      special_tip: `${getPeriodTitle()}에는 ${zodiacAnimal}띠의 특성을 살려 ${Math.random() > 0.5 ? '적극적으로' : '신중하게'} 행동하는 것이 좋겠습니다.`,
-      
+      message: eventsForDate.length > 0
+        ? `${name}님, ${eventsForDate.map(e => e.title).join(', ')} 일정이 있는 특별한 날이에요! ✨`
+        : `${name}님의 ${dateDisplayStr} 운세입니다.`,
+      description: fortuneData.content || '',
+      greeting: eventsForDate.length > 0
+        ? `${name}님, ${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일 ${currentDayName}! ${eventsForDate.map(e => e.title).join(', ')} 일정과 함께하는 특별한 날의 운세를 확인해보세요. 🎯`
+        : `${name}님, ${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일 ${currentDayName}의 운세를 확인해보세요.`,
+
+      // ✅ 경계대상 패턴 - 시간대별 운세 (12시진 기반)
+      timeSlots: fortuneData.timeSlots || [],
+
+      // ✅ 경계대상 패턴 - 4개 주의 카테고리
+      cautionTimes: fortuneData.cautionTimes || [],
+      cautionActivities: fortuneData.cautionActivities || [],
+      cautionPeople: fortuneData.cautionPeople || [],
+      cautionDirections: fortuneData.cautionDirections || [],
+
+      // ✅ 경계대상 패턴 - 행운 요소 (균형)
+      luckyElements: fortuneData.luckyElements || {
+        colors: [],
+        numbers: [],
+        direction: '',
+        zodiacMatch: [],
+        items: [],
+        bestTime: ''
+      },
+
+      // ✅ 경계대상 패턴 - 시간대별 전략
+      timeStrategy: fortuneData.timeStrategy || {
+        morning: { caution: '', advice: '', luckyAction: '' },
+        afternoon: { caution: '', advice: '', luckyAction: '' },
+        evening: { caution: '', advice: '', luckyAction: '' }
+      },
+
+      // ✅ 한국 전통 요소 (12시진, 오행, 일진)
+      traditionalElements: fortuneData.traditionalElements || {
+        element: '',
+        dailyGan: '',
+        dailyJi: '',
+        seasonalAdvice: '',
+        twelveTimePeriod: ''
+      },
+
+      // 최고/최악 시간대
+      bestTime: fortuneData.bestTime || { period: '', score: 0, reason: '' },
+      worstTime: fortuneData.worstTime || { period: '', score: 0, reason: '' },
+
+      // 하위 호환성 - 행운 아이템
+      luckyItems: {
+        color: fortuneData.luckyElements?.colors?.[0] || '',
+        number: fortuneData.luckyElements?.numbers?.[0] || 0,
+        direction: fortuneData.luckyElements?.direction || '',
+        time: fortuneData.luckyElements?.bestTime || ''
+      },
+      lucky_items: {
+        color: fortuneData.luckyElements?.colors?.[0] || '',
+        number: fortuneData.luckyElements?.numbers?.[0] || 0,
+        direction: fortuneData.luckyElements?.direction || '',
+        time: fortuneData.luckyElements?.bestTime || ''
+      },
+      luckyColor: fortuneData.luckyElements?.colors?.[0] || '',
+      luckyNumber: fortuneData.luckyElements?.numbers?.[0] || 0,
+      luckyDirection: fortuneData.luckyElements?.direction || '',
+
+      // 하위 호환성 - timeSpecificFortunes
+      timeSpecificFortunes: fortuneData.timeSlots || [],
+
+      // 주의사항 (하위 호환성)
+      caution: fortuneData.cautionTimes?.[0]?.reason || '시간대별 에너지를 활용하세요.',
+      specialTip: fortuneData.timeStrategy?.morning?.advice || '',
+      special_tip: fortuneData.timeStrategy?.morning?.advice || '',
+
       // 메타데이터
       metadata: {
         period: period,
         targetDate: targetDate.toISOString(),
         location: processedLocation,
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
+        hasCalendarEvents: eventsForDate.length > 0,
+        calendarEventsCount: eventsForDate.length
       },
+
+      // ✅ 캘린더 일정 연동 정보
+      calendarAdvice: fortuneData.calendarAdvice || [],
+      dayTheme: fortuneData.dayTheme || '',
+      specialMessage: fortuneData.specialMessage || '',
+      calendarEvents: eventsForDate,
 
       // ✅ 블러 상태 정보
       isBlurred,
@@ -468,15 +857,17 @@ serve(async (req) => {
     const percentileData = await calculatePercentile(supabaseClient, 'time', overallScore)
     const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
 
+    console.log(`[fortune-time] ✅ 응답 생성 완료`)
+
     return new Response(
       JSON.stringify({
         fortune: fortuneWithPercentile,
         cached: false,
-        tokensUsed: 0
+        tokensUsed: response.usage?.totalTokens || 0
       }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
-        status: 200 
+        status: 200
       }
     )
 

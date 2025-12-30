@@ -8,7 +8,6 @@ import '../../services/social_auth_service.dart';
 import '../../services/storage_service.dart';
 import '../../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
-import '../../core/utils/profile_validation.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/test_auth_service.dart';
 
@@ -79,9 +78,9 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
           'created_at': DateTime.now().toIso8601String(),
         });
 
-        debugPrint('🔧 [TestMode] Test profile created, navigating to home...');
+        debugPrint('🔧 [TestMode] Test profile created, navigating to chat...');
         if (mounted) {
-          context.go('/home');
+          context.go('/chat');
         }
         return;
       }
@@ -149,16 +148,11 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
   }
 
   Future<void> _navigateAfterLogin() async {
-    final needsOnboarding = await ProfileValidation.needsOnboarding();
     if (!mounted) return;
 
-    if (needsOnboarding) {
-      debugPrint('Profile incomplete, redirecting to onboarding...');
-      context.go('/onboarding');
-    } else {
-      debugPrint('Profile complete, redirecting to home...');
-      context.go('/home');
-    }
+    // Chat-First: 모든 경우 /chat으로 이동 (온보딩은 채팅 내에서 처리)
+    debugPrint('Redirecting to chat...');
+    context.go('/chat');
   }
 
   @override
@@ -406,12 +400,10 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
 
       await syncProfileFromSupabase();
 
-      final needsOnboarding = await ProfileValidation.needsOnboarding();
-
-      if (needsOnboarding) {
-        debugPrint('User needs onboarding, staying on landing page');
-      } else {
-        // Note: Navigation should be handled by the widget
+      // Chat-First: 온보딩 체크는 채팅 내에서 처리됨
+      // 세션이 있으면 바로 채팅으로 이동
+      if (mounted) {
+        context.go('/chat');
       }
     } catch (e) {
       debugPrint('Error saving profile: $e');

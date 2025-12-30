@@ -388,8 +388,8 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   FortuneSurveyType.tarot: tarotSurveyConfig,
   FortuneSurveyType.mbti: mbtiSurveyConfig,
   // 시간 기반 (2개)
-  FortuneSurveyType.yearly: yearlySurveyConfig,
   FortuneSurveyType.newYear: newYearSurveyConfig,
+  FortuneSurveyType.dailyCalendar: dailyCalendarSurveyConfig,
   // 전통 분석 (3개)
   FortuneSurveyType.traditional: traditionalSurveyConfig,
   FortuneSurveyType.faceReading: faceReadingSurveyConfig,
@@ -435,38 +435,6 @@ List<SurveyOption> getPositionsForField(String fieldId) {
 }
 
 // ============================================================
-// Yearly (연간 운세) 설문 설정
-// ============================================================
-
-/// 연간 운세 초점 영역 옵션
-const _yearlyFocusOptions = [
-  SurveyOption(id: 'overall', label: '종합 운세', emoji: '✨'),
-  SurveyOption(id: 'career', label: '커리어/사업', emoji: '💼'),
-  SurveyOption(id: 'love', label: '연애/결혼', emoji: '💕'),
-  SurveyOption(id: 'money', label: '재물/투자', emoji: '💰'),
-  SurveyOption(id: 'health', label: '건강/웰빙', emoji: '💪'),
-  SurveyOption(id: 'study', label: '학업/자격증', emoji: '📚'),
-];
-
-/// Yearly 설문 설정
-const yearlySurveyConfig = FortuneSurveyConfig(
-  fortuneType: FortuneSurveyType.yearly,
-  title: '연간 운세',
-  description: '2025년 한 해 운세를 미리 살펴볼까요?',
-  emoji: '📅',
-  accentColor: FortuneColors.mystical,
-  steps: [
-    SurveyStep(
-      id: 'focus',
-      question: '특히 궁금한 영역이 있으세요?',
-      inputType: SurveyInputType.chips,
-      options: _yearlyFocusOptions,
-      isRequired: false,
-    ),
-  ],
-);
-
-// ============================================================
 // NewYear (새해 운세) 설문 설정
 // ============================================================
 
@@ -496,6 +464,44 @@ const newYearSurveyConfig = FortuneSurveyConfig(
       options: _newYearGoalOptions,
       isRequired: false,
     ),
+  ],
+);
+
+// ============================================================
+// DailyCalendar (기간별 운세) 설문 설정
+// ============================================================
+
+/// 캘린더 연동 옵션
+const _calendarSyncOptions = [
+  SurveyOption(id: 'sync', label: '캘린더 연동하기', emoji: '📲'),
+  SurveyOption(id: 'skip', label: '건너뛰기', emoji: '⏭️'),
+];
+
+/// DailyCalendar 설문 설정
+/// 플로우: 캘린더 연동 → 날짜 선택 → (동적) 일정 표시 → 운세 생성
+const dailyCalendarSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.dailyCalendar,
+  title: '기간별 운세',
+  description: '날짜를 선택하면 그날의 일정과 운세를 함께 봐드려요!',
+  emoji: '📅',
+  accentColor: FortuneColors.daily,
+  steps: [
+    // Step 1: 캘린더 연동 여부 (선택적)
+    SurveyStep(
+      id: 'calendarSync',
+      question: '캘린더를 연동하면 일정과 함께 더 정확한 운세를 볼 수 있어요! 📅',
+      inputType: SurveyInputType.chips,
+      options: _calendarSyncOptions,
+      isRequired: false,
+    ),
+    // Step 2: 날짜 선택 (인라인 캘린더)
+    SurveyStep(
+      id: 'targetDate',
+      question: '날짜를 선택해주세요! 🗓️',
+      inputType: SurveyInputType.calendar,
+    ),
+    // Note: 일정 선택은 chat handler에서 동적으로 처리
+    // 날짜 선택 후 해당 날짜의 일정을 보여주고, 사용자가 선택/확인
   ],
 );
 

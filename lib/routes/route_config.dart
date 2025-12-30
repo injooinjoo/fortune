@@ -17,7 +17,6 @@ import '../screens/profile/saju_summary_page.dart';
 import '../features/history/presentation/pages/fortune_history_page.dart';
 import '../features/history/presentation/pages/fortune_history_detail_page.dart';
 import '../features/history/domain/models/fortune_history.dart';
-import '../screens/settings/settings_screen.dart';
 import '../screens/settings/social_accounts_screen.dart';
 import '../screens/settings/phone_management_screen.dart';
 import '../screens/onboarding/onboarding_page.dart';
@@ -228,9 +227,46 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   const FortuneHistoryPage(),
                 ),
               ),
+              // 설정 관련 라우트 (settings_screen.dart에서 통합)
+              GoRoute(
+                path: 'social-accounts',
+                name: 'profile-social-accounts',
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const SocialAccountsScreen(),
+                ),
+              ),
+              GoRoute(
+                path: 'phone-management',
+                name: 'profile-phone-management',
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const PhoneManagementScreen(),
+                ),
+              ),
+              GoRoute(
+                path: 'notifications',
+                name: 'profile-notifications',
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const NotificationSettingsPage(),
+                ),
+              ),
+              GoRoute(
+                path: 'font',
+                name: 'profile-font',
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const FontSettingsPage(),
+                ),
+              ),
             ],
           ),
-          
+
           // Premium & Payment routes
           GoRoute(
             path: '/premium',
@@ -292,55 +328,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Trend content routes (outside shell - 네비게이션 바 숨김)
       ...trendRoutes,
 
-      // Settings routes (outside shell - no navigation bar)
-      GoRoute(
-        path: '/settings',
-        name: 'settings',
-        pageBuilder: (context, state) => PageTransitions.slideTransition(
-          context,
-          state,
-          const SettingsScreen(),
-        ),
-        routes: [
-          GoRoute(
-            path: 'social-accounts',
-            name: 'social-accounts',
-            pageBuilder: (context, state) => PageTransitions.slideTransition(
-              context,
-              state,
-              const SocialAccountsScreen(),
-            ),
-          ),
-          GoRoute(
-            path: 'phone-management',
-            name: 'phone-management',
-            pageBuilder: (context, state) => PageTransitions.slideTransition(
-              context,
-              state,
-              const PhoneManagementScreen(),
-            ),
-          ),
-          GoRoute(
-            path: 'notifications',
-            name: 'notification-settings',
-            pageBuilder: (context, state) => PageTransitions.slideTransition(
-              context,
-              state,
-              const NotificationSettingsPage(),
-            ),
-          ),
-          GoRoute(
-            path: 'font',
-            name: 'font-settings',
-            pageBuilder: (context, state) => PageTransitions.slideTransition(
-              context,
-              state,
-              const FontSettingsPage(),
-            ),
-          ),
-        ],
-      ),
-      
       // Fortune routes that need to hide navigation bar
       GoRoute(
         path: '/health-toss',

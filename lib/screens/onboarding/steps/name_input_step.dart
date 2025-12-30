@@ -226,9 +226,9 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
       if (!mounted) return;
 
       if (response != null && response.user != null) {
-        // Close bottom sheet and navigate to home
+        // Close bottom sheet and navigate to chat
         Navigator.pop(context);
-        context.go('/home');
+        context.go('/chat');
       } else {
         // For OAuth flows, close bottom sheet and let auth state listener handle navigation
         Navigator.pop(context);

@@ -863,6 +863,13 @@ class SajuPillarTablePro extends StatelessWidget {
       elementKorean: explanation['elementKorean']!,
       meaning: explanation['meaning']!,
       description: explanation['description']!,
+      // 보강된 콘텐츠
+      realLife: explanation['realLife'],
+      love: explanation['love'],
+      career: explanation['career'],
+      health: explanation['health'],
+      tips: explanation['tips'],
+      compatibility: explanation['compatibility'],
     );
   }
 
@@ -887,6 +894,13 @@ class SajuPillarTablePro extends StatelessWidget {
       description: explanation['description']!,
       animal: explanation['animal'],
       time: explanation['time'],
+      // 보강된 콘텐츠
+      realLife: explanation['realLife'],
+      love: explanation['love'],
+      career: explanation['career'],
+      health: explanation['health'],
+      tips: explanation['tips'],
+      compatibility: explanation['compatibility'],
     );
   }
 }

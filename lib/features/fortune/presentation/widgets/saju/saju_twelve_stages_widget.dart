@@ -257,6 +257,13 @@ class SajuTwelveStagesWidget extends StatelessWidget {
           description: stageData?['description'] ?? stage.meaning,
           fortune: stage.fortune,
           stageColor: color,
+          // 보강된 콘텐츠
+          realLife: stageData?['realLife'],
+          when: stageData?['when'],
+          career: stageData?['career'],
+          love: stageData?['love'],
+          tips: stageData?['tips'],
+          warning: stageData?['warning'],
         );
       },
       child: Column(
@@ -488,6 +495,13 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                       description: stageData?['description'] ?? stage.meaning,
                       fortune: stage.fortune,
                       stageColor: stage.color,
+                      // 보강된 콘텐츠
+                      realLife: stageData?['realLife'],
+                      when: stageData?['when'],
+                      career: stageData?['career'],
+                      love: stageData?['love'],
+                      tips: stageData?['tips'],
+                      warning: stageData?['warning'],
                     );
                   },
                   child: Container(

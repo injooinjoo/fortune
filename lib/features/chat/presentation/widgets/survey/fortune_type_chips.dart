@@ -172,8 +172,8 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.exercise:
       case FortuneSurveyType.sportsGame:
         return const Color(0xFF00BCD4); // 시안
-      case FortuneSurveyType.yearly:
       case FortuneSurveyType.newYear:
+      case FortuneSurveyType.dailyCalendar:
       case FortuneSurveyType.money:
       case FortuneSurveyType.lotto:
         return const Color(0xFFFFB800); // 골드
@@ -208,10 +208,10 @@ class _FortuneTypeChip extends StatelessWidget {
         return '타로';
       case FortuneSurveyType.mbti:
         return 'MBTI';
-      case FortuneSurveyType.yearly:
-        return '연간 운세';
       case FortuneSurveyType.newYear:
         return '새해 운세';
+      case FortuneSurveyType.dailyCalendar:
+        return '기간별 운세';
       case FortuneSurveyType.traditional:
         return '사주 분석';
       case FortuneSurveyType.faceReading:
@@ -283,10 +283,10 @@ class _FortuneTypeChip extends StatelessWidget {
         return '🃏';
       case FortuneSurveyType.mbti:
         return '🧠';
-      case FortuneSurveyType.yearly:
-        return '📅';
       case FortuneSurveyType.newYear:
         return '🎊';
+      case FortuneSurveyType.dailyCalendar:
+        return '📅';
       case FortuneSurveyType.traditional:
         return '📿';
       case FortuneSurveyType.faceReading:

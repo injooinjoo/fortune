@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../core/design_system/design_system.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/utils/profile_validation.dart';
 import '../../core/utils/logger.dart';
 
 /// Lightweight callback handler for native auth flows (Google Sign-In SDK, etc)
@@ -12,20 +11,15 @@ class NativeAuthCallbackHandler {
     try {
       Logger.info('user: ${user.id}');
       
-      // Check if user needs onboarding
-      final needsOnboarding = await ProfileValidation.needsOnboarding();
-      
-      if (needsOnboarding && context.mounted) {
-        Logger.info('Redirecting to onboarding');
-        context.go('/onboarding');
-      } else if (context.mounted) {
-        Logger.info('Redirecting to home');
-        context.go('/home');
+      // Chat-First: 모든 경우 /chat으로 이동 (온보딩은 채팅 내에서 처리)
+      if (context.mounted) {
+        Logger.info('Redirecting to chat');
+        context.go('/chat');
       }
     } catch (e) {
       Logger.error('Error in native auth callback', e);
       if (context.mounted) {
-        context.go('/');
+        context.go('/chat');
       }
     }
   }

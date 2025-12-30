@@ -302,9 +302,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         }
       }
 
-      // 즉시 홈으로 이동 (사주 계산 대기 없음)
+      // 즉시 채팅으로 이동 (사주 계산 대기 없음)
       if (mounted) {
-        context.go('/home?firstTime=true');
+        context.go('/chat?firstTime=true');
       }
     } catch (e) {
       debugPrint('프로필 저장 오류: $e');

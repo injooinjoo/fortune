@@ -39,8 +39,14 @@ import '../widgets/survey/chat_survey_slider.dart';
 import '../widgets/survey/chat_tarot_flow.dart';
 import '../widgets/survey/chat_face_reading_flow.dart';
 import '../widgets/survey/chat_birth_datetime_picker.dart';
+import '../widgets/survey/chat_onboarding_inputs.dart';
+import '../widgets/guest_login_banner.dart';
+import '../../../../presentation/widgets/social_login_bottom_sheet.dart';
+import '../../../../services/social_auth_service.dart';
+import '../providers/onboarding_chat_provider.dart';
 import '../../../fortune/presentation/providers/saju_provider.dart';
 import '../../../../core/services/fortune_generators/fortune_cookie_generator.dart';
+import '../../../../core/services/unified_calendar_service.dart';
 
 /// Chat-First 메인 홈 페이지
 class ChatHomePage extends ConsumerStatefulWidget {
@@ -67,11 +73,50 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   /// 스크롤 디바운싱을 위한 플래그
   bool _isScrolling = false;
 
+  /// 온보딩 시작 여부 플래그
+  bool _onboardingStarted = false;
+
+  /// 캘린더 연동 서비스 (기간별 운세용)
+  final UnifiedCalendarService _calendarService = UnifiedCalendarService();
+  bool _isCalendarSynced = false;
+
   @override
   void initState() {
     super.initState();
     _recommendService = FortuneRecommendService();
     _textController.addListener(_onTextChanged);
+    _initializeCalendarService();
+
+    // 초기화 후 온보딩 체크
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndStartOnboarding();
+    });
+  }
+
+  /// 온보딩 필요 여부 확인 및 시작
+  void _checkAndStartOnboarding() {
+    if (_onboardingStarted) return;
+
+    final onboardingState = ref.read(onboardingChatProvider);
+    final chatState = ref.read(chatMessagesProvider);
+
+    // ✅ 핵심: isCheckingStatus가 true면 아직 비동기 체크 중 → 기다려야 함
+    if (onboardingState.isCheckingStatus) {
+      debugPrint('🔍 [_checkAndStartOnboarding] Still checking status, will retry...');
+      // 상태 체크 완료 후 다시 확인
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) _checkAndStartOnboarding();
+      });
+      return;
+    }
+
+    // 온보딩이 필요하고 채팅이 비어있으면 시작
+    if (onboardingState.needsOnboarding &&
+        onboardingState.currentStep == OnboardingStep.welcome &&
+        chatState.isEmpty) {
+      _onboardingStarted = true;
+      ref.read(onboardingChatProvider.notifier).startOnboarding();
+    }
   }
 
   @override
@@ -83,7 +128,262 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     super.dispose();
   }
 
+  /// 캘린더 서비스 초기화 (기간별 운세용)
+  Future<void> _initializeCalendarService() async {
+    try {
+      await _calendarService.initialize();
+
+      if (_calendarService.isGoogleConnected) {
+        if (mounted) {
+          setState(() => _isCalendarSynced = true);
+        }
+        return;
+      }
+
+      final hasDevicePermission =
+          await _calendarService.requestDevicePermission();
+      if (hasDevicePermission && mounted) {
+        setState(() => _isCalendarSynced = true);
+      }
+    } catch (e) {
+      debugPrint('[Calendar] 초기화 실패: $e');
+    }
+  }
+
+  /// 캘린더 연동 시작 (설문 답변 'sync' 선택 시)
+  Future<void> _handleCalendarSync() async {
+    try {
+      final hasPermission = await _calendarService.requestDevicePermission();
+      if (hasPermission && mounted) {
+        setState(() => _isCalendarSynced = true);
+      }
+    } catch (e) {
+      debugPrint('[Calendar] 연동 실패: $e');
+    }
+  }
+
+  /// 특정 날짜의 캘린더 이벤트 로드
+  Future<List<CalendarEventSummary>> _loadEventsForDate(DateTime date) async {
+    try {
+      return await _calendarService.getEventsForDate(date);
+    } catch (e) {
+      debugPrint('[Calendar] 이벤트 로드 실패: $e');
+      return [];
+    }
+  }
+
+  /// 캘린더 바텀시트 열기 버튼 빌드
+  Widget _buildCalendarOpenButton({
+    required BuildContext context,
+    required VoidCallback onTap,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.md),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.lg,
+              vertical: DSSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              color: colors.accentSecondary,
+              borderRadius: BorderRadius.circular(DSRadius.lg),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.accentSecondary.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.calendar_month_rounded,
+                  color: Colors.white,
+                  size: 22,
+                ),
+                const SizedBox(width: DSSpacing.sm),
+                Text(
+                  '날짜 선택하기',
+                  style: typography.labelLarge.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 기간별 운세 캘린더 바텀시트 표시
+  void _showDailyCalendarBottomSheet({required bool showEvents}) {
+    DSBottomSheet.show(
+      context: context,
+      title: '날짜 선택',
+      showHandle: true,
+      isScrollable: true,
+      maxHeightFactor: 0.85,
+      child: ChatInlineCalendar(
+        onDateSelected: (date) {
+          // showEventsAfterSelection=true일 때는 즉시 호출되지 않음
+        },
+        onDateConfirmed: (date, events) {
+          Navigator.of(context).pop(); // 바텀시트 닫기
+
+          final displayText = DateFormat('yyyy년 M월 d일').format(date);
+          final eventSummary =
+              events.isEmpty ? '' : ' (${events.length}개 일정 포함)';
+
+          // 날짜와 이벤트를 함께 저장 (단일 날짜)
+          _handleSurveyAnswerValue(
+            {
+              'date': date.toIso8601String(),
+              'events': events
+                  .map((e) => {
+                        'title': e.title,
+                        'description': e.description,
+                        'start_time': e.startTime?.toIso8601String(),
+                        'end_time': e.endTime?.toIso8601String(),
+                        'location': e.location,
+                        'is_all_day': e.isAllDay,
+                      })
+                  .toList(),
+            },
+            '$displayText$eventSummary',
+          );
+        },
+        // 다중 날짜 선택 지원
+        allowMultipleDates: true,
+        maxSelectableDates: 7,
+        onMultipleDatesConfirmed: (dates, eventsMap) {
+          Navigator.of(context).pop(); // 바텀시트 닫기
+
+          // 다중 날짜 + 날짜별 이벤트 저장
+          final datesList = dates.map((d) => d.toIso8601String()).toList();
+          final eventsPerDate = <String, List<Map<String, dynamic>>>{};
+          int totalEvents = 0;
+
+          for (final entry in eventsMap.entries) {
+            final dateStr = entry.key.toIso8601String();
+            eventsPerDate[dateStr] = entry.value
+                .map((e) => {
+                      'title': e.title,
+                      'description': e.description,
+                      'start_time': e.startTime?.toIso8601String(),
+                      'end_time': e.endTime?.toIso8601String(),
+                      'location': e.location,
+                      'is_all_day': e.isAllDay,
+                    })
+                .toList();
+            totalEvents += entry.value.length;
+          }
+
+          // 표시 텍스트 생성
+          String displayText;
+          if (dates.length == 1) {
+            displayText = DateFormat('yyyy년 M월 d일').format(dates.first);
+          } else {
+            final first = DateFormat('M/d').format(dates.first);
+            final last = DateFormat('M/d').format(dates.last);
+            displayText = '$first ~ $last (${dates.length}일)';
+          }
+          final eventSummary =
+              totalEvents > 0 ? ' ($totalEvents개 일정 포함)' : '';
+
+          _handleSurveyAnswerValue(
+            {
+              'dates': datesList, // 다중 날짜
+              'eventsPerDate': eventsPerDate, // 날짜별 이벤트
+              'isMultipleDates': true,
+            },
+            '$displayText$eventSummary',
+          );
+        },
+        showQuickOptions: true,
+        showEventsAfterSelection: showEvents,
+        isCalendarSynced: showEvents,
+        onLoadEvents: _loadEventsForDate,
+      ),
+    );
+  }
+
+  /// 소셜 로그인 바텀시트 표시
+  void _showSocialLoginBottomSheet(BuildContext context) {
+    SocialAuthService? socialAuthService;
+    try {
+      socialAuthService = SocialAuthService(Supabase.instance.client);
+    } catch (e) {
+      debugPrint('⚠️ [ChatHomePage] SocialAuthService init failed: $e');
+      return;
+    }
+
+    SocialLoginBottomSheet.show(
+      context,
+      onGoogleLogin: () async {
+        Navigator.pop(context);
+        try {
+          await socialAuthService!.signInWithGoogle();
+          // 로그인 성공 시 온보딩 완료 처리
+          ref.read(onboardingChatProvider.notifier).skipLoginPrompt();
+        } catch (e) {
+          debugPrint('❌ Google login failed: $e');
+        }
+      },
+      onAppleLogin: () async {
+        Navigator.pop(context);
+        try {
+          await socialAuthService!.signInWithApple();
+          ref.read(onboardingChatProvider.notifier).skipLoginPrompt();
+        } catch (e) {
+          debugPrint('❌ Apple login failed: $e');
+        }
+      },
+      onKakaoLogin: () async {
+        Navigator.pop(context);
+        try {
+          await socialAuthService!.signInWithKakao();
+          ref.read(onboardingChatProvider.notifier).skipLoginPrompt();
+        } catch (e) {
+          debugPrint('❌ Kakao login failed: $e');
+        }
+      },
+      onNaverLogin: () async {
+        Navigator.pop(context);
+        try {
+          await socialAuthService!.signInWithNaver();
+          ref.read(onboardingChatProvider.notifier).skipLoginPrompt();
+        } catch (e) {
+          debugPrint('❌ Naver login failed: $e');
+        }
+      },
+      isProcessing: false,
+      ref: ref,
+    );
+  }
+
   void _onTextChanged() {
+    // 온보딩 중일 때는 추천 서비스 호출하지 않음
+    final onboardingState = ref.read(onboardingChatProvider);
+    final isOnboarding = onboardingState.needsOnboarding ||
+        onboardingState.currentStep != OnboardingStep.completed;
+    if (isOnboarding) {
+      debugPrint('🔇 [ChatHomePage] Skipping recommendations - onboarding active');
+      return;
+    }
+
     final text = _textController.text;
     if (text.length >= 2) {
       // 1. 즉시 키워드 기반 결과 표시 (빠른 피드백)
@@ -244,6 +544,13 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // 설문 시작
         surveyNotifier.startSurvey(surveyType);
 
+        // dailyCalendar이고 이미 캘린더 연동되어 있으면 첫 단계 건너뛰기
+        if (surveyType == FortuneSurveyType.dailyCalendar && _isCalendarSynced) {
+          // 자동으로 'sync' 답변 처리 후 다음 단계로
+          surveyNotifier.answerCurrentStep('sync');
+          chatNotifier.addAiMessage('캘린더가 이미 연동되어 있어요! 📅');
+        }
+
         // AI 첫 질문 메시지
         Future.delayed(const Duration(milliseconds: 500), () {
           final surveyState = ref.read(chatSurveyProvider);
@@ -287,10 +594,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case 'mbti':
         return FortuneSurveyType.mbti;
       // 시간 기반
-      case 'yearly':
-        return FortuneSurveyType.yearly;
       case 'newYear':
         return FortuneSurveyType.newYear;
+      case 'daily_calendar':
+        return FortuneSurveyType.dailyCalendar;
       // 전통 분석
       case 'traditional':
         return FortuneSurveyType.traditional;
@@ -344,6 +651,14 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // 스타일/패션
       case 'ootdEvaluation':
         return FortuneSurveyType.ootdEvaluation;
+      // 전통/신비 (추가)
+      case 'talisman':
+        return FortuneSurveyType.talisman;
+      // 실용/결정
+      case 'exam':
+        return FortuneSurveyType.exam;
+      case 'moving':
+        return FortuneSurveyType.moving;
       // 웰니스
       case 'gratitude':
         return FortuneSurveyType.gratitude;
@@ -352,8 +667,105 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
   }
 
+  /// 온보딩 이름 입력 제출
+  void _handleOnboardingNameSubmit(String text) {
+    if (text.trim().isEmpty) return;
+
+    // 이름 파싱: "김인주입니다", "김인주 입니다", "제 이름은 김인주예요" 등에서 이름 추출
+    final name = _parseNameFromText(text.trim());
+    debugPrint('🔍 [_handleOnboardingNameSubmit] Original: $text, Parsed: $name');
+
+    ref.read(onboardingChatProvider.notifier).submitName(name);
+    _textController.clear();
+    _scrollToBottom();
+  }
+
+  /// 텍스트에서 이름 추출 (한국어 문장 패턴 처리)
+  String _parseNameFromText(String text) {
+    // 공백 정리
+    final cleaned = text.trim();
+
+    // 패턴 1: "OOO입니다", "OOO 입니다", "OOO이에요", "OOO예요", "OOO요"
+    final suffixPatterns = [
+      RegExp(r'^(.+?)\s*입니다\.?$'),
+      RegExp(r'^(.+?)\s*이에요\.?$'),
+      RegExp(r'^(.+?)\s*예요\.?$'),
+      RegExp(r'^(.+?)\s*이요\.?$'),
+      RegExp(r'^(.+?)\s*요\.?$'),
+      RegExp(r'^(.+?)\s*이야\.?$'),
+      RegExp(r'^(.+?)\s*야\.?$'),
+    ];
+
+    for (final pattern in suffixPatterns) {
+      final match = pattern.firstMatch(cleaned);
+      if (match != null) {
+        final extracted = match.group(1)?.trim();
+        if (extracted != null && extracted.isNotEmpty) {
+          // "제 이름은", "저는", "나는" 등 접두사 제거
+          return _removePrefixes(extracted);
+        }
+      }
+    }
+
+    // 패턴 2: "제 이름은 OOO", "저는 OOO", "나는 OOO"
+    final prefixPatterns = [
+      RegExp(r'^제?\s*이름은\s*(.+)$'),
+      RegExp(r'^저는\s*(.+)$'),
+      RegExp(r'^나는\s*(.+)$'),
+      RegExp(r'^전\s*(.+)$'),
+      RegExp(r'^난\s*(.+)$'),
+    ];
+
+    for (final pattern in prefixPatterns) {
+      final match = pattern.firstMatch(cleaned);
+      if (match != null) {
+        final extracted = match.group(1)?.trim();
+        if (extracted != null && extracted.isNotEmpty) {
+          return extracted;
+        }
+      }
+    }
+
+    // 패턴 매칭 실패 시 원본 반환
+    return cleaned;
+  }
+
+  /// 이름 앞의 접두사 제거
+  String _removePrefixes(String text) {
+    final prefixes = ['제 이름은', '이름은', '저는', '나는', '전', '난'];
+    var result = text;
+    for (final prefix in prefixes) {
+      if (result.startsWith(prefix)) {
+        result = result.substring(prefix.length).trim();
+      }
+    }
+    return result;
+  }
+
   void _handleSendMessage(String text) {
     if (text.trim().isEmpty) return;
+
+    // 온보딩 중이면 온보딩 핸들러로 위임 (빌드 시점 레이스 컨디션 방지)
+    final onboardingState = ref.read(onboardingChatProvider);
+    debugPrint('🔍 [_handleSendMessage] needsOnboarding: ${onboardingState.needsOnboarding}, currentStep: ${onboardingState.currentStep}');
+
+    // 온보딩 진행 중이면 모든 입력을 온보딩으로 처리
+    // ✅ currentStep 기준으로 판단 (needsOnboarding이 stale data로 false일 수 있음)
+    final isOnboardingActive = onboardingState.currentStep != OnboardingStep.completed;
+    debugPrint('🔍 [_handleSendMessage] isOnboardingActive: $isOnboardingActive');
+
+    if (isOnboardingActive) {
+      if (onboardingState.currentStep == OnboardingStep.name ||
+          onboardingState.currentStep == OnboardingStep.welcome) {
+        // 이름 입력 또는 웰컴 단계에서 텍스트 입력 시 이름으로 처리
+        debugPrint('🔍 [_handleSendMessage] Delegating to onboarding: $text');
+        _handleOnboardingNameSubmit(text);
+        return;
+      }
+      // birthDate/birthTime 단계에서는 텍스트 입력 무시 (picker 사용)
+      debugPrint('🔍 [_handleSendMessage] Ignoring text during picker step');
+      return;
+    }
 
     final notifier = ref.read(chatMessagesProvider.notifier);
     notifier.addUserMessage(text);
@@ -410,6 +822,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // 설문 시작
       surveyNotifier.startSurvey(type);
 
+      // dailyCalendar이고 이미 캘린더 연동되어 있으면 첫 단계 건너뛰기
+      if (type == FortuneSurveyType.dailyCalendar && _isCalendarSynced) {
+        surveyNotifier.answerCurrentStep('sync');
+        chatNotifier.addAiMessage('캘린더가 이미 연동되어 있어요! 📅');
+      }
+
       // AI 첫 질문 메시지 (설문 단계가 있는 경우)
       Future.delayed(const Duration(milliseconds: 500), () {
         final surveyState = ref.read(chatSurveyProvider);
@@ -447,7 +865,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
         return '$name님의 오늘 운세를 봐드릴게요! ✨';
 
-      case FortuneSurveyType.yearly:
       case FortuneSurveyType.newYear:
         return '$name님의 2025년 운세를 살펴볼게요! 🎊';
 
@@ -1003,9 +1420,85 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           },
         );
 
-      case FortuneSurveyType.yearly:
       case FortuneSurveyType.newYear:
         return apiService.getYearlyFortune(userId: userId);
+
+      case FortuneSurveyType.dailyCalendar:
+        // 기간별 운세: 선택한 날짜의 운세 조회
+        final calendarSync = answers['calendarSync'] as String?;
+
+        final targetDateAnswer = answers['targetDate'];
+
+        // 다중 날짜 형식 체크: {dates: [...], eventsPerDate: {...}, isMultipleDates: true}
+        if (targetDateAnswer is Map<String, dynamic> &&
+            targetDateAnswer['isMultipleDates'] == true) {
+          // 다중 날짜 요청
+          final dates = (targetDateAnswer['dates'] as List?)
+                  ?.map((d) => d.toString())
+                  .toList() ??
+              [];
+          final eventsPerDate =
+              (targetDateAnswer['eventsPerDate'] as Map<String, dynamic>?) ??
+                  {};
+
+          // 모든 이벤트를 병합하여 전달
+          final allEvents = <Map<String, dynamic>>[];
+          for (final events in eventsPerDate.values) {
+            if (events is List) {
+              allEvents.addAll(events.cast<Map<String, dynamic>>());
+            }
+          }
+
+          return apiService.getFortune(
+            userId: userId,
+            fortuneType: 'daily_calendar',
+            params: {
+              'birthDate': birthDateStr,
+              'birthTime': userProfile?.birthTime ?? '자시 (23:00 - 01:00)',
+              'gender': gender,
+              'zodiacSign': userProfile?.zodiacSign ?? '양자리',
+              'zodiacAnimal': userProfile?.chineseZodiac ?? '용',
+              'targetDates': dates, // 다중 날짜 배열
+              'eventsPerDate': eventsPerDate, // 날짜별 이벤트 맵
+              'calendarSynced': calendarSync == 'sync',
+              'calendarEvents': allEvents, // 전체 이벤트 (호환성)
+              'hasCalendarEvents': allEvents.isNotEmpty,
+              'isMultipleDates': true,
+            },
+          );
+        }
+
+        // 단일 날짜 형식 (기존 호환성)
+        String? targetDateStr;
+        List<Map<String, dynamic>> calendarEvents = [];
+
+        if (targetDateAnswer is Map<String, dynamic>) {
+          // 새 형식: {date: '...', events: [...]}
+          targetDateStr = targetDateAnswer['date'] as String?;
+          final events = targetDateAnswer['events'];
+          if (events is List) {
+            calendarEvents = events.cast<Map<String, dynamic>>();
+          }
+        } else if (targetDateAnswer is String) {
+          // 기존 형식: ISO8601 문자열
+          targetDateStr = targetDateAnswer;
+        }
+
+        return apiService.getFortune(
+          userId: userId,
+          fortuneType: 'daily_calendar',
+          params: {
+            'birthDate': birthDateStr,
+            'birthTime': userProfile?.birthTime ?? '자시 (23:00 - 01:00)',
+            'gender': gender,
+            'zodiacSign': userProfile?.zodiacSign ?? '양자리',
+            'zodiacAnimal': userProfile?.chineseZodiac ?? '용',
+            'targetDate': targetDateStr,
+            'calendarSynced': calendarSync == 'sync',
+            'calendarEvents': calendarEvents,
+            'hasCalendarEvents': calendarEvents.isNotEmpty,
+          },
+        );
 
       // ============================================================
       // Career
@@ -1566,10 +2059,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return '타로';
       case FortuneSurveyType.mbti:
         return 'MBTI';
-      case FortuneSurveyType.yearly:
-        return '연간 운세';
       case FortuneSurveyType.newYear:
         return '새해 운세';
+      case FortuneSurveyType.dailyCalendar:
+        return '기간별 운세';
       case FortuneSurveyType.traditional:
         return '사주 분석';
       case FortuneSurveyType.faceReading:
@@ -1642,9 +2135,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return 'tarot';
       case FortuneSurveyType.mbti:
         return 'personality';
-      case FortuneSurveyType.yearly:
       case FortuneSurveyType.newYear:
         return 'time';
+      case FortuneSurveyType.dailyCalendar:
+        return 'daily_calendar';
       case FortuneSurveyType.traditional:
         return 'traditional';
       case FortuneSurveyType.faceReading:
@@ -1800,6 +2294,33 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case SurveyInputType.calendar:
+        // dailyCalendar인 경우 바텀시트로 표시
+        final isDailyCalendar =
+            surveyState.activeProgress?.config.fortuneType ==
+                FortuneSurveyType.dailyCalendar;
+
+        if (isDailyCalendar) {
+          // calendarSync 답변이 'sync'면 연동 시도
+          final calendarSyncAnswer =
+              surveyState.activeProgress?.answers['calendarSync'];
+          final shouldSync = calendarSyncAnswer == 'sync';
+
+          // 아직 연동 안됐지만 연동 요청한 경우 백그라운드에서 연동 시도
+          if (shouldSync && !_isCalendarSynced) {
+            _handleCalendarSync();
+          }
+
+          // 연동 여부 결정: 이미 연동됐거나, 연동 요청한 경우
+          final showEvents = _isCalendarSynced || shouldSync;
+
+          // 바텀시트 열기 버튼
+          return _buildCalendarOpenButton(
+            context: context,
+            onTap: () => _showDailyCalendarBottomSheet(showEvents: showEvents),
+          );
+        }
+
+        // 기본 캘린더 (다른 운세 타입용)
         return ChatInlineCalendar(
           onDateSelected: (date) {
             final displayText = DateFormat('yyyy년 M월 d일').format(date);
@@ -1840,6 +2361,78 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
   }
 
+  /// 온보딩 칩 입력 위젯 빌드 (성별/MBTI/혈액형/확인/로그인유도)
+  Widget _buildOnboardingChipInput(OnboardingState onboardingState) {
+    switch (onboardingState.currentStep) {
+      case OnboardingStep.gender:
+        return KeyedSubtree(
+          key: const ValueKey('onboarding-gender'),
+          child: OnboardingGenderSelector(
+            onSelect: (gender) {
+              ref.read(onboardingChatProvider.notifier).submitGender(gender);
+              _scrollToBottom();
+            },
+          ),
+        );
+
+      case OnboardingStep.mbti:
+        return KeyedSubtree(
+          key: const ValueKey('onboarding-mbti'),
+          child: OnboardingMbtiSelector(
+            onSelect: (mbti) {
+              ref.read(onboardingChatProvider.notifier).submitMbti(mbti);
+              _scrollToBottom();
+            },
+          ),
+        );
+
+      case OnboardingStep.bloodType:
+        return KeyedSubtree(
+          key: const ValueKey('onboarding-bloodtype'),
+          child: OnboardingBloodTypeSelector(
+            onSelect: (bloodType) {
+              ref.read(onboardingChatProvider.notifier).submitBloodType(bloodType);
+              _scrollToBottom();
+            },
+          ),
+        );
+
+      case OnboardingStep.confirmation:
+        return KeyedSubtree(
+          key: const ValueKey('onboarding-confirmation'),
+          child: OnboardingConfirmationCard(
+            state: onboardingState,
+            onConfirm: () {
+              ref.read(onboardingChatProvider.notifier).confirmOnboarding();
+              _scrollToBottom();
+            },
+            onRestart: () {
+              ref.read(onboardingChatProvider.notifier).restartOnboarding();
+              _scrollToBottom();
+            },
+          ),
+        );
+
+      case OnboardingStep.loginPrompt:
+        return KeyedSubtree(
+          key: const ValueKey('onboarding-login'),
+          child: OnboardingLoginPromptCard(
+            onSignUp: () {
+              // 소셜 로그인 바텀시트 표시
+              _showSocialLoginBottomSheet(context);
+            },
+            onSkip: () {
+              ref.read(onboardingChatProvider.notifier).skipLoginPrompt();
+              _scrollToBottom();
+            },
+          ),
+        );
+
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
   /// 선택형 설문 중인지 확인 (입력란 숨김 조건)
   bool _shouldHideInputField(ChatSurveyState surveyState) {
     if (!surveyState.isActive) return false;
@@ -1851,12 +2444,33 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
            inputType != SurveyInputType.voice;
   }
 
-  /// 하단 떠다니는 영역의 높이 계산 (설문 + 칩 + 입력란)
-  double _calculateBottomPadding(ChatSurveyState surveyState) {
+  /// 하단 떠다니는 영역의 높이 계산 (설문 + 온보딩 칩 + 입력란)
+  double _calculateBottomPadding(ChatSurveyState surveyState, OnboardingState onboardingState) {
     // 기본 입력란 높이
     double padding = 80;
 
-    if (surveyState.isActive) {
+    // 온보딩 칩 입력 중인 경우 (성별/MBTI/혈액형/확인/로그인유도)
+    final onboardingStep = onboardingState.currentStep;
+    if (onboardingStep == OnboardingStep.gender) {
+      // 성별 선택: 3개 칩 + 건너뛰기 버튼
+      padding += 220;
+    } else if (onboardingStep == OnboardingStep.mbti) {
+      // MBTI 선택: 16개 칩 (4줄) + 건너뛰기 버튼
+      padding += 420;
+    } else if (onboardingStep == OnboardingStep.bloodType) {
+      // 혈액형 선택: 4개 칩 + 건너뛰기 버튼
+      padding += 220;
+    } else if (onboardingStep == OnboardingStep.confirmation) {
+      // 확인 화면: 정보 요약 카드 + 2개 버튼
+      padding += 380;
+    } else if (onboardingStep == OnboardingStep.loginPrompt) {
+      // 로그인 유도: 회원가입 버튼 + 나중에 버튼 + 혜택 아이콘
+      padding += 320;
+    } else if (onboardingStep == OnboardingStep.birthDate ||
+               onboardingStep == OnboardingStep.birthTime) {
+      // 생년월일/시간 피커 (통합 피커는 높이가 큼)
+      padding += 400;
+    } else if (surveyState.isActive) {
       final inputType = surveyState.activeProgress?.currentStep.inputType;
 
       if (inputType == SurveyInputType.chips ||
@@ -1882,7 +2496,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   Widget build(BuildContext context) {
     final chatState = ref.watch(chatMessagesProvider);
     final surveyState = ref.watch(chatSurveyProvider);
+    final onboardingState = ref.watch(onboardingChatProvider);
     final colors = context.colors;
+
+    // 온보딩 상태 변경 시 자동 스크롤
+    ref.listen<OnboardingState>(onboardingChatProvider, (previous, next) {
+      if (previous?.currentStep != next.currentStep) {
+        _scrollToBottom();
+      }
+    });
 
     // 현재 설문 옵션 가져오기
     final surveyOptions = surveyState.isActive
@@ -1894,8 +2516,31 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         surveyState.activeProgress != null &&
         surveyState.activeProgress!.currentStep.inputType == SurveyInputType.text;
 
-    // 선택형 설문 중일 때 입력란 숨김
-    final shouldHideInput = _shouldHideInputField(surveyState);
+    // 온보딩 이름 입력 중인지 확인 (welcome과 name 단계 모두 포함)
+    // ✅ currentStep 기준으로 판단 (needsOnboarding이 stale data로 false일 수 있음)
+    final isOnboardingNameStep =
+        onboardingState.currentStep == OnboardingStep.welcome ||
+        onboardingState.currentStep == OnboardingStep.name;
+
+    // 온보딩 특수 입력 단계 (텍스트 입력 숨김)
+    final isOnboardingPickerStep =
+        onboardingState.currentStep == OnboardingStep.birthDate ||
+        onboardingState.currentStep == OnboardingStep.birthTime;
+    final isOnboardingChipStep =
+        onboardingState.currentStep == OnboardingStep.gender ||
+        onboardingState.currentStep == OnboardingStep.mbti ||
+        onboardingState.currentStep == OnboardingStep.bloodType ||
+        onboardingState.currentStep == OnboardingStep.confirmation ||
+        onboardingState.currentStep == OnboardingStep.loginPrompt;
+    final shouldHideInput = _shouldHideInputField(surveyState) || isOnboardingPickerStep || isOnboardingChipStep;
+
+    // ✅ 온보딩 상태 체크 중이면 빈 화면 표시 (깜빡임 방지)
+    if (onboardingState.isCheckingStatus) {
+      return Scaffold(
+        backgroundColor: colors.background,
+        body: const SizedBox.shrink(),
+      );
+    }
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -1907,44 +2552,58 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             chatState.isEmpty
                 ? ChatWelcomeView(
                     onChipTap: _handleChipTap,
-                    bottomPadding: _calculateBottomPadding(surveyState),
+                    bottomPadding: _calculateBottomPadding(surveyState, onboardingState),
                   )
                 : ChatMessageList(
                     scrollController: _scrollController,
                     messages: chatState.messages,
                     isTyping: chatState.isTyping,
                     onChipTap: _handleChipTap,
-                    bottomPadding: _calculateBottomPadding(surveyState),
+                    bottomPadding: _calculateBottomPadding(surveyState, onboardingState),
                   ),
 
-            // 프로필 아이콘 (투명 오버레이 - 좌측)
-            const Positioned(
-              left: DSSpacing.md,
-              top: DSSpacing.sm,
-              child: ProfileHeaderIcon(),
-            ),
-
-            // 초기화 버튼 (투명 오버레이 - 우측)
-            Positioned(
-              right: DSSpacing.xs,
-              top: 0,
-              child: IconButton(
-                icon: Icon(
-                  Icons.refresh,
-                  size: 20,
-                  color: colors.textTertiary,
-                ),
-                onPressed: () {
-                  ref.read(chatMessagesProvider.notifier).clearConversation();
-                  ref.read(chatSurveyProvider.notifier).cancelSurvey();
-                  _textController.clear();
-                  setState(() {
-                    _detectedIntents = [];
-                  });
-                },
-                tooltip: '대화 초기화',
+            // 프로필 아이콘 (투명 오버레이 - 좌측) - 온보딩 중에는 숨김
+            if (onboardingState.currentStep == OnboardingStep.completed)
+              const Positioned(
+                left: DSSpacing.md,
+                top: DSSpacing.sm,
+                child: ProfileHeaderIcon(),
               ),
-            ),
+
+            // 상단 우측 버튼 영역 (게스트 로그인 + 초기화) - 온보딩 중에는 숨김
+            if (onboardingState.currentStep == OnboardingStep.completed)
+              Positioned(
+                right: DSSpacing.sm,
+                top: DSSpacing.xs,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 게스트 로그인 버튼 (심플 버전)
+                    const GuestLoginBanner(),
+                    const SizedBox(width: DSSpacing.xs),
+                    // 초기화 버튼
+                    InkWell(
+                      onTap: () {
+                        ref.read(chatMessagesProvider.notifier).clearConversation();
+                        ref.read(chatSurveyProvider.notifier).cancelSurvey();
+                        _textController.clear();
+                        setState(() {
+                          _detectedIntents = [];
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(DSRadius.full),
+                      child: Padding(
+                        padding: const EdgeInsets.all(DSSpacing.xs),
+                        child: Icon(
+                          Icons.refresh,
+                          size: 18,
+                          color: colors.textTertiary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
             // 떠다니는 하단 영역 (설문 + 칩 + 입력란)
             Positioned(
@@ -1978,6 +2637,63 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                           : const SizedBox.shrink(),
                     ),
 
+                    // 온보딩 날짜+시간 피커 (birthDate 단계에서 표시)
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 1),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                      child: isOnboardingPickerStep
+                          ? KeyedSubtree(
+                              key: const ValueKey('onboarding-picker'),
+                              child: ChatBirthDatetimePicker(
+                                hintText: '생년월일과 태어난 시간을 선택하세요',
+                                onSelected: (result) {
+                                  if (result.isUnknown) {
+                                    // 날짜 모름 - 기본값으로 처리
+                                    ref.read(onboardingChatProvider.notifier).submitBirthDateTime(
+                                      DateTime(1990, 1, 1),
+                                      null,
+                                    );
+                                  } else if (result.year != null && result.month != null && result.day != null) {
+                                    final date = DateTime(result.year!, result.month!, result.day!);
+                                    final time = result.hour != null
+                                        ? TimeOfDay(hour: result.hour!, minute: result.minute ?? 0)
+                                        : null;
+                                    ref.read(onboardingChatProvider.notifier).submitBirthDateTime(date, time);
+                                  }
+                                  _scrollToBottom();
+                                },
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+
+                    // 온보딩 성별/MBTI/혈액형/확인/로그인 선택
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 1),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                      child: _buildOnboardingChipInput(onboardingState),
+                    ),
+
                     // 추천 운세 칩 (텍스트 입력 시 - 키워드 기반 + AI 추천)
                     if (!surveyState.isActive && (_detectedIntents.isNotEmpty || _isLoadingRecommendations))
                       FortuneTypeChips(
@@ -1986,34 +2702,41 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                         isLoading: _isLoadingRecommendations,
                       ),
 
-                    // 텍스트 입력란 (선택형 설문 시 슬라이드 아웃)
-                    ClipRect(
-                      child: AnimatedSlide(
-                        offset: shouldHideInput ? const Offset(0, 1) : Offset.zero,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOutCubic,
-                        child: AnimatedOpacity(
-                          opacity: shouldHideInput ? 0.0 : 1.0,
-                          duration: const Duration(milliseconds: 200),
-                          child: Padding(
+                    // 텍스트 입력란 (선택형 설문/온보딩 시 슬라이드 아웃)
+                    IgnorePointer(
+                      ignoring: shouldHideInput,
+                      child: ClipRect(
+                        child: AnimatedSlide(
+                          offset: shouldHideInput ? const Offset(0, 1) : Offset.zero,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOutCubic,
+                          child: AnimatedOpacity(
+                            opacity: shouldHideInput ? 0.0 : 1.0,
+                            duration: const Duration(milliseconds: 200),
+                            child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
                             child: UnifiedVoiceTextField(
                               controller: _textController,
-                              hintText: isTextInputStep
-                                  ? '텍스트를 입력하세요...'
-                                  : surveyState.isActive
-                                      ? '위 선택지에서 골라주세요'
-                                      : '무엇이든 물어보세요...',
-                              onSubmit: isTextInputStep
-                                  ? _handleTextSurveySubmit
-                                  : surveyState.isActive
-                                      ? (_) {}
-                                      : _handleSendMessage,
-                              enabled: !surveyState.isActive || isTextInputStep,
+                              hintText: isOnboardingNameStep
+                                  ? '이름을 입력하세요'
+                                  : isTextInputStep
+                                      ? '텍스트를 입력하세요...'
+                                      : surveyState.isActive
+                                          ? '위 선택지에서 골라주세요'
+                                          : '무엇이든 물어보세요...',
+                              onSubmit: isOnboardingNameStep
+                                  ? _handleOnboardingNameSubmit
+                                  : isTextInputStep
+                                      ? _handleTextSurveySubmit
+                                      : surveyState.isActive
+                                          ? (_) {}
+                                          : _handleSendMessage,
+                              enabled: !shouldHideInput && (!surveyState.isActive || isTextInputStep || isOnboardingNameStep),
                             ),
                           ),
                         ),
                       ),
+                    ),
                     ),
                   ],
                 ),

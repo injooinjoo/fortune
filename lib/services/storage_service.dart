@@ -1,17 +1,21 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
 class StorageService {
   static const String _userProfileKey = 'userProfile';
   static const String _recentFortunesKey = 'recentFortunes';
   static const String _lastUpdateDateKey = 'fortune_last_update_date';
   static const String _guestModeKey = 'isGuestMode';
+  static const String _guestIdKey = 'guest_user_id';
   static const String _userStatisticsKey = 'userStatistics';
   static const String _dailyFortuneRefreshKey = 'dailyFortuneRefresh';
   static const String _loveFortuneInputKey = 'loveFortuneInput';
   static const String _dreamResultKey = 'dreamInterpretationResult';
   static const String _fortuneGaugeKey = 'fortune_gauge_progress';
+
+  static const _uuid = Uuid();
 
   Future<Map<String, dynamic>?> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -207,6 +211,37 @@ class StorageService {
   Future<void> clearGuestMode() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_guestModeKey);
+  }
+
+  /// 게스트 ID 조회 또는 생성
+  /// guest_ 접두사로 실제 Supabase UUID와 구분
+  Future<String> getOrCreateGuestId() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? guestId = prefs.getString(_guestIdKey);
+
+    if (guestId == null) {
+      // UUID v4 생성 + guest_ 접두사
+      guestId = 'guest_${_uuid.v4()}';
+      await prefs.setString(_guestIdKey, guestId);
+      debugPrint('[StorageService] Created new guest ID: $guestId');
+    } else {
+      debugPrint('[StorageService] Retrieved existing guest ID: $guestId');
+    }
+
+    return guestId;
+  }
+
+  /// 게스트 ID 삭제 (로그인 시 호출)
+  Future<void> clearGuestId() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_guestIdKey);
+    debugPrint('[StorageService] Guest ID cleared');
+  }
+
+  /// 게스트 ID 존재 여부 확인
+  Future<bool> hasGuestId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_guestIdKey) != null;
   }
   
   // User statistics management

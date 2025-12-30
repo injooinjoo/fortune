@@ -28,10 +28,10 @@ const List<RecommendationChip> defaultChips = [
     color: Color(0xFF7C3AED),
   ),
   RecommendationChip(
-    id: 'yearly',
-    label: '연간 운세',
-    fortuneType: 'yearly',
-    icon: Icons.calendar_today_outlined,
+    id: 'dailyCalendar',
+    label: '기간별 운세',
+    fortuneType: 'daily_calendar',
+    icon: Icons.calendar_month_outlined,
     color: Color(0xFF6366F1),
   ),
   RecommendationChip(
@@ -140,6 +140,13 @@ const List<RecommendationChip> defaultChips = [
     icon: Icons.face_retouching_natural,
     color: Color(0xFF06B6D4),
   ),
+  RecommendationChip(
+    id: 'talisman',
+    label: '부적',
+    fortuneType: 'talisman',
+    icon: Icons.shield_outlined,
+    color: Color(0xFF7C3AED),
+  ),
 
   // ============ 성격/개성 ============
   RecommendationChip(
@@ -247,6 +254,22 @@ const List<RecommendationChip> defaultChips = [
     fortuneType: 'ootdEvaluation',
     icon: Icons.checkroom,
     color: Color(0xFF10B981),
+  ),
+
+  // ============ 실용/결정 ============
+  RecommendationChip(
+    id: 'exam',
+    label: '시험운',
+    fortuneType: 'exam',
+    icon: Icons.school_outlined,
+    color: Color(0xFF3B82F6),
+  ),
+  RecommendationChip(
+    id: 'moving',
+    label: '이사/이직',
+    fortuneType: 'moving',
+    icon: Icons.home_work_outlined,
+    color: Color(0xFF059669),
   ),
 
   // ============ 웰니스 ============

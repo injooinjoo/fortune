@@ -558,6 +558,65 @@ class FortuneData {
       }
     }
 
+    // Time fortune: map time-specific fields to metadata (경계대상 패턴 적용)
+    if (json['fortuneType'] == 'time' || json['type'] == 'time' ||
+        json['fortune_type'] == 'time' || json['type'] == 'time_based') {
+      score ??= json['score'] as int?;
+      summary ??= json['summary'] as String?;
+      advice ??= json['advice'] as String?;
+
+      // Store all time fortune data in metadata for UI access
+      metadata = {
+        ...?metadata,
+        if (json['timeSlots'] != null) 'timeSlots': json['timeSlots'],
+        if (json['cautionTimes'] != null) 'cautionTimes': json['cautionTimes'],
+        if (json['cautionActivities'] != null) 'cautionActivities': json['cautionActivities'],
+        if (json['cautionPeople'] != null) 'cautionPeople': json['cautionPeople'],
+        if (json['cautionDirections'] != null) 'cautionDirections': json['cautionDirections'],
+        if (json['luckyElements'] != null) 'luckyElements': json['luckyElements'],
+        if (json['timeStrategy'] != null) 'timeStrategy': json['timeStrategy'],
+        if (json['traditionalElements'] != null) 'traditionalElements': json['traditionalElements'],
+        if (json['bestTime'] != null) 'bestTime': json['bestTime'],
+        if (json['worstTime'] != null) 'worstTime': json['worstTime'],
+        'fortuneType': 'time',
+      };
+
+      // Build content from time fortune sections
+      final contentParts = <String>[];
+      if (summary != null) contentParts.add(summary);
+
+      // Add time strategy preview
+      final timeStrategy = json['timeStrategy'] as Map<String, dynamic>?;
+      if (timeStrategy != null) {
+        final morning = timeStrategy['morning'] as Map<String, dynamic>?;
+        if (morning?['advice'] != null) {
+          contentParts.add('\n\n🌅 오전: ${morning!['advice']}');
+        }
+        final afternoon = timeStrategy['afternoon'] as Map<String, dynamic>?;
+        if (afternoon?['advice'] != null) {
+          contentParts.add('\n🌤️ 오후: ${afternoon!['advice']}');
+        }
+        final evening = timeStrategy['evening'] as Map<String, dynamic>?;
+        if (evening?['advice'] != null) {
+          contentParts.add('\n🌙 저녁: ${evening!['advice']}');
+        }
+      }
+
+      // Add best/worst time preview
+      final bestTime = json['bestTime'] as Map<String, dynamic>?;
+      if (bestTime?['period'] != null) {
+        contentParts.add('\n\n⭐ 최고 시간: ${bestTime!['period']}');
+      }
+      final worstTime = json['worstTime'] as Map<String, dynamic>?;
+      if (worstTime?['period'] != null) {
+        contentParts.add('\n⚠️ 주의 시간: ${worstTime!['period']}');
+      }
+
+      if (contentParts.isNotEmpty) {
+        content = contentParts.join('');
+      }
+    }
+
     return FortuneData(
       id: json['id'],
       userId: json['userId'],

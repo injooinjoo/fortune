@@ -113,8 +113,8 @@ class _LandingPageState extends ConsumerState<LandingPage>
           debugPrint('🔍 [LandingPage] Navigating to returnUrl: $returnUrl');
           context.go(Uri.decodeComponent(returnUrl));
         } else {
-          debugPrint('🔍 [LandingPage] Navigating to /home');
-          context.go('/home');
+          debugPrint('🔍 [LandingPage] Navigating to /chat');
+          context.go('/chat');
         }
       }
     }

@@ -142,7 +142,7 @@ serve(async (req: Request) => {
 
     const userPrompt = `사용자 입력: "${query.trim()}"\n\n이 입력에 가장 적합한 운세 ${Math.min(limit, 3)}개를 추천해주세요.`
 
-    const response = await llm.chat([
+    const response = await llm.generate([
       { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: userPrompt },
     ], {

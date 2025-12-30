@@ -77,7 +77,7 @@ class SupabaseHelper {
     }
   }
   
-  /// 프로필이 없으면 생성, 있으면 조회
+  /// 프로필이 없으면 생성, 있으면 조회 (소셜 로그인 시 프로필 이미지 업데이트)
   static Future<Map<String, dynamic>?> ensureUserProfile({
     required String userId,
     String? email,
@@ -85,17 +85,29 @@ class SupabaseHelper {
     String? profileImageUrl}) async {
     // 먼저 프로필 조회 시도
     var profile = await getUserProfile(userId);
-    
+
     // 프로필이 없으면 생성
     if (profile == null) {
-      Logger.info('Supabase initialized successfully');
+      Logger.info('Creating new user profile for $userId');
       profile = await createUserProfile(
         userId: userId,
         email: email,
         name: name,
         profileImageUrl: profileImageUrl);
+    } else {
+      // 프로필이 있지만 소셜 로그인 이미지가 제공되었으면 업데이트
+      final existingImageUrl = profile['profile_image_url'] as String?;
+      if (profileImageUrl != null &&
+          profileImageUrl.isNotEmpty &&
+          existingImageUrl != profileImageUrl) {
+        Logger.info('Updating profile image from social login');
+        profile = await updateUserProfile(
+          userId: userId,
+          updates: {'profile_image_url': profileImageUrl},
+        ) ?? profile;
+      }
     }
-    
+
     return profile;
   }
   

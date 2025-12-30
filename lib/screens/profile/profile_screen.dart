@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,7 @@ import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/services/debug_premium_service.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import '../../presentation/providers/token_provider.dart';
+import '../../core/providers/user_settings_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
 import '../../shared/components/premium_membership_card.dart';
@@ -69,6 +71,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Color _getBackgroundColor(BuildContext context) {
     return context.colors.surface;
+  }
+
+  Color _getSectionBackgroundColor(BuildContext context) {
+    return context.colors.surface;
+  }
+
+  // 테스트 계정 확인
+  String? get _userEmail => supabase.auth.currentUser?.email;
+  bool get _isTestAccount => DebugPremiumService.isTestAccount(_userEmail);
+
+  // 로그아웃 처리
+  Future<void> _handleLogout() async {
+    final shouldLogout = await DSModal.confirm(
+      context: context,
+      title: '로그아웃',
+      message: '정말 로그아웃 하시겠습니까?',
+      confirmText: '로그아웃',
+      cancelText: '취소',
+      isDestructive: true,
+    );
+
+    if (shouldLogout == true) {
+      await supabase.auth.signOut();
+      if (mounted) {
+        // Chat-First: 로그아웃 후 채팅으로 이동 (게스트 모드)
+        context.go('/chat');
+      }
+    }
   }
 
   // Helper methods
@@ -137,11 +167,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     // 2. 먼저 온보딩으로 이동
     // 3. 이동 후 백그라운드에서 정리 작업 수행
 
-    debugPrint('🚀 초기화 시작 - 온보딩으로 이동');
+    debugPrint('🚀 초기화 시작 - 채팅으로 이동');
 
-    // 1. 먼저 온보딩으로 이동! (모든 정리 작업 전에)
+    // 1. 먼저 채팅으로 이동! (Chat-First: 온보딩은 채팅 내에서 처리)
     if (context.mounted) {
-      context.go('/onboarding/toss-style');
+      context.go('/chat');
     }
 
     // 2. 약간의 지연 후 정리 작업 수행 (네비게이션이 완전히 완료된 후)
@@ -469,17 +499,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ref.read(themeModeProvider.notifier).toggleTheme();
                     },
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.settings_outlined,
-                      color: context.colors.textPrimary,
-                    ),
-                    onPressed: () {
-                      ref.read(fortuneHapticServiceProvider).buttonTap();
-                      Navigator.of(context).pop(); // 바텀시트 닫기
-                      context.push('/settings');
-                    },
-                  ),
                 ],
               ),
             )
@@ -551,96 +570,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
           // 프리미엄 & 복주머니 통합 카드
           const PremiumMembershipCard(),
-
-          // 테스트 계정 섹션 (간소화)
-          FutureBuilder<UserProfile?>(
-            future: ref.watch(userProfileProvider.future),
-            builder: (context, snapshot) {
-              final profile = snapshot.data;
-              if (profile != null && profile.isTestAccount) {
-                return FutureBuilder<bool?>(
-                  future: DebugPremiumService.getOverrideValue(),
-                  builder: (context, overrideSnapshot) {
-                    final tokenState = ref.watch(tokenProvider);
-                    final premiumOverride = overrideSnapshot.data;
-                    final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionHeader(title: '테스트 계정'),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                          decoration: BoxDecoration(
-                            color: context.colors.surface,
-                            borderRadius: BorderRadius.circular(DSRadius.md),
-                            border: Border.all(
-                              color: context.colors.border,
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              SettingsListTile(
-                                icon: Icons.bug_report_outlined,
-                                title: '무제한 복주머니',
-                                trailing: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: context.colors.success.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    '활성화',
-                                    style: context.labelSmall.copyWith(
-                                      color: context.colors.success,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SettingsListTile(
-                                icon: Icons.star_outline,
-                                title: '프리미엄 기능',
-                                trailing: Switch(
-                                  value: isPremium,
-                                  onChanged: (value) async {
-                                    // 디버그 프리미엄 토글
-                                    await DebugPremiumService.togglePremium();
-                                    setState(() {});
-                                  },
-                                  activeThumbColor: context.colors.accent,
-                                ),
-                              ),
-                              SettingsListTile(
-                                icon: Icons.refresh_outlined,
-                                title: '초기화 및 온보딩 재시작',
-                                subtitle: '모든 데이터 삭제 후 처음부터',
-                                trailing: Icon(
-                                  Icons.chevron_right,
-                                  color: context.colors.textSecondary,
-                                ),
-                                onTap: () => _showResetConfirmationDialog(context),
-                                isLast: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
 
           // 탐구 활동 섹션
           const SectionHeader(title: '탐구 활동'),
@@ -874,17 +803,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     },
                   ),
                   SettingsListTile(
-                    icon: Icons.wb_sunny_outlined,
-                    title: '오행 분석',
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: _getSecondaryTextColor(context),
-                    ),
-                    onTap: () {
-                      context.push('/profile/elements');
-                    },
-                  ),
-                  SettingsListTile(
                     icon: Icons.history,
                     title: '운세 기록',
                     trailing: Icon(
@@ -932,15 +850,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   },
                 ),
                 SettingsListTile(
-                  icon: Icons.star_outline,
-                  title: '프리미엄 체험',
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: _getSecondaryTextColor(context),
-                  ),
-                  onTap: () => context.push('/subscription'),
-                ),
-                SettingsListTile(
                   icon: Icons.verified_outlined,
                   title: '프로필 인증',
                   trailing: Icon(
@@ -951,6 +860,259 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   isLast: true,
                 ),
               ],
+            ),
+          ),
+
+          // ───────────────────────────────────────────────────────
+          // 설정 섹션 (settings_screen.dart에서 통합)
+          // ───────────────────────────────────────────────────────
+
+          // 계정 관리 섹션
+          const SectionHeader(title: '계정 관리'),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: _getSectionBackgroundColor(context),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                SettingsListTile(
+                  icon: Icons.link_outlined,
+                  title: '소셜 계정 연동',
+                  subtitle: '여러 로그인 방법을 하나로 관리',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/profile/social-accounts'),
+                ),
+                SettingsListTile(
+                  icon: Icons.phone_outlined,
+                  title: '전화번호 관리',
+                  subtitle: '전화번호 변경 및 인증',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/profile/phone-management'),
+                ),
+                SettingsListTile(
+                  icon: Icons.notifications_outlined,
+                  title: '알림 설정',
+                  subtitle: '푸시, 문자, 운세 알림 관리',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/profile/notifications'),
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+
+          // 앱 설정 섹션
+          const SectionHeader(title: '앱 설정'),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: _getSectionBackgroundColor(context),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                SettingsListTile(
+                  icon: Icons.vibration_outlined,
+                  title: '진동 피드백',
+                  subtitle: '버튼 및 카드 터치 시 진동',
+                  trailing: DSToggle(
+                    value: ref.watch(userSettingsProvider).hapticEnabled,
+                    onChanged: (value) {
+                      ref.read(userSettingsProvider.notifier).setHapticEnabled(value);
+                      if (value) {
+                        DSHaptics.light();
+                      }
+                    },
+                  ),
+                ),
+                SettingsListTile(
+                  icon: Icons.language_outlined,
+                  title: '언어',
+                  subtitle: '한국어',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () {
+                    // TODO: Implement language selection
+                  },
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+
+          // 지원 섹션
+          const SectionHeader(title: '지원'),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: _getSectionBackgroundColor(context),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                SettingsListTile(
+                  icon: Icons.help_outline,
+                  title: '도움말',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/help'),
+                ),
+                SettingsListTile(
+                  icon: Icons.privacy_tip_outlined,
+                  title: '개인정보 처리방침',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/policy/privacy'),
+                ),
+                SettingsListTile(
+                  icon: Icons.description_outlined,
+                  title: '이용약관',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/policy/terms'),
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+
+          // 로그아웃 버튼
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: DSButton.destructive(
+              text: '로그아웃',
+              onPressed: _handleLogout,
+              size: DSButtonSize.medium,
+            ),
+          ),
+
+          // 개발자 도구 (테스트 계정에서만 표시)
+          FutureBuilder<UserProfile?>(
+            future: ref.watch(userProfileProvider.future),
+            builder: (context, snapshot) {
+              final profile = snapshot.data;
+              if ((kDebugMode || _isTestAccount) && profile != null && profile.isTestAccount) {
+                return FutureBuilder<bool?>(
+                  future: DebugPremiumService.getOverrideValue(),
+                  builder: (context, overrideSnapshot) {
+                    final tokenState = ref.watch(tokenProvider);
+                    final premiumOverride = overrideSnapshot.data;
+                    final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 24),
+                        const SectionHeader(title: '개발자 도구'),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                          decoration: BoxDecoration(
+                            color: context.colors.surface,
+                            borderRadius: BorderRadius.circular(DSRadius.md),
+                            border: Border.all(
+                              color: context.colors.border,
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              SettingsListTile(
+                                icon: Icons.bug_report_outlined,
+                                title: '무제한 복주머니',
+                                trailing: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: context.colors.success.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    '활성화',
+                                    style: context.labelSmall.copyWith(
+                                      color: context.colors.success,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SettingsListTile(
+                                icon: Icons.star_outline,
+                                title: '프리미엄 기능',
+                                trailing: Switch(
+                                  value: isPremium,
+                                  onChanged: (value) async {
+                                    await DebugPremiumService.togglePremium();
+                                    setState(() {});
+                                  },
+                                  activeThumbColor: context.colors.accent,
+                                ),
+                              ),
+                              SettingsListTile(
+                                icon: Icons.refresh_outlined,
+                                title: '초기화 및 온보딩 재시작',
+                                subtitle: '모든 데이터 삭제 후 처음부터',
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: context.colors.textSecondary,
+                                ),
+                                onTap: () => _showResetConfirmationDialog(context),
+                              ),
+                              SettingsListTile(
+                                icon: Icons.cloud_download_outlined,
+                                title: '유명인 정보 크롤링',
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: _getSecondaryTextColor(context),
+                                ),
+                                onTap: () => context.push('/admin/celebrity-crawling'),
+                                isLast: true,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+
+          // 버전 정보
+          const SizedBox(height: 16),
+          Center(
+            child: Text(
+              'Fortune v1.0.0',
+              style: context.bodySmall.copyWith(
+                color: _getSecondaryTextColor(context),
+              ),
             ),
           ),
 
@@ -990,16 +1152,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onPressed: () {
               ref.read(fortuneHapticServiceProvider).selection();
               ref.read(themeModeProvider.notifier).toggleTheme();
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.settings_outlined,
-              color: context.colors.textPrimary,
-            ),
-            onPressed: () {
-              ref.read(fortuneHapticServiceProvider).buttonTap();
-              context.push('/settings');
             },
           ),
         ],

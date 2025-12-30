@@ -120,8 +120,8 @@ class ProfileCompletionDialog extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  // Navigate to onboarding with partial completion mode
-                  context.go('/onboarding/toss-style?partial=true');
+                  // Chat-First: 채팅 내에서 온보딩 정보 입력
+                  context.go('/chat');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TossDesignSystem.tossBlue,

@@ -185,6 +185,12 @@ class _SajuElementChartState extends State<SajuElementChart> {
                       organ: data['organ'] ?? '',
                       colorName: data['color'] ?? '',
                       number: data['number'] ?? '',
+                      // 보강된 콘텐츠
+                      realLife: data['realLife'],
+                      loveStyle: data['loveStyle'],
+                      workStyle: data['workStyle'],
+                      stressSign: data['stressSign'],
+                      rechargeWay: data['rechargeWay'],
                     );
                   }
                 }
@@ -291,6 +297,12 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   organ: data['organ'] ?? '',
                   colorName: data['color'] ?? '',
                   number: data['number'] ?? '',
+                  // 보강된 콘텐츠
+                  realLife: data['realLife'],
+                  loveStyle: data['loveStyle'],
+                  workStyle: data['workStyle'],
+                  stressSign: data['stressSign'],
+                  rechargeWay: data['rechargeWay'],
                 );
               }
             },
