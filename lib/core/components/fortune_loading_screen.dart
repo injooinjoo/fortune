@@ -220,7 +220,7 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
               
               // 아주 작은 부가 텍스트 (선택적)
               Text(
-                'my morrow',
+                'ZPZG',
                 style: TossDesignSystem.small.copyWith(
                   color: textColor.withValues(alpha: 0.3),
                   letterSpacing: 1.5,

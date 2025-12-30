@@ -39,7 +39,7 @@
     <uses-permission android:name="android.permission.health.READ_EXERCISE" />
 
     <application
-        android:label="my morrow"
+        android:label="ZPZG"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

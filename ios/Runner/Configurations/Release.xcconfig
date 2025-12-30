@@ -3,7 +3,7 @@
 
 // Production Configuration
 PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune
-PRODUCT_NAME = my morrow
+PRODUCT_NAME = ZPZG
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 
 // Code Signing

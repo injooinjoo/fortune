@@ -36,7 +36,7 @@ class LandingMainContent extends StatelessWidget {
 
           // App Name
           Text(
-            'my morrow',
+            'ZPZG',
             style: context.displaySmall.copyWith(
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.onSurface,

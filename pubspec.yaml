@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+21
+version: 1.0.0+22
 
 environment:
   sdk: ">=3.5.3 <4.0.0"
@@ -337,33 +337,33 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
-  adaptive_icon_background: "#FFD700" # Gold color for Fortune app
-  adaptive_icon_foreground: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
+  image_path: "assets/images/zpzg_logo.png"
+  adaptive_icon_background: "#F5F0E6" # 크림색 한지 배경
+  adaptive_icon_foreground: "assets/images/zpzg_logo.png"
   min_sdk_android: 21
   web:
     generate: true
-    image_path: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
+    image_path: "assets/images/zpzg_logo.png"
   windows:
     generate: true
-    image_path: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
+    image_path: "assets/images/zpzg_logo.png"
   macos:
     generate: true
-    image_path: "ios/Runner/Assets.xcassets/AppIcon.appiconset/1024.png"
+    image_path: "assets/images/zpzg_logo.png"
 
 # Splash Screen Configuration
 flutter_native_splash:
-  color: "#FFFFFF" # White background
-  color_dark: "#121212" # Dark gray for dark mode
-  image: "assets/images/splash_flower_icon.png" # Cherry blossom icon
-  image_dark: "assets/images/splash_flower_icon.png"
+  color: "#F5F0E6" # 크림색 한지 배경
+  color_dark: "#1A1A1A" # 다크 모드 배경
+  image: "assets/images/zpzg_logo_light.png" # 知 로고 (라이트)
+  image_dark: "assets/images/zpzg_logo_dark.png" # 知 로고 (다크)
 
   # Android 12+ specific
   android_12:
-    color: "#FFFFFF"
-    color_dark: "#121212"
-    icon_background_color: "#FFFFFF"
-    icon_background_color_dark: "#121212"
+    color: "#F5F0E6"
+    color_dark: "#1A1A1A"
+    icon_background_color: "#F5F0E6"
+    icon_background_color_dark: "#1A1A1A"
 
   # Platform specific options
   android: true

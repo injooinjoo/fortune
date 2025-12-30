@@ -95,7 +95,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               color: TossDesignSystem.white)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
           const SizedBox(height: 24),
           Text(
-            'my morrow',
+            'ZPZG',
             style: DSTypography.displayLarge.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)).animate().fadeIn(delay: 200.ms),

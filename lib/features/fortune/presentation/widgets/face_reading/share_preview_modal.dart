@@ -305,7 +305,7 @@ class _SharePreviewModalState extends State<SharePreviewModal> {
           const Spacer(),
           if (_includeAppLogo)
             Text(
-              'my morrow',
+              'ZPZG',
               style: TextStyle(
                 fontSize: 10,
                 color: DSColors.textSecondary.withValues(alpha: 0.5),
