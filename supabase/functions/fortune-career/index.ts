@@ -99,6 +99,12 @@ interface CareerFortuneRequest {
   challenges?: string[]
   strengths?: string[]
   isPremium?: boolean // ✅ 프리미엄 사용자 여부
+  primaryConcern?: string  // ✅ 핵심 고민 (growth|direction|transition|balance|compensation|relationship)
+  shortTermGoal?: string   // ✅ 단기 목표
+  coreValue?: string       // ✅ 핵심 가치
+  primary_concern?: string // ✅ Flutter에서 snake_case로 전달되는 경우
+  short_term_goal?: string
+  core_value?: string
 }
 
 // 커리어 예측 데이터
@@ -151,6 +157,88 @@ interface CareerFortuneResponse {
     timestamp: string
   }
   error?: string
+}
+
+// ✅ 핵심 고민 라벨 매핑
+function getConcernLabel(concern: string): string {
+  const labels: Record<string, string> = {
+    'growth': '성장 정체',
+    'direction': '방향성 고민',
+    'transition': '이직/전직',
+    'balance': '워라벨',
+    'compensation': '보상',
+    'relationship': '직장 내 인간관계'
+  }
+  return labels[concern] || concern
+}
+
+// ✅ 핵심 고민별 프롬프트 섹션 생성
+function getConcernPromptSection(concern: string): string {
+  const concernPrompts: Record<string, string> = {
+    'relationship': `
+## 직장 내 인간관계 집중 분석 (반드시 포함)
+사용자의 핵심 고민: 직장 내 인간관계
+다음 내용을 반드시 결과에 포함해주세요:
+- 동료와의 관계 개선 전략 (소통 방법, 신뢰 구축)
+- 상사와의 관계 관리법 (보고 스킬, 기대치 조율)
+- 부하직원/후배와의 관계 (리더십, 멘토링)
+- 갈등 상황 대처법 및 해결 전략
+- 맞지 않는 사람과 협업하는 방법
+- 팀 내 정치적 상황 대응법
+- 네트워킹 및 관계 확장 전략`,
+
+    'growth': `
+## 성장 정체 돌파 전략 (반드시 포함)
+사용자의 핵심 고민: 성장 정체
+다음 내용을 반드시 결과에 포함해주세요:
+- 현재 정체 원인 분석
+- 새로운 스킬 습득 로드맵
+- 승진/성장 기회 포착 전략
+- 가시적 성과 창출 방법
+- 멘토/스폰서 확보 전략`,
+
+    'direction': `
+## 커리어 방향성 설정 (반드시 포함)
+사용자의 핵심 고민: 방향성 고민
+다음 내용을 반드시 결과에 포함해주세요:
+- 강점 기반 커리어 방향 제안
+- 업계 트렌드와 기회 분석
+- 의사결정 프레임워크
+- 단계별 탐색 계획
+- 다양한 경로 비교 분석`,
+
+    'transition': `
+## 이직/전직 전략 (반드시 포함)
+사용자의 핵심 고민: 이직/전직
+다음 내용을 반드시 결과에 포함해주세요:
+- 이직 적기 판단 기준
+- 타겟 회사/포지션 분석
+- 이력서/면접 전략
+- 연봉 협상 팁
+- 온보딩 성공 전략`,
+
+    'balance': `
+## 워라벨 개선 전략 (반드시 포함)
+사용자의 핵심 고민: 워라벨
+다음 내용을 반드시 결과에 포함해주세요:
+- 업무 효율화 방법
+- 경계 설정 전략
+- 번아웃 예방법
+- 지속 가능한 업무 패턴
+- 에너지 관리 전략`,
+
+    'compensation': `
+## 보상/처우 개선 전략 (반드시 포함)
+사용자의 핵심 고민: 보상
+다음 내용을 반드시 결과에 포함해주세요:
+- 연봉 협상 타이밍과 전략
+- 가치 증명 방법
+- 대안적 보상 협상 (복지, 유연근무 등)
+- 시장가치 파악법
+- 장기적 재정 계획`
+  }
+
+  return concernPrompts[concern] || ''
 }
 
 // 커리어 분야 추정 함수
@@ -282,8 +370,20 @@ serve(async (req) => {
       industry = '',
       challenges = [],
       strengths = [],
-      isPremium = false // ✅ 프리미엄 사용자 여부
+      isPremium = false, // ✅ 프리미엄 사용자 여부
+      // ✅ 핵심 고민 관련 필드 (camelCase 또는 snake_case 모두 지원)
+      primaryConcern = '',
+      primary_concern = '',
+      shortTermGoal = '',
+      short_term_goal = '',
+      coreValue = '',
+      core_value = ''
     } = requestData
+
+    // ✅ snake_case → camelCase 통합 (Flutter에서 snake_case로 전달됨)
+    const concern = primaryConcern || primary_concern || ''
+    const shortGoal = shortTermGoal || short_term_goal || ''
+    const value = coreValue || core_value || ''
 
     if (!currentRole && !careerGoal) {
       throw new Error('현재 직무 또는 커리어 목표를 입력해주세요.')
@@ -295,7 +395,10 @@ serve(async (req) => {
       timeHorizon,
       careerPath,
       skillsCount: skills.length,
-      isPremium // ✅ 프리미엄 상태 로깅
+      isPremium, // ✅ 프리미엄 상태 로깅
+      primaryConcern: concern, // ✅ 핵심 고민 로깅
+      shortTermGoal: shortGoal,
+      coreValue: value
     })
 
     // 기본 분석 수행
@@ -303,8 +406,8 @@ serve(async (req) => {
     const skillAnalysis = analyzeSkills(skills, careerField, currentRole)
     const predictions = generateCareerPredictions(timeHorizon, careerPath, careerField, currentRole)
 
-    // 캐시 확인 (UTF-8 안전한 SHA-256 해시)
-    const hash = await createHash(`${fortuneType}_${currentRole}_${timeHorizon}_${careerPath}_${skills.join(',')}`)
+    // 캐시 확인 (UTF-8 안전한 SHA-256 해시) - ✅ 핵심 고민도 캐시 키에 포함
+    const hash = await createHash(`${fortuneType}_${currentRole}_${timeHorizon}_${careerPath}_${skills.join(',')}_${concern}`)
     const cacheKey = `career_fortune_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
@@ -320,6 +423,10 @@ serve(async (req) => {
     } else {
       console.log('Cache miss, calling OpenAI API')
 
+      // ✅ 핵심 고민별 프롬프트 섹션 생성
+      const concernSection = getConcernPromptSection(concern)
+      const concernLabel = concern ? getConcernLabel(concern) : ''
+
       // OpenAI API 호출을 위한 프롬프트 생성
       const prompt = `당신은 한국의 전문 커리어 컨설턴트입니다. 다음 정보를 바탕으로 구체적이고 실용적인 커리어 조언을 제공해주세요.
 
@@ -329,6 +436,10 @@ serve(async (req) => {
 희망 경로: ${careerPath}
 개발 희망 스킬: ${skills.join(', ')}
 분야 추정: ${careerField}
+${concernLabel ? `핵심 고민: ${concernLabel}` : ''}
+${shortGoal ? `단기 목표: ${shortGoal}` : ''}
+${value ? `중요시하는 가치: ${value}` : ''}
+${concernSection}
 
 다음 JSON 형식으로 커리어 운세를 제공해주세요:
 

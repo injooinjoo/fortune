@@ -136,7 +136,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
     final selectionOrder = isSelected && widget.selectedIndices != null
         ? widget.selectedIndices!.indexOf(index) + 1
         : null;
-    
+
     return AnimatedBuilder(
       animation: _fanAnimations[index],
       builder: (context, child) {
@@ -148,18 +148,41 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
           radius: screenWidth * 0.6,
           baseRotation: _currentRotation
         );
-        
+
         // 드래그 중일 때 추가 변환
         double translateX = position.x * fanProgress;
         double translateY = position.y * fanProgress + (1 - fanProgress) * 100;
         double scale = position.scale * fanProgress;
-        
+
+        // 선택된 카드는 위로 올라오고 크기가 커짐
+        if (isSelected) {
+          translateY -= 40; // 위로 올라옴
+          scale *= 1.15; // 크기 증가
+        }
+
+        // 호버 시 약간 위로
+        if (isHovered && !isSelected) {
+          translateY -= 20;
+          scale *= 1.08;
+        }
+
         if (isDragging) {
           translateX += _dragOffset.dx;
           translateY += _dragOffset.dy;
           scale *= _dragScale;
         }
-        
+
+        // z-index 조정: 선택된 카드가 맨 위로
+        double zIndex = (widget.cardCount - index).toDouble();
+        if (isSelected) {
+          zIndex += 200; // 선택된 카드는 맨 위로
+        } else if (isHovered) {
+          zIndex += 100; // 호버된 카드도 위로
+        }
+        if (isDragging) {
+          zIndex += 300;
+        }
+
         // GestureDetector를 Transform 바깥에 배치하여 터치 영역 보존
         return GestureDetector(
           onTap: () => _handleCardTap(index),
@@ -195,18 +218,19 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
           },
           behavior: HitTestBehavior.opaque,
           child: AnimatedContainer(
-            duration: isDragging ? Duration.zero : const Duration(milliseconds: 200),
+            duration: isDragging ? Duration.zero : const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
             child: Transform(
               alignment: Alignment.center,
               transform: Matrix4.identity()
-                ..translate(
-                  translateX,
-                  translateY,
-                  (widget.cardCount - index).toDouble() + (isDragging ? 100 : 0))
-                ..rotateZ(position.rotation * fanProgress)
+                ..translate(translateX, translateY, zIndex)
+                ..rotateZ(isSelected ? 0 : position.rotation * fanProgress) // 선택된 카드는 회전 해제
                 ..scale(scale, scale),
-              child: Opacity(
-                opacity: ((isDragging ? 1.0 : 0.3) + fanProgress * 0.7).clamp(0.0, 1.0),
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: isSelected || isHovered || isDragging
+                    ? 1.0
+                    : (0.7 + fanProgress * 0.3).clamp(0.0, 1.0),
                 child: MouseRegion(
                   onEnter: widget.enableHover ? (_) => setState(() => _hoveredIndex = index) : null,
                   onExit: widget.enableHover ? (_) => setState(() => _hoveredIndex = -1) : null,
@@ -215,6 +239,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
                     deck: widget.selectedDeck,
                     width: widget.cardWidth,
                     height: widget.cardHeight,
+                    showFront: true, // 카드 앞면을 보여줌
                     isSelected: isSelected,
                     isHovered: isHovered || isDragging,
                     selectionOrder: selectionOrder,

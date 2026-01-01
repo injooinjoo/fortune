@@ -35,6 +35,8 @@ import 'widgets/mental_model_section.dart';
 import 'widgets/collaboration_section.dart';
 import 'widgets/growth_roadmap_section.dart';
 import 'widgets/learning_strategy_section.dart';
+import 'widgets/warnings_section.dart';
+import 'widgets/recommendations_section.dart';
 
 class TalentFortuneResultsPage extends ConsumerStatefulWidget {
   final TalentInputData inputData;
@@ -522,6 +524,30 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                                   icon: Icons.school,
                                   iconColor: colors.accent,
                                   contentBuilder: () => LearningStrategySection(
+                                    fortuneResult: _fortuneResult,
+                                    colors: colors,
+                                  ),
+                                  colors: colors,
+                                ),
+                                const SizedBox(height: 16),
+                                _buildSectionWithBlur(
+                                  sectionKey: 'recommendations',
+                                  title: '🚀 실행 가이드',
+                                  icon: Icons.rocket_launch,
+                                  iconColor: colors.accent,
+                                  contentBuilder: () => RecommendationsSection(
+                                    fortuneResult: _fortuneResult,
+                                    colors: colors,
+                                  ),
+                                  colors: colors,
+                                ),
+                                const SizedBox(height: 16),
+                                _buildSectionWithBlur(
+                                  sectionKey: 'warnings',
+                                  title: '⚠️ 주의할 함정',
+                                  icon: Icons.warning_amber_rounded,
+                                  iconColor: DSColors.error,
+                                  contentBuilder: () => WarningsSection(
                                     fortuneResult: _fortuneResult,
                                     colors: colors,
                                   ),

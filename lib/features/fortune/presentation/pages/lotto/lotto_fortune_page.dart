@@ -21,6 +21,12 @@ import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../domain/services/lotto_number_generator.dart';
 import 'widgets/widgets.dart';
 
+/// 로또 분석 모드
+enum LottoAnalysisMode {
+  saju,   // 사주 기반 (기본)
+  dream,  // 꿈해석 기반
+}
+
 /// 로또 운세 페이지
 ///
 /// 사주 정보를 기반으로 6개의 로또 번호를 생성합니다.
@@ -40,6 +46,11 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
   String? _selectedBirthTime;
   String? _selectedGender;
   List<AccordionInputSection> _sections = [];
+
+  // 분석 모드 상태
+  LottoAnalysisMode _analysisMode = LottoAnalysisMode.saju;
+  String? _dreamText;  // 꿈해석 모드에서 입력한 꿈 내용
+  Map<String, dynamic>? _dreamResult;  // 꿈해석 API 결과
 
   // 결과 상태
   bool _showResult = false;
@@ -326,7 +337,9 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    '사주를 기반으로 오늘의 행운 번호와\n구매 장소, 최적 타이밍을 추천해드립니다',
+                    _analysisMode == LottoAnalysisMode.saju
+                        ? '사주를 기반으로 오늘의 행운 번호와\n구매 장소, 최적 타이밍을 추천해드립니다'
+                        : '꿈의 상징을 해석하여\n행운의 번호를 추천해드립니다',
                     style: TypographyUnified.bodyMedium.copyWith(
                       color: isDark
                           ? ObangseokColors.baekDark.withValues(alpha: 0.7)
@@ -335,6 +348,9 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 24),
+                  // 분석 모드 선택
+                  _buildAnalysisModeSelector(isDark),
                 ],
               ),
             ),
@@ -342,6 +358,166 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
         ),
       ),
     );
+  }
+
+  /// 분석 모드 선택 UI
+  Widget _buildAnalysisModeSelector(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: isDark
+            ? ObangseokColors.meok.withValues(alpha: 0.3)
+            : ObangseokColors.baek.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildModeButton(
+              icon: '🔮',
+              label: '사주 기반',
+              isSelected: _analysisMode == LottoAnalysisMode.saju,
+              onTap: () {
+                setState(() {
+                  _analysisMode = LottoAnalysisMode.saju;
+                  _dreamText = null;
+                  _dreamResult = null;
+                });
+              },
+              isDark: isDark,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildModeButton(
+              icon: '💭',
+              label: '꿈해석 기반',
+              isSelected: _analysisMode == LottoAnalysisMode.dream,
+              onTap: () {
+                setState(() {
+                  _analysisMode = LottoAnalysisMode.dream;
+                });
+                // 꿈해석 BottomSheet 표시
+                _showDreamInputBottomSheet();
+              },
+              isDark: isDark,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModeButton({
+    required String icon,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? ObangseokColors.hwang.withValues(alpha: 0.2)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected
+                ? ObangseokColors.hwang
+                : Colors.transparent,
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(icon, style: const TextStyle(fontSize: 18)),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TypographyUnified.labelMedium.copyWith(
+                color: isSelected
+                    ? ObangseokColors.hwang
+                    : (isDark ? ObangseokColors.baekDark : ObangseokColors.meok)
+                        .withValues(alpha: 0.6),
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 꿈 입력 BottomSheet 표시
+  void _showDreamInputBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DreamLottoBottomSheet(
+        onDreamAnalyzed: (dreamText, dreamResult) {
+          setState(() {
+            _dreamText = dreamText;
+            _dreamResult = dreamResult;
+          });
+        },
+        onGenerateNumbers: () {
+          Navigator.pop(context);
+          _generateNumbersFromDream();
+        },
+      ),
+    );
+  }
+
+  /// 꿈해석 결과 기반 로또 번호 생성
+  Future<void> _generateNumbersFromDream() async {
+    if (_dreamResult == null) return;
+
+    setState(() {
+      _isGenerating = true;
+    });
+
+    // 햅틱 피드백
+    ref.read(fortuneHapticServiceProvider).mysticalReveal();
+
+    // 현재 위치 가져오기
+    String? locationName;
+    try {
+      final locationInfo = await LocationManager.instance.getCurrentLocation();
+      locationName = locationInfo.cityName;
+    } catch (e) {
+      Logger.debug('[Lotto] 위치 정보 가져오기 실패: $e');
+    }
+
+    // 꿈해석 결과 기반 번호 생성
+    final result = LottoNumberGenerator.generateFromDream(
+      dreamResult: _dreamResult!,
+      birthDate: _selectedBirthDate,
+      birthTime: _selectedBirthTime,
+      gender: _selectedGender,
+      currentLocation: locationName,
+    );
+
+    // 프리미엄 사용자 체크
+    final isPremium = ref.read(isPremiumProvider);
+
+    if (mounted) {
+      setState(() {
+        _result = result;
+        _currentLocationName = locationName;
+        _isPremiumUnlocked = isPremium;
+        _showResult = true;
+        _isGenerating = false;
+      });
+
+      // 게이지 증가
+      FortuneCompletionHelper.onFortuneViewed(context, ref, 'lotto');
+    }
   }
 
   Widget _buildResultView(bool isDark) {

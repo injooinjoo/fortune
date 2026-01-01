@@ -14,6 +14,24 @@ import 'tarot_card_detail_modal.dart';
 
 /// Simplified tarot reading result view
 class TarotResultView extends ConsumerStatefulWidget {
+  /// 프리미엄 관련 메시지 필터링
+  static bool _isPremiumMessage(String? text) {
+    if (text == null || text.isEmpty) return false;
+    final lowerText = text.toLowerCase();
+    return lowerText.contains('프리미엄') ||
+        lowerText.contains('premium') ||
+        lowerText.contains('🔒') ||
+        lowerText.contains('결제') ||
+        lowerText.contains('구독') ||
+        lowerText.contains('잠금') ||
+        lowerText.contains('업그레이드');
+  }
+
+  /// 프리미엄 메시지가 아닌 경우만 텍스트 반환
+  static String? _filterPremiumText(String? text) {
+    if (_isPremiumMessage(text)) return null;
+    return text;
+  }
   final List<int> selectedCards;
   final TarotDeck selectedDeck;
   final String? question;
@@ -136,6 +154,9 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
   Widget _buildHeader(ThemeData theme, double fontScale) {
     return Column(
       children: [
+        // 덱 소개 섹션
+        _buildDeckIntroSection(theme),
+        const SizedBox(height: 24),
         Text(
           '타로 리딩 결과',
           style: context.typography.headingLarge.copyWith(
@@ -148,6 +169,189 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               fontStyle: FontStyle.italic),
             textAlign: TextAlign.center)]]);
+  }
+
+  /// 덱 소개 섹션 빌드
+  Widget _buildDeckIntroSection(ThemeData theme) {
+    final deck = widget.selectedDeck;
+
+    // 대표 카드 3장 (Fool, Magician, Star)
+    final showcaseCards = [0, 1, 17];
+
+    return GlassContainer(
+      padding: const EdgeInsets.all(20),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          deck.primaryColor.withValues(alpha: 0.15),
+          deck.secondaryColor.withValues(alpha: 0.1),
+        ],
+      ),
+      child: Column(
+        children: [
+          // 타이틀
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                color: deck.primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '오늘의 타로카드는',
+                style: context.typography.labelLarge.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // 덱 이름
+          Text(
+            '"${deck.name}"',
+            style: context.typography.headingMedium.copyWith(
+              fontWeight: FontWeight.bold,
+              color: deck.primaryColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            deck.koreanName,
+            style: context.typography.labelMedium.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // 카드 쇼케이스
+          SizedBox(
+            height: 160,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(showcaseCards.length, (index) {
+                final cardIndex = showcaseCards[index];
+                final imagePath = TarotHelper.getMajorArcanaImagePath(deck.id, cardIndex);
+
+                // 가운데 카드가 약간 위로
+                final isCenter = index == 1;
+                final rotation = (index - 1) * 0.08; // -0.08, 0, 0.08
+
+                return Transform.translate(
+                  offset: Offset(
+                    (index - 1) * -15, // 살짝 겹치게
+                    isCenter ? -10 : 0, // 가운데 카드 위로
+                  ),
+                  child: Transform.rotate(
+                    angle: rotation,
+                    child: Container(
+                      width: 90,
+                      height: 135,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: deck.primaryColor.withValues(alpha: 0.3),
+                            blurRadius: isCenter ? 15 : 10,
+                            spreadRadius: isCenter ? 2 : 1,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          imagePath,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    deck.primaryColor.withValues(alpha: 0.5),
+                                    deck.secondaryColor.withValues(alpha: 0.5),
+                                  ],
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.auto_awesome,
+                                size: 40,
+                                color: Colors.white.withValues(alpha: 0.8),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // 덱 정보 배지들
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.center,
+            children: [
+              _buildDeckInfoBadge(
+                icon: Icons.palette_outlined,
+                label: deck.style.label,
+                color: deck.primaryColor,
+              ),
+              _buildDeckInfoBadge(
+                icon: Icons.timeline,
+                label: '${deck.year}년',
+                color: deck.secondaryColor,
+              ),
+              _buildDeckInfoBadge(
+                icon: Icons.brush_outlined,
+                label: deck.artist.split(' ').last,
+                color: theme.colorScheme.tertiary,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeckInfoBadge({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: context.typography.labelSmall.copyWith(
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildCardsDisplay(ThemeData theme, double fontScale) {
@@ -223,14 +427,17 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  result != null && result['overallInterpretation'] != null
-                      ? result['overallInterpretation']
-                      : _generateDefaultInterpretation(),
-                  style: context.typography.labelLarge.copyWith(
-                    height: 1.6,
-                  ),
-                ),
+                Builder(builder: (context) {
+                  final overallText = result != null && result['overallInterpretation'] != null
+                      ? TarotResultView._filterPremiumText(result['overallInterpretation']?.toString())
+                      : null;
+                  return Text(
+                    overallText ?? _generateDefaultInterpretation(),
+                    style: context.typography.labelLarge.copyWith(
+                      height: 1.6,
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -394,11 +601,18 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                     const SizedBox(height: 20),
                     // 해석 내용 - 스토리텔링 포맷 (프리미엄 잠금 메시지 필터링)
                     Builder(builder: (context) {
-                      final interpretationText = interpretation['interpretation'] ?? interpretation['meaning'] ?? '';
-                      // 프리미엄 잠금 메시지가 있으면 빈 문자열로 처리
-                      if (interpretationText.toString().contains('프리미엄') ||
-                          interpretationText.toString().contains('🔒')) {
-                        return const SizedBox.shrink();
+                      final rawText = interpretation['interpretation'] ?? interpretation['meaning'] ?? '';
+                      final interpretationText = TarotResultView._filterPremiumText(rawText.toString());
+                      if (interpretationText == null || interpretationText.isEmpty) {
+                        // 프리미엄 메시지면 기본 해석 생성
+                        final fallback = _generateCardInterpretation(cardIndex, index);
+                        return Text(
+                          fallback['interpretation'] ?? '',
+                          style: context.typography.bodyMedium.copyWith(
+                            height: 1.8,
+                            letterSpacing: 0.2,
+                          ),
+                        );
                       }
                       return Text(
                         interpretationText,
@@ -438,8 +652,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           
           // Advice (프리미엄 잠금 메시지가 아닌 경우만 표시)
           if (result != null && result['advice'] != null &&
-              !result['advice'].toString().contains('프리미엄') &&
-              !result['advice'].toString().contains('🔒')) ...[
+              !TarotResultView._isPremiumMessage(result['advice'].toString())) ...[
             const SizedBox(height: 16),
             GlassContainer(
               padding: const EdgeInsets.all(20),

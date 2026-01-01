@@ -295,6 +295,8 @@ class _CompatibilityInputViewState
         return '👨‍👩‍👧';
       case 'friend':
         return '👫';
+      case 'lover':
+        return '💑';
       default:
         return '👤';
     }

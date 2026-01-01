@@ -26,8 +26,14 @@ class SecondaryProfile extends Equatable {
   /// 음력 여부
   final bool isLunar;
 
-  /// 관계 ("family" | "friend" | "other")
+  /// 관계 ("family" | "friend" | "lover" | "other")
   final String? relationship;
+
+  /// MBTI 성격유형 (선택)
+  final String? mbti;
+
+  /// 혈액형 (선택)
+  final String? bloodType;
 
   /// 아바타 이미지 인덱스
   final int avatarIndex;
@@ -47,6 +53,8 @@ class SecondaryProfile extends Equatable {
     required this.gender,
     this.isLunar = false,
     this.relationship,
+    this.mbti,
+    this.bloodType,
     this.avatarIndex = 0,
     required this.createdAt,
     required this.updatedAt,
@@ -63,6 +71,8 @@ class SecondaryProfile extends Equatable {
       gender: json['gender'] as String,
       isLunar: json['is_lunar'] as bool? ?? false,
       relationship: json['relationship'] as String?,
+      mbti: json['mbti'] as String?,
+      bloodType: json['blood_type'] as String?,
       avatarIndex: json['avatar_index'] as int? ?? 0,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
@@ -84,6 +94,8 @@ class SecondaryProfile extends Equatable {
       'gender': gender,
       'is_lunar': isLunar,
       'relationship': relationship,
+      'mbti': mbti,
+      'blood_type': bloodType,
       'avatar_index': avatarIndex,
     };
   }
@@ -140,6 +152,8 @@ class SecondaryProfile extends Equatable {
     String? gender,
     bool? isLunar,
     String? relationship,
+    String? mbti,
+    String? bloodType,
     int? avatarIndex,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -153,6 +167,8 @@ class SecondaryProfile extends Equatable {
       gender: gender ?? this.gender,
       isLunar: isLunar ?? this.isLunar,
       relationship: relationship ?? this.relationship,
+      mbti: mbti ?? this.mbti,
+      bloodType: bloodType ?? this.bloodType,
       avatarIndex: avatarIndex ?? this.avatarIndex,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -169,6 +185,8 @@ class SecondaryProfile extends Equatable {
         gender,
         isLunar,
         relationship,
+        mbti,
+        bloodType,
         avatarIndex,
       ];
 

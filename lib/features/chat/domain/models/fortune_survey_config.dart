@@ -19,6 +19,7 @@ enum SurveyInputType {
   investmentCategory, // 투자 카테고리 선택 (코인, 주식, ETF 등)
   investmentTicker,   // 투자 종목 선택 (티커 검색)
   celebritySelection, // 유명인 선택 (검색 + 그리드)
+  matchSelection,     // 경기 선택 (스포츠 경기 목록)
 }
 
 /// 설문 선택지

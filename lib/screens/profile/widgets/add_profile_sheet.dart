@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/design_system/design_system.dart';
 import '../../../core/theme/typography_unified.dart';
 import '../../../core/theme/app_theme/fortune_theme_extension.dart';
 import '../../../core/widgets/date_picker/numeric_date_input.dart';
@@ -8,7 +10,7 @@ import '../../../presentation/providers/secondary_profiles_provider.dart';
 
 /// 프로필 추가 바텀시트
 ///
-/// 가족/친구의 정보를 입력받아 새 프로필 생성
+/// 가족/친구/애인의 정보를 입력받아 새 프로필 생성
 class AddProfileSheet extends ConsumerStatefulWidget {
   /// 미리 채울 이름 (궁합에서 직접 입력 후 호출 시)
   final String? initialName;
@@ -41,12 +43,32 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
   String _gender = 'male';
   bool _isLunar = false;
   String _relationship = 'family';
+  String? _mbti;
+  String? _bloodType;
   bool _isLoading = false;
+
+  // 관계 옵션
+  static const List<Map<String, String>> _relationshipOptions = [
+    {'value': 'family', 'label': '가족', 'emoji': '👨‍👩‍👧'},
+    {'value': 'friend', 'label': '친구', 'emoji': '👫'},
+    {'value': 'lover', 'label': '애인', 'emoji': '💑'},
+    {'value': 'other', 'label': '기타', 'emoji': '👤'},
+  ];
+
+  // MBTI 목록
+  static const List<String> _mbtiTypes = [
+    'ISTJ', 'ISFJ', 'INFJ', 'INTJ',
+    'ISTP', 'ISFP', 'INFP', 'INTP',
+    'ESTP', 'ESFP', 'ENFP', 'ENTP',
+    'ESTJ', 'ESFJ', 'ENFJ', 'ENTJ',
+  ];
+
+  // 혈액형 목록
+  static const List<String> _bloodTypes = ['A', 'B', 'O', 'AB'];
 
   @override
   void initState() {
     super.initState();
-    // 초기값 설정 (궁합에서 직접 입력 후 호출 시)
     if (widget.initialName != null) {
       _nameController.text = widget.initialName!;
     }
@@ -65,11 +87,13 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     super.dispose();
   }
 
-  bool get _isValid => _nameController.text.trim().isNotEmpty && _birthDate != null;
+  bool get _isValid =>
+      _nameController.text.trim().isNotEmpty && _birthDate != null;
 
   @override
   Widget build(BuildContext context) {
     final fortuneTheme = context.fortuneTheme;
+    final colors = context.colors;
 
     return Container(
       padding: EdgeInsets.only(
@@ -104,7 +128,8 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Text(widget.title ?? '프로필 추가', style: context.heading2),
+                    child:
+                        Text(widget.title ?? '프로필 추가', style: context.heading2),
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
@@ -164,33 +189,10 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
               ),
               const SizedBox(height: 20),
 
-              // 관계 선택
+              // 관계 선택 (칩 스타일)
               _buildSectionTitle('관계'),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  _RelationshipChip(
-                    label: '가족',
-                    value: 'family',
-                    selected: _relationship == 'family',
-                    onTap: () => setState(() => _relationship = 'family'),
-                  ),
-                  const SizedBox(width: 8),
-                  _RelationshipChip(
-                    label: '친구',
-                    value: 'friend',
-                    selected: _relationship == 'friend',
-                    onTap: () => setState(() => _relationship = 'friend'),
-                  ),
-                  const SizedBox(width: 8),
-                  _RelationshipChip(
-                    label: '기타',
-                    value: 'other',
-                    selected: _relationship == 'other',
-                    onTap: () => setState(() => _relationship = 'other'),
-                  ),
-                ],
-              ),
+              const SizedBox(height: 12),
+              _buildRelationshipChips(colors),
               const SizedBox(height: 20),
 
               // 생년월일 선택
@@ -275,28 +277,22 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
               ),
               const SizedBox(height: 20),
 
-              // 성별 선택
+              // 성별 선택 (칩 스타일)
               _buildSectionTitle('성별'),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: _GenderButton(
-                      label: '남성',
-                      selected: _gender == 'male',
-                      onTap: () => setState(() => _gender = 'male'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _GenderButton(
-                      label: '여성',
-                      selected: _gender == 'female',
-                      onTap: () => setState(() => _gender = 'female'),
-                    ),
-                  ),
-                ],
-              ),
+              const SizedBox(height: 12),
+              _buildGenderChips(colors),
+              const SizedBox(height: 20),
+
+              // MBTI 선택 (선택)
+              _buildSectionTitle('MBTI (선택)'),
+              const SizedBox(height: 12),
+              _buildMbtiGrid(colors),
+              const SizedBox(height: 20),
+
+              // 혈액형 선택 (선택)
+              _buildSectionTitle('혈액형 (선택)'),
+              const SizedBox(height: 12),
+              _buildBloodTypeChips(colors),
               const SizedBox(height: 32),
 
               // 저장 버튼
@@ -347,6 +343,173 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     );
   }
 
+  /// 관계 선택 칩
+  Widget _buildRelationshipChips(DSColorScheme colors) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: _relationshipOptions.map((option) {
+        final isSelected = _relationship == option['value'];
+        return _buildSelectionChip(
+          label: '${option['emoji']} ${option['label']}',
+          isSelected: isSelected,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            setState(() => _relationship = option['value']!);
+          },
+          colors: colors,
+        );
+      }).toList(),
+    );
+  }
+
+  /// 성별 선택 칩
+  Widget _buildGenderChips(DSColorScheme colors) {
+    return Row(
+      children: [
+        _buildSelectionChip(
+          label: '♂ 남성',
+          isSelected: _gender == 'male',
+          onTap: () {
+            HapticFeedback.lightImpact();
+            setState(() => _gender = 'male');
+          },
+          colors: colors,
+        ),
+        const SizedBox(width: 8),
+        _buildSelectionChip(
+          label: '♀ 여성',
+          isSelected: _gender == 'female',
+          onTap: () {
+            HapticFeedback.lightImpact();
+            setState(() => _gender = 'female');
+          },
+          colors: colors,
+        ),
+      ],
+    );
+  }
+
+  /// MBTI 선택 그리드
+  Widget _buildMbtiGrid(DSColorScheme colors) {
+    final fortuneTheme = context.fortuneTheme;
+    return Column(
+      children: [
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: _mbtiTypes.map((type) {
+            final isSelected = _mbti == type;
+            return _buildSelectionChip(
+              label: type,
+              isSelected: isSelected,
+              onTap: () {
+                HapticFeedback.lightImpact();
+                setState(() => _mbti = type);
+              },
+              colors: colors,
+              compact: true,
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 8),
+        TextButton(
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            setState(() => _mbti = null);
+          },
+          child: Text(
+            '모르겠어요',
+            style: context.bodySmall.copyWith(
+              color: fortuneTheme.secondaryText,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 혈액형 선택 칩
+  Widget _buildBloodTypeChips(DSColorScheme colors) {
+    final fortuneTheme = context.fortuneTheme;
+    return Column(
+      children: [
+        Row(
+          children: _bloodTypes.map((type) {
+            final isSelected = _bloodType == type;
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: _buildSelectionChip(
+                label: '$type형',
+                isSelected: isSelected,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  setState(() => _bloodType = type);
+                },
+                colors: colors,
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 8),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              setState(() => _bloodType = null);
+            },
+            child: Text(
+              '모르겠어요',
+              style: context.bodySmall.copyWith(
+                color: fortuneTheme.secondaryText,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 공통 선택 칩 위젯
+  Widget _buildSelectionChip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required DSColorScheme colors,
+    bool compact = false,
+  }) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 12 : 16,
+          vertical: compact ? 8 : 10,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? primaryColor
+              : (isDark ? colors.backgroundSecondary : colors.surface),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? primaryColor : colors.border,
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          label,
+          style: context.bodyMedium.copyWith(
+            color: isSelected ? Colors.white : colors.textPrimary,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _selectBirthTime() async {
     final time = await showTimePicker(
       context: context,
@@ -376,17 +539,20 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     setState(() => _isLoading = true);
 
     try {
-      await ref.read(secondaryProfilesProvider.notifier).addProfile(
-            name: _nameController.text.trim(),
-            birthDate: _formatDateString(_birthDate!),
-            birthTime: _birthTime,
-            gender: _gender,
-            isLunar: _isLunar,
-            relationship: _relationship,
-          );
+      final newProfile =
+          await ref.read(secondaryProfilesProvider.notifier).addProfile(
+                name: _nameController.text.trim(),
+                birthDate: _formatDateString(_birthDate!),
+                birthTime: _birthTime,
+                gender: _gender,
+                isLunar: _isLunar,
+                relationship: _relationship,
+                mbti: _mbti,
+                bloodType: _bloodType,
+              );
 
       if (mounted) {
-        Navigator.pop(context, true); // 성공 시 true 반환
+        Navigator.pop(context, newProfile); // 성공 시 생성된 프로필 반환
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_nameController.text.trim()} 프로필이 추가되었습니다'),
@@ -413,89 +579,5 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
         setState(() => _isLoading = false);
       }
     }
-  }
-}
-
-/// 관계 선택 칩
-class _RelationshipChip extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _RelationshipChip({
-    required this.label,
-    required this.value,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final fortuneTheme = context.fortuneTheme;
-    final primaryColor = Theme.of(context).colorScheme.primary;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: selected ? primaryColor : fortuneTheme.cardSurface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? primaryColor : fortuneTheme.dividerColor,
-          ),
-        ),
-        child: Text(
-          label,
-          style: context.bodyMedium.copyWith(
-            color: selected ? Colors.white : fortuneTheme.primaryText,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 성별 선택 버튼
-class _GenderButton extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _GenderButton({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final fortuneTheme = context.fortuneTheme;
-    final primaryColor = Theme.of(context).colorScheme.primary;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: selected ? primaryColor : fortuneTheme.cardSurface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected ? primaryColor : fortuneTheme.dividerColor,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: context.bodyLarge.copyWith(
-              color: selected ? Colors.white : fortuneTheme.primaryText,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

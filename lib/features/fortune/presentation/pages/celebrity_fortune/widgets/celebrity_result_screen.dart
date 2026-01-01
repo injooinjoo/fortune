@@ -66,6 +66,9 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
   Map<String, dynamic>? get _intimateCompatibility =>
       widget.fortune.additionalInfo?['intimate_compatibility'] as Map<String, dynamic>?;
 
+  String? get _specialMessage =>
+      widget.fortune.additionalInfo?['special_message'] as String?;
+
   @override
   void initState() {
     super.initState();
@@ -252,6 +255,15 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
                   fortuneType: 'celebrity',
                   child: _Recommendations(recommendations: widget.fortune.recommendations!),
                 ).animate().fadeIn(duration: 500.ms, delay: 1000.ms),
+                const SizedBox(height: 20),
+              ],
+
+              // 12. Special Message - 영혼의 메시지 (무료, 마지막에 감동적으로)
+              if (_specialMessage?.isNotEmpty ?? false) ...[
+                _SpecialMessageSection(
+                  message: _specialMessage!,
+                  celebrityName: widget.selectedCelebrity?.name ?? '유명인',
+                ).animate().fadeIn(duration: 600.ms, delay: 1100.ms).scale(begin: const Offset(0.95, 0.95)),
                 const SizedBox(height: 20),
               ],
 
@@ -1026,6 +1038,131 @@ class _Recommendations extends StatelessWidget {
               ],
             ),
           )),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// _SpecialMessageSection - 영혼의 메시지 (무료, 마지막 감동 섹션)
+// ============================================================
+class _SpecialMessageSection extends StatelessWidget {
+  final String message;
+  final String celebrityName;
+
+  const _SpecialMessageSection({
+    required this.message,
+    required this.celebrityName,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.xl),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colors.accent.withValues(alpha: 0.15),
+            DSColors.accentSecondary.withValues(alpha: 0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: colors.accent.withValues(alpha: 0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colors.accent.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // 아이콘과 제목
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                color: colors.accent,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '$celebrityName의 메시지',
+                style: DSTypography.labelLarge.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: colors.accent,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.auto_awesome,
+                color: colors.accent,
+                size: 20,
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.lg),
+          // 메시지 내용
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+            child: Text(
+              '"$message"',
+              style: DSTypography.buttonMedium.copyWith(
+                height: 1.7,
+                fontStyle: FontStyle.italic,
+                color: colors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.md),
+          // 하단 장식
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 30,
+                height: 1,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      colors.accent.withValues(alpha: 0.5),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.favorite,
+                color: DSColors.error.withValues(alpha: 0.7),
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Container(
+                width: 30,
+                height: 1,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      colors.accent.withValues(alpha: 0.5),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

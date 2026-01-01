@@ -16,17 +16,19 @@ import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/widgets/today_result_label.dart';
 
-/// 투자운세 결과 페이지 v2 (리서치 기반 새 구조)
+/// 재물운/투자운세 결과 페이지 v3 (종합 재물 분석)
 ///
 /// **무료 공개**:
-/// - 메인 점수, 종목 정보, 요약, 행운 아이템
+/// - 메인 점수, 재물 잠재력, 오행 분석, 행운 요소
 ///
 /// **프리미엄 (블러)**:
-/// - timing: 타이밍 운세
-/// - outlook: 전망 운세
-/// - risks: 리스크 경고
-/// - marketMood: 시장 기운
-/// - advice, psychologyTip: 투자 조언
+/// - goalAdvice: 목표 맞춤 조언
+/// - cashflowInsight: 수입/지출 분석
+/// - investmentInsights: 관심분야별 분석
+/// - monthlyFlow: 월간 재물 흐름
+/// - actionItems: 실천 체크리스트
+///
+/// **하위 호환**: 기존 투자(ticker) 포맷도 지원
 class InvestmentFortuneResultPage extends ConsumerStatefulWidget {
   final FortuneResult fortuneResult;
 
@@ -44,11 +46,17 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   int _currentTypingSection = 0;
   bool _hapticTriggered = false;
 
+  /// 새로운 종합 재물운 포맷인지 확인 (goalAdvice, elementAnalysis 등 존재 여부)
+  bool get _isWealthFormat {
+    final data = _fortuneResult.data;
+    return data.containsKey('elementAnalysis') || data.containsKey('goalAdvice');
+  }
+
   @override
   void initState() {
     super.initState();
     _fortuneResult = widget.fortuneResult;
-    Logger.info('[투자운 v2] 결과 페이지 초기화 - isBlurred: ${_fortuneResult.isBlurred}');
+    Logger.info('[재물운 v3] 결과 페이지 초기화 - isBlurred: ${_fortuneResult.isBlurred}, isWealthFormat: $_isWealthFormat');
 
     // 투자운 결과 공개 햅틱 (동전 패턴 + 점수)
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -111,35 +119,62 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   _buildMainScoreCard(),
                   const SizedBox(height: 24),
 
-                  // 2. 종목 정보 (공개)
-                  _buildTickerInfoSection(),
-                  const SizedBox(height: 16),
+                  if (_isWealthFormat) ...[
+                    // ===== 새로운 종합 재물운 섹션 =====
 
-                  // 3. 요약 (공개)
-                  _buildContentSection(),
+                    // 2. 오행 재물 분석 (공개)
+                    _buildElementAnalysisSection(),
 
-                  // 4. 행운 아이템 (공개)
-                  _buildLuckyItemsSection(),
+                    // 3. 행운 요소 (공개)
+                    _buildLuckyElementsSection(),
 
-                  // 5. 사주 인사이트 (공개 - 무료)
-                  _buildSajuInsightSection(),
+                    // 4. 목표 맞춤 조언 (블러)
+                    _buildGoalAdviceSection(),
 
-                  // 6. 타이밍 운세 (블러) - NEW
-                  _buildTimingSection(),
+                    // 5. 수입/지출 분석 (블러)
+                    _buildCashflowInsightSection(),
 
-                  // 6. 전망 운세 (블러) - NEW
-                  _buildOutlookSection(),
+                    // 6. 관심분야별 분석 (블러)
+                    _buildInvestmentInsightsSection(),
 
-                  // 7. 리스크 경고 (블러) - NEW
-                  _buildRisksSection(),
+                    // 7. 월간 재물 흐름 (블러)
+                    _buildMonthlyFlowSection(),
 
-                  // 8. 시장 기운 (블러) - NEW
-                  _buildMarketMoodSection(),
+                    // 8. 실천 체크리스트 (블러)
+                    _buildActionItemsSection(),
+                  ] else ...[
+                    // ===== 기존 투자 운세 섹션 (하위 호환) =====
 
-                  // 10. 투자 조언 (블러)
-                  _buildAdviceSection(),
+                    // 2. 종목 정보 (공개)
+                    _buildTickerInfoSection(),
+                    const SizedBox(height: 16),
 
-                  // 11. 면책 문구 (공개)
+                    // 3. 요약 (공개)
+                    _buildContentSection(),
+
+                    // 4. 행운 아이템 (공개)
+                    _buildLuckyItemsSection(),
+
+                    // 5. 사주 인사이트 (공개 - 무료)
+                    _buildSajuInsightSection(),
+
+                    // 6. 타이밍 운세 (블러)
+                    _buildTimingSection(),
+
+                    // 7. 전망 운세 (블러)
+                    _buildOutlookSection(),
+
+                    // 8. 리스크 경고 (블러)
+                    _buildRisksSection(),
+
+                    // 9. 시장 기운 (블러)
+                    _buildMarketMoodSection(),
+
+                    // 10. 투자 조언 (블러)
+                    _buildAdviceSection(),
+                  ],
+
+                  // 면책 문구 (공개)
                   _buildDisclaimerSection(),
 
                   const SizedBox(height: 80),
@@ -151,7 +186,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             if (_fortuneResult.isBlurred)
               UnifiedAdUnlockButton(
                 onPressed: _showAdAndUnblur,
-                customText: '📊 투자 분석 모두 보기',
+                customText: _isWealthFormat ? '💰 재물 분석 모두 보기' : '📊 투자 분석 모두 보기',
               ),
           ],
         ),
@@ -164,6 +199,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   Widget _buildMainScoreCard() {
     final data = _fortuneResult.data;
     final score = data['overallScore'] as int? ?? data['overall_score'] as int? ?? 50;
+    final wealthPotential = data['wealthPotential'] as String? ?? '';
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -202,7 +238,22 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             style: context.displayLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
-          Text(_getScoreEmoji(score), style: context.bodyLarge.copyWith(color: Colors.white)),
+          // 새 포맷: wealthPotential 표시, 기존 포맷: 이모지 표시
+          if (_isWealthFormat && wealthPotential.isNotEmpty) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                wealthPotential,
+                style: context.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ] else ...[
+            Text(_getScoreEmoji(score), style: context.bodyLarge.copyWith(color: Colors.white)),
+          ],
           if (_fortuneResult.percentile != null && _fortuneResult.isPercentileValid) ...[
             const SizedBox(height: 8),
             Container(
@@ -334,7 +385,501 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
     );
   }
 
-  // ===== 프리미엄 섹션 (블러) =====
+  // ===== 새로운 종합 재물운 섹션 =====
+
+  /// 오행 재물 분석 (공개)
+  Widget _buildElementAnalysisSection() {
+    final colors = context.colors;
+    final data = _fortuneResult.data;
+    final elementAnalysis = data['elementAnalysis'] as Map<String, dynamic>? ?? {};
+
+    if (elementAnalysis.isEmpty) return const SizedBox.shrink();
+
+    final dominantElement = elementAnalysis['dominantElement'] as String? ?? '';
+    final wealthElement = elementAnalysis['wealthElement'] as String? ?? '';
+    final compatibility = elementAnalysis['compatibility'] as int? ?? 50;
+    final insight = elementAnalysis['insight'] as String? ?? '';
+    final advice = elementAnalysis['advice'] as String? ?? '';
+
+    return _buildSectionCard(
+      title: '오행 재물 분석',
+      icon: Icons.auto_awesome_rounded,
+      color: const Color(0xFF673AB7),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 오행 궁합 점수
+          _buildElementCompatibilityBadge(compatibility, dominantElement, wealthElement),
+          const SizedBox(height: 16),
+
+          // 인사이트
+          if (insight.isNotEmpty) ...[
+            Text(
+              insight,
+              style: context.bodyMedium.copyWith(color: colors.textSecondary, height: 1.6),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          // 보충 조언
+          if (advice.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF673AB7).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Text('💡', style: TextStyle(fontSize: 18)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(advice, style: context.bodySmall.copyWith(color: colors.textSecondary)),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildElementCompatibilityBadge(int score, String dominant, String wealth) {
+    final color = score >= 70
+        ? const Color(0xFF4CAF50)
+        : score >= 40
+            ? const Color(0xFFFF9800)
+            : const Color(0xFFF44336);
+    final label = score >= 70 ? '재물운 좋음' : score >= 40 ? '보통' : '주의 필요';
+
+    final elementEmojis = {
+      '목': '🌳', '화': '🔥', '토': '🏔️', '금': '🪙', '수': '💧',
+      'wood': '🌳', 'fire': '🔥', 'earth': '🏔️', 'metal': '🪙', 'water': '💧',
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Text(elementEmojis[dominant] ?? '☯️', style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: 8),
+          const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.grey),
+          const SizedBox(width: 8),
+          Text(elementEmojis[wealth] ?? '💰', style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('오행 궁합 $score점', style: context.bodySmall.copyWith(color: color, fontWeight: FontWeight.w600)),
+                Text(label, style: context.labelSmall.copyWith(color: color)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 행운 요소 (공개) - 새 포맷
+  Widget _buildLuckyElementsSection() {
+    final colors = context.colors;
+    final data = _fortuneResult.data;
+    final luckyElements = data['luckyElements'] as Map<String, dynamic>? ?? {};
+
+    if (luckyElements.isEmpty) return const SizedBox.shrink();
+
+    return _buildSectionCard(
+      title: '행운 요소',
+      icon: Icons.auto_awesome_rounded,
+      color: const Color(0xFFFFB300),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              if (luckyElements['color'] != null) _buildLuckyChip('🎨', '색상', luckyElements['color'].toString(), colors),
+              if (luckyElements['number'] != null) _buildLuckyChip('🔢', '숫자', luckyElements['number'].toString(), colors),
+              if (luckyElements['direction'] != null) _buildLuckyChip('🧭', '방향', luckyElements['direction'].toString(), colors),
+              if (luckyElements['day'] != null) _buildLuckyChip('📅', '요일', luckyElements['day'].toString(), colors),
+              if (luckyElements['time'] != null) _buildLuckyChip('⏰', '시간', luckyElements['time'].toString(), colors),
+              if (luckyElements['item'] != null) _buildLuckyChip('🍀', '아이템', luckyElements['item'].toString(), colors),
+            ],
+          ),
+          if (luckyElements['avoid'] != null) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF44336).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Text('⚠️', style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '피할 것: ${luckyElements['avoid']}',
+                      style: context.bodySmall.copyWith(color: const Color(0xFFF44336)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 목표 맞춤 조언 (블러)
+  Widget _buildGoalAdviceSection() {
+    final colors = context.colors;
+    final data = _fortuneResult.data;
+    final goalAdvice = data['goalAdvice'] as Map<String, dynamic>? ?? {};
+
+    if (goalAdvice.isEmpty) return const SizedBox.shrink();
+
+    final primaryGoal = goalAdvice['primaryGoal'] as String? ?? '';
+    final timeline = goalAdvice['timeline'] as String? ?? '';
+    final strategy = goalAdvice['strategy'] as String? ?? '';
+    final luckyTiming = goalAdvice['luckyTiming'] as String? ?? '';
+
+    return _buildBlurredSectionCard(
+      title: '🎯 목표 맞춤 조언',
+      icon: Icons.flag_rounded,
+      color: const Color(0xFF2196F3),
+      sectionKey: 'goalAdvice',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 목표 + 타임라인
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2196F3).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(primaryGoal, style: context.bodyMedium.copyWith(color: const Color(0xFF2196F3), fontWeight: FontWeight.w600)),
+                if (timeline.isNotEmpty) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2196F3).withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(timeline, style: context.labelSmall.copyWith(color: const Color(0xFF2196F3))),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // 전략
+          if (strategy.isNotEmpty)
+            Text(strategy, style: context.bodyMedium.copyWith(color: colors.textSecondary, height: 1.6)),
+
+          // 행운 타이밍
+          if (luckyTiming.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.schedule_rounded, size: 18, color: Color(0xFF4CAF50)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(luckyTiming, style: context.bodySmall.copyWith(color: const Color(0xFF4CAF50), fontWeight: FontWeight.w500)),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 수입/지출 분석 (블러)
+  Widget _buildCashflowInsightSection() {
+    final colors = context.colors;
+    final data = _fortuneResult.data;
+    final cashflowInsight = data['cashflowInsight'] as Map<String, dynamic>? ?? {};
+
+    if (cashflowInsight.isEmpty) return const SizedBox.shrink();
+
+    final incomeEnergy = cashflowInsight['incomeEnergy'] as String? ?? '';
+    final expenseWarning = cashflowInsight['expenseWarning'] as String? ?? '';
+    final savingTip = cashflowInsight['savingTip'] as String? ?? '';
+
+    final energyConfig = {
+      '상승': {'icon': Icons.trending_up_rounded, 'color': const Color(0xFF4CAF50)},
+      '안정': {'icon': Icons.trending_flat_rounded, 'color': const Color(0xFF2196F3)},
+      '주의': {'icon': Icons.trending_down_rounded, 'color': const Color(0xFFFF9800)},
+    };
+    final config = energyConfig[incomeEnergy] ?? energyConfig['안정']!;
+
+    return _buildBlurredSectionCard(
+      title: '💸 수입/지출 분석',
+      icon: Icons.account_balance_wallet_rounded,
+      color: const Color(0xFF4CAF50),
+      sectionKey: 'cashflowInsight',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 수입 에너지
+          if (incomeEnergy.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: (config['color'] as Color).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(config['icon'] as IconData, size: 20, color: config['color'] as Color),
+                  const SizedBox(width: 8),
+                  Text('수입 기운: $incomeEnergy', style: context.bodyMedium.copyWith(color: config['color'] as Color, fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+          const SizedBox(height: 16),
+
+          // 지출 주의
+          if (expenseWarning.isNotEmpty) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('⚠️', style: TextStyle(fontSize: 16)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(expenseWarning, style: context.bodyMedium.copyWith(color: colors.textSecondary, height: 1.5)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          // 저축 팁
+          if (savingTip.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colors.backgroundSecondary,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF4CAF50).withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.savings_rounded, size: 20, color: Color(0xFF4CAF50)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(savingTip, style: context.bodySmall.copyWith(color: colors.textPrimary, fontWeight: FontWeight.w500)),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// 관심분야별 분석 (블러)
+  Widget _buildInvestmentInsightsSection() {
+    final colors = context.colors;
+    final data = _fortuneResult.data;
+    final investmentInsights = data['investmentInsights'] as Map<String, dynamic>? ?? {};
+
+    if (investmentInsights.isEmpty) return const SizedBox.shrink();
+
+    final areaLabels = {
+      'stock': '📈 주식',
+      'crypto': '₿ 코인',
+      'realEstate': '🏠 부동산',
+      'savings': '🏦 저축',
+      'business': '💼 사업',
+      'sideJob': '💵 부업',
+    };
+
+    return _buildBlurredSectionCard(
+      title: '📊 관심분야 분석',
+      icon: Icons.pie_chart_rounded,
+      color: const Color(0xFF9C27B0),
+      sectionKey: 'investmentInsights',
+      child: Column(
+        children: investmentInsights.entries.map((entry) {
+          final area = entry.key;
+          final insight = entry.value as Map<String, dynamic>? ?? {};
+          final score = insight['score'] as int? ?? 50;
+          final timing = insight['timing'] as String? ?? '';
+          final caution = insight['caution'] as String? ?? '';
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colors.backgroundSecondary,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(areaLabels[area] ?? area, style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _getScoreColor(score).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text('$score점', style: context.labelSmall.copyWith(color: _getScoreColor(score), fontWeight: FontWeight.w600)),
+                    ),
+                  ],
+                ),
+                if (timing.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text('⏰ $timing', style: context.bodySmall.copyWith(color: colors.textSecondary)),
+                ],
+                if (caution.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text('⚠️ $caution', style: context.bodySmall.copyWith(color: const Color(0xFFFF9800))),
+                ],
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// 월간 재물 흐름 (블러)
+  Widget _buildMonthlyFlowSection() {
+    final colors = context.colors;
+    final data = _fortuneResult.data;
+    final monthlyFlow = data['monthlyFlow'] as List? ?? [];
+
+    if (monthlyFlow.isEmpty) return const SizedBox.shrink();
+
+    final energyColors = {
+      '축적기': const Color(0xFF2196F3),
+      '성장기': const Color(0xFF4CAF50),
+      '주의기': const Color(0xFFFF9800),
+      '수확기': const Color(0xFF9C27B0),
+    };
+
+    return _buildBlurredSectionCard(
+      title: '📅 월간 재물 흐름',
+      icon: Icons.calendar_month_rounded,
+      color: const Color(0xFF00BCD4),
+      sectionKey: 'monthlyFlow',
+      child: Column(
+        children: monthlyFlow.asMap().entries.map((entry) {
+          final index = entry.key;
+          final week = entry.value as Map<String, dynamic>? ?? {};
+          final weekNum = week['week'] as int? ?? (index + 1);
+          final energy = week['energy'] as String? ?? '';
+          final advice = week['advice'] as String? ?? '';
+          final color = energyColors[energy] ?? colors.accent;
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              children: [
+                Container(
+                  width: 60,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text('$weekNum주차', style: context.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(energy, style: context.labelSmall.copyWith(color: color)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(advice, style: context.bodySmall.copyWith(color: colors.textSecondary)),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// 실천 체크리스트 (블러)
+  Widget _buildActionItemsSection() {
+    final colors = context.colors;
+    final data = _fortuneResult.data;
+    final actionItems = data['actionItems'] as List? ?? [];
+
+    if (actionItems.isEmpty) return const SizedBox.shrink();
+
+    return _buildBlurredSectionCard(
+      title: '✅ 실천 체크리스트',
+      icon: Icons.checklist_rounded,
+      color: const Color(0xFF4CAF50),
+      sectionKey: 'actionItems',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: actionItems.map((item) {
+          final text = item.toString();
+          final isWarning = text.startsWith('⚠️');
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isWarning
+                  ? const Color(0xFFFF9800).withValues(alpha: 0.1)
+                  : const Color(0xFF4CAF50).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  isWarning ? Icons.warning_rounded : Icons.check_circle_rounded,
+                  size: 20,
+                  color: isWarning ? const Color(0xFFFF9800) : const Color(0xFF4CAF50),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    text.replaceAll(RegExp(r'^[✅⚠️]\s*'), ''),
+                    style: context.bodySmall.copyWith(color: colors.textPrimary),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  // ===== 프리미엄 섹션 (블러) - 기존 투자 포맷 =====
 
   Widget _buildTimingSection() {
     final colors = context.colors;

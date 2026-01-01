@@ -790,6 +790,63 @@ class UnifiedFortuneService {
             rethrow;
           }
 
+        case 'celebrity':
+        case 'fortune-celebrity':
+          // Celebrity Fortune Edge Function 직접 호출
+          Logger.info('[UnifiedFortune] 🔄 Celebrity Fortune API 호출 시작');
+          Logger.info('[UnifiedFortune] 📋 Request Body: ${jsonEncode(inputConditions)}');
+
+          try {
+            final celebrityUser = _supabase.auth.currentUser;
+            final celebrityPayload = {
+              'userId': celebrityUser?.id ?? inputConditions['userId'] ?? 'anonymous',
+              'name': inputConditions['name'] ?? 'Guest',
+              'birthDate': inputConditions['birthDate'],
+              'celebrity_id': inputConditions['celebrity_id'],
+              'celebrity_name': inputConditions['celebrity_name'],
+              'celebrity_birth_date': inputConditions['celebrity_birth_date'],
+              'connection_type': inputConditions['connection_type'] ?? 'ideal_match',
+              'question_type': inputConditions['question_type'] ?? 'overall',
+              'category': inputConditions['category'] ?? 'entertainment',
+              'isPremium': inputConditions['isPremium'] ?? false,
+            };
+
+            final celebrityResponse = await _supabase.functions.invoke(
+              'fortune-celebrity',
+              body: celebrityPayload,
+            );
+
+            if (celebrityResponse.data == null) {
+              throw Exception('Celebrity API 응답 데이터 없음');
+            }
+
+            Logger.info('[UnifiedFortune] ✅ Celebrity Fortune API 호출 성공');
+
+            final celebrityResponseData = celebrityResponse.data as Map<String, dynamic>;
+            if (celebrityResponseData['success'] == true && celebrityResponseData.containsKey('data')) {
+              final celebrityData = celebrityResponseData['data'] as Map<String, dynamic>;
+
+              return FortuneResult(
+                type: 'celebrity',
+                title: '${celebrityPayload['celebrity_name']} 궁합',
+                summary: {'message': celebrityData['main_message'] as String? ?? '궁합 분석 완료'},
+                data: celebrityData,
+                score: (celebrityData['overall_score'] as num?)?.toInt() ?? 75,
+                createdAt: DateTime.now(),
+                isBlurred: celebrityData['isBlurred'] as bool? ?? false,
+                blurredSections: List<String>.from(celebrityData['blurredSections'] ?? []),
+              );
+            } else {
+              throw Exception('Celebrity API 응답 형식 오류');
+            }
+          } on FunctionException catch (e) {
+            Logger.error('[UnifiedFortune] ❌ Celebrity Fortune API 에러');
+            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
+            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
+            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
+            rethrow;
+          }
+
         case 'naming':
           // Naming Edge Function 직접 호출
           final namingUser = _supabase.auth.currentUser;

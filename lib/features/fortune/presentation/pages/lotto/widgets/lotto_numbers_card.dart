@@ -154,8 +154,8 @@ class LottoNumbersCard extends StatelessWidget {
 
   /// 여러 세트 번호 표시 섹션
   Widget _buildNumbersSections(BuildContext context, bool isDark) {
-    // 세트가 있으면 여러 세트, 없으면 단일 세트 (하위 호환성)
-    final hasSets = lottoResult.sets.isNotEmpty;
+    // 2개 이상 세트가 있으면 여러 세트 모드, 아니면 단일 세트 (하위 호환성)
+    final hasSets = lottoResult.sets.length > 1;
     final setCount = hasSets ? lottoResult.sets.length : 1;
 
     return Container(

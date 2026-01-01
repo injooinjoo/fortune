@@ -167,7 +167,6 @@ const _loveConcernOptions = [
   SurveyOption(id: 'relationship', label: '관계 발전', emoji: '💞'),
   SurveyOption(id: 'conflict', label: '갈등 해결', emoji: '🌧️'),
   SurveyOption(id: 'future', label: '미래/결혼', emoji: '💒'),
-  SurveyOption(id: 'breakup', label: '이별/재회', emoji: '🍂'),
 ];
 
 /// 연애 스타일 옵션
@@ -180,14 +179,40 @@ const _datingStyleOptions = [
   SurveyOption(id: 'independent', label: '개인 시간 중요', emoji: '🧘'),
 ];
 
-/// 이상형 스타일 옵션
-const _idealTypeOptions = [
+/// 이상형 성격 옵션 (공통)
+const _idealTypePersonalityOptions = [
   SurveyOption(id: 'kind', label: '따뜻한', emoji: '🥰'),
   SurveyOption(id: 'funny', label: '유머러스', emoji: '😄'),
-  SurveyOption(id: 'smart', label: '똑똒한', emoji: '🧠'),
+  SurveyOption(id: 'smart', label: '똑똑한', emoji: '🧠'),
   SurveyOption(id: 'stable', label: '안정적인', emoji: '🏠'),
   SurveyOption(id: 'passionate', label: '열정적인', emoji: '🔥'),
   SurveyOption(id: 'calm', label: '차분한', emoji: '🌊'),
+];
+
+/// 이상형 외모상 - 남성이 선호하는 여성 타입 (동물상)
+const _idealTypeFemaleOptions = [
+  SurveyOption(id: 'cat', label: '고양이상 (도도+세련)', emoji: '🐱'),
+  SurveyOption(id: 'fox', label: '여우상 (성숙+요염)', emoji: '🦊'),
+  SurveyOption(id: 'puppy', label: '강아지상 (밝고 순수)', emoji: '🐶'),
+  SurveyOption(id: 'rabbit', label: '토끼상 (귀엽고 발랄)', emoji: '🐰'),
+  SurveyOption(id: 'deer', label: '사슴상 (청순+우아)', emoji: '🦌'),
+  SurveyOption(id: 'squirrel', label: '다람쥐상 (앙증맞은)', emoji: '🐿️'),
+];
+
+/// 이상형 외모상 - 여성이 선호하는 남성 타입 (남성상)
+const _idealTypeMaleOptions = [
+  SurveyOption(id: 'arab', label: '아랍상 (강렬+남자다운)', emoji: '🦁'),
+  SurveyOption(id: 'tofu', label: '두부상 (부드럽고 정감)', emoji: '🧸'),
+  SurveyOption(id: 'nerd', label: '너드남 (지적+섬세)', emoji: '🤓'),
+  SurveyOption(id: 'beast', label: '짐승남 (야성+매력)', emoji: '🐺'),
+  SurveyOption(id: 'gentle', label: '젠틀남 (매너+다정)', emoji: '🎩'),
+  SurveyOption(id: 'warm', label: '훈훈남 (따뜻+편안)', emoji: '☀️'),
+];
+
+/// 성별 옵션 (연애운용)
+const _genderOptions = [
+  SurveyOption(id: 'male', label: '남성', emoji: '👨'),
+  SurveyOption(id: 'female', label: '여성', emoji: '👩'),
 ];
 
 /// Love 설문 설정
@@ -198,6 +223,12 @@ final loveSurveyConfig = FortuneSurveyConfig(
   emoji: '💕',
   accentColor: FortuneColors.love,
   steps: [
+    const SurveyStep(
+      id: 'gender',
+      question: '성별이 어떻게 되세요? 💫',
+      inputType: SurveyInputType.chips,
+      options: _genderOptions,
+    ),
     const SurveyStep(
       id: 'status',
       question: '지금 연애 상태가 어때? 💕',
@@ -217,11 +248,30 @@ final loveSurveyConfig = FortuneSurveyConfig(
       options: _datingStyleOptions,
       isRequired: false,
     ),
+    // 남성 → 여성 이상형 (동물상)
     const SurveyStep(
-      id: 'idealType',
-      question: '이상형은 어떤 스타일이야? ✨',
+      id: 'idealLooks',
+      question: '어떤 외모 스타일이 끌려? 👀',
       inputType: SurveyInputType.multiSelect,
-      options: _idealTypeOptions,
+      options: _idealTypeFemaleOptions,
+      isRequired: false,
+      showWhen: {'status': ['single', 'crush'], 'gender': ['male']},
+    ),
+    // 여성 → 남성 이상형 (남성상)
+    const SurveyStep(
+      id: 'idealLooks',
+      question: '어떤 외모 스타일이 끌려? 👀',
+      inputType: SurveyInputType.multiSelect,
+      options: _idealTypeMaleOptions,
+      isRequired: false,
+      showWhen: {'status': ['single', 'crush'], 'gender': ['female']},
+    ),
+    // 공통 성격 옵션
+    const SurveyStep(
+      id: 'idealPersonality',
+      question: '이상형 성격은? ✨',
+      inputType: SurveyInputType.multiSelect,
+      options: _idealTypePersonalityOptions,
       isRequired: false,
       showWhen: {'status': ['single', 'crush']},
     ),
@@ -267,6 +317,31 @@ const _problemSolvingOptions = [
   SurveyOption(id: 'intuitive', label: '직관적으로 판단'),
 ];
 
+/// 재능 경험 수준 옵션
+const _talentExperienceOptions = [
+  SurveyOption(id: 'beginner', label: '처음 시작', emoji: '🌱'),
+  SurveyOption(id: 'some', label: '조금 해봤어요', emoji: '📚'),
+  SurveyOption(id: 'intermediate', label: '어느 정도 경험', emoji: '⭐'),
+  SurveyOption(id: 'experienced', label: '전문가 수준', emoji: '🏆'),
+];
+
+/// 투자 가능 시간 옵션
+const _timeAvailableOptions = [
+  SurveyOption(id: 'minimal', label: '주 1-2시간', emoji: '⏰'),
+  SurveyOption(id: 'moderate', label: '주 5-10시간', emoji: '📅'),
+  SurveyOption(id: 'significant', label: '주 10시간 이상', emoji: '🔥'),
+  SurveyOption(id: 'fulltime', label: '풀타임 가능', emoji: '💼'),
+];
+
+/// 도전 과제 옵션
+const _challengesOptions = [
+  SurveyOption(id: 'time', label: '시간 부족', emoji: '⏳'),
+  SurveyOption(id: 'motivation', label: '동기부여 어려움', emoji: '😴'),
+  SurveyOption(id: 'direction', label: '방향 모르겠음', emoji: '🧭'),
+  SurveyOption(id: 'resources', label: '자원/비용 부담', emoji: '💰'),
+  SurveyOption(id: 'confidence', label: '자신감 부족', emoji: '😰'),
+];
+
 /// Talent 설문 설정
 final talentSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.talent,
@@ -292,6 +367,25 @@ final talentSurveyConfig = FortuneSurveyConfig(
       question: '문제를 어떻게 해결하세요?',
       inputType: SurveyInputType.chips,
       options: _problemSolvingOptions,
+    ),
+    const SurveyStep(
+      id: 'experience',
+      question: '관심 분야 경험이 어느 정도 있으세요?',
+      inputType: SurveyInputType.chips,
+      options: _talentExperienceOptions,
+    ),
+    const SurveyStep(
+      id: 'timeAvailable',
+      question: '일주일에 얼마나 투자할 수 있으세요?',
+      inputType: SurveyInputType.chips,
+      options: _timeAvailableOptions,
+    ),
+    const SurveyStep(
+      id: 'challenges',
+      question: '현재 겪고 있는 어려움이 있나요?',
+      inputType: SurveyInputType.multiSelect,
+      options: _challengesOptions,
+      isRequired: false,
     ),
   ],
 );
@@ -1201,53 +1295,120 @@ final blindDateSurveyConfig = FortuneSurveyConfig(
 // Money (재물운/투자운세) 설문 설정
 // ============================================================
 
+/// 재물 목표 옵션
+const _wealthGoalOptions = [
+  SurveyOption(id: 'saving', label: '목돈 마련', emoji: '💰'),
+  SurveyOption(id: 'house', label: '내집 마련', emoji: '🏠'),
+  SurveyOption(id: 'expense', label: '큰 지출 예정', emoji: '🚗'),
+  SurveyOption(id: 'investment', label: '투자 수익', emoji: '📈'),
+  SurveyOption(id: 'income', label: '안정적 수입', emoji: '💵'),
+];
+
+/// 재물 고민 옵션
+const _wealthConcernOptions = [
+  SurveyOption(id: 'spending', label: '지출 관리', emoji: '💸'),
+  SurveyOption(id: 'loss', label: '투자 손실', emoji: '📉'),
+  SurveyOption(id: 'debt', label: '빚/대출', emoji: '💳'),
+  SurveyOption(id: 'returns', label: '수익률', emoji: '📊'),
+  SurveyOption(id: 'savings', label: '저축', emoji: '🏦'),
+];
+
+/// 수입 상태 옵션
+const _incomeStatusOptions = [
+  SurveyOption(id: 'increasing', label: '늘어나는 중', emoji: '📈'),
+  SurveyOption(id: 'stable', label: '안정적', emoji: '➡️'),
+  SurveyOption(id: 'decreasing', label: '줄어드는 중', emoji: '📉'),
+  SurveyOption(id: 'irregular', label: '불규칙', emoji: '🔀'),
+];
+
+/// 지출 패턴 옵션
+const _expensePatternOptions = [
+  SurveyOption(id: 'frugal', label: '절약형', emoji: '🐜'),
+  SurveyOption(id: 'balanced', label: '균형형', emoji: '⚖️'),
+  SurveyOption(id: 'spender', label: '소비 즐김', emoji: '🛍️'),
+  SurveyOption(id: 'variable', label: '기복 있음', emoji: '🎲'),
+];
+
 /// 투자 성향 옵션
 const _investmentStyleOptions = [
-  SurveyOption(id: 'safe', label: '안전 추구', emoji: '🛡️'),
-  SurveyOption(id: 'balanced', label: '중립적', emoji: '⚖️'),
+  SurveyOption(id: 'safe', label: '안전 최우선', emoji: '🛡️'),
+  SurveyOption(id: 'balanced', label: '균형 추구', emoji: '⚖️'),
   SurveyOption(id: 'aggressive', label: '공격적', emoji: '🚀'),
 ];
 
-/// 관심 분야 옵션 (legacy - 호환성 유지)
+/// 관심 분야 옵션 (다중선택)
 const _investmentAreaOptions = [
   SurveyOption(id: 'stock', label: '주식', emoji: '📈'),
-  SurveyOption(id: 'realestate', label: '부동산', emoji: '🏠'),
   SurveyOption(id: 'crypto', label: '코인', emoji: '₿'),
+  SurveyOption(id: 'realestate', label: '부동산', emoji: '🏠'),
   SurveyOption(id: 'saving', label: '저축/예금', emoji: '🏦'),
   SurveyOption(id: 'business', label: '사업', emoji: '💼'),
   SurveyOption(id: 'side', label: '부업/N잡', emoji: '💵'),
 ];
 
-/// Money 설문 설정 (투자 종목 선택 포함)
+/// 시급성 옵션
+const _urgencyOptions = [
+  SurveyOption(id: 'urgent', label: '급함', emoji: '⚡'),
+  SurveyOption(id: 'thisYear', label: '올해 안에', emoji: '📅'),
+  SurveyOption(id: 'longTerm', label: '장기적으로', emoji: '🌱'),
+];
+
+/// Money 설문 설정 (7단계 확장)
 const moneySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.money,
-  title: '투자 인사이트',
-  description: '관심 종목의 투자 인사이트를 알려드릴게요',
-  emoji: '📈',
+  title: '재물 인사이트',
+  description: '당신의 재정 상황을 분석하고 맞춤 조언을 드릴게요',
+  emoji: '💰',
   accentColor: FortuneColors.wealth,
   steps: [
-    // Step 1: 투자 카테고리 선택 (코인, 국내주식, 해외주식, ETF, 금/원자재, 부동산)
+    // Step 1: 재물 목표
     SurveyStep(
-      id: 'category',
-      question: '어떤 투자에 관심 있으세요? 💰',
-      inputType: SurveyInputType.investmentCategory,
-      options: [], // 카테고리는 enum에서 동적으로 로드
+      id: 'goal',
+      question: '재물 목표가 뭐예요? 🎯',
+      inputType: SurveyInputType.chips,
+      options: _wealthGoalOptions,
     ),
-    // Step 2: 티커(종목) 선택 - 검색 및 인기 종목
+    // Step 2: 가장 고민되는 것
     SurveyStep(
-      id: 'ticker',
-      question: '어떤 종목이 궁금하세요? 📊',
-      inputType: SurveyInputType.investmentTicker,
-      options: [], // 티커는 검색 위젯에서 동적으로 표시
-      dependsOn: 'category', // 카테고리에 따라 필터링
+      id: 'concern',
+      question: '가장 고민되는 건? 🤔',
+      inputType: SurveyInputType.chips,
+      options: _wealthConcernOptions,
     ),
-    // Step 3: 투자 성향 (선택)
+    // Step 3: 수입 상태
     SurveyStep(
-      id: 'style',
-      question: '투자 성향이 어떻게 되세요?',
+      id: 'income',
+      question: '요즘 수입 상태는? 💵',
+      inputType: SurveyInputType.chips,
+      options: _incomeStatusOptions,
+    ),
+    // Step 4: 지출 패턴
+    SurveyStep(
+      id: 'expense',
+      question: '지출 패턴은 어때요? 🛒',
+      inputType: SurveyInputType.chips,
+      options: _expensePatternOptions,
+    ),
+    // Step 5: 투자 성향
+    SurveyStep(
+      id: 'risk',
+      question: '투자 성향은? 📊',
       inputType: SurveyInputType.chips,
       options: _investmentStyleOptions,
-      isRequired: false,
+    ),
+    // Step 6: 관심 분야 (다중선택)
+    SurveyStep(
+      id: 'interests',
+      question: '관심 있는 분야를 모두 선택해주세요 ✨',
+      inputType: SurveyInputType.multiSelect,
+      options: _investmentAreaOptions,
+    ),
+    // Step 7: 시급성
+    SurveyStep(
+      id: 'urgency',
+      question: '얼마나 급하세요? ⏰',
+      inputType: SurveyInputType.chips,
+      options: _urgencyOptions,
     ),
   ],
 );
@@ -1428,6 +1589,15 @@ const _mealRegularityOptions = [
   SurveyOption(id: '5', label: '매우 규칙적', emoji: '🥦'),
 ];
 
+/// 현재 컨디션 옵션
+const _currentConditionOptions = [
+  SurveyOption(id: 'excellent', label: '매우 좋음', emoji: '💪'),
+  SurveyOption(id: 'good', label: '좋음', emoji: '😊'),
+  SurveyOption(id: 'normal', label: '보통', emoji: '😐'),
+  SurveyOption(id: 'tired', label: '피곤함', emoji: '😴'),
+  SurveyOption(id: 'poor', label: '매우 피곤함', emoji: '😫'),
+];
+
 /// Health 설문 설정
 const healthSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.health,
@@ -1436,6 +1606,12 @@ const healthSurveyConfig = FortuneSurveyConfig(
   emoji: '💊',
   accentColor: FortuneColors.career,
   steps: [
+    SurveyStep(
+      id: 'currentCondition',
+      question: '오늘 전반적인 컨디션이 어떤가요?',
+      inputType: SurveyInputType.chips,
+      options: _currentConditionOptions,
+    ),
     SurveyStep(
       id: 'concern',
       question: '특히 신경 쓰이는 부분이 있으세요?',
@@ -1517,38 +1693,44 @@ const exerciseSurveyConfig = FortuneSurveyConfig(
 // SportsGame (스포츠 경기) 설문 설정
 // ============================================================
 
-/// 스포츠 종목 옵션
+/// 스포츠 종목 옵션 (한국 인기 종목)
 const _sportTypeOptions = [
-  SurveyOption(id: 'soccer', label: '축구', emoji: '⚽'),
   SurveyOption(id: 'baseball', label: '야구', emoji: '⚾'),
+  SurveyOption(id: 'soccer', label: '축구', emoji: '⚽'),
   SurveyOption(id: 'basketball', label: '농구', emoji: '🏀'),
+  SurveyOption(id: 'volleyball', label: '배구', emoji: '🏐'),
   SurveyOption(id: 'esports', label: 'e스포츠', emoji: '🎮'),
-  SurveyOption(id: 'other', label: '기타', emoji: '🏆'),
 ];
 
-/// SportsGame 설문 설정
+/// SportsGame (경기 인사이트) 설문 설정
+/// Step 1: 종목 선택 → Step 2: 경기 선택 → Step 3: 응원팀 선택
 const sportsGameSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.sportsGame,
-  title: '스포츠 경기',
-  description: '경기 인사이트를 확인해드릴게요!',
+  title: '경기 인사이트',
+  description: '경기 결과를 예측해드릴게요!',
   emoji: '🏆',
   accentColor: FortuneColors.career,
   steps: [
+    // Step 1: 종목 선택
     SurveyStep(
       id: 'sport',
-      question: '어떤 종목이야? ⚽',
+      question: '어떤 종목이야? 🏆',
       inputType: SurveyInputType.chips,
       options: _sportTypeOptions,
     ),
+    // Step 2: 경기 선택 (종목에 따라 동적 로드)
     SurveyStep(
-      id: 'gameDate',
-      question: '경기 날짜가 언제야? 📅',
-      inputType: SurveyInputType.calendar,
+      id: 'match',
+      question: '어떤 경기를 볼까? 📅',
+      inputType: SurveyInputType.matchSelection,
+      dependsOn: 'sport',
     ),
+    // Step 3: 응원팀 선택 (선택한 경기의 양 팀 중)
     SurveyStep(
       id: 'favoriteTeam',
-      question: '응원하는 팀 이름을 알려줘! 📣',
-      inputType: SurveyInputType.text,
+      question: '어느 팀 응원해? 📣',
+      inputType: SurveyInputType.chips,
+      dependsOn: 'match',
       isRequired: false,
     ),
   ],

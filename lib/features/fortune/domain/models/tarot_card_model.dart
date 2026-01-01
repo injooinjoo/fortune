@@ -14,17 +14,42 @@ enum TarotDifficulty {
 
 /// 타로 스프레드 타입 (F11: 난이도순 정렬 지원)
 enum TarotSpreadType {
-  single('단일 카드', '빠른 답변', 1, TarotDifficulty.beginner),
-  threeCard('3카드 스프레드', '과거-현재-미래', 3, TarotDifficulty.beginner),
-  relationship('관계 스프레드', '연애/관계 심화 분석', 5, TarotDifficulty.intermediate),
-  celticCross('켈틱 크로스', '가장 상세한 분석', 10, TarotDifficulty.advanced);
+  single(
+    '단일 카드',
+    '예/아니오 질문, 오늘의 조언 등 간단한 답이 필요할 때',
+    1,
+    TarotDifficulty.beginner,
+    '하나의 핵심 메시지로 명확한 방향 제시',
+  ),
+  threeCard(
+    '3카드 스프레드',
+    '상황의 흐름을 파악하고 싶을 때 (과거→현재→미래)',
+    3,
+    TarotDifficulty.beginner,
+    '시간의 흐름 속에서 원인과 결과를 이해',
+  ),
+  relationship(
+    '관계 스프레드',
+    '연애, 우정, 가족 관계의 양측 마음과 미래를 알고 싶을 때',
+    5,
+    TarotDifficulty.intermediate,
+    '나와 상대방의 감정, 현재 역학, 조언까지 종합 분석',
+  ),
+  celticCross(
+    '켈틱 크로스',
+    '인생의 중요한 결정, 복잡한 상황을 깊이 분석하고 싶을 때',
+    10,
+    TarotDifficulty.advanced,
+    '과거부터 미래까지, 내면과 외부 요인을 모두 탐색하는 가장 깊은 분석',
+  );
 
   final String displayName;
   final String description;
   final int cardCount;
   final TarotDifficulty difficulty;
+  final String detailedDescription;
 
-  const TarotSpreadType(this.displayName, this.description, this.cardCount, this.difficulty);
+  const TarotSpreadType(this.displayName, this.description, this.cardCount, this.difficulty, this.detailedDescription);
 
   /// F11: 난이도순 정렬된 스프레드 목록
   static List<TarotSpreadType> get sortedByDifficulty {

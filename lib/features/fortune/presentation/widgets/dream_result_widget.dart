@@ -36,8 +36,8 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
   }
 
   void _startMessageAnimation() {
-    // 총 메시지 개수 (6개 섹션)
-    final totalMessages = 6;
+    // 총 메시지 개수 (9개 섹션: 기존 6 + 키워드/확언/감정)
+    final totalMessages = 9;
 
     for (int i = 0; i < totalMessages; i++) {
       _visibleMessages.add(false);
@@ -85,6 +85,12 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
             as Map<String, dynamic>?)?['symbolAnalysis'] as List<dynamic>? ??
         [];
     final actionAdvice = data['actionAdvice'] as List<dynamic>? ?? [];
+
+    // 추가 필드들
+    final luckyKeywords = data['luckyKeywords'] as List<dynamic>? ?? [];
+    final avoidKeywords = data['avoidKeywords'] as List<dynamic>? ?? [];
+    final affirmations = data['affirmations'] as List<dynamic>? ?? [];
+    final emotionalBalance = data['emotionalBalance'] as num? ?? 5;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,6 +165,43 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
             actionAdvice: actionAdvice,
             isBlurred: widget.isBlurred &&
                 widget.blurredSections.contains('actionAdvice'),
+          ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
+
+        if (actionAdvice.isNotEmpty) const SizedBox(height: 12),
+
+        // 6. 감정 균형 점수
+        if (_visibleMessages.length > 6 && _visibleMessages[6])
+          _buildEmotionalBalanceMessage(
+            isDark: isDark,
+            emotionalBalance: emotionalBalance.toInt(),
+          ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
+
+        const SizedBox(height: 12),
+
+        // 7. 행운/주의 키워드
+        if (_visibleMessages.length > 7 &&
+            _visibleMessages[7] &&
+            (luckyKeywords.isNotEmpty || avoidKeywords.isNotEmpty))
+          _buildKeywordsMessage(
+            isDark: isDark,
+            luckyKeywords: luckyKeywords,
+            avoidKeywords: avoidKeywords,
+            isBlurred: widget.isBlurred &&
+                widget.blurredSections.contains('keywords'),
+          ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
+
+        if (luckyKeywords.isNotEmpty || avoidKeywords.isNotEmpty)
+          const SizedBox(height: 12),
+
+        // 8. 긍정 확언
+        if (_visibleMessages.length > 8 &&
+            _visibleMessages[8] &&
+            affirmations.isNotEmpty)
+          _buildAffirmationsMessage(
+            isDark: isDark,
+            affirmations: affirmations,
+            isBlurred: widget.isBlurred &&
+                widget.blurredSections.contains('affirmations'),
           ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
 
         const SizedBox(height: 100), // 버튼 여유 공간
@@ -474,6 +517,339 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
           ),
         ),
       ],
+    );
+  }
+
+  /// 감정 균형 점수 메시지
+  Widget _buildEmotionalBalanceMessage({
+    required bool isDark,
+    required int emotionalBalance,
+  }) {
+    // 1-10 점수를 색상과 이모지로 변환
+    final Color balanceColor;
+    final String emoji;
+    final String description;
+
+    if (emotionalBalance >= 8) {
+      balanceColor = DSColors.success;
+      emoji = '😊';
+      description = '매우 긍정적인 에너지가 충만해요';
+    } else if (emotionalBalance >= 6) {
+      balanceColor = Colors.lightGreen;
+      emoji = '🙂';
+      description = '안정적이고 균형잡힌 상태예요';
+    } else if (emotionalBalance >= 4) {
+      balanceColor = DSColors.warning;
+      emoji = '😐';
+      description = '평온하지만 약간의 변화가 필요해요';
+    } else if (emotionalBalance >= 2) {
+      balanceColor = Colors.orange;
+      emoji = '😔';
+      description = '마음의 휴식이 필요한 시기예요';
+    } else {
+      balanceColor = DSColors.error;
+      emoji = '😰';
+      description = '스트레스 관리에 신경 쓰세요';
+    }
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.85,
+        ),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[850] : Colors.grey[100],
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(4),
+            topRight: Radius.circular(20),
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '감정 균형',
+              style: context.heading3.copyWith(
+                color: isDark ? Colors.teal.shade300 : Colors.teal,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Text(emoji, style: const TextStyle(fontSize: 32)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '$emotionalBalance',
+                            style: context.heading2.copyWith(
+                              color: balanceColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            ' / 10',
+                            style: context.bodySmall.copyWith(
+                              color: isDark ? Colors.white54 : Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: emotionalBalance / 10,
+                          minHeight: 6,
+                          backgroundColor: isDark ? Colors.grey[700] : Colors.grey[300],
+                          valueColor: AlwaysStoppedAnimation<Color>(balanceColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              description,
+              style: context.bodySmall.copyWith(
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 행운/주의 키워드 메시지
+  Widget _buildKeywordsMessage({
+    required bool isDark,
+    required List<dynamic> luckyKeywords,
+    required List<dynamic> avoidKeywords,
+    required bool isBlurred,
+  }) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.85,
+        ),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[850] : Colors.grey[100],
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(4),
+            topRight: Radius.circular(20),
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '오늘의 키워드',
+              style: context.heading3.copyWith(
+                color: isDark ? Colors.amber.shade300 : Colors.amber.shade700,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (isBlurred)
+              UnifiedBlurWrapper(
+                isBlurred: true,
+                blurredSections: const ['keywords'],
+                sectionKey: 'keywords',
+                fortuneType: widget.fortuneResult.type,
+                child: Text(
+                  '${luckyKeywords.join(', ')}\n${avoidKeywords.join(', ')}',
+                  style: context.bodyMedium.copyWith(color: Colors.grey),
+                ),
+              )
+            else ...[
+              if (luckyKeywords.isNotEmpty) ...[
+                Row(
+                  children: [
+                    const Icon(Icons.thumb_up, size: 16, color: DSColors.success),
+                    const SizedBox(width: 6),
+                    Text(
+                      '행운 키워드',
+                      style: context.labelMedium.copyWith(
+                        color: DSColors.success,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: luckyKeywords.map((keyword) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: DSColors.success.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: DSColors.success.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Text(
+                        keyword.toString(),
+                        style: context.bodySmall.copyWith(
+                          color: DSColors.success,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+              ],
+              if (avoidKeywords.isNotEmpty) ...[
+                Row(
+                  children: [
+                    const Icon(Icons.warning_amber, size: 16, color: DSColors.error),
+                    const SizedBox(width: 6),
+                    Text(
+                      '주의 키워드',
+                      style: context.labelMedium.copyWith(
+                        color: DSColors.error,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: avoidKeywords.map((keyword) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: DSColors.error.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: DSColors.error.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Text(
+                        keyword.toString(),
+                        style: context.bodySmall.copyWith(
+                          color: DSColors.error,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 긍정 확언 메시지
+  Widget _buildAffirmationsMessage({
+    required bool isDark,
+    required List<dynamic> affirmations,
+    required bool isBlurred,
+  }) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.85,
+        ),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [Colors.deepPurple.shade900, Colors.indigo.shade900]
+                : [Colors.deepPurple.shade50, Colors.indigo.shade50],
+          ),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(4),
+            topRight: Radius.circular(20),
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.auto_awesome, size: 20, color: Colors.amber),
+                const SizedBox(width: 8),
+                Text(
+                  '오늘의 확언',
+                  style: context.heading3.copyWith(
+                    color: isDark ? Colors.white : Colors.deepPurple,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (isBlurred)
+              UnifiedBlurWrapper(
+                isBlurred: true,
+                blurredSections: const ['affirmations'],
+                sectionKey: 'affirmations',
+                fortuneType: widget.fortuneResult.type,
+                child: Text(
+                  affirmations.join('\n'),
+                  style: context.bodyMedium.copyWith(color: Colors.grey),
+                ),
+              )
+            else
+              ...affirmations.asMap().entries.map((entry) {
+                final affirmation = entry.value.toString();
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '✨',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          affirmation,
+                          style: context.bodyMedium.copyWith(
+                            color: isDark ? Colors.white.withValues(alpha: 0.9) : Colors.deepPurple.shade700,
+                            fontStyle: FontStyle.italic,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+          ],
+        ),
+      ),
     );
   }
 }

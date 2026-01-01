@@ -58,7 +58,9 @@ class SecondaryProfilesNotifier
   /// [birthTime] 태어난 시간 HH:MM (선택)
   /// [gender] 성별 male/female (필수)
   /// [isLunar] 음력 여부
-  /// [relationship] 관계 family/friend/other
+  /// [relationship] 관계 family/friend/lover/other
+  /// [mbti] MBTI 성격유형 (선택)
+  /// [bloodType] 혈액형 A/B/O/AB (선택)
   Future<SecondaryProfile?> addProfile({
     required String name,
     required String birthDate,
@@ -66,6 +68,8 @@ class SecondaryProfilesNotifier
     required String gender,
     bool isLunar = false,
     String? relationship,
+    String? mbti,
+    String? bloodType,
   }) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
@@ -83,6 +87,8 @@ class SecondaryProfilesNotifier
         'gender': gender,
         'is_lunar': isLunar,
         'relationship': relationship,
+        'mbti': mbti,
+        'blood_type': bloodType,
       }).select().single();
 
       final newProfile = SecondaryProfile.fromJson(response);
@@ -112,6 +118,8 @@ class SecondaryProfilesNotifier
             'gender': profile.gender,
             'is_lunar': profile.isLunar,
             'relationship': profile.relationship,
+            'mbti': profile.mbti,
+            'blood_type': profile.bloodType,
             'avatar_index': profile.avatarIndex,
           })
           .eq('id', profile.id);

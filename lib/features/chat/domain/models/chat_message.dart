@@ -1,4 +1,5 @@
 import '../../../../domain/entities/fortune.dart';
+import '../../../fortune/domain/models/match_insight.dart';
 
 /// 채팅 메시지 유형
 enum ChatMessageType {
@@ -85,6 +86,9 @@ class ChatMessage {
   /// 온보딩용: 입력 타입
   final OnboardingInputType? onboardingInputType;
 
+  /// 경기 인사이트 결과 데이터
+  final MatchInsight? matchInsight;
+
   const ChatMessage({
     required this.id,
     required this.type,
@@ -99,6 +103,7 @@ class ChatMessage {
     this.sajuData,
     this.sajuFortuneResult,
     this.onboardingInputType,
+    this.matchInsight,
   });
 
   ChatMessage copyWith({
@@ -115,6 +120,7 @@ class ChatMessage {
     Map<String, dynamic>? sajuData,
     Map<String, dynamic>? sajuFortuneResult,
     OnboardingInputType? onboardingInputType,
+    MatchInsight? matchInsight,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -130,6 +136,7 @@ class ChatMessage {
       sajuData: sajuData ?? this.sajuData,
       sajuFortuneResult: sajuFortuneResult ?? this.sajuFortuneResult,
       onboardingInputType: onboardingInputType ?? this.onboardingInputType,
+      matchInsight: matchInsight ?? this.matchInsight,
     );
   }
 }

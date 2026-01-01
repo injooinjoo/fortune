@@ -4,6 +4,7 @@ import '../../domain/models/chat_message.dart';
 import 'chat_career_result_card.dart';
 import 'chat_celebrity_result_card.dart';
 import 'chat_fortune_result_card.dart';
+import 'chat_match_insight_card.dart';
 import 'chat_ootd_result_card.dart';
 import 'chat_saju_result_card.dart';
 
@@ -96,6 +97,21 @@ class ChatMessageBubble extends StatelessWidget {
           celebrityName: additionalInfo['celebrity_name'] as String?,
           celebrityImageUrl: additionalInfo['celebrity_image_url'] as String?,
           connectionType: additionalInfo['connection_type'] as String? ?? 'ideal_match',
+        ),
+      );
+    }
+
+    // 경기 인사이트 결과 카드 표시
+    if (message.type == ChatMessageType.fortuneResult &&
+        message.fortuneType == 'match-insight' &&
+        message.matchInsight != null) {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatMatchInsightCard(
+          insight: message.matchInsight!,
+          isBlurred: message.isBlurred,
         ),
       );
     }

@@ -10,3 +10,5 @@ export 'health_content.dart';
 export 'fashion_content.dart';
 export 'lifestyle_content.dart';
 export 'today_color_content.dart';
+export 'number_content.dart';
+export 'style_selector.dart';

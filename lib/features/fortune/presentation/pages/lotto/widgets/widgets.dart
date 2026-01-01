@@ -6,3 +6,4 @@ export 'lotto_timing_card.dart';
 export 'lotto_saju_card.dart';
 export 'lotto_purchase_guide.dart';
 export 'lotto_lucky_combo_card.dart';
+export 'dream_lotto_bottom_sheet.dart';

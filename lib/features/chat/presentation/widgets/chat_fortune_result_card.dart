@@ -1318,8 +1318,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.sm),
-          // 아이템 목록 (최대 3개만 표시)
-          ...items.take(3).map((item) {
+          // 아이템 목록 (전체 표시)
+          ...items.map((item) {
             if (item is! Map<String, dynamic>) return const SizedBox.shrink();
 
             final itemTitle = item['type'] as String? ??
@@ -1381,16 +1381,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
             );
           }),
-          if (items.length > 3)
-            Padding(
-              padding: const EdgeInsets.only(top: DSSpacing.xs),
-              child: Text(
-                '외 ${items.length - 3}개 더...',
-                style: typography.labelSmall.copyWith(
-                  color: colors.textTertiary,
-                ),
-              ),
-            ),
         ],
       ),
     );

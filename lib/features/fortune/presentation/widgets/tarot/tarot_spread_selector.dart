@@ -315,6 +315,30 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                               color: colors.textSecondary,
                             ),
                           ),
+                          const SizedBox(height: 6),
+                          // 상세 설명 추가
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: color.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(DSRadius.sm),
+                              border: Border.all(
+                                color: color.withValues(alpha: 0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              '💡 ${spread.detailedDescription}',
+                              style: typography.labelSmall.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: color,
+                                height: 1.3,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),

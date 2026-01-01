@@ -66,7 +66,7 @@ class SoulRates {
     'traditional-unified': -15,
     'saju-psychology': -12,
     'tojeong': -15,
-    'past-life': -18,
+    'past-life': -1,
     'destiny': -20,
     'marriage': -15,
     'couple-match': -12,
@@ -100,7 +100,8 @@ class SoulRates {
     'lucky-lottery': -30,
     'employment': -25,
     'salpuli': -20,
-    'health-document': -3};  // 건강검진표/처방전/진단서 분석
+    'health-document': -3,  // 건강검진표/처방전/진단서 분석
+    'fashion-image': -35};  // NanoBanana 패션 이미지 생성
 
   // 특별 조건부 운세
   static const Map<String, dynamic> conditionalRates = {

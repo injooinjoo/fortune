@@ -10,3 +10,5 @@ export 'widgets/mental_model_section.dart';
 export 'widgets/collaboration_section.dart';
 export 'widgets/growth_roadmap_section.dart';
 export 'widgets/learning_strategy_section.dart';
+export 'widgets/warnings_section.dart';
+export 'widgets/recommendations_section.dart';

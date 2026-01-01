@@ -28,6 +28,7 @@ import 'widgets/zodiac_fortune_card.dart';
 import 'widgets/weekly_trend_card.dart';
 import 'widgets/share_card.dart';
 import 'widgets/celebrity_card.dart';
+import 'widgets/age_fortune_card.dart';
 import 'utils/fortune_swipe_helpers.dart';
 
 /// 세로 스와이프 카드 기반 운세 완료 페이지
@@ -138,7 +139,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
               child: PageView.builder(
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
-                itemCount: 17,
+                itemCount: 18,
                 itemBuilder: (context, index) {
                   return _buildFullSizeCard(context, index, score, isDark, displayUserName, colors);
                 },
@@ -159,7 +160,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
                 ),
                 child: FractionallySizedBox(
                   alignment: Alignment.centerLeft,
-                  widthFactor: (_currentPage + 1) / 17,
+                  widthFactor: (_currentPage + 1) / 18,
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(colors: [Color(0xFF3182F6), Color(0xFF1B64DA)]),
@@ -327,8 +328,10 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
       case 14:
         return ZodiacFortuneCard(zodiacFortunes: _getZodiacFortuneData(), isDark: isDark);
       case 15:
-        return WeeklyTrendCard(weeklyScores: _getWeeklyScores(), isDark: isDark);
+        return AgeFortuneCard(ageFortune: _getAgeFortune(), isDark: isDark);
       case 16:
+        return WeeklyTrendCard(weeklyScores: _getWeeklyScores(), isDark: isDark);
+      case 17:
         return ShareCard(
           score: score,
           message: _getMainScoreMessage(score),
@@ -456,6 +459,10 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
       };
     }
     return {'wood': 20, 'fire': 15, 'earth': 25, 'metal': 20, 'water': 20};
+  }
+
+  Map<String, dynamic>? _getAgeFortune() {
+    return widget.fortune?.metadata?['age_fortune'] as Map<String, dynamic>?;
   }
 
   Map<String, String?> _getSajuData() {

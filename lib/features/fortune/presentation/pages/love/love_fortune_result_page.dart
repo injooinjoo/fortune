@@ -131,7 +131,46 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
               // 4. 개선 포인트 (공개)
               _buildImprovementSection(colors),
 
-              // 5. 궁합 인사이트 (블러)
+              // 5. 추천 장소 (메인만 공개, 대안은 블러)
+              _buildDateSpotSection(colors),
+
+              // 6. 스타일 추천 (블러)
+              _buildBlurredSection(
+                title: '스타일 추천',
+                icon: Icons.checkroom_rounded,
+                color: const Color(0xFF6B5CE7),
+                contentBuilder: () => _buildFashionContent(colors),
+                colors: colors,
+              ),
+
+              // 7. 악세서리 추천 (블러)
+              _buildBlurredSection(
+                title: '악세서리 추천',
+                icon: Icons.watch_rounded,
+                color: const Color(0xFFE67E22),
+                contentBuilder: () => _buildAccessoriesContent(colors),
+                colors: colors,
+              ),
+
+              // 8. 향수 추천 (블러)
+              _buildBlurredSection(
+                title: '향수 추천',
+                icon: Icons.spa_rounded,
+                color: const Color(0xFFE91E63),
+                contentBuilder: () => _buildFragranceContent(colors),
+                colors: colors,
+              ),
+
+              // 9. 대화 팁 (블러)
+              _buildBlurredSection(
+                title: '대화 팁',
+                icon: Icons.chat_bubble_outline_rounded,
+                color: const Color(0xFF00BCD4),
+                contentBuilder: () => _buildConversationContent(colors),
+                colors: colors,
+              ),
+
+              // 10. 궁합 인사이트 (블러)
               _buildBlurredSection(
                 title: '궁합 인사이트',
                 icon: Icons.people_rounded,
@@ -931,6 +970,537 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
     ).animate()
         .fadeIn(delay: 200.ms, duration: 500.ms)
         .slideX(begin: -0.1, end: 0);
+  }
+
+  // ===== 추천 섹션 빌더 (NEW) =====
+
+  /// 추천 장소 섹션 (메인 장소만 공개, 대안은 블러)
+  Widget _buildDateSpotSection(DSColorScheme colors) {
+    final data = _fortuneResult.data;
+    final recommendations = data['recommendations'] as Map<String, dynamic>? ?? {};
+    final dateSpots = recommendations['dateSpots'] as Map<String, dynamic>? ?? {};
+
+    final primary = FortuneTextCleaner.clean(
+      dateSpots['primary'] as String? ?? '분위기 좋은 카페에서 깊은 대화를 나눠보세요'
+    );
+    final alternatives = List<String>.from(dateSpots['alternatives'] ?? [])
+        .map((a) => FortuneTextCleaner.clean(a.toString()))
+        .toList();
+    final reason = FortuneTextCleaner.clean(
+      dateSpots['reason'] as String? ?? '차분한 분위기에서 서로를 알아가기 좋아요'
+    );
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.place_rounded, color: Color(0xFF4CAF50), size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '추천 데이트 장소',
+                style: context.heading3.copyWith(fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 메인 추천 (공개)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                  const Color(0xFF8BC34A).withValues(alpha: 0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: const Color(0xFF4CAF50).withValues(alpha: 0.3),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.star, color: Color(0xFF4CAF50), size: 18),
+                    const SizedBox(width: 6),
+                    Text(
+                      '베스트 픽',
+                      style: context.labelMedium.copyWith(
+                        color: const Color(0xFF4CAF50),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  primary,
+                  style: context.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '💡 $reason',
+                  style: context.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 대안 장소 (블러)
+          if (alternatives.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            BlurredFortuneContent(
+              fortuneResult: _fortuneResult,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '📍 다른 추천 장소',
+                    style: context.labelMedium.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: alternatives.map((alt) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: colors.background,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: colors.border),
+                      ),
+                      child: Text(
+                        alt,
+                        style: context.labelMedium.copyWith(color: colors.textSecondary),
+                      ),
+                    )).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    ).animate()
+        .fadeIn(delay: 200.ms, duration: 500.ms)
+        .slideX(begin: -0.1, end: 0);
+  }
+
+  /// 패션 스타일 추천 콘텐츠
+  Widget _buildFashionContent(DSColorScheme colors) {
+    final data = _fortuneResult.data;
+    final recommendations = data['recommendations'] as Map<String, dynamic>? ?? {};
+    final fashion = recommendations['fashion'] as Map<String, dynamic>? ?? {};
+
+    final style = fashion['style'] as String? ?? '캐주얼 시크';
+    final colorsList = List<String>.from(fashion['colors'] ?? ['베이지', '화이트', '네이비']);
+    final items = List<String>.from(fashion['items'] ?? ['깔끔한 니트', '슬랙스', '화이트 스니커즈']);
+    final reason = FortuneTextCleaner.clean(fashion['reason'] as String? ?? '첫인상에서 신뢰감을 줄 수 있어요');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 스타일 배지
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF6B5CE7), Color(0xFF9B8CF7)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            '👔 $style',
+            style: context.labelMedium.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // 추천 색상
+        Text(
+          '🎨 추천 색상',
+          style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: colorsList.map((color) => _buildColorChip(color, colors)).toList(),
+        ),
+        const SizedBox(height: 16),
+
+        // 추천 아이템
+        Text(
+          '👕 추천 아이템',
+          style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        ...items.map((item) => Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Color(0xFF6B5CE7), size: 16),
+              const SizedBox(width: 8),
+              Text(
+                item,
+                style: context.bodyMedium.copyWith(color: colors.textSecondary),
+              ),
+            ],
+          ),
+        )),
+        const SizedBox(height: 12),
+
+        // 추천 이유
+        Text(
+          '💡 $reason',
+          style: context.bodySmall.copyWith(
+            color: colors.textSecondary,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 색상 칩 위젯
+  Widget _buildColorChip(String colorName, DSColorScheme colors) {
+    // 색상 이름에서 실제 색상 매핑
+    final colorMap = {
+      '베이지': const Color(0xFFF5DEB3),
+      '화이트': Colors.white,
+      '네이비': const Color(0xFF1E3A5F),
+      '블랙': Colors.black,
+      '그레이': Colors.grey,
+      '브라운': const Color(0xFF8B4513),
+      '핑크': const Color(0xFFFFB6C1),
+      '블루': Colors.blue,
+      '그린': Colors.green,
+    };
+
+    final chipColor = colorMap[colorName] ?? colors.accent;
+    final isDark = chipColor.computeLuminance() < 0.5;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: chipColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.border),
+        boxShadow: [
+          BoxShadow(
+            color: chipColor.withValues(alpha: 0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Text(
+        colorName,
+        style: context.labelMedium.copyWith(
+          color: isDark ? Colors.white : Colors.black87,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  /// 악세서리 추천 콘텐츠
+  Widget _buildAccessoriesContent(DSColorScheme colors) {
+    final data = _fortuneResult.data;
+    final recommendations = data['recommendations'] as Map<String, dynamic>? ?? {};
+    final accessories = recommendations['accessories'] as Map<String, dynamic>? ?? {};
+
+    final recommended = List<String>.from(accessories['recommended'] ?? ['미니멀 시계', '실버 반지', '가죽 백']);
+    final avoid = List<String>.from(accessories['avoid'] ?? ['과한 금장식']);
+    final reason = FortuneTextCleaner.clean(accessories['reason'] as String? ?? '센스있고 세련된 이미지 연출');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '✨ 추천 악세서리',
+          style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: recommended.map((item) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE67E22).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE67E22).withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.check, color: Color(0xFFE67E22), size: 14),
+                const SizedBox(width: 4),
+                Text(
+                  item,
+                  style: context.labelMedium.copyWith(color: const Color(0xFFE67E22)),
+                ),
+              ],
+            ),
+          )).toList(),
+        ),
+        const SizedBox(height: 16),
+
+        // 피해야 할 악세서리
+        if (avoid.isNotEmpty) ...[
+          Text(
+            '⚠️ 피할 것',
+            style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          ...avoid.map((item) => Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              children: [
+                const Icon(Icons.close, color: DSColors.error, size: 14),
+                const SizedBox(width: 6),
+                Text(
+                  item,
+                  style: context.bodySmall.copyWith(color: colors.textSecondary),
+                ),
+              ],
+            ),
+          )),
+          const SizedBox(height: 12),
+        ],
+
+        Text(
+          '💡 $reason',
+          style: context.bodySmall.copyWith(
+            color: colors.textSecondary,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 향수 추천 콘텐츠
+  Widget _buildFragranceContent(DSColorScheme colors) {
+    final data = _fortuneResult.data;
+    final recommendations = data['recommendations'] as Map<String, dynamic>? ?? {};
+    final fragrance = recommendations['fragrance'] as Map<String, dynamic>? ?? {};
+
+    final notes = List<String>.from(fragrance['notes'] ?? ['우디', '머스크']);
+    final mood = fragrance['mood'] as String? ?? '차분하면서 깊이있는';
+    final timing = fragrance['timing'] as String? ?? '저녁 데이트에 특히 어울려요';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 향 노트
+        Text(
+          '🌸 추천 향 노트',
+          style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: notes.map((note) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFFE91E63).withValues(alpha: 0.1),
+                  const Color(0xFFF48FB1).withValues(alpha: 0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFFE91E63).withValues(alpha: 0.3)),
+            ),
+            child: Text(
+              note,
+              style: context.labelMedium.copyWith(
+                color: const Color(0xFFE91E63),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          )).toList(),
+        ),
+        const SizedBox(height: 16),
+
+        // 무드
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('✨', style: TextStyle(fontSize: 14)),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '분위기',
+                    style: context.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    mood,
+                    style: context.bodyMedium.copyWith(color: colors.textPrimary),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // 타이밍
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('⏰', style: TextStyle(fontSize: 14)),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '추천 상황',
+                    style: context.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    timing,
+                    style: context.bodyMedium.copyWith(color: colors.textPrimary),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// 대화 팁 콘텐츠
+  Widget _buildConversationContent(DSColorScheme colors) {
+    final data = _fortuneResult.data;
+    final recommendations = data['recommendations'] as Map<String, dynamic>? ?? {};
+    final conversation = recommendations['conversation'] as Map<String, dynamic>? ?? {};
+
+    final topics = List<String>.from(conversation['topics'] ?? ['여행 이야기', '취미 공유', '미래 꿈']);
+    final avoid = List<String>.from(conversation['avoid'] ?? ['전 애인 이야기', '급한 결혼 언급']);
+    final tip = FortuneTextCleaner.clean(conversation['tip'] as String? ?? '상대방 이야기를 먼저 들어주세요');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 추천 대화 주제
+        Text(
+          '💬 추천 대화 주제',
+          style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        ...topics.map((topic) => Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Row(
+            children: [
+              const Icon(Icons.chat_bubble, color: Color(0xFF00BCD4), size: 14),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  topic,
+                  style: context.bodyMedium.copyWith(color: colors.textSecondary),
+                ),
+              ),
+            ],
+          ),
+        )),
+        const SizedBox(height: 16),
+
+        // 피해야 할 주제
+        if (avoid.isNotEmpty) ...[
+          Text(
+            '🚫 피할 주제',
+            style: context.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          ...avoid.map((topic) => Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              children: [
+                const Icon(Icons.remove_circle_outline, color: DSColors.error, size: 14),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    topic,
+                    style: context.bodySmall.copyWith(color: colors.textSecondary),
+                  ),
+                ),
+              ],
+            ),
+          )),
+          const SizedBox(height: 12),
+        ],
+
+        // 대화 팁
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xFF00BCD4).withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFF00BCD4).withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('💡', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  tip,
+                  style: context.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   // ===== 광고 & 블러 해제 =====

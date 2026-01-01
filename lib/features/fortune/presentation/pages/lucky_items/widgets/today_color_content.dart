@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/design_system.dart';
 import 'info_item.dart';
 
-/// 오늘의 색상 컨텐츠 - ChatGPT 스타일
+/// 오늘의 색상 컨텐츠 - API 데이터 우선, 없으면 기존 로직 사용
 class TodayColorContent extends StatelessWidget {
   final DateTime birthDate;
+  final Map<String, dynamic>? colorDetail;
 
-  const TodayColorContent({super.key, required this.birthDate});
+  const TodayColorContent({
+    super.key,
+    required this.birthDate,
+    this.colorDetail,
+  });
 
-  /// 사주 기반 행운 색상 생성
+  /// 사주 기반 행운 색상 생성 (API 데이터 없을 때 폴백)
   Map<String, dynamic> _generateTodayColor() {
     final now = DateTime.now();
 
@@ -51,6 +56,17 @@ class TodayColorContent extends StatelessWidget {
     };
   }
 
+  /// 색상 코드 파싱
+  Color _parseColorCode(String? colorCode, Color fallback) {
+    if (colorCode == null || colorCode.isEmpty) return fallback;
+    try {
+      if (colorCode.startsWith('#')) {
+        return Color(int.parse(colorCode.substring(1), radix: 16) + 0xFF000000);
+      }
+    } catch (_) {}
+    return fallback;
+  }
+
   /// 색상에 따른 상세 설명
   String _getColorDescription(String colorName) {
     final descriptions = {
@@ -81,10 +97,27 @@ class TodayColorContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final colorData = _generateTodayColor();
-    final color = colorData['color'] as Color;
-    final colorName = colorData['name'] as String;
-    final meaning = colorData['meaning'] as String;
+
+    // API 데이터 우선, 없으면 기존 로직 사용
+    final String colorName;
+    final Color color;
+    final String meaning;
+    final String description;
+
+    if (colorDetail != null && colorDetail!['mainColor'] != null) {
+      colorName = colorDetail!['mainColor'] as String;
+      color = _parseColorCode(
+          colorDetail!['mainColorCode'] as String?, Colors.grey);
+      meaning = colorDetail!['colorMeaning'] as String? ?? '행운의 기운';
+      description = colorDetail!['colorDescription'] as String? ??
+          _getColorDescription(colorName);
+    } else {
+      final colorData = _generateTodayColor();
+      colorName = colorData['name'] as String;
+      color = colorData['color'] as Color;
+      meaning = colorData['meaning'] as String;
+      description = _getColorDescription(colorName);
+    }
 
     // 텍스트 색상 계산 (명도 기반)
     final luminance = color.computeLuminance();
@@ -123,7 +156,7 @@ class TodayColorContent extends StatelessWidget {
           // 색상 정보 (한글로만 표시)
           InfoItem(label: '오늘의 행운색', value: colorName),
           InfoItem(label: '색상 의미', value: meaning),
-          InfoItem(label: '오늘의 조언', value: _getColorDescription(colorName)),
+          InfoItem(label: '오늘의 조언', value: description),
           const InfoItem(
             label: '활용 팁',
             value: '오늘 이 색상의 옷이나 소품을 착용하면 행운이 따릅니다',

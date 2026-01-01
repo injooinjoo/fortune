@@ -312,6 +312,309 @@ class LottoNumberGenerator {
     );
   }
 
+  /// 꿈해석 결과 기반 로또 운세 생성
+  ///
+  /// [dreamResult]: 꿈해석 API 결과 (symbols, sentiment, luckyElements 포함)
+  /// [birthDate]: 생년월일 (선택사항 - 더 정확한 번호 생성에 사용)
+  static LottoFortuneResult generateFromDream({
+    required Map<String, dynamic> dreamResult,
+    DateTime? birthDate,
+    String? birthTime,
+    String? gender,
+    String? currentLocation,
+    int gameCount = 1,
+  }) {
+    final now = DateTime.now();
+    final validGameCount = gameCount.clamp(1, 5);
+
+    // 꿈 상징에서 시드 추출
+    final dreamSeed = _calculateDreamSeed(dreamResult);
+
+    // 꿈 감정에서 오행 매핑
+    final dreamElement = _getDreamElement(dreamResult);
+
+    // 사주 정보가 있으면 결합
+    int combinedSeed = dreamSeed;
+    String dominantElement = dreamElement;
+
+    if (birthDate != null) {
+      final sajuSeed = _calculateSeed(
+        birthDate: birthDate,
+        birthTime: birthTime,
+        gender: gender,
+        date: now,
+      );
+      // 꿈 시드와 사주 시드 결합
+      combinedSeed = (dreamSeed * 31 + sajuSeed) % 1000000000;
+
+      // 오행도 결합 (꿈 우선, 사주 보조)
+      final sajuElement = _calculateDominantElement(birthDate, birthTime);
+      dominantElement = _combineElements(dreamElement, sajuElement);
+    }
+
+    // 로또 번호 생성
+    final lottoResult = _generateLottoResult(
+      combinedSeed,
+      dominantElement,
+      now,
+      gameCount: validGameCount,
+    );
+
+    // 꿈 기반 행운의 장소 생성
+    final luckyLocation = _generateDreamLuckyLocation(
+      dreamResult,
+      dominantElement,
+      combinedSeed,
+      currentLocation,
+    );
+
+    // 최적 타이밍 생성
+    final luckyTiming = _generateLuckyTiming(dominantElement, now);
+
+    // 꿈 기반 조언 생성
+    final sajuAdvice = _generateDreamAdvice(dreamResult, dominantElement);
+
+    // 연금복권 생성
+    final pensionResult = _generatePensionLottery(combinedSeed, now);
+
+    return LottoFortuneResult(
+      lottoResult: lottoResult,
+      pensionResult: pensionResult,
+      luckyLocation: luckyLocation,
+      luckyTiming: luckyTiming,
+      sajuAdvice: sajuAdvice,
+    );
+  }
+
+  /// 꿈 상징에서 시드 계산
+  static int _calculateDreamSeed(Map<String, dynamic> dreamResult) {
+    int seed = DateTime.now().millisecondsSinceEpoch % 100000;
+
+    // 꿈 내용에서 해시 생성
+    final dream = dreamResult['dream']?.toString() ?? '';
+    for (int i = 0; i < dream.length; i++) {
+      seed = (seed * 31 + dream.codeUnitAt(i)) % 1000000000;
+    }
+
+    // 상징들에서 추가 시드
+    final symbols = dreamResult['symbols'] as List? ?? [];
+    for (final symbol in symbols) {
+      final str = symbol.toString();
+      for (int i = 0; i < str.length; i++) {
+        seed = (seed * 17 + str.codeUnitAt(i)) % 1000000000;
+      }
+    }
+
+    return seed;
+  }
+
+  /// 꿈 감정에서 오행 매핑
+  static String _getDreamElement(Map<String, dynamic> dreamResult) {
+    final sentiment = dreamResult['sentiment']?.toString() ?? 'neutral';
+    final symbols = dreamResult['symbols'] as List? ?? [];
+
+    // 상징 키워드로 오행 판단
+    final symbolStr = symbols.join(' ').toLowerCase();
+
+    if (symbolStr.contains('물') ||
+        symbolStr.contains('바다') ||
+        symbolStr.contains('강') ||
+        symbolStr.contains('비')) {
+      return '수(水)';
+    }
+    if (symbolStr.contains('불') ||
+        symbolStr.contains('태양') ||
+        symbolStr.contains('빛')) {
+      return '화(火)';
+    }
+    if (symbolStr.contains('나무') ||
+        symbolStr.contains('숲') ||
+        symbolStr.contains('꽃') ||
+        symbolStr.contains('초록')) {
+      return '목(木)';
+    }
+    if (symbolStr.contains('금') ||
+        symbolStr.contains('돈') ||
+        symbolStr.contains('보석') ||
+        symbolStr.contains('은')) {
+      return '금(金)';
+    }
+    if (symbolStr.contains('땅') ||
+        symbolStr.contains('산') ||
+        symbolStr.contains('흙')) {
+      return '토(土)';
+    }
+
+    // 감정으로 오행 매핑
+    switch (sentiment) {
+      case 'positive':
+        return '목(木)'; // 성장, 발전
+      case 'negative':
+        return '수(水)'; // 정화, 흐름
+      default:
+        return '토(土)'; // 안정, 균형
+    }
+  }
+
+  /// 두 오행 결합 (첫 번째 우선)
+  static String _combineElements(String primary, String secondary) {
+    // 상생 관계면 primary 유지, 상극이면 secondary 반영
+    const shengMap = {
+      '목(木)': '화(火)',
+      '화(火)': '토(土)',
+      '토(土)': '금(金)',
+      '금(金)': '수(水)',
+      '수(水)': '목(木)',
+    };
+
+    if (shengMap[primary] == secondary) {
+      // 상생 - primary 강화
+      return primary;
+    }
+    // 그 외는 primary 유지
+    return primary;
+  }
+
+  /// 꿈 기반 행운의 장소 생성
+  static LuckyLocation _generateDreamLuckyLocation(
+    Map<String, dynamic> dreamResult,
+    String element,
+    int seed,
+    String? currentLocation,
+  ) {
+    final symbols = dreamResult['symbols'] as List? ?? [];
+    final symbolStr = symbols.join(' ');
+
+    // 꿈 상징에 따른 장소 추천
+    String placeType;
+    String direction;
+
+    if (symbolStr.contains('물') || symbolStr.contains('바다')) {
+      placeType = '물가 근처 (강변, 호수, 분수대 근처)';
+      direction = '북쪽';
+    } else if (symbolStr.contains('산') || symbolStr.contains('숲')) {
+      placeType = '자연 근처 (공원, 산책로, 녹지대)';
+      direction = '동쪽';
+    } else if (symbolStr.contains('금') || symbolStr.contains('돈')) {
+      placeType = '금융가 근처 (은행, 증권사 인근)';
+      direction = '서쪽';
+    } else if (symbolStr.contains('불') || symbolStr.contains('태양')) {
+      placeType = '밝고 활기찬 곳 (번화가, 대형마트)';
+      direction = '남쪽';
+    } else {
+      // 기본: 오행 기반
+      return _generateLuckyLocation(element, seed, currentLocation);
+    }
+
+    // 최적 구매처 추천
+    final storeTypes = [
+      {'type': '편의점', 'reason': '빠른 기운이 도움됩니다'},
+      {'type': '복권 전문점', 'reason': '집중된 복 기운이 모여 있습니다'},
+      {'type': '대형마트 복권 코너', 'reason': '풍요로운 기운이 도움됩니다'},
+      {'type': '로또 명당', 'reason': '행운의 기운이 강합니다'},
+    ];
+    final storeIndex = seed % storeTypes.length;
+    final store = storeTypes[storeIndex];
+
+    // 꿈 상징 기반 방위 설명
+    final symbolName = symbols.isNotEmpty ? symbols.first.toString() : '상징';
+    final directionDesc = '꿈 속 "$symbolName"이(가) $direction 방향의 기운과 연결됩니다. $placeType에서 구매하세요.';
+
+    // 오행 기반 간판 색상
+    final luckyColor = _elementColors[element] ?? '황색';
+
+    return LuckyLocation(
+      direction: direction,
+      directionDescription: directionDesc,
+      shopType: store['type']!,
+      shopReason: store['reason']!,
+      luckySignColor: luckyColor,
+      locationMessage: '$placeType의 $direction 방향이 유리합니다',
+    );
+  }
+
+  /// 꿈 기반 조언 생성
+  static SajuAdvice _generateDreamAdvice(
+    Map<String, dynamic> dreamResult,
+    String element,
+  ) {
+    final sentiment = dreamResult['sentiment']?.toString() ?? 'neutral';
+    final symbols = dreamResult['symbols'] as List? ?? [];
+
+    String advice;
+    String luckyColor;
+    String luckyNumber;
+
+    switch (sentiment) {
+      case 'positive':
+        advice = '길몽입니다! 꿈의 좋은 기운을 담아 복권을 구매하세요. '
+            '${symbols.isNotEmpty ? '"${symbols.first}" 상징이 행운을 가져다줄 것입니다.' : ''}';
+        luckyColor = '금색, 노란색';
+        luckyNumber = '3, 8 계열';
+        break;
+      case 'negative':
+        advice = '꿈의 경고를 긍정적으로 전환하세요. '
+            '조심스럽게 접근하되, 새로운 시작의 기운으로 바꿀 수 있습니다.';
+        luckyColor = '파란색, 검은색';
+        luckyNumber = '1, 6 계열';
+        break;
+      default:
+        advice = '평화로운 꿈입니다. 안정적인 마음으로 구매하면 좋은 결과가 있을 것입니다.';
+        luckyColor = '노란색, 갈색';
+        luckyNumber = '5, 10 계열';
+    }
+
+    // 꿈 감정에 따른 피해야 할 번호대와 재물운 점수
+    String avoidNumber;
+    int wealthScore;
+
+    switch (sentiment) {
+      case 'positive':
+        avoidNumber = '4, 9 계열 (상극)';
+        wealthScore = 75 + (DateTime.now().millisecondsSinceEpoch % 20); // 75-94
+        break;
+      case 'negative':
+        avoidNumber = '2, 7 계열 (상극)';
+        wealthScore = 50 + (DateTime.now().millisecondsSinceEpoch % 25); // 50-74
+        break;
+      default:
+        avoidNumber = '없음 (균형 잡힌 상태)';
+        wealthScore = 60 + (DateTime.now().millisecondsSinceEpoch % 20); // 60-79
+    }
+
+    // 오행 설명
+    String elementDesc;
+    switch (element) {
+      case '목(木)':
+        elementDesc = '꿈에서 성장과 발전의 기운을 받았습니다.';
+        break;
+      case '화(火)':
+        elementDesc = '꿈에서 열정과 활력의 기운을 받았습니다.';
+        break;
+      case '토(土)':
+        elementDesc = '꿈에서 안정과 균형의 기운을 받았습니다.';
+        break;
+      case '금(金)':
+        elementDesc = '꿈에서 결실과 재물의 기운을 받았습니다.';
+        break;
+      case '수(水)':
+        elementDesc = '꿈에서 지혜와 직관의 기운을 받았습니다.';
+        break;
+      default:
+        elementDesc = '꿈에서 균형 잡힌 기운을 받았습니다.';
+    }
+
+    return SajuAdvice(
+      dominantElement: element,
+      elementDescription: elementDesc,
+      luckyColor: luckyColor,
+      luckyNumberRange: luckyNumber,
+      avoidNumberRange: avoidNumber,
+      adviceMessage: advice,
+      wealthScore: wealthScore,
+    );
+  }
+
   /// 시드 계산
   static int _calculateSeed({
     required DateTime birthDate,

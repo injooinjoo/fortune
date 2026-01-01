@@ -147,6 +147,13 @@ const List<RecommendationChip> defaultChips = [
     icon: Icons.shield_outlined,
     color: Color(0xFF7C3AED),
   ),
+  RecommendationChip(
+    id: 'pastLife',
+    label: '전생 탐험',
+    fortuneType: 'pastLife',
+    icon: Icons.history_edu,
+    color: Color(0xFF8B4513),
+  ),
 
   // ============ 성격/개성 ============
   RecommendationChip(

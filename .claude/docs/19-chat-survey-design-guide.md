@@ -588,7 +588,7 @@ final loveSurveyConfig = FortuneSurveyConfig(
       options: [
         SurveyOption(id: 'kind', label: '따뜻한', emoji: '🥰'),
         SurveyOption(id: 'funny', label: '유머러스', emoji: '😄'),
-        SurveyOption(id: 'smart', label: '똑똒한', emoji: '🧠'),
+        SurveyOption(id: 'smart', label: '똑똑한', emoji: '🧠'),
         SurveyOption(id: 'stable', label: '안정적인', emoji: '🏠'),
         SurveyOption(id: 'passionate', label: '열정적인', emoji: '🔥'),
         SurveyOption(id: 'calm', label: '차분한', emoji: '🌊'),

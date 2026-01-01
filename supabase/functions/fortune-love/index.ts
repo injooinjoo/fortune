@@ -36,9 +36,10 @@ import { calculatePercentile, addPercentileToResult } from '../_shared/percentil
 // TypeScript 인터페이스 정의
 interface LoveFortuneRequest {
   userId: string;
+  userName?: string; // ✅ 사용자 이름 (결과에서 "xx세 여성분" 대신 사용)
   age: number;
   gender: string;
-  relationshipStatus: 'single' | 'dating' | 'breakup' | 'crush';
+  relationshipStatus: 'single' | 'dating' | 'crush' | 'complicated'; // breakup 제거
   // Step 2: 연애 스타일
   datingStyles: string[];
   valueImportance: {
@@ -53,6 +54,7 @@ interface LoveFortuneRequest {
     min: number;
     max: number;
   };
+  idealLooks?: string[]; // ✅ 이상형 외모상 (동물상/남성상)
   preferredPersonality: string[];
   preferredMeetingPlaces: string[];
   relationshipGoal: string;
@@ -120,6 +122,35 @@ interface LoveFortuneResponse {
       immediate: string[];
       shortTerm: string[];
       longTerm: string[];
+    };
+    // ✅ 추천 섹션 (세분화된 데이트/스타일 추천)
+    recommendations?: {
+      dateSpots: {
+        primary: string;        // 메인 추천 장소 (무료 공개)
+        alternatives: string[]; // 대안 장소들 (블러)
+        reason: string;         // 추천 이유
+      };
+      fashion: {
+        style: string;          // 추천 스타일
+        colors: string[];       // 추천 색상
+        items: string[];        // 구체적 아이템
+        reason: string;         // 추천 이유
+      };
+      accessories: {
+        recommended: string[];  // 추천 악세서리
+        avoid: string[];        // 피할 악세서리
+        reason: string;         // 추천 이유
+      };
+      fragrance: {
+        notes: string[];        // 향 노트
+        mood: string;           // 분위기
+        timing: string;         // 추천 상황
+      };
+      conversation: {
+        topics: string[];       // 추천 대화 주제
+        avoid: string[];        // 피할 주제
+        tip: string;            // 대화 팁
+      };
     };
     isBlurred?: boolean; // ✅ 블러 상태
     blurredSections?: string[]; // ✅ 블러 처리된 섹션 목록
@@ -308,6 +339,34 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
     "shortTerm": ["1-2주 내 할 것 3가지 (각 50자 이상)"],
     "longTerm": ["1-3개월 내 목표 3가지 (각 50자 이상)"],
     "dailyHabit": "매일 실천할 연애 습관 (50자 이상)"
+  },
+  "recommendations": {
+    "dateSpots": {
+      "primary": "메인 추천 데이트 장소 (구체적인 장소명 + 이유, 50자 이상)",
+      "alternatives": ["대안 장소 3개 (각 20자 이상)"],
+      "reason": "이 장소를 추천하는 이유 (상담자 성향 기반)"
+    },
+    "fashion": {
+      "style": "추천 패션 스타일 (캐주얼 시크, 미니멀 등)",
+      "colors": ["추천 색상 3개"],
+      "items": ["구체적인 아이템 3개 (니트, 슬랙스 등)"],
+      "reason": "이 스타일이 어울리는 이유"
+    },
+    "accessories": {
+      "recommended": ["추천 악세서리 3개 (미니멀 시계, 실버 반지 등)"],
+      "avoid": ["피할 악세서리 (과한 금장식 등)"],
+      "reason": "악세서리 선택 팁"
+    },
+    "fragrance": {
+      "notes": ["추천 향 노트 2개 (우디, 머스크 등)"],
+      "mood": "향수가 주는 분위기",
+      "timing": "이 향수가 어울리는 상황"
+    },
+    "conversation": {
+      "topics": ["추천 대화 주제 3개"],
+      "avoid": ["피해야 할 주제 2개"],
+      "tip": "대화할 때 팁"
+    }
   }
 }
 
@@ -346,9 +405,15 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 - 설문에서 입력한 내용이 결과에 직접 반영되어야 함
 - 반드시 유효한 JSON 형식으로 출력`
 
+  // ✅ 상담자 호칭 결정 (userName 있으면 이름, 없으면 성별 기반)
+  const clientName = params.userName
+    ? `${params.userName}님`
+    : params.gender === 'female' ? '회원님' : '회원님';
+
   const userPrompt = `# 연애 상담 요청 정보
 
 ## 상담자 기본 정보
+- 이름/호칭: ${clientName}
 - 나이: ${params.age}세
 - 성별: ${params.gender}
 - 현재 연애 상태: ${relationshipContexts[params.relationshipStatus] || '일반'}
@@ -359,6 +424,7 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 
 ## 이상형 정보
 - 선호 나이대: ${params.preferredAgeRange?.min || 20}~${params.preferredAgeRange?.max || 30}세
+- 선호 외모상: ${params.idealLooks?.length > 0 ? params.idealLooks.join(', ') : '미지정'}
 - 선호 성격: ${params.preferredPersonality?.length > 0 ? params.preferredPersonality.join(', ') : '미지정'}
 - 선호 만남 장소: ${params.preferredMeetingPlaces?.length > 0 ? params.preferredMeetingPlaces.join(', ') : '미지정'}
 - 원하는 관계: ${params.relationshipGoal || '진지한 연애'}
@@ -371,10 +437,16 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 
 ${statusSpecificInstructions[params.relationshipStatus] || statusSpecificInstructions.single}
 
-위 정보를 바탕으로 ${params.age}세 ${params.gender}이며 현재 ${relationshipContexts[params.relationshipStatus] || '연애를 준비하는'} 상담자에게 전문적이고 구체적인 연애운세 분석을 JSON 형식으로 제공해주세요.
+## ⭐ 중요 지시사항
+1. 모든 분석에서 상담자를 "${clientName}"으로 호칭하세요 ("xx세 여성분" 같은 표현 금지)
+2. 위에서 입력받은 설문 정보(데이팅 스타일, 가치관, 이상형 외모/성격, 매력 포인트 등)를 결과에 직접적으로 반영하세요
+3. 추상적인 표현 대신 구체적인 장소명, 아이템명, 색상명을 사용하세요
+4. recommendations 섹션은 상담자의 성향과 이상형을 고려한 맞춤 추천으로 작성하세요
+
+위 정보를 바탕으로 ${clientName}에게 전문적이고 구체적인 연애운세 분석을 JSON 형식으로 제공해주세요.
 특히 심리학적 관점에서의 분석과 실질적으로 도움이 되는 조언을 부탁드립니다.
 
-⚠️ 주의: compatibilityInsights와 predictions 필드는 반드시 풍부하고 구체적인 내용으로 작성하세요. 빈 값이나 짧은 응답은 허용되지 않습니다.`
+⚠️ 주의: compatibilityInsights, predictions, recommendations 필드는 반드시 풍부하고 구체적인 내용으로 작성하세요. 빈 값이나 짧은 응답은 허용되지 않습니다.`
 
   // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
   const llm = await LLMFactory.createFromConfigAsync('love')
@@ -710,6 +782,36 @@ serve(async (req) => {
           shortTerm: ['데이트 계획 세우기', '관계 발전 방향 대화하기'],
           longTerm: ['서로의 미래 계획 공유하기', '신뢰 관계 더 깊게 구축하기']
         },
+
+        // ✅ 추천 섹션 (데이트 장소, 패션, 악세서리, 향수, 대화)
+        recommendations: fortuneData.recommendations ? {
+          dateSpots: {
+            primary: fortuneData.recommendations.dateSpots?.primary || '분위기 좋은 카페에서 깊은 대화를 나눠보세요',
+            alternatives: getValidArray(fortuneData.recommendations.dateSpots?.alternatives, ['공원 산책', '미술관 데이트', '맛집 탐방']),
+            reason: fortuneData.recommendations.dateSpots?.reason || '차분한 분위기에서 서로를 알아가기 좋아요'
+          },
+          fashion: {
+            style: fortuneData.recommendations.fashion?.style || '캐주얼 시크',
+            colors: getValidArray(fortuneData.recommendations.fashion?.colors, ['베이지', '화이트', '네이비']),
+            items: getValidArray(fortuneData.recommendations.fashion?.items, ['깔끔한 니트', '슬랙스', '화이트 스니커즈']),
+            reason: fortuneData.recommendations.fashion?.reason || '첫인상에서 신뢰감을 줄 수 있어요'
+          },
+          accessories: {
+            recommended: getValidArray(fortuneData.recommendations.accessories?.recommended, ['미니멀 시계', '실버 반지', '가죽 백']),
+            avoid: getValidArray(fortuneData.recommendations.accessories?.avoid, ['과한 금장식']),
+            reason: fortuneData.recommendations.accessories?.reason || '센스있고 세련된 이미지 연출'
+          },
+          fragrance: {
+            notes: getValidArray(fortuneData.recommendations.fragrance?.notes, ['우디', '머스크']),
+            mood: fortuneData.recommendations.fragrance?.mood || '차분하면서 깊이있는',
+            timing: fortuneData.recommendations.fragrance?.timing || '저녁 데이트에 특히 어울려요'
+          },
+          conversation: {
+            topics: getValidArray(fortuneData.recommendations.conversation?.topics, ['여행 이야기', '취미 공유', '미래 꿈']),
+            avoid: getValidArray(fortuneData.recommendations.conversation?.avoid, ['전 애인 이야기', '급한 결혼 언급']),
+            tip: fortuneData.recommendations.conversation?.tip || '상대방 이야기를 먼저 들어주세요'
+          }
+        } : undefined,
 
         // ✅ 블러 상태 정보
         isBlurred,

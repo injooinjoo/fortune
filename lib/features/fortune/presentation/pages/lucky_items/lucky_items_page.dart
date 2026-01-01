@@ -35,6 +35,12 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
   bool _isBlurred = false;
   List<String> _blurredSections = [];
 
+  // ✅ API 결과 데이터 저장 (content widgets에 전달용)
+  FortuneResult? _fortuneResult;
+
+  // ✅ 카테고리 조회 기록 (본 카테고리는 하단으로 이동)
+  final Set<String> _viewedCategories = {};
+
   // ✅ 입력 폼 상태
   DateTime? _selectedBirthDate;
   String? _selectedBirthTime;
@@ -515,8 +521,24 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
     );
   }
 
+  /// 카테고리 정렬: 안 본 건 상단, 본 건 하단
+  List<CategoryModel> get _sortedCategories {
+    final sorted = List<CategoryModel>.from(_categories);
+    sorted.sort((a, b) {
+      final aViewed = _viewedCategories.contains(a.id);
+      final bViewed = _viewedCategories.contains(b.id);
+      if (aViewed && !bViewed) return 1; // 본 건 아래로
+      if (!aViewed && bViewed) return -1; // 안 본 건 위로
+      return 0;
+    });
+    return sorted;
+  }
+
   /// 결과 화면 (원페이지 스크롤 + 블러 적용)
   Widget _buildResult(BuildContext context, FortuneResult result) {
+    // ✅ API 결과 저장 (content widgets에서 사용)
+    _fortuneResult = result;
+
     // ✅ 사용자가 블러를 해제하지 않았을 때만 result.isBlurred와 동기화
     if (!_hasUserUnlockedBlur &&
         (_isBlurred != result.isBlurred ||
@@ -538,15 +560,15 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // ✅ 원페이지 스크롤 (모든 카테고리 세로로 배치)
+        // ✅ 원페이지 스크롤 (정렬된 카테고리 세로로 배치)
         SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(
               16, 16, 16, 100), // bottom padding for button
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 전체 섹션을 세로로 나열
-              for (var category in _categories) ...[
+              // ✅ 정렬된 카테고리로 표시 (안 본 건 상단)
+              for (var category in _sortedCategories) ...[
                 _buildCategorySection(category),
                 const SizedBox(height: 32),
               ],
@@ -672,57 +694,81 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
     }
   }
 
-  /// 카테고리별 상세 정보
+  /// 카테고리별 상세 정보 (API 데이터 전달)
   Widget _buildCategoryDetails(String categoryId) {
+    // ✅ 카테고리 조회 기록 (본 카테고리는 다음에 하단으로)
+    _viewedCategories.add(categoryId);
+
+    // ✅ API 결과에서 데이터 추출
+    final data = _fortuneResult?.data ?? {};
+
     switch (categoryId) {
       case 'shopping':
         return UnifiedBlurWrapper(
           isBlurred: _isBlurred,
           blurredSections: _blurredSections,
           sectionKey: 'shopping',
-          child: const ShoppingContent(),
+          child: ShoppingContent(
+            data: data,
+          ),
         );
       case 'game':
         return UnifiedBlurWrapper(
           isBlurred: _isBlurred,
           blurredSections: _blurredSections,
           sectionKey: 'game',
-          child: const GameContent(),
+          child: GameContent(
+            data: data,
+          ),
         );
       case 'food':
         return UnifiedBlurWrapper(
           isBlurred: _isBlurred,
           blurredSections: _blurredSections,
           sectionKey: 'food',
-          child: const FoodContent(),
+          child: FoodContent(
+            foodDetail: data['foodDetail'],
+          ),
         );
       case 'travel':
         return UnifiedBlurWrapper(
           isBlurred: _isBlurred,
           blurredSections: _blurredSections,
           sectionKey: 'travel',
-          child: const TravelContent(),
+          child: TravelContent(
+            placesDetail: data['placesDetail'],
+            directionDetail: data['directionDetail'],
+            directionCompass: data['directionCompass'] as String?,
+          ),
         );
       case 'health':
         return UnifiedBlurWrapper(
           isBlurred: _isBlurred,
           blurredSections: _blurredSections,
           sectionKey: 'health',
-          child: const HealthContent(),
+          child: HealthContent(
+            data: data,
+          ),
         );
       case 'fashion':
         return UnifiedBlurWrapper(
           isBlurred: _isBlurred,
           blurredSections: _blurredSections,
           sectionKey: 'fashion',
-          child: const FashionContent(),
+          child: FashionContent(
+            fashionDetail: data['fashionDetail'],
+            colorDetail: data['colorDetail'],
+            jewelryDetail: data['jewelryDetail'],
+          ),
         );
       case 'lifestyle':
         return UnifiedBlurWrapper(
           isBlurred: _isBlurred,
           blurredSections: _blurredSections,
           sectionKey: 'lifestyle',
-          child: const LifestyleContent(),
+          child: LifestyleContent(
+            data: data,
+          ),
         );
       case 'today_color':
         return UnifiedBlurWrapper(
@@ -731,6 +777,18 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
           sectionKey: 'today_color',
           child: TodayColorContent(
             birthDate: _selectedBirthDate ?? DateTime.now(),
+            colorDetail: data['colorDetail'],
+          ),
+        );
+      case 'number':
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
+          sectionKey: 'number',
+          child: NumberContent(
+            numbers: (data['numbers'] as List?)?.cast<int>() ?? [],
+            numbersExplanation: data['numbersExplanation'] as String?,
+            avoidNumbers: (data['avoidNumbers'] as List?)?.cast<int>() ?? [],
           ),
         );
       default:

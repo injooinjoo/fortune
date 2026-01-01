@@ -116,6 +116,60 @@ class CacheService {
     }
   }
 
+  // Daily Calendar Fortune caching (하루 1회 제한용)
+  Future<void> cacheDailyCalendarFortune(Fortune fortune) async {
+    try {
+      final cacheKey = _generateDailyCalendarKey(fortune.userId);
+      final cachedFortune = CachedFortune.fromFortune(fortune);
+
+      await _fortuneBox.put(cacheKey, cachedFortune);
+      await _enforceCacheSize();
+
+      Logger.debug('Daily calendar fortune cached');
+    } catch (e) {
+      Logger.error('Failed to cache daily calendar fortune', e);
+    }
+  }
+
+  Future<Fortune?> getTodayDailyCalendarFortune(String userId) async {
+    try {
+      final cacheKey = _generateDailyCalendarKey(userId);
+      final cached = _fortuneBox.get(cacheKey);
+
+      if (cached == null) {
+        return null;
+      }
+
+      if (cached.isExpired) {
+        await _fortuneBox.delete(cacheKey);
+        return null;
+      }
+
+      Logger.debug('Daily calendar fortune retrieved from cache');
+      return cached.toFortune();
+    } catch (e) {
+      Logger.error('Failed to get daily calendar fortune from cache', e);
+      return null;
+    }
+  }
+
+  bool hasTodayDailyCalendarFortune(String userId) {
+    try {
+      final cacheKey = _generateDailyCalendarKey(userId);
+      final cached = _fortuneBox.get(cacheKey);
+      return cached != null && !cached.isExpired;
+    } catch (e) {
+      Logger.error('Failed to check daily calendar fortune cache', e);
+      return false;
+    }
+  }
+
+  String _generateDailyCalendarKey(String userId) {
+    final today = DateTime.now();
+    final dateKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+    return '${userId}_daily_calendar_result_$dateKey';
+  }
+
   // Settings cache methods
   Future<void> setSetting(String key, dynamic value) async {
     try {
