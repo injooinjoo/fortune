@@ -97,6 +97,9 @@ class EdgeFunctionsEndpoints {
   static const String avoidPeopleFortune = '/fortune-avoid-people';
   static const String celebrityFortune = '/fortune-celebrity';
 
+  // 새해 운세
+  static const String newYearFortune = '/fortune-new-year';
+
   // 반려동물
   static const String petCompatibilityFortune = '/fortune-pet-compatibility';
 
@@ -172,6 +175,10 @@ class EdgeFunctionsEndpoints {
       // 특별 운세
       'avoid-people': avoidPeopleFortune,
       'celebrity': celebrityFortune,
+      // 새해 운세
+      'new_year': newYearFortune,
+      'newYear': newYearFortune,
+      'yearly': newYearFortune,
       // 반려동물
       'pet-compatibility': petCompatibilityFortune,
       // 스포츠 운세 (10개)

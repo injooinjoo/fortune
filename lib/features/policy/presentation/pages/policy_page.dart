@@ -32,7 +32,7 @@ class PolicyPage extends ConsumerWidget {
                         title: '개인정보처리방침',
                         subtitle: '개인정보 수집 및 이용에 관한 안내',
                         color: TossDesignSystem.tossBlue,
-                        onTap: () => context.push('/policy/privacy')).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0),
+                        onTap: () => context.push('/privacy-policy')).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0),
                       const SizedBox(height: 16),
                       _buildPolicyCard(
                         context: context,
@@ -40,7 +40,7 @@ class PolicyPage extends ConsumerWidget {
                         title: '이용약관',
                         subtitle: '서비스 이용에 관한 약관',
                         color: TossDesignSystem.purple,
-                        onTap: () => context.push('/policy/terms')).animate().fadeIn(delay: 200.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
+                        onTap: () => context.push('/terms-of-service')).animate().fadeIn(delay: 200.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
                       const SizedBox(height: 32),
                       _buildInfoSection(),
                     ],

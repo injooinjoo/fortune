@@ -47,17 +47,15 @@ class TickerNotifier extends StateNotifier<TickerState> {
     );
   }
 
-  /// 티커 검색
+  /// 티커 검색 (전체 카테고리에서 검색)
   void search(String query) {
     state = state.copyWith(
       searchQuery: query,
       errorMessage: null,
     );
 
-    final tickers = _repository.searchTickers(
-      query,
-      category: state.selectedCategory,
-    );
+    // 검색 시 전체 카테고리에서 검색 (카테고리 필터 제거)
+    final tickers = _repository.searchTickers(query);
 
     state = state.copyWith(
       tickers: tickers,

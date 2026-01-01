@@ -13,6 +13,7 @@ import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
+import '../../../../core/widgets/today_result_label.dart';
 import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
 import '../../../../presentation/providers/subscription_provider.dart'; // ✅ 구독 체크용
 
@@ -526,7 +527,12 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
-        const Spacer(flex: 2),
+        const Spacer(flex: 1),
+
+        // 오늘 날짜 라벨 + 재방문 유도
+        const TodayResultLabel(showRevisitHint: true),
+
+        const Spacer(flex: 1),
 
         // 하트 이모지
         const Text(

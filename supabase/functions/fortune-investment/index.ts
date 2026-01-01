@@ -47,11 +47,28 @@ interface TickerInfo {
   exchange?: string;   // BINANCE, NASDAQ, KRX 등
 }
 
-// v2: 간소화된 요청 (투자 프로필 제거)
+// 사주 데이터 인터페이스
+interface SajuData {
+  yearPillar: string;    // 년주 (예: 무진)
+  monthPillar: string;   // 월주
+  dayPillar: string;     // 일주
+  hourPillar: string;    // 시주
+  dayMaster: string;     // 일간
+  fiveElements: {        // 오행 분포
+    목: number;
+    화: number;
+    토: number;
+    금: number;
+    수: number;
+  };
+}
+
+// v2: 간소화된 요청 (투자 프로필 제거) + 사주 데이터
 interface InvestmentRequest {
   ticker: TickerInfo;
   userId?: string;
   isPremium?: boolean;
+  sajuData?: SajuData;
 }
 
 /**
@@ -112,6 +129,65 @@ Aspect ratio: 1:1, centered composition
 No text, no characters, pure symbolic imagery`;
 }
 
+/**
+ * 오행과 투자 카테고리 궁합 분석
+ * 사주의 오행 분포와 투자 카테고리의 관련 오행을 비교하여 궁합 점수와 인사이트 생성
+ */
+function analyzeSajuInvestmentFit(
+  fiveElements: Record<string, number> | undefined,
+  category: string,
+  dayMaster: string
+): { score: number; insight: string; mindset: string } {
+  // 카테고리별 관련 오행
+  const categoryElement: Record<string, string> = {
+    crypto: '수',      // 암호화폐: 수(水) - 유동성, 변화
+    usStock: '금',     // 해외주식: 금(金) - 서방, 금융
+    krStock: '토',     // 국내주식: 토(土) - 안정, 중앙
+    etf: '토',         // ETF: 토(土) - 분산, 안정
+    commodity: '금',   // 원자재: 금(金) - 금속, 자원
+    realEstate: '토',  // 부동산: 토(土) - 땅, 안정
+  };
+
+  const element = categoryElement[category] || '토';
+  const userElementStrength = fiveElements?.[element] || 1.0;
+
+  // 점수 계산 (오행 강도 기반)
+  const score = Math.min(100, Math.round(50 + userElementStrength * 15));
+
+  // 일간 기반 인사이트 (민감한 전략 언급 X)
+  const insights: Record<string, string> = {
+    '갑': '새로운 시작의 기운이 있습니다. 도전적인 마음가짐이 필요한 날입니다.',
+    '을': '유연한 접근이 좋습니다. 급하게 결정하지 마세요.',
+    '병': '열정이 넘치는 시기입니다. 냉정함을 유지하세요.',
+    '정': '신중한 판단이 빛나는 날입니다. 직감을 믿어보세요.',
+    '무': '안정을 추구하는 기운입니다. 무리하지 마세요.',
+    '기': '현실적인 판단이 필요합니다. 기본에 충실하세요.',
+    '경': '결단력이 강한 시기입니다. 신중하게 행동하세요.',
+    '신': '섬세한 분석이 빛나는 날입니다. 꼼꼼히 살펴보세요.',
+    '임': '변화에 열린 마음을 가지세요. 흐름을 읽으세요.',
+    '계': '통찰력이 뛰어난 시기입니다. 본질을 보세요.',
+  };
+
+  const mindsets: Record<string, string> = {
+    '갑': '자신감을 갖되 겸손함을 잃지 마세요.',
+    '을': '인내심을 가지고 기다리는 것도 전략입니다.',
+    '병': '뜨거운 마음을 진정시키고 한 발 물러서 보세요.',
+    '정': '마음의 평정을 유지하면 좋은 기회가 보입니다.',
+    '무': '욕심을 버리고 현재에 집중하세요.',
+    '기': '작은 것에 감사하는 마음으로 임하세요.',
+    '경': '결과에 집착하지 말고 과정을 즐기세요.',
+    '신': '완벽을 추구하기보다 유연하게 대처하세요.',
+    '임': '변화를 두려워하지 마세요.',
+    '계': '조용히 관찰하고 때를 기다리세요.',
+  };
+
+  return {
+    score,
+    insight: insights[dayMaster] || '오늘의 흐름을 읽고 신중하게 판단하세요.',
+    mindset: mindsets[dayMaster] || '마음의 평정을 유지하세요.',
+  };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -124,7 +200,7 @@ serve(async (req) => {
     )
 
     const requestData: InvestmentRequest = await req.json()
-    const { ticker, userId, isPremium = false } = requestData
+    const { ticker, userId, isPremium = false, sajuData } = requestData
 
     if (!ticker || !ticker.symbol || !ticker.name || !ticker.category) {
       throw new Error('ticker 정보가 필요합니다 (symbol, name, category)')
@@ -149,12 +225,13 @@ serve(async (req) => {
     const today = new Date().toISOString().split('T')[0]
     const cacheKey = `${userId || 'anonymous'}_investment_v2_${today}_${tickerSymbol}_${tickerCategory}`
 
+    // ✅ .maybeSingle()은 결과 없을 때 null 반환 (에러 X)
     const { data: cachedResult } = await supabaseClient
       .from('fortune_cache')
       .select('result')
       .eq('cache_key', cacheKey)
       .eq('fortune_type', 'investment')
-      .single()
+      .maybeSingle()
 
     if (cachedResult) {
       // 캐시된 결과도 블러 상태 업데이트
@@ -177,80 +254,79 @@ serve(async (req) => {
     const llm = await LLMFactory.createFromConfigAsync('investment')
 
     const systemPrompt = `당신은 ${categoryLabel} 투자 인사이트 전문가입니다.
-사용자가 선택한 종목(${tickerName})에 대해 투자자들이 가장 궁금해하는 정보를 인사이트 형식으로 제공합니다.
+사용자가 선택한 종목(${tickerName})에 대해 오늘의 기운과 마음가짐을 인사이트 형식으로 제공합니다.
 
-## 투자자들이 가장 궁금해하는 것 (리서치 기반)
-1. 타이밍: 지금 살 때인가? 팔 때인가? 최적 시점은?
-2. 전망: 단기/중기/장기 방향은?
-3. 리스크: 주의해야 할 점은?
-4. 시장 분위기: 다른 투자자들은 어떻게 생각하나?
-5. 행운 요소: 좋은 기운을 받을 수 있는 요소
+## 중요 원칙 (반드시 준수)
+- 구체적인 투자 전략, 매매 시점, 목표가, 투자 기간은 절대 언급하지 마세요
+- 마음가짐과 심리 상태 중심으로 조언하세요
+- 모든 투자 결정은 본인의 선택과 책임임을 명시하세요
+- "~하세요", "~해야 합니다" 대신 "~해보시는 건 어떨까요", "~도 좋겠네요" 같은 부드러운 표현 사용
 
 다음 JSON 형식으로 응답해주세요:
 {
-  "overallScore": 0-100 (오늘의 투자 운세 점수),
-  "content": "핵심 운세 요약 (80자 내외, 오늘 이 종목에 대한 전체적인 기운)",
+  "overallScore": 0-100 (오늘의 투자 기운 점수),
+  "content": "핵심 요약 (150자 내외, 오늘의 투자 기운과 마음가짐 중심, 구체적 전략 X)",
+
+  "sajuInsight": {
+    "elementFit": "사용자 오행과 종목 카테고리의 조화 설명 (100자 내외)",
+    "todayEnergy": "오늘 일주 기운이 투자 심리에 미치는 영향 (80자 내외)",
+    "mindsetAdvice": "오늘의 마음가짐 조언 (60자 내외)"
+  },
 
   "timing": {
     "buySignal": "strong" | "moderate" | "weak" | "avoid",
-    "buySignalText": "매수 타이밍 설명 (50자 내외)",
-    "bestTimeSlot": "morning" | "afternoon" | "evening",
-    "bestTimeSlotText": "최적 시간대 설명 (30자 내외)",
-    "holdAdvice": "홀딩/관망 조언 (40자 내외)"
+    "generalAdvice": "전체적인 분위기 설명 (80자 내외, 구체적 시점 언급 X)",
+    "emotionalTip": "감정 조절 팁 (50자 내외)"
   },
 
   "outlook": {
-    "shortTerm": {
-      "score": 0-100,
-      "trend": "up" | "neutral" | "down",
-      "text": "1주일 전망 (40자 내외)"
-    },
-    "midTerm": {
-      "score": 0-100,
-      "trend": "up" | "neutral" | "down",
-      "text": "1개월 전망 (40자 내외)"
-    },
-    "longTerm": {
-      "score": 0-100,
-      "trend": "up" | "neutral" | "down",
-      "text": "3개월+ 전망 (40자 내외)"
+    "general": {
+      "mood": "positive" | "neutral" | "cautious",
+      "text": "전반적인 기운 흐름 (80자 내외, 기간 언급 X)"
     }
   },
 
   "risks": {
-    "warnings": ["주의사항 3가지 (각 30자 내외)"],
-    "avoidActions": ["피해야 할 행동 2가지 (각 30자 내외)"],
-    "volatilityLevel": "low" | "medium" | "high" | "extreme",
-    "volatilityText": "변동성 설명 (30자 내외)"
+    "emotionalRisks": ["감정적 위험 요소 3가지 (각 40자, 심리 중심)"],
+    "mindfulReminders": ["마음챙김 조언 2가지 (각 40자)"]
   },
 
   "marketMood": {
     "categoryMood": "bullish" | "neutral" | "bearish",
-    "categoryMoodText": "${categoryLabel} 시장 전체 기운 (40자 내외)",
-    "investorSentiment": "투자자들의 심리 상태 (40자 내외)"
+    "categoryMoodText": "${categoryLabel} 시장 전체 기운 (50자 내외)",
+    "investorSentiment": "투자자들의 심리 상태 (50자 내외)"
   },
 
   "luckyItems": {
     "color": "행운의 색상",
     "number": 행운의 숫자,
     "direction": "행운의 방향",
-    "timing": "최적 투자 시점 (예: 오후 2-4시)"
+    "element": "오행 중 오늘 도움이 되는 기운"
   },
 
-  "advice": "종합 투자 조언 (80자 내외)",
-  "psychologyTip": "투자 심리 조언 (60자 내외, 감정 조절, 냉정함 유지 등)"
+  "advice": "종합 조언 (120자 내외, 마음가짐 + 인사이트 관점, 전략 X)",
+  "psychologyTip": "투자 심리 조언 (80자 내외, 감정 조절, 평정심 유지)",
+  "disclaimer": "투자는 본인의 선택과 책임입니다. 이 내용은 재미로 참고하시기 바랍니다."
 }`
+
+    // 사주 정보 문자열 생성
+    const sajuInfoText = sajuData ? `
+[사용자 사주 정보]
+일간(Day Master): ${sajuData.dayMaster}
+사주: ${sajuData.yearPillar} ${sajuData.monthPillar} ${sajuData.dayPillar} ${sajuData.hourPillar}
+오행 분포: 목${sajuData.fiveElements?.목 || 0} 화${sajuData.fiveElements?.화 || 0} 토${sajuData.fiveElements?.토 || 0} 금${sajuData.fiveElements?.금 || 0} 수${sajuData.fiveElements?.수 || 0}
+` : '[사주 정보 없음]';
 
     const userPrompt = `[투자 종목 정보]
 종목명: ${tickerName}
 티커/심볼: ${tickerSymbol}
 카테고리: ${categoryLabel}${tickerExchange ? `\n거래소: ${tickerExchange}` : ''}
-
-[분석 요청일]
+${sajuInfoText}
+[오늘]
 ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
 
-위 종목에 대해 투자자들이 가장 궁금해하는 정보를 운세 형식으로 JSON 응답해주세요.
-특히 매수/매도 타이밍, 단기/중기/장기 전망, 주의사항을 구체적으로 알려주세요.`
+마음가짐과 오늘의 인사이트 관점에서 투자 기운을 알려주세요.
+중요: 구체적인 매매 전략, 목표가, 투자 기간은 절대 언급하지 마세요.`
 
     const response = await llm.generate([
       { role: 'system', content: systemPrompt },
@@ -295,6 +371,11 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     // C03: 재물운 이미지 프롬프트 (한국 전통 스타일)
     const wealthImagePrompt = generateWealthImagePrompt(fortuneData.overallScore, categoryLabel)
 
+    // 사주 분석 결과 계산 (사주 데이터가 있을 경우)
+    const sajuAnalysisResult = sajuData
+      ? analyzeSajuInvestmentFit(sajuData.fiveElements, tickerCategory, sajuData.dayMaster)
+      : null;
+
     const result = {
       // ✅ 표준화된 필드명: score, content, summary, advice
       fortuneType: 'investment',
@@ -306,7 +387,7 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       // 기존 필드 유지 (하위 호환성)
       id: `investment-${Date.now()}`,
       type: 'investment',
-      version: 'v2',
+      version: 'v3',  // v3: 사주 분석 추가
       userId: userId,
       ticker: {
         symbol: tickerSymbol,
@@ -317,6 +398,12 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       overallScore: fortuneData.overallScore,
       overall_score: fortuneData.overallScore,
       investment_content: fortuneData.content,
+
+      // ✅ NEW: 사주 인사이트 (LLM 생성)
+      sajuInsight: fortuneData.sajuInsight || null,
+
+      // ✅ NEW: 사주 분석 결과 (로컬 계산)
+      sajuAnalysis: sajuAnalysisResult,
 
       // ✅ 실제 데이터 반환 (클라이언트에서 블러 처리)
       timing: fortuneData.timing,
@@ -332,12 +419,16 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       advice: fortuneData.advice,
       psychologyTip: fortuneData.psychologyTip,
 
+      // ✅ NEW: 면책 문구
+      disclaimer: fortuneData.disclaimer || '투자는 본인의 선택과 책임입니다. 이 내용은 재미로 참고하시기 바랍니다.',
+
       // C03: 재물 이미지 프롬프트 추가
       imagePrompt: wealthImagePrompt,
 
       created_at: new Date().toISOString(),
       metadata: {
-        categoryLabel
+        categoryLabel,
+        hasSajuData: !!sajuData
       },
       isBlurred,
       blurredSections

@@ -473,7 +473,7 @@ class UnifiedFortuneService {
           };
 
           final response = await _supabase.functions.invoke(
-            'fortune-career-coaching',
+            'fortune-career',  // fortune-career-coaching 미정의 → fortune-career 사용
             body: payload,
           );
 
@@ -784,6 +784,55 @@ class UnifiedFortuneService {
             );
           } on FunctionException catch (e) {
             Logger.error('[UnifiedFortune] ❌ Biorhythm Fortune API 에러');
+            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
+            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
+            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
+            rethrow;
+          }
+
+        case 'naming':
+          // Naming Edge Function 직접 호출
+          final namingUser = _supabase.auth.currentUser;
+          final namingPayload = {
+            'userId': namingUser?.id ?? 'anonymous',
+            'motherBirthDate': inputConditions['motherBirthDate'],
+            'motherBirthTime': inputConditions['motherBirthTime'],
+            'expectedBirthDate': inputConditions['expectedBirthDate'],
+            'babyGender': inputConditions['babyGender'] ?? 'unknown',
+            'familyName': inputConditions['familyName'] ?? '김',
+            'nameStyle': inputConditions['nameStyle'] ?? 'modern',
+            'isPremium': inputConditions['isPremium'] ?? false,
+          };
+
+          try {
+            final namingResponse = await _supabase.functions.invoke(
+              'fortune-naming',
+              body: namingPayload,
+            );
+
+            if (namingResponse.data == null) {
+              throw Exception('Naming API 응답 데이터 없음');
+            }
+
+            final namingResponseData = namingResponse.data as Map<String, dynamic>;
+            if (namingResponseData['success'] == true && namingResponseData.containsKey('data')) {
+              final namingData = namingResponseData['data'] as Map<String, dynamic>;
+              Logger.info('[UnifiedFortune] ✅ Naming API 호출 성공');
+
+              return FortuneResult(
+                type: 'naming',
+                title: '작명 추천 - ${namingPayload['familyName']}씨',
+                summary: {},
+                data: namingData,
+                createdAt: DateTime.now(),
+                isBlurred: namingData['isBlurred'] as bool? ?? false,
+                blurredSections: List<String>.from(namingData['blurredSections'] ?? []),
+              );
+            } else {
+              throw Exception('Naming API 응답 형식 오류');
+            }
+          } on FunctionException catch (e) {
+            Logger.error('[UnifiedFortune] ❌ Naming API 에러');
             Logger.error('[UnifiedFortune]   - Status: ${e.status}');
             Logger.error('[UnifiedFortune]   - Details: ${e.details}');
             Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');

@@ -384,7 +384,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
             ElevatedButton(
               onPressed: () {
                 // Navigate to detailed reading
-                context.push('/interactive/tarot/reading', extra: cardData);
+                context.push('/interactive/tarot/storytelling', extra: cardData);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,

@@ -1,58 +1,540 @@
-/// 헤어진 애인 운세 간소화 모델
+// 헤어진 애인 운세 모델 (v2 - 솔직한 조언자)
+
+// ============================================================================
+// 상담 목표 (가치 제안)
+// ============================================================================
+enum PrimaryGoal {
+  healing,        // 감정 정리 + 힐링
+  reunionStrategy, // 재회 전략 가이드
+  readTheirMind,  // 상대방 마음 읽기
+  newStart,       // 새 출발 준비도
+}
+
+extension PrimaryGoalExtension on PrimaryGoal {
+  String get id {
+    switch (this) {
+      case PrimaryGoal.healing:
+        return 'healing';
+      case PrimaryGoal.reunionStrategy:
+        return 'reunion_strategy';
+      case PrimaryGoal.readTheirMind:
+        return 'read_their_mind';
+      case PrimaryGoal.newStart:
+        return 'new_start';
+    }
+  }
+
+  String get label {
+    switch (this) {
+      case PrimaryGoal.healing:
+        return '감정 정리 + 힐링';
+      case PrimaryGoal.reunionStrategy:
+        return '재회 전략 가이드';
+      case PrimaryGoal.readTheirMind:
+        return '상대방 마음 읽기';
+      case PrimaryGoal.newStart:
+        return '새 출발 준비도';
+    }
+  }
+
+  String get emoji {
+    switch (this) {
+      case PrimaryGoal.healing:
+        return '🌿';
+      case PrimaryGoal.reunionStrategy:
+        return '🔄';
+      case PrimaryGoal.readTheirMind:
+        return '💭';
+      case PrimaryGoal.newStart:
+        return '🌸';
+    }
+  }
+
+  static PrimaryGoal fromString(String? value) {
+    switch (value) {
+      case 'healing':
+        return PrimaryGoal.healing;
+      case 'reunion_strategy':
+        return PrimaryGoal.reunionStrategy;
+      case 'read_their_mind':
+        return PrimaryGoal.readTheirMind;
+      case 'new_start':
+        return PrimaryGoal.newStart;
+      default:
+        return PrimaryGoal.healing;
+    }
+  }
+}
+
+// ============================================================================
+// Input 모델 (v2 - 8단계 설문)
+// ============================================================================
 class ExLoverSimpleInput {
   // 상대방 정보
-  final String? exName; // 상대방 이름/닉네임
-  final String? exMbti; // 상대방 MBTI (16개 + unknown)
+  final String? exName;
+  final String? exMbti;
   final DateTime? exBirthDate;
 
-  // 관계 정보
-  final String relationshipDuration; // lessThan1Month, 1to3Months, 3to6Months, 6to12Months, 1to2Years, 2to3Years, moreThan3Years
-  final String timeSinceBreakup; // recent(1개월 미만), short(1-3개월), medium(3-6개월), long(6개월-1년), verylong(1년 이상)
-  final String breakupInitiator; // me(내가), them(상대가), mutual(서로 합의)
-  final String contactStatus; // blocked(완전 차단), noContact(연락 안 함), sometimes(가끔 연락), often(자주 연락), stillMeeting(아직 만남)
+  // ✅ Step 1: 상담 목표 (가치 제안)
+  final PrimaryGoal primaryGoal;
 
-  // 이별 상세
-  final String? breakupReason; // differentValues(가치관), timing(시기), communication(소통), trust(신뢰), other(기타)
-  final String? breakupDetail; // STT/타이핑으로 입력한 상세 이유
+  // ✅ Step 2: 이별 시점 + 통보자
+  final String timeSinceBreakup; // very_recent, recent, 1to3months, 3to6months, 6to12months, over_year
+  final String breakupInitiator; // me, them, mutual
 
-  // 감정 정보
-  final String currentEmotion; // miss(그리움), anger(분노), sadness(슬픔), relief(안도), acceptance(받아들임)
-  final String mainCuriosity; // theirFeelings(상대방 마음), reunionChance(재회 가능성), newLove(새로운 사랑), healing(치유 방법)
+  // ✅ Step 3: 관계 깊이
+  final String relationshipDepth; // casual, moderate, deep, very_deep
+
+  // ✅ Step 4: 핵심 이별 이유
+  final String coreReason; // values, communication, trust, cheating, distance, family, feelings_changed, personal_issues, unknown
+
+  // ✅ Step 5: 상세 이야기 (음성/텍스트)
+  final String? breakupDetail;
+
+  // ✅ Step 6: 현재 상태 (복수 선택)
+  final List<String> currentState; // cant_sleep, checking_sns, crying, angry, regret, miss_them, relieved, confused, moving_on
+
+  // ✅ Step 7: 연락 상태
+  final String contactStatus; // blocked, noContact, sometimes, often, stillMeeting
+
+  // ✅ Step 8: 목표별 심화 질문
+  final Map<String, dynamic>? goalSpecific;
 
   // 추가 정보 (선택)
-  final String? chatHistory; // 카톡/대화 내용
+  final String? chatHistory;
+
+  // 하위 호환성 (기존 필드)
+  final String? relationshipDuration;
+  final String? currentEmotion;
+  final String? mainCuriosity;
+  final String? breakupReason;
 
   ExLoverSimpleInput({
     this.exName,
     this.exMbti,
     this.exBirthDate,
-    required this.relationshipDuration,
+    required this.primaryGoal,
     required this.timeSinceBreakup,
     required this.breakupInitiator,
-    required this.contactStatus,
-    this.breakupReason,
+    required this.relationshipDepth,
+    required this.coreReason,
     this.breakupDetail,
-    required this.currentEmotion,
-    required this.mainCuriosity,
+    required this.currentState,
+    required this.contactStatus,
+    this.goalSpecific,
     this.chatHistory,
+    // 하위 호환성
+    this.relationshipDuration,
+    this.currentEmotion,
+    this.mainCuriosity,
+    this.breakupReason,
   });
+
+  Map<String, dynamic> toJson() => {
+        'ex_name': exName,
+        'ex_mbti': exMbti,
+        'ex_birth_date': exBirthDate?.toIso8601String(),
+        'primaryGoal': primaryGoal.id,
+        'time_since_breakup': timeSinceBreakup,
+        'breakup_initiator': breakupInitiator,
+        'relationshipDepth': relationshipDepth,
+        'coreReason': coreReason,
+        'breakup_detail': breakupDetail,
+        'currentState': currentState,
+        'contact_status': contactStatus,
+        'goalSpecific': goalSpecific,
+        'chat_history': chatHistory,
+        // 하위 호환성
+        'relationship_duration': relationshipDuration ?? timeSinceBreakup,
+        'current_emotion': currentEmotion,
+        'main_curiosity': mainCuriosity,
+        'breakup_reason': breakupReason ?? coreReason,
+      };
 }
 
-/// 감정 중심 결과 모델
+// ============================================================================
+// Hard Truth 섹션 (v2 핵심!)
+// ============================================================================
+class HardTruth {
+  final String headline; // "냉정하게 말하면..."
+  final String diagnosis; // 현재 상황 진단
+  final List<String> realityCheck; // 현실 체크 포인트
+  final String mostImportantAdvice; // 가장 중요한 조언
+
+  HardTruth({
+    required this.headline,
+    required this.diagnosis,
+    required this.realityCheck,
+    required this.mostImportantAdvice,
+  });
+
+  factory HardTruth.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return HardTruth(
+        headline: '솔직하게 말해줄게요.',
+        diagnosis: '현재 상황을 분석 중입니다.',
+        realityCheck: ['분석 중...'],
+        mostImportantAdvice: '지금은 자신에게 집중하세요.',
+      );
+    }
+    return HardTruth(
+      headline: json['headline'] as String? ?? '솔직하게 말해줄게요.',
+      diagnosis: json['diagnosis'] as String? ?? '',
+      realityCheck: (json['realityCheck'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      mostImportantAdvice: json['mostImportantAdvice'] as String? ?? '',
+    );
+  }
+}
+
+// ============================================================================
+// 재회 평가 (v2 - 현실적 기준)
+// ============================================================================
+class ReunionAssessment {
+  final int score; // 재회 가능성 (0-reunionCap)
+  final List<String> keyFactors; // 핵심 요인
+  final String timing; // 적절한 시기
+  final String approach; // 접근 방법
+  final List<String> neverDo; // 절대 하면 안 되는 것
+
+  ReunionAssessment({
+    required this.score,
+    required this.keyFactors,
+    required this.timing,
+    required this.approach,
+    required this.neverDo,
+  });
+
+  factory ReunionAssessment.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return ReunionAssessment(
+        score: 50,
+        keyFactors: ['분석 중...'],
+        timing: '적절한 시기 분석 중',
+        approach: '접근 방법 분석 중',
+        neverDo: ['연락 폭탄 금지', 'SNS 스토킹 금지'],
+      );
+    }
+    return ReunionAssessment(
+      score: json['score'] as int? ?? 50,
+      keyFactors: (json['keyFactors'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      timing: json['timing'] as String? ?? '',
+      approach: json['approach'] as String? ?? '',
+      neverDo: (json['neverDo'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          ['연락 폭탄 금지', 'SNS 스토킹 금지', '술 먹고 연락 금지'],
+    );
+  }
+}
+
+// ============================================================================
+// 감정 처방 (v2)
+// ============================================================================
+class EmotionalPrescriptionV2 {
+  final String currentStateAnalysis; // 현재 감정 상태 분석
+  final String healingFocus; // 치유 집중 포인트
+  final List<String> weeklyActions; // 이번 주 실천 사항
+  final String monthlyMilestone; // 한 달 후 목표
+
+  EmotionalPrescriptionV2({
+    required this.currentStateAnalysis,
+    required this.healingFocus,
+    required this.weeklyActions,
+    required this.monthlyMilestone,
+  });
+
+  factory EmotionalPrescriptionV2.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return EmotionalPrescriptionV2(
+        currentStateAnalysis: '감정 상태 분석 중',
+        healingFocus: '치유 포인트 분석 중',
+        weeklyActions: ['자기 돌봄에 집중하기'],
+        monthlyMilestone: '한 달 후 목표 설정 중',
+      );
+    }
+    return EmotionalPrescriptionV2(
+      currentStateAnalysis: json['currentStateAnalysis'] as String? ?? '',
+      healingFocus: json['healingFocus'] as String? ?? '',
+      weeklyActions: (json['weeklyActions'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      monthlyMilestone: json['monthlyMilestone'] as String? ?? '',
+    );
+  }
+}
+
+// ============================================================================
+// 상대방 관점 (v2)
+// ============================================================================
+class TheirPerspective {
+  final String likelyThoughts; // 상대방 감정 추측
+  final String doTheyThinkOfYou; // 그 사람도 나를 생각할까?
+  final String whatTheyNeed; // 상대방에게 필요한 것
+
+  TheirPerspective({
+    required this.likelyThoughts,
+    required this.doTheyThinkOfYou,
+    required this.whatTheyNeed,
+  });
+
+  factory TheirPerspective.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return TheirPerspective(
+        likelyThoughts: '상대방 감정 분석 중',
+        doTheyThinkOfYou: '솔직한 분석을 준비 중입니다',
+        whatTheyNeed: '분석 중',
+      );
+    }
+    return TheirPerspective(
+      likelyThoughts: json['likelyThoughts'] as String? ?? '',
+      doTheyThinkOfYou: json['doTheyThinkOfYou'] as String? ?? '',
+      whatTheyNeed: json['whatTheyNeed'] as String? ?? '',
+    );
+  }
+}
+
+// ============================================================================
+// 전략적 조언 (v2)
+// ============================================================================
+class StrategicAdvice {
+  final String shortTerm; // 1주일 내 액션
+  final String midTerm; // 1개월 내 목표
+  final String longTerm; // 3개월 후 체크포인트
+
+  StrategicAdvice({
+    required this.shortTerm,
+    required this.midTerm,
+    required this.longTerm,
+  });
+
+  factory StrategicAdvice.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return StrategicAdvice(
+        shortTerm: '1주일 내 해야 할 것 분석 중',
+        midTerm: '1개월 내 목표 설정 중',
+        longTerm: '3개월 후 체크포인트 설정 중',
+      );
+    }
+    return StrategicAdvice(
+      shortTerm: json['shortTerm'] as String? ?? '',
+      midTerm: json['midTerm'] as String? ?? '',
+      longTerm: json['longTerm'] as String? ?? '',
+    );
+  }
+}
+
+// ============================================================================
+// 새 출발 (v2)
+// ============================================================================
+class NewBeginningV2 {
+  final int readinessScore; // 새 출발 준비도 (0-100)
+  final List<String> unresolvedIssues; // 미해결 감정/문제
+  final List<String> growthPoints; // 성장 포인트
+  final String newLoveTiming; // 새 인연 가능 시기
+
+  NewBeginningV2({
+    required this.readinessScore,
+    required this.unresolvedIssues,
+    required this.growthPoints,
+    required this.newLoveTiming,
+  });
+
+  factory NewBeginningV2.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return NewBeginningV2(
+        readinessScore: 50,
+        unresolvedIssues: ['미해결 감정 분석 중'],
+        growthPoints: ['성장 포인트 분석 중'],
+        newLoveTiming: '새 인연 시기 분석 중',
+      );
+    }
+    return NewBeginningV2(
+      readinessScore: json['readinessScore'] as int? ?? 50,
+      unresolvedIssues: (json['unresolvedIssues'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      growthPoints: (json['growthPoints'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      newLoveTiming: json['newLoveTiming'] as String? ?? '',
+    );
+  }
+}
+
+// ============================================================================
+// 마일스톤 (v2)
+// ============================================================================
+class Milestones {
+  final List<String> oneWeek; // 1주일 후 체크
+  final List<String> oneMonth; // 1개월 후 체크
+  final List<String> threeMonths; // 3개월 후 체크
+
+  Milestones({
+    required this.oneWeek,
+    required this.oneMonth,
+    required this.threeMonths,
+  });
+
+  factory Milestones.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return Milestones(
+        oneWeek: ['감정 일기 쓰기', '자기 돌봄 시간 갖기'],
+        oneMonth: ['새로운 취미 시작', '자기 성장 점검'],
+        threeMonths: ['관계 복기 완료', '미래 계획 세우기'],
+      );
+    }
+    return Milestones(
+      oneWeek: (json['oneWeek'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      oneMonth: (json['oneMonth'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      threeMonths: (json['threeMonths'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+    );
+  }
+}
+
+// ============================================================================
+// 마무리 메시지 (v2)
+// ============================================================================
+class ClosingMessage {
+  final String empathy; // 공감 메시지
+  final String todayAction; // 오늘 당장 할 것
+
+  ClosingMessage({
+    required this.empathy,
+    required this.todayAction,
+  });
+
+  factory ClosingMessage.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return ClosingMessage(
+        empathy: '힘들지... 괜찮아질 거야.',
+        todayAction: '오늘은 좋아하는 음악 한 곡 들으며 쉬어요.',
+      );
+    }
+    return ClosingMessage(
+      empathy: json['empathy'] as String? ?? '힘들지...',
+      todayAction: json['todayAction'] as String? ?? '',
+    );
+  }
+}
+
+// ============================================================================
+// 결과 모델 (v2 - 솔직한 조언자)
+// ============================================================================
+class ExLoverEmotionalResultV2 {
+  // 메타 정보
+  final String title;
+  final int score;
+  final PrimaryGoal primaryGoal;
+  final String coreReason;
+  final int reunionCap; // 재회 가능성 최대값
+
+  // ✅ 핵심 섹션: Hard Truth (항상 첫 번째)
+  final HardTruth hardTruth;
+
+  // 목표별 섹션
+  final ReunionAssessment reunionAssessment;
+  final EmotionalPrescriptionV2 emotionalPrescription;
+  final TheirPerspective theirPerspective;
+  final StrategicAdvice strategicAdvice;
+  final NewBeginningV2 newBeginning;
+  final Milestones milestones;
+  final ClosingMessage closingMessage;
+
+  // 블러 정보
+  final bool isBlurred;
+  final List<String> blurredSections;
+
+  ExLoverEmotionalResultV2({
+    required this.title,
+    required this.score,
+    required this.primaryGoal,
+    required this.coreReason,
+    required this.reunionCap,
+    required this.hardTruth,
+    required this.reunionAssessment,
+    required this.emotionalPrescription,
+    required this.theirPerspective,
+    required this.strategicAdvice,
+    required this.newBeginning,
+    required this.milestones,
+    required this.closingMessage,
+    this.isBlurred = false,
+    this.blurredSections = const [],
+  });
+
+  factory ExLoverEmotionalResultV2.fromJson(Map<String, dynamic> json) {
+    return ExLoverEmotionalResultV2(
+      title: json['title'] as String? ?? '솔직한 조언자',
+      score: json['score'] as int? ?? 70,
+      primaryGoal: PrimaryGoalExtension.fromString(json['primaryGoal'] as String?),
+      coreReason: json['coreReason'] as String? ?? 'unknown',
+      reunionCap: json['reunionCap'] as int? ?? 100,
+      hardTruth: HardTruth.fromJson(json['hardTruth'] as Map<String, dynamic>?),
+      reunionAssessment: ReunionAssessment.fromJson(
+          json['reunionAssessment'] as Map<String, dynamic>?),
+      emotionalPrescription: EmotionalPrescriptionV2.fromJson(
+          json['emotionalPrescription'] as Map<String, dynamic>?),
+      theirPerspective: TheirPerspective.fromJson(
+          json['theirPerspective'] as Map<String, dynamic>?),
+      strategicAdvice: StrategicAdvice.fromJson(
+          json['strategicAdvice'] as Map<String, dynamic>?),
+      newBeginning: NewBeginningV2.fromJson(
+          json['newBeginning'] as Map<String, dynamic>?),
+      milestones:
+          Milestones.fromJson(json['milestones'] as Map<String, dynamic>?),
+      closingMessage: ClosingMessage.fromJson(
+          json['closingMessage'] as Map<String, dynamic>?),
+      isBlurred: json['isBlurred'] as bool? ?? false,
+      blurredSections: (json['blurredSections'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+    );
+  }
+
+  /// 목표별 섹션 우선순위 반환
+  List<String> getSectionPriority() {
+    switch (primaryGoal) {
+      case PrimaryGoal.healing:
+        return ['hardTruth', 'emotionalPrescription', 'theirPerspective', 'reunionAssessment'];
+      case PrimaryGoal.reunionStrategy:
+        return ['hardTruth', 'reunionAssessment', 'strategicAdvice', 'emotionalPrescription'];
+      case PrimaryGoal.readTheirMind:
+        return ['hardTruth', 'theirPerspective', 'reunionAssessment', 'emotionalPrescription'];
+      case PrimaryGoal.newStart:
+        return ['hardTruth', 'newBeginning', 'emotionalPrescription', 'theirPerspective'];
+    }
+  }
+}
+
+// ============================================================================
+// 하위 호환성: 기존 모델들 유지
+// ============================================================================
+
+/// 감정 중심 결과 모델 (v1 - 하위 호환성)
 class ExLoverEmotionalResult {
-  // 오늘의 감정 처방
   final EmotionalPrescription emotionalPrescription;
-
-  // 그 사람과의 인연
   final RelationshipInsight relationshipInsight;
-
-  // 새로운 시작
   final NewBeginning newBeginning;
-
-  // 전체 운세 점수
   final int overallScore;
-
-  // 특별 메시지
   final String specialMessage;
 
   ExLoverEmotionalResult({
@@ -66,13 +548,13 @@ class ExLoverEmotionalResult {
   factory ExLoverEmotionalResult.fromJson(Map<String, dynamic> json) {
     return ExLoverEmotionalResult(
       emotionalPrescription: EmotionalPrescription.fromJson(
-        json['emotional_prescription'] as Map<String, dynamic>,
+        json['emotional_prescription'] as Map<String, dynamic>?,
       ),
       relationshipInsight: RelationshipInsight.fromJson(
-        json['relationship_insight'] as Map<String, dynamic>,
+        json['relationship_insight'] as Map<String, dynamic>?,
       ),
       newBeginning: NewBeginning.fromJson(
-        json['new_beginning'] as Map<String, dynamic>,
+        json['new_beginning'] as Map<String, dynamic>?,
       ),
       overallScore: json['overall_score'] as int? ?? 50,
       specialMessage: json['special_message'] as String? ?? '',
@@ -80,13 +562,13 @@ class ExLoverEmotionalResult {
   }
 }
 
-/// 오늘의 감정 처방
+/// 오늘의 감정 처방 (v1)
 class EmotionalPrescription {
-  final String currentState; // 현재 감정 상태 분석
-  final List<String> recommendedActivities; // 추천 활동
-  final List<String> thingsToAvoid; // 피해야 할 것들
-  final String healingAdvice; // 치유 조언
-  final int healingProgress; // 치유 진행도 (0-100)
+  final String currentState;
+  final List<String> recommendedActivities;
+  final List<String> thingsToAvoid;
+  final String healingAdvice;
+  final int healingProgress;
 
   EmotionalPrescription({
     required this.currentState,
@@ -96,7 +578,16 @@ class EmotionalPrescription {
     required this.healingProgress,
   });
 
-  factory EmotionalPrescription.fromJson(Map<String, dynamic> json) {
+  factory EmotionalPrescription.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return EmotionalPrescription(
+        currentState: '',
+        recommendedActivities: [],
+        thingsToAvoid: [],
+        healingAdvice: '',
+        healingProgress: 50,
+      );
+    }
     return EmotionalPrescription(
       currentState: json['current_state'] as String? ?? '',
       recommendedActivities: (json['recommended_activities'] as List<dynamic>?)
@@ -113,13 +604,13 @@ class EmotionalPrescription {
   }
 }
 
-/// 그 사람과의 인연
+/// 그 사람과의 인연 (v1)
 class RelationshipInsight {
-  final int reunionPossibility; // 재회 가능성 (0-100)
-  final String theirCurrentFeelings; // 상대방 현재 마음
-  final String contactTiming; // 연락 타이밍 조언
-  final String karmicLesson; // 이 관계에서 배울 점
-  final bool isThinkingOfYou; // 상대방도 생각하고 있을까
+  final int reunionPossibility;
+  final String theirCurrentFeelings;
+  final String contactTiming;
+  final String karmicLesson;
+  final bool isThinkingOfYou;
 
   RelationshipInsight({
     required this.reunionPossibility,
@@ -129,7 +620,16 @@ class RelationshipInsight {
     required this.isThinkingOfYou,
   });
 
-  factory RelationshipInsight.fromJson(Map<String, dynamic> json) {
+  factory RelationshipInsight.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return RelationshipInsight(
+        reunionPossibility: 50,
+        theirCurrentFeelings: '',
+        contactTiming: '',
+        karmicLesson: '',
+        isThinkingOfYou: false,
+      );
+    }
     return RelationshipInsight(
       reunionPossibility: json['reunion_possibility'] as int? ?? 50,
       theirCurrentFeelings: json['their_current_feelings'] as String? ?? '',
@@ -140,13 +640,13 @@ class RelationshipInsight {
   }
 }
 
-/// 새로운 시작
+/// 새로운 시작 (v1)
 class NewBeginning {
-  final String readinessLevel; // 준비 정도 (not_ready, preparing, almost_ready, ready)
-  final String expectedTiming; // 새로운 인연 시기
-  final List<String> growthPoints; // 성장 포인트
-  final String newLoveAdvice; // 새로운 사랑 조언
-  final int readinessScore; // 준비도 점수 (0-100)
+  final String readinessLevel;
+  final String expectedTiming;
+  final List<String> growthPoints;
+  final String newLoveAdvice;
+  final int readinessScore;
 
   NewBeginning({
     required this.readinessLevel,
@@ -156,7 +656,16 @@ class NewBeginning {
     required this.readinessScore,
   });
 
-  factory NewBeginning.fromJson(Map<String, dynamic> json) {
+  factory NewBeginning.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return NewBeginning(
+        readinessLevel: 'preparing',
+        expectedTiming: '',
+        growthPoints: [],
+        newLoveAdvice: '',
+        readinessScore: 50,
+      );
+    }
     return NewBeginning(
       readinessLevel: json['readiness_level'] as String? ?? 'preparing',
       expectedTiming: json['expected_timing'] as String? ?? '',
@@ -170,14 +679,17 @@ class NewBeginning {
   }
 }
 
-/// 감정 카드 데이터
+// ============================================================================
+// UI 카드 데이터 (하위 호환성)
+// ============================================================================
+
 class EmotionCard {
   final String id;
   final String title;
   final String emoji;
   final String description;
   final List<int> gradientColors;
-  
+
   const EmotionCard({
     required this.id,
     required this.title,
@@ -187,7 +699,6 @@ class EmotionCard {
   });
 }
 
-/// 미리 정의된 감정 카드들
 const List<EmotionCard> emotionCards = [
   EmotionCard(
     id: 'miss',
@@ -226,13 +737,12 @@ const List<EmotionCard> emotionCards = [
   ),
 ];
 
-/// 주요 궁금증 카드
 class CuriosityCard {
   final String id;
   final String title;
   final String icon;
   final String description;
-  
+
   const CuriosityCard({
     required this.id,
     required this.title,
@@ -268,7 +778,6 @@ const List<CuriosityCard> curiosityCards = [
   ),
 ];
 
-/// 이별 통보자 카드
 class BreakupInitiatorCard {
   final String id;
   final String title;
@@ -304,7 +813,6 @@ const List<BreakupInitiatorCard> breakupInitiatorCards = [
   ),
 ];
 
-/// 관계 기간 선택지
 class RelationshipDurationOption {
   final String id;
   final String label;
@@ -325,7 +833,6 @@ const List<RelationshipDurationOption> relationshipDurationOptions = [
   RelationshipDurationOption(id: 'moreThan3Years', label: '3년 이상'),
 ];
 
-/// 현재 연락 상태 선택지
 class ContactStatusOption {
   final String id;
   final String label;
@@ -344,11 +851,10 @@ const List<ContactStatusOption> contactStatusOptions = [
   ContactStatusOption(id: 'stillMeeting', label: '아직 만남'),
 ];
 
-/// MBTI 선택지
 const List<String> mbtiOptions = [
   'ISTJ', 'ISFJ', 'INFJ', 'INTJ',
   'ISTP', 'ISFP', 'INFP', 'INTP',
   'ESTP', 'ESFP', 'ENFP', 'ENTP',
   'ESTJ', 'ESFJ', 'ENFJ', 'ENTJ',
-  'unknown', // 모름
+  'unknown',
 ];

@@ -13,6 +13,7 @@ import '../../../../../core/services/location_manager.dart';
 import '../../../../../core/utils/logger.dart';
 import '../../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../../core/utils/subscription_snackbar.dart';
+import '../../../../../core/widgets/today_result_label.dart';
 import '../../../../../presentation/providers/auth_provider.dart';
 import '../../../../../presentation/providers/ad_provider.dart';
 import '../../../../../presentation/providers/token_provider.dart';
@@ -354,12 +355,19 @@ class _LottoFortunePageState extends ConsumerState<LottoFortunePage> {
       children: [
         SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-          child: LottoResultContainer(
-            result: _result!,
-            isPremiumUnlocked: _isPremiumUnlocked || isPremium,
-            onUnlockPressed:
-                (!_isPremiumUnlocked && !isPremium) ? _showAdAndUnlock : null,
-            currentLocationName: _currentLocationName,
+          child: Column(
+            children: [
+              // 오늘 날짜 라벨 + 재방문 유도
+              const TodayResultLabel(showRevisitHint: true),
+              const SizedBox(height: 16),
+              LottoResultContainer(
+                result: _result!,
+                isPremiumUnlocked: _isPremiumUnlocked || isPremium,
+                onUnlockPressed:
+                    (!_isPremiumUnlocked && !isPremium) ? _showAdAndUnlock : null,
+                currentLocationName: _currentLocationName,
+              ),
+            ],
           ),
         ),
         // 광고 보고 잠금 해제 버튼 (프리미엄이 아니고 아직 해제 안 했을 때)

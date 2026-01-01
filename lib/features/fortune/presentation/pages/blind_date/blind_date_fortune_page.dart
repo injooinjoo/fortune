@@ -43,6 +43,7 @@ import 'widgets/blind_date_dos_donts.dart';
 import 'widgets/blind_date_partner_info.dart';
 import 'widgets/blind_date_photo_analysis.dart';
 import 'widgets/blind_date_face_analysis.dart';
+import '../../../../../core/widgets/today_result_label.dart';
 
 class BlindDateFortunePage extends ConsumerStatefulWidget {
   const BlindDateFortunePage({super.key});
@@ -93,6 +94,9 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   final _chatContentController = TextEditingController();
   String? _chatPlatform;
 
+  // Instagram Analysis
+  final _instagramController = TextEditingController();
+
   // User info form state
   final _nameController = TextEditingController();
   DateTime? _birthDate;
@@ -141,6 +145,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   void dispose() {
     _nameController.dispose();
     _chatContentController.dispose();
+    _instagramController.dispose();
     super.dispose();
   }
 
@@ -288,17 +293,23 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       final realPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
       final isPremium = debugPremium || realPremium;
 
-      // Analysis Type 결정 (상대 사진 + 대화 기반)
+      // Analysis Type 결정 (Instagram/상대 사진 + 대화 기반)
       String analysisType = 'basic';
       final hasPhotos = partnerEncodedPhotos?.isNotEmpty ?? false;
+      final hasInstagramId = _instagramController.text.trim().isNotEmpty;
+      final hasImageSource = hasPhotos || hasInstagramId; // Instagram 또는 사진
       final hasChat = _chatContentController.text.isNotEmpty;
-      if (hasChat && hasPhotos) {
+      if (hasChat && hasImageSource) {
         analysisType = 'comprehensive';
-      } else if (hasPhotos) {
+      } else if (hasImageSource) {
         analysisType = 'photos';
       } else if (hasChat) {
         analysisType = 'chat';
       }
+
+      // Instagram 아이디가 있으면 사진 대신 사용
+      final instagramUsername = _instagramController.text.trim();
+      final hasInstagram = instagramUsername.isNotEmpty;
 
       final inputConditions = {
         'name': params['name'],
@@ -317,7 +328,8 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
         'past_experience': params['pastExperience'],
         'is_first_blind_date': params['isFirstBlindDate'],
         'analysis_type': analysisType,
-        'partner_photos': partnerEncodedPhotos,
+        'partner_photos': hasInstagram ? null : partnerEncodedPhotos, // Instagram 있으면 사진 무시
+        'instagram_username': hasInstagram ? instagramUsername : null,
         'chat_content': _chatContentController.text.isEmpty
             ? null
             : _chatContentController.text,
@@ -359,6 +371,14 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
         _isLoading = false;
         _currentTypingSection = 0;  // 타이핑 섹션 리셋
       });
+
+      // Instagram 에러 처리 (비공개 계정 등)
+      final instagramError = fortuneResult.data['instagramError'] as String?;
+      if (instagramError != null && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Toast.warning(context, '인스타그램: $instagramError\n직접 사진을 업로드하면 더 정확한 분석이 가능해요');
+        });
+      }
 
       // 소개팅 운세 결과 공개 햅틱 (하트비트 + 점수)
       final haptic = ref.read(fortuneHapticServiceProvider);
@@ -453,7 +473,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
           _buildUserInfoForm(),
           const SizedBox(height: 16),
 
-          // 2. 상대 정보 (선택) - 사진 + 대화 통합
+          // 2. 상대 정보 (선택) - Instagram + 사진 + 대화 통합
           BlindDatePartnerInfo(
             partnerPhotos: _partnerPhotos,
             onPartnerPhotosSelected: (photos) =>
@@ -462,6 +482,8 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
             chatPlatform: _chatPlatform,
             onPlatformChanged: (platform) =>
                 setState(() => _chatPlatform = platform),
+            instagramController: _instagramController,
+            hasInstagramInput: _instagramController.text.trim().isNotEmpty,
           ),
           const SizedBox(height: 16),
 
@@ -767,6 +789,10 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
           padding: const EdgeInsets.all(DSSpacing.md),
           child: Column(
             children: [
+              // 오늘 날짜 라벨 + 재방문 유도
+              const TodayResultLabel(showRevisitHint: true),
+              const SizedBox(height: DSSpacing.md),
+
               // 관상 분석 섹션 (최상단, 블러 처리)
               if (_faceAnalysisData != null) ...[
                 UnifiedBlurWrapper(

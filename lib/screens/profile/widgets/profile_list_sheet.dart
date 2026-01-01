@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/typography_unified.dart';
 import '../../../core/theme/app_theme/fortune_theme_extension.dart';
@@ -204,7 +205,7 @@ class ProfileListSheet extends ConsumerWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: 수정 페이지로 이동
+                context.push('/profile/edit');
               },
             ),
             ListTile(

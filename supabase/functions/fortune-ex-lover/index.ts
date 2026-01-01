@@ -56,19 +56,47 @@ interface ExLoverFortuneRequest {
   ex_name?: string
   ex_mbti?: string
   ex_birth_date?: string
-  // 관계 정보
-  relationship_duration: string
-  time_since_breakup: string
+
+  // ✅ Step 1: 상담 목표 (가치 제안 선택) - NEW
+  primaryGoal: 'healing' | 'reunion_strategy' | 'read_their_mind' | 'new_start'
+
+  // ✅ Step 2: 이별 시점 - UPDATED
+  time_since_breakup: string // very_recent, recent, 1to3months, 3to6months, 6to12months, over_year
   breakup_initiator: string // me, them, mutual
+
+  // ✅ Step 3: 관계 깊이 - NEW
+  relationshipDepth: 'casual' | 'moderate' | 'deep' | 'very_deep'
+
+  // ✅ Step 4: 이별 핵심 이유 - NEW
+  coreReason: 'values' | 'communication' | 'trust' | 'cheating' | 'distance' | 'family' | 'feelings_changed' | 'personal_issues' | 'unknown'
+
+  // ✅ Step 5: 상세 이야기 (음성/텍스트)
+  breakup_detail?: string
+
+  // ✅ Step 6: 현재 상태 (복수 선택) - NEW
+  currentState: string[] // cant_sleep, checking_sns, crying, angry, regret, miss_them, relieved, confused, moving_on
+
+  // ✅ Step 7: 연락 상태
   contact_status: string // blocked, noContact, sometimes, often, stillMeeting
-  // 이별 상세
+
+  // ✅ Step 8: 목표별 심화 질문 - NEW
+  goalSpecific?: {
+    // healing: 가장 힘든 순간
+    hardestMoment?: 'morning' | 'night' | 'places' | 'alone'
+    // reunion: 달라질 것
+    whatWillChange?: 'i_changed' | 'they_changed' | 'situation_changed' | 'unsure'
+    // read_mind: 상대 특징
+    exCharacteristics?: string
+    // new_start: 새 연애에서 중요한 것
+    newRelationshipPriority?: 'trust_communication' | 'emotional_stability' | 'similar_values' | 'excitement'
+  }
+
+  // 기존 필드 (하위 호환성)
+  relationship_duration?: string
   breakup_reason?: string
-  breakup_detail?: string // STT/타이핑으로 입력한 상세 이유
-  // 감정 정보
-  current_emotion: string // miss, anger, sadness, relief, acceptance
-  main_curiosity: string // theirFeelings, reunionChance, newLove, healing
-  // 추가 정보
-  chat_history?: string // 카톡/대화 내용
+  current_emotion?: string
+  main_curiosity?: string
+  chat_history?: string
   isPremium?: boolean
 }
 
@@ -136,6 +164,142 @@ function getMainCuriosityKorean(curiosity: string): string {
     'healing': '치유 방법 (어떻게 마음을 치유할까?)',
   }
   return map[curiosity] || curiosity
+}
+
+// ✅ NEW: 상담 목표 (가치 제안) 한글 변환
+function getPrimaryGoalKorean(goal: string): string {
+  const map: Record<string, string> = {
+    'healing': '감정 정리 + 힐링 (클로저, 마음 치유)',
+    'reunion_strategy': '재회 전략 가이드 (액션, 타이밍, 방법)',
+    'read_their_mind': '상대방 마음 읽기 (그 사람 감정 분석)',
+    'new_start': '새 출발 준비도 확인 (성장, 새 인연 시기)',
+  }
+  return map[goal] || goal
+}
+
+// ✅ NEW: 관계 깊이 한글 변환
+function getRelationshipDepthKorean(depth: string): string {
+  const map: Record<string, string> = {
+    'casual': '가벼운 연애 (몇 달 정도, 썸 단계)',
+    'moderate': '보통 관계 (1년 미만, 서로 알아가는 중)',
+    'deep': '진지한 관계 (1년 이상, 결혼 이야기 나옴)',
+    'very_deep': '매우 깊은 관계 (동거/약혼, 인생의 일부)',
+  }
+  return map[depth] || depth
+}
+
+// ✅ NEW: 이별 핵심 이유 한글 변환
+function getCoreReasonKorean(reason: string): string {
+  const map: Record<string, string> = {
+    'values': '가치관/미래 계획 불일치',
+    'communication': '소통 문제/잦은 싸움',
+    'trust': '신뢰 문제 (거짓말/의심)',
+    'cheating': '외도/바람',
+    'distance': '거리/시간 문제 (장거리, 바쁜 일정)',
+    'family': '가족 반대/외부 압력',
+    'feelings_changed': '감정이 식음 (권태기, 마음 변화)',
+    'personal_issues': '개인적 문제 (직장/건강/학업)',
+    'unknown': '잘 모르겠음 (이유를 제대로 듣지 못함)',
+  }
+  return map[reason] || reason
+}
+
+// ✅ NEW: 현재 상태 한글 변환 (복수)
+function getCurrentStateKorean(states: string[]): string {
+  const map: Record<string, string> = {
+    'cant_sleep': '😴 잠을 못 자',
+    'checking_sns': '📱 SNS 계속 확인해',
+    'crying': '😢 자주 울어',
+    'angry': '😤 화가 나',
+    'regret': '😔 후회돼',
+    'miss_them': '💙 너무 보고싶어',
+    'relieved': '🕊️ 해방감이 느껴져',
+    'confused': '🌀 내 감정을 모르겠어',
+    'moving_on': '🌱 극복하고 있어',
+  }
+  return states.map(s => map[s] || s).join(', ')
+}
+
+// ✅ NEW: 이별 시점 상세 한글 변환
+function getBreakupTimeDetailKorean(time: string): string {
+  const map: Record<string, string> = {
+    'very_recent': '1주일 이내 (아주 최근)',
+    'recent': '1개월 이내',
+    '1to3months': '1-3개월 전',
+    '3to6months': '3-6개월 전',
+    '6to12months': '6개월-1년 전',
+    'over_year': '1년 이상',
+  }
+  return map[time] || time
+}
+
+// ✅ NEW: 목표별 심화 질문 한글 변환
+function getGoalSpecificKorean(goalSpecific: any, primaryGoal: string): string {
+  if (!goalSpecific) return ''
+
+  switch (primaryGoal) {
+    case 'healing':
+      const momentMap: Record<string, string> = {
+        'morning': '아침에 일어날 때',
+        'night': '밤에 잠들기 전',
+        'places': '우리 갔던 장소 볼 때',
+        'alone': '혼자 있을 때',
+      }
+      return `가장 힘든 순간: ${momentMap[goalSpecific.hardestMoment] || goalSpecific.hardestMoment || '미입력'}`
+
+    case 'reunion_strategy':
+      const changeMap: Record<string, string> = {
+        'i_changed': '내가 변했어',
+        'they_changed': '상대가 변했을 것 같아',
+        'situation_changed': '상황이 달라졌어',
+        'unsure': '잘 모르겠어',
+      }
+      return `재회하면 달라질 것: ${changeMap[goalSpecific.whatWillChange] || goalSpecific.whatWillChange || '미입력'}`
+
+    case 'read_their_mind':
+      return `상대방 특징/MBTI: ${goalSpecific.exCharacteristics || '미입력'}`
+
+    case 'new_start':
+      const priorityMap: Record<string, string> = {
+        'trust_communication': '신뢰와 소통',
+        'emotional_stability': '감정적 안정',
+        'similar_values': '비슷한 가치관',
+        'excitement': '설렘과 열정',
+      }
+      return `새 연애에서 중요한 것: ${priorityMap[goalSpecific.newRelationshipPriority] || goalSpecific.newRelationshipPriority || '미입력'}`
+
+    default:
+      return ''
+  }
+}
+
+// ✅ NEW: 재회 가능성 현실적 최대값 계산
+function calculateReunionCap(coreReason: string, contact_status: string, time_since_breakup: string): number {
+  let maxCap = 100
+
+  // 이별 이유별 최대값
+  switch (coreReason) {
+    case 'cheating': maxCap = Math.min(maxCap, 20); break  // 외도: 최대 20%
+    case 'trust': maxCap = Math.min(maxCap, 35); break      // 신뢰 문제: 최대 35%
+    case 'feelings_changed': maxCap = Math.min(maxCap, 35); break // 감정 식음: 최대 35%
+    case 'values': maxCap = Math.min(maxCap, 40); break     // 가치관 불일치: 최대 40%
+    case 'distance': maxCap = Math.min(maxCap, 60); break   // 거리 문제: 최대 60%
+    case 'communication': maxCap = Math.min(maxCap, 55); break // 소통 문제: 최대 55%
+  }
+
+  // 연락 상태별 최대값
+  switch (contact_status) {
+    case 'blocked': maxCap = Math.min(maxCap, 25); break    // 차단: 최대 25%
+    case 'noContact': maxCap = Math.min(maxCap, 40); break  // 무연락: 최대 40%
+  }
+
+  // 이별 기간별 최대값
+  switch (time_since_breakup) {
+    case 'over_year': maxCap = Math.min(maxCap, 25); break  // 1년 이상: 최대 25%
+    case '6to12months': maxCap = Math.min(maxCap, 35); break
+  }
+
+  return maxCap
 }
 
 /**
@@ -246,35 +410,60 @@ serve(async (req) => {
       name = '',
       ex_name,
       ex_mbti,
-      relationship_duration = '',
+      // ✅ v2: 새 필드들
+      primaryGoal = 'healing',
       time_since_breakup = '',
       breakup_initiator = '',
-      contact_status = '',
-      breakup_reason,
+      relationshipDepth = 'moderate',
+      coreReason = 'unknown',
       breakup_detail,
-      current_emotion = '',
-      main_curiosity = '',
+      currentState = [],
+      contact_status = '',
+      goalSpecific,
+      // 기존 필드 (하위 호환성)
+      relationship_duration,
+      current_emotion,
+      main_curiosity,
       chat_history,
       isPremium = false
     } = requestData
 
     console.log('💎 [ExLover] Premium 상태:', isPremium)
+    console.log('🎯 [ExLover] 상담 목표:', primaryGoal)
 
-    // 필수 필드 검증
-    if (!name || !relationship_duration || !breakup_initiator || !contact_status || !current_emotion || !main_curiosity) {
-      throw new Error('필수 정보를 입력해주세요.')
+    // 필수 필드 검증 (v2)
+    if (!name) {
+      throw new Error('이름을 입력해주세요.')
+    }
+    if (!primaryGoal) {
+      throw new Error('상담 목표를 선택해주세요.')
+    }
+    if (!time_since_breakup) {
+      throw new Error('이별 시점을 선택해주세요.')
+    }
+    if (!breakup_initiator) {
+      throw new Error('이별 통보자를 선택해주세요.')
+    }
+    if (!contact_status) {
+      throw new Error('현재 연락 상태를 선택해주세요.')
     }
 
-    // breakup_detail이 없으면 에러
+    // breakup_detail이 없으면 에러 (단, 선택적으로 변경 가능)
     if (!breakup_detail || breakup_detail.trim() === '') {
-      throw new Error('이별 이유를 상세히 입력해주세요.')
+      throw new Error('상세 이야기를 입력해주세요.')
     }
 
-    console.log('Ex-lover fortune request:', { name, relationship_duration, breakup_initiator })
+    console.log('Ex-lover fortune request:', {
+      name,
+      primaryGoal,
+      coreReason,
+      contact_status,
+      time_since_breakup
+    })
 
-    // 캐시 키 생성 (상세 내용 제외 - 재사용 가능하게)
-    const hash = await createHash(`${name}_${current_emotion}_${time_since_breakup}_${main_curiosity}_${breakup_initiator}_${contact_status}`)
-    const cacheKey = `ex_lover_fortune_${hash}`
+    // 캐시 키 생성 (v2 - 목표 + 핵심 요소 기반)
+    const hash = await createHash(`${name}_${primaryGoal}_${coreReason}_${time_since_breakup}_${breakup_initiator}_${contact_status}_${relationshipDepth}`)
+    const cacheKey = `ex_lover_fortune_v2_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')
@@ -292,91 +481,130 @@ serve(async (req) => {
       // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
       const llm = await LLMFactory.createFromConfigAsync('ex-lover')
 
-      // ✅ 강화된 시스템 프롬프트 (전문가 페르소나 + 분석 프레임워크)
-      const systemPrompt = `당신은 25년 경력의 연애 심리 상담 전문가이자 동양 철학 기반 인연 분석가입니다.
-심리학 석사 학위와 사주명리학 정통 자격증을 보유하고 있으며, 수천 쌍의 연인 관계를 분석하고 상담해온 경험이 있습니다.
+      // ✅ "솔직한 조언자" 시스템 프롬프트 (v2 - 목표 기반 맞춤형)
+      const systemPrompt = `당신은 25년 경력의 연애 상담 전문가입니다.
+"솔직한 친구 같은 조언자" 페르소나로 답변합니다. 듣기 좋은 말보다 진짜 도움이 되는 말을 합니다.
 
-# 전문 분야
-- 연애 심리학 및 애착 이론 (Attachment Theory)
-- 사주명리학 기반 인연 분석 (삼합/육합/천간합/지지합 이론)
-- 이별 후 감정 치유 프로그램 개발
-- 재회 상담 및 관계 회복 코칭
+# 핵심 원칙
 
-# 분석 철학
-1. **균형성**: 재회를 무조건 권유하거나 포기를 강요하지 않고 객관적 분석 제공
-2. **공감**: 이별의 아픔에 깊이 공감하며 따뜻한 위로 전달
-3. **실용성**: 즉시 실천 가능한 구체적 조언
-4. **전문성**: 심리학 + 동양철학 용어를 적절히 혼합하되 쉽게 풀어 설명
-5. **맞춤형**: 사용자가 제공한 상세 정보(이별 이유, 대화 내용 등)를 적극 반영
+## 1. 솔직함 (가장 중요)
+- "솔직히 말하면..." / "냉정하게 보면..." / "현실적으로..." 표현 적극 사용
+- 재회 가능성이 낮으면 솔직히 말함. 단, 이유와 대안을 함께 제시
+- 모호한 예측 절대 금지: "때가 되면 알게 됩니다" → "최소 3개월은 연락하지 마세요. 그 이유는..."
 
-# 출력 형식 (반드시 JSON 형식으로)
+## 2. 목표 중심 맞춤 (primaryGoal에 따라 초점 조정)
+- healing (감정 정리): 감정 치유, 자기 돌봄, 클로저에 집중. 재회 가능성은 간략히만
+- reunion_strategy (재회 전략): 재회 가능성, 타이밍, 구체적 방법, 절대 하면 안 되는 것에 집중
+- read_their_mind (상대방 마음): 상대방 심리 분석, "그 사람도 나를 생각할까?" 에 집중
+- new_start (새 출발): 준비도 점수, 미해결 감정, 새 인연 시기, 성장 포인트에 집중
+
+## 3. 재회 가능성 현실적 기준 (reunionCap 참고, 절대 초과 금지!)
+- 외도로 헤어진 경우: 최대 20%
+- 상대가 차단한 경우: 최대 25%
+- 1년 이상 무연락: 최대 25%
+- 신뢰 문제/감정 식음: 최대 35%
+- 가치관 불일치: 최대 40%
+- 소통 문제: 최대 55%
+- 거리/상황 문제 + 합의 이별: 최대 60-70%
+
+## 4. "절대 하면 안 되는 것" 반드시 포함
+- 연락 폭탄 (여러 번 연속 메시지)
+- SNS 스토킹 & 간접 어필 (의미심장한 스토리)
+- 술 먹고 연락
+- 공동 지인 통한 압박
+- "바뀔게" 빈말 (구체적 변화 없이)
+
+# JSON 출력 형식
+
 {
-  "title": "감성적이고 희망적인 제목 (예: 'OOO님, 새로운 인연의 문이 열립니다')",
-  "score": 70-95 사이 정수 (전반적인 인연 점수),
-  "overall_fortune": "전반적인 운세 분석 (100자 이내, 핵심만 간결하게)",
-  "relationship_analysis": {
-    "energy_compatibility": "두 사람의 에너지 궁합 분석 (천간 상성 기반, 100자 이상)",
-    "meeting_meaning": "만남의 의미와 성장 포인트 (100자 이상)",
-    "karma_interpretation": "인연의 깊이와 카르마적 해석 (100자 이상)"
+  "title": "솔직하고 공감적인 제목 (예: '냉정하게 말해줄게요, OOO님')",
+  "score": 50-90 사이 정수 (전반적 상황 점수, 현실적으로),
+
+  "hardTruth": {
+    "headline": "냉정하게 말하면... (핵심 진단 한 문장, 50자 이내)",
+    "diagnosis": "현재 상황에 대한 솔직한 진단 (150자 이내)",
+    "realityCheck": ["현실 체크 포인트 3가지 (각 50자 이내)"],
+    "mostImportantAdvice": "가장 중요한 조언 1가지 (100자 이내)"
   },
-  "breakup_analysis": {
-    "type": "이별 유형 (갈등형/소원형/외부요인형/성장통형 중 택1)",
-    "type_description": "이별 유형에 대한 상세 설명 (100자 이상)",
-    "pattern": "관계에서 나타난 패턴과 반복 가능성 (100자 이상)",
-    "hidden_emotions": "숨겨진 감정과 미해결 과제 분석 (100자 이상)"
+
+  "reunionAssessment": {
+    "score": 0-reunionCap 사이 정수 (재회 확률, 현실적으로),
+    "keyFactors": ["재회 가능성에 영향을 주는 핵심 요인 3가지"],
+    "timing": "적절한 시기와 조건 (구체적, 예: '최소 3개월 후, 그것도 ~조건이 충족되면')",
+    "approach": "접근 방법 (재회 목표인 경우 상세히, 아니면 간략히)",
+    "neverDo": ["절대 하면 안 되는 것 3가지 (이유 포함)"]
   },
-  "reunion_possibility": {
-    "score": 0-100 사이 정수 (재회 확률),
-    "analysis": "재회 가능성에 대한 상세 분석 (150자 이상)",
-    "favorable_timing": "재회에 유리한 시기 (구체적 기간, 예: '3개월 후', '내년 봄')",
-    "conditions": ["재회에 필요한 조건 3가지"],
-    "recommendation": "재회 vs 새 출발 추천과 이유 (100자 이상)"
+
+  "emotionalPrescription": {
+    "currentStateAnalysis": "현재 감정 상태 분석 (100자 이내)",
+    "healingFocus": "치유에 집중해야 할 포인트 (100자 이내)",
+    "weeklyActions": ["이번 주 실천할 것 3가지"],
+    "monthlyMilestone": "한 달 후 목표 상태"
   },
-  "healing_roadmap": {
-    "phase1": {
-      "period": "수용기 (현재~2주)",
-      "goal": "감정 인정하기",
-      "actions": ["구체적 실천 방법 3가지"]
-    },
-    "phase2": {
-      "period": "정리기 (2주~1개월)",
-      "goal": "관계 복기와 배움",
-      "actions": ["구체적 실천 방법 3가지"]
-    },
-    "phase3": {
-      "period": "회복기 (1개월~3개월)",
-      "goal": "새로운 나 발견",
-      "actions": ["구체적 실천 방법 3가지"]
-    }
+
+  "theirPerspective": {
+    "likelyThoughts": "상대방이 지금 느끼고 있을 감정 추측 (100자 이내)",
+    "doTheyThinkOfYou": "그 사람도 나를 생각할까? 솔직한 분석 (100자 이내)",
+    "whatTheyNeed": "상대방에게 필요한 것 (시간/공간/변화 등)"
   },
-  "new_love_forecast": {
-    "timing": "새 인연을 만날 가능성 높은 시기 (구체적)",
-    "ideal_type": "어울리는 이상형 특성 (외모/성격/직업 포함, 100자 이상)",
-    "meeting_context": "만남의 장소와 계기 예측 (구체적, 50자 이상)"
+
+  "strategicAdvice": {
+    "shortTerm": "1주일 내 해야 할 것 (구체적 액션 3가지)",
+    "midTerm": "1개월 내 목표 (구체적)",
+    "longTerm": "3개월 후 체크포인트"
   },
-  "practical_advice": {
-    "do_now": ["당장 해야 할 것 3가지 (구체적이고 실천 가능한)"],
-    "never_do": ["절대 하지 말아야 할 것 3가지 (구체적 이유 포함)"],
-    "monthly_checklist": ["한 달 후 체크리스트 항목 3가지"]
+
+  "newBeginning": {
+    "readinessScore": 0-100 사이 정수 (새 출발 준비도),
+    "unresolvedIssues": ["미해결 감정/문제 목록"],
+    "growthPoints": ["이 경험에서 얻은 성장 포인트"],
+    "newLoveTiming": "새 인연 가능 시기 (조건부로 구체적 제시)"
   },
-  "comfort_message": "현재 감정에 대한 공감과 희망적 전망 (100자 이내)"
+
+  "milestones": {
+    "oneWeek": ["1주일 후 체크 항목 2가지"],
+    "oneMonth": ["1개월 후 체크 항목 2가지"],
+    "threeMonths": ["3개월 후 체크 항목 2가지"]
+  },
+
+  "closingMessage": {
+    "empathy": "공감 메시지 (50자 이내, 진심으로)",
+    "todayAction": "오늘 당장 할 것 1가지 (구체적)"
+  }
 }
 
-# 분량 요구사항 (카드 UI 스크롤 방지)
-- 각 항목: 반드시 100자 이내
-- overall_fortune, comfort_message: 각각 100자 이내 (핵심만)
-- 간결하고 핵심적인 내용만 작성
+# 목표별 섹션 우선순위 (응답 시 이 순서로 강조)
+- healing: hardTruth → emotionalPrescription → theirPerspective → reunionAssessment (간략)
+- reunion_strategy: hardTruth → reunionAssessment → strategicAdvice → emotionalPrescription
+- read_their_mind: hardTruth → theirPerspective → reunionAssessment → emotionalPrescription
+- new_start: hardTruth → newBeginning → emotionalPrescription → theirPerspective
+
+# 분량 요구사항
+- hardTruth.headline: 50자 이내 (핵심만)
+- 각 배열 항목: 50자 이내
+- 긴 분석 필드: 150자 이내
+- 전체적으로 읽기 쉽게 핵심만
 
 # 주의사항
-- 사용자 정보를 면밀히 분석하여 맞춤형 조언 제공
-- 특히 이별 이유 상세(breakup_detail)와 대화 내용(chat_history)을 적극 분석하여 구체적 조언 제공
-- 모호한 점술 표현 금지 (예: "때가 되면 알게 됩니다" → 구체적 시기와 조건 명시)
-- 부정적 단정 금지 (예: "재회는 불가능합니다" → "현재 조건에서는 어려우나, ~하면 가능성이 열립니다")
-- 반드시 유효한 JSON 형식으로 출력`
+- reunionCap 값이 주어지면 reunionAssessment.score는 그 값을 절대 초과하지 않음
+- 사용자 정보(특히 breakup_detail, currentState, goalSpecific)를 면밀히 분석
+- 반드시 유효한 JSON 형식으로 출력
+- 빈 필드 없이 모든 필드 채움`
 
-      // 사용자 프롬프트 생성
+      // ✅ 재회 가능성 최대값 계산
+      const reunionCap = calculateReunionCap(coreReason, contact_status, time_since_breakup)
+      console.log(`📊 [ExLover] reunionCap 계산: ${reunionCap}% (coreReason: ${coreReason}, contact: ${contact_status}, time: ${time_since_breakup})`)
+
+      // 사용자 프롬프트 생성 (v2 - 8단계 설문 기반)
       let userPromptParts = [
         `# 상담 요청 정보`,
+        ``,
+        `## 🎯 상담 목표 (가장 중요!)`,
+        `**${getPrimaryGoalKorean(primaryGoal)}**`,
+        ``,
+        `## 📊 재회 가능성 최대값 (CRITICAL: 이 값을 절대 초과하지 마세요!)`,
+        `**reunionCap: ${reunionCap}%**`,
+        `(이 사용자의 상황에서 재회 가능성은 아무리 높아도 ${reunionCap}%를 넘을 수 없습니다)`,
         ``,
         `## 사용자 정보`,
         `- 이름: ${name}`,
@@ -385,20 +613,23 @@ serve(async (req) => {
         `- 이름/닉네임: ${ex_name || '미입력'}`,
         `- MBTI: ${ex_mbti && ex_mbti !== 'unknown' ? ex_mbti : '모름'}`,
         ``,
-        `## 관계 정보`,
-        `- 교제 기간: ${getRelationshipDurationKorean(relationship_duration)}`,
-        `- 이별 후 경과: ${getTimeSinceBreakupKorean(time_since_breakup)}`,
+        `## 이별 정보`,
+        `- 이별 시점: ${getBreakupTimeDetailKorean(time_since_breakup)}`,
         `- 이별 통보자: ${getBreakupInitiatorKorean(breakup_initiator)}`,
-        `- 현재 연락 상태: ${getContactStatusKorean(contact_status)}`,
+        `- 관계 깊이: ${getRelationshipDepthKorean(relationshipDepth)}`,
+        `- 핵심 이별 이유: ${getCoreReasonKorean(coreReason)}`,
         ``,
-        `## 이별 이유`,
-        `${breakup_detail}`,
+        `## 상세 이야기 (음성/텍스트로 입력)`,
+        `${breakup_detail || '(미입력)'}`,
         ``,
-        `## 현재 감정 상태`,
-        `${getCurrentEmotionKorean(current_emotion)}`,
+        `## 현재 상태 (복수 선택)`,
+        `${getCurrentStateKorean(currentState)}`,
         ``,
-        `## 가장 궁금한 것`,
-        `${getMainCuriosityKorean(main_curiosity)}`,
+        `## 현재 연락 상태`,
+        `${getContactStatusKorean(contact_status)}`,
+        ``,
+        `## 목표별 심화 정보`,
+        `${getGoalSpecificKorean(goalSpecific, primaryGoal)}`,
       ]
 
       // 대화 내용이 있으면 추가
@@ -410,15 +641,29 @@ serve(async (req) => {
           chat_history,
           `\`\`\``,
           ``,
-          `(위 대화 내용을 분석하여 두 사람의 관계 패턴, 숨겨진 감정, 재회 가능성 등을 파악해주세요)`
+          `(위 대화 내용을 분석하여 두 사람의 관계 패턴, 숨겨진 감정을 파악해주세요)`
         )
+      }
+
+      // 목표별 강조 포인트
+      const goalEmphasis: Record<string, string> = {
+        'healing': `감정 치유와 클로저에 집중해주세요. 재회 가능성은 간략히만 언급하고, emotionalPrescription을 가장 상세하게 작성해주세요.`,
+        'reunion_strategy': `재회 전략에 집중해주세요. reunionAssessment와 strategicAdvice를 가장 상세하게 작성하고, 절대 하면 안 되는 것(neverDo)을 반드시 포함해주세요.`,
+        'read_their_mind': `상대방 심리 분석에 집중해주세요. theirPerspective를 가장 상세하게 작성하고, "그 사람도 나를 생각할까?"에 대해 솔직하게 답해주세요.`,
+        'new_start': `새 출발 준비도에 집중해주세요. newBeginning을 가장 상세하게 작성하고, 미해결 감정과 성장 포인트를 분석해주세요.`,
       }
 
       userPromptParts.push(
         ``,
-        `위 정보를 바탕으로 전문적이고 상세한 전 애인 운세 분석을 JSON 형식으로 제공해주세요.`,
-        `특히 ${name}님의 상황에 맞는 구체적이고 실용적인 조언을 부탁드립니다.`,
-        `가장 궁금해하는 "${getMainCuriosityKorean(main_curiosity)}"에 대해 특히 자세히 분석해주세요.`
+        `---`,
+        ``,
+        `## 💡 요청사항`,
+        `1. 반드시 reunionAssessment.score는 ${reunionCap}% 이하로 설정하세요`,
+        `2. ${goalEmphasis[primaryGoal] || '사용자 상황에 맞는 맞춤 조언을 제공해주세요.'}`,
+        `3. hardTruth.headline은 "냉정하게 말하면..." 또는 "솔직히..." 로 시작하세요`,
+        `4. 모호한 표현 금지. 구체적인 기간과 조건을 명시하세요`,
+        ``,
+        `위 정보를 바탕으로 솔직한 조언자 페르소나로 분석 결과를 JSON 형식으로 제공해주세요.`
       )
 
       const userPrompt = userPromptParts.join('\n')
@@ -440,7 +685,7 @@ serve(async (req) => {
 
       console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
 
-      // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+      // ✅ LLM 사용량 로깅 (v2 - 새 필드 포함)
       await UsageLogger.log({
         fortuneType: 'ex-lover',
         provider: response.provider,
@@ -449,11 +694,14 @@ serve(async (req) => {
         metadata: {
           name,
           ex_name,
-          relationship_duration,
+          primaryGoal,
+          coreReason,
+          relationshipDepth,
           breakup_initiator,
           contact_status,
-          current_emotion,
-          main_curiosity,
+          time_since_breakup,
+          reunionCap,
+          currentStateCount: currentState.length,
           has_chat_history: !!chat_history,
           isPremium
         }
@@ -463,85 +711,126 @@ serve(async (req) => {
 
       const parsedResponse = JSON.parse(response.content)
 
-      // ✅ Blur 로직 적용 (프리미엄이 아니면 일부 섹션 블러 처리)
+      // ✅ v2 Blur 로직 (목표별 차등 적용)
       const isBlurred = !isPremium
+      // 무료: hardTruth.headline + reunionAssessment.score + closingMessage 만 공개
+      // 프리미엄: 전체 공개
       const blurredSections = isBlurred
-        ? ['relationship_analysis', 'breakup_analysis', 'reunion_possibility', 'healing_roadmap', 'new_love_forecast', 'practical_advice']
+        ? ['hardTruth.diagnosis', 'hardTruth.realityCheck', 'hardTruth.mostImportantAdvice',
+           'reunionAssessment.keyFactors', 'reunionAssessment.timing', 'reunionAssessment.approach', 'reunionAssessment.neverDo',
+           'emotionalPrescription', 'theirPerspective', 'strategicAdvice', 'newBeginning', 'milestones']
         : []
 
       // 재회 가능성 점수 추출 (이미지 프롬프트용)
-      const reunionScore = parsedResponse.reunion_possibility?.score ?? 50
+      const reunionScore = parsedResponse.reunionAssessment?.score ?? Math.min(50, reunionCap)
 
+      // ✅ v2 응답 데이터 구조
       fortuneData = {
-        // ✅ 표준화된 필드명: score, content, summary, advice
+        // 표준화된 필드 (하위 호환성)
         fortuneType: 'ex-lover',
-        score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
-        content: parsedResponse.overall_fortune || '이별은 끝이 아닌 새로운 시작입니다.',
-        summary: `재회 가능성 ${reunionScore}% - ${parsedResponse.title || '새로운 시작을 응원합니다'}`,
-        advice: parsedResponse.comfort_message || '지금의 아픔은 반드시 지나갑니다.',
-
-        // 기존 필드 유지 (하위 호환성)
-        title: parsedResponse.title || `${name}님, 새로운 시작을 응원합니다`,
         fortune_type: 'ex_lover',
+        score: parsedResponse.score || Math.floor(Math.random() * 20) + 60,
+        content: parsedResponse.hardTruth?.headline || '솔직한 조언을 드릴게요.',
+        summary: `재회 가능성 ${reunionScore}% - ${parsedResponse.title || '솔직한 조언자가 함께합니다'}`,
+        advice: parsedResponse.closingMessage?.todayAction || '오늘은 자신에게 집중하세요.',
+
+        // 메타 정보
+        title: parsedResponse.title || `${name}님, 솔직하게 말해줄게요`,
         name,
-        relationship_duration,
+        primaryGoal,
+        coreReason,
+        relationshipDepth,
         breakup_initiator,
         contact_status,
-        // ✅ 헤더 이미지 프롬프트 (감정 + 재회점수 + 궁금증 기반)
-        headerImagePrompt: generateReunionImagePrompt(current_emotion, reunionScore, main_curiosity),
-        // ✅ 무료: 공개 섹션
-        ex_score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
-        overall_fortune: parsedResponse.overall_fortune || '이별은 끝이 아닌 새로운 시작입니다.',
-        comfort_message: parsedResponse.comfort_message || '지금의 아픔은 반드시 지나갑니다.',
+        time_since_breakup,
+        reunionCap, // ✅ 재회 가능성 최대값 (프론트에서 활용 가능)
 
-        // 인연 분석
-        relationship_analysis: parsedResponse.relationship_analysis || {
-          energy_compatibility: '두 분의 에너지 분석이 진행 중입니다.',
-          meeting_meaning: '만남의 의미를 분석 중입니다.',
-          karma_interpretation: '인연의 깊이를 해석 중입니다.'
+        // ✅ 헤더 이미지 프롬프트 (목표 기반)
+        headerImagePrompt: generateReunionImagePrompt(
+          currentState.includes('miss_them') ? 'miss' :
+          currentState.includes('angry') ? 'anger' :
+          currentState.includes('crying') ? 'sadness' :
+          currentState.includes('relieved') ? 'relief' : 'acceptance',
+          reunionScore,
+          primaryGoal === 'healing' ? 'healing' :
+          primaryGoal === 'reunion_strategy' ? 'reunionChance' :
+          primaryGoal === 'read_their_mind' ? 'theirFeelings' : 'newLove'
+        ),
+
+        // ✅ v2 핵심 섹션: Hard Truth (항상 첫 번째)
+        hardTruth: parsedResponse.hardTruth || {
+          headline: '냉정하게 말하면, 지금은 정리가 필요한 시간이에요.',
+          diagnosis: '현재 상황을 분석 중입니다.',
+          realityCheck: ['현실 체크 포인트를 분석 중입니다.'],
+          mostImportantAdvice: '가장 중요한 조언을 준비 중입니다.'
         },
 
-        // 이별 분석
-        breakup_analysis: parsedResponse.breakup_analysis || {
-          type: '분석 중',
-          type_description: '이별 유형을 분석 중입니다.',
-          pattern: '관계 패턴을 분석 중입니다.',
-          hidden_emotions: '숨겨진 감정을 분석 중입니다.'
+        // ✅ v2 재회 평가 (현실적 기준)
+        reunionAssessment: {
+          ...parsedResponse.reunionAssessment,
+          score: Math.min(parsedResponse.reunionAssessment?.score ?? 50, reunionCap), // ✅ reunionCap 강제 적용
+          keyFactors: parsedResponse.reunionAssessment?.keyFactors || ['핵심 요인 분석 중'],
+          timing: parsedResponse.reunionAssessment?.timing || '적절한 시기 분석 중',
+          approach: parsedResponse.reunionAssessment?.approach || '접근 방법 분석 중',
+          neverDo: parsedResponse.reunionAssessment?.neverDo || ['연락 폭탄 금지', 'SNS 스토킹 금지', '술 먹고 연락 금지']
         },
 
-        // 재회 가능성
-        reunion_possibility: parsedResponse.reunion_possibility || {
-          score: 50,
-          analysis: '재회 가능성을 분석 중입니다.',
-          favorable_timing: '적절한 시기를 분석 중입니다.',
-          conditions: ['조건을 분석 중입니다.'],
-          recommendation: '추천 방향을 분석 중입니다.'
+        // ✅ v2 감정 처방
+        emotionalPrescription: parsedResponse.emotionalPrescription || {
+          currentStateAnalysis: '현재 감정 상태 분석 중',
+          healingFocus: '치유 포인트 분석 중',
+          weeklyActions: ['자기 돌봄에 집중하기'],
+          monthlyMilestone: '한 달 후 목표 설정 중'
         },
 
-        // 치유 로드맵
-        healing_roadmap: parsedResponse.healing_roadmap || {
-          phase1: { period: '수용기', goal: '감정 인정', actions: ['천천히 감정 정리하기'] },
-          phase2: { period: '정리기', goal: '관계 복기', actions: ['배움 찾기'] },
-          phase3: { period: '회복기', goal: '새로운 시작', actions: ['자기 성장'] }
+        // ✅ v2 상대방 관점
+        theirPerspective: parsedResponse.theirPerspective || {
+          likelyThoughts: '상대방 감정 추측 중',
+          doTheyThinkOfYou: '솔직한 분석을 준비 중입니다',
+          whatTheyNeed: '분석 중'
         },
 
-        // 새로운 인연 전망
-        new_love_forecast: parsedResponse.new_love_forecast || {
-          timing: '새 인연 시기를 분석 중입니다.',
-          ideal_type: '이상형을 분석 중입니다.',
-          meeting_context: '만남 계기를 분석 중입니다.'
+        // ✅ v2 전략적 조언
+        strategicAdvice: parsedResponse.strategicAdvice || {
+          shortTerm: '1주일 내 해야 할 것 분석 중',
+          midTerm: '1개월 내 목표 설정 중',
+          longTerm: '3개월 후 체크포인트 설정 중'
         },
 
-        // 실천 조언
-        practical_advice: parsedResponse.practical_advice || {
-          do_now: ['자기 돌봄에 집중하기'],
-          never_do: ['충동적 연락 금지'],
-          monthly_checklist: ['감정 일기 쓰기']
+        // ✅ v2 새 출발
+        newBeginning: parsedResponse.newBeginning || {
+          readinessScore: 50,
+          unresolvedIssues: ['미해결 감정 분석 중'],
+          growthPoints: ['성장 포인트 분석 중'],
+          newLoveTiming: '새 인연 시기 분석 중'
         },
+
+        // ✅ v2 마일스톤
+        milestones: parsedResponse.milestones || {
+          oneWeek: ['감정 일기 쓰기', '자기 돌봄 시간 갖기'],
+          oneMonth: ['새로운 취미 시작', '자기 성장 점검'],
+          threeMonths: ['관계 복기 완료', '미래 계획 세우기']
+        },
+
+        // ✅ v2 마무리 메시지
+        closingMessage: parsedResponse.closingMessage || {
+          empathy: '힘들지... 괜찮아질 거야.',
+          todayAction: '오늘은 좋아하는 음악 한 곡 들으며 쉬어요.'
+        },
+
+        // 하위 호환성: 기존 필드 매핑
+        reunion_possibility: {
+          score: Math.min(parsedResponse.reunionAssessment?.score ?? 50, reunionCap),
+          analysis: parsedResponse.hardTruth?.diagnosis || '',
+          favorable_timing: parsedResponse.reunionAssessment?.timing || '',
+          conditions: parsedResponse.reunionAssessment?.keyFactors || [],
+          recommendation: parsedResponse.hardTruth?.mostImportantAdvice || ''
+        },
+        comfort_message: parsedResponse.closingMessage?.empathy || '지금의 아픔은 반드시 지나갑니다.',
 
         timestamp: new Date().toISOString(),
-        isBlurred, // ✅ 블러 상태
-        blurredSections // ✅ 블러된 섹션 목록
+        isBlurred,
+        blurredSections
       }
 
       await supabase.from('fortune_cache').insert({

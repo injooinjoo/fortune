@@ -11,6 +11,7 @@ import 'package:fortune/core/widgets/unified_button.dart';
 import 'package:fortune/core/services/unified_fortune_service.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/core/utils/fortune_completion_helper.dart';
+import 'package:fortune/core/widgets/today_result_label.dart';
 import 'package:fortune/shared/components/toast.dart';
 import 'package:fortune/services/ad_service.dart';
 import 'package:fortune/core/utils/subscription_snackbar.dart';
@@ -605,8 +606,11 @@ class _MbtiFortunePageState extends ConsumerState<MbtiFortunePage> {
       ),
       child: Column(
         children: [
+          // 오늘 날짜 라벨 + 재방문 유도
+          const TodayResultLabel(showRevisitHint: true),
+          const SizedBox(height: 12),
           Text(
-            '오늘의 $_selectedMbti 운세',
+            '$_selectedMbti 운세',
             style: TextStyle(
               fontSize: FontConfig.labelMedium,
               fontWeight: FontWeight.w500,

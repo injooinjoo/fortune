@@ -54,7 +54,11 @@ class SmartImage extends StatelessWidget {
       fit: fit,
       color: color,
       colorBlendMode: colorBlendMode,
-      errorBuilder: (context, error, stackTrace) => errorWidget ?? _buildErrorWidget(),
+      errorBuilder: (context, error, stackTrace) {
+        debugPrint('🖼️ [SmartImage] ❌ Asset 로드 실패: $path');
+        debugPrint('🖼️ [SmartImage] Error: $error');
+        return errorWidget ?? _buildErrorWidget();
+      },
     );
   }
 

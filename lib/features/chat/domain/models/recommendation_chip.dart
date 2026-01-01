@@ -266,9 +266,9 @@ const List<RecommendationChip> defaultChips = [
   ),
   RecommendationChip(
     id: 'moving',
-    label: '이사/이직',
+    label: '이사',
     fortuneType: 'moving',
-    icon: Icons.home_work_outlined,
+    icon: Icons.home_outlined,
     color: Color(0xFF059669),
   ),
 

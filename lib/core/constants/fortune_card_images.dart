@@ -6,112 +6,122 @@ class FortuneCardImages {
   static const String basePath = 'assets/images/fortune_cards/';
 
   /// Default image mapping for fortune types
+  /// 모든 이미지를 민화(minhwa)로 통일 - fortune_cards 폴더에 에셋 없음
   static const Map<String, String> fortuneTypeImages = {
-    // Love & Relationship
-    'love': '${basePath}love_fortune.png',
-    'chemistry': '${basePath}chemistry_fortune.png',
-    'marriage': '${basePath}marriage_fortune.png',
-    'breakup': '${basePath}breakup_fortune.png',
-    'crush': '${basePath}crush_fortune.png',
-    'relationship': '${basePath}people_to_avoid_fortune.png',
-    'avoid-people': '${basePath}people_to_avoid_fortune.png',
+    // Love & Relationship - 연애/궁합 (원앙, 모란, 나비)
+    'love': 'assets/images/minhwa/minhwa_love_peony.webp',
+    'chemistry': 'assets/images/minhwa/minhwa_love_butterfly.webp',
+    'marriage': 'assets/images/minhwa/minhwa_love_mandarin.webp',
+    'breakup': 'assets/images/minhwa/minhwa_overall_moon.webp',
+    'crush': 'assets/images/minhwa/minhwa_love_magpie_bridge.webp',
+    'relationship': 'assets/images/minhwa/minhwa_love_butterfly.webp',
+    'avoid-people': 'assets/images/minhwa/minhwa_overall_tiger.webp',
     'compatibility': 'assets/images/minhwa/minhwa_love_mandarin.webp',
-    'blind-date': 'assets/images/minhwa/minhwa_love_mandarin.webp',
-    'ex-lover': '${basePath}ex_lover_fortune.png',
+    'blind-date': 'assets/images/minhwa/minhwa_love_butterfly.webp',
+    'ex-lover': 'assets/images/minhwa/minhwa_overall_moon.webp',
 
-    // Career & Money
-    'career': '${basePath}career_fortune.png',
-    'career_seeker': '${basePath}job_fortune.png',
-    'career_change': '${basePath}career_fortune.png',
-    'career_future': '${basePath}career_fortune.png',
-    'career_freelance': '${basePath}business_fortune.png',
-    'career_startup': '${basePath}business_fortune.png',
-    'career_crisis': '${basePath}career_fortune.png',
-    'job': '${basePath}job_fortune.png',
-    'business': '${basePath}business_fortune.png',
-    'study': '${basePath}exam_fortune.png',
-    'money': '${basePath}money_fortune.png',
-    'investment': '${basePath}investment_fortune.png',
+    // Career & Money - 직장/재물 (매, 잉어, 보물)
+    'career': 'assets/images/minhwa/minhwa_work_eagle.webp',
+    'career_seeker': 'assets/images/minhwa/minhwa_work_bamboo.webp',
+    'career_change': 'assets/images/minhwa/minhwa_work_waterfall.webp',
+    'career_future': 'assets/images/minhwa/minhwa_work_crane.webp',
+    'career_freelance': 'assets/images/minhwa/minhwa_work_bamboo.webp',
+    'career_startup': 'assets/images/minhwa/minhwa_work_eagle.webp',
+    'career_crisis': 'assets/images/minhwa/minhwa_work_waterfall.webp',
+    'job': 'assets/images/minhwa/minhwa_work_bamboo.webp',
+    'business': 'assets/images/minhwa/minhwa_money_carp.webp',
+    'study': 'assets/images/minhwa/minhwa_study_owl.webp',
+    'money': 'assets/images/minhwa/minhwa_money_treasure.webp',
+    'investment': 'assets/images/minhwa/minhwa_money_carp.webp',
 
-    // Traditional
-    'saju': '${basePath}traditional_fortune.png',
-    'zodiac': '${basePath}zodiac_fortune.png',
-    'constellation': '${basePath}constellation_fortune.png',
-    'tarot': '${basePath}tarot_fortune.png',
-    'dream': '${basePath}dream_fortune.png',
-    'traditional': '${basePath}traditional_fortune.png',
-    'physiognomy': '${basePath}physiognomy_fortune.png',
-    'face-reading': '${basePath}physiognomy_fortune.png',
-    'talisman': '${basePath}talisman_fortune.png',
+    // Traditional - 전통/사주 (사신도, 용호, 음양)
+    'saju': 'assets/images/minhwa/minhwa_saju_dragon.webp',
+    'zodiac': 'assets/images/minhwa/minhwa_saju_tiger_dragon.webp',
+    'constellation': 'assets/images/minhwa/minhwa_overall_moon.webp',
+    'tarot': 'assets/images/minhwa/minhwa_overall_moon.webp',
+    'dream': 'assets/images/minhwa/minhwa_overall_moon.webp',
+    'traditional': 'assets/images/minhwa/minhwa_saju_fourguardians.webp',
+    'physiognomy': 'assets/images/minhwa/minhwa_saju_yin_yang.webp',
+    'face-reading': 'assets/images/minhwa/minhwa_saju_yin_yang.webp',
+    'talisman': 'assets/images/minhwa/minhwa_overall_phoenix.webp',
 
-    // Daily & Personal
+    // Daily & Personal - 일상 (호랑이, 용, 학)
     'daily': 'assets/images/minhwa/minhwa_overall_tiger.webp',
     'yearly': 'assets/images/minhwa/minhwa_overall_dragon.webp',
     'new-year': 'assets/images/minhwa/minhwa_overall_sunrise.webp',
-    'time': 'assets/images/hanji_texture.png',
-    'health': '${basePath}health_sports_fortune.png',
-    'health_sports': '${basePath}health_sports_fortune.png',
-    'sports': '${basePath}health_sports_fortune.png',
-    'enhanced_sports': '${basePath}health_sports_fortune.png',
-    'travel': '${basePath}travel_fortune.png',
-    'moving': '${basePath}moving_fortune.png',
-    'naming': '${basePath}naming_fortune.png',
-    'personality': '${basePath}personality_fortune.png',
-    'talent': '${basePath}talent_fortune.png',
+    'time': 'assets/images/minhwa/minhwa_saju_yin_yang.webp',
+    'health': 'assets/images/minhwa/minhwa_health_crane_turtle.webp',
+    'health_sports': 'assets/images/minhwa/minhwa_health_deer.webp',
+    'sports': 'assets/images/minhwa/minhwa_health_deer.webp',
+    'enhanced_sports': 'assets/images/minhwa/minhwa_health_deer.webp',
+    'travel': 'assets/images/minhwa/minhwa_overall_turtle.webp',
+    'moving': 'assets/images/minhwa/minhwa_overall_sunrise.webp',
+    'naming': '${basePath}naming_fortune.png', // 유일하게 존재하는 에셋
+    'personality': 'assets/images/minhwa/minhwa_saju_yin_yang.webp',
+    'talent': 'assets/images/minhwa/minhwa_study_brush.webp',
 
-    // Interactive & Fun
-    'biorhythm': '${basePath}biorhythm_fortune.png',
-    'color': '${basePath}color_fortune.png',
-    'pet': '${basePath}pet_fortune.png',
-    'lottery': '${basePath}lottery_fortune.png',
-    'lucky_items': '${basePath}lucky_items_fortune.png',
+    // Interactive & Fun - 재미/행운 (봉황, 두꺼비, 달)
+    'biorhythm': 'assets/images/minhwa/minhwa_overall_moon.webp',
+    'color': 'assets/images/minhwa/minhwa_overall_phoenix.webp',
+    'pet': 'assets/images/minhwa/minhwa_health_deer.webp',
+    'lottery': 'assets/images/minhwa/minhwa_money_toad.webp',
+    'lucky_items': 'assets/images/minhwa/minhwa_saju_fourguardians.webp',
     'fortune-cookie': '${basePath}fortune_cookie_fortune.png',
-    'wish': '${basePath}wish_fulfillment_fortune.png',
+    'wish': 'assets/images/minhwa/minhwa_overall_dragon.webp',
 
-    // Family
-    'family': '${basePath}family_fortune.png',
+    // Family - 가족 (원앙)
+    'family': 'assets/images/minhwa/minhwa_love_mandarin.webp',
 
-    // Celebrity
-    'celebrity': '${basePath}celebrity_fortune.png',
+    // Celebrity - 연예인 (봉황)
+    'celebrity': 'assets/images/minhwa/minhwa_overall_phoenix.webp',
 
-    // History
-    'history': '${basePath}fortune_history_fortune.png',
+    // History - 히스토리 (사신도)
+    'history': 'assets/images/minhwa/minhwa_saju_fourguardians.webp',
 
-    // Default fallback
-    'default': '${basePath}default_fortune.png'};
+    // Default fallback - 기본 (호랑이)
+    'default': 'assets/images/minhwa/minhwa_overall_tiger.webp'
+  };
 
   /// Get image path for a fortune type
   static String getImagePath(String fortuneType) {
     return fortuneTypeImages[fortuneType] ?? fortuneTypeImages['default']!;
   }
 
-
   /// Category-based gradient overlays for better text visibility
   static Map<String, List<Color>> categoryGradients = {
     'love': [
       const Color(0x99EC4899).withValues(alpha: 0.7),
-      const Color(0x99F472B6).withValues(alpha: 0.4)],
+      const Color(0x99F472B6).withValues(alpha: 0.4)
+    ],
     'career': [
       const Color(0x996366F1).withValues(alpha: 0.7),
-      const Color(0x998B5CF6).withValues(alpha: 0.4)],
+      const Color(0x998B5CF6).withValues(alpha: 0.4)
+    ],
     'money': [
       const Color(0x9910B981).withValues(alpha: 0.7),
-      const Color(0x9984CC16).withValues(alpha: 0.4)],
+      const Color(0x9984CC16).withValues(alpha: 0.4)
+    ],
     'health': [
       const Color(0x99F59E0B).withValues(alpha: 0.7),
-      const Color(0x99FBBF24).withValues(alpha: 0.4)],
+      const Color(0x99FBBF24).withValues(alpha: 0.4)
+    ],
     'traditional': [
       const Color(0x99DC2626).withValues(alpha: 0.7),
-      const Color(0x99EF4444).withValues(alpha: 0.4)],
+      const Color(0x99EF4444).withValues(alpha: 0.4)
+    ],
     'lifestyle': [
       const Color(0x993B82F6).withValues(alpha: 0.7),
-      const Color(0x9960A5FA).withValues(alpha: 0.4)],
+      const Color(0x9960A5FA).withValues(alpha: 0.4)
+    ],
     'interactive': [
       const Color(0x998B5CF6).withValues(alpha: 0.7),
-      const Color(0x99A78BFA).withValues(alpha: 0.4)],
+      const Color(0x99A78BFA).withValues(alpha: 0.4)
+    ],
     'default': [
       const Color(0x99475569).withValues(alpha: 0.7),
-      const Color(0x9964748B).withValues(alpha: 0.4)]};
+      const Color(0x9964748B).withValues(alpha: 0.4)
+    ]
+  };
 
   /// Modern gradient backgrounds for fortune types (inspired by trend page design)
   static Map<String, List<Color>> modernGradients = {
@@ -246,5 +256,6 @@ class FortuneCardImages {
     'lottery': '대박의 기운이 느껴진다!',
 
     // Default fallback
-    'default': '오늘 당신에게 필요한 메시지'};
+    'default': '오늘 당신에게 필요한 메시지'
+  };
 }

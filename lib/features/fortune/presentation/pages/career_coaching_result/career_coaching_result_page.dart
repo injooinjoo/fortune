@@ -16,6 +16,7 @@ import '../../widgets/fortune_loading_skeleton.dart';
 import 'widgets/index.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
 import '../../../../../core/utils/fortune_completion_helper.dart';
+import '../../../../../core/widgets/today_result_label.dart';
 import '../../../../../presentation/providers/subscription_provider.dart';
 
 class CareerCoachingResultPage extends ConsumerStatefulWidget {
@@ -295,6 +296,10 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // 오늘 날짜 라벨 + 재방문 유도
+        const Center(child: TodayResultLabel(showRevisitHint: true)),
+        const SizedBox(height: 16),
+
         // ✅ 1. 종합 - 커리어 건강도 (항상 표시)
         if (healthScore != null) ...[
           HealthScoreCard(healthScore: healthScore, colors: colors),

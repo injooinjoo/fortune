@@ -25,6 +25,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import { extractUsername, fetchInstagramProfileImage, downloadAndEncodeImage } from '../_shared/instagram/scraper.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -244,14 +245,36 @@ serve(async (req) => {
     const photoAnalysis = requestData.photoAnalysis || requestData.photo_analysis
     const userId = requestData.userId || requestData.user_id
     const isPremium = requestData.isPremium ?? requestData.is_premium ?? false
+    const instagramUsername = requestData.instagramUsername || requestData.instagram_username
 
     console.log('📸 [BlindDate] Photo data:', {
       hasPhotoUrls: !!photoUrls,
       myPhotosCount: myPhotos.length,
-      partnerPhotosCount: partnerPhotos.length
+      partnerPhotosCount: partnerPhotos.length,
+      instagramUsername: instagramUsername || null
     })
 
     console.log('💎 [BlindDate] Premium 상태:', isPremium)
+
+    // Instagram 프로필 이미지 가져오기
+    let instagramError: string | null = null
+    let instagramFetched = false
+    const partnerPhotosWithInstagram = [...partnerPhotos]
+
+    if (instagramUsername && partnerPhotos.length === 0) {
+      try {
+        console.log(`📷 [BlindDate] Instagram 프로필 이미지 가져오기: @${instagramUsername}`)
+        const username = extractUsername(instagramUsername)
+        const profileImageUrl = await fetchInstagramProfileImage(username)
+        const base64Image = await downloadAndEncodeImage(profileImageUrl)
+        partnerPhotosWithInstagram.push(base64Image)
+        instagramFetched = true
+        console.log(`✅ [BlindDate] Instagram 프로필 이미지 가져오기 성공: @${username}`)
+      } catch (error) {
+        console.error(`❌ [BlindDate] Instagram 프로필 이미지 가져오기 실패:`, error)
+        instagramError = error instanceof Error ? error.message : '인스타그램 이미지를 가져올 수 없습니다.'
+      }
+    }
 
     // Cache key 생성
     const today = new Date().toISOString().split('T')[0]
@@ -280,18 +303,20 @@ serve(async (req) => {
       let photoAnalysisResult: any = null;
       let chatAnalysisResult: any = null;
 
-      // 사진 분석
+      // 사진 분석 (Instagram 이미지 포함)
       if (analysisType === 'photos' || analysisType === 'comprehensive') {
         // ✅ 우선순위: my_photos/partner_photos (Base64 배열) > photoUrls (URL 배열)
+        // ✅ Instagram에서 가져온 이미지도 partnerPhotosWithInstagram에 포함됨
         const myPhotoData = myPhotos.length > 0 ? myPhotos.map(b64 => `data:image/jpeg;base64,${b64}`) : (photoUrls?.myPhotos || [])
-        const partnerPhotoData = partnerPhotos.length > 0 ? partnerPhotos.map(b64 => `data:image/jpeg;base64,${b64}`) : (photoUrls?.theirPhotos || [])
+        const partnerPhotoData = partnerPhotosWithInstagram.length > 0 ? partnerPhotosWithInstagram.map(b64 => `data:image/jpeg;base64,${b64}`) : (photoUrls?.theirPhotos || [])
 
         console.log('📸 [BlindDate] Analyzing photos:', {
           myPhotoCount: myPhotoData.length,
-          partnerPhotoCount: partnerPhotoData.length
+          partnerPhotoCount: partnerPhotoData.length,
+          fromInstagram: instagramFetched
         })
 
-        if (myPhotoData.length > 0) {
+        if (partnerPhotoData.length > 0) {
           photoAnalysisResult = await analyzePhotosWithVision(
             myPhotoData,
             partnerPhotoData
@@ -454,7 +479,11 @@ ${photoAnalysisText}${chatAnalysisText}
         hasChatAnalysis: !!chatAnalysisResult,
         timestamp: new Date().toISOString(),
         isBlurred, // ✅ 블러 상태
-        blurredSections // ✅ 블러된 섹션 목록
+        blurredSections, // ✅ 블러된 섹션 목록
+        // Instagram 관련 정보
+        instagramUsername: instagramUsername || null,
+        instagramFetched, // Instagram에서 이미지 가져왔는지
+        instagramError // Instagram 에러 (비공개 계정 등)
       }
 
       // fortune_cache에 저장

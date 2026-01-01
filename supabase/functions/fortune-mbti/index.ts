@@ -38,6 +38,7 @@ interface MbtiFortuneRequest {
   birthDate: string;
   userId?: string;
   isPremium?: boolean;
+  category?: 'overall' | 'love' | 'career' | 'all';  // 카테고리 선택
 }
 
 interface DimensionFortune {
@@ -268,6 +269,81 @@ function generateCombinedFortune(mbti: string, dimensions: DimensionFortune[]): 
   return `오늘 ${mbti}의 가장 빛나는 영역은 '${bestDim.title}'입니다. ${bestDim.fortune}`
 }
 
+/**
+ * 카테고리별 상세 인사이트 생성
+ */
+function generateCategoryInsight(
+  mbti: string,
+  category: string,
+  dimensions: DimensionFortune[],
+  characteristics: typeof MBTI_CHARACTERISTICS[string]
+): {
+  title: string;
+  content: string;
+  tips: string[];
+  score: number;
+} {
+  const dimMap = Object.fromEntries(dimensions.map(d => [d.dimension, d]))
+  const avgScore = Math.round(dimensions.reduce((sum, d) => sum + d.score, 0) / dimensions.length)
+
+  // 첫 번째 글자 (E/I), 네 번째 글자 (J/P) 차원 활용
+  const energyDim = dimMap[mbti[0]] // E or I
+  const lifestyleDim = dimMap[mbti[3]] // J or P
+  const perceivingDim = dimMap[mbti[1]] // N or S
+  const judgingDim = dimMap[mbti[2]] // T or F
+
+  switch (category) {
+    case 'overall':
+      return {
+        title: '오늘의 종합 인사이트',
+        content: `${mbti}인 당신의 오늘은 '${energyDim.title}'의 기운이 강하게 작용합니다. ${energyDim.fortune} 특히 '${lifestyleDim.title}' 영역에서 ${lifestyleDim.tip}`,
+        tips: [
+          energyDim.tip,
+          perceivingDim.tip,
+          judgingDim.tip
+        ],
+        score: avgScore
+      }
+
+    case 'love':
+      return {
+        title: '연애/관계 인사이트',
+        content: `${mbti}의 연애 스타일은 '${judgingDim.title}'의 영향을 받습니다. 오늘은 ${judgingDim.fortune} 상대방과의 관계에서 ${characteristics.cognitiveStrengths[1]}를 발휘해보세요. 잘 맞는 유형: ${characteristics.compatibility.slice(0, 2).join(', ')}`,
+        tips: [
+          judgingDim.tip,
+          `${characteristics.compatibility[0]} 유형과의 대화를 시도해보세요`,
+          '상대방의 관점에서 생각해보세요'
+        ],
+        score: judgingDim.score
+      }
+
+    case 'career':
+      return {
+        title: '직장/커리어 인사이트',
+        content: `${mbti}의 업무 스타일은 '${perceivingDim.title}'와 '${lifestyleDim.title}'의 조합입니다. ${perceivingDim.fortune} 오늘 업무에서는 ${characteristics.cognitiveStrengths[0]}을 활용해보세요.`,
+        tips: [
+          perceivingDim.tip,
+          lifestyleDim.tip,
+          `${characteristics.challenges[0]}에 주의하세요`
+        ],
+        score: Math.round((perceivingDim.score + lifestyleDim.score) / 2)
+      }
+
+    case 'all':
+    default:
+      return {
+        title: '전체 상세 인사이트',
+        content: `${mbti} 유형의 오늘은 전반적으로 ${avgScore}점입니다.\n\n` +
+          `💫 에너지: ${energyDim.fortune}\n` +
+          `💡 인식: ${perceivingDim.fortune}\n` +
+          `🧠 판단: ${judgingDim.fortune}\n` +
+          `📋 생활: ${lifestyleDim.fortune}`,
+        tips: dimensions.map(d => d.tip),
+        score: avgScore
+      }
+  }
+}
+
 // ==================== 메인 핸들러 ====================
 
 serve(async (req) => {
@@ -281,9 +357,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    const { mbti, name, birthDate, userId, isPremium }: MbtiFortuneRequest = await req.json()
+    const { mbti, name, birthDate, userId, isPremium, category = 'overall' }: MbtiFortuneRequest = await req.json()
 
-    console.log(`[MBTI-v2] Request - User: ${userId}, Premium: ${isPremium}, MBTI: ${mbti}`)
+    console.log(`[MBTI-v2] Request - User: ${userId}, Premium: ${isPremium}, MBTI: ${mbti}, Category: ${category}`)
 
     // 입력 데이터 검증
     if (!mbti || !name || !birthDate) {
@@ -448,16 +524,26 @@ serve(async (req) => {
     const mbtiCharacteristics = MBTI_CHARACTERISTICS[upperMbti]
     const meta = (allDimensions as any)._meta || { luckyColor: '파란색', luckyNumber: 7 }
 
-    // ==================== 5. 블러 처리 ====================
+    // ==================== 5. 카테고리별 인사이트 생성 ====================
+    const categoryInsight = generateCategoryInsight(
+      upperMbti,
+      category,
+      userDimensions,
+      mbtiCharacteristics
+    )
+
+    console.log(`[MBTI-v2] Category: ${category}, Insight: ${categoryInsight.title}`)
+
+    // ==================== 6. 블러 처리 ====================
     const isBlurred = !isPremium
     // 점수만 무료, 텍스트는 프리미엄
     const blurredSections = isBlurred
-      ? ['dimensions.fortune', 'dimensions.tip', 'loveFortune', 'careerFortune', 'moneyFortune', 'healthFortune', 'advice', 'compatibility', 'cognitiveStrengths', 'challenges']
+      ? ['dimensions.fortune', 'dimensions.tip', 'loveFortune', 'careerFortune', 'moneyFortune', 'healthFortune', 'advice', 'compatibility', 'cognitiveStrengths', 'challenges', 'categoryInsight.content', 'categoryInsight.tips']
       : []
 
     console.log(`[MBTI-v2] isPremium: ${isPremium}, isBlurred: ${isBlurred}`)
 
-    // ==================== 6. 응답 구성 ====================
+    // ==================== 7. 응답 구성 ====================
     const result = {
       // ✅ 표준화된 필드명: score, content, summary, advice
       fortuneType: 'mbti',
@@ -465,6 +551,10 @@ serve(async (req) => {
       content: todayFortune,
       summary: `${upperMbti}의 오늘 종합 점수는 ${overallScore}점입니다.`,
       advice: `오늘의 조언: ${userDimensions.find(d => d.score === Math.max(...userDimensions.map(x => x.score)))?.tip || '자신을 믿으세요.'}`,
+
+      // ✅ 카테고리별 상세 인사이트 (NEW)
+      requestedCategory: category,
+      categoryInsight,
 
       // 새로운 4차원 데이터
       dimensions: userDimensions,

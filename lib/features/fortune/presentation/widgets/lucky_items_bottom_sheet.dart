@@ -140,7 +140,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
     // 네비게이션 바 복원
     ref.read(navigationVisibilityProvider.notifier).show();
     Navigator.of(context).pop(); // Bottom Sheet 닫기
-    context.push('/lucky-items-results');
+    context.push('/lucky-items');
   }
 
   @override

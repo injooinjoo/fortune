@@ -14,6 +14,7 @@ import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../../core/services/fortune_haptic_service.dart';
 import '../../../../../core/utils/fortune_completion_helper.dart';
+import '../../../../../core/widgets/today_result_label.dart';
 
 /// 연애운 결과 페이지 (프리미엄/블러 시스템 적용)
 ///
@@ -221,6 +222,12 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
       ),
       child: Column(
         children: [
+          // 오늘 날짜 라벨 + 재방문 유도
+          const TodayResultLabel(
+            useLightTheme: true,
+            showRevisitHint: true,
+          ),
+          const SizedBox(height: 12),
           const Icon(
             Icons.favorite_rounded,
             color: Colors.white,
@@ -228,7 +235,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            '오늘의 연애운',
+            '연애운',
             style: context.bodyMedium.copyWith(
               color: Colors.white.withValues(alpha: 0.9),
             ),

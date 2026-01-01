@@ -46,27 +46,41 @@ export async function checkTokenBalance(userId: string, requiredTokens: number) 
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
-  // Get user's token balance from token_balance table (NOT user_profiles)
-  const { data: tokenData, error } = await supabase
+  // ✅ 구독 상태 먼저 체크 (unlimited/premium 사용자는 토큰 체크 불필요)
+  const { data: subData } = await supabase
+    .from('subscriptions')
+    .select('status, plan_id')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .single()
+
+  if (subData?.plan_id === 'unlimited' || subData?.plan_id === 'premium') {
+    console.log(`[checkTokenBalance] User ${userId} has unlimited/premium subscription`)
+    return {
+      hasBalance: true,
+      balance: Infinity,
+      isUnlimited: true,
+      error: null
+    }
+  }
+
+  // ✅ 토큰 잔액 조회 (에러 무시, nullish coalescing 사용)
+  const { data: tokenData } = await supabase
     .from('token_balance')
     .select('balance')
     .eq('user_id', userId)
     .single()
 
-  if (error || !tokenData) {
-    console.error('Token balance fetch error:', error)
-    return {
-      hasBalance: false,
-      balance: 0,
-      error: 'Failed to fetch token balance'
-    }
-  }
+  // ✅ row가 없어도 0으로 처리 (에러 아님 - 신규 사용자)
+  const balance = tokenData?.balance ?? 0
+  const hasBalance = balance >= requiredTokens
 
-  const hasBalance = tokenData.balance >= requiredTokens
+  console.log(`[checkTokenBalance] User ${userId}: balance=${balance}, required=${requiredTokens}, hasBalance=${hasBalance}`)
 
   return {
     hasBalance,
-    balance: tokenData.balance,
+    balance,
+    isUnlimited: false,
     error: null
   }
 }
@@ -77,32 +91,31 @@ export async function deductTokens(userId: string, amount: number, description: 
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
-  // Fetch current balance from token_balance table
-  const { data: tokenData, error: fetchError } = await supabase
+  // ✅ 현재 잔액 조회 (없으면 0으로 처리 - 신규 사용자)
+  const { data: tokenData } = await supabase
     .from('token_balance')
     .select('balance, total_spent')
     .eq('user_id', userId)
     .single()
 
-  if (fetchError || !tokenData) {
-    console.error('Token fetch error:', fetchError)
-    return { success: false, error: 'Failed to fetch token balance' }
-  }
+  const currentBalance = tokenData?.balance ?? 0
+  const currentSpent = tokenData?.total_spent ?? 0
+  const newBalance = currentBalance - amount
 
-  const newBalance = tokenData.balance - amount
   if (newBalance < 0) {
+    console.log(`[deductTokens] Insufficient balance: current=${currentBalance}, required=${amount}`)
     return { success: false, error: 'Insufficient token balance' }
   }
 
-  // Update balance in token_balance table
+  // ✅ upsert로 없으면 생성, 있으면 업데이트
   const { error: updateError } = await supabase
     .from('token_balance')
-    .update({
+    .upsert({
+      user_id: userId,
       balance: newBalance,
-      total_spent: (tokenData.total_spent || 0) + amount, // Increment total_spent
+      total_spent: currentSpent + amount,
       updated_at: new Date().toISOString()
-    })
-    .eq('user_id', userId)
+    }, { onConflict: 'user_id' })
 
   if (updateError) {
     console.error('Token update error:', updateError)
@@ -110,7 +123,7 @@ export async function deductTokens(userId: string, amount: number, description: 
   }
 
   // Log token usage
-  const { error: logError } = await supabase
+  await supabase
     .from('token_usage')
     .insert({
       user_id: userId,
@@ -120,9 +133,6 @@ export async function deductTokens(userId: string, amount: number, description: 
       transaction_type: 'debit'
     })
 
-  if (logError) {
-    console.error('Failed to log token usage:', logError)
-  }
-
+  console.log(`[deductTokens] User ${userId}: deducted ${amount}, newBalance=${newBalance}`)
   return { success: true, newBalance }
 }

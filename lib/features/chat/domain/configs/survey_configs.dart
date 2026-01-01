@@ -355,7 +355,21 @@ const _mbtiTypeOptions = [
   SurveyOption(id: 'ESFP', label: 'ESFP'),
 ];
 
-/// MBTI 설문 설정
+/// MBTI 확인 옵션 (Step 1용)
+const _mbtiConfirmOptions = [
+  SurveyOption(id: 'yes', label: '네, 맞아요!', emoji: '👍'),
+  SurveyOption(id: 'no', label: '아니요, 다시 선택할게요', emoji: '🔄'),
+];
+
+/// MBTI 카테고리 옵션 (Step 2용)
+const _mbtiCategoryOptions = [
+  SurveyOption(id: 'overall', label: '오늘의 종합', emoji: '🌟'),
+  SurveyOption(id: 'love', label: '연애/관계', emoji: '💕'),
+  SurveyOption(id: 'career', label: '직장/커리어', emoji: '💼'),
+  SurveyOption(id: 'all', label: '전체 다 보기', emoji: '📚'),
+];
+
+/// MBTI 설문 설정 (3단계: 확인 → 재선택 → 카테고리)
 const mbtiSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.mbti,
   title: 'MBTI 인사이트',
@@ -363,11 +377,27 @@ const mbtiSurveyConfig = FortuneSurveyConfig(
   emoji: '🧠',
   accentColor: FortuneColors.career,
   steps: [
+    // Step 1: MBTI 확인 (프로필에 MBTI가 있으면 확인 질문)
+    SurveyStep(
+      id: 'mbtiConfirm',
+      question: '맞으신가요?', // 실제 질문은 chat_home_page에서 동적 생성
+      inputType: SurveyInputType.chips,
+      options: _mbtiConfirmOptions,
+    ),
+    // Step 1-B: MBTI 재선택 (확인에서 '아니요' 선택 시에만 표시)
     SurveyStep(
       id: 'mbtiType',
       question: 'MBTI 유형이 어떻게 되세요?',
       inputType: SurveyInputType.chips,
       options: _mbtiTypeOptions,
+      showWhen: {'mbtiConfirm': 'no'},
+    ),
+    // Step 2: 카테고리 선택
+    SurveyStep(
+      id: 'category',
+      question: '어떤 인사이트를 받고 싶으세요? ✨',
+      inputType: SurveyInputType.chips,
+      options: _mbtiCategoryOptions,
     ),
   ],
 );
@@ -822,61 +852,249 @@ const avoidPeopleSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// ExLover (재회 운세) 설문 설정
+// ExLover (재회 인사이트) 설문 설정 - 8단계 심층 상담
 // ============================================================
 
-/// 이별 시기 옵션
-const _breakupTimeOptions = [
-  SurveyOption(id: 'recent', label: '최근 (1개월 이내)', emoji: '💔'),
-  SurveyOption(id: 'months', label: '몇 달 전', emoji: '📅'),
-  SurveyOption(id: 'year', label: '1년 전후', emoji: '🗓️'),
-  SurveyOption(id: 'years', label: '몇 년 전', emoji: '⏳'),
+/// Step 1: 상담 목표 선택 (가치 제안)
+const _exLoverPrimaryGoalOptions = [
+  SurveyOption(id: 'healing', label: '감정 정리 + 힐링', emoji: '🌿'),
+  SurveyOption(id: 'reunion_strategy', label: '재회 전략 가이드', emoji: '🔄'),
+  SurveyOption(id: 'read_their_mind', label: '상대방 마음 읽기', emoji: '💭'),
+  SurveyOption(id: 'new_start', label: '새 출발 준비도 확인', emoji: '🌸'),
 ];
 
-/// 이별 사유 옵션
-const _breakupReasonOptions = [
-  SurveyOption(id: 'natural', label: '자연스러운 이별', emoji: '🍂'),
-  SurveyOption(id: 'conflict', label: '갈등/싸움', emoji: '💢'),
-  SurveyOption(id: 'distance', label: '거리/시간', emoji: '🌍'),
-  SurveyOption(id: 'other', label: '다른 사람', emoji: '💔'),
-  SurveyOption(id: 'family', label: '가족 반대', emoji: '👨‍👩‍👧'),
-  SurveyOption(id: 'unknown', label: '잘 모르겠어요', emoji: '❓'),
+/// Step 2: 이별 시기 (상세)
+const _exLoverBreakupTimeOptions = [
+  SurveyOption(id: 'very_recent', label: '1주일 이내', emoji: '⚡'),
+  SurveyOption(id: 'recent', label: '1개월 이내', emoji: '💔'),
+  SurveyOption(id: '1to3months', label: '1-3개월 전', emoji: '📅'),
+  SurveyOption(id: '3to6months', label: '3-6개월 전', emoji: '🗓️'),
+  SurveyOption(id: '6to12months', label: '6개월-1년 전', emoji: '📆'),
+  SurveyOption(id: 'over_year', label: '1년 이상', emoji: '⏳'),
 ];
 
-/// 현재 마음 상태 옵션
-const _currentFeelingOptions = [
-  SurveyOption(id: 'miss', label: '많이 그리워', emoji: '😢'),
-  SurveyOption(id: 'curious', label: '궁금해', emoji: '🤔'),
+/// Step 3: 이별 주도권
+const _exLoverInitiatorOptions = [
+  SurveyOption(id: 'me', label: '내가 먼저', emoji: '🙋'),
+  SurveyOption(id: 'them', label: '상대가 먼저', emoji: '😢'),
+  SurveyOption(id: 'mutual', label: '서로 합의', emoji: '🤝'),
+];
+
+/// Step 4: 관계 깊이
+const _exLoverRelationshipDepthOptions = [
+  SurveyOption(id: 'short_casual', label: '짧고 가벼웠어 (1-3개월)', emoji: '🌱'),
+  SurveyOption(id: 'growing', label: '진지해지던 중이었어 (3-6개월)', emoji: '🌷'),
+  SurveyOption(id: 'serious', label: '진지한 관계였어 (6개월-1년)', emoji: '🌹'),
+  SurveyOption(id: 'deep', label: '깊은 관계였어 (1-2년)', emoji: '💐'),
+  SurveyOption(id: 'long_term', label: '오래된 관계였어 (2년+)', emoji: '🏡'),
+  SurveyOption(id: 'engagement', label: '결혼을 약속했었어', emoji: '💍'),
+];
+
+/// Step 5: 핵심 이별 이유 (솔직하게)
+const _exLoverCoreReasonOptions = [
+  SurveyOption(id: 'values', label: '가치관/미래 계획 불일치', emoji: '🧭'),
+  SurveyOption(id: 'communication', label: '소통 문제/잦은 싸움', emoji: '💢'),
+  SurveyOption(id: 'trust', label: '신뢰 문제 (거짓말/의심)', emoji: '🔒'),
+  SurveyOption(id: 'cheating', label: '외도/바람', emoji: '💔'),
+  SurveyOption(id: 'distance', label: '거리/시간 문제', emoji: '🌍'),
+  SurveyOption(id: 'family', label: '가족 반대/외부 압력', emoji: '👨‍👩‍👧'),
+  SurveyOption(id: 'feelings_changed', label: '감정이 식음', emoji: '❄️'),
+  SurveyOption(id: 'personal_issues', label: '개인적 문제 (직장/건강)', emoji: '🏥'),
+  SurveyOption(id: 'unknown', label: '잘 모르겠어', emoji: '❓'),
+];
+
+/// Step 7: 현재 상태 (multiSelect 최대 3개)
+const _exLoverCurrentStateOptions = [
+  SurveyOption(id: 'cant_sleep', label: '잠을 못 자', emoji: '😴'),
+  SurveyOption(id: 'checking_sns', label: 'SNS 계속 확인해', emoji: '📱'),
+  SurveyOption(id: 'crying', label: '자주 울어', emoji: '😢'),
+  SurveyOption(id: 'angry', label: '화가 나', emoji: '😤'),
   SurveyOption(id: 'regret', label: '후회돼', emoji: '😔'),
-  SurveyOption(id: 'conflicted', label: '복잡해', emoji: '🌀'),
-  SurveyOption(id: 'hopeful', label: '다시 만나고 싶어', emoji: '🙏'),
+  SurveyOption(id: 'miss_them', label: '너무 보고싶어', emoji: '💙'),
+  SurveyOption(id: 'relieved', label: '해방감이 느껴져', emoji: '🕊️'),
+  SurveyOption(id: 'confused', label: '내 감정을 모르겠어', emoji: '🌀'),
+  SurveyOption(id: 'moving_on', label: '극복하고 있어', emoji: '🌱'),
 ];
 
-/// ExLover 설문 설정
+/// Step 8: 연락 상태
+const _exLoverContactStatusOptions = [
+  SurveyOption(id: 'blocked_both', label: '서로 차단', emoji: '🚫'),
+  SurveyOption(id: 'blocked_by_them', label: '상대가 차단', emoji: '🔒'),
+  SurveyOption(id: 'i_blocked', label: '내가 차단', emoji: '🛑'),
+  SurveyOption(id: 'no_contact', label: '연락 안 함', emoji: '📵'),
+  SurveyOption(id: 'occasional', label: '가끔 연락', emoji: '📬'),
+  SurveyOption(id: 'frequent', label: '자주 연락', emoji: '💬'),
+  SurveyOption(id: 'still_meeting', label: '아직 만나고 있음', emoji: '🫂'),
+];
+
+/// 목표별 분기 질문 - 힐링
+const _exLoverHealingDeepOptions = [
+  SurveyOption(id: 'morning', label: '아침에 일어날 때', emoji: '🌅'),
+  SurveyOption(id: 'night', label: '밤에 잠들기 전', emoji: '🌙'),
+  SurveyOption(id: 'places', label: '우리 갔던 장소 볼 때', emoji: '📍'),
+  SurveyOption(id: 'alone', label: '혼자 있을 때', emoji: '🏠'),
+  SurveyOption(id: 'couples', label: '커플 볼 때', emoji: '💑'),
+];
+
+/// 목표별 분기 질문 - 재회 전략
+const _exLoverReunionDeepOptions = [
+  SurveyOption(id: 'i_changed', label: '내가 변했어', emoji: '🦋'),
+  SurveyOption(id: 'they_changed', label: '상대가 변했을 것 같아', emoji: '✨'),
+  SurveyOption(id: 'situation_changed', label: '상황이 달라졌어', emoji: '🔄'),
+  SurveyOption(id: 'both_grew', label: '둘 다 성장했어', emoji: '🌱'),
+  SurveyOption(id: 'not_sure', label: '잘 모르겠어', emoji: '🤔'),
+];
+
+/// 목표별 분기 질문 - 상대방 마음 읽기 (MBTI)
+const _exLoverMbtiOptions = [
+  SurveyOption(id: 'INTJ', label: 'INTJ'),
+  SurveyOption(id: 'INTP', label: 'INTP'),
+  SurveyOption(id: 'ENTJ', label: 'ENTJ'),
+  SurveyOption(id: 'ENTP', label: 'ENTP'),
+  SurveyOption(id: 'INFJ', label: 'INFJ'),
+  SurveyOption(id: 'INFP', label: 'INFP'),
+  SurveyOption(id: 'ENFJ', label: 'ENFJ'),
+  SurveyOption(id: 'ENFP', label: 'ENFP'),
+  SurveyOption(id: 'ISTJ', label: 'ISTJ'),
+  SurveyOption(id: 'ISFJ', label: 'ISFJ'),
+  SurveyOption(id: 'ESTJ', label: 'ESTJ'),
+  SurveyOption(id: 'ESFJ', label: 'ESFJ'),
+  SurveyOption(id: 'ISTP', label: 'ISTP'),
+  SurveyOption(id: 'ISFP', label: 'ISFP'),
+  SurveyOption(id: 'ESTP', label: 'ESTP'),
+  SurveyOption(id: 'ESFP', label: 'ESFP'),
+  SurveyOption(id: 'unknown', label: '몰라', emoji: '❓'),
+];
+
+/// 목표별 분기 질문 - 새 출발
+const _exLoverNewStartDeepOptions = [
+  SurveyOption(id: 'trust', label: '신뢰/소통', emoji: '🤝'),
+  SurveyOption(id: 'stability', label: '감정적 안정', emoji: '🧘'),
+  SurveyOption(id: 'values', label: '비슷한 가치관', emoji: '🧭'),
+  SurveyOption(id: 'passion', label: '설렘과 열정', emoji: '🔥'),
+  SurveyOption(id: 'growth', label: '서로의 성장', emoji: '🌱'),
+];
+
+/// 상대방 생년 옵션 (10년 단위 + 모름)
+const _exLoverPartnerBirthYearOptions = [
+  SurveyOption(id: '2010s', label: '2010년대생', emoji: '🌱'),
+  SurveyOption(id: '2000s', label: '2000년대생', emoji: '🧒'),
+  SurveyOption(id: '1990s', label: '90년대생', emoji: '🌸'),
+  SurveyOption(id: '1980s', label: '80년대생', emoji: '🌿'),
+  SurveyOption(id: '1970s_or_older', label: '70년대 이전', emoji: '🏔️'),
+  SurveyOption(id: 'unknown', label: '모르겠어요', emoji: '❓'),
+];
+
+/// ExLover 설문 설정 (8단계 심층 상담)
 const exLoverSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.exLover,
   title: '재회 인사이트',
-  description: '재회 가능성을 살펴볼게요',
-  emoji: '🔄',
+  description: '솔직한 조언자가 함께할게요',
+  emoji: '💬',
   accentColor: FortuneColors.love,
   steps: [
+    // Step 1: 상담 목표 (가치 제안 선택)
+    SurveyStep(
+      id: 'primaryGoal',
+      question: '오늘 이 상담에서 뭘 얻고 싶어? 💭',
+      inputType: SurveyInputType.chips,
+      options: _exLoverPrimaryGoalOptions,
+    ),
+    // Step 2: 이별 시기
     SurveyStep(
       id: 'breakupTime',
-      question: '언제 헤어졌어? 💔',
+      question: '이별은 언제 있었어? 💔',
       inputType: SurveyInputType.chips,
-      options: _breakupTimeOptions,
+      options: _exLoverBreakupTimeOptions,
     ),
+    // Step 2-1: 상대방 이름 (선택)
     SurveyStep(
-      id: 'breakupReason',
-      question: '헤어진 이유가 뭐였어? 🤔',
-      inputType: SurveyInputType.chips,
-      options: _breakupReasonOptions,
+      id: 'exPartnerName',
+      question: '상대방 이름이나 별명 알려줄래? 🏷️\n(모르면 "그 사람"으로 부를게)',
+      inputType: SurveyInputType.text,
+      isRequired: false,
     ),
+    // Step 2-2: 상대방 나이대 (선택)
     SurveyStep(
-      id: 'currentFeeling',
-      question: '지금 마음은 어때? 💭',
+      id: 'exPartnerBirthYear',
+      question: '상대방은 몇 년생이야? 👤',
       inputType: SurveyInputType.chips,
-      options: _currentFeelingOptions,
+      options: _exLoverPartnerBirthYearOptions,
+      isRequired: false,
+    ),
+    // Step 2-3: 상대방 MBTI (선택 - 모든 목표에서 표시)
+    SurveyStep(
+      id: 'exPartnerMbti',
+      question: '상대방 MBTI 알아? 🎭\n(성격 분석에 도움이 돼)',
+      inputType: SurveyInputType.chips,
+      options: _exLoverMbtiOptions,
+      isRequired: false,
+    ),
+    // Step 3: 이별 주도권
+    SurveyStep(
+      id: 'breakupInitiator',
+      question: '누가 먼저 이별을 말했어?',
+      inputType: SurveyInputType.chips,
+      options: _exLoverInitiatorOptions,
+    ),
+    // Step 4: 관계 깊이
+    SurveyStep(
+      id: 'relationshipDepth',
+      question: '우리 관계는 얼마나 깊었어? 💕',
+      inputType: SurveyInputType.chips,
+      options: _exLoverRelationshipDepthOptions,
+    ),
+    // Step 5: 핵심 이별 이유
+    SurveyStep(
+      id: 'coreReason',
+      question: '헤어진 핵심 이유가 뭐였어? (솔직하게) 🤔',
+      inputType: SurveyInputType.chips,
+      options: _exLoverCoreReasonOptions,
+    ),
+    // Step 6: 자세한 이야기 (음성/텍스트)
+    SurveyStep(
+      id: 'detailedStory',
+      question: '좀 더 자세히 얘기해줄 수 있어? 🎤\n상담사처럼 들을게',
+      inputType: SurveyInputType.voice,
+      isRequired: false,
+    ),
+    // Step 7: 현재 상태 (multiSelect)
+    SurveyStep(
+      id: 'currentState',
+      question: '지금 상태는 어때? 솔직하게 골라줘 🌡️\n(최대 3개)',
+      inputType: SurveyInputType.multiSelect,
+      options: _exLoverCurrentStateOptions,
+    ),
+    // Step 8: 연락 상태
+    SurveyStep(
+      id: 'contactStatus',
+      question: '지금 연락은 어떻게 되고 있어? 📞',
+      inputType: SurveyInputType.chips,
+      options: _exLoverContactStatusOptions,
+    ),
+    // Step 9: 목표별 분기 질문 - 힐링
+    SurveyStep(
+      id: 'healingDeep',
+      question: '가장 힘든 순간은 언제야? 🌙',
+      inputType: SurveyInputType.chips,
+      options: _exLoverHealingDeepOptions,
+      showWhen: {'primaryGoal': 'healing'},
+    ),
+    // Step 9: 목표별 분기 질문 - 재회 전략
+    SurveyStep(
+      id: 'reunionDeep',
+      question: '재회하면 뭐가 달라질 것 같아? 💫',
+      inputType: SurveyInputType.chips,
+      options: _exLoverReunionDeepOptions,
+      showWhen: {'primaryGoal': 'reunion_strategy'},
+    ),
+    // Step 9: 목표별 분기 질문 - 새 출발
+    SurveyStep(
+      id: 'newStartDeep',
+      question: '새로운 연애에서 가장 중요한 건 뭐야? 💝',
+      inputType: SurveyInputType.chips,
+      options: _exLoverNewStartDeepOptions,
+      showWhen: {'primaryGoal': 'new_start'},
     ),
   ],
 );
@@ -980,7 +1198,7 @@ final blindDateSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// Money (재물운) 설문 설정
+// Money (재물운/투자운세) 설문 설정
 // ============================================================
 
 /// 투자 성향 옵션
@@ -990,7 +1208,7 @@ const _investmentStyleOptions = [
   SurveyOption(id: 'aggressive', label: '공격적', emoji: '🚀'),
 ];
 
-/// 관심 분야 옵션
+/// 관심 분야 옵션 (legacy - 호환성 유지)
 const _investmentAreaOptions = [
   SurveyOption(id: 'stock', label: '주식', emoji: '📈'),
   SurveyOption(id: 'realestate', label: '부동산', emoji: '🏠'),
@@ -1000,25 +1218,35 @@ const _investmentAreaOptions = [
   SurveyOption(id: 'side', label: '부업/N잡', emoji: '💵'),
 ];
 
-/// Money 설문 설정
+/// Money 설문 설정 (투자 종목 선택 포함)
 const moneySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.money,
-  title: '재물운',
-  description: '재물운을 분석해드릴게요',
-  emoji: '💰',
+  title: '투자 인사이트',
+  description: '관심 종목의 투자 인사이트를 알려드릴게요',
+  emoji: '📈',
   accentColor: FortuneColors.wealth,
   steps: [
+    // Step 1: 투자 카테고리 선택 (코인, 국내주식, 해외주식, ETF, 금/원자재, 부동산)
+    SurveyStep(
+      id: 'category',
+      question: '어떤 투자에 관심 있으세요? 💰',
+      inputType: SurveyInputType.investmentCategory,
+      options: [], // 카테고리는 enum에서 동적으로 로드
+    ),
+    // Step 2: 티커(종목) 선택 - 검색 및 인기 종목
+    SurveyStep(
+      id: 'ticker',
+      question: '어떤 종목이 궁금하세요? 📊',
+      inputType: SurveyInputType.investmentTicker,
+      options: [], // 티커는 검색 위젯에서 동적으로 표시
+      dependsOn: 'category', // 카테고리에 따라 필터링
+    ),
+    // Step 3: 투자 성향 (선택)
     SurveyStep(
       id: 'style',
       question: '투자 성향이 어떻게 되세요?',
       inputType: SurveyInputType.chips,
       options: _investmentStyleOptions,
-    ),
-    SurveyStep(
-      id: 'interest',
-      question: '관심 있는 분야가 있으세요?',
-      inputType: SurveyInputType.multiSelect,
-      options: _investmentAreaOptions,
       isRequired: false,
     ),
   ],
@@ -1164,6 +1392,42 @@ const _healthConcernOptions = [
   SurveyOption(id: 'general', label: '전반적 건강', emoji: '💪'),
 ];
 
+/// 수면 품질 옵션 (1-5)
+const _sleepQualityOptions = [
+  SurveyOption(id: '1', label: '매우 나쁨', emoji: '😵'),
+  SurveyOption(id: '2', label: '나쁨', emoji: '😫'),
+  SurveyOption(id: '3', label: '보통', emoji: '😐'),
+  SurveyOption(id: '4', label: '좋음', emoji: '😊'),
+  SurveyOption(id: '5', label: '매우 좋음', emoji: '😴'),
+];
+
+/// 운동 빈도 옵션 (1-5)
+const _exerciseFrequencyOptions = [
+  SurveyOption(id: '1', label: '거의 안함', emoji: '🛋️'),
+  SurveyOption(id: '2', label: '가끔 (주1회)', emoji: '🚶'),
+  SurveyOption(id: '3', label: '보통 (주2-3회)', emoji: '🏃'),
+  SurveyOption(id: '4', label: '자주 (주4-5회)', emoji: '💪'),
+  SurveyOption(id: '5', label: '매일', emoji: '🏋️'),
+];
+
+/// 스트레스 수준 옵션 (1-5)
+const _stressLevelOptions = [
+  SurveyOption(id: '1', label: '거의 없음', emoji: '😌'),
+  SurveyOption(id: '2', label: '조금', emoji: '🙂'),
+  SurveyOption(id: '3', label: '보통', emoji: '😐'),
+  SurveyOption(id: '4', label: '많음', emoji: '😓'),
+  SurveyOption(id: '5', label: '매우 많음', emoji: '😰'),
+];
+
+/// 식사 규칙성 옵션 (1-5)
+const _mealRegularityOptions = [
+  SurveyOption(id: '1', label: '불규칙', emoji: '🍕'),
+  SurveyOption(id: '2', label: '자주 거름', emoji: '🍔'),
+  SurveyOption(id: '3', label: '보통', emoji: '🍱'),
+  SurveyOption(id: '4', label: '대체로 규칙적', emoji: '🥗'),
+  SurveyOption(id: '5', label: '매우 규칙적', emoji: '🥦'),
+];
+
 /// Health 설문 설정
 const healthSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.health,
@@ -1178,6 +1442,30 @@ const healthSurveyConfig = FortuneSurveyConfig(
       inputType: SurveyInputType.chips,
       options: _healthConcernOptions,
       isRequired: false,
+    ),
+    SurveyStep(
+      id: 'sleepQuality',
+      question: '요즘 수면 상태는 어떠세요?',
+      inputType: SurveyInputType.chips,
+      options: _sleepQualityOptions,
+    ),
+    SurveyStep(
+      id: 'exerciseFrequency',
+      question: '운동은 얼마나 자주 하세요?',
+      inputType: SurveyInputType.chips,
+      options: _exerciseFrequencyOptions,
+    ),
+    SurveyStep(
+      id: 'stressLevel',
+      question: '요즘 스트레스는 어느 정도예요?',
+      inputType: SurveyInputType.chips,
+      options: _stressLevelOptions,
+    ),
+    SurveyStep(
+      id: 'mealRegularity',
+      question: '식사는 규칙적으로 하시나요?',
+      inputType: SurveyInputType.chips,
+      options: _mealRegularityOptions,
     ),
   ],
 );
@@ -1307,12 +1595,21 @@ const dreamSurveyConfig = FortuneSurveyConfig(
 // Celebrity (유명인 궁합) 설문 설정
 // ============================================================
 
+/// Celebrity 관계 유형 옵션
+const _celebrityConnectionTypeOptions = [
+  SurveyOption(id: 'ideal_match', label: '이상형으로', emoji: '💘'),
+  SurveyOption(id: 'friend', label: '친구로', emoji: '🤝'),
+  SurveyOption(id: 'colleague', label: '동료로', emoji: '💼'),
+  SurveyOption(id: 'fan', label: '팬으로', emoji: '⭐'),
+];
+
 /// Celebrity 관심포인트 옵션
 const _celebrityInterestOptions = [
   SurveyOption(id: 'overall', label: '전체 궁합', emoji: '💫'),
   SurveyOption(id: 'personality', label: '성격 궁합', emoji: '🧠'),
   SurveyOption(id: 'love', label: '연애 궁합', emoji: '💕'),
-  SurveyOption(id: 'work', label: '케미/협업', emoji: '🤝'),
+  SurveyOption(id: 'pastLife', label: '전생 인연', emoji: '🌙'),
+  SurveyOption(id: 'timing', label: '운명의 시기', emoji: '⏰'),
 ];
 
 /// Celebrity 설문 설정
@@ -1324,14 +1621,20 @@ const celebritySurveyConfig = FortuneSurveyConfig(
   accentColor: FortuneColors.love,
   steps: [
     SurveyStep(
-      id: 'celebrityName',
-      question: '누구와의 궁합이 궁금하세요?',
-      inputType: SurveyInputType.text,
+      id: 'celebrity',
+      question: '궁합을 보고 싶은 유명인을 선택해줘! ⭐',
+      inputType: SurveyInputType.celebritySelection,
       options: [],
     ),
     SurveyStep(
+      id: 'connectionType',
+      question: '어떤 관계로 궁합을 볼까? 💫',
+      inputType: SurveyInputType.chips,
+      options: _celebrityConnectionTypeOptions,
+    ),
+    SurveyStep(
       id: 'interest',
-      question: '특히 궁금한 부분이 있어? 💫',
+      question: '특히 궁금한 부분이 있어? ✨',
       inputType: SurveyInputType.chips,
       options: _celebrityInterestOptions,
       isRequired: false,
@@ -1567,15 +1870,8 @@ const examSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// Moving (이사/이직운) 설문 설정
+// Moving (이사운) 설문 설정
 // ============================================================
-
-/// 이동 유형 옵션
-const _movingTypeOptions = [
-  SurveyOption(id: 'home', label: '이사', emoji: '🏠'),
-  SurveyOption(id: 'job', label: '이직', emoji: '💼'),
-  SurveyOption(id: 'both', label: '둘 다', emoji: '🔄'),
-];
 
 /// 이사 방향 옵션
 const _movingDirectionOptions = [
@@ -1589,28 +1885,21 @@ const _movingDirectionOptions = [
 /// Moving 설문 설정
 const movingSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.moving,
-  title: '이사/이직운',
-  description: '좋은 방향을 찾아드릴게요!',
+  title: '이사운',
+  description: '새 보금자리의 길한 방향을 찾아드릴게요!',
   emoji: '🏠',
   accentColor: FortuneColors.career,
   steps: [
     SurveyStep(
-      id: 'movingType',
-      question: '어떤 이동을 계획하고 있어요? 🚚',
-      inputType: SurveyInputType.chips,
-      options: _movingTypeOptions,
-    ),
-    SurveyStep(
       id: 'movingDate',
-      question: '예정일이 언제예요? 📅',
+      question: '이사 예정일이 언제예요? 📅',
       inputType: SurveyInputType.calendar,
     ),
     SurveyStep(
       id: 'direction',
-      question: '이동 방향이 정해졌나요? 🧭',
+      question: '이사 방향이 정해졌나요? 🧭',
       inputType: SurveyInputType.chips,
       options: _movingDirectionOptions,
-      showWhen: {'movingType': ['home', 'both']},
     ),
   ],
 );

@@ -70,6 +70,8 @@ interface TalentRequest {
   challenges: string[]; // 현재 직면한 어려움
   userId?: string;
   isPremium?: boolean; // ✅ 프리미엄 사용자 여부
+  hasResume?: boolean; // ✅ 이력서 포함 여부
+  resumeText?: string; // ✅ 이력서에서 추출한 텍스트
 }
 
 serve(async (req) => {
@@ -92,14 +94,16 @@ serve(async (req) => {
       timeAvailable,
       challenges,
       userId,
-      isPremium = false // ✅ 프리미엄 사용자 여부
+      isPremium = false, // ✅ 프리미엄 사용자 여부
+      hasResume = false, // ✅ 이력서 포함 여부
+      resumeText // ✅ 이력서에서 추출한 텍스트
     } = requestData
 
-    console.log('💎 [Talent] Premium 상태:', isPremium)
+    console.log('💎 [Talent] Premium 상태:', isPremium, '| 이력서:', hasResume ? '있음' : '없음')
 
-    // 캐시 확인
+    // 캐시 확인 (이력서 포함 여부도 캐시 키에 반영)
     const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `${userId || 'anonymous'}_talent_${today}_${JSON.stringify({talentArea, goals})}`
+    const cacheKey = `${userId || 'anonymous'}_talent_${today}_${JSON.stringify({talentArea, goals, hasResume})}`
 
     const { data: cachedResult } = await supabaseClient
       .from('fortune_cache')
@@ -120,11 +124,8 @@ serve(async (req) => {
       )
     }
 
-    // OpenAI API 호출
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 30000)
-
     // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    // Note: 클라이언트 측에서 90초 타임아웃 설정 (복잡한 프롬프트로 인해 25-40초 소요)
     const llm = await LLMFactory.createFromConfigAsync('talent')
 
     const response = await llm.generate([
@@ -271,10 +272,28 @@ serve(async (req) => {
     "함정 5: XX → 해결: XX"
   ],
 
-  "advice": "종합 조언 (100자 이내, 핵심만 간결하게)"
+  "advice": "종합 조언 (100자 이내, 핵심만 간결하게)",
+
+  // ✅ 이력서 기반 분석 (이력서 제공 시에만 포함)
+  "resumeAnalysis": {
+    "careerFit": "현재 경력과 목표의 적합도 분석 (200자)",
+    "skillGaps": [
+      "보완이 필요한 스킬 1: 설명 + 학습 방법",
+      "보완이 필요한 스킬 2: 설명 + 학습 방법",
+      "보완이 필요한 스킬 3: 설명 + 학습 방법"
+    ],
+    "careerTransition": "이직/전환 추천 방향 (300자)",
+    "hiddenPotentials": [
+      "이력서에서 발견한 숨은 재능 1",
+      "이력서에서 발견한 숨은 재능 2",
+      "이력서에서 발견한 숨은 재능 3"
+    ],
+    "experienceValue": "경력 가치 평가 (200자)",
+    "positioningAdvice": "포지셔닝 전략 (300자)"
+  }
 }
 
-⚠️ **중요**: 사용자가 입력한 관심사, 고민 영역, 업무 스타일 등을 **반드시** 분석에 반영하고, 각 섹션마다 **구체적이고 실행 가능한** 내용으로 채워주세요. 추상적이거나 일반적인 조언은 피하고, 사용자 맞춤형 상세 분석을 제공해야 합니다.`
+⚠️ **중요**: 사용자가 입력한 관심사, 고민 영역, 업무 스타일 등을 **반드시** 분석에 반영하고, 각 섹션마다 **구체적이고 실행 가능한** 내용으로 채워주세요. 추상적이거나 일반적인 조언은 피하고, 사용자 맞춤형 상세 분석을 제공해야 합니다. **이력서가 제공된 경우, resumeAnalysis 섹션을 반드시 포함하여 이력서 기반 상세 분석을 제공해주세요.**`
       },
       {
         role: 'user',
@@ -285,7 +304,12 @@ serve(async (req) => {
 가능 시간: ${timeAvailable}
 어려움: ${challenges.join(', ')}
 오늘 날짜: ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
+${hasResume && resumeText ? `
+📄 **이력서 정보**:
+${resumeText.slice(0, 3000)}${resumeText.length > 3000 ? '...(이하 생략)' : ''}
 
+위 이력서 내용을 바탕으로 resumeAnalysis 섹션에서 경력 적합도, 보완 스킬, 이직 방향, 숨은 재능 등을 상세히 분석해주세요.
+` : ''}
 위 정보를 바탕으로 재능 개발 운세를 JSON 형식으로 분석하고, 구체적인 주간 실행 계획을 제공해주세요. 현실적이면서도 동기부여가 되는 조언을 부탁드립니다.`
       }
     ], {
@@ -303,7 +327,7 @@ serve(async (req) => {
       provider: response.provider,
       model: response.model,
       response: response,
-      metadata: { talentArea, goals, experience, timeAvailable, isPremium }
+      metadata: { talentArea, goals, experience, timeAvailable, isPremium, hasResume }
     })
 
     if (!response.content) {
@@ -356,6 +380,9 @@ serve(async (req) => {
       // ✅ 신규: 학습 전략
       learningStrategy: fortuneData.learningStrategy,
 
+      // ✅ 신규: 이력서 기반 분석 (이력서 제공 시에만 포함)
+      ...(hasResume && fortuneData.resumeAnalysis ? { resumeAnalysis: fortuneData.resumeAnalysis } : {}),
+
       recommendations: fortuneData.recommendations, // ✅ 실제 데이터 (블러 처리는 클라이언트에서)
       warnings: fortuneData.warnings, // ✅ 실제 데이터 (블러 처리는 클라이언트에서)
       advice: fortuneData.advice, // ✅ 실제 데이터 (블러 처리는 클라이언트에서)
@@ -364,7 +391,8 @@ serve(async (req) => {
         currentSkills,
         experience,
         timeAvailable,
-        challenges
+        challenges,
+        hasResume // ✅ 이력서 포함 여부
       },
       isBlurred, // ✅ 블러 상태 (true면 클라이언트가 블러 처리)
       blurredSections // ✅ 블러된 섹션 목록

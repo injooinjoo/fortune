@@ -43,8 +43,15 @@ class HealthGenerator {
         throw Exception('API 호출 실패: ${response.status}');
       }
 
-      final responseData = response.data as Map<String, dynamic>;
-      final data = responseData['data'] as Map<String, dynamic>;
+      // Null Safety: 응답 데이터 검증
+      final responseData = response.data as Map<String, dynamic>?;
+      if (responseData == null) {
+        throw Exception('API 응답 데이터가 없습니다');
+      }
+      final data = responseData['data'] as Map<String, dynamic>?;
+      if (data == null) {
+        throw Exception('API 응답에서 data 필드를 찾을 수 없습니다');
+      }
 
       // 프리미엄이 아니면 블러 섹션 설정
       final blurredSections = isPremium

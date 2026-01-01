@@ -71,46 +71,98 @@ class ChatMessageList extends StatelessWidget {
   }
 }
 
-/// 타이핑 인디케이터
-class _TypingIndicator extends StatelessWidget {
+/// 타이핑 인디케이터 - 점 3개 bounce 애니메이션
+class _TypingIndicator extends StatefulWidget {
   const _TypingIndicator();
+
+  @override
+  State<_TypingIndicator> createState() => _TypingIndicatorState();
+}
+
+class _TypingIndicatorState extends State<_TypingIndicator>
+    with TickerProviderStateMixin {
+  late List<AnimationController> _controllers;
+  late List<Animation<double>> _animations;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List.generate(
+      3,
+      (index) => AnimationController(
+        duration: const Duration(milliseconds: 600),
+        vsync: this,
+      ),
+    );
+
+    _animations = _controllers.map((controller) {
+      return Tween<double>(begin: 0, end: -8).animate(
+        CurvedAnimation(parent: controller, curve: Curves.easeInOut),
+      );
+    }).toList();
+
+    // 순차적으로 애니메이션 시작
+    for (int i = 0; i < 3; i++) {
+      Future.delayed(Duration(milliseconds: i * 150), () {
+        if (mounted) {
+          _controllers[i].repeat(reverse: true);
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final typography = context.typography;
 
     return Container(
       alignment: Alignment.centerLeft,
       padding: const EdgeInsets.symmetric(
         vertical: DSSpacing.sm,
-        horizontal: DSSpacing.md, // 수평 패딩 추가
+        horizontal: DSSpacing.md,
       ),
       child: Container(
-        padding: const EdgeInsets.all(DSSpacing.md),
+        padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.lg,
+          vertical: DSSpacing.md,
+        ),
         decoration: BoxDecoration(
           color: colors.backgroundSecondary,
           borderRadius: BorderRadius.circular(DSRadius.lg),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: colors.accentSecondary,
-              ),
-            ),
-            const SizedBox(width: DSSpacing.sm),
-            Text(
-              '운세를 살펴보고 있어요...',
-              style: typography.labelMedium.copyWith(
-                color: colors.textSecondary,
-              ),
-            ),
-          ],
+          children: List.generate(3, (index) {
+            return AnimatedBuilder(
+              animation: _animations[index],
+              builder: (context, child) {
+                return Container(
+                  margin: EdgeInsets.only(
+                    right: index < 2 ? 6 : 0,
+                  ),
+                  child: Transform.translate(
+                    offset: Offset(0, _animations[index].value),
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: colors.textSecondary.withValues(alpha: 0.6),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
         ),
       ),
     );

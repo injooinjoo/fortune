@@ -7,3 +7,4 @@ export 'preference_options_input.dart';
 export 'text_input_field.dart';
 export 'self_evaluation_input.dart';
 export 'talent_input_title.dart';
+export 'resume_upload_input.dart';

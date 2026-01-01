@@ -72,7 +72,8 @@ class TokenState {
     'marriage': 3,
     'couple-match': 3,
     'chemistry': 3,
-    
+    'talent': 3,  // 적성 운세 기본 분석
+
     // Premium fortunes (5 tokens)
     'startup': 5,
     'business': 5,
@@ -81,6 +82,7 @@ class TokenState {
     'celebrity-match': 5,
     'network-report': 5,
     'five-blessings': 5,
+    'talent-resume': 5,  // 적성 운세 이력서 포함 분석 (3+2)
     'health-document': 3};  // 건강검진표/처방전/진단서 분석
 
   TokenState copyWith({

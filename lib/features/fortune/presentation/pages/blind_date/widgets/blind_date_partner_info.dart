@@ -6,13 +6,15 @@ import '../../../../../../core/widgets/app_widgets.dart';
 import '../../../../../../widgets/multi_photo_selector.dart';
 import '../constants/blind_date_options.dart';
 
-/// 상대 정보 통합 섹션 (사진 + 대화 내용) - 모두 선택적
+/// 상대 정보 통합 섹션 (Instagram + 사진 + 대화 내용) - 모두 선택적
 class BlindDatePartnerInfo extends StatelessWidget {
   final List<XFile> partnerPhotos;
   final ValueChanged<List<XFile>> onPartnerPhotosSelected;
   final TextEditingController chatContentController;
   final String? chatPlatform;
   final ValueChanged<String?> onPlatformChanged;
+  final TextEditingController instagramController;
+  final bool hasInstagramInput;
 
   const BlindDatePartnerInfo({
     super.key,
@@ -21,6 +23,8 @@ class BlindDatePartnerInfo extends StatelessWidget {
     required this.chatContentController,
     required this.chatPlatform,
     required this.onPlatformChanged,
+    required this.instagramController,
+    this.hasInstagramInput = false,
   });
 
   @override
@@ -41,12 +45,125 @@ class BlindDatePartnerInfo extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // 상대 사진 섹션
-          _buildPartnerPhotoSection(context),
+          // Instagram 아이디 섹션
+          _buildInstagramSection(context),
+          const SizedBox(height: 24),
+
+          // Instagram 입력 시 안내, 미입력 시 사진 업로드 표시
+          if (hasInstagramInput)
+            _buildInstagramNotice(context)
+          else
+            _buildPartnerPhotoSection(context),
           const SizedBox(height: 24),
 
           // 대화 내용 섹션
           _buildChatSection(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInstagramSection(BuildContext context) {
+    final colors = context.colors;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.camera_alt_outlined,
+              size: 18,
+              color: colors.accent,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '상대방 인스타그램',
+              style: DSTypography.labelLarge.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: instagramController,
+          style: DSTypography.bodyMedium.copyWith(
+            color: colors.textPrimary,
+          ),
+          decoration: InputDecoration(
+            hintText: '아이디 입력 (예: injooinjoo)',
+            hintStyle: DSTypography.bodyMedium.copyWith(
+              color: colors.textSecondary.withValues(alpha: 0.6),
+            ),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 12, right: 8),
+              child: Text(
+                '@',
+                style: DSTypography.bodyLarge.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(DSRadius.md),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(DSRadius.md),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(DSRadius.md),
+              borderSide: BorderSide(color: colors.accent, width: 2),
+            ),
+            filled: true,
+            fillColor: colors.surface,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          ),
+          onChanged: (_) => HapticFeedback.selectionClick(),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '아이디만 입력하면 프로필 사진을 자동으로 가져옵니다',
+          style: DSTypography.labelSmall.copyWith(
+            color: colors.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInstagramNotice(BuildContext context) {
+    final colors = context.colors;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colors.accent.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.check_circle_outline,
+            size: 20,
+            color: colors.accent,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              '인스타그램 프로필 사진으로 분석합니다',
+              style: DSTypography.bodySmall.copyWith(
+                color: colors.accent,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
         ],
       ),
     );

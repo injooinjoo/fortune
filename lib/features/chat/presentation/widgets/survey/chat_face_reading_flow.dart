@@ -117,43 +117,21 @@ class _ChatFaceReadingFlowState extends ConsumerState<ChatFaceReadingFlow> {
   }
 
   Widget _buildImageSelector(DSColorScheme colors) {
-    final typography = context.typography;
-
-    return Column(
+    return Row(
       key: const ValueKey('imageSelector'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          '얼굴 사진을 선택해주세요',
-          style: typography.labelMedium.copyWith(
-            color: colors.textSecondary,
-          ),
+        _ImageOptionChip(
+          icon: Icons.camera_alt_outlined,
+          label: '카메라',
+          onTap: _isLoading ? null : _pickFromCamera,
+          isLoading: _isLoading,
         ),
-        const SizedBox(height: DSSpacing.xs),
-        Text(
-          '정면을 바라보고 있는 얼굴 사진이 좋아요',
-          style: typography.labelSmall.copyWith(
-            color: colors.textTertiary,
-          ),
-        ),
-        const SizedBox(height: DSSpacing.sm),
-        Row(
-          children: [
-            _ImageOptionChip(
-              icon: Icons.camera_alt_outlined,
-              label: '카메라',
-              onTap: _isLoading ? null : _pickFromCamera,
-              isLoading: _isLoading,
-            ),
-            const SizedBox(width: DSSpacing.xs),
-            _ImageOptionChip(
-              icon: Icons.photo_library_outlined,
-              label: '갤러리',
-              onTap: _isLoading ? null : _pickFromGallery,
-              isLoading: _isLoading,
-            ),
-          ],
+        const SizedBox(width: DSSpacing.xs),
+        _ImageOptionChip(
+          icon: Icons.photo_library_outlined,
+          label: '갤러리',
+          onTap: _isLoading ? null : _pickFromGallery,
+          isLoading: _isLoading,
         ),
       ],
     );

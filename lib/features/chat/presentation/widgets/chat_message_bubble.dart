@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/chat_message.dart';
 import 'chat_career_result_card.dart';
+import 'chat_celebrity_result_card.dart';
 import 'chat_fortune_result_card.dart';
 import 'chat_ootd_result_card.dart';
 import 'chat_saju_result_card.dart';
@@ -76,6 +77,25 @@ class ChatMessageBubble extends StatelessWidget {
           fortune: message.fortune!,
           isBlurred: message.isBlurred,
           blurredSections: message.blurredSections,
+        ),
+      );
+    }
+
+    // 유명인 궁합 결과 카드 표시
+    if (message.fortune != null &&
+        message.type == ChatMessageType.fortuneResult &&
+        message.fortuneType == 'celebrity') {
+      // Fortune의 additionalInfo에서 celebrity 정보 추출
+      final additionalInfo = message.fortune!.additionalInfo ?? {};
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatCelebrityResultCard(
+          fortune: message.fortune!,
+          celebrityName: additionalInfo['celebrity_name'] as String?,
+          celebrityImageUrl: additionalInfo['celebrity_image_url'] as String?,
+          connectionType: additionalInfo['connection_type'] as String? ?? 'ideal_match',
         ),
       );
     }

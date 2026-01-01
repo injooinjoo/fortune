@@ -56,7 +56,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   String get typeName => widget.typeName;
 
   /// 오늘의 운세 타입 체크 (설문 기반 아닌 운세)
-  bool get _isDailyFortune => fortuneType == 'daily' || fortuneType == 'time';
+  /// 'daily_calendar'는 기간별 인사이트로, 민화 이미지 사용
+  bool get _isDailyFortune =>
+      fortuneType == 'daily' ||
+      fortuneType == 'time' ||
+      fortuneType == 'daily_calendar';
 
   /// 연간 운세 타입 체크
   bool get _isYearlyFortune => fortuneType == 'yearly' || fortuneType == 'new-year';
@@ -168,6 +172,10 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           if (_shouldShowContent && fortune.content.isNotEmpty && fortuneType != 'avoid-people')
             _buildContentSection(context),
 
+          // 기간별 인사이트 상세 데이터 (daily_calendar)
+          if (fortuneType == 'daily_calendar')
+            _buildDailyCalendarSection(context),
+
           // 카테고리/육각형 점수 표시 (content 표시하지 않는 타입만)
           if (!_shouldShowContent) ...[
             if (fortune.categories != null && fortune.categories!.isNotEmpty)
@@ -185,6 +193,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           // 행운 아이템
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
             _buildLuckyItemsSection(context),
+
+          // lucky-items 전용: 상세 섹션 표시
+          if (fortuneType == 'lucky-items')
+            _buildLuckyItemsDetailSections(context),
+
+          // talent 전용: 상세 섹션 표시
+          if (fortuneType == 'talent')
+            _buildTalentDetailSections(context),
 
           // 광고 버튼 (avoid-people 블러 상태일 때만)
           if (fortuneType == 'avoid-people' && _isBlurred && !isPremium)
@@ -326,6 +342,336 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           color: colors.textPrimary,
           height: 1.6,
         ),
+      ),
+    );
+  }
+
+  /// 기간별 인사이트 (daily_calendar) 상세 섹션
+  Widget _buildDailyCalendarSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+
+    final dailyFortunes = metadata['dailyFortunes'] as List<dynamic>?;
+    final bestDate = metadata['bestDate'] as String?;
+    final worstDate = metadata['worstDate'] as String?;
+    final periodTheme = metadata['periodTheme'] as String?;
+    final specialMessage = metadata['specialMessage'] as String?;
+    final advice = metadata['advice'] as String?;
+
+    // 데이터가 없으면 빈 위젯 반환
+    if (dailyFortunes == null && bestDate == null && periodTheme == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 기간 테마
+          if (periodTheme != null && periodTheme.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    colors.accent.withValues(alpha: 0.1),
+                    colors.accentSecondary.withValues(alpha: 0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Row(
+                children: [
+                  Text('🎯', style: typography.headingMedium),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '이 기간의 테마',
+                          style: typography.labelSmall.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                        Text(
+                          periodTheme,
+                          style: typography.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // 베스트/워스트 날짜
+          if (bestDate != null || worstDate != null) ...[
+            const SizedBox(height: DSSpacing.md),
+            Row(
+              children: [
+                if (bestDate != null)
+                  Expanded(
+                    child: _buildDateChip(
+                      context,
+                      icon: '✨',
+                      label: '좋은 날',
+                      date: bestDate,
+                      color: const Color(0xFF10B981),
+                    ),
+                  ),
+                if (bestDate != null && worstDate != null)
+                  const SizedBox(width: DSSpacing.sm),
+                if (worstDate != null)
+                  Expanded(
+                    child: _buildDateChip(
+                      context,
+                      icon: '⚠️',
+                      label: '주의할 날',
+                      date: worstDate,
+                      color: const Color(0xFFF59E0B),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+
+          // 일별 운세 목록
+          if (dailyFortunes != null && dailyFortunes.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            Text(
+              '📅 날짜별 운세',
+              style: typography.labelLarge.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            ...dailyFortunes.take(5).map((fortune) {
+              final fortuneMap = fortune as Map<String, dynamic>?;
+              if (fortuneMap == null) return const SizedBox.shrink();
+
+              final date = fortuneMap['date'] as String? ?? '';
+              final score = fortuneMap['score'] as int? ?? 0;
+              final summary = fortuneMap['summary'] as String? ??
+                             fortuneMap['content'] as String? ?? '';
+
+              return _buildDailyFortuneItem(
+                context,
+                date: date,
+                score: score,
+                summary: summary,
+              );
+            }),
+          ],
+
+          // 특별 메시지
+          if (specialMessage != null && specialMessage.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: colors.accent.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                  color: colors.accent.withValues(alpha: 0.2),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('💫', style: typography.bodyLarge),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      specialMessage,
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // 조언
+          if (advice != null && advice.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: colors.backgroundSecondary,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('💡', style: typography.bodyLarge),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '조언',
+                          style: typography.labelSmall.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          advice,
+                          style: typography.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          const SizedBox(height: DSSpacing.sm),
+        ],
+      ),
+    );
+  }
+
+  /// 날짜 칩 위젯
+  Widget _buildDateChip(
+    BuildContext context, {
+    required String icon,
+    required String label,
+    required String date,
+    required Color color,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(icon, style: typography.bodyMedium),
+          const SizedBox(width: DSSpacing.xs),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: typography.labelSmall.copyWith(
+                  color: colors.textSecondary,
+                  fontSize: 10,
+                ),
+              ),
+              Text(
+                date,
+                style: typography.labelMedium.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 일별 운세 아이템
+  Widget _buildDailyFortuneItem(
+    BuildContext context, {
+    required String date,
+    required int score,
+    required String summary,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    Color scoreColor;
+    if (score >= 80) {
+      scoreColor = const Color(0xFF10B981);
+    } else if (score >= 60) {
+      scoreColor = const Color(0xFF3B82F6);
+    } else if (score >= 40) {
+      scoreColor = const Color(0xFFF59E0B);
+    } else {
+      scoreColor = const Color(0xFFEF4444);
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+        border: Border.all(
+          color: colors.textPrimary.withValues(alpha: 0.08),
+        ),
+      ),
+      child: Row(
+        children: [
+          // 점수 원형
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: scoreColor.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                '$score',
+                style: typography.labelMedium.copyWith(
+                  color: scoreColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: DSSpacing.sm),
+          // 날짜 및 요약
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  date,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+                if (summary.isNotEmpty)
+                  Text(
+                    summary,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textPrimary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -576,6 +922,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   String _getPeriodLabel(String period) {
+    // 로또/행운번호는 항상 오늘 날짜 표시
+    if (widget.fortuneType == 'lucky-number' || widget.fortuneType == 'lotto') {
+      final now = DateTime.now();
+      return '${now.year}년 ${now.month}월 ${now.day}일';
+    }
+
     return switch (period) {
       'today' => '오늘의 운세',
       'tomorrow' => '내일의 운세',
@@ -603,6 +955,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   String _getCategoryEmoji(String key) {
     return switch (key.toLowerCase()) {
+      // 기존 운세 카테고리
       'love' || '연애운' || '연애' => '💕',
       'money' || '금전운' || '재물운' || '재물' => '💰',
       'work' || 'career' || '직업운' || '사업운' || '직업' => '💼',
@@ -610,18 +963,33 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       'social' || '대인운' || '인간관계' => '👥',
       'study' || '학업운' || '학업' => '📚',
       '총운' => '⭐',
+      // 적성 운세 hexagonScores
+      'creativity' => '💡',
+      'technique' => '⚙️',
+      'passion' => '🔥',
+      'discipline' => '📈',
+      'uniqueness' => '🦄',
+      'marketvalue' => '💎',
       _ => '✨',
     };
   }
 
   String _getCategoryTitle(String key) {
     return switch (key.toLowerCase()) {
+      // 기존 운세 카테고리
       'love' => '연애운',
       'money' => '금전운',
       'work' || 'career' => '직업운',
       'health' => '건강운',
       'social' => '대인운',
       'study' => '학업운',
+      // 적성 운세 hexagonScores
+      'creativity' => '창의성',
+      'technique' => '기술력',
+      'passion' => '열정',
+      'discipline' => '꾸준함',
+      'uniqueness' => '독창성',
+      'marketvalue' => '시장가치',
       _ => key,
     };
   }
@@ -1201,6 +1569,933 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.')),
         );
       }
+    }
+  }
+
+  /// 적성 운세 상세 섹션들 빌드 (talent 전용)
+  Widget _buildTalentDetailSections(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final data = widget.fortune.additionalInfo ?? widget.fortune.metadata ?? {};
+
+    // 데이터 추출
+    final description = data['description'] as String? ?? '';
+    final talentInsights = data['talentInsights'] as List<dynamic>? ?? [];
+    final mentalModel = data['mentalModel'] as Map<String, dynamic>? ?? {};
+    final weeklyPlan = data['weeklyPlan'] as List<dynamic>? ?? [];
+    final collaboration = data['collaboration'] as Map<String, dynamic>? ?? {};
+    final resumeAnalysis = data['resumeAnalysis'] as Map<String, dynamic>? ?? {};
+
+    // 데이터가 없으면 빈 위젯 반환
+    if (description.isEmpty && talentInsights.isEmpty && mentalModel.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 상세 분석 섹션
+          if (description.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildTalentSection(
+              context,
+              icon: '📝',
+              title: '상세 분석',
+              child: Container(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                decoration: BoxDecoration(
+                  color: colors.backgroundSecondary,
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                ),
+                child: Text(
+                  description,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.6,
+                  ),
+                  maxLines: 10,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+
+          // TOP 재능 인사이트 (상위 3개)
+          if (talentInsights.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildTalentSection(
+              context,
+              icon: '🌟',
+              title: 'TOP 재능',
+              child: Column(
+                children: talentInsights.take(3).toList().asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final insight = entry.value as Map<String, dynamic>? ?? {};
+                  final talent = insight['talent'] as String? ?? '';
+                  final potential = insight['potential'] as int? ?? 0;
+                  final insightDesc = insight['description'] as String? ?? '';
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+                    padding: const EdgeInsets.all(DSSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: colors.surface,
+                      borderRadius: BorderRadius.circular(DSRadius.md),
+                      border: Border.all(
+                        color: colors.textPrimary.withValues(alpha: 0.08),
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 순위 배지
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: index == 0
+                                  ? [const Color(0xFFFFD700), const Color(0xFFFFA500)]
+                                  : index == 1
+                                      ? [const Color(0xFFC0C0C0), const Color(0xFFA8A8A8)]
+                                      : [const Color(0xFFCD7F32), const Color(0xFFB8860B)],
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${index + 1}',
+                              style: typography.labelSmall.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: DSSpacing.sm),
+                        // 재능 정보
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      talent,
+                                      style: typography.bodyMedium.copyWith(
+                                        color: colors.textPrimary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: _getTalentScoreColor(potential).withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                                    ),
+                                    child: Text(
+                                      '$potential점',
+                                      style: typography.labelSmall.copyWith(
+                                        color: _getTalentScoreColor(potential),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (insightDesc.isNotEmpty) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  insightDesc,
+                                  style: typography.bodySmall.copyWith(
+                                    color: colors.textSecondary,
+                                    height: 1.4,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+
+          // 멘탈 모델 분석
+          if (mentalModel.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildTalentSection(
+              context,
+              icon: '🧠',
+              title: '멘탈 모델',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (mentalModel['thinkingStyle'] != null)
+                    _buildMentalModelItem(
+                      context,
+                      emoji: '💭',
+                      label: '사고방식',
+                      value: mentalModel['thinkingStyle'] as String,
+                    ),
+                  if (mentalModel['decisionPattern'] != null)
+                    _buildMentalModelItem(
+                      context,
+                      emoji: '🎯',
+                      label: '의사결정',
+                      value: mentalModel['decisionPattern'] as String,
+                    ),
+                  if (mentalModel['learningStyle'] != null)
+                    _buildMentalModelItem(
+                      context,
+                      emoji: '📚',
+                      label: '학습스타일',
+                      value: mentalModel['learningStyle'] as String,
+                    ),
+                ],
+              ),
+            ),
+          ],
+
+          // 협업 궁합 (간략하게)
+          if (collaboration.isNotEmpty && collaboration['teamRole'] != null) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildTalentSection(
+              context,
+              icon: '🤝',
+              title: '협업 역할',
+              child: Container(
+                padding: const EdgeInsets.all(DSSpacing.sm),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                  border: Border.all(color: colors.accent.withValues(alpha: 0.15)),
+                ),
+                child: Row(
+                  children: [
+                    Text('👤', style: typography.bodyLarge),
+                    const SizedBox(width: DSSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        collaboration['teamRole'] as String,
+                        style: typography.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+
+          // 7일 실행 계획 미리보기 (오늘/내일/모레)
+          if (weeklyPlan.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            Builder(builder: (context) {
+              final weekdays = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
+              final today = DateTime.now().weekday; // 1=월, 7=일
+
+              return _buildTalentSection(
+                context,
+                icon: '📅',
+                title: '7일 실행 계획',
+                child: Column(
+                  children: weeklyPlan.take(3).map((dayPlan) {
+                    final plan = dayPlan as Map<String, dynamic>? ?? {};
+                    final day = plan['day'] as String? ?? '';
+                    final focus = plan['focus'] as String? ?? '';
+                    final activities = plan['activities'] as List<dynamic>? ?? [];
+
+                    // 오늘인지 확인
+                    final dayIndex = weekdays.indexOf(day);
+                    final isToday = dayIndex >= 0 && (dayIndex + 1) == today;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: DSSpacing.xs),
+                      padding: const EdgeInsets.all(DSSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: isToday
+                            ? colors.accent.withValues(alpha: 0.1)
+                            : colors.surface,
+                        borderRadius: BorderRadius.circular(DSRadius.sm),
+                        border: Border.all(
+                          color: isToday
+                              ? colors.accent.withValues(alpha: 0.3)
+                              : colors.textPrimary.withValues(alpha: 0.08),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          // 요일
+                          SizedBox(
+                            width: 50,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  day.isNotEmpty ? day.substring(0, 1) : '',
+                                  style: typography.labelMedium.copyWith(
+                                    color: isToday ? colors.accent : colors.textSecondary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (isToday)
+                                  Text(
+                                    '오늘',
+                                    style: typography.labelSmall.copyWith(
+                                      color: colors.accent,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          // 집중 영역 및 활동
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  focus,
+                                  style: typography.labelMedium.copyWith(
+                                    color: colors.textPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (activities.isNotEmpty)
+                                  Text(
+                                    activities.first.toString(),
+                                    style: typography.bodySmall.copyWith(
+                                      color: colors.textSecondary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              );
+            }),
+          ],
+
+          // 📄 이력서 기반 분석 섹션 (resumeAnalysis가 있을 때만)
+          if (resumeAnalysis.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildTalentSection(
+              context,
+              icon: '📄',
+              title: '이력서 기반 분석',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 경력 적합도
+                  if (resumeAnalysis['careerFit'] != null) ...[
+                    _buildResumeAnalysisItem(
+                      context,
+                      icon: '💼',
+                      title: '경력 적합도',
+                      content: resumeAnalysis['careerFit'] as String,
+                    ),
+                    const SizedBox(height: DSSpacing.sm),
+                  ],
+                  // 보완 필요 스킬
+                  if (resumeAnalysis['skillGaps'] != null) ...[
+                    _buildResumeAnalysisItem(
+                      context,
+                      icon: '📈',
+                      title: '보완 필요 스킬',
+                      content: (resumeAnalysis['skillGaps'] as List<dynamic>).join('\n'),
+                    ),
+                    const SizedBox(height: DSSpacing.sm),
+                  ],
+                  // 이직/전환 방향
+                  if (resumeAnalysis['careerTransition'] != null) ...[
+                    _buildResumeAnalysisItem(
+                      context,
+                      icon: '🔄',
+                      title: '이직/전환 추천',
+                      content: resumeAnalysis['careerTransition'] as String,
+                    ),
+                    const SizedBox(height: DSSpacing.sm),
+                  ],
+                  // 숨은 재능
+                  if (resumeAnalysis['hiddenPotentials'] != null) ...[
+                    _buildResumeAnalysisItem(
+                      context,
+                      icon: '💎',
+                      title: '숨은 재능',
+                      content: (resumeAnalysis['hiddenPotentials'] as List<dynamic>).join('\n'),
+                    ),
+                    const SizedBox(height: DSSpacing.sm),
+                  ],
+                  // 경력 가치
+                  if (resumeAnalysis['experienceValue'] != null) ...[
+                    _buildResumeAnalysisItem(
+                      context,
+                      icon: '⭐',
+                      title: '경력 가치',
+                      content: resumeAnalysis['experienceValue'] as String,
+                    ),
+                    const SizedBox(height: DSSpacing.sm),
+                  ],
+                  // 포지셔닝 전략
+                  if (resumeAnalysis['positioningAdvice'] != null) ...[
+                    _buildResumeAnalysisItem(
+                      context,
+                      icon: '🎯',
+                      title: '포지셔닝 전략',
+                      content: resumeAnalysis['positioningAdvice'] as String,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+
+          const SizedBox(height: DSSpacing.sm),
+        ],
+      ),
+    );
+  }
+
+  /// 이력서 분석 항목 빌더
+  Widget _buildResumeAnalysisItem(
+    BuildContext context, {
+    required String icon,
+    required String title,
+    required String content,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+        border: Border.all(
+          color: DSColors.accent.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(icon, style: const TextStyle(fontSize: 14)),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                title,
+                style: typography.labelMedium.copyWith(
+                  color: DSColors.accent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            content,
+            style: typography.bodySmall.copyWith(
+              color: colors.textPrimary,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 적성 운세 섹션 빌더
+  Widget _buildTalentSection(BuildContext context, {
+    required String icon,
+    required String title,
+    required Widget child,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(icon, style: const TextStyle(fontSize: 16)),
+            const SizedBox(width: DSSpacing.xs),
+            Text(
+              title,
+              style: typography.labelLarge.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: DSSpacing.sm),
+        child,
+      ],
+    );
+  }
+
+  /// 멘탈 모델 개별 아이템 빌더
+  Widget _buildMentalModelItem(BuildContext context, {
+    required String emoji,
+    required String label,
+    required String value,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: DSSpacing.xs),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textTertiary,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 재능 점수 색상 반환
+  Color _getTalentScoreColor(int score) {
+    if (score >= 90) return const Color(0xFF10B981);
+    if (score >= 80) return const Color(0xFF3B82F6);
+    if (score >= 70) return const Color(0xFFF59E0B);
+    return const Color(0xFFEF4444);
+  }
+
+  /// 행운 아이템 상세 섹션들 빌드 (lucky-items 전용)
+  Widget _buildLuckyItemsDetailSections(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final data = widget.fortune.additionalInfo ?? widget.fortune.metadata ?? {};
+
+    // 데이터 추출
+    final keyword = data['keyword'] as String? ?? '';
+    final element = data['element'] as String? ?? '';
+    final color = data['color'] as String? ?? '';
+    final direction = data['direction'] as String? ?? '';
+    final numbers = data['numbers'] as List<dynamic>? ?? [];
+    final fashion = data['fashion'] as List<dynamic>? ?? [];
+    final food = data['food'] as List<dynamic>? ?? [];
+    final jewelry = data['jewelry'] as List<dynamic>? ?? [];
+    final material = data['material'] as List<dynamic>? ?? [];
+    final places = data['places'] as List<dynamic>? ?? [];
+    final relationships = data['relationships'] as List<dynamic>? ?? [];
+    final advice = data['advice'] as String? ?? data['lucky_advice'] as String? ?? '';
+    final luckySummary = data['lucky_summary'] as String? ?? data['summary'] as String? ?? '';
+
+    // 오늘 날짜 포맷
+    final now = DateTime.now();
+    final dateStr = '${now.year}년 ${now.month}월 ${now.day}일';
+    final weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+    final weekday = weekdays[now.weekday - 1];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 오늘 날짜 배지
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs, horizontal: DSSpacing.sm),
+            decoration: BoxDecoration(
+              color: colors.accent.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('📅', style: TextStyle(fontSize: 14)),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '$dateStr ($weekday)',
+                  style: typography.labelMedium.copyWith(
+                    color: colors.accent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          // 오행 분석
+          if (luckySummary.isNotEmpty || element.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '✨',
+              title: '오행 분석',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (element.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+                      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                      decoration: BoxDecoration(
+                        color: _getLuckyElementColor(element).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.full),
+                        border: Border.all(color: _getLuckyElementColor(element).withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(_getLuckyElementEmoji(element), style: const TextStyle(fontSize: 14)),
+                          const SizedBox(width: DSSpacing.xs),
+                          Text(
+                            '오행: $element',
+                            style: typography.labelMedium.copyWith(
+                              color: _getLuckyElementColor(element),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (luckySummary.isNotEmpty)
+                    Text(
+                      luckySummary,
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                        height: 1.5,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+          // 오늘의 키워드
+          if (keyword.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '🔑',
+              title: '오늘의 키워드',
+              child: Wrap(
+                spacing: DSSpacing.xs,
+                runSpacing: DSSpacing.xs,
+                children: keyword.split(',').map((k) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: colors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(DSRadius.full),
+                    border: Border.all(color: colors.warning.withValues(alpha: 0.3)),
+                  ),
+                  child: Text(
+                    k.trim(),
+                    style: typography.labelSmall.copyWith(
+                      color: colors.warning,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                )).toList(),
+              ),
+            ),
+
+          // 행운 요소 (색상, 숫자, 방향)
+          if (color.isNotEmpty || numbers.isNotEmpty || direction.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '🍀',
+              title: '행운 요소',
+              child: Wrap(
+                spacing: DSSpacing.sm,
+                runSpacing: DSSpacing.sm,
+                children: [
+                  if (color.isNotEmpty)
+                    _buildLuckyChip(context, icon: '🎨', label: '색상', value: color, chipColor: colors.error),
+                  if (numbers.isNotEmpty)
+                    _buildLuckyChip(context, icon: '🔢', label: '숫자', value: numbers.join(', '), chipColor: colors.info),
+                  if (direction.isNotEmpty)
+                    _buildLuckyChip(context, icon: '🧭', label: '방향', value: direction, chipColor: colors.success),
+                ],
+              ),
+            ),
+
+          // 패션
+          if (fashion.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '👔',
+              title: '오늘의 패션',
+              child: _buildLuckyItemsChips(context, fashion, colors.accentSecondary),
+            ),
+
+          // 음식
+          if (food.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '🍽️',
+              title: '행운의 음식',
+              child: _buildLuckyItemsChips(context, food, colors.warning),
+            ),
+
+          // 보석/액세서리
+          if (jewelry.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '💎',
+              title: '행운의 보석/액세서리',
+              child: _buildLuckyItemsChips(context, jewelry, colors.accent),
+            ),
+
+          // 소재
+          if (material.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '🧶',
+              title: '행운의 소재',
+              child: _buildLuckyItemsChips(context, material, colors.info),
+            ),
+
+          // 장소
+          if (places.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '📍',
+              title: '행운의 장소',
+              child: _buildLuckyItemsChips(context, places, colors.success),
+            ),
+
+          // 인간관계
+          if (relationships.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '👥',
+              title: '궁합 좋은 사람',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: relationships.map((rel) => Padding(
+                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('• ', style: TextStyle(color: colors.textSecondary, fontSize: 14)),
+                      Expanded(
+                        child: Text(
+                          rel.toString(),
+                          style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                        ),
+                      ),
+                    ],
+                  ),
+                )).toList(),
+              ),
+            ),
+
+          // 종합 조언
+          if (advice.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '💡',
+              title: '오늘의 추천',
+              child: Container(
+                padding: const EdgeInsets.all(DSSpacing.sm),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                  border: Border.all(color: colors.accent.withValues(alpha: 0.15)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('💬', style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: DSSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        advice,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textPrimary,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// 행운 아이템 섹션 빌더
+  Widget _buildLuckySection(BuildContext context, {
+    required String icon,
+    required String title,
+    required Widget child,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DSSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(icon, style: const TextStyle(fontSize: 16)),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                title,
+                style: typography.labelLarge.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          child,
+        ],
+      ),
+    );
+  }
+
+  /// 행운 아이템 칩 빌더
+  Widget _buildLuckyChip(BuildContext context, {
+    required String icon,
+    required String label,
+    required String value,
+    required Color chipColor,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+      decoration: BoxDecoration(
+        color: chipColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+        border: Border.all(color: chipColor.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 12)),
+          const SizedBox(width: DSSpacing.xs),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: typography.labelSmall.copyWith(
+                  color: colors.textTertiary,
+                  fontSize: 10,
+                ),
+              ),
+              Text(
+                value,
+                style: typography.labelSmall.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 아이템 목록을 칩 형태로 표시
+  Widget _buildLuckyItemsChips(BuildContext context, List<dynamic> items, Color chipColor) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Wrap(
+      spacing: DSSpacing.xs,
+      runSpacing: DSSpacing.xs,
+      children: items.map((item) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+        decoration: BoxDecoration(
+          color: chipColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(DSRadius.sm),
+          border: Border.all(color: chipColor.withValues(alpha: 0.2)),
+        ),
+        child: Text(
+          item.toString(),
+          style: typography.labelSmall.copyWith(
+            color: colors.textPrimary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      )).toList(),
+    );
+  }
+
+  /// 오행별 색상 반환
+  Color _getLuckyElementColor(String element) {
+    switch (element) {
+      case '목':
+        return const Color(0xFF4CAF50);
+      case '화':
+        return const Color(0xFFE53935);
+      case '토':
+        return const Color(0xFFFF9800);
+      case '금':
+        return const Color(0xFFFFD700);
+      case '수':
+        return const Color(0xFF2196F3);
+      default:
+        return const Color(0xFF9E9E9E);
+    }
+  }
+
+  /// 오행별 이모지 반환
+  String _getLuckyElementEmoji(String element) {
+    switch (element) {
+      case '목':
+        return '🌳';
+      case '화':
+        return '🔥';
+      case '토':
+        return '🏔️';
+      case '금':
+        return '⚱️';
+      case '수':
+        return '💧';
+      default:
+        return '✨';
     }
   }
 }

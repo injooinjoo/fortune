@@ -27,6 +27,7 @@ import 'widgets/advice_section.dart';
 import 'widgets/timeline_section.dart';
 import 'widgets/share_section.dart';
 import 'widgets/card_detail_modal.dart';
+import '../../../../../core/widgets/today_result_label.dart';
 
 class TarotSummaryPage extends ConsumerStatefulWidget {
   final List<int> cards;
@@ -258,6 +259,12 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   opacity: _fadeAnimation,
                   child: Column(
                     children: [
+                      // 오늘 날짜 라벨 + 재방문 유도
+                      const TodayResultLabel(
+                        useLightTheme: true,
+                        showRevisitHint: true,
+                      ),
+                      const SizedBox(height: 16),
                       SummaryHeader(
                         fontScale: fontScale,
                         question: widget.question,

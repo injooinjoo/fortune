@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
 import '../../shared/glassmorphism/glass_container.dart';
 
@@ -93,8 +94,7 @@ class PremiumScreen extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // TODO: Navigate to premium saju content
-                // 프리미엄 사주 콘텐츠 페이지로 연결 예정
+                context.push('/traditional-saju');
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),

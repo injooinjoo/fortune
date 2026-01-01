@@ -14,6 +14,7 @@ import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
+import '../../../../core/widgets/today_result_label.dart';
 
 /// 투자운세 결과 페이지 v2 (리서치 기반 새 구조)
 ///
@@ -120,7 +121,10 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   // 4. 행운 아이템 (공개)
                   _buildLuckyItemsSection(),
 
-                  // 5. 타이밍 운세 (블러) - NEW
+                  // 5. 사주 인사이트 (공개 - 무료)
+                  _buildSajuInsightSection(),
+
+                  // 6. 타이밍 운세 (블러) - NEW
                   _buildTimingSection(),
 
                   // 6. 전망 운세 (블러) - NEW
@@ -132,8 +136,11 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   // 8. 시장 기운 (블러) - NEW
                   _buildMarketMoodSection(),
 
-                  // 9. 투자 조언 (블러)
+                  // 10. 투자 조언 (블러)
                   _buildAdviceSection(),
+
+                  // 11. 면책 문구 (공개)
+                  _buildDisclaimerSection(),
 
                   const SizedBox(height: 80),
                 ],
@@ -177,10 +184,16 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       ),
       child: Column(
         children: [
+          // 오늘 날짜 라벨 + 재방문 유도
+          const TodayResultLabel(
+            useLightTheme: true,
+            showRevisitHint: true,
+          ),
+          const SizedBox(height: 12),
           const Icon(Icons.trending_up_rounded, color: Colors.white, size: 48),
           const SizedBox(height: 16),
           Text(
-            '재물운 점수',
+            '재물운',
             style: context.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.9)),
           ),
           const SizedBox(height: 8),
@@ -629,6 +642,159 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  // ===== 사주 인사이트 섹션 (공개) =====
+
+  Widget _buildSajuInsightSection() {
+    final colors = context.colors;
+    final data = _fortuneResult.data;
+    final sajuInsight = data['sajuInsight'] as Map<String, dynamic>?;
+    final sajuAnalysis = data['sajuAnalysis'] as Map<String, dynamic>?;
+
+    if (sajuInsight == null && sajuAnalysis == null) return const SizedBox.shrink();
+
+    return _buildSectionCard(
+      title: '사주 인사이트',
+      icon: Icons.auto_awesome_rounded,
+      color: const Color(0xFF673AB7),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 오행 궁합 점수
+          if (sajuAnalysis != null) ...[
+            _buildElementFitBadge(sajuAnalysis['score'] as int? ?? 50),
+            const SizedBox(height: 16),
+          ],
+
+          // 오행 조화 설명
+          if (sajuInsight?['elementFit'] != null) ...[
+            Text(
+              sajuInsight!['elementFit'] as String,
+              style: context.bodyMedium.copyWith(
+                color: colors.textSecondary,
+                height: 1.6,
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          // 오늘의 기운
+          if (sajuInsight?['todayEnergy'] != null) ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF673AB7).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Text('✨', style: TextStyle(fontSize: 20)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      sajuInsight!['todayEnergy'] as String,
+                      style: context.bodySmall.copyWith(color: colors.textSecondary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          // 마음가짐 조언
+          if (sajuInsight?['mindsetAdvice'] != null || sajuAnalysis?['mindset'] != null)
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colors.backgroundSecondary,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF673AB7).withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.psychology_alt_rounded, size: 20, color: Color(0xFF673AB7)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      sajuInsight?['mindsetAdvice'] as String? ?? sajuAnalysis?['mindset'] as String? ?? '',
+                      style: context.bodySmall.copyWith(color: colors.textPrimary, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildElementFitBadge(int score) {
+    final color = score >= 70
+        ? const Color(0xFF4CAF50)
+        : score >= 40
+            ? const Color(0xFFFF9800)
+            : const Color(0xFFF44336);
+    final label = score >= 70 ? '좋은 궁합' : score >= 40 ? '보통 궁합' : '주의 필요';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('☯️', style: TextStyle(fontSize: 18)),
+          const SizedBox(width: 8),
+          Text(
+            '오행 궁합 $score점',
+            style: context.bodySmall.copyWith(color: color, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(label, style: context.labelSmall.copyWith(color: color)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===== 면책 문구 섹션 =====
+
+  Widget _buildDisclaimerSection() {
+    final colors = context.colors;
+    final data = _fortuneResult.data;
+    final disclaimer = data['disclaimer'] as String? ?? '투자는 본인의 선택과 책임입니다. 이 내용은 재미로 참고하시기 바랍니다.';
+
+    return Container(
+      margin: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline_rounded, size: 18, color: colors.textTertiary),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              disclaimer,
+              style: context.bodySmall.copyWith(color: colors.textTertiary, height: 1.4),
+            ),
+          ),
         ],
       ),
     );

@@ -8,6 +8,7 @@ import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../domain/models/fortune_result.dart';
 import '../../widgets/face_reading/celebrity_match_carousel.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
+import '../../../../../core/widgets/today_result_label.dart';
 
 /// Face AI 결과 페이지 - 세분화된 얼굴 분석
 class FaceReadingResultPage extends ConsumerStatefulWidget {
@@ -76,6 +77,10 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 오늘 날짜 라벨 + 재방문 유도
+            const Center(child: TodayResultLabel(showRevisitHint: true)),
+            const SizedBox(height: 16),
+
             // 상단: 업로드 이미지 + 관상 맵 이미지 나란히
             // F25: 총평 외 모든 섹션 블러 처리
             UnifiedBlurWrapper(

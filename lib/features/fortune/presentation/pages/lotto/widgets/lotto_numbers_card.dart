@@ -6,9 +6,10 @@ import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/design_system/components/traditional/hanji_card.dart';
 import '../../../../domain/services/lotto_number_generator.dart';
 
-/// 로또 번호 카드 (5+1 구조)
+/// 로또 번호 카드 (5+1 구조, 여러 세트 지원)
 ///
 /// 6개 번호 중 5개는 바로 공개, 1개는 광고 후 공개
+/// gameCount > 1일 경우 여러 세트를 행별로 표시
 class LottoNumbersCard extends StatelessWidget {
   final LottoResult lottoResult;
   final bool isPremiumUnlocked;
@@ -41,8 +42,8 @@ class LottoNumbersCard extends StatelessWidget {
             _buildFortuneMessage(isDark),
             const SizedBox(height: 24),
 
-            // 번호들 (5 + 1)
-            _buildNumbersRow(context, isDark),
+            // 번호들 (여러 세트 지원)
+            _buildNumbersSections(context, isDark),
             const SizedBox(height: 16),
 
             // 번호 색상 안내
@@ -99,7 +100,9 @@ class LottoNumbersCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '사주 기반 맞춤 번호 6개',
+                lottoResult.gameCount > 1
+                    ? '사주 기반 맞춤 번호 ${lottoResult.gameCount}게임'
+                    : '사주 기반 맞춤 번호 6개',
                 style: TypographyUnified.bodySmall.copyWith(
                   color: isDark
                       ? ObangseokColors.baekDark.withValues(alpha: 0.7)
@@ -149,7 +152,12 @@ class LottoNumbersCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNumbersRow(BuildContext context, bool isDark) {
+  /// 여러 세트 번호 표시 섹션
+  Widget _buildNumbersSections(BuildContext context, bool isDark) {
+    // 세트가 있으면 여러 세트, 없으면 단일 세트 (하위 호환성)
+    final hasSets = lottoResult.sets.isNotEmpty;
+    final setCount = hasSets ? lottoResult.sets.length : 1;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
@@ -166,32 +174,111 @@ class LottoNumbersCard extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           // 화면 너비에 따라 볼 크기 동적 계산
-          // 6개 볼 + 간격(5개 x 8px) + 패딩 여유
-          final availableWidth = constraints.maxWidth - 16; // 좌우 패딩
-          final maxBallSize = (availableWidth - 40) / 6; // 6개 볼, 간격 고려
-          final ballSize = maxBallSize.clamp(36.0, 48.0); // 최소 36, 최대 48
+          final availableWidth = constraints.maxWidth - 16;
+          final maxBallSize = (availableWidth - 40) / 6;
+          // 여러 세트일 때는 볼 크기를 조금 줄임
+          final ballSize = setCount > 1
+              ? maxBallSize.clamp(32.0, 40.0)
+              : maxBallSize.clamp(36.0, 48.0);
 
-          return Row(
+          if (hasSets) {
+            // 여러 세트 표시
+            return Column(
+              children: [
+                for (int i = 0; i < lottoResult.sets.length; i++) ...[
+                  if (i > 0) const SizedBox(height: 12),
+                  _buildSetRow(
+                    setIndex: i,
+                    set: lottoResult.sets[i],
+                    isDark: isDark,
+                    ballSize: ballSize,
+                  ),
+                ],
+              ],
+            );
+          } else {
+            // 단일 세트 (하위 호환성)
+            return _buildSingleSetRow(isDark, ballSize);
+          }
+        },
+      ),
+    );
+  }
+
+  /// 단일 세트 행 (하위 호환성)
+  Widget _buildSingleSetRow(bool isDark, double ballSize) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        // 5개 공개 번호
+        ...lottoResult.visibleNumbers.map((number) => _buildNumberBall(
+              number,
+              isDark,
+              isLocked: false,
+              size: ballSize,
+            )),
+        // 1개 잠금 번호
+        _buildNumberBall(
+          lottoResult.lockedNumber,
+          isDark,
+          isLocked: !isPremiumUnlocked,
+          size: ballSize,
+        ),
+      ],
+    );
+  }
+
+  /// 세트별 번호 행
+  Widget _buildSetRow({
+    required int setIndex,
+    required LottoNumberSet set,
+    required bool isDark,
+    required double ballSize,
+  }) {
+    return Row(
+      children: [
+        // 게임 번호 표시 (A, B, C, D, E)
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: ObangseokColors.hwang.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Center(
+            child: Text(
+              String.fromCharCode(65 + setIndex), // A, B, C, D, E
+              style: TypographyUnified.labelSmall.copyWith(
+                fontWeight: FontWeight.w700,
+                color: ObangseokColors.hwang,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        // 6개 번호
+        Expanded(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // 5개 공개 번호
-              ...lottoResult.visibleNumbers.map((number) => _buildNumberBall(
+              ...set.visibleNumbers.map((number) => _buildNumberBall(
                     number,
                     isDark,
                     isLocked: false,
                     size: ballSize,
                   )),
-              // 1개 잠금 번호
+              // 1개 잠금 번호 (광고 전까지 블러)
               _buildNumberBall(
-                lottoResult.lockedNumber,
+                set.lockedNumber,
                 isDark,
                 isLocked: !isPremiumUnlocked,
                 size: ballSize,
               ),
             ],
-          );
-        },
-      ),
+          ),
+        ),
+      ],
     );
   }
 

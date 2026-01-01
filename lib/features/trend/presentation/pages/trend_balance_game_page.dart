@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
@@ -410,8 +411,19 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Share functionality
+                        onPressed: () async {
+                          try {
+                            await Share.share(
+                              '🎮 밸런스 게임 결과\n\n앱에서 더 다양한 밸런스 게임을 즐겨보세요!',
+                              subject: '밸런스 게임 결과 공유',
+                            );
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('공유에 실패했습니다')),
+                              );
+                            }
+                          }
                         },
                         icon: const Icon(Icons.share_outlined),
                         label: const Text('공유하기'),

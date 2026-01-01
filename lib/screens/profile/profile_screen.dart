@@ -979,7 +979,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
                   ),
-                  onTap: () => context.push('/policy/privacy'),
+                  onTap: () => context.push('/privacy-policy'),
                 ),
                 SettingsListTile(
                   icon: Icons.description_outlined,
@@ -988,7 +988,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
                   ),
-                  onTap: () => context.push('/policy/terms'),
+                  onTap: () => context.push('/terms-of-service'),
                   isLast: true,
                 ),
               ],

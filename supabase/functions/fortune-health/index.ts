@@ -70,8 +70,59 @@ interface HealthFortuneRequest {
   fortune_type?: string
   current_condition: string
   concerned_body_parts: string[]
+  sleepQuality?: number // ✅ 수면 품질 (1-5)
+  exerciseFrequency?: number // ✅ 운동 빈도 (1-5)
+  stressLevel?: number // ✅ 스트레스 수준 (1-5)
+  mealRegularity?: number // ✅ 식사 규칙성 (1-5)
+  hasChronicCondition?: boolean // ✅ 기저질환 여부
+  chronicCondition?: string // ✅ 기저질환 내용
   isPremium?: boolean // ✅ 프리미엄 사용자 여부
   health_app_data?: HealthAppData | null // ✅ 프리미엄 건강앱 데이터
+}
+
+// ✅ 건강 입력값을 설명 레이블로 변환하는 헬퍼 함수
+function getSleepLabel(value: number): string {
+  const labels: Record<number, string> = {
+    1: '매우 나쁨 - 수면 부족이 심각함',
+    2: '나쁨 - 자주 깨거나 숙면 어려움',
+    3: '보통 - 적당한 수면',
+    4: '좋음 - 숙면하는 편',
+    5: '매우 좋음 - 깊은 수면, 상쾌한 기상'
+  }
+  return labels[value] || '보통'
+}
+
+function getExerciseLabel(value: number): string {
+  const labels: Record<number, string> = {
+    1: '거의 안함 - 운동 부족',
+    2: '가끔 (주 1회 이하)',
+    3: '보통 (주 2-3회)',
+    4: '자주 (주 4-5회)',
+    5: '매일 운동 - 활동적'
+  }
+  return labels[value] || '보통'
+}
+
+function getStressLabel(value: number): string {
+  const labels: Record<number, string> = {
+    1: '거의 없음 - 편안한 상태',
+    2: '조금 있음 - 관리 가능',
+    3: '보통 - 일상적인 스트레스',
+    4: '많음 - 스트레스 관리 필요',
+    5: '매우 많음 - 과도한 스트레스, 주의 필요'
+  }
+  return labels[value] || '보통'
+}
+
+function getMealLabel(value: number): string {
+  const labels: Record<number, string> = {
+    1: '매우 불규칙 - 식사 거르기 잦음',
+    2: '불규칙 - 자주 거름',
+    3: '보통 - 대체로 규칙적',
+    4: '규칙적 - 정해진 시간에 식사',
+    5: '매우 규칙적 - 균형 잡힌 식사'
+  }
+  return labels[value] || '보통'
 }
 
 serve(async (req) => {
@@ -90,6 +141,12 @@ serve(async (req) => {
     const {
       current_condition = '',
       concerned_body_parts = [],
+      sleepQuality = 3, // ✅ 수면 품질 (1-5, 기본값 3)
+      exerciseFrequency = 3, // ✅ 운동 빈도 (1-5, 기본값 3)
+      stressLevel = 3, // ✅ 스트레스 수준 (1-5, 기본값 3)
+      mealRegularity = 3, // ✅ 식사 규칙성 (1-5, 기본값 3)
+      hasChronicCondition = false, // ✅ 기저질환 여부
+      chronicCondition = '', // ✅ 기저질환 내용
       isPremium = false, // ✅ 프리미엄 사용자 여부
       health_app_data = null // ✅ 건강앱 데이터 (프리미엄 전용)
     } = requestData
@@ -101,11 +158,21 @@ serve(async (req) => {
     const hasHealthAppData = isPremium && health_app_data !== null
     console.log('💎 [Health] Premium 상태:', isPremium)
     console.log('📱 [Health] 건강앱 데이터:', hasHealthAppData ? '있음' : '없음')
-    console.log('Health fortune request:', { current_condition, concerned_body_parts })
+    console.log('🏥 [Health] 건강 입력:', {
+      current_condition,
+      concerned_body_parts,
+      sleepQuality,
+      exerciseFrequency,
+      stressLevel,
+      mealRegularity,
+      hasChronicCondition,
+      chronicCondition
+    })
 
-    // 건강앱 데이터가 있으면 캐시 키에 포함 (개인화된 결과)
+    // 모든 건강 입력을 캐시 키에 포함 (개인화된 결과)
+    const healthInputs = `${current_condition}_${concerned_body_parts.join(',')}_s${sleepQuality}e${exerciseFrequency}t${stressLevel}m${mealRegularity}`
     const healthDataHash = hasHealthAppData ? `_healthapp_${JSON.stringify(health_app_data).slice(0, 50)}` : ''
-    const hash = await createHash(`${current_condition}_${concerned_body_parts.join(',')}${healthDataHash}`)
+    const hash = await createHash(`${healthInputs}${healthDataHash}`)
     const cacheKey = `health_fortune_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
@@ -158,8 +225,19 @@ ${health_app_data!.data_period ? `- **데이터 기간**: ${health_app_data!.dat
       const userPrompt = `## 사용자 건강 프로필
 - **현재 컨디션**: ${current_condition}
 - **관심 부위**: ${concerned_body_parts.length > 0 ? concerned_body_parts.join(', ') : '전신 컨디션'}
+- **수면 품질**: ${sleepQuality}/5점 (${getSleepLabel(sleepQuality)})
+- **운동 빈도**: ${exerciseFrequency}/5점 (${getExerciseLabel(exerciseFrequency)})
+- **스트레스 수준**: ${stressLevel}/5점 (${getStressLabel(stressLevel)})
+- **식사 규칙성**: ${mealRegularity}/5점 (${getMealLabel(mealRegularity)})
+${hasChronicCondition ? `- **기저질환**: ${chronicCondition}` : ''}
 - **분석 날짜**: ${new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' })}
 ${healthAppSection}
+
+⚠️ **위 건강 입력 데이터를 반드시 분석에 반영하세요!**
+- 수면 품질이 낮으면 → 수면 개선 조언 제공
+- 운동 빈도가 낮으면 → 운동 권장 조언 제공
+- 스트레스가 높으면 → 스트레스 관리 조언 제공
+- 식사가 불규칙하면 → 식습관 개선 조언 제공
 
 ---
 
@@ -167,12 +245,12 @@ ${healthAppSection}
 
 \`\`\`json
 {
-  "overall_health": "전반 건강 분석 (100자 이내)",
-  "body_part_advice": "부위별 맞춤 조언 (100자 이내)",
-  "cautions": ["주의사항1 (이유 포함)", "주의사항2", "주의사항3"],
-  "recommended_activities": ["활동1 (시간+방법)", "활동2", "활동3"],
-  "diet_advice": "식습관 조언 (100자 이내)",
-  "exercise_advice": "운동 조언 (100자 이내)",
+  "overall_health": "전반 건강 분석 (200자 이내) - 사용자의 수면/운동/스트레스/식사 데이터를 반영한 구체적 분석",
+  "body_part_advice": "부위별 맞춤 조언 (200자 이내) - 관심 부위에 맞춘 구체적 조언",
+  "cautions": ["주의사항1 (이유 + 구체적 수치)", "주의사항2", "주의사항3"],
+  "recommended_activities": ["활동1 (시간+방법+효과)", "활동2", "활동3"],
+  "diet_advice": "식습관 조언 (150자 이내) - 사용자 식사 규칙성에 맞춘 조언",
+  "exercise_advice": "운동 조언 (150자 이내) - 사용자 운동 빈도에 맞춘 조언",
   "health_keyword": "오늘의 건강 키워드 2-3단어"
 }
 \`\`\`
@@ -182,26 +260,26 @@ ${healthAppSection}
 ## 각 필드 작성 기준
 
 ### 1. overall_health (전반적인 건강운)
-**반드시 100자 이내로 작성** - 핵심만 간결하게
+**200자 이내로 작성** - 사용자의 수면/운동/스트레스/식사 점수를 분석하여 구체적으로 작성
 
 ### 2. body_part_advice (부위별 건강 조언)
-**반드시 100자 이내로 작성** - 부위별 핵심 조언만
+**200자 이내로 작성** - 관심 부위와 사용자 건강 상태를 연결하여 조언
 
 ### 3. cautions (주의사항) - 배열 3개
-**각 항목 50자 이내** - 이유 포함
+**각 항목 80자 이내** - 이유 + 구체적 수치/시간 포함
 
 ### 4. recommended_activities (추천 활동) - 배열 3개
-**각 항목 50자 이내** - 시간+방법
+**각 항목 80자 이내** - 시간+방법+예상 효과
 
 ### 5. diet_advice (식습관 조언)
-**반드시 100자 이내로 작성** - 좋은 음식, 피할 음식 핵심만
+**150자 이내로 작성** - 사용자의 식사 규칙성 점수에 맞춘 구체적 조언
 
 ### 6. exercise_advice (운동 조언)
-**반드시 100자 이내로 작성** - 종류+강도+횟수 핵심만
+**150자 이내로 작성** - 사용자의 운동 빈도 점수에 맞춘 구체적 조언
 
 ### 7. health_keyword
 2-3단어의 긍정적이고 기억하기 쉬운 표현
-예: "균형 회복", "활력 충전", "면역 강화"
+예: "수면 개선", "스트레스 관리", "균형 회복", "활력 충전"
 
 ---
 
@@ -249,10 +327,26 @@ ${healthAppSection}
       // ✅ 표준화된 필드명 사용
       const overallHealthText = parsedResponse.전반적인건강운 || parsedResponse.overall_health || '건강하십니다.'
 
+      // ✅ 입력 기반 점수 계산 (랜덤 제거)
+      // 기본 점수 50 + 각 항목별 보너스/감점
+      const sleepBonus = (sleepQuality - 1) * 5      // 0~20점 (수면 좋으면 가산)
+      const exerciseBonus = (exerciseFrequency - 1) * 5 // 0~20점 (운동 많으면 가산)
+      const stressDeduct = (stressLevel - 1) * 3    // 0~12점 (스트레스 높으면 감점)
+      const mealBonus = (mealRegularity - 1) * 3    // 0~12점 (식사 규칙적이면 가산)
+      const calculatedScore = Math.min(100, Math.max(30, 50 + sleepBonus + exerciseBonus + mealBonus - stressDeduct))
+      console.log('📊 [Health] 점수 계산:', {
+        base: 50,
+        sleepBonus,
+        exerciseBonus,
+        stressDeduct,
+        mealBonus,
+        finalScore: calculatedScore
+      })
+
       fortuneData = {
         // ✅ 표준화된 필드명: score, content, summary, advice
         fortuneType: 'health',
-        score: Math.floor(Math.random() * 30) + 70,
+        score: calculatedScore,
         content: overallHealthText,
         summary: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강 관리',
         advice: parsedResponse.운동조언 || parsedResponse.exercise_advice || '규칙적인 운동을 하세요',
@@ -261,12 +355,21 @@ ${healthAppSection}
         fortune_type: 'health',
         current_condition,
         concerned_body_parts,
+        // ✅ 건강 입력 데이터 저장 (히스토리용)
+        healthInputs: {
+          sleepQuality,
+          exerciseFrequency,
+          stressLevel,
+          mealRegularity,
+          hasChronicCondition,
+          chronicCondition
+        },
         overall_health: overallHealthText,
-        body_part_advice: parsedResponse.부위별건강 || parsedResponse.body_part_advice || '주의가 필요합니다.', // 블러 대상
-        cautions: parsedResponse.주의사항 || parsedResponse.cautions || ['규칙적 생활', '충분한 휴식', '정기 검진'], // 블러 대상
-        recommended_activities: parsedResponse.추천활동 || parsedResponse.recommended_activities || ['산책', '요가', '스트레칭'], // 블러 대상
-        diet_advice: parsedResponse.식습관조언 || parsedResponse.diet_advice || '균형잡힌 식사를 하세요.', // 블러 대상
-        exercise_advice: parsedResponse.운동조언 || parsedResponse.exercise_advice || '꾸준한 운동이 중요합니다.', // 블러 대상
+        body_part_advice: parsedResponse.부위별건강 || parsedResponse.body_part_advice, // 블러 대상
+        cautions: parsedResponse.주의사항 || parsedResponse.cautions || [], // 블러 대상
+        recommended_activities: parsedResponse.추천활동 || parsedResponse.recommended_activities || [], // 블러 대상
+        diet_advice: parsedResponse.식습관조언 || parsedResponse.diet_advice, // 블러 대상
+        exercise_advice: parsedResponse.운동조언 || parsedResponse.exercise_advice, // 블러 대상
         health_keyword: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강', // 블러 대상
         timestamp: new Date().toISOString(),
         isBlurred, // ✅ 블러 상태

@@ -16,6 +16,18 @@ import 'fortune_api_service.dart';
 class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   final FeatureFlags _featureFlags = FeatureFlags.instance;
   final Ref _ref;
+
+  /// 복잡한 LLM 프롬프트로 인해 더 긴 타임아웃이 필요한 운세 타입들
+  /// 이 타입들은 8192+ 토큰 출력 또는 복잡한 JSON 구조를 생성함
+  static const _complexFortuneTypes = [
+    'talent',       // 8192 토큰, 주간 계획 + 성장 로드맵
+    'blind-date',   // 상세 분석 + 대화 주제 + 패션 조언
+    'career',       // 커리어 분석 + 추천 사항
+    'investment',   // 투자 분석 + 예측
+    'ex-lover',     // 감정 분석 + 조언
+    'love',         // 23초 소요 확인됨 (경계 수준)
+    'avoid-people', // 15-18초 소요 확인됨
+  ];
   
   FortuneApiServiceWithEdgeFunctions(this._ref) : super(_ref.read(apiClientProvider));
   
@@ -229,12 +241,23 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         headers['x-requested-with'] = 'XMLHttpRequest';
       }
       
+      // 복잡한 운세 타입은 더 긴 타임아웃 필요 (LLM 응답 시간이 길음)
+      final isComplexFortune = _complexFortuneTypes.contains(fortuneType);
+      final timeout = isComplexFortune
+          ? const Duration(seconds: 90)   // 복잡한 운세: 90초 (fortune-love가 23초, fortune-talent는 25-40초 예상)
+          : const Duration(seconds: 30);  // 일반 운세: 30초
+
+      if (isComplexFortune) {
+        debugPrint('⏱️ [_getFortuneFromEdgeFunction] Complex fortune type detected: $fortuneType');
+        debugPrint('⏱️ [_getFortuneFromEdgeFunction] Using extended timeout: ${timeout.inSeconds}s');
+      }
+
       final edgeFunctionsDio = Dio(BaseOptions(
         baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
         headers: headers,
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-        sendTimeout: const Duration(seconds: 30),
+        connectTimeout: timeout,
+        receiveTimeout: timeout,
+        sendTimeout: timeout,
         validateStatus: (status) => status! < 500));
       debugPrint('present: ${Environment.supabaseAnonKey.isNotEmpty}');
       debugPrint('prefix: ${Environment.supabaseAnonKey.substring(0, 20)}...');
@@ -555,7 +578,8 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         }
       }
 
-      debugPrint('📝 [_getFortuneFromEdgeFunction] Final content length: ${contentText.length}, score: $extractedScoreValue');
+      debugPrint('📝 [_getFortuneFromEdgeFunction] Final content length: ${contentText.length}');
+      debugPrint('📝 [_getFortuneFromEdgeFunction] extractedScoreValue: $extractedScoreValue (type: ${extractedScoreValue.runtimeType})');
 
       final fortuneDataModel = FortuneData(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -582,16 +606,16 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         specialTip: fortuneData['special_tip'] ?? fortuneData['specialTip'],
         period: fortuneData['period']);
       
-      // FortuneData model created
-      
+      debugPrint('📝 [_getFortuneFromEdgeFunction] FortuneData.score: ${fortuneDataModel.score}');
+
       final fortuneResponse = FortuneResponseModel(
         success: true,
         data: fortuneDataModel,
         tokensUsed: tokensUsed);
 
       final fortune = fortuneResponse.toEntity();
-      // Fortune entity created
-      
+      debugPrint('📝 [_getFortuneFromEdgeFunction] Fortune.overallScore: ${fortune.overallScore}');
+
       return fortune;
       
     } catch (e) {

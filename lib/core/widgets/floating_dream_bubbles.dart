@@ -19,11 +19,15 @@ class FloatingDreamBubbles extends StatefulWidget {
   /// null이면 initState에서 랜덤 선택
   final List<DreamTopic>? preloadedTopics;
 
+  /// 채팅용 컴팩트 모드 (배경 숨김, 여백 축소)
+  final bool isCompact;
+
   const FloatingDreamBubbles({
     super.key,
     required this.onTopicSelected,
     this.bubbleCount = 15,
     this.preloadedTopics,
+    this.isCompact = false,
   });
 
   @override
@@ -57,20 +61,21 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
 
     return Stack(
       children: [
-        // 배경 그라디언트
-        Container(
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              center: Alignment.center,
-              radius: 1.5,
-              colors: [
-                colors.background,
-                colors.backgroundSecondary,
-                colors.surface,
-              ],
+        // 배경 그라디언트 - 컴팩트 모드에서는 숨김
+        if (!widget.isCompact)
+          Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 1.5,
+                colors: [
+                  colors.background,
+                  colors.backgroundSecondary,
+                  colors.surface,
+                ],
+              ),
             ),
           ),
-        ),
 
         // 플로팅 버블들
         ..._displayedTopics.asMap().entries.map((entry) {
@@ -84,9 +89,9 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
           );
         }),
 
-        // 새로고침 버튼 (하단)
+        // 새로고침 버튼 (하단) - 컴팩트 모드에서는 위치 조정
         Positioned(
-          bottom: 100,
+          bottom: widget.isCompact ? 10 : 100,
           left: 0,
           right: 0,
           child: Center(
@@ -197,15 +202,22 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
   /// 버블 위치를 화면에 고르게 분산
   List<Offset> _generateBubblePositions(Size screenSize, int count) {
     final positions = <Offset>[];
-    final padding = 60.0;
+    // 컴팩트 모드에서는 패딩과 여백 축소
+    final padding = widget.isCompact ? 20.0 : 60.0;
     final availableWidth = screenSize.width - padding * 2;
-    final availableHeight = screenSize.height - 280; // 상하단 여백
+    // 컴팩트 모드: 제한된 높이에 맞춤, 일반 모드: 상하단 여백
+    final availableHeight = widget.isCompact
+        ? screenSize.height - 60  // 컴팩트: 하단 버튼 여백만
+        : screenSize.height - 280;
 
     // 그리드 기반 배치 + 약간의 랜덤 오프셋
     final cols = 3;
     final rows = (count / cols).ceil();
     final cellWidth = availableWidth / cols;
     final cellHeight = availableHeight / rows;
+
+    // 컴팩트 모드: 상단 여백 축소
+    final topOffset = widget.isCompact ? 20.0 : 120.0;
 
     for (int i = 0; i < count; i++) {
       final col = i % cols;
@@ -216,11 +228,11 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
       final randomOffsetY = (_random.nextDouble() - 0.5) * (cellHeight * 0.4);
 
       final x = padding + col * cellWidth + cellWidth / 2 - 50 + randomOffsetX;
-      final y = 120 + row * cellHeight + cellHeight / 2 - 50 + randomOffsetY;
+      final y = topOffset + row * cellHeight + cellHeight / 2 - 50 + randomOffsetY;
 
       positions.add(Offset(
         x.clamp(10, screenSize.width - 110),
-        y.clamp(100, screenSize.height - 200),
+        y.clamp(widget.isCompact ? 10 : 100, screenSize.height - (widget.isCompact ? 80 : 200)),
       ));
     }
 

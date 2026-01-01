@@ -278,24 +278,28 @@ class _TarotResultCardState extends State<TarotResultCard>
           
           const SizedBox(height: 32),
           
-          // 해석
-          FadeTransition(
-            opacity: _contentFadeAnimation,
-            child: SlideTransition(
-              position: _contentSlideAnimation,
-              child: _buildSection(
-                title: '카드의 메시지',
-                content: widget.result['interpretation'] ?? '',
-                icon: Icons.auto_awesome,
-                color: const Color(0xFF7C3AED),
+          // 해석 (프리미엄 잠금 메시지가 아닌 경우만 표시)
+          if (!((widget.result['interpretation'] ?? '').toString().contains('프리미엄') ||
+                (widget.result['interpretation'] ?? '').toString().contains('🔒')))
+            FadeTransition(
+              opacity: _contentFadeAnimation,
+              child: SlideTransition(
+                position: _contentSlideAnimation,
+                child: _buildSection(
+                  title: '카드의 메시지',
+                  content: widget.result['interpretation'] ?? '',
+                  icon: Icons.auto_awesome,
+                  color: const Color(0xFF7C3AED),
+                ),
               ),
             ),
-          ),
-          
+
           const SizedBox(height: 24),
-          
-          // 조언
-          if (widget.result['advice'] != null)
+
+          // 조언 (프리미엄 잠금 메시지가 아닌 경우만 표시)
+          if (widget.result['advice'] != null &&
+              !widget.result['advice'].toString().contains('프리미엄') &&
+              !widget.result['advice'].toString().contains('🔒'))
             FadeTransition(
               opacity: _contentFadeAnimation,
               child: SlideTransition(

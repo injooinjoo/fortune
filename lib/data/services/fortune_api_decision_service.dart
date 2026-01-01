@@ -218,7 +218,7 @@ class FortuneApiDecisionService {
         .eq('metadata->>mbti', mbti ?? '')
         .gte('created_at', DateTime.now().subtract(const Duration(days: 30)))
         .order('created_at', ascending: false)
-        .limit(10)
+        .limit(1)
         .maybeSingle();
 
     if (result == null) return null;
@@ -246,7 +246,7 @@ class FortuneApiDecisionService {
         .eq('metadata->>age_group', ageGroup)
         .gte('created_at', DateTime.now().subtract(const Duration(days: 60)))
         .order('created_at', ascending: false)
-        .limit(20)
+        .limit(1)
         .maybeSingle();
 
     if (result == null) return null;
@@ -262,7 +262,7 @@ class FortuneApiDecisionService {
         .eq('fortune_type', fortuneType)
         .gte('created_at', DateTime.now().subtract(const Duration(days: 90)))
         .order('created_at', ascending: false)
-        .limit(50)
+        .limit(1)
         .maybeSingle();
 
     if (result == null) return null;

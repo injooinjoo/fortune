@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/fortune_design_system.dart';
@@ -445,11 +446,21 @@ ${_selectedKeywords.map((keyword) => '• $keyword: ${_getKeywordInterpretation(
     });
   }
 
-  void _shareResult() {
+  void _shareResult() async {
     HapticUtils.lightImpact();
-    // TODO: 공유 기능 구현
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('공유 기능은 준비 중입니다')));
+    if (_analysisResult == null) return;
+
+    try {
+      await Share.share(
+        '🌙 태몽 분석 결과\n\n$_analysisResult\n\n앱에서 더 자세히 확인해보세요!',
+        subject: '태몽 분석 결과 공유',
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('공유에 실패했습니다')));
+      }
+    }
   }
 
   void _showInsufficientTokensModal() {

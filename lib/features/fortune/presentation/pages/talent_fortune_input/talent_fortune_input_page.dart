@@ -22,6 +22,7 @@ import '../../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../../presentation/providers/token_provider.dart';
 import '../../../../../../core/utils/logger.dart';
 import '../../../domain/models/conditions/talent_fortune_conditions.dart';
+import '../../../../../../services/talent_resume_service.dart';
 import 'widgets/widgets.dart';
 
 /// Provider for talent input data
@@ -56,6 +57,11 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   String? _problemSolving;
   String? _preferredRole;
 
+  // Phase 4: 이력서 (선택)
+  TalentResumeInfo? _resumeInfo;
+  bool _includeResumeInAnalysis = true;
+  late TalentResumeService _resumeService;
+
   // Accordion sections
   List<AccordionInputSection> _accordionSections = [];
   bool _isGenerating = false; // 운세 생성 중 플래그
@@ -66,6 +72,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   void initState() {
     super.initState();
     _fortuneService = UnifiedFortuneService(Supabase.instance.client);
+    _resumeService = TalentResumeService(Supabase.instance.client);
     _initializeData();
   }
 
@@ -73,7 +80,25 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
     Logger.debug('[TalentFortune] 📋 데이터 초기화 시작');
     await _loadProfileData();
     await _loadSavedSelections();
+    await _loadStoredResume();
     Logger.debug('[TalentFortune] ✅ 데이터 초기화 완료');
+  }
+
+  /// 저장된 이력서 불러오기
+  Future<void> _loadStoredResume() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+
+    Logger.debug('[TalentFortune] 📄 저장된 이력서 확인 중...');
+    final resumeInfo = await _resumeService.getStoredResume(userId);
+
+    if (resumeInfo != null && mounted) {
+      setState(() {
+        _resumeInfo = resumeInfo;
+        _includeResumeInAnalysis = true;
+      });
+      Logger.info('[TalentFortune] 📄 저장된 이력서 발견: ${resumeInfo.fileName}');
+    }
   }
 
   @override
@@ -394,7 +419,36 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
             : (_weaknessesController.text.isNotEmpty ? '약점: ${_weaknessesController.text}' : null),
       ),
 
-      // 9. 업무 스타일 (선택 필요 - 열려있음)
+      // 9. 이력서 업로드 (선택)
+      AccordionInputSection(
+        id: 'resume',
+        title: '이력서 업로드 (선택)',
+        icon: Icons.attach_file_rounded,
+        inputWidgetBuilder: (context, onComplete) => ResumeUploadInput(
+          resumeInfo: _resumeInfo,
+          includeInAnalysis: _includeResumeInAnalysis,
+          onResumeChanged: (resumeInfo) {
+            setState(() {
+              _resumeInfo = resumeInfo;
+              _updateAccordionSection(
+                'resume',
+                resumeInfo,
+                resumeInfo?.fileName,
+              );
+            });
+          },
+          onIncludeChanged: (include) {
+            setState(() {
+              _includeResumeInAnalysis = include;
+            });
+          },
+        ),
+        value: _resumeInfo,
+        isCompleted: _resumeInfo != null,
+        displayValue: _resumeInfo?.fileName,
+      ),
+
+      // 10. 업무 스타일 (선택 필요)
       AccordionInputSection(
         id: 'workStyle',
         title: '업무 스타일',
@@ -576,6 +630,18 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
       // 3. API 호출 시작 (버튼 로딩 애니메이션 표시 중)
       Logger.info('[TalentFortune] 🔮 API 호출 시작...');
 
+      // 이력서 텍스트 추출 (있는 경우)
+      String? resumeText;
+      final hasResume = _resumeInfo != null && _includeResumeInAnalysis;
+      if (hasResume) {
+        Logger.info('[TalentFortune] 📄 이력서 텍스트 추출 중...');
+        final bytes = await _resumeService.downloadResume(_resumeInfo!.storagePath);
+        if (bytes != null) {
+          resumeText = await _resumeService.extractTextFromPdf(bytes);
+          Logger.info('[TalentFortune] 📄 이력서 텍스트: ${resumeText?.length ?? 0}자');
+        }
+      }
+
       final inputConditions = {
         'birth_date': inputData.birthDate!.toIso8601String().split('T')[0],
         'birth_time': '${inputData.birthTime!.hour.toString().padLeft(2, '0')}:${inputData.birthTime!.minute.toString().padLeft(2, '0')}',
@@ -595,14 +661,22 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         'problem_solving': inputData.problemSolving!,
         'preferred_role': inputData.preferredRole!,
         'isPremium': isPremium,
+        // 이력서 관련 필드
+        'hasResume': hasResume,
+        if (resumeText != null && resumeText.isNotEmpty)
+          'resumeText': resumeText,
       };
 
       // ✅ 최적화 시스템용 conditions 생성 (캐시/DB 재사용)
       final conditions = TalentFortuneConditions.fromInputData(inputConditions);
       Logger.info('[TalentFortune] 🔑 Conditions hash: ${conditions.generateHash()}');
 
+      // 이력서 포함 시 다른 fortuneType 사용 (토큰 소모량 차이)
+      final fortuneType = hasResume ? 'talent-resume' : 'talent';
+      Logger.info('[TalentFortune] 🎯 Fortune type: $fortuneType');
+
       final fortuneResult = await _fortuneService.getFortune(
-        fortuneType: 'talent',
+        fortuneType: fortuneType,
         dataSource: FortuneDataSource.api,
         inputConditions: inputConditions,
         conditions: conditions, // ✅ 최적화 시스템 활성화

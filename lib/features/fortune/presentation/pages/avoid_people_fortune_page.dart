@@ -16,6 +16,7 @@ import '../../../../core/widgets/unified_button.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
+import '../../../../core/widgets/today_result_label.dart';
 
 class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
   const AvoidPeopleFortunePage({super.key});
@@ -159,6 +160,10 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                   padding: const EdgeInsets.all(24).copyWith(bottom: 100),
                   child: Column(
                     children: [
+                      // 오늘 날짜 라벨 + 재방문 유도
+                      const TodayResultLabel(showRevisitHint: true),
+                      const SizedBox(height: 16),
+
                       // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                       // 📊 경계지수 카드 (무료)
                       // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

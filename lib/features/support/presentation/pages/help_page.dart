@@ -229,7 +229,14 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                       size: 20,
                       color: colors.textSecondary,
                     ),
-                    onTap: () => context.push('/support'),
+                    onTap: () {
+                      // TODO: 1:1 문의 페이지가 없으므로 이메일 문의로 대체
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('이메일로 문의해주세요: support@fortune-app.com'),
+                        ),
+                      );
+                    },
                   ),
                   Divider(height: 1, color: colors.divider),
                   ListTile(

@@ -265,96 +265,118 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               child: GlassContainer(
                 padding: const EdgeInsets.all(20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // 카드 헤더: 이미지 + 카드 이름 + 위치
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 카드 이미지 미니 썸네일
-                        Container(
-                          width: 60,
-                          height: 90,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              imagePath,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        widget.selectedDeck.primaryColor.withValues(alpha: 0.3),
-                                        widget.selectedDeck.secondaryColor.withValues(alpha: 0.3),
-                                      ],
-                                    ),
-                                  ),
-                                  child: Icon(Icons.auto_awesome, color: widget.selectedDeck.primaryColor),
-                                );
-                              },
-                            ),
-                          ),
+                    // 위치 배지
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        _getPositionLabel(index),
+                        style: context.typography.labelLarge.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.primary,
                         ),
-                        const SizedBox(width: 16),
-                        // 카드 정보
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // 순서 배지 + 위치
-                              Row(
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // 카드 이미지 - 크게 표시
+                    Container(
+                      width: 200,
+                      height: 280,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: widget.selectedDeck.primaryColor.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            spreadRadius: 2,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.asset(
+                          imagePath,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    widget.selectedDeck.primaryColor.withValues(alpha: 0.5),
+                                    widget.selectedDeck.secondaryColor.withValues(alpha: 0.5),
+                                  ],
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: theme.colorScheme.primary.withValues(alpha: 0.15),
-                                      borderRadius: BorderRadius.circular(12),
+                                  Icon(
+                                    Icons.auto_awesome,
+                                    size: 60,
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    cardInfo?.name ?? 'Card ${cardIndex + 1}',
+                                    style: context.typography.bodyMedium.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    child: Text(
-                                      _getPositionLabel(index),
-                                      style: context.typography.labelMedium.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: theme.colorScheme.primary,
-                                      ),
-                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              // 카드 이름
-                              Text(
-                                cardInfo?.name ?? 'Card ${cardIndex + 1}',
-                                style: context.typography.headingSmall.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              // 키워드
-                              if (cardInfo?.keywords.isNotEmpty ?? false) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  cardInfo!.keywords.join(' • '),
-                                  style: context.typography.labelSmall.copyWith(
-                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      ],
+                      ),
                     ),
+                    const SizedBox(height: 20),
+
+                    // 카드 이름
+                    Text(
+                      cardInfo?.name ?? 'Card ${cardIndex + 1}',
+                      style: context.typography.headingMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    // 키워드
+                    if (cardInfo?.keywords.isNotEmpty ?? false) ...[
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        alignment: WrapAlignment.center,
+                        children: cardInfo!.keywords.map((keyword) => Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: widget.selectedDeck.primaryColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: widget.selectedDeck.primaryColor.withValues(alpha: 0.2),
+                            ),
+                          ),
+                          child: Text(
+                            keyword,
+                            style: context.typography.labelSmall.copyWith(
+                              color: widget.selectedDeck.primaryColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        )).toList(),
+                      ),
+                    ],
                     const SizedBox(height: 20),
                     // 구분선
                     Container(
@@ -370,14 +392,22 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                       ),
                     ),
                     const SizedBox(height: 20),
-                    // 해석 내용 - 스토리텔링 포맷
-                    Text(
-                      interpretation['interpretation'] ?? interpretation['meaning'] ?? '',
-                      style: context.typography.bodyMedium.copyWith(
-                        height: 1.8,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
+                    // 해석 내용 - 스토리텔링 포맷 (프리미엄 잠금 메시지 필터링)
+                    Builder(builder: (context) {
+                      final interpretationText = interpretation['interpretation'] ?? interpretation['meaning'] ?? '';
+                      // 프리미엄 잠금 메시지가 있으면 빈 문자열로 처리
+                      if (interpretationText.toString().contains('프리미엄') ||
+                          interpretationText.toString().contains('🔒')) {
+                        return const SizedBox.shrink();
+                      }
+                      return Text(
+                        interpretationText,
+                        style: context.typography.bodyMedium.copyWith(
+                          height: 1.8,
+                          letterSpacing: 0.2,
+                        ),
+                      );
+                    }),
                     // 추가 인사이트 (원소, 점성술)
                     if (cardInfo != null) ...[
                       const SizedBox(height: 16),
@@ -406,8 +436,10 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
             );
           }),
           
-          // Advice
-          if (result != null && result['advice'] != null) ...[
+          // Advice (프리미엄 잠금 메시지가 아닌 경우만 표시)
+          if (result != null && result['advice'] != null &&
+              !result['advice'].toString().contains('프리미엄') &&
+              !result['advice'].toString().contains('🔒')) ...[
             const SizedBox(height: 16),
             GlassContainer(
               padding: const EdgeInsets.all(20),

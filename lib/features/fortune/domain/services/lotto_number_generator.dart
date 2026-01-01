@@ -1,13 +1,33 @@
 import 'dart:math';
 
-/// 로또 번호 결과 모델
-///
-/// 6개 번호 중 5개는 바로 공개, 1개는 광고 후 공개
-class LottoResult {
+/// 단일 로또 세트 (6개 번호)
+class LottoNumberSet {
   /// 6개의 로또 번호 (정렬됨, 1-45)
   final List<int> numbers;
 
   /// 각 번호별 오행 속성
+  final List<String> numberElements;
+
+  const LottoNumberSet({
+    required this.numbers,
+    required this.numberElements,
+  });
+
+  /// 공개된 번호들 (5개) - 광고 전
+  List<int> get visibleNumbers => numbers.sublist(0, 5);
+
+  /// 잠긴 번호 (1개 - 광고 후 공개)
+  int get lockedNumber => numbers[5];
+}
+
+/// 로또 번호 결과 모델
+///
+/// 6개 번호 중 5개는 바로 공개, 1개는 광고 후 공개
+class LottoResult {
+  /// 6개의 로또 번호 (정렬됨, 1-45) - 하위 호환성을 위해 유지 (1세트일 때만)
+  final List<int> numbers;
+
+  /// 각 번호별 오행 속성 - 하위 호환성을 위해 유지
   final List<String> numberElements;
 
   /// 오늘의 운세 메시지
@@ -16,18 +36,25 @@ class LottoResult {
   /// 생성 시간
   final DateTime generatedAt;
 
+  /// 여러 세트의 번호 (gameCount > 1일 때 사용)
+  final List<LottoNumberSet> sets;
+
   const LottoResult({
     required this.numbers,
     required this.numberElements,
     required this.fortuneMessage,
     required this.generatedAt,
+    this.sets = const [],
   });
 
-  /// 공개된 번호들 (5개)
+  /// 공개된 번호들 (5개) - 하위 호환성 (1세트일 때)
   List<int> get visibleNumbers => numbers.sublist(0, 5);
 
-  /// 잠긴 번호 (1개 - 광고 후 공개)
+  /// 잠긴 번호 (1개 - 광고 후 공개) - 하위 호환성 (1세트일 때)
   int get lockedNumber => numbers[5];
+
+  /// 게임 수 (세트 수)
+  int get gameCount => sets.isEmpty ? 1 : sets.length;
 }
 
 /// 행운의 구매 장소 추천
@@ -228,13 +255,18 @@ class LottoNumberGenerator {
   ];
 
   /// 사주 기반 로또 운세 전체 생성
+  ///
+  /// [gameCount]: 생성할 게임 수 (1-5, 기본값 1)
   static LottoFortuneResult generate({
     required DateTime birthDate,
     String? birthTime,
     String? gender,
     String? currentLocation,
+    int gameCount = 1,
   }) {
     final now = DateTime.now();
+    // gameCount 범위 제한 (1-5)
+    final validGameCount = gameCount.clamp(1, 5);
 
     // 시드 계산
     final seed = _calculateSeed(
@@ -247,8 +279,13 @@ class LottoNumberGenerator {
     // 주요 오행 계산
     final dominantElement = _calculateDominantElement(birthDate, birthTime);
 
-    // 로또 번호 생성
-    final lottoResult = _generateLottoResult(seed, dominantElement, now);
+    // 로또 번호 생성 (여러 세트)
+    final lottoResult = _generateLottoResult(
+      seed,
+      dominantElement,
+      now,
+      gameCount: validGameCount,
+    );
 
     // 행운의 장소 생성
     final luckyLocation = _generateLuckyLocation(
@@ -342,51 +379,68 @@ class LottoNumberGenerator {
     return elements[totalElement];
   }
 
-  /// 로또 번호 생성
+  /// 로또 번호 생성 (여러 세트 지원)
   static LottoResult _generateLottoResult(
     int seed,
     String dominantElement,
-    DateTime now,
-  ) {
-    final random = Random(seed);
-    final numbers = <int>{};
+    DateTime now, {
+    int gameCount = 1,
+  }) {
+    final sets = <LottoNumberSet>[];
 
-    // 오행 기반 선호 번호에서 2개 선택
-    final preferredNumbers = _elementNumbers[dominantElement] ?? [];
-    while (numbers.length < 2 && preferredNumbers.isNotEmpty) {
-      final num = preferredNumbers[random.nextInt(preferredNumbers.length)];
-      if (num >= 1 && num <= 45) {
-        numbers.add(num);
-      }
-    }
+    // gameCount 만큼 세트 생성
+    for (int setIndex = 0; setIndex < gameCount; setIndex++) {
+      // 각 세트마다 다른 시드 사용
+      final setSeed = seed + (setIndex * 12345);
+      final random = Random(setSeed);
+      final numbers = <int>{};
 
-    // 나머지 번호 랜덤 선택
-    while (numbers.length < 6) {
-      final num = random.nextInt(45) + 1;
-      numbers.add(num);
-    }
-
-    final sortedNumbers = numbers.toList()..sort();
-
-    // 각 번호의 오행 속성 계산
-    final numberElements = sortedNumbers.map((n) {
-      for (final entry in _elementNumbers.entries) {
-        if (entry.value.contains(n)) {
-          return entry.key;
+      // 오행 기반 선호 번호에서 2개 선택
+      final preferredNumbers = _elementNumbers[dominantElement] ?? [];
+      while (numbers.length < 2 && preferredNumbers.isNotEmpty) {
+        final num = preferredNumbers[random.nextInt(preferredNumbers.length)];
+        if (num >= 1 && num <= 45) {
+          numbers.add(num);
         }
       }
-      return '토(土)'; // 기본값
-    }).toList();
+
+      // 나머지 번호 랜덤 선택
+      while (numbers.length < 6) {
+        final num = random.nextInt(45) + 1;
+        numbers.add(num);
+      }
+
+      final sortedNumbers = numbers.toList()..sort();
+
+      // 각 번호의 오행 속성 계산
+      final numberElements = sortedNumbers.map((n) {
+        for (final entry in _elementNumbers.entries) {
+          if (entry.value.contains(n)) {
+            return entry.key;
+          }
+        }
+        return '토(土)'; // 기본값
+      }).toList();
+
+      sets.add(LottoNumberSet(
+        numbers: sortedNumbers,
+        numberElements: numberElements,
+      ));
+    }
 
     // 운세 메시지 선택
     final messageSeed = seed % _fortuneMessages.length;
     final fortuneMessage = _fortuneMessages[messageSeed];
 
+    // 첫 번째 세트를 기본값으로 (하위 호환성)
+    final firstSet = sets.first;
+
     return LottoResult(
-      numbers: sortedNumbers,
-      numberElements: numberElements,
+      numbers: firstSet.numbers,
+      numberElements: firstSet.numberElements,
       fortuneMessage: fortuneMessage,
       generatedAt: now,
+      sets: sets,
     );
   }
 

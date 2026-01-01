@@ -34,7 +34,7 @@ class AdminGuard extends ConsumerWidget {
         if (user == null) {
           // Not authenticated
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.go('/auth/selection');
+            context.go('/signup');
           });
           return const SizedBox.shrink();
         }

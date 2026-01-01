@@ -28,11 +28,11 @@ const String _kCookieCrackVideoPath = 'assets/videos/cookie_crack.mp4';
 /// 포춘쿠키 타입 (U11: 오방색 적용)
 /// 오방색: 청(靑), 적(赤), 황(黃), 백(白), 흑(黑)
 enum CookieType {
-  love('사랑', '💕', Color(0xFFDC143C), '연애와 인연에 관한 메시지'),     // 적색 (화/火)
-  wealth('재물', '💰', Color(0xFFDAA520), '금전과 재물에 관한 메시지'),   // 황색 (토/土)
-  health('건강', '🌿', Color(0xFF2E8B57), '건강과 활력에 관한 메시지'),   // 청색 (목/木)
-  wisdom('지혜', '🔮', Color(0xFF1E3A5F), '지혜와 깨달음의 메시지'),     // 흑색 (수/水)
-  luck('행운', '🍀', Color(0xFFC9A962), '오늘의 행운 메시지');           // 금색 (금/金)
+  love('사랑', '💕', Color(0xFFDC143C), '연애와 인연에 관한 메시지'), // 적색 (화/火)
+  wealth('재물', '💰', Color(0xFFDAA520), '금전과 재물에 관한 메시지'), // 황색 (토/土)
+  health('건강', '🌿', Color(0xFF2E8B57), '건강과 활력에 관한 메시지'), // 청색 (목/木)
+  wisdom('지혜', '🔮', Color(0xFF1E3A5F), '지혜와 깨달음의 메시지'), // 흑색 (수/水)
+  luck('행운', '🍀', Color(0xFFC9A962), '오늘의 행운 메시지'); // 금색 (금/金)
 
   const CookieType(this.title, this.emoji, this.color, this.description);
 
@@ -56,13 +56,13 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   late AnimationController _crackController;
   late AnimationController _paperController;
   late AnimationController _floatController;
-  
+
   // Animations
   late Animation<double> _shakeAnimation;
   late Animation<double> _crackAnimation;
   late Animation<double> _paperAnimation;
   late Animation<double> _floatAnimation;
-  
+
   // State
   CookieType? _selectedCookie;
   bool _isShaking = false;
@@ -109,22 +109,22 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    
+
     _crackController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _paperController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _floatController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     )..repeat(reverse: true);
-    
+
     _shakeAnimation = Tween<double>(
       begin: -5,
       end: 5,
@@ -132,7 +132,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       parent: _shakeController,
       curve: Curves.elasticIn,
     ));
-    
+
     _crackAnimation = Tween<double>(
       begin: 0,
       end: 1,
@@ -140,7 +140,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       parent: _crackController,
       curve: Curves.easeOutBack,
     ));
-    
+
     _paperAnimation = Tween<double>(
       begin: 0,
       end: 1,
@@ -148,7 +148,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       parent: _paperController,
       curve: const ElasticOutCurve(0.8),
     ));
-    
+
     _floatAnimation = Tween<double>(
       begin: -10,
       end: 10,
@@ -173,16 +173,21 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+      backgroundColor:
+          isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
       appBar: _showPaper
           ? AppBar(
-              backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+              backgroundColor: isDark
+                  ? TossDesignSystem.backgroundDark
+                  : TossDesignSystem.white,
               elevation: 0,
               automaticallyImplyLeading: false, // 백 버튼 제거
               title: Text(
                 '포춘쿠키',
                 style: TossDesignSystem.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
+                  color: isDark
+                      ? TossDesignSystem.textPrimaryDark
+                      : TossDesignSystem.gray900,
                 ),
               ),
               centerTitle: true,
@@ -190,7 +195,9 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
+                    color: isDark
+                        ? TossDesignSystem.textPrimaryDark
+                        : TossDesignSystem.gray900,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -231,34 +238,36 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             right: 20,
             child: _buildCookieHeader(),
           ),
-          
+
           // 중앙 쿠키
           Center(
             child: _buildCenteredCookie(),
           ),
-          
+
           // 하단 힌트
           Positioned(
             bottom: 100,
             left: 20,
             right: 20,
-            child: Builder(
-              builder: (context) {
-                final isDark = Theme.of(context).brightness == Brightness.dark;
-                return Center(
-                  child: Text(
-                    '탭하여 쿠키 깨뜨리기',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray500,
-                    ),
-                  ).animate(
-                    onPlay: (controller) => controller.repeat(),
-                  ).fadeIn(duration: 1.seconds)
+            child: Builder(builder: (context) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              return Center(
+                child: Text(
+                  '탭하여 쿠키 깨뜨리기',
+                  style: TossDesignSystem.body2.copyWith(
+                    color: isDark
+                        ? TossDesignSystem.textSecondaryDark
+                        : TossDesignSystem.gray500,
+                  ),
+                )
+                    .animate(
+                      onPlay: (controller) => controller.repeat(),
+                    )
+                    .fadeIn(duration: 1.seconds)
                     .then(delay: 1.seconds)
                     .fadeOut(duration: 1.seconds),
-                );
-              }
-            ),
+              );
+            }),
           ),
         ],
       );
@@ -271,8 +280,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
 
     // 한지 배경색
     final hanjiColor = isDark
-        ? const Color(0xFF2A2622)  // 어두운 한지
-        : const Color(0xFFF5F0E8);  // 밝은 한지
+        ? const Color(0xFF2A2622) // 어두운 한지
+        : const Color(0xFFF5F0E8); // 밝은 한지
 
     return Column(
       children: [
@@ -300,12 +309,21 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
               ),
             ],
           ),
-          child: const Center(
-            child: Text('🥠', style: TextStyle(fontSize: FontConfig.emojiMedium)),
+          child: Center(
+            child: Image.asset(
+              'assets/images/fortune_cards/fortune_cookie_fortune.png',
+              width: 70,
+              height: 70,
+              fit: BoxFit.contain,
+            ),
           ),
-        ).animate()
-          .scale(begin: const Offset(0.5, 0.5), duration: 600.ms, curve: Curves.elasticOut)
-          .fadeIn(),
+        )
+            .animate()
+            .scale(
+                begin: const Offset(0.5, 0.5),
+                duration: 600.ms,
+                curve: Curves.elasticOut)
+            .fadeIn(),
         const SizedBox(height: 28),
         // 붓글씨 스타일 제목 (GowunBatang)
         Text(
@@ -319,9 +337,10 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             letterSpacing: 1.5,
           ),
           textAlign: TextAlign.center,
-        ).animate()
-          .fadeIn(duration: 500.ms, delay: 200.ms)
-          .slideY(begin: 0.2, end: 0),
+        )
+            .animate()
+            .fadeIn(duration: 500.ms, delay: 200.ms)
+            .slideY(begin: 0.2, end: 0),
         const SizedBox(height: 14),
         // 부제목
         Text(
@@ -335,8 +354,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                 : const Color(0xFF5C5C5C),
           ),
           textAlign: TextAlign.center,
-        ).animate()
-          .fadeIn(duration: 700.ms, delay: 300.ms),
+        ).animate().fadeIn(duration: 700.ms, delay: 300.ms),
       ],
     );
   }
@@ -348,9 +366,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     return Column(
       children: [
         Text(
-          _isCracking
-            ? '쿠키가 열리고 있어요!'
-            : '쿠키를 탭해서 깨뜨리세요',
+          _isCracking ? '쿠키가 열리고 있어요!' : '쿠키를 탭해서 깨뜨리세요',
           style: TextStyle(
             fontFamily: FontConfig.primary,
             fontSize: FontConfig.heading3,
@@ -358,9 +374,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             color: isDark ? const Color(0xFFF5F0E8) : const Color(0xFF2C2C2C),
           ),
           textAlign: TextAlign.center,
-        ).animate()
-          .fadeIn(duration: 500.ms)
-          .slideY(begin: -0.2, end: 0),
+        ).animate().fadeIn(duration: 500.ms).slideY(begin: -0.2, end: 0),
         const SizedBox(height: 8),
         Text(
           '특별한 메시지가 당신을 기다리고 있어요',
@@ -372,9 +386,10 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                 : const Color(0xFF5C5C5C),
           ),
           textAlign: TextAlign.center,
-        ).animate()
-          .fadeIn(duration: 700.ms, delay: 200.ms)
-          .slideY(begin: -0.2, end: 0),
+        )
+            .animate()
+            .fadeIn(duration: 700.ms, delay: 200.ms)
+            .slideY(begin: -0.2, end: 0),
       ],
     );
   }
@@ -444,7 +459,9 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             return _buildCookieTypeCard(cookie)
                 .animate()
                 .fadeIn(delay: Duration(milliseconds: 100 * index))
-                .scale(begin: const Offset(0.92, 0.92), delay: Duration(milliseconds: 100 * index));
+                .scale(
+                    begin: const Offset(0.92, 0.92),
+                    delay: Duration(milliseconds: 100 * index));
           },
         ),
       ],
@@ -456,9 +473,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // 한지 배경색
-    final hanjiColor = isDark
-        ? const Color(0xFF2A2622)
-        : const Color(0xFFF5F0E8);
+    final hanjiColor =
+        isDark ? const Color(0xFF2A2622) : const Color(0xFFF5F0E8);
 
     // 오행 라벨 매핑
     final elementLabel = switch (cookie) {
@@ -614,7 +630,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                           borderRadius: BorderRadius.circular(100),
                           boxShadow: [
                             BoxShadow(
-                              color: _selectedCookie!.color.withValues(alpha: 0.3),
+                              color:
+                                  _selectedCookie!.color.withValues(alpha: 0.3),
                               blurRadius: 40,
                               spreadRadius: 20,
                             ),
@@ -631,51 +648,18 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              // Cookie shape
-                              Container(
+                              // Minhwa Fortune Cookie Image
+                              Image.asset(
+                                'assets/images/fortune_cards/fortune_cookie_fortune.png',
                                 width: 220,
-                                height: 160,
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFFFC68A),
-                                      Color(0xFFFFB56B),
-                                      Color(0xFFFF9F40),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(80),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFFFF9F40).withValues(alpha: 0.4),
-                                      blurRadius: 30,
-                                      offset: const Offset(0, 10),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // Cookie texture
-                              Container(
-                                width: 220,
-                                height: 160,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(80),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      TossDesignSystem.white.withValues(alpha: 0.2),
-                                      TossDesignSystem.transparent,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.center,
-                                  ),
-                                ),
+                                height: 220,
+                                fit: BoxFit.contain,
                               ),
                               // F22: Crack effect (영상 또는 기본 애니메이션)
                               if (_isCracking)
                                 _useVideoAnimation && _videoController != null
                                     ? // veo3 영상 사용
-                                      ClipRRect(
+                                    ClipRRect(
                                         borderRadius: BorderRadius.circular(80),
                                         child: SizedBox(
                                           width: 220,
@@ -684,13 +668,15 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                         ),
                                       )
                                     : // 기본 애니메이션
-                                      Opacity(
-                                        opacity: _crackAnimation.value.clamp(0.0, 1.0),
+                                    Opacity(
+                                        opacity: _crackAnimation.value
+                                            .clamp(0.0, 1.0),
                                         child: Container(
                                           width: 220,
                                           height: 160,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(80),
+                                            borderRadius:
+                                                BorderRadius.circular(80),
                                           ),
                                           child: CustomPaint(
                                             painter: ImprovedCrackPainter(
@@ -699,19 +685,6 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                           ),
                                         ),
                                       ),
-                              // Cookie emoji
-                              Text(
-                                _selectedCookie!.emoji,
-                                style: DSTypography.displayLarge.copyWith(
-                                  shadows: [
-                                    Shadow(
-                                      color: TossDesignSystem.black.withValues(alpha: 0.2),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ],
                           ),
                         );
@@ -770,13 +743,13 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         Text(
           '오늘의 운세 메시지',
           style: TossDesignSystem.heading2.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
+            color: isDark
+                ? TossDesignSystem.textPrimaryDark
+                : TossDesignSystem.gray900,
           ),
         ),
       ],
-    ).animate()
-      .fadeIn(duration: 800.ms)
-      .slideY(begin: 0.2, end: 0);
+    ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2, end: 0);
   }
 
   Widget _buildFortuneCard() {
@@ -788,139 +761,199 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         return Transform.scale(
           scale: _paperAnimation.value,
           child: AppCard(
-            padding: const EdgeInsets.all(32),
+            padding: EdgeInsets.zero,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // Main message
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFFFF9E6),
-                        Color(0xFFFFF3CD),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFFFFE4A1),
-                      width: 1,
-                    ),
-                  ),
-                  child: Column(
+                // Minhwa Image Header
+                ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(24)),
+                  child: Stack(
                     children: [
-                      Text(
-                        '"',
-                        style: DSTypography.displaySmall.copyWith(
-                          fontWeight: FontWeight.w300,
-                          color: const Color(0xFFFFB74D),
-                          height: 0.5,
-                        ),
+                      Image.asset(
+                        'assets/images/fortune_cards/fortune_cookie_fortune.png',
+                        width: double.infinity,
+                        height: 160,
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _mainMessage,
-                        style: TossDesignSystem.body1.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: TossDesignSystem.gray900,
-                          height: 1.6,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '"',
-                        style: DSTypography.displaySmall.copyWith(
-                          fontWeight: FontWeight.w300,
-                          color: const Color(0xFFFFB74D),
-                          height: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // Chinese proverb
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        _chineseProverb,
-                        style: TossDesignSystem.body1.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _chineseProverbMeaning,
-                        style: TossDesignSystem.body2.copyWith(
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
-                          height: 1.5,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // Advice
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        height: 160,
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.lightbulb_outline,
-                          color: TossDesignSystem.tossBlue,
-                          size: 20,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withValues(alpha: 0.1),
+                              Colors.black.withValues(alpha: 0.4),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
+                      Positioned(
+                        bottom: 16,
+                        left: 20,
+                        child: Text(
+                          '${_selectedCookie!.title}의 메시지',
+                          style: TossDesignSystem.heading3.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      // Main message
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFFFF9E6),
+                              Color(0xFFFFF3CD),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: const Color(0xFFFFE4A1),
+                            width: 1,
+                          ),
+                        ),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '오늘의 조언',
-                              style: TossDesignSystem.caption.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
+                              '"',
+                              style: DSTypography.displaySmall.copyWith(
+                                fontWeight: FontWeight.w300,
+                                color: const Color(0xFFFFB74D),
+                                height: 0.5,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 8),
                             Text(
-                              _advice,
+                              _mainMessage,
+                              style: TossDesignSystem.body1.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: TossDesignSystem.gray900,
+                                height: 1.6,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '"',
+                              style: DSTypography.displaySmall.copyWith(
+                                fontWeight: FontWeight.w300,
+                                color: const Color(0xFFFFB74D),
+                                height: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Chinese proverb
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? TossDesignSystem.cardBackgroundDark
+                              : TossDesignSystem.gray50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              _chineseProverb,
+                              style: TossDesignSystem.body1.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: isDark
+                                    ? TossDesignSystem.textPrimaryDark
+                                    : TossDesignSystem.gray900,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _chineseProverbMeaning,
                               style: TossDesignSystem.body2.copyWith(
-                                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
-                                height: 1.4,
+                                color: isDark
+                                    ? TossDesignSystem.textSecondaryDark
+                                    : TossDesignSystem.gray600,
+                                height: 1.5,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Advice
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: isDark
+                                ? TossDesignSystem.borderDark
+                                : TossDesignSystem.gray200,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: TossDesignSystem.tossBlue
+                                    .withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.lightbulb_outline,
+                                color: TossDesignSystem.tossBlue,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '오늘의 조언',
+                                    style: TossDesignSystem.caption.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark
+                                          ? TossDesignSystem.textPrimaryDark
+                                          : TossDesignSystem.gray700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    _advice,
+                                    style: TossDesignSystem.body2.copyWith(
+                                      color: isDark
+                                          ? TossDesignSystem.textPrimaryDark
+                                          : TossDesignSystem.gray700,
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -958,12 +991,14 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           ),
         ),
       ],
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 400.ms)
-      .slideY(begin: 0.2, end: 0);
+    )
+        .animate()
+        .fadeIn(duration: 800.ms, delay: 400.ms)
+        .slideY(begin: 0.2, end: 0);
   }
 
-  Widget _buildLuckyCard(String title, String value, IconData icon, Color color) {
+  Widget _buildLuckyCard(
+      String title, String value, IconData icon, Color color) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppCard(
@@ -979,7 +1014,9 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           Text(
             title,
             style: TossDesignSystem.caption.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossDesignSystem.gray600,
             ),
           ),
           const SizedBox(height: 4),
@@ -1001,9 +1038,10 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       onPressed: _shareFortune,
       style: UnifiedButtonStyle.secondary,
       icon: const Icon(Icons.share_outlined, size: 20),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 600.ms)
-      .slideY(begin: 0.2, end: 0);
+    )
+        .animate()
+        .fadeIn(duration: 800.ms, delay: 600.ms)
+        .slideY(begin: 0.2, end: 0);
   }
 
   Future<void> _onCookieTap() async {
@@ -1145,7 +1183,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         '기대 이상의 좋은 일이 생길 것입니다',
       ],
     };
-    
+
     final list = messages[_selectedCookie] ?? messages[CookieType.luck]!;
     return list[math.Random().nextInt(list.length)];
   }
@@ -1235,7 +1273,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         '감사하는 마음을 잊지 마세요',
       ],
     };
-    
+
     final list = advice[_selectedCookie] ?? advice[CookieType.luck]!;
     return list[math.Random().nextInt(list.length)];
   }
@@ -1256,7 +1294,7 @@ $_chineseProverb
 
 포춘쿠키로 오늘의 운세를 확인해보세요!
     ''';
-    
+
     Share.share(text);
   }
 }
@@ -1277,47 +1315,31 @@ class ImprovedCrackPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round; // 부드러운 끝처리
 
     final path = Path();
-    
+
     // 더 자연스러운 균열 패턴
     final centerX = size.width * 0.5;
     final centerY = size.height * 0.5;
-    
+
     // 메인 균열
     path.moveTo(centerX - 20, centerY);
-    path.quadraticBezierTo(
-      centerX - 10 * progress, 
-      centerY - 20 * progress,
-      centerX - 30 * progress, 
-      centerY - 40 * progress
-    );
-    
+    path.quadraticBezierTo(centerX - 10 * progress, centerY - 20 * progress,
+        centerX - 30 * progress, centerY - 40 * progress);
+
     path.moveTo(centerX + 20, centerY);
-    path.quadraticBezierTo(
-      centerX + 10 * progress, 
-      centerY + 20 * progress,
-      centerX + 30 * progress, 
-      centerY + 40 * progress
-    );
-    
+    path.quadraticBezierTo(centerX + 10 * progress, centerY + 20 * progress,
+        centerX + 30 * progress, centerY + 40 * progress);
+
     // 서브 균열
     if (progress > 0.5) {
       path.moveTo(centerX, centerY - 10);
-      path.quadraticBezierTo(
-        centerX + 15 * (progress - 0.5), 
-        centerY - 5,
-        centerX + 25 * (progress - 0.5), 
-        centerY - 25 * (progress - 0.5)
-      );
-      
+      path.quadraticBezierTo(centerX + 15 * (progress - 0.5), centerY - 5,
+          centerX + 25 * (progress - 0.5), centerY - 25 * (progress - 0.5));
+
       path.moveTo(centerX, centerY + 10);
-      path.quadraticBezierTo(
-        centerX - 15 * (progress - 0.5), 
-        centerY + 5,
-        centerX - 25 * (progress - 0.5), 
-        centerY + 25 * (progress - 0.5)
-      );
+      path.quadraticBezierTo(centerX - 15 * (progress - 0.5), centerY + 5,
+          centerX - 25 * (progress - 0.5), centerY + 25 * (progress - 0.5));
     }
-    
+
     canvas.drawPath(path, paint);
   }
 
@@ -1326,4 +1348,3 @@ class ImprovedCrackPainter extends CustomPainter {
     return oldDelegate.progress != progress;
   }
 }
-
