@@ -22,7 +22,8 @@ class ExLoverFortuneConditions extends FortuneConditions {
   final String mainCuriosity; // 'theirFeelings', 'reunionChance', 'newLove', 'healing'
 
   // 추가 정보
-  final String? chatHistory; // 카톡/대화 내용
+  final String? chatHistory; // 카톡/대화 내용 (텍스트)
+  final List<String>? chatScreenshots; // 카톡 스크린샷 (base64, 최대 3장)
   final DateTime date; // 조회 날짜
 
   ExLoverFortuneConditions({
@@ -38,6 +39,7 @@ class ExLoverFortuneConditions extends FortuneConditions {
     required this.currentEmotion,
     required this.mainCuriosity,
     this.chatHistory,
+    this.chatScreenshots,
     DateTime? date,
   }) : date = date ?? DateTime.now();
 
@@ -63,6 +65,7 @@ class ExLoverFortuneConditions extends FortuneConditions {
       'current_emotion': currentEmotion,
       'main_curiosity': mainCuriosity,
       'chat_history': chatHistory,
+      'chat_screenshots': chatScreenshots,
       'date': date.toIso8601String(),
     };
   }
@@ -94,6 +97,7 @@ class ExLoverFortuneConditions extends FortuneConditions {
       'currentEmotion': currentEmotion,
       'mainCuriosity': mainCuriosity,
       if (chatHistory != null && chatHistory!.isNotEmpty) 'chatHistory': chatHistory,
+      if (chatScreenshots != null && chatScreenshots!.isNotEmpty) 'chatScreenshots': chatScreenshots,
     };
   }
 

@@ -39,12 +39,21 @@ class ChatSurveyNotifier extends StateNotifier<ChatSurveyState> {
   ChatSurveyNotifier() : super(const ChatSurveyState());
 
   /// 설문 시작
-  void startSurvey(FortuneSurveyType type) {
+  /// [initialAnswers]: 프로필에서 자동으로 가져온 값 (예: 성별)
+  void startSurvey(FortuneSurveyType type, {Map<String, dynamic>? initialAnswers}) {
     final config = surveyConfigs[type];
     if (config == null) return;
 
+    var progress = SurveyProgress(
+      config: config,
+      answers: initialAnswers ?? {},
+    );
+
+    // initialAnswers가 있으면 해당 스텝들 건너뛰기
+    progress = _skipConditionalSteps(progress);
+
     state = ChatSurveyState(
-      activeProgress: SurveyProgress(config: config),
+      activeProgress: progress,
     );
   }
 
@@ -144,12 +153,53 @@ class ChatSurveyNotifier extends StateNotifier<ChatSurveyState> {
     // 동적 옵션인 경우 (dependsOn이 있는 경우)
     if (currentStep.dependsOn != null) {
       final previousAnswer = progress.answers[currentStep.dependsOn];
+
+      // position 필드 (야구 포지션 등)
       if (previousAnswer != null && currentStep.id == 'position') {
         return getPositionsForField(previousAnswer.toString());
+      }
+
+      // favoriteTeam 필드 (경기 선택 후 팀 선택)
+      if (currentStep.id == 'favoriteTeam' && previousAnswer != null) {
+        return _getTeamOptionsFromMatch(previousAnswer);
       }
     }
 
     return currentStep.options;
+  }
+
+  /// 선택한 경기에서 팀 옵션 추출
+  List<SurveyOption> _getTeamOptionsFromMatch(dynamic matchAnswer) {
+    // matchAnswer가 Map인 경우 (SportsGame 객체가 저장된 경우)
+    if (matchAnswer is Map<String, dynamic>) {
+      final homeTeam = matchAnswer['homeTeam'] as String?;
+      final awayTeam = matchAnswer['awayTeam'] as String?;
+
+      if (homeTeam != null && awayTeam != null) {
+        return [
+          SurveyOption(id: 'home', label: homeTeam, emoji: '🏠'),
+          SurveyOption(id: 'away', label: awayTeam, emoji: '✈️'),
+          const SurveyOption(id: 'none', label: '그냥 볼게요', emoji: '👀'),
+        ];
+      }
+    }
+
+    // matchAnswer가 String인 경우 (matchTitle 형식: "TeamA vs TeamB")
+    if (matchAnswer is String && matchAnswer.contains(' vs ')) {
+      final teams = matchAnswer.split(' vs ');
+      if (teams.length == 2) {
+        return [
+          SurveyOption(id: 'home', label: teams[0].trim(), emoji: '🏠'),
+          SurveyOption(id: 'away', label: teams[1].trim(), emoji: '✈️'),
+          const SurveyOption(id: 'none', label: '그냥 볼게요', emoji: '👀'),
+        ];
+      }
+    }
+
+    // 기본값 (파싱 실패 시)
+    return const [
+      SurveyOption(id: 'none', label: '그냥 볼게요', emoji: '👀'),
+    ];
   }
 }
 

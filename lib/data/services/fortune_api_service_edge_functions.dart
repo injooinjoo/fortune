@@ -30,6 +30,15 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   ];
   
   FortuneApiServiceWithEdgeFunctions(this._ref) : super(_ref.read(apiClientProvider));
+
+  /// 안전한 int 파싱 - int, num, String 모두 처리
+  static int? _parseToInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
   
   /// Get weather info optionally (doesn't fail if location permission denied)
   Future<WeatherInfo?> _getWeatherInfoOptional() async {
@@ -589,9 +598,11 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         createdAt: DateTime.now(),
         metadata: fortuneData,
         score: extractedScoreValue is int ? extractedScoreValue : (extractedScoreValue is num ? extractedScoreValue.toInt() : null),
-        summary: fortuneData['summary'],
+        summary: fortuneData['summary'] is Map
+            ? (fortuneData['summary']['status_message'] ?? fortuneData['summary']['greeting'] ?? fortuneData['summary'].toString())
+            : fortuneData['summary'],
         luckyColor: fortuneData['luckyColor'] ?? fortuneData['lucky_items']?['color'] ?? fortuneData['luckyItems']?['color'],
-        luckyNumber: fortuneData['luckyNumber']?.toInt() ?? fortuneData['lucky_items']?['number'] ?? fortuneData['luckyItems']?['number'],
+        luckyNumber: _parseToInt(fortuneData['luckyNumber']) ?? _parseToInt(fortuneData['lucky_items']?['number']) ?? _parseToInt(fortuneData['luckyItems']?['number']),
         luckyDirection: fortuneData['lucky_items']?['direction'] ?? fortuneData['luckyItems']?['direction'],
         bestTime: fortuneData['lucky_items']?['time'] ?? fortuneData['luckyItems']?['time'],
         advice: fortuneData['advice'],
@@ -1141,7 +1152,10 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       return _getFortuneFromEdgeFunction(
         endpoint: EdgeFunctionsEndpoints.luckyItemsFortune,
         userId: userId,
-        fortuneType: 'lucky-items');
+        fortuneType: 'lucky-items',
+        data: {
+          if (params?['interests'] != null) 'interests': params!['interests'],
+        });
     }
     return super.getLuckyItemsFortune(userId: userId);
   }

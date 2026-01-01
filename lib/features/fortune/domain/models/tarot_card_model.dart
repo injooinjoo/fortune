@@ -62,6 +62,48 @@ enum TarotSpreadType {
     });
     return list;
   }
+
+  /// 각 위치별 이름 반환 (0-indexed)
+  String getPositionName(int index) {
+    switch (this) {
+      case TarotSpreadType.single:
+        return '핵심 메시지';
+      case TarotSpreadType.threeCard:
+        return ThreeCardPosition.values[index].displayName;
+      case TarotSpreadType.relationship:
+        return RelationshipPosition.values[index].displayName;
+      case TarotSpreadType.celticCross:
+        return CelticCrossPosition.values[index].displayName;
+    }
+  }
+
+  /// 각 위치별 설명 반환 (0-indexed)
+  String getPositionDescription(int index) {
+    switch (this) {
+      case TarotSpreadType.single:
+        return '하나의 핵심 메시지';
+      case TarotSpreadType.threeCard:
+        return ThreeCardPosition.values[index].description;
+      case TarotSpreadType.relationship:
+        return RelationshipPosition.values[index].description;
+      case TarotSpreadType.celticCross:
+        return CelticCrossPosition.values[index].description;
+    }
+  }
+
+  /// 각 위치별 키 반환 (0-indexed) - API 전송용
+  String getPositionKey(int index) {
+    switch (this) {
+      case TarotSpreadType.single:
+        return 'core';
+      case TarotSpreadType.threeCard:
+        return ThreeCardPosition.values[index].name;
+      case TarotSpreadType.relationship:
+        return RelationshipPosition.values[index].name;
+      case TarotSpreadType.celticCross:
+        return CelticCrossPosition.values[index].name;
+    }
+  }
 }
 
 /// 3카드 스프레드 포지션

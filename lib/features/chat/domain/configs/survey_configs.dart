@@ -223,12 +223,7 @@ final loveSurveyConfig = FortuneSurveyConfig(
   emoji: '💕',
   accentColor: FortuneColors.love,
   steps: [
-    const SurveyStep(
-      id: 'gender',
-      question: '성별이 어떻게 되세요? 💫',
-      inputType: SurveyInputType.chips,
-      options: _genderOptions,
-    ),
+    // gender는 프로필에서 자동 가져옴 (chat_home_page.dart에서 initialAnswers로 전달)
     const SurveyStep(
       id: 'status',
       question: '지금 연애 상태가 어때? 💕',

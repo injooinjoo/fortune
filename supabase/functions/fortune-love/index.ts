@@ -123,31 +123,43 @@ interface LoveFortuneResponse {
       shortTerm: string[];
       longTerm: string[];
     };
-    // ✅ 추천 섹션 (세분화된 데이트/스타일 추천)
+    // ✅ 추천 섹션 (풀 스타일링 - 데이트/패션/그루밍/향수/대화)
     recommendations?: {
       dateSpots: {
-        primary: string;        // 메인 추천 장소 (무료 공개)
-        alternatives: string[]; // 대안 장소들 (블러)
-        reason: string;         // 추천 이유
+        primary: string;            // 메인 추천 장소 (구체적 장소명+분위기+이유)
+        alternatives: string[];     // 대안 장소 3개
+        reason: string;             // 추천 이유
+        timeRecommendation: string; // 추천 시간대
       };
       fashion: {
-        style: string;          // 추천 스타일
-        colors: string[];       // 추천 색상
-        items: string[];        // 구체적 아이템
-        reason: string;         // 추천 이유
+        style: string;              // 스타일 명칭
+        colors: string[];           // 행운 컬러 3개+이유
+        topItems: string[];         // 상의 추천 2개
+        bottomItems: string[];      // 하의 추천 2개
+        outerwear: string;          // 아우터 추천
+        shoes: string;              // 신발 추천
+        avoidFashion: string[];     // 피해야 할 스타일
+        reason: string;             // 추천 이유
       };
       accessories: {
-        recommended: string[];  // 추천 악세서리
-        avoid: string[];        // 피할 악세서리
-        reason: string;         // 추천 이유
+        recommended: string[];      // 추천 악세서리 3개
+        avoid: string[];            // 피할 악세서리 2개
+        bags: string;               // 가방 추천
+        reason: string;             // 추천 이유
+      };
+      grooming: {
+        hair: string;               // 헤어스타일 추천
+        makeup: string;             // 메이크업/그루밍 팁
+        nails: string;              // 네일 추천
       };
       fragrance: {
-        notes: string[];        // 향 노트
-        mood: string;           // 분위기
-        timing: string;         // 추천 상황
+        notes: string[];            // 향 노트+브랜드 추천
+        mood: string;               // 분위기
+        timing: string;             // 사용 팁
       };
       conversation: {
-        topics: string[];       // 추천 대화 주제
+        topics: string[];           // 추천 대화 주제 3개
+        openers: string[];          // 대화 시작 문장 2개
         avoid: string[];        // 피할 주제
         tip: string;            // 대화 팁
       };
@@ -342,30 +354,42 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
   },
   "recommendations": {
     "dateSpots": {
-      "primary": "메인 추천 데이트 장소 (구체적인 장소명 + 이유, 50자 이상)",
-      "alternatives": ["대안 장소 3개 (각 20자 이상)"],
-      "reason": "이 장소를 추천하는 이유 (상담자 성향 기반)"
+      "primary": "구체적 장소명 + 분위기 + 추천 이유 (예: '한남동 블루보틀 카페 - 세련되고 조용한 분위기가 상담자의 차분한 매력과 잘 어울려요', 80자 이상)",
+      "alternatives": ["대안 장소 3개 - 구체적 장소명과 한줄 이유 (예: '성수동 대림창고 - 인스타그래머블한 분위기')"],
+      "reason": "왜 이 장소가 상담자에게 맞는지 심리학적 분석",
+      "timeRecommendation": "추천 시간대와 이유 (예: '오후 3-5시, 햇살이 좋아 첫만남에 좋아요')"
     },
     "fashion": {
-      "style": "추천 패션 스타일 (캐주얼 시크, 미니멀 등)",
-      "colors": ["추천 색상 3개"],
-      "items": ["구체적인 아이템 3개 (니트, 슬랙스 등)"],
-      "reason": "이 스타일이 어울리는 이유"
+      "style": "구체적 스타일 명칭 (미니멀 캐주얼, 시크 페미닌, 스포티 캐주얼, 댄디 캐주얼 등)",
+      "colors": ["오늘의 행운 컬러 3개 + 이유 (예: '베이지 - 신뢰감과 따뜻함', '크림화이트 - 순수하고 깔끔한 이미지', '카키 - 세련되고 안정된 느낌')"],
+      "topItems": ["상의 추천 2개 - 구체적 아이템+색상 (예: '라운드넥 캐시미어 니트(베이지)', '오버핏 옥스포드 셔츠(화이트)')"],
+      "bottomItems": ["하의 추천 2개 - 구체적 아이템+색상 (예: '와이드 슬랙스(차콜)', '스트레이트 데님(인디고)')"],
+      "outerwear": "아우터 추천 - 구체적 아이템 (예: '캐멀 롱코트 - 고급스러운 첫인상을 줄 수 있어요')",
+      "shoes": "신발 추천 - 구체적 아이템 (예: '화이트 레더 스니커즈 - 깔끔하면서도 편안한 느낌')",
+      "avoidFashion": ["피해야 할 스타일 2개와 이유 (예: '과한 로고 플레이 - 부담스러운 인상')"],
+      "reason": "왜 이 스타일이 상담자에게 어울리는지 성격/매력 기반 분석"
     },
     "accessories": {
-      "recommended": ["추천 악세서리 3개 (미니멀 시계, 실버 반지 등)"],
-      "avoid": ["피할 악세서리 (과한 금장식 등)"],
-      "reason": "악세서리 선택 팁"
+      "recommended": ["추천 악세서리 3개 - 구체적 아이템+효과 (예: '미니멀 실버 시계 - 세련된 느낌', '작은 진주 귀걸이 - 우아한 포인트', '심플한 가죽 벨트 - 깔끔한 마무리')"],
+      "avoid": ["피할 악세서리 2개와 이유 (예: '과한 금장식 - 부담스럽고 과시하는 인상')"],
+      "bags": "가방 추천 (예: '미니 크로스백(베이지) - 활동적이면서 세련된 느낌, 첫 데이트에 적합')",
+      "reason": "악세서리 선택 기준과 전체 코디 밸런스 팁"
+    },
+    "grooming": {
+      "hair": "헤어스타일 추천 - 구체적 스타일+효과 (예: '자연스러운 웨이브 - 부드럽고 다가가기 쉬운 인상', '깔끔한 투블럭 - 단정하고 신뢰감 있는 이미지')",
+      "makeup": "메이크업/그루밍 팁 - 성별 맞춤 (예: 여성 '내추럴 코랄 립 + 은은한 광채 베이스', 남성 '깔끔한 눈썹 정리 + 입술 보습')",
+      "nails": "네일 추천 (예: '누드톤 젤네일 - 깔끔하고 단정한 인상', '깔끔하게 정돈된 숏네일 - 청결한 이미지')"
     },
     "fragrance": {
-      "notes": ["추천 향 노트 2개 (우디, 머스크 등)"],
-      "mood": "향수가 주는 분위기",
-      "timing": "이 향수가 어울리는 상황"
+      "notes": ["추천 향 노트 2개 + 구체적 향수 추천 (예: '우디 머스크 - 조말론 우드세이지앤씨솔트, 고급스럽고 세련된 분위기', '시트러스 플로럴 - 딥티크 도손, 상쾌하고 밝은 이미지')"],
+      "mood": "향수가 상대방에게 주는 인상과 분위기",
+      "timing": "향수 사용 팁 (예: '만나기 30분 전, 손목과 귀 뒤에 가볍게 2-3번 뿌리기')"
     },
     "conversation": {
-      "topics": ["추천 대화 주제 3개"],
-      "avoid": ["피해야 할 주제 2개"],
-      "tip": "대화할 때 팁"
+      "topics": ["추천 대화 주제 3개 - 구체적 (예: '최근 본 넷플릭스 드라마나 영화', '요즘 빠진 취미나 관심사', '가고 싶은 여행지나 맛집')"],
+      "openers": ["대화 시작 문장 2개 (예: '요즘 뭐 재밌게 보세요?', '이 카페 분위기 진짜 좋다! 자주 오세요?')"],
+      "avoid": ["피해야 할 주제 2개와 이유 (예: '전 연인 얘기 - 부정적인 분위기', '정치/종교 - 첫만남에 논쟁적')"],
+      "tip": "대화 팁 - 상담자의 성격과 매력을 살리는 방법"
     }
   }
 }
@@ -396,6 +420,18 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 - 매력 포인트 → 강점 분석에 그대로 활용
 - 취미/라이프스타일 → 만남 조언에 반영
 - 외모 자신감 점수 → 자기개발 조언에 반영
+
+# ⛔ 절대 금지 표현 (이 표현들은 절대로 사용하지 마세요!)
+다음 표현들은 비인격적이고 차갑게 느껴지므로 절대 사용 금지:
+- "남자분", "여자분", "남성분", "여성분" → 금지!
+- "회원님" → userName이 제공되면 절대 사용 금지!
+- "xx세 분", "xx대 분", "xx대 여성", "xx대 남성" → 금지!
+- "상담자", "사용자", "고객님" → 금지!
+
+# ✅ 반드시 사용할 호칭 규칙
+- 모든 문장에서 상담자를 이름으로 호칭 (예: "철수님", "영희님")
+- 2인칭 존칭 사용 (예: "철수님은...", "철수님의...", "철수님께...")
+- 따뜻하고 친근한 톤 유지 (예: "철수님, 오늘 정말 좋은 기운이 느껴져요!")
 
 # 주의사항
 - 상담자의 나이, 성별, 연애 상태를 고려한 맞춤형 분석
@@ -783,33 +819,45 @@ serve(async (req) => {
           longTerm: ['서로의 미래 계획 공유하기', '신뢰 관계 더 깊게 구축하기']
         },
 
-        // ✅ 추천 섹션 (데이트 장소, 패션, 악세서리, 향수, 대화)
+        // ✅ 추천 섹션 (풀 스타일링: 데이트/패션/그루밍/향수/대화)
         recommendations: fortuneData.recommendations ? {
           dateSpots: {
-            primary: fortuneData.recommendations.dateSpots?.primary || '분위기 좋은 카페에서 깊은 대화를 나눠보세요',
-            alternatives: getValidArray(fortuneData.recommendations.dateSpots?.alternatives, ['공원 산책', '미술관 데이트', '맛집 탐방']),
-            reason: fortuneData.recommendations.dateSpots?.reason || '차분한 분위기에서 서로를 알아가기 좋아요'
+            primary: fortuneData.recommendations.dateSpots?.primary || '한남동 블루보틀 카페 - 세련되고 조용한 분위기에서 깊은 대화를 나눠보세요',
+            alternatives: getValidArray(fortuneData.recommendations.dateSpots?.alternatives, ['성수동 대림창고 - 인스타그래머블한 분위기', '북촌 한옥마을 - 여유로운 산책', '이태원 경리단길 - 트렌디한 맛집']),
+            reason: fortuneData.recommendations.dateSpots?.reason || '차분한 분위기에서 서로를 알아가기 좋아요',
+            timeRecommendation: fortuneData.recommendations.dateSpots?.timeRecommendation || '오후 3-5시, 햇살이 따뜻한 시간대가 첫만남에 좋아요'
           },
           fashion: {
-            style: fortuneData.recommendations.fashion?.style || '캐주얼 시크',
-            colors: getValidArray(fortuneData.recommendations.fashion?.colors, ['베이지', '화이트', '네이비']),
-            items: getValidArray(fortuneData.recommendations.fashion?.items, ['깔끔한 니트', '슬랙스', '화이트 스니커즈']),
+            style: fortuneData.recommendations.fashion?.style || '미니멀 캐주얼',
+            colors: getValidArray(fortuneData.recommendations.fashion?.colors, ['베이지 - 신뢰감과 따뜻함', '크림화이트 - 순수하고 깔끔한 이미지', '네이비 - 차분하고 지적인 느낌']),
+            topItems: getValidArray(fortuneData.recommendations.fashion?.topItems, ['라운드넥 캐시미어 니트(베이지)', '오버핏 옥스포드 셔츠(화이트)']),
+            bottomItems: getValidArray(fortuneData.recommendations.fashion?.bottomItems, ['와이드 슬랙스(차콜)', '스트레이트 데님(인디고)']),
+            outerwear: fortuneData.recommendations.fashion?.outerwear || '캐멀 롱코트 - 고급스러운 첫인상을 줄 수 있어요',
+            shoes: fortuneData.recommendations.fashion?.shoes || '화이트 레더 스니커즈 - 깔끔하면서도 편안한 느낌',
+            avoidFashion: getValidArray(fortuneData.recommendations.fashion?.avoidFashion, ['과한 로고 플레이 - 부담스러운 인상', '너무 화려한 패턴 - 산만해 보일 수 있음']),
             reason: fortuneData.recommendations.fashion?.reason || '첫인상에서 신뢰감을 줄 수 있어요'
           },
           accessories: {
-            recommended: getValidArray(fortuneData.recommendations.accessories?.recommended, ['미니멀 시계', '실버 반지', '가죽 백']),
-            avoid: getValidArray(fortuneData.recommendations.accessories?.avoid, ['과한 금장식']),
+            recommended: getValidArray(fortuneData.recommendations.accessories?.recommended, ['미니멀 실버 시계 - 세련된 느낌', '작은 귀걸이 - 우아한 포인트', '심플한 가죽 벨트 - 깔끔한 마무리']),
+            avoid: getValidArray(fortuneData.recommendations.accessories?.avoid, ['과한 금장식 - 부담스러운 인상', '너무 많은 액세서리 - 산만해 보임']),
+            bags: fortuneData.recommendations.accessories?.bags || '미니 크로스백(베이지) - 활동적이면서 세련된 느낌',
             reason: fortuneData.recommendations.accessories?.reason || '센스있고 세련된 이미지 연출'
           },
+          grooming: {
+            hair: fortuneData.recommendations.grooming?.hair || '자연스러운 웨이브 - 부드럽고 다가가기 쉬운 인상',
+            makeup: fortuneData.recommendations.grooming?.makeup || '내추럴 메이크업 - 은은한 광채와 부드러운 립 컬러',
+            nails: fortuneData.recommendations.grooming?.nails || '누드톤 젤네일 - 깔끔하고 단정한 인상'
+          },
           fragrance: {
-            notes: getValidArray(fortuneData.recommendations.fragrance?.notes, ['우디', '머스크']),
-            mood: fortuneData.recommendations.fragrance?.mood || '차분하면서 깊이있는',
-            timing: fortuneData.recommendations.fragrance?.timing || '저녁 데이트에 특히 어울려요'
+            notes: getValidArray(fortuneData.recommendations.fragrance?.notes, ['우디 머스크 - 조말론 우드세이지앤씨솔트, 세련된 분위기', '시트러스 플로럴 - 딥티크 도손, 상쾌하고 밝은 이미지']),
+            mood: fortuneData.recommendations.fragrance?.mood || '차분하면서 고급스러운 분위기',
+            timing: fortuneData.recommendations.fragrance?.timing || '만나기 30분 전, 손목과 귀 뒤에 가볍게 2-3번'
           },
           conversation: {
-            topics: getValidArray(fortuneData.recommendations.conversation?.topics, ['여행 이야기', '취미 공유', '미래 꿈']),
-            avoid: getValidArray(fortuneData.recommendations.conversation?.avoid, ['전 애인 이야기', '급한 결혼 언급']),
-            tip: fortuneData.recommendations.conversation?.tip || '상대방 이야기를 먼저 들어주세요'
+            topics: getValidArray(fortuneData.recommendations.conversation?.topics, ['최근 본 넷플릭스 드라마', '요즘 빠진 취미나 관심사', '가고 싶은 여행지나 맛집']),
+            openers: getValidArray(fortuneData.recommendations.conversation?.openers, ['요즘 뭐 재밌게 보세요?', '이 카페 분위기 진짜 좋다! 자주 오세요?']),
+            avoid: getValidArray(fortuneData.recommendations.conversation?.avoid, ['전 연인 얘기 - 부정적인 분위기', '정치/종교 - 첫만남에 논쟁적']),
+            tip: fortuneData.recommendations.conversation?.tip || '상대방 이야기를 먼저 들어주고, 공감하면서 자연스럽게 대화를 이어가세요'
           }
         } : undefined,
 

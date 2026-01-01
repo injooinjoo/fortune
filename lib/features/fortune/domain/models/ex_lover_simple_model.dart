@@ -102,6 +102,7 @@ class ExLoverSimpleInput {
 
   // 추가 정보 (선택)
   final String? chatHistory;
+  final List<String>? chatScreenshots; // 카톡 스크린샷 (base64, 최대 3장)
 
   // 하위 호환성 (기존 필드)
   final String? relationshipDuration;
@@ -123,6 +124,7 @@ class ExLoverSimpleInput {
     required this.contactStatus,
     this.goalSpecific,
     this.chatHistory,
+    this.chatScreenshots,
     // 하위 호환성
     this.relationshipDuration,
     this.currentEmotion,
@@ -144,6 +146,7 @@ class ExLoverSimpleInput {
         'contact_status': contactStatus,
         'goalSpecific': goalSpecific,
         'chat_history': chatHistory,
+        'chat_screenshots': chatScreenshots,
         // 하위 호환성
         'relationship_duration': relationshipDuration ?? timeSinceBreakup,
         'current_emotion': currentEmotion,
@@ -410,6 +413,81 @@ class Milestones {
 }
 
 // ============================================================================
+// 개인화 분석 (v3 - 설문 기반)
+// ============================================================================
+class PersonalizedAnalysis {
+  final String yourStory; // breakup_detail 기반 분석
+  final String emotionalPattern; // currentState 기반 감정 패턴
+  final String? chatAnalysis; // 대화 내용 분석
+  final String coreInsight; // 핵심 인사이트
+
+  PersonalizedAnalysis({
+    required this.yourStory,
+    required this.emotionalPattern,
+    this.chatAnalysis,
+    required this.coreInsight,
+  });
+
+  factory PersonalizedAnalysis.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return PersonalizedAnalysis(
+        yourStory: '',
+        emotionalPattern: '',
+        chatAnalysis: null,
+        coreInsight: '',
+      );
+    }
+    return PersonalizedAnalysis(
+      yourStory: json['yourStory'] as String? ?? '',
+      emotionalPattern: json['emotionalPattern'] as String? ?? '',
+      chatAnalysis: json['chatAnalysis'] as String?,
+      coreInsight: json['coreInsight'] as String? ?? '',
+    );
+  }
+}
+
+// ============================================================================
+// 스크린샷 분석 (v3 - Vision API)
+// ============================================================================
+class ScreenshotAnalysis {
+  final String conversationTone; // 대화 톤 분석
+  final String emotionalFlow; // 감정 흐름
+  final String relationshipDynamics; // 관계 역학
+  final List<String> keyMoments; // 핵심 순간들
+  final String advice; // 대화 기반 조언
+
+  ScreenshotAnalysis({
+    required this.conversationTone,
+    required this.emotionalFlow,
+    required this.relationshipDynamics,
+    required this.keyMoments,
+    required this.advice,
+  });
+
+  factory ScreenshotAnalysis.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return ScreenshotAnalysis(
+        conversationTone: '',
+        emotionalFlow: '',
+        relationshipDynamics: '',
+        keyMoments: [],
+        advice: '',
+      );
+    }
+    return ScreenshotAnalysis(
+      conversationTone: json['conversationTone'] as String? ?? '',
+      emotionalFlow: json['emotionalFlow'] as String? ?? '',
+      relationshipDynamics: json['relationshipDynamics'] as String? ?? '',
+      keyMoments: (json['keyMoments'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      advice: json['advice'] as String? ?? '',
+    );
+  }
+}
+
+// ============================================================================
 // 마무리 메시지 (v2)
 // ============================================================================
 class ClosingMessage {
@@ -458,6 +536,10 @@ class ExLoverEmotionalResultV2 {
   final Milestones milestones;
   final ClosingMessage closingMessage;
 
+  // ✅ 개인화 분석 (v3)
+  final PersonalizedAnalysis? personalizedAnalysis;
+  final ScreenshotAnalysis? screenshotAnalysis;
+
   // 블러 정보
   final bool isBlurred;
   final List<String> blurredSections;
@@ -476,6 +558,8 @@ class ExLoverEmotionalResultV2 {
     required this.newBeginning,
     required this.milestones,
     required this.closingMessage,
+    this.personalizedAnalysis,
+    this.screenshotAnalysis,
     this.isBlurred = false,
     this.blurredSections = const [],
   });
@@ -502,6 +586,14 @@ class ExLoverEmotionalResultV2 {
           Milestones.fromJson(json['milestones'] as Map<String, dynamic>?),
       closingMessage: ClosingMessage.fromJson(
           json['closingMessage'] as Map<String, dynamic>?),
+      personalizedAnalysis: json['personalizedAnalysis'] != null
+          ? PersonalizedAnalysis.fromJson(
+              json['personalizedAnalysis'] as Map<String, dynamic>)
+          : null,
+      screenshotAnalysis: json['screenshotAnalysis'] != null
+          ? ScreenshotAnalysis.fromJson(
+              json['screenshotAnalysis'] as Map<String, dynamic>)
+          : null,
       isBlurred: json['isBlurred'] as bool? ?? false,
       blurredSections: (json['blurredSections'] as List<dynamic>?)
               ?.map((e) => e.toString())

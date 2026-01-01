@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design_system/design_system.dart';
-import '../../../core/theme/typography_unified.dart';
-import '../../../core/theme/app_theme/fortune_theme_extension.dart';
 import '../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../presentation/providers/secondary_profiles_provider.dart';
 
@@ -92,7 +90,6 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final fortuneTheme = context.fortuneTheme;
     final colors = context.colors;
 
     return Container(
@@ -100,7 +97,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       decoration: BoxDecoration(
-        color: fortuneTheme.cardBackground,
+        color: colors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(
@@ -116,7 +113,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: fortuneTheme.dividerColor,
+                    color: colors.divider,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -129,13 +126,13 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                 children: [
                   Expanded(
                     child:
-                        Text(widget.title ?? '프로필 추가', style: context.heading2),
+                        Text(widget.title ?? '프로필 추가', style: context.typography.headingLarge),
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
                     icon: Icon(
                       Icons.close,
-                      color: fortuneTheme.secondaryText,
+                      color: colors.textSecondary,
                     ),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -145,8 +142,8 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
               const SizedBox(height: 8),
               Text(
                 widget.subtitle ?? '가족이나 친구의 운세를 확인할 수 있어요',
-                style: context.bodyMedium.copyWith(
-                  color: fortuneTheme.secondaryText,
+                style: context.typography.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 24),
@@ -158,18 +155,18 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   hintText: '이름을 입력해주세요',
-                  hintStyle: context.bodyMedium.copyWith(
-                    color: fortuneTheme.secondaryText,
+                  hintStyle: context.typography.bodyMedium.copyWith(
+                    color: colors.textSecondary,
                   ),
                   filled: true,
-                  fillColor: fortuneTheme.cardSurface,
+                  fillColor: colors.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: fortuneTheme.dividerColor),
+                    borderSide: BorderSide(color: colors.border),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: fortuneTheme.dividerColor),
+                    borderSide: BorderSide(color: colors.border),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -182,8 +179,8 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                     vertical: 14,
                   ),
                 ),
-                style: context.bodyLarge.copyWith(
-                  color: fortuneTheme.primaryText,
+                style: context.typography.bodyLarge.copyWith(
+                  color: colors.textPrimary,
                 ),
                 onChanged: (_) => setState(() {}),
               ),
@@ -231,8 +228,8 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                     const SizedBox(width: 8),
                     Text(
                       '음력',
-                      style: context.bodyMedium.copyWith(
-                        color: fortuneTheme.primaryText,
+                      style: context.typography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -251,8 +248,8 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    color: fortuneTheme.cardSurface,
-                    border: Border.all(color: fortuneTheme.dividerColor),
+                    color: colors.surface,
+                    border: Border.all(color: colors.border),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -260,15 +257,15 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                     children: [
                       Text(
                         _birthTime ?? '모름',
-                        style: context.bodyLarge.copyWith(
+                        style: context.typography.bodyLarge.copyWith(
                           color: _birthTime != null
-                              ? fortuneTheme.primaryText
-                              : fortuneTheme.secondaryText,
+                              ? colors.textPrimary
+                              : colors.textSecondary,
                         ),
                       ),
                       Icon(
                         Icons.access_time_outlined,
-                        color: fortuneTheme.secondaryText,
+                        color: colors.textSecondary,
                         size: 20,
                       ),
                     ],
@@ -306,7 +303,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    disabledBackgroundColor: fortuneTheme.dividerColor,
+                    disabledBackgroundColor: colors.divider,
                   ),
                   child: _isLoading
                       ? const SizedBox(
@@ -319,7 +316,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                         )
                       : Text(
                           '저장',
-                          style: context.buttonLarge.copyWith(
+                          style: context.typography.buttonLarge.copyWith(
                             color: Colors.white,
                           ),
                         ),
@@ -333,12 +330,12 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
   }
 
   Widget _buildSectionTitle(String title) {
-    final fortuneTheme = context.fortuneTheme;
+    final colors = context.colors;
     return Text(
       title,
-      style: context.bodyMedium.copyWith(
+      style: context.typography.bodyMedium.copyWith(
         fontWeight: FontWeight.w600,
-        color: fortuneTheme.primaryText,
+        color: colors.textPrimary,
       ),
     );
   }
@@ -392,7 +389,6 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
 
   /// MBTI 선택 그리드
   Widget _buildMbtiGrid(DSColorScheme colors) {
-    final fortuneTheme = context.fortuneTheme;
     return Column(
       children: [
         Wrap(
@@ -420,8 +416,8 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           },
           child: Text(
             '모르겠어요',
-            style: context.bodySmall.copyWith(
-              color: fortuneTheme.secondaryText,
+            style: context.typography.bodySmall.copyWith(
+              color: colors.textSecondary,
             ),
           ),
         ),
@@ -431,7 +427,6 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
 
   /// 혈액형 선택 칩
   Widget _buildBloodTypeChips(DSColorScheme colors) {
-    final fortuneTheme = context.fortuneTheme;
     return Column(
       children: [
         Row(
@@ -461,8 +456,8 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
             },
             child: Text(
               '모르겠어요',
-              style: context.bodySmall.copyWith(
-                color: fortuneTheme.secondaryText,
+              style: context.typography.bodySmall.copyWith(
+                color: colors.textSecondary,
               ),
             ),
           ),
@@ -471,7 +466,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     );
   }
 
-  /// 공통 선택 칩 위젯
+  /// 공통 선택 칩 위젯 (채팅 페이지와 동일한 스타일)
   Widget _buildSelectionChip({
     required String label,
     required bool isSelected,
@@ -479,31 +474,52 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     required DSColorScheme colors,
     bool compact = false,
   }) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: compact ? 12 : 16,
-          vertical: compact ? 8 : 10,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? primaryColor
-              : (isDark ? colors.backgroundSecondary : colors.surface),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? primaryColor : colors.border,
-            width: 1.5,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 12 : 16,
+            vertical: compact ? 8 : 10,
           ),
-        ),
-        child: Text(
-          label,
-          style: context.bodyMedium.copyWith(
-            color: isSelected ? Colors.white : colors.textPrimary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          decoration: BoxDecoration(
+            color: isSelected
+                ? colors.accentSecondary.withValues(alpha: 0.2)
+                : (isDark ? colors.backgroundSecondary : colors.surface),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            border: Border.all(
+              color: isSelected
+                  ? colors.accentSecondary
+                  : colors.textPrimary.withValues(alpha: 0.2),
+              width: isSelected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: context.typography.bodyMedium.copyWith(
+                  color: isSelected
+                      ? colors.accentSecondary
+                      : colors.textPrimary,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+              if (isSelected) ...[
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.check,
+                  size: 14,
+                  color: colors.accentSecondary,
+                ),
+              ],
+            ],
           ),
         ),
       ),
@@ -570,7 +586,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           SnackBar(
             content: Text(errorMessage),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: context.fortuneTheme.errorColor,
+            backgroundColor: context.colors.error,
           ),
         );
       }

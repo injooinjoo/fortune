@@ -244,11 +244,18 @@ serve(async (req) => {
 - 관심 분야: ${interestLabels || '미선택'}
 - 시급성: ${URGENCY_LABELS[urgency] || urgency}
 
-## 중요 원칙
-- ${userName}님의 이름을 자연스럽게 사용하세요
-- 구체적인 투자 종목, 매매 타이밍, 목표가는 절대 언급하지 마세요
-- 마음가짐, 재정 습관, 운의 흐름 중심으로 조언하세요
-- 모든 재정 결정은 본인의 선택과 책임임을 명시하세요
+## 핵심 개인화 원칙 (반드시 준수)
+1. **관심 분야 필수 반영**: "${interestLabels}" 각각에 대해 구체적인 분석과 조언을 제공
+2. **목표 맞춤 전략**: "${GOAL_LABELS[goal] || goal}" 달성을 위한 실질적인 단계별 전략 제시
+3. **성향 차별화**: "${RISK_LABELS[risk] || risk}" 성향에 맞게 보수적/적극적 조언 차별화
+4. **시급성 고려**: "${URGENCY_LABELS[urgency] || urgency}" 기준으로 단기/장기 전략 구분
+5. **고민 해결**: "${CONCERN_LABELS[concern] || concern}" 우려에 대한 구체적 해결책 포함
+
+## 안전 원칙
+- ${userName}님의 이름을 자연스럽게 사용
+- 구체적인 투자 종목, 매매 타이밍, 목표가는 절대 언급 금지
+- 마음가짐, 재정 습관, 운의 흐름 중심으로 조언
+- 모든 재정 결정은 본인의 선택과 책임임을 명시
 - 부드러운 표현 사용 ("~하세요" 대신 "~해보시는 건 어떨까요")
 
 다음 JSON 형식으로 응답해주세요:
@@ -267,19 +274,39 @@ serve(async (req) => {
 
   "goalAdvice": {
     "primaryGoal": "${GOAL_LABELS[goal] || goal}",
-    "timeline": "권장 기간 (예: 6개월~1년)",
-    "strategy": "목표 달성을 위한 구체적 방법 (150자)",
-    "luckyTiming": "유리한 시기 (예: 매월 15일 전후)"
+    "timeline": "사주 분석 기반 권장 기간 (예: 1~2년 내)",
+    "strategy": "${GOAL_LABELS[goal] || goal} 달성을 위한 구체적 3단계 전략 (200자)",
+    "monthlyTarget": "월별 권장 저축/투자액 (사주 기반)",
+    "luckyTiming": "유리한 시기와 이유 (예: 3월, 7월 - 금 기운 상승기)",
+    "cautionPeriod": "피해야 할 시기 (예: 5월 중순)",
+    "sajuAnalysis": "사주에서 본 ${GOAL_LABELS[goal] || goal} 운세 분석 (100자)"
   },
 
   "cashflowInsight": {
     "incomeEnergy": "상승 | 안정 | 주의",
-    "expenseWarning": "이달 지출 주의사항 (80자)",
+    "incomeDetail": "수입 흐름 분석 (${INCOME_LABELS[income] || income} 상태 기반, 80자)",
+    "expenseWarning": "${EXPENSE_LABELS[expense] || expense} 패턴 기반 지출 주의사항 (80자)",
     "savingTip": "저축 팁 (50자)"
   },
 
+  "concernResolution": {
+    "primaryConcern": "${CONCERN_LABELS[concern] || concern}",
+    "analysis": "${CONCERN_LABELS[concern] || concern} 우려에 대한 사주 분석 (100자)",
+    "solution": "구체적 해결 방안 3가지",
+    "mindset": "마음가짐 조언 (50자)",
+    "sajuPerspective": "사주 관점에서 본 해결 시기"
+  },
+
   "investmentInsights": {
-    ${interests.map(i => `"${i}": { "score": 0-100, "timing": "유리한 시기", "caution": "주의사항" }`).join(',\n    ')}
+    ${interests.map(i => {
+      if (i === 'realestate') return `"realestate": { "score": 0-100, "analysis": "부동산 운세 분석 (100자)", "recommendedType": "아파트|오피스텔|토지|상가 중 추천", "timing": "매수/계약 유리한 시기", "direction": "사주 기반 추천 방향 (동/서/남/북)", "caution": "부동산 투자 시 주의사항 (80자)", "sajuMatch": "사주와 부동산운 궁합 한 줄" }`;
+      if (i === 'side') return `"side": { "score": 0-100, "analysis": "부업운 분석 (100자)", "recommendedAreas": "추천 부업 분야 3가지 (성향 기반)", "incomeExpectation": "예상 월 부수입 범위", "startTiming": "시작하기 좋은 시기", "caution": "부업 시 주의사항", "sajuMatch": "사주와 부업운 궁합 한 줄" }`;
+      if (i === 'stock') return `"stock": { "score": 0-100, "analysis": "주식운 분석 (100자)", "style": "추천 투자 스타일 (가치투자|성장주|배당주)", "timing": "진입 유리한 시기", "caution": "주의사항", "sajuMatch": "사주와 주식운 궁합" }`;
+      if (i === 'crypto') return `"crypto": { "score": 0-100, "analysis": "코인운 분석 (100자)", "riskLevel": "적정 투자 비중 (%)", "timing": "진입 시기 조언", "caution": "주의사항", "sajuMatch": "사주와 코인운 궁합" }`;
+      if (i === 'saving') return `"saving": { "score": 0-100, "analysis": "저축운 분석 (100자)", "recommendedProduct": "추천 저축 유형", "monthlyAmount": "권장 월 저축액", "caution": "주의사항", "sajuMatch": "사주와 저축운 궁합" }`;
+      if (i === 'business') return `"business": { "score": 0-100, "analysis": "사업운 분석 (100자)", "recommendedField": "추천 사업 분야", "timing": "창업 적기", "caution": "주의사항", "sajuMatch": "사주와 사업운 궁합" }`;
+      return `"${i}": { "score": 0-100, "analysis": "분석 (100자)", "timing": "유리한 시기", "caution": "주의사항", "sajuMatch": "사주 궁합" }`;
+    }).join(',\n    ')}
   },
 
   "luckyElements": {
@@ -322,16 +349,25 @@ serve(async (req) => {
 [오늘]
 ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
 
-${userName}님의 재물운을 종합적으로 분석해주세요.
-- 목표: ${GOAL_LABELS[goal] || goal}
-- 고민: ${CONCERN_LABELS[concern] || concern}
+## ${userName}님의 재물운 분석 요청
+
+### 반드시 반영해야 할 선택 사항:
+1. **주요 목표**: ${GOAL_LABELS[goal] || goal} ← 이 목표 달성 전략이 핵심!
+2. **가장 큰 고민**: ${CONCERN_LABELS[concern] || concern} ← 이 우려 해소 방안 필수!
+3. **관심 분야**: ${interestLabels || '미선택'} ← 각각에 대한 상세 분석 필수!
+4. **투자 성향**: ${RISK_LABELS[risk] || risk} ← 이 성향에 맞는 조언으로!
+5. **시급성**: ${URGENCY_LABELS[urgency] || urgency} ← 이 기간에 맞는 전략으로!
+
+### 현재 재정 상태:
 - 수입: ${INCOME_LABELS[income] || income}
 - 지출: ${EXPENSE_LABELS[expense] || expense}
-- 투자 성향: ${RISK_LABELS[risk] || risk}
-- 관심 분야: ${interestLabels || '미선택'}
-- 시급성: ${URGENCY_LABELS[urgency] || urgency}
 
-구체적이고 실용적인 조언을 부탁드립니다.`
+### 요청 사항:
+- "${interestLabels}"에 대해 각각 구체적인 점수와 분석을 제공해주세요
+- "${GOAL_LABELS[goal] || goal}" 목표를 위한 실질적인 3단계 전략을 제시해주세요
+- "${CONCERN_LABELS[concern] || concern}" 우려에 대한 명확한 해결책을 포함해주세요
+- "${RISK_LABELS[risk] || risk}" 성향에 맞게 보수적/적극적 조언을 차별화해주세요
+- 사주 정보가 있다면 적극 활용해주세요`
 
     const response = await llm.generate([
       { role: 'system', content: systemPrompt },
@@ -375,7 +411,7 @@ ${userName}님의 재물운을 종합적으로 분석해주세요.
     // 블러 로직
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['goalAdvice', 'cashflowInsight', 'investmentInsights', 'monthlyFlow', 'actionItems']
+      ? ['goalAdvice', 'cashflowInsight', 'concernResolution', 'investmentInsights', 'monthlyFlow', 'actionItems']
       : []
 
     const result = {
@@ -408,6 +444,9 @@ ${userName}님의 재물운을 종합적으로 분석해주세요.
 
       // 캐시플로우 인사이트 (프리미엄)
       cashflowInsight: fortuneData.cashflowInsight,
+
+      // 고민 해결책 (프리미엄)
+      concernResolution: fortuneData.concernResolution,
 
       // 투자 분야별 분석 (프리미엄)
       investmentInsights: fortuneData.investmentInsights,

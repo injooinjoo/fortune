@@ -759,6 +759,7 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
             fashionDetail: data['fashionDetail'],
             colorDetail: data['colorDetail'],
             jewelryDetail: data['jewelryDetail'],
+            gender: _selectedGender,
           ),
         );
       case 'lifestyle':

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/design_system/design_system.dart';
 import '../../../core/theme/app_theme_extensions.dart';
 import '../../../core/services/fortune_haptic_service.dart';
 
@@ -67,13 +68,16 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
+    final fortuneTheme = context.fortuneTheme;
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.4,
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: colors.background,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius),
-          topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius),
+          topLeft: Radius.circular(fortuneTheme.bottomSheetStyles.borderRadius),
+          topRight: Radius.circular(fortuneTheme.bottomSheetStyles.borderRadius),
         ),
       ),
       child: Column(
@@ -81,34 +85,34 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
           // Handle bar
           Container(
             margin: const EdgeInsets.only(top: 8),
-            width: context.fortuneTheme.bottomSheetStyles.handleWidth,
-            height: context.fortuneTheme.bottomSheetStyles.handleHeight,
+            width: fortuneTheme.bottomSheetStyles.handleWidth,
+            height: fortuneTheme.bottomSheetStyles.handleHeight,
             decoration: BoxDecoration(
-              color: context.fortuneTheme.dividerColor,
-              borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2),
+              color: colors.divider,
+              borderRadius: BorderRadius.circular(fortuneTheme.bottomSheetStyles.handleHeight / 2),
             ),
           ),
-          
+
           // Header
           Padding(
-            padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal),
+            padding: EdgeInsets.all(fortuneTheme.formStyles.inputPadding.horizontal),
             child: Text(
               dimension,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              style: context.typography.headingLarge.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          
+
           // Options
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
+              padding: EdgeInsets.symmetric(horizontal: fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildOption(context, ref, option1),
-                  SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
+                  SizedBox(height: fortuneTheme.formStyles.inputPadding.horizontal),
                   _buildOption(context, ref, option2),
                 ],
               ),
@@ -121,42 +125,66 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
 
   Widget _buildOption(BuildContext context, WidgetRef ref, String option) {
     final isSelected = selectedOption == option;
+    final colors = context.colors;
+    final fortuneTheme = context.fortuneTheme;
 
-    return InkWell(
-      onTap: () {
-        ref.read(fortuneHapticServiceProvider).selection();
-        onOptionSelected(option);
-      },
-      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
-        decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : context.fortuneTheme.cardBackground,
-          borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4),
-          border: Border.all(
-            color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.dividerColor,
-            width: isSelected ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          ref.read(fortuneHapticServiceProvider).selection();
+          onOptionSelected(option);
+        },
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: double.infinity,
+          padding: EdgeInsets.all(fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? colors.accentSecondary.withValues(alpha: 0.2)
+                : colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            border: Border.all(
+              color: isSelected
+                  ? colors.accentSecondary
+                  : colors.textPrimary.withValues(alpha: 0.2),
+              width: isSelected ? 1.5 : 1,
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              option,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.primaryText,
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      option,
+                      style: context.typography.headingSmall.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: isSelected
+                            ? colors.accentSecondary
+                            : colors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: fortuneTheme.formStyles.inputPadding.vertical * 0.3),
+                    Text(
+                      _getDescription(option),
+                      style: context.typography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.3),
-            Text(
-              _getDescription(option),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: context.fortuneTheme.subtitleText,
-              ),
-            ),
-          ],
+              if (isSelected)
+                Icon(
+                  Icons.check_circle,
+                  color: colors.accentSecondary,
+                  size: 24,
+                ),
+            ],
+          ),
         ),
       ),
     );

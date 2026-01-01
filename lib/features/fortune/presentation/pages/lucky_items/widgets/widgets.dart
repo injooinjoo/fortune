@@ -12,3 +12,4 @@ export 'lifestyle_content.dart';
 export 'today_color_content.dart';
 export 'number_content.dart';
 export 'style_selector.dart';
+export 'fashion_image_section.dart';

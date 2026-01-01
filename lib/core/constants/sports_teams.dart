@@ -512,15 +512,6 @@ const List<SportsTeam> lckTeams = [
     primaryColor: '#5383E8',
   ),
   SportsTeam(
-    id: 'lck_lsb',
-    name: 'Liiv SANDBOX',
-    shortName: 'LSB',
-    sport: SportType.esports,
-    league: 'LCK',
-    city: '서울',
-    primaryColor: '#F5A623',
-  ),
-  SportsTeam(
     id: 'lck_ns',
     name: 'Nongshim RedForce',
     shortName: 'NS',

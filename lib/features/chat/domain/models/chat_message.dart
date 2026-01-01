@@ -89,6 +89,9 @@ class ChatMessage {
   /// 경기 인사이트 결과 데이터
   final MatchInsight? matchInsight;
 
+  /// 기간별 인사이트: 선택한 날짜 (결과 제목에 표시)
+  final DateTime? selectedDate;
+
   const ChatMessage({
     required this.id,
     required this.type,
@@ -104,6 +107,7 @@ class ChatMessage {
     this.sajuFortuneResult,
     this.onboardingInputType,
     this.matchInsight,
+    this.selectedDate,
   });
 
   ChatMessage copyWith({
@@ -121,6 +125,7 @@ class ChatMessage {
     Map<String, dynamic>? sajuFortuneResult,
     OnboardingInputType? onboardingInputType,
     MatchInsight? matchInsight,
+    DateTime? selectedDate,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -137,6 +142,7 @@ class ChatMessage {
       sajuFortuneResult: sajuFortuneResult ?? this.sajuFortuneResult,
       onboardingInputType: onboardingInputType ?? this.onboardingInputType,
       matchInsight: matchInsight ?? this.matchInsight,
+      selectedDate: selectedDate ?? this.selectedDate,
     );
   }
 }

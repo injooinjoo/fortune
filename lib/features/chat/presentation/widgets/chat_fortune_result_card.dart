@@ -24,6 +24,7 @@ class ChatFortuneResultCard extends ConsumerStatefulWidget {
   final String fortuneType;
   final String typeName;
   final bool isBlurred;
+  final DateTime? selectedDate;
 
   const ChatFortuneResultCard({
     super.key,
@@ -31,6 +32,7 @@ class ChatFortuneResultCard extends ConsumerStatefulWidget {
     required this.fortuneType,
     required this.typeName,
     this.isBlurred = false,
+    this.selectedDate,
   });
 
   @override
@@ -54,6 +56,15 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   Fortune get fortune => widget.fortune;
   String get fortuneType => widget.fortuneType;
   String get typeName => widget.typeName;
+  DateTime? get selectedDate => widget.selectedDate;
+
+  /// 기간별 인사이트 제목 생성 (선택한 날짜 기반)
+  String get _dailyCalendarTitle {
+    if (selectedDate != null) {
+      return '${selectedDate!.month}월 ${selectedDate!.day}일의 내 이야기';
+    }
+    return '오늘의 내 이야기';
+  }
 
   /// 오늘의 운세 타입 체크 (설문 기반 아닌 운세)
   /// 'daily_calendar'는 기간별 인사이트로, 민화 이미지 사용
@@ -62,8 +73,18 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       fortuneType == 'time' ||
       fortuneType == 'daily_calendar';
 
-  /// 연간 운세 타입 체크
-  bool get _isYearlyFortune => fortuneType == 'yearly' || fortuneType == 'new-year';
+  /// 연간 운세 타입 체크 (다양한 형식 지원: new-year, new_year, newYear)
+  bool get _isYearlyFortune =>
+      fortuneType == 'yearly' ||
+      fortuneType == 'new-year' ||
+      fortuneType == 'new_year' ||
+      fortuneType == 'newYear';
+
+  /// 연간 인사이트 제목 생성 (현재 연도 기반)
+  String get _yearlyTitle {
+    final year = DateTime.now().year;
+    return '나의 $year년 인사이트';
+  }
 
   /// 본문 content를 직접 표시해야 하는 타입 체크
   bool get _shouldShowContent =>
@@ -82,6 +103,43 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   /// 경계 대상 caution 데이터 가져오기
   Map<String, dynamic>? get _cautionData => fortune.metadata ?? fortune.additionalInfo;
+
+  /// 바이오리듬 타입 체크
+  bool get _isBiorhythm => fortuneType == 'biorhythm';
+
+  /// 로또 타입 체크
+  bool get _isLottoType =>
+      fortuneType == 'lotto' ||
+      fortuneType == 'lottery' ||
+      fortuneType == 'lucky-number';
+
+  /// 연애운 상세 추천 존재 여부 체크
+  bool get _hasLoveRecommendations {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    return metadata['recommendations'] != null;
+  }
+
+  /// 바이오리듬 데이터 존재 여부 체크
+  bool get _hasBiorhythmData {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    return metadata['physical'] != null ||
+           metadata['emotional'] != null ||
+           metadata['intellectual'] != null;
+  }
+
+  /// 재물운 타입 체크
+  bool get _isWealth => fortuneType == 'wealth';
+
+  /// 재물운 데이터 존재 여부 체크
+  bool get _hasWealthData {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    return metadata['goalAdvice'] != null ||
+           metadata['investmentInsights'] != null ||
+           metadata['concernResolution'] != null;
+  }
 
   /// 인사이트 민화 이미지 목록 (날짜별 랜덤 선택)
   static const List<String> _minhwaImages = [
@@ -202,6 +260,48 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           if (fortuneType == 'talent')
             _buildTalentDetailSections(context),
 
+          // biorhythm 전용: 3가지 리듬 상세 표시
+          if (_isBiorhythm && _hasBiorhythmData)
+            _buildBiorhythmDetailSection(context),
+
+          // lotto 전용: 로또 번호 공 표시
+          if (_isLottoType)
+            _buildLottoNumbersSection(context),
+
+          // love 전용: 상세 추천 섹션 (데이트 장소, 패션, 악세서리 등)
+          if (fortuneType == 'love' && _hasLoveRecommendations)
+            _buildLoveRecommendationsSection(context),
+
+          // 연간 운세 전용 섹션들 (new_year, yearly)
+          if (_isYearlyFortune) ...[
+            // 1. 목표별 맞춤 분석
+            _buildGoalFortuneSection(context, isPremium),
+            // 2. 오행 분석
+            _buildSajuAnalysisSection(context, isPremium),
+            // 3. 월별 하이라이트 (1-3월 무료, 4-12월 프리미엄)
+            _buildMonthlyHighlightsSection(context, isPremium),
+            // 4. 행동 계획
+            _buildActionPlanSection(context, isPremium),
+            // 5. 특별 메시지
+            _buildSpecialMessageSection(context, isPremium),
+          ],
+
+          // 재물운 전용 섹션들 (wealth)
+          if (_isWealth && _hasWealthData) ...[
+            // 1. 선택한 관심 분야 태그
+            _buildWealthInterestsSection(context),
+            // 2. 목표 맞춤 조언
+            _buildWealthGoalAdviceSection(context, isPremium),
+            // 3. 고민 해결책
+            _buildWealthConcernSection(context, isPremium),
+            // 4. 관심 분야별 투자 인사이트
+            _buildWealthInvestmentInsightsSection(context, isPremium),
+            // 5. 월별 흐름
+            _buildWealthMonthlyFlowSection(context, isPremium),
+            // 6. 실천 항목
+            _buildWealthActionItemsSection(context, isPremium),
+          ],
+
           // 광고 버튼 (avoid-people 블러 상태일 때만)
           if (fortuneType == 'avoid-people' && _isBlurred && !isPremium)
             _buildAdUnlockButton(context),
@@ -250,7 +350,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  _isDailyFortune ? '오늘의 내 이야기' : typeName,
+                  _isDailyFortune
+                      ? _dailyCalendarTitle
+                      : _isYearlyFortune
+                          ? _yearlyTitle
+                          : typeName,
                   style: typography.headingSmall.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -353,8 +457,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
 
     final dailyFortunes = metadata['dailyFortunes'] as List<dynamic>?;
-    final bestDate = metadata['bestDate'] as String?;
-    final worstDate = metadata['worstDate'] as String?;
+    // bestDate/worstDate는 객체 {date, reason} 또는 String일 수 있음
+    final bestDateRaw = metadata['bestDate'];
+    final worstDateRaw = metadata['worstDate'];
+    final bestDate = bestDateRaw is Map<String, dynamic>
+        ? bestDateRaw['date'] as String?
+        : bestDateRaw as String?;
+    final bestDateReason = bestDateRaw is Map<String, dynamic>
+        ? bestDateRaw['reason'] as String?
+        : null;
+    final worstDate = worstDateRaw is Map<String, dynamic>
+        ? worstDateRaw['date'] as String?
+        : worstDateRaw as String?;
+    final worstDateReason = worstDateRaw is Map<String, dynamic>
+        ? worstDateRaw['reason'] as String?
+        : null;
     final periodTheme = metadata['periodTheme'] as String?;
     final specialMessage = metadata['specialMessage'] as String?;
     final advice = metadata['advice'] as String?;
@@ -425,6 +542,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                       label: '좋은 날',
                       date: bestDate,
                       color: const Color(0xFF10B981),
+                      reason: bestDateReason,
                     ),
                   ),
                 if (bestDate != null && worstDate != null)
@@ -437,6 +555,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                       label: '주의할 날',
                       date: worstDate,
                       color: const Color(0xFFF59E0B),
+                      reason: worstDateReason,
                     ),
                   ),
               ],
@@ -556,6 +675,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     required String label,
     required String date,
     required Color color,
+    String? reason,
   }) {
     final colors = context.colors;
     final typography = context.typography;
@@ -572,24 +692,35 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         children: [
           Text(icon, style: typography.bodyMedium),
           const SizedBox(width: DSSpacing.xs),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: typography.labelSmall.copyWith(
-                  color: colors.textSecondary,
-                  fontSize: 10,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textSecondary,
+                    fontSize: 10,
+                  ),
                 ),
-              ),
-              Text(
-                date,
-                style: typography.labelMedium.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w600,
+                Text(
+                  date,
+                  style: typography.labelMedium.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
+                if (reason != null && reason.isNotEmpty)
+                  Text(
+                    reason,
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
+            ),
           ),
         ],
       ),
@@ -805,6 +936,16 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final colors = context.colors;
     final typography = context.typography;
 
+    // 프리미엄 잠금 메시지 필터링 - 실제 추천만 표시
+    final filteredRecommendations = fortune.recommendations!
+        .where((rec) => !rec.contains('프리미엄 결제') && !rec.contains('🔒'))
+        .toList();
+
+    // 필터 후 빈 리스트면 섹션 자체를 숨김
+    if (filteredRecommendations.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.md,
@@ -827,7 +968,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.xs),
-          ...fortune.recommendations!.take(3).map((rec) {
+          ...filteredRecommendations.take(3).map((rec) {
             return Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Row(
@@ -923,7 +1064,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   String _getPeriodLabel(String period) {
     // 로또/행운번호는 항상 오늘 날짜 표시
-    if (widget.fortuneType == 'lucky-number' || widget.fortuneType == 'lotto') {
+    if (widget.fortuneType == 'lucky-number' || widget.fortuneType == 'lotto' || widget.fortuneType == 'lottery') {
       final now = DateTime.now();
       return '${now.year}년 ${now.month}월 ${now.day}일';
     }
@@ -1562,6 +1703,803 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     }
   }
 
+  /// 바이오리듬 상세 섹션 빌드 (biorhythm 전용)
+  Widget _buildBiorhythmDetailSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+
+    final physical = metadata['physical'] as Map<String, dynamic>?;
+    final emotional = metadata['emotional'] as Map<String, dynamic>?;
+    final intellectual = metadata['intellectual'] as Map<String, dynamic>?;
+
+    // today_recommendation이 String 또는 Map일 수 있음
+    final todayRecRaw = metadata['today_recommendation'];
+    final String? todayRec = todayRecRaw is String
+        ? todayRecRaw
+        : (todayRecRaw is Map ? todayRecRaw['text']?.toString() ?? todayRecRaw['recommendation']?.toString() : null);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: DSSpacing.md),
+          // 3가지 리듬 카드
+          if (physical != null)
+            _buildRhythmCard(
+              context,
+              name: '신체',
+              icon: '☀️',
+              data: physical,
+              color: const Color(0xFFEF4444),
+            ),
+          if (emotional != null)
+            _buildRhythmCard(
+              context,
+              name: '감성',
+              icon: '🌿',
+              data: emotional,
+              color: const Color(0xFF22C55E),
+            ),
+          if (intellectual != null)
+            _buildRhythmCard(
+              context,
+              name: '지성',
+              icon: '🌙',
+              data: intellectual,
+              color: const Color(0xFF3B82F6),
+            ),
+
+          // 오늘의 추천
+          if (todayRec != null && todayRec.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    colors.accent.withValues(alpha: 0.1),
+                    colors.accentSecondary.withValues(alpha: 0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                  color: colors.accent.withValues(alpha: 0.2),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text('🎯', style: typography.headingSmall),
+                      const SizedBox(width: DSSpacing.xs),
+                      Text(
+                        '오늘의 추천',
+                        style: typography.labelLarge.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DSSpacing.sm),
+                  Text(
+                    todayRec,
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 로또 번호 공 섹션 빌드 (lotto 전용)
+  Widget _buildLottoNumbersSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? {};
+    final additionalInfo = fortune.additionalInfo ?? {};
+
+    // lottoNumbers 추출 (metadata 또는 additionalInfo에서)
+    List<int> lottoNumbers = [];
+    final numbersFromMetadata = metadata['lottoNumbers'];
+    final numbersFromAdditional = additionalInfo['lottoNumbers'];
+
+    if (numbersFromMetadata is List) {
+      lottoNumbers = numbersFromMetadata.map((e) => e as int).toList();
+    } else if (numbersFromAdditional is List) {
+      lottoNumbers = numbersFromAdditional.map((e) => e as int).toList();
+    }
+
+    if (lottoNumbers.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: DSSpacing.md),
+          // 제목
+          Row(
+            children: [
+              Text('🎱', style: typography.headingSmall),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '오늘의 행운 번호',
+                style: typography.labelLarge.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+          // 로또 번호 공들
+          Center(
+            child: Wrap(
+              spacing: DSSpacing.sm,
+              runSpacing: DSSpacing.sm,
+              alignment: WrapAlignment.center,
+              children: lottoNumbers.map((number) {
+                return _LottoBall(number: number);
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          // 안내 문구
+          Center(
+            child: Text(
+              '사주 기반으로 생성된 번호입니다',
+              style: typography.bodySmall.copyWith(
+                color: colors.textSecondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 개별 리듬 카드 빌드
+  Widget _buildRhythmCard(
+    BuildContext context, {
+    required String name,
+    required String icon,
+    required Map<String, dynamic> data,
+    required Color color,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final score = data['score'] as int? ?? 0;
+    final phase = data['phase'] as String? ?? '';
+    final status = data['status'] as String? ?? '';
+    final advice = data['advice'] as String? ?? '';
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark
+            ? color.withValues(alpha: 0.1)
+            : color.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: color.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더: 아이콘, 이름, 점수
+          Row(
+            children: [
+              Text(icon, style: typography.headingSmall),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '$name 리듬',
+                style: typography.labelLarge.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(DSRadius.full),
+                ),
+                child: Text(
+                  '$score점',
+                  style: typography.labelMedium.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: DSSpacing.sm),
+
+          // 프로그레스 바 + 상태
+          Row(
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(DSRadius.full),
+                  child: LinearProgressIndicator(
+                    value: score / 100,
+                    backgroundColor: colors.textPrimary.withValues(alpha: 0.1),
+                    valueColor: AlwaysStoppedAnimation<Color>(color),
+                    minHeight: 8,
+                  ),
+                ),
+              ),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                _getPhaseKorean(phase),
+                style: typography.labelSmall.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+
+          // 상태 메시지
+          if (status.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              status,
+              style: typography.bodySmall.copyWith(
+                color: colors.textSecondary,
+              ),
+            ),
+          ],
+
+          // 조언
+          if (advice.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.xs),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '💡',
+                  style: typography.labelSmall,
+                ),
+                const SizedBox(width: DSSpacing.xxs),
+                Expanded(
+                  child: Text(
+                    advice,
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textTertiary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 바이오리듬 phase 한글 변환
+  String _getPhaseKorean(String phase) => switch (phase.toLowerCase()) {
+    'high' => '최고조',
+    'rising' => '상승 중',
+    'transition' => '전환기',
+    'declining' => '하강 중',
+    'recharge' => '재충전',
+    _ => phase,
+  };
+
+  /// 연애운 상세 추천 섹션 빌드 (love 전용)
+  Widget _buildLoveRecommendationsSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final recommendations = metadata['recommendations'] as Map<String, dynamic>?;
+
+    if (recommendations == null) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: DSSpacing.lg),
+
+          // 섹션 타이틀
+          Row(
+            children: [
+              Text('💝', style: typography.headingSmall),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '오늘의 연애 추천',
+                style: typography.labelLarge.copyWith(
+                  color: colors.accent,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          // 데이트 장소 추천
+          if (recommendations['dateSpots'] != null)
+            _buildLoveRecommendationCard(
+              context,
+              icon: '📍',
+              title: '데이트 장소',
+              data: recommendations['dateSpots'] as Map<String, dynamic>,
+              fields: ['primary', 'timeRecommendation', 'reason'],
+              fieldLabels: {'primary': '추천 장소', 'timeRecommendation': '추천 시간', 'reason': '이유'},
+            ),
+
+          // 패션 추천
+          if (recommendations['fashion'] != null)
+            _buildLoveFashionCard(context, recommendations['fashion'] as Map<String, dynamic>),
+
+          // 악세서리 추천
+          if (recommendations['accessories'] != null)
+            _buildLoveRecommendationCard(
+              context,
+              icon: '💎',
+              title: '악세서리',
+              data: recommendations['accessories'] as Map<String, dynamic>,
+              fields: ['recommended', 'bags', 'avoid'],
+              fieldLabels: {'recommended': '추천', 'bags': '가방', 'avoid': '피할 것'},
+              listFields: ['recommended', 'avoid'],
+            ),
+
+          // 그루밍 추천
+          if (recommendations['grooming'] != null)
+            _buildLoveRecommendationCard(
+              context,
+              icon: '✨',
+              title: '그루밍',
+              data: recommendations['grooming'] as Map<String, dynamic>,
+              fields: ['hair', 'makeup', 'nails'],
+              fieldLabels: {'hair': '헤어', 'makeup': '메이크업', 'nails': '네일'},
+            ),
+
+          // 향수 추천
+          if (recommendations['fragrance'] != null)
+            _buildLoveRecommendationCard(
+              context,
+              icon: '🌸',
+              title: '향수',
+              data: recommendations['fragrance'] as Map<String, dynamic>,
+              fields: ['notes', 'mood', 'timing'],
+              fieldLabels: {'notes': '추천 향', 'mood': '분위기', 'timing': '타이밍'},
+              listFields: ['notes'],
+            ),
+
+          // 대화 주제 추천
+          if (recommendations['conversation'] != null)
+            _buildLoveConversationCard(context, recommendations['conversation'] as Map<String, dynamic>),
+
+          const SizedBox(height: DSSpacing.sm),
+        ],
+      ),
+    );
+  }
+
+  /// 연애 추천 카드 빌드
+  Widget _buildLoveRecommendationCard(
+    BuildContext context, {
+    required String icon,
+    required String title,
+    required Map<String, dynamic> data,
+    required List<String> fields,
+    required Map<String, String> fieldLabels,
+    List<String> listFields = const [],
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    final validFields = fields.where((f) => data[f] != null).toList();
+    if (validFields.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: colors.accent.withValues(alpha: 0.15),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(icon, style: typography.bodyLarge),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                title,
+                style: typography.labelMedium.copyWith(
+                  color: colors.accent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...validFields.map((field) {
+            final value = data[field];
+            final label = fieldLabels[field] ?? field;
+            final isListField = listFields.contains(field);
+
+            if (isListField && value is List) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: typography.labelSmall.copyWith(
+                        color: colors.textTertiary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    ...value.take(3).map((item) => Padding(
+                      padding: const EdgeInsets.only(left: DSSpacing.xs),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('•', style: typography.bodySmall.copyWith(color: colors.accent)),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              item.toString(),
+                              style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                  ],
+                ),
+              );
+            }
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '$label: ',
+                      style: typography.labelSmall.copyWith(
+                        color: colors.textTertiary,
+                      ),
+                    ),
+                    TextSpan(
+                      text: value.toString(),
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// 패션 추천 카드 빌드 (상세)
+  Widget _buildLoveFashionCard(BuildContext context, Map<String, dynamic> data) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            colors.accent.withValues(alpha: 0.08),
+            colors.accentSecondary.withValues(alpha: 0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: colors.accent.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text('👔', style: typography.bodyLarge),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '패션 스타일링',
+                style: typography.labelMedium.copyWith(
+                  color: colors.accent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+
+          // 스타일
+          if (data['style'] != null)
+            _buildFashionRow(context, '스타일', data['style'].toString()),
+
+          // 컬러
+          if (data['colors'] != null && data['colors'] is List)
+            _buildFashionListRow(context, '컬러', data['colors'] as List),
+
+          // 상의
+          if (data['topItems'] != null && data['topItems'] is List)
+            _buildFashionListRow(context, '상의', data['topItems'] as List),
+
+          // 하의
+          if (data['bottomItems'] != null && data['bottomItems'] is List)
+            _buildFashionListRow(context, '하의', data['bottomItems'] as List),
+
+          // 아우터
+          if (data['outerwear'] != null)
+            _buildFashionRow(context, '아우터', data['outerwear'].toString()),
+
+          // 신발
+          if (data['shoes'] != null)
+            _buildFashionRow(context, '신발', data['shoes'].toString()),
+
+          // 피해야 할 스타일
+          if (data['avoidFashion'] != null && data['avoidFashion'] is List)
+            _buildFashionListRow(context, '⚠️ 피할 것', data['avoidFashion'] as List, isWarning: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFashionRow(BuildContext context, String label, String value) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 60,
+            child: Text(
+              label,
+              style: typography.labelSmall.copyWith(
+                color: colors.textTertiary,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: typography.bodySmall.copyWith(
+                color: colors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFashionListRow(BuildContext context, String label, List items, {bool isWarning = false}) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: typography.labelSmall.copyWith(
+              color: isWarning ? colors.error : colors.textTertiary,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Wrap(
+            spacing: DSSpacing.xs,
+            runSpacing: DSSpacing.xxs,
+            children: items.take(4).map((item) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: isWarning
+                    ? colors.error.withValues(alpha: 0.1)
+                    : colors.accent.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+              ),
+              child: Text(
+                item.toString(),
+                style: typography.labelSmall.copyWith(
+                  color: isWarning ? colors.error : colors.accent,
+                  fontSize: 11,
+                ),
+              ),
+            )).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 대화 추천 카드 빌드
+  Widget _buildLoveConversationCard(BuildContext context, Map<String, dynamic> data) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: colors.accent.withValues(alpha: 0.15),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text('💬', style: typography.bodyLarge),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '대화 주제',
+                style: typography.labelMedium.copyWith(
+                  color: colors.accent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+
+          // 추천 주제
+          if (data['topics'] != null && data['topics'] is List) ...[
+            Text(
+              '추천 주제',
+              style: typography.labelSmall.copyWith(color: colors.textTertiary),
+            ),
+            const SizedBox(height: 4),
+            ...(data['topics'] as List).take(3).map((topic) => Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('💡', style: typography.labelSmall),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      topic.toString(),
+                      style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+
+          // 대화 시작 문장
+          if (data['openers'] != null && data['openers'] is List) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              '대화 시작 멘트',
+              style: typography.labelSmall.copyWith(color: colors.textTertiary),
+            ),
+            const SizedBox(height: 4),
+            ...(data['openers'] as List).take(2).map((opener) => Container(
+              margin: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: colors.accent.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+              ),
+              child: Text(
+                '"${opener.toString()}"',
+                style: typography.bodySmall.copyWith(
+                  color: colors.textPrimary,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            )),
+          ],
+
+          // 피해야 할 주제
+          if (data['avoid'] != null && data['avoid'] is List) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              '⚠️ 피해야 할 주제',
+              style: typography.labelSmall.copyWith(color: colors.error),
+            ),
+            const SizedBox(height: 4),
+            ...(data['avoid'] as List).take(2).map((topic) => Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('❌', style: typography.labelSmall),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      topic.toString(),
+                      style: typography.bodySmall.copyWith(color: colors.textSecondary),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+
+          // 팁
+          if (data['tip'] != null) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: colors.success.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🎯', style: typography.labelSmall),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      data['tip'].toString(),
+                      style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   /// 적성 운세 상세 섹션들 빌드 (talent 전용)
   Widget _buildTalentDetailSections(BuildContext context) {
     final colors = context.colors;
@@ -2097,20 +3035,37 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final typography = context.typography;
     final data = widget.fortune.additionalInfo ?? widget.fortune.metadata ?? {};
 
+    // ✅ 선택된 카테고리 추출 (기본값: 'all' - 전체 표시)
+    final selectedCategory = data['selectedCategory'] as String? ?? 'all';
+    final showAll = selectedCategory == 'all' || selectedCategory.isEmpty;
+
+    // 카테고리별 표시 여부
+    final showFashion = showAll || selectedCategory == 'fashion';
+    final showFood = showAll || selectedCategory == 'food';
+    final showColor = showAll || selectedCategory == 'color' || selectedCategory == 'fashion';
+    final showPlace = showAll || selectedCategory == 'place';
+    final showNumber = showAll || selectedCategory == 'number';
+
     // 데이터 추출
     final keyword = data['keyword'] as String? ?? '';
     final element = data['element'] as String? ?? '';
     final color = data['color'] as String? ?? '';
     final direction = data['direction'] as String? ?? '';
     final numbers = data['numbers'] as List<dynamic>? ?? [];
-    final fashion = data['fashion'] as List<dynamic>? ?? [];
-    final food = data['food'] as List<dynamic>? ?? [];
-    final jewelry = data['jewelry'] as List<dynamic>? ?? [];
-    final material = data['material'] as List<dynamic>? ?? [];
-    final places = data['places'] as List<dynamic>? ?? [];
     final relationships = data['relationships'] as List<dynamic>? ?? [];
     final advice = data['advice'] as String? ?? data['lucky_advice'] as String? ?? '';
     final luckySummary = data['lucky_summary'] as String? ?? data['summary'] as String? ?? '';
+
+    // ✅ 상세 필드 우선 사용 (reason, timing 포함)
+    final foodDetail = data['foodDetail'] as List<dynamic>? ?? data['food'] as List<dynamic>? ?? [];
+    final fashionDetail = data['fashionDetail'] as List<dynamic>? ?? data['fashion'] as List<dynamic>? ?? [];
+    final colorDetail = data['colorDetail'] as Map<String, dynamic>? ?? (data['colorDetail'] is Map ? data['colorDetail'] as Map<String, dynamic> : <String, dynamic>{});
+    final placesDetail = data['placesDetail'] as List<dynamic>? ?? data['places'] as List<dynamic>? ?? [];
+    final jewelryDetail = data['jewelryDetail'] as List<dynamic>? ?? data['jewelry'] as List<dynamic>? ?? [];
+    final materialDetail = data['materialDetail'] as List<dynamic>? ?? data['material'] as List<dynamic>? ?? [];
+    final numbersExplanation = data['numbersExplanation'] as String? ?? '';
+    final avoidNumbers = data['avoidNumbers'] as List<dynamic>? ?? [];
+    final todayTip = data['todayTip'] as String? ?? '';
 
     // 오늘 날짜 포맷
     final now = DateTime.now();
@@ -2219,73 +3174,282 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
             ),
 
-          // 행운 요소 (색상, 숫자, 방향)
-          if (color.isNotEmpty || numbers.isNotEmpty || direction.isNotEmpty)
+          // 숫자 (number 카테고리 선택 시 상세 표시)
+          if (showNumber && numbers.isNotEmpty)
             _buildLuckySection(
               context,
-              icon: '🍀',
-              title: '행운 요소',
-              child: Wrap(
-                spacing: DSSpacing.sm,
-                runSpacing: DSSpacing.sm,
+              icon: '🔢',
+              title: '오늘의 행운 숫자',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (color.isNotEmpty)
-                    _buildLuckyChip(context, icon: '🎨', label: '색상', value: color, chipColor: colors.error),
-                  if (numbers.isNotEmpty)
-                    _buildLuckyChip(context, icon: '🔢', label: '숫자', value: numbers.join(', '), chipColor: colors.info),
-                  if (direction.isNotEmpty)
-                    _buildLuckyChip(context, icon: '🧭', label: '방향', value: direction, chipColor: colors.success),
+                  // 행운 숫자들 (원형 배지)
+                  Wrap(
+                    spacing: DSSpacing.sm,
+                    runSpacing: DSSpacing.sm,
+                    children: numbers.map((n) => Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [colors.info, colors.info.withValues(alpha: 0.7)],
+                        ),
+                        borderRadius: BorderRadius.circular(DSRadius.full),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colors.info.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        n.toString(),
+                        style: typography.headingMedium.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )).toList(),
+                  ),
+                  // 숫자 설명
+                  if (numbersExplanation.isNotEmpty) ...[
+                    const SizedBox(height: DSSpacing.md),
+                    Container(
+                      padding: const EdgeInsets.all(DSSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: colors.info.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(DSRadius.sm),
+                      ),
+                      child: Text(
+                        numbersExplanation,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                  // 피해야 할 숫자
+                  if (avoidNumbers.isNotEmpty) ...[
+                    const SizedBox(height: DSSpacing.md),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                      decoration: BoxDecoration(
+                        color: colors.error.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.sm),
+                        border: Border.all(color: colors.error.withValues(alpha: 0.2)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('⚠️ ', style: TextStyle(fontSize: 14)),
+                          Text('피해야 할 숫자: ', style: typography.labelSmall.copyWith(color: colors.error)),
+                          Text(
+                            avoidNumbers.join(', '),
+                            style: typography.bodySmall.copyWith(
+                              color: colors.error,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
 
-          // 패션
-          if (fashion.isNotEmpty)
+          // 방향 (place 카테고리 선택 시 표시)
+          if (showPlace && direction.isNotEmpty)
+            _buildLuckySection(
+              context,
+              icon: '🧭',
+              title: '행운의 방향',
+              child: _buildDetailedItemCard(
+                context,
+                item: direction,
+                reason: '오늘 이 방향으로 움직이면 좋은 기운을 받을 수 있어요',
+                accentColor: colors.success,
+                emoji: '🧭',
+              ),
+            ),
+
+          // 패션 (fashion 카테고리 선택 시만 표시) - 상세 카드
+          if (showFashion && fashionDetail.isNotEmpty)
             _buildLuckySection(
               context,
               icon: '👔',
-              title: '오늘의 패션',
-              child: _buildLuckyItemsChips(context, fashion, colors.accentSecondary),
+              title: '오늘의 추천 패션',
+              child: Column(
+                children: fashionDetail.map((item) {
+                  if (item is Map) {
+                    return _buildDetailedItemCard(
+                      context,
+                      item: item['item']?.toString() ?? '',
+                      reason: item['reason']?.toString() ?? '',
+                      accentColor: colors.accentSecondary,
+                      emoji: '👕',
+                    );
+                  }
+                  return _buildDetailedItemCard(
+                    context,
+                    item: item.toString(),
+                    reason: '',
+                    accentColor: colors.accentSecondary,
+                    emoji: '👕',
+                  );
+                }).toList(),
+              ),
             ),
 
-          // 음식
-          if (food.isNotEmpty)
+          // 음식 (food 카테고리 선택 시만 표시) - 상세 카드
+          if (showFood && foodDetail.isNotEmpty)
             _buildLuckySection(
               context,
               icon: '🍽️',
-              title: '행운의 음식',
-              child: _buildLuckyItemsChips(context, food, colors.warning),
+              title: '오늘의 추천 음식',
+              child: Column(
+                children: foodDetail.map((item) {
+                  if (item is Map) {
+                    return _buildDetailedItemCard(
+                      context,
+                      item: item['item']?.toString() ?? '',
+                      reason: item['reason']?.toString() ?? '',
+                      timing: item['timing']?.toString(),
+                      accentColor: colors.warning,
+                      emoji: '🍜',
+                    );
+                  }
+                  return _buildDetailedItemCard(
+                    context,
+                    item: item.toString(),
+                    reason: '',
+                    accentColor: colors.warning,
+                    emoji: '🍜',
+                  );
+                }).toList(),
+              ),
             ),
 
-          // 보석/액세서리
-          if (jewelry.isNotEmpty)
+          // 색상 (color 카테고리 선택 시 상세 표시)
+          if (showColor && (colorDetail.isNotEmpty || color.isNotEmpty))
+            _buildLuckySection(
+              context,
+              icon: '🎨',
+              title: '오늘의 행운 색상',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDetailedItemCard(
+                    context,
+                    item: '메인 색상: ${colorDetail['primary'] ?? color}',
+                    reason: colorDetail['reason']?.toString() ?? '오행 균형을 위한 색상',
+                    accentColor: colors.error,
+                    emoji: '🔴',
+                  ),
+                  if (colorDetail['secondary'] != null)
+                    _buildDetailedItemCard(
+                      context,
+                      item: '보조 색상: ${colorDetail['secondary']}',
+                      reason: '메인 색상과 조화로운 조합',
+                      accentColor: colors.error.withValues(alpha: 0.7),
+                      emoji: '🟠',
+                    ),
+                ],
+              ),
+            ),
+
+          // 보석/액세서리 (fashion 카테고리 선택 시만 표시) - 상세 카드
+          if (showFashion && jewelryDetail.isNotEmpty)
             _buildLuckySection(
               context,
               icon: '💎',
               title: '행운의 보석/액세서리',
-              child: _buildLuckyItemsChips(context, jewelry, colors.accent),
+              child: Column(
+                children: jewelryDetail.map((item) {
+                  if (item is Map) {
+                    return _buildDetailedItemCard(
+                      context,
+                      item: item['item']?.toString() ?? '',
+                      reason: item['reason']?.toString() ?? '',
+                      accentColor: colors.accent,
+                      emoji: '💍',
+                    );
+                  }
+                  return _buildDetailedItemCard(
+                    context,
+                    item: item.toString(),
+                    reason: '',
+                    accentColor: colors.accent,
+                    emoji: '💍',
+                  );
+                }).toList(),
+              ),
             ),
 
-          // 소재
-          if (material.isNotEmpty)
+          // 소재 (fashion 카테고리 선택 시만 표시) - 상세 카드
+          if (showFashion && materialDetail.isNotEmpty)
             _buildLuckySection(
               context,
               icon: '🧶',
               title: '행운의 소재',
-              child: _buildLuckyItemsChips(context, material, colors.info),
+              child: Column(
+                children: materialDetail.map((item) {
+                  if (item is Map) {
+                    return _buildDetailedItemCard(
+                      context,
+                      item: item['item']?.toString() ?? '',
+                      reason: item['reason']?.toString() ?? '',
+                      accentColor: colors.info,
+                      emoji: '🧵',
+                    );
+                  }
+                  return _buildDetailedItemCard(
+                    context,
+                    item: item.toString(),
+                    reason: '',
+                    accentColor: colors.info,
+                    emoji: '🧵',
+                  );
+                }).toList(),
+              ),
             ),
 
-          // 장소
-          if (places.isNotEmpty)
+          // 장소 (place 카테고리 선택 시만 표시) - 상세 카드
+          if (showPlace && placesDetail.isNotEmpty)
             _buildLuckySection(
               context,
               icon: '📍',
-              title: '행운의 장소',
-              child: _buildLuckyItemsChips(context, places, colors.success),
+              title: '오늘 가면 좋은 장소',
+              child: Column(
+                children: placesDetail.map((item) {
+                  if (item is Map) {
+                    return _buildDetailedItemCard(
+                      context,
+                      item: item['place']?.toString() ?? item['item']?.toString() ?? '',
+                      reason: item['reason']?.toString() ?? '',
+                      timing: item['timing']?.toString(),
+                      accentColor: colors.success,
+                      emoji: '📍',
+                    );
+                  }
+                  return _buildDetailedItemCard(
+                    context,
+                    item: item.toString(),
+                    reason: '',
+                    accentColor: colors.success,
+                    emoji: '📍',
+                  );
+                }).toList(),
+              ),
             ),
 
-          // 인간관계
-          if (relationships.isNotEmpty)
+          // 인간관계 (showAll일 때만 표시)
+          if (showAll && relationships.isNotEmpty)
             _buildLuckySection(
               context,
               icon: '👥',
@@ -2339,6 +3503,40 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     ),
                   ],
                 ),
+              ),
+            ),
+
+          // 오늘의 핵심 팁
+          if (todayTip.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.only(top: DSSpacing.md),
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colors.accent.withValues(alpha: 0.1),
+                    colors.accentSecondary.withValues(alpha: 0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Text('💡', style: TextStyle(fontSize: 24)),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      todayTip,
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
@@ -2453,6 +3651,81 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
+  /// 마크다운 **bold** 제거
+  String _stripMarkdown(String text) {
+    return text.replaceAll('**', '');
+  }
+
+  /// 상세 아이템 카드 (아이템명 + 이유 + 시간대)
+  Widget _buildDetailedItemCard(
+    BuildContext context, {
+    required String item,
+    required String reason,
+    String? timing,
+    required Color accentColor,
+    required String emoji,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    // 마크다운 **bold** 제거
+    final cleanItem = _stripMarkdown(item);
+    final cleanReason = _stripMarkdown(reason);
+    final cleanTiming = timing != null ? _stripMarkdown(timing) : null;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: accentColor.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: accentColor.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: DSSpacing.xs),
+              Expanded(
+                child: Text(
+                  cleanItem,
+                  style: typography.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: colors.textPrimary,
+                  ),
+                ),
+              ),
+              if (cleanTiming != null && cleanTiming.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                  ),
+                  child: Text(
+                    cleanTiming,
+                    style: typography.labelSmall.copyWith(color: accentColor),
+                  ),
+                ),
+            ],
+          ),
+          if (cleanReason.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.xs),
+            Text(
+              cleanReason,
+              style: typography.bodySmall.copyWith(
+                color: colors.textSecondary,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   /// 오행별 색상 반환
   Color _getLuckyElementColor(String element) {
     switch (element) {
@@ -2487,6 +3760,1778 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       default:
         return '✨';
     }
+  }
+
+  // ============================================================
+  // 연간 운세 (new_year, yearly) 전용 섹션들
+  // ============================================================
+
+  /// 1. 목표별 맞춤 분석 섹션
+  Widget _buildGoalFortuneSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final goalFortune = metadata['goalFortune'] as Map<String, dynamic>?;
+
+    if (goalFortune == null) return const SizedBox.shrink();
+
+    final goalLabel = goalFortune['goalLabel'] as String? ?? '새해 목표';
+    final emoji = goalFortune['emoji'] as String? ?? '🎯';
+    final title = goalFortune['title'] as String? ?? '$goalLabel 분석';
+    final prediction = goalFortune['prediction'] as String? ?? '';
+    final deepAnalysis = goalFortune['deepAnalysis'] as String? ?? '';
+    final bestMonths = (goalFortune['bestMonths'] as List<dynamic>?)?.cast<String>() ?? [];
+    final cautionMonths = (goalFortune['cautionMonths'] as List<dynamic>?)?.cast<String>() ?? [];
+    final successFactors = (goalFortune['successFactors'] as List<dynamic>?)?.cast<String>() ?? [];
+    final actionItems = (goalFortune['actionItems'] as List<dynamic>?)?.cast<String>() ?? [];
+    final riskAnalysis = goalFortune['riskAnalysis'] as String? ?? '';
+
+    // 프리미엄 체크 - 블러 처리
+    final isBlurred = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더
+          Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Text(
+                  title,
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (isBlurred)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '프리미엄',
+                    style: typography.labelSmall.copyWith(color: colors.accent),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          // 블러 또는 콘텐츠
+          if (isBlurred)
+            _buildBlurredPlaceholder(context, '목표별 맞춤 분석을 확인하세요')
+          else ...[
+            // 예측
+            if (prediction.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                  border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
+                ),
+                child: Text(
+                  prediction,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.6,
+                  ),
+                ),
+              ),
+
+            // 심화 분석
+            if (deepAnalysis.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Text(
+                '💡 심화 분석',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+              Text(
+                deepAnalysis,
+                style: typography.bodySmall.copyWith(
+                  color: colors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ],
+
+            // 좋은 달 / 주의할 달
+            if (bestMonths.isNotEmpty || cautionMonths.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Row(
+                children: [
+                  if (bestMonths.isNotEmpty)
+                    Expanded(
+                      child: _buildMonthBadges(context, '✨ 좋은 달', bestMonths, const Color(0xFF10B981)),
+                    ),
+                  if (bestMonths.isNotEmpty && cautionMonths.isNotEmpty)
+                    const SizedBox(width: DSSpacing.sm),
+                  if (cautionMonths.isNotEmpty)
+                    Expanded(
+                      child: _buildMonthBadges(context, '⚠️ 주의할 달', cautionMonths, const Color(0xFFF59E0B)),
+                    ),
+                ],
+              ),
+            ],
+
+            // 성공 요소
+            if (successFactors.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Text(
+                '🌟 성공 요소',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: successFactors.map((factor) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    factor,
+                    style: typography.labelSmall.copyWith(color: const Color(0xFF10B981)),
+                  ),
+                )).toList(),
+              ),
+            ],
+
+            // 행동 항목
+            if (actionItems.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Text(
+                '📋 추천 행동',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+              ...actionItems.asMap().entries.map((entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${entry.key + 1}. ',
+                      style: typography.bodySmall.copyWith(
+                        color: colors.accent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        entry.value,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+            ],
+
+            // 주의 사항
+            if (riskAnalysis.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.sm),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('⚠️', style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: DSSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        riskAnalysis,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 월 배지 빌더 헬퍼
+  Widget _buildMonthBadges(BuildContext context, String title, List<String> months, Color color) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: typography.labelSmall.copyWith(
+            color: colors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          children: months.map((month) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              month,
+              style: typography.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600),
+            ),
+          )).toList(),
+        ),
+      ],
+    );
+  }
+
+  /// 2. 오행 분석 섹션
+  Widget _buildSajuAnalysisSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final sajuAnalysis = metadata['sajuAnalysis'] as Map<String, dynamic>?;
+
+    if (sajuAnalysis == null) return const SizedBox.shrink();
+
+    final dominantElement = sajuAnalysis['dominantElement'] as String? ?? '';
+    final yearElement = sajuAnalysis['yearElement'] as String? ?? '';
+    final compatibility = sajuAnalysis['compatibility'] as String? ?? '보통';
+    final compatibilityReason = sajuAnalysis['compatibilityReason'] as String? ?? '';
+    final elementalAdvice = sajuAnalysis['elementalAdvice'] as String? ?? '';
+    final balanceElements = (sajuAnalysis['balanceElements'] as List<dynamic>?)?.cast<String>() ?? [];
+    final strengthenTips = (sajuAnalysis['strengthenTips'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    final isBlurred = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더
+          Row(
+            children: [
+              const Text('☯️', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Text(
+                  '오행 분석',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (isBlurred)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '프리미엄',
+                    style: typography.labelSmall.copyWith(color: colors.accent),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          if (isBlurred)
+            _buildBlurredPlaceholder(context, '오행 궁합 분석을 확인하세요')
+          else ...[
+            // 오행 궁합 카드
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    _getLuckyElementColor(dominantElement).withValues(alpha: 0.1),
+                    _getLuckyElementColor(yearElement).withValues(alpha: 0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildElementCard(context, '나의 오행', dominantElement),
+                      Text(
+                        _getCompatibilityEmoji(compatibility),
+                        style: const TextStyle(fontSize: 32),
+                      ),
+                      _buildElementCard(context, '올해 오행', yearElement),
+                    ],
+                  ),
+                  const SizedBox(height: DSSpacing.md),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: _getCompatibilityColor(compatibility).withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '궁합: $compatibility',
+                      style: typography.labelMedium.copyWith(
+                        color: _getCompatibilityColor(compatibility),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // 궁합 설명
+            if (compatibilityReason.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Text(
+                compatibilityReason,
+                style: typography.bodySmall.copyWith(
+                  color: colors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ],
+
+            // 오행 조언
+            if (elementalAdvice.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.sm),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                  border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('💡', style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: DSSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        elementalAdvice,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            // 보완 오행 & 강화 팁
+            if (balanceElements.isNotEmpty || strengthenTips.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (balanceElements.isNotEmpty)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '⚖️ 보완 필요',
+                            style: typography.labelSmall.copyWith(color: colors.textSecondary),
+                          ),
+                          const SizedBox(height: 4),
+                          Wrap(
+                            spacing: 4,
+                            children: balanceElements.map((e) => Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: _getLuckyElementColor(e).withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                '${_getLuckyElementEmoji(e)} $e',
+                                style: typography.labelSmall.copyWith(
+                                  color: _getLuckyElementColor(e),
+                                ),
+                              ),
+                            )).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+              if (strengthenTips.isNotEmpty) ...[
+                const SizedBox(height: DSSpacing.sm),
+                ...strengthenTips.map((tip) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('• ', style: TextStyle(fontSize: 12)),
+                      Expanded(
+                        child: Text(
+                          tip,
+                          style: typography.bodySmall.copyWith(color: colors.textSecondary),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+              ],
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 오행 카드 빌더
+  Widget _buildElementCard(BuildContext context, String label, String element) {
+    final typography = context.typography;
+    final colors = context.colors;
+    final elementColor = _getLuckyElementColor(element);
+
+    return Column(
+      children: [
+        Text(
+          label,
+          style: typography.labelSmall.copyWith(color: colors.textSecondary),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: elementColor.withValues(alpha: 0.2),
+            shape: BoxShape.circle,
+            border: Border.all(color: elementColor, width: 2),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(_getLuckyElementEmoji(element), style: const TextStyle(fontSize: 20)),
+                Text(
+                  element,
+                  style: typography.labelSmall.copyWith(
+                    color: elementColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getCompatibilityEmoji(String compatibility) {
+    switch (compatibility) {
+      case '높음': return '💫';
+      case '보통': return '🔄';
+      case '주의': return '⚡';
+      default: return '🔄';
+    }
+  }
+
+  Color _getCompatibilityColor(String compatibility) {
+    switch (compatibility) {
+      case '높음': return const Color(0xFF10B981);
+      case '보통': return const Color(0xFF3B82F6);
+      case '주의': return const Color(0xFFF59E0B);
+      default: return const Color(0xFF9E9E9E);
+    }
+  }
+
+  /// 3. 월별 하이라이트 섹션 (1-3월 무료, 4-12월 프리미엄)
+  Widget _buildMonthlyHighlightsSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final monthlyHighlights = (metadata['monthlyHighlights'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [];
+    final blurredMonthIndices = (metadata['blurredMonthIndices'] as List<dynamic>?)?.cast<int>() ?? [];
+
+    if (monthlyHighlights.isEmpty) return const SizedBox.shrink();
+
+    final currentMonth = DateTime.now().month;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('📅', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '월별 하이라이트',
+                style: typography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            isPremium ? '12개월 전체 보기' : '1-3월 무료 • 4-12월 프리미엄',
+            style: typography.labelSmall.copyWith(color: colors.textSecondary),
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          // 월별 카드 가로 스크롤
+          SizedBox(
+            height: 160,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: monthlyHighlights.length,
+              separatorBuilder: (_, __) => const SizedBox(width: DSSpacing.sm),
+              itemBuilder: (context, index) {
+                final monthData = monthlyHighlights[index];
+                final isBlurredMonth = !isPremium && blurredMonthIndices.contains(index);
+                final monthNum = index + 1;
+                final isCurrentMonth = monthNum == currentMonth;
+
+                return _buildMonthCard(
+                  context,
+                  monthData: monthData,
+                  monthNum: monthNum,
+                  isBlurred: isBlurredMonth,
+                  isCurrentMonth: isCurrentMonth,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMonthCard(
+    BuildContext context, {
+    required Map<String, dynamic> monthData,
+    required int monthNum,
+    required bool isBlurred,
+    required bool isCurrentMonth,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    final theme = monthData['theme'] as String? ?? '';
+    final score = (monthData['score'] as num?)?.toInt() ?? 70;
+    final advice = monthData['advice'] as String? ?? '';
+    final energyLevel = monthData['energyLevel'] as String? ?? 'Medium';
+
+    final energyColor = _getEnergyColor(energyLevel);
+
+    return Container(
+      width: 130,
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: isCurrentMonth
+            ? colors.accent.withValues(alpha: 0.1)
+            : colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: isCurrentMonth ? colors.accent : colors.textPrimary.withValues(alpha: 0.1),
+          width: isCurrentMonth ? 2 : 1,
+        ),
+      ),
+      child: isBlurred
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$monthNum월',
+                  style: typography.labelMedium.copyWith(
+                    color: colors.textSecondary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                Icon(Icons.lock_outline, color: colors.textTertiary, size: 24),
+                const SizedBox(height: DSSpacing.xs),
+                Text(
+                  '프리미엄',
+                  style: typography.labelSmall.copyWith(color: colors.accent),
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '$monthNum월',
+                      style: typography.labelMedium.copyWith(
+                        color: isCurrentMonth ? colors.accent : colors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: energyColor.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '$score점',
+                        style: typography.labelSmall.copyWith(
+                          color: energyColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.xs),
+                Text(
+                  theme,
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Expanded(
+                  child: Text(
+                    advice,
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.3,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Color _getEnergyColor(String energyLevel) {
+    switch (energyLevel) {
+      case 'High': return const Color(0xFF10B981);
+      case 'Medium': return const Color(0xFF3B82F6);
+      case 'Low': return const Color(0xFFF59E0B);
+      default: return const Color(0xFF9E9E9E);
+    }
+  }
+
+  /// 4. 행동 계획 섹션
+  Widget _buildActionPlanSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final actionPlan = metadata['actionPlan'] as Map<String, dynamic>?;
+
+    if (actionPlan == null) return const SizedBox.shrink();
+
+    final immediate = (actionPlan['immediate'] as List<dynamic>?)?.cast<String>() ?? [];
+    final shortTerm = (actionPlan['shortTerm'] as List<dynamic>?)?.cast<String>() ?? [];
+    final longTerm = (actionPlan['longTerm'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    if (immediate.isEmpty && shortTerm.isEmpty && longTerm.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final isBlurred = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🚀', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Text(
+                  '행동 계획',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (isBlurred)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '프리미엄',
+                    style: typography.labelSmall.copyWith(color: colors.accent),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          if (isBlurred)
+            _buildBlurredPlaceholder(context, '맞춤 행동 계획을 확인하세요')
+          else ...[
+            if (immediate.isNotEmpty)
+              _buildActionPlanCategory(context, '⚡ 지금 바로 (1-2주)', immediate, const Color(0xFFEF4444)),
+            if (shortTerm.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              _buildActionPlanCategory(context, '📆 단기 (1-3개월)', shortTerm, const Color(0xFFF59E0B)),
+            ],
+            if (longTerm.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              _buildActionPlanCategory(context, '🎯 장기 (6-12개월)', longTerm, const Color(0xFF10B981)),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionPlanCategory(BuildContext context, String title, List<String> items, Color color) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: typography.labelMedium.copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          ...items.map((item) => Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('• ', style: TextStyle(color: color, fontSize: 12)),
+                Expanded(
+                  child: Text(
+                    item,
+                    style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+
+  /// 5. 특별 메시지 섹션
+  Widget _buildSpecialMessageSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final specialMessage = metadata['specialMessage'] as String?;
+
+    if (specialMessage == null || specialMessage.isEmpty) return const SizedBox.shrink();
+
+    final isBlurred = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              colors.accent.withValues(alpha: 0.1),
+              colors.accentSecondary.withValues(alpha: 0.1),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+        ),
+        child: isBlurred
+            ? Row(
+                children: [
+                  const Text('💌', style: TextStyle(fontSize: 24)),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '특별 메시지',
+                          style: typography.labelMedium.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '프리미엄으로 확인하세요',
+                          style: typography.labelSmall.copyWith(color: colors.accent),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.lock_outline, color: colors.accent, size: 20),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text('💌', style: TextStyle(fontSize: 24)),
+                      const SizedBox(width: DSSpacing.sm),
+                      Text(
+                        '특별 메시지',
+                        style: typography.labelMedium.copyWith(
+                          color: colors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DSSpacing.sm),
+                  Text(
+                    specialMessage,
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.6,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+
+  /// 블러 플레이스홀더 빌더
+  Widget _buildBlurredPlaceholder(BuildContext context, String message) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      decoration: BoxDecoration(
+        color: colors.textPrimary.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.lock_outline, color: colors.textTertiary, size: 32),
+          const SizedBox(height: DSSpacing.sm),
+          Text(
+            message,
+            style: typography.bodySmall.copyWith(color: colors.textSecondary),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: colors.accent.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              '프리미엄 구독하기',
+              style: typography.labelSmall.copyWith(
+                color: colors.accent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // 재물운(Wealth) 전용 섹션 빌더들
+  // ============================================================
+
+  /// 관심 분야 라벨 맵
+  static const Map<String, String> _interestLabels = {
+    'realestate': '🏠 부동산',
+    'stock': '📈 주식',
+    'crypto': '₿ 가상화폐',
+    'side': '💼 부업/N잡',
+    'saving': '💰 저축',
+    'business': '🏢 사업/창업',
+  };
+
+  /// 1. 선택한 관심 분야 태그 표시
+  Widget _buildWealthInterestsSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final surveyData = metadata['surveyData'] as Map<String, dynamic>?;
+    final interests = (surveyData?['interests'] as List?)?.cast<String>() ?? [];
+
+    if (interests.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '📊 분석 항목',
+            style: typography.labelMedium.copyWith(
+              color: colors.textSecondary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: interests.map((interest) {
+              final label = _interestLabels[interest] ?? interest;
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  label,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.accent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 2. 목표 맞춤 조언 섹션
+  Widget _buildWealthGoalAdviceSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final goalAdvice = metadata['goalAdvice'] as Map<String, dynamic>?;
+
+    if (goalAdvice == null) return const SizedBox.shrink();
+
+    final primaryGoal = goalAdvice['primaryGoal'] as String? ?? '재물 목표';
+    final timeline = goalAdvice['timeline'] as String? ?? '';
+    final strategy = goalAdvice['strategy'] as String? ?? '';
+    final monthlyTarget = goalAdvice['monthlyTarget'] as String? ?? '';
+    final luckyTiming = goalAdvice['luckyTiming'] as String? ?? '';
+    final cautionPeriod = goalAdvice['cautionPeriod'] as String? ?? '';
+    final sajuAnalysis = goalAdvice['sajuAnalysis'] as String? ?? '';
+
+    final isBlurred = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더
+          Row(
+            children: [
+              const Text('🎯', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Text(
+                  '$primaryGoal 달성 전략',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (isBlurred)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '프리미엄',
+                    style: typography.labelSmall.copyWith(color: colors.accent),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          if (isBlurred)
+            _buildBlurredPlaceholder(context, '목표 달성 전략을 확인하세요')
+          else ...[
+            // 전략
+            if (strategy.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                  border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
+                ),
+                child: Text(
+                  strategy,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.6,
+                  ),
+                ),
+              ),
+
+            // 타임라인 & 월별 목표
+            if (timeline.isNotEmpty || monthlyTarget.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Row(
+                children: [
+                  if (timeline.isNotEmpty)
+                    Expanded(
+                      child: _buildWealthInfoCard(
+                        context,
+                        '📅 권장 기간',
+                        timeline,
+                        const Color(0xFF6366F1),
+                      ),
+                    ),
+                  if (timeline.isNotEmpty && monthlyTarget.isNotEmpty)
+                    const SizedBox(width: DSSpacing.sm),
+                  if (monthlyTarget.isNotEmpty)
+                    Expanded(
+                      child: _buildWealthInfoCard(
+                        context,
+                        '💵 월별 목표',
+                        monthlyTarget,
+                        const Color(0xFF10B981),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+
+            // 유리한 시기 / 주의 시기
+            if (luckyTiming.isNotEmpty || cautionPeriod.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Row(
+                children: [
+                  if (luckyTiming.isNotEmpty)
+                    Expanded(
+                      child: _buildWealthInfoCard(
+                        context,
+                        '✨ 유리한 시기',
+                        luckyTiming,
+                        const Color(0xFF10B981),
+                      ),
+                    ),
+                  if (luckyTiming.isNotEmpty && cautionPeriod.isNotEmpty)
+                    const SizedBox(width: DSSpacing.sm),
+                  if (cautionPeriod.isNotEmpty)
+                    Expanded(
+                      child: _buildWealthInfoCard(
+                        context,
+                        '⚠️ 주의 시기',
+                        cautionPeriod,
+                        const Color(0xFFF59E0B),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+
+            // 사주 분석
+            if (sajuAnalysis.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                decoration: BoxDecoration(
+                  color: colors.textPrimary.withValues(alpha: 0.03),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('🔮', style: TextStyle(fontSize: 20)),
+                    const SizedBox(width: DSSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        sajuAnalysis,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                          height: 1.5,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 3. 고민 해결책 섹션
+  Widget _buildWealthConcernSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final concernResolution = metadata['concernResolution'] as Map<String, dynamic>?;
+
+    if (concernResolution == null) return const SizedBox.shrink();
+
+    final primaryConcern = concernResolution['primaryConcern'] as String? ?? '고민';
+    final analysis = concernResolution['analysis'] as String? ?? '';
+    final solution = concernResolution['solution'] as String? ?? '';
+    final mindset = concernResolution['mindset'] as String? ?? '';
+    final sajuPerspective = concernResolution['sajuPerspective'] as String? ?? '';
+
+    final isBlurred = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더
+          Row(
+            children: [
+              const Text('💡', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Text(
+                  '$primaryConcern 해결책',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          if (isBlurred)
+            _buildBlurredPlaceholder(context, '고민 해결책을 확인하세요')
+          else ...[
+            // 분석
+            if (analysis.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                  border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  analysis,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.6,
+                  ),
+                ),
+              ),
+
+            // 해결책
+            if (solution.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Text(
+                '✅ 해결 방안',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+              Text(
+                solution,
+                style: typography.bodySmall.copyWith(
+                  color: colors.textPrimary,
+                  height: 1.5,
+                ),
+              ),
+            ],
+
+            // 마음가짐
+            if (mindset.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('🧘', style: TextStyle(fontSize: 20)),
+                    const SizedBox(width: DSSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        mindset,
+                        style: typography.bodySmall.copyWith(
+                          color: const Color(0xFF10B981),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            // 사주 관점
+            if (sajuPerspective.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.sm),
+              Text(
+                '🔮 $sajuPerspective',
+                style: typography.labelSmall.copyWith(
+                  color: colors.textTertiary,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 4. 투자 인사이트 섹션 (관심 분야별)
+  Widget _buildWealthInvestmentInsightsSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final investmentInsights = metadata['investmentInsights'] as Map<String, dynamic>?;
+    final surveyData = metadata['surveyData'] as Map<String, dynamic>?;
+    final interests = (surveyData?['interests'] as List?)?.cast<String>() ?? [];
+
+    if (investmentInsights == null || interests.isEmpty) return const SizedBox.shrink();
+
+    final isBlurred = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더
+          Row(
+            children: [
+              const Text('📊', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Text(
+                  '분야별 인사이트',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (isBlurred)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '프리미엄',
+                    style: typography.labelSmall.copyWith(color: colors.accent),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          if (isBlurred)
+            _buildBlurredPlaceholder(context, '분야별 상세 분석을 확인하세요')
+          else
+            ...interests.map((interest) {
+              final insightData = investmentInsights[interest] as Map<String, dynamic>?;
+              if (insightData == null) return const SizedBox.shrink();
+              return _buildWealthInsightCard(context, interest, insightData);
+            }),
+        ],
+      ),
+    );
+  }
+
+  /// 투자 인사이트 개별 카드
+  Widget _buildWealthInsightCard(BuildContext context, String interest, Map<String, dynamic> data) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    final label = _interestLabels[interest] ?? interest;
+    final score = data['score'] as int? ?? 0;
+    final analysis = data['analysis'] as String? ?? '';
+
+    // 분야별 추가 정보
+    final additionalInfo = <String, String>{};
+    if (interest == 'realestate') {
+      if (data['recommendedType'] != null) additionalInfo['추천 유형'] = data['recommendedType'];
+      if (data['timing'] != null) additionalInfo['타이밍'] = data['timing'];
+      if (data['direction'] != null) additionalInfo['추천 방향'] = data['direction'];
+    } else if (interest == 'side') {
+      if (data['recommendedAreas'] != null) additionalInfo['추천 분야'] = data['recommendedAreas'];
+      if (data['incomeExpectation'] != null) additionalInfo['예상 수입'] = data['incomeExpectation'];
+      if (data['startTiming'] != null) additionalInfo['시작 시기'] = data['startTiming'];
+    } else if (interest == 'stock') {
+      if (data['recommendedSectors'] != null) additionalInfo['추천 섹터'] = data['recommendedSectors'];
+      if (data['timing'] != null) additionalInfo['매매 타이밍'] = data['timing'];
+      if (data['riskLevel'] != null) additionalInfo['리스크'] = data['riskLevel'];
+    } else if (interest == 'crypto') {
+      if (data['marketOutlook'] != null) additionalInfo['시장 전망'] = data['marketOutlook'];
+      if (data['timing'] != null) additionalInfo['진입 시기'] = data['timing'];
+    } else if (interest == 'saving') {
+      if (data['recommendedProducts'] != null) additionalInfo['추천 상품'] = data['recommendedProducts'];
+      if (data['targetRate'] != null) additionalInfo['목표 금리'] = data['targetRate'];
+    } else if (interest == 'business') {
+      if (data['recommendedFields'] != null) additionalInfo['추천 분야'] = data['recommendedFields'];
+      if (data['timing'] != null) additionalInfo['시작 시기'] = data['timing'];
+      if (data['partnerAdvice'] != null) additionalInfo['파트너'] = data['partnerAdvice'];
+    }
+
+    final caution = data['caution'] as String? ?? '';
+    final sajuMatch = data['sajuMatch'] as String? ?? '';
+
+    // 점수 색상
+    final scoreColor = score >= 80
+        ? const Color(0xFF10B981)
+        : score >= 60
+            ? const Color(0xFF6366F1)
+            : const Color(0xFFF59E0B);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.textPrimary.withValues(alpha: 0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: colors.textPrimary.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더: 라벨 + 점수
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: typography.labelLarge.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: scoreColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$score점',
+                  style: typography.labelMedium.copyWith(
+                    color: scoreColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // 분석
+          if (analysis.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              analysis,
+              style: typography.bodySmall.copyWith(
+                color: colors.textPrimary,
+                height: 1.5,
+              ),
+            ),
+          ],
+
+          // 추가 정보
+          if (additionalInfo.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.sm),
+            const Divider(height: 1),
+            const SizedBox(height: DSSpacing.sm),
+            ...additionalInfo.entries.map((entry) => Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 80,
+                    child: Text(
+                      entry.key,
+                      style: typography.labelSmall.copyWith(
+                        color: colors.textTertiary,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      entry.value,
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+
+          // 주의사항
+          if (caution.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('⚠️', style: TextStyle(fontSize: 14)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      caution,
+                      style: typography.labelSmall.copyWith(
+                        color: const Color(0xFFB45309),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // 사주 궁합
+          if (sajuMatch.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.xs),
+            Text(
+              '🔮 $sajuMatch',
+              style: typography.labelSmall.copyWith(
+                color: colors.textTertiary,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 5. 월별 흐름 섹션
+  Widget _buildWealthMonthlyFlowSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final monthlyFlow = metadata['monthlyFlow'] as List<dynamic>?;
+
+    if (monthlyFlow == null || monthlyFlow.isEmpty) return const SizedBox.shrink();
+
+    final isBlurred = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더
+          Row(
+            children: [
+              const Text('📈', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Text(
+                  '월별 재물 흐름',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          if (isBlurred)
+            _buildBlurredPlaceholder(context, '월별 재물 흐름을 확인하세요')
+          else
+            SizedBox(
+              height: 120,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: monthlyFlow.length,
+                itemBuilder: (context, index) {
+                  final monthData = monthlyFlow[index] as Map<String, dynamic>;
+                  final month = monthData['month'] as String? ?? '${index + 1}월';
+                  final score = monthData['score'] as int? ?? 50;
+                  final trend = monthData['trend'] as String? ?? '';
+                  final tip = monthData['tip'] as String? ?? '';
+
+                  return _buildMonthFlowCard(context, month, score, trend, tip);
+                },
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// 월별 흐름 개별 카드
+  Widget _buildMonthFlowCard(BuildContext context, String month, int score, String trend, String tip) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    final trendEmoji = trend == 'up' ? '📈' : trend == 'down' ? '📉' : '➡️';
+    final scoreColor = score >= 80
+        ? const Color(0xFF10B981)
+        : score >= 60
+            ? const Color(0xFF6366F1)
+            : score >= 40
+                ? const Color(0xFFF59E0B)
+                : const Color(0xFFEF4444);
+
+    return Container(
+      width: 100,
+      margin: const EdgeInsets.only(right: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: scoreColor.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            month,
+            style: typography.labelMedium.copyWith(
+              color: colors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(trendEmoji, style: const TextStyle(fontSize: 20)),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: scoreColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '$score',
+              style: typography.labelSmall.copyWith(
+                color: scoreColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          if (tip.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              tip,
+              style: typography.labelSmall.copyWith(
+                color: colors.textTertiary,
+                fontSize: 10,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 6. 실천 항목 섹션
+  Widget _buildWealthActionItemsSection(BuildContext context, bool isPremium) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final actionItems = (metadata['actionItems'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    if (actionItems.isEmpty) return const SizedBox.shrink();
+
+    final isBlurred = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더
+          Row(
+            children: [
+              const Text('✅', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '이번 달 실천 항목',
+                style: typography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          if (isBlurred)
+            _buildBlurredPlaceholder(context, '실천 항목을 확인하세요')
+          else
+            ...actionItems.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              return Container(
+                margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+                padding: const EdgeInsets.all(DSSpacing.md),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                  border: Border.all(color: colors.accent.withValues(alpha: 0.1)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: colors.accent.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${index + 1}',
+                          style: typography.labelSmall.copyWith(
+                            color: colors.accent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        item,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textPrimary,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+        ],
+      ),
+    );
+  }
+
+  /// 재물운 정보 카드 빌더
+  Widget _buildWealthInfoCard(BuildContext context, String title, String content, Color accentColor) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: accentColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: typography.labelSmall.copyWith(
+              color: accentColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            content,
+            style: typography.bodySmall.copyWith(
+              color: colors.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -2844,6 +5889,67 @@ class _LuckyItemChip extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 로또 번호 공 위젯
+/// 번호 범위에 따른 색상:
+/// 1-10: 노랑, 11-20: 파랑, 21-30: 빨강, 31-40: 회색, 41-45: 초록
+class _LottoBall extends StatelessWidget {
+  final int number;
+
+  const _LottoBall({required this.number});
+
+  Color get _ballColor {
+    if (number <= 10) return const Color(0xFFFFC107); // 노랑
+    if (number <= 20) return const Color(0xFF2196F3); // 파랑
+    if (number <= 30) return const Color(0xFFE91E63); // 빨강
+    if (number <= 40) return const Color(0xFF9E9E9E); // 회색
+    return const Color(0xFF4CAF50); // 초록
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          center: const Alignment(-0.3, -0.3),
+          colors: [
+            _ballColor.withValues(alpha: 0.9),
+            _ballColor,
+            _ballColor.withValues(alpha: 0.7),
+          ],
+          stops: const [0.0, 0.5, 1.0],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: _ballColor.withValues(alpha: 0.4),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          '$number',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.black26,
+                offset: Offset(1, 1),
+                blurRadius: 2,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -8,13 +8,7 @@ import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/constants/tarot_metadata.dart';
 import '../../../../../core/providers/user_settings_provider.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
-import '../../../../../services/ad_service.dart';
-import '../../../../../core/utils/subscription_snackbar.dart';
-import '../../../../../core/utils/logger.dart';
-import '../../../../../core/services/fortune_haptic_service.dart';
-import '../../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../../presentation/providers/token_provider.dart';
-import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
 import '../../widgets/mystical_background.dart';
 import '../../providers/tarot_storytelling_provider.dart';
@@ -295,105 +289,20 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   ),
                 ),
               ),
-              // ✅ 블러 상태일 때: 광고 버튼 / 아닐 때: 새로운 리딩 버튼
-              if (_isBlurred && !ref.watch(isPremiumProvider))
-                UnifiedButton.floating(
-                  text: '광고 보고 전체 내용 확인하기',
-                  onPressed: _showAdAndUnblur,
-                  isEnabled: true,
-                )
-              else
-                UnifiedButton.floating(
-                  text: '새로운 리딩 시작하기',
-                  onPressed: () {
-                    context.goNamed('interactive-tarot');
-                  },
-                  isEnabled: true,
-                  icon: const Icon(Icons.refresh, color: Colors.white),
-                ),
+              // 블러 처리만 유지 - 프리미엄 결제 버튼 제거됨
+              UnifiedButton.floating(
+                text: '새로운 리딩 시작하기',
+                onPressed: () {
+                  context.goNamed('interactive-tarot');
+                },
+                isEnabled: true,
+                icon: const Icon(Icons.refresh, color: Colors.white),
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  // ✅ RewardedAd 패턴
-  Future<void> _showAdAndUnblur() async {
-    debugPrint('[타로요약] 광고 시청 후 블러 해제 시작');
-
-    try {
-      final adService = AdService.instance;
-
-      // 광고가 준비 안됐으면 로드
-      if (!adService.isRewardedAdReady) {
-        debugPrint('[타로요약] ⏳ RewardedAd 로드 중...');
-        await adService.loadRewardedAd();
-
-        int waitCount = 0;
-        while (!adService.isRewardedAdReady && waitCount < 10) {
-          await Future.delayed(const Duration(milliseconds: 500));
-          waitCount++;
-        }
-
-        if (!adService.isRewardedAdReady) {
-          debugPrint('[타로요약] ❌ RewardedAd 로드 타임아웃');
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
-                backgroundColor: DSColors.error,
-              ),
-            );
-          }
-          return;
-        }
-      }
-
-      await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) async {
-          debugPrint('[타로요약] ✅ 광고 시청 완료, 블러 해제');
-
-          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
-          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-          // NEW: 게이지 증가 호출
-          if (mounted) {
-            FortuneCompletionHelper.onFortuneViewed(context, ref, 'tarot-summary');
-          }
-
-          if (mounted) {
-            setState(() {
-              _isBlurred = false;
-              _blurredSections = [];
-            });
-            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
-            final tokenState = ref.read(tokenProvider);
-            SubscriptionSnackbar.showAfterAd(
-              context,
-              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-            );
-          }
-        },
-      );
-    } catch (e, stackTrace) {
-      Logger.error('[타로요약] 광고 표시 실패', e, stackTrace);
-
-      // UX 개선: 에러 발생해도 블러 해제
-      if (mounted) {
-        setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
-            backgroundColor: DSColors.warning,
-          ),
-        );
-      }
-    }
   }
 
   Widget _buildSummarySection(double fontScale) {

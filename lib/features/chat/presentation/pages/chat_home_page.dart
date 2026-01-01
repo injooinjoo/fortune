@@ -17,7 +17,7 @@ import '../../../../data/models/user_profile.dart';
 import '../../../../data/models/secondary_profile.dart';
 import '../../../../data/models/pet_profile.dart';
 import '../../../../data/services/fortune_api/fortune_api_service.dart';
-import '../../../../domain/entities/fortune.dart';
+import '../../../../domain/entities/fortune.dart' hide FortuneElements;
 import '../../../../core/cache/cache_service.dart';
 import '../../domain/models/recommendation_chip.dart';
 import '../../domain/models/fortune_survey_config.dart';
@@ -46,13 +46,17 @@ import '../widgets/survey/chat_celebrity_selector.dart';
 import '../widgets/survey/chat_match_selector.dart';
 import '../widgets/survey/chat_onboarding_inputs.dart';
 import '../../../../features/fortune/domain/models/sports_schedule.dart';
+import '../../../../features/fortune/domain/models/match_insight.dart';
 import '../widgets/guest_login_banner.dart';
 import '../../../../presentation/widgets/social_login_bottom_sheet.dart';
+import '../../../../services/fortune_history_service.dart';
+import '../../../../features/history/domain/models/fortune_history.dart';
 import '../../../../services/social_auth_service.dart';
 import '../../../../screens/profile/widgets/add_profile_sheet.dart';
 import '../providers/onboarding_chat_provider.dart';
 import '../../../fortune/presentation/providers/saju_provider.dart';
 import '../../../../core/services/fortune_generators/fortune_cookie_generator.dart';
+import '../../../fortune/domain/services/lotto_number_generator.dart';
 import '../../../../core/services/unified_calendar_service.dart';
 import '../../../../core/widgets/floating_dream_bubbles.dart';
 
@@ -468,6 +472,37 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     });
   }
 
+  /// 운세 결과 표시 후 스크롤 - 결과 상단이 보이도록 적당히만 스크롤
+  /// 추천 칩이 나와도 결과 카드가 잘 보이게 유지
+  void _scrollToShowResult() {
+    if (_isScrolling) return;
+    _isScrolling = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients && mounted) {
+        final currentPosition = _scrollController.position.pixels;
+        final maxExtent = _scrollController.position.maxScrollExtent;
+        // 현재 위치에서 300px만 더 스크롤 (결과 카드 상단이 보이도록)
+        // 하지만 maxExtent를 넘지 않도록
+        final targetPosition = (currentPosition + 300).clamp(0.0, maxExtent);
+
+        _scrollController
+            .animateTo(
+          targetPosition,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+        )
+            .then((_) {
+          _isScrolling = false;
+        }).catchError((_) {
+          _isScrolling = false;
+        });
+      } else {
+        _isScrolling = false;
+      }
+    });
+  }
+
   void _handleChipTap(RecommendationChip chip) {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
     final surveyNotifier = ref.read(chatSurveyProvider.notifier);
@@ -512,7 +547,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           final typeName = _getTypeDisplayName(surveyType);
           final fortuneTypeStr = _mapSurveyTypeToString(surveyType);
 
-          _callFortuneApi(type: surveyType, answers: {}).then((fortune) {
+          _callFortuneApiWithCache(type: surveyType, answers: {}).then((fortune) {
             // Fortune 객체와 함께 리치 카드 표시
             chatNotifier.addFortuneResultMessage(
               text: typeName,
@@ -521,12 +556,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               isBlurred: fortune.isBlurred,
               blurredSections: fortune.blurredSections,
             );
-            _scrollToBottom();
+            _scrollToShowResult();
 
-            // 운세 결과 후 추천 칩 표시
+            // 운세 결과 후 추천 칩 표시 (스크롤 없이 - 결과 카드가 보이게 유지)
             Future.delayed(const Duration(milliseconds: 500), () {
               chatNotifier.addSystemMessage();
-              _scrollToBottom();
             });
           }).catchError((error) {
             Logger.error('Fortune API 호출 실패', error);
@@ -564,13 +598,13 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                   fortune: cachedFortune,
                   isBlurred: cachedFortune.isBlurred,
                   blurredSections: cachedFortune.blurredSections,
+                  selectedDate: DateTime.now(), // 캐시된 결과는 오늘 날짜
                 );
-                _scrollToBottom();
+                _scrollToShowResult();
 
-                // 추천 칩 표시
+                // 추천 칩 표시 (스크롤 없이 - 결과 카드가 보이게 유지)
                 Future.delayed(const Duration(milliseconds: 500), () {
                   chatNotifier.addSystemMessage();
-                  _scrollToBottom();
                 });
               });
             }
@@ -593,8 +627,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         chatNotifier.addAiMessage(greeting);
         _scrollToBottom();
 
-        // 설문 시작
-        surveyNotifier.startSurvey(surveyType);
+        // 설문 시작 (연애운은 프로필 성별 자동 적용)
+        Map<String, dynamic>? initialAnswers;
+        if (surveyType == FortuneSurveyType.love && userProfile?.gender != null) {
+          initialAnswers = {'gender': userProfile!.gender};
+        }
+        surveyNotifier.startSurvey(surveyType, initialAnswers: initialAnswers);
 
         // dailyCalendar이고 이미 캘린더 연동되어 있으면 첫 단계 건너뛰기
         if (surveyType == FortuneSurveyType.dailyCalendar && _isCalendarSynced) {
@@ -880,8 +918,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       chatNotifier.addAiMessage(greeting);
       _scrollToBottom();
 
-      // 설문 시작
-      surveyNotifier.startSurvey(type);
+      // 설문 시작 (연애운은 프로필 성별 자동 적용)
+      Map<String, dynamic>? initialAnswers;
+      if (type == FortuneSurveyType.love && userProfile?.gender != null) {
+        initialAnswers = {'gender': userProfile!.gender};
+      }
+      surveyNotifier.startSurvey(type, initialAnswers: initialAnswers);
 
       // dailyCalendar이고 이미 캘린더 연동되어 있으면 첫 단계 건너뛰기
       if (type == FortuneSurveyType.dailyCalendar && _isCalendarSynced) {
@@ -1203,8 +1245,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         ? _getTypeDisplayName(completedType)
         : '인사이트';
 
-    // API 호출 (점 3개 로딩 애니메이션 표시 중)
-    _callFortuneApi(
+    // API 호출 (점 3개 로딩 애니메이션 표시 중) - 캐시 우선 확인
+    _callFortuneApiWithCache(
       type: completedType ?? FortuneSurveyType.daily,
       answers: completedData,
     ).then((fortune) {
@@ -1213,21 +1255,165 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         CacheService().cacheDailyCalendarFortune(fortune);
       }
 
+      // 기간별 인사이트: 선택한 날짜 추출
+      DateTime? selectedDate;
+      if (completedType == FortuneSurveyType.dailyCalendar) {
+        final targetDateAnswer = completedData['targetDate'];
+        if (targetDateAnswer is Map) {
+          // 다중 날짜 선택 모드: dates 배열에서 첫 번째 날짜 사용
+          if (targetDateAnswer['isMultipleDates'] == true) {
+            final dates = targetDateAnswer['dates'] as List?;
+            if (dates != null && dates.isNotEmpty) {
+              final firstDateStr = dates.first as String?;
+              if (firstDateStr != null) {
+                selectedDate = DateTime.tryParse(firstDateStr);
+              }
+            }
+          } else {
+            // 단일 날짜 선택 모드: date 키 사용
+            final dateStr = targetDateAnswer['date'] as String?;
+            if (dateStr != null) {
+              selectedDate = DateTime.tryParse(dateStr);
+            }
+          }
+        } else if (targetDateAnswer is String) {
+          selectedDate = DateTime.tryParse(targetDateAnswer);
+        }
+      }
+
       // Fortune 객체와 함께 리치 카드 표시 (모든 운세 유형 동일 처리)
       final fortuneTypeStr = _mapSurveyTypeToString(completedType ?? FortuneSurveyType.daily);
+
+      // match-insight인 경우 MatchInsight 구성
+      MatchInsight? matchInsight;
+      if (fortuneTypeStr == 'match-insight') {
+        try {
+          final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+          final matchData = completedData['match'] as Map<String, dynamic>?;
+          final sportStr = completedData['sport'] as String? ?? 'baseball';
+
+          Logger.info('[ChatHome] MatchInsight 구성 시작: sport=$sportStr, matchData=$matchData');
+          Logger.info('[ChatHome] metadata keys: ${metadata.keys.toList()}');
+
+          // SportType 변환
+          SportType sportType;
+          switch (sportStr) {
+            case 'soccer':
+              sportType = SportType.soccer;
+              break;
+            case 'basketball':
+              sportType = SportType.basketball;
+              break;
+            case 'volleyball':
+              sportType = SportType.volleyball;
+              break;
+            case 'esports':
+              sportType = SportType.esports;
+              break;
+            case 'american_football':
+              sportType = SportType.americanFootball;
+              break;
+            case 'fighting':
+              sportType = SportType.fighting;
+              break;
+            default:
+              sportType = SportType.baseball;
+          }
+
+          // 경기 정보 추출
+          final homeTeam = matchData?['homeTeam'] as String? ?? '';
+          final awayTeam = matchData?['awayTeam'] as String? ?? '';
+          final gameTimeStr = matchData?['gameTime'] as String? ?? matchData?['startTime'] as String?;
+          final gameDate = gameTimeStr != null
+              ? DateTime.tryParse(gameTimeStr) ?? DateTime.now()
+              : DateTime.now();
+          final favoriteTeam = completedData['favoriteTeam'] as String?;
+
+          // prediction 파싱
+          final predictionData = metadata['prediction'] as Map<String, dynamic>? ?? {};
+          final prediction = MatchPrediction(
+            winProbability: (predictionData['winProbability'] as num?)?.toInt() ?? 50,
+            confidence: predictionData['confidence'] as String? ?? 'medium',
+            keyFactors: (predictionData['keyFactors'] as List?)?.cast<String>() ?? [],
+            predictedScore: predictionData['predictedScore'] as String?,
+            mvpCandidate: predictionData['mvpCandidate'] as String?,
+          );
+
+          // favoriteTeamAnalysis 파싱
+          final ftaData = metadata['favoriteTeamAnalysis'] as Map<String, dynamic>? ?? {};
+          final favoriteTeamAnalysis = TeamAnalysis(
+            name: ftaData['name'] as String? ?? favoriteTeam ?? homeTeam,
+            recentForm: ftaData['recentForm'] as String? ?? '',
+            strengths: (ftaData['strengths'] as List?)?.cast<String>() ?? [],
+            concerns: (ftaData['concerns'] as List?)?.cast<String>() ?? [],
+            keyPlayer: ftaData['keyPlayer'] as String?,
+            formEmoji: ftaData['formEmoji'] as String?,
+          );
+
+          // opponentAnalysis 파싱
+          final oaData = metadata['opponentAnalysis'] as Map<String, dynamic>? ?? {};
+          final opponentAnalysis = TeamAnalysis(
+            name: oaData['name'] as String? ?? (favoriteTeam == homeTeam ? awayTeam : homeTeam),
+            recentForm: oaData['recentForm'] as String? ?? '',
+            strengths: (oaData['strengths'] as List?)?.cast<String>() ?? [],
+            concerns: (oaData['concerns'] as List?)?.cast<String>() ?? [],
+            keyPlayer: oaData['keyPlayer'] as String?,
+            formEmoji: oaData['formEmoji'] as String?,
+          );
+
+          // fortuneElements 파싱
+          final feData = metadata['fortuneElements'] as Map<String, dynamic>? ?? {};
+          final fortuneElements = FortuneElements(
+            luckyColor: feData['luckyColor'] as String? ?? '',
+            luckyNumber: (feData['luckyNumber'] as num?)?.toInt() ?? 7,
+            luckyTime: feData['luckyTime'] as String? ?? '',
+            luckyItem: feData['luckyItem'] as String? ?? '',
+            luckySection: feData['luckySection'] as String?,
+            luckyAction: feData['luckyAction'] as String?,
+          );
+
+          matchInsight = MatchInsight(
+            id: fortune.id,
+            score: fortune.overallScore ?? (metadata['score'] as num?)?.toInt() ?? 75,
+            content: fortune.content,
+            summary: fortune.summary ?? metadata['summary'] as String? ?? '',
+            advice: metadata['advice'] as String? ?? '',
+            prediction: prediction,
+            favoriteTeamAnalysis: favoriteTeamAnalysis,
+            opponentAnalysis: opponentAnalysis,
+            fortuneElements: fortuneElements,
+            cautionMessage: metadata['cautionMessage'] as String? ??
+                '이 인사이트는 순수 재미 목적입니다. 도박이나 베팅에 활용하지 마세요.',
+            timestamp: DateTime.now(),
+            sport: sportType,
+            homeTeam: homeTeam,
+            awayTeam: awayTeam,
+            gameDate: gameDate,
+            favoriteTeam: favoriteTeam,
+            isBlurred: fortune.isBlurred,
+            blurredSections: fortune.blurredSections,
+          );
+
+          Logger.info('[ChatHome] MatchInsight 구성 성공: score=${matchInsight.score}, $homeTeam vs $awayTeam');
+        } catch (e, st) {
+          Logger.error('[ChatHome] MatchInsight 구성 실패', e, st);
+        }
+      }
+
       chatNotifier.addFortuneResultMessage(
         text: typeName,
         fortuneType: fortuneTypeStr,
         fortune: fortune,
+        matchInsight: matchInsight,
         isBlurred: fortune.isBlurred,
         blurredSections: fortune.blurredSections,
+        selectedDate: selectedDate,
       );
       surveyNotifier.clearCompleted();
-      _scrollToBottom();
-      // 운세 결과 후 추천 칩 표시
+      _scrollToShowResult();
+      // 운세 결과 후 추천 칩 표시 (스크롤 없이 - 결과 카드가 보이게 유지)
       Future.delayed(const Duration(milliseconds: 500), () {
         chatNotifier.addSystemMessage();
-        _scrollToBottom();
       });
     }).catchError((error) {
       Logger.error('Fortune API 호출 실패', error);
@@ -1265,10 +1451,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       );
       _scrollToBottom();
 
-      // 완료 후 추천 칩 표시
+      // 완료 후 추천 칩 표시 (스크롤 없이 - 결과가 보이게 유지)
       Future.delayed(const Duration(milliseconds: 500), () {
         chatNotifier.addSystemMessage();
-        _scrollToBottom();
       });
     });
   }
@@ -1498,14 +1683,17 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   void _handleTarotComplete(Map<String, dynamic> tarotData) {
     final spreadName = tarotData['spreadDisplayName'] as String? ?? '타로';
     final cardCount = tarotData['cardCount'] as int? ?? 1;
-    final selectedCards = tarotData['selectedCardIndices'] as List<int>? ?? [];
+    // BUG FIX: List<dynamic>을 List<int>로 직접 캐스팅하면 null 반환됨
+    // map().toList()는 List<dynamic>을 반환하므로 .cast<int>() 사용
+    final rawIndices = tarotData['selectedCardIndices'] as List? ?? [];
+    final selectedCardIndices = rawIndices.cast<int>();
 
-    final displayText = '🃏 $spreadName (${selectedCards.length}장 선택)';
+    final displayText = '🃏 $spreadName (${selectedCardIndices.length}장 선택)';
     _handleSurveyAnswerValue({
       ...tarotData,
       'spreadType': tarotData['spreadType'],
       'cardCount': cardCount,
-      'selectedCards': selectedCards,
+      'selectedCards': selectedCardIndices,
     }, displayText);
   }
 
@@ -1561,16 +1749,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         sajuData: sajuState.sajuData!,
         isBlurred: false, // TODO: 프리미엄 상태에 따라 결정
       );
-      _scrollToBottom();
+      _scrollToShowResult();
 
       // 오늘의 운세 자동 호출 (사주 분석 후 무료 제공)
       Future.delayed(const Duration(milliseconds: 500), () async {
         chatNotifier.addAiMessage('이제 오늘의 인사이트를 보여드릴게요... ✨');
-        _scrollToBottom();
+        _scrollToShowResult();
 
         try {
-          // 기존 _callFortuneApi 메서드 재사용 (fortuneApiServiceProvider 사용)
-          final fortune = await _callFortuneApi(
+          // 캐시 우선 확인 후 API 호출
+          final fortune = await _callFortuneApiWithCache(
             type: FortuneSurveyType.daily,
             answers: {}, // 기본 파라미터로 호출 (mood, schedule, category 없이)
           );
@@ -1583,7 +1771,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             isBlurred: false,
             blurredSections: const [],
           );
-          _scrollToBottom();
+          _scrollToShowResult();
         } catch (e) {
           Logger.error('오늘의 운세 호출 실패', e);
           chatNotifier.addAiMessage(
@@ -1593,10 +1781,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           _scrollToBottom();
         }
 
-        // 추천 칩 표시
+        // 추천 칩 표시 (스크롤 없이 - 결과 카드가 보이게 유지)
         Future.delayed(const Duration(milliseconds: 500), () {
           chatNotifier.addSystemMessage();
-          _scrollToBottom();
         });
       });
     } catch (e) {
@@ -1621,6 +1808,121 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       '변화' || 'change' || '이사' || '전환' => 'change',
       _ => 'all', // default - 종합 운세
     };
+  }
+
+  /// 캐시/DB 확인 후 필요시 API 호출 (래퍼 메서드)
+  Future<Fortune> _callFortuneApiWithCache({
+    required FortuneSurveyType type,
+    required Map<String, dynamic> answers,
+  }) async {
+    final fortuneType = type.name;
+    final historyService = FortuneHistoryService();
+
+    // 1. DB에서 오늘 결과 확인
+    try {
+      final cachedHistory = await historyService.getTodayFortuneByConditions(
+        fortuneType: fortuneType,
+        inputConditions: answers,
+      );
+
+      if (cachedHistory != null && cachedHistory.detailedResult != null) {
+        Logger.info('🎯 [ChatHomePage] Cache HIT - returning cached fortune for $fortuneType');
+        return _convertHistoryToFortune(cachedHistory);
+      }
+    } catch (e) {
+      Logger.warning('[ChatHomePage] Cache lookup failed, proceeding to API: $e');
+    }
+
+    // 2. 캐시 미스 → API 호출
+    Logger.info('🔄 [ChatHomePage] Cache MISS - calling API for $fortuneType');
+    final fortune = await _callFortuneApi(type: type, answers: answers);
+
+    // 3. DB 저장 (비동기, 실패 무시)
+    _saveFortuneToHistory(
+      fortune: fortune,
+      fortuneType: fortuneType,
+      inputConditions: answers,
+    );
+
+    return fortune;
+  }
+
+  /// FortuneHistory → Fortune 변환 헬퍼
+  Fortune _convertHistoryToFortune(FortuneHistory history) {
+    final data = history.detailedResult ?? {};
+    final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+
+    return Fortune(
+      id: data['id'] as String? ?? history.id,
+      userId: data['userId'] as String? ?? userId,
+      type: data['type'] as String? ?? history.fortuneType,
+      content: data['content'] as String? ?? history.title,
+      createdAt: history.createdAt,
+      metadata: data['metadata'] as Map<String, dynamic>?,
+      tokenCost: data['tokenCost'] as int? ?? 0, // 캐시된 결과는 토큰 소비 없음
+      category: data['category'] as String?,
+      overallScore: data['overallScore'] as int? ?? history.summary['score'] as int?,
+      description: data['description'] as String?,
+      scoreBreakdown: data['scoreBreakdown'] as Map<String, dynamic>?,
+      luckyItems: data['luckyItems'] as Map<String, dynamic>?,
+      recommendations: (data['recommendations'] as List?)?.cast<String>(),
+      warnings: (data['warnings'] as List?)?.cast<String>(),
+      summary: data['summary'] as String?,
+      additionalInfo: data['additionalInfo'] as Map<String, dynamic>?,
+      greeting: data['greeting'] as String?,
+      hexagonScores: (data['hexagonScores'] as Map<String, dynamic>?)?.map(
+        (k, v) => MapEntry(k, v as int),
+      ),
+      fiveElements: data['fiveElements'] as Map<String, dynamic>?,
+      specialTip: data['specialTip'] as String?,
+      period: data['period'] as String?,
+      meta: data['meta'] as Map<String, dynamic>?,
+      weatherSummary: data['weatherSummary'] as Map<String, dynamic>?,
+      overall: data['overall'] as Map<String, dynamic>?,
+      categories: data['categories'] as Map<String, dynamic>?,
+      sajuInsight: data['sajuInsight'] as Map<String, dynamic>?,
+      personalActions: (data['personalActions'] as List?)?.cast<Map<String, dynamic>>(),
+      notification: data['notification'] as Map<String, dynamic>?,
+      shareCard: data['shareCard'] as Map<String, dynamic>?,
+      uiBlocks: (data['uiBlocks'] as List?)?.cast<String>(),
+      explain: data['explain'] as Map<String, dynamic>?,
+      isBlurred: data['isBlurred'] as bool? ?? false,
+      blurredSections: (data['blurredSections'] as List?)?.cast<String>() ?? const [],
+      percentile: data['percentile'] as int?,
+      totalTodayViewers: data['totalTodayViewers'] as int?,
+      isPercentileValid: data['isPercentileValid'] as bool? ?? false,
+    );
+  }
+
+  /// DB에 운세 결과 저장 (비동기, 실패 무시)
+  void _saveFortuneToHistory({
+    required Fortune fortune,
+    required String fortuneType,
+    required Map<String, dynamic> inputConditions,
+  }) {
+    // Fire and forget - 저장 실패해도 사용자 경험에 영향 없음
+    Future(() async {
+      try {
+        final historyService = FortuneHistoryService();
+        await historyService.saveFortuneResultWithConditions(
+          fortuneType: fortuneType,
+          title: fortune.content.length > 50
+              ? '${fortune.content.substring(0, 50)}...'
+              : fortune.content,
+          summary: {
+            'score': fortune.overallScore,
+            'greeting': fortune.greeting,
+            'description': fortune.description,
+          },
+          fortuneData: fortune.toJson(),
+          inputConditions: inputConditions,
+          score: fortune.overallScore,
+        );
+        Logger.info('💾 [ChatHomePage] Fortune saved to history: $fortuneType');
+      } catch (e) {
+        Logger.warning('[ChatHomePage] Failed to save fortune to history (ignored): $e');
+      }
+    });
   }
 
   /// 운세 API 호출 - Edge Function 요구사항에 맞게 파라미터 매핑
@@ -1791,11 +2093,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // Love & Relationship
       // ============================================================
       case FortuneSurveyType.love:
-        // Edge Function 요구: age, gender, relationshipStatus, datingStyles, valueImportance
+        // Edge Function 요구: userName, age, gender, relationshipStatus, datingStyles, valueImportance
         return apiService.getFortune(
           userId: userId,
           fortuneType: 'love',
           params: {
+            'userName': userName,  // ✅ 유저 이름 (철수님 대신 실제 이름 사용)
             'age': age,
             'gender': gender,
             'relationshipStatus': answers['status'] ?? 'single',
@@ -2088,19 +2391,47 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case FortuneSurveyType.lotto:
-        // Survey step ids: 'method', 'gameCount'
-        final lottoMethod = answers['method'] ?? 'saju';
-        final gameCount = answers['gameCount'] ?? '1';
-        return apiService.getFortune(
+        // 클라이언트 사이드에서 로또 번호 생성
+        final gameCountStr = answers['gameCount'] ?? '1';
+        final gameCount = int.tryParse(gameCountStr) ?? 1;
+
+        // LottoNumberGenerator로 번호 생성
+        final lottoFortuneResult = LottoNumberGenerator.generate(
+          birthDate: birthDate,
+          birthTime: userProfile?.birthTime,
+          gender: userProfile?.gender,
+          gameCount: gameCount,
+        );
+
+        // Fortune 객체로 변환하여 반환
+        final lottoNumbers = lottoFortuneResult.lottoResult.numbers;
+        final fortune = Fortune(
+          id: 'lotto_${DateTime.now().millisecondsSinceEpoch}',
           userId: userId,
-          fortuneType: 'lucky-number',
-          params: {
-            'name': userName,
-            'birthDate': birthDateStr,
-            'method': lottoMethod,
-            'gameCount': int.tryParse(gameCount) ?? 1,
+          type: 'lotto',
+          content: lottoFortuneResult.lottoResult.fortuneMessage,
+          createdAt: DateTime.now(),
+          tokenCost: 0, // 클라이언트 생성이므로 토큰 비용 없음
+          overallScore: 85,
+          period: 'today',
+          metadata: {
+            'lottoNumbers': lottoNumbers,
+            'numberElements': lottoFortuneResult.lottoResult.numberElements,
+            'gameCount': gameCount,
+          },
+          additionalInfo: {
+            'lottoNumbers': lottoNumbers,
+            'luckyLocation': {
+              'direction': lottoFortuneResult.luckyLocation.direction,
+              'shopType': lottoFortuneResult.luckyLocation.shopType,
+            },
+            'luckyTiming': {
+              'day': lottoFortuneResult.luckyTiming.luckyDay,
+              'timeSlot': lottoFortuneResult.luckyTiming.luckyTimeSlot,
+            },
           },
         );
+        return Future.value(fortune);
 
       // ============================================================
       // Dream / Interactive
@@ -2121,17 +2452,20 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       case FortuneSurveyType.tarot:
         // ChatTarotFlow에서 수집된 데이터로 타로 API 호출
+        // BUG FIX: 타로 데이터는 answers['tarotSelection'] 안에 중첩되어 있음!
+        // survey step id가 'tarotSelection'이므로 해당 키 아래에 저장됨
+        final tarotData = answers['tarotSelection'] as Map<String, dynamic>? ?? {};
         return apiService.getFortune(
           userId: userId,
           fortuneType: 'tarot',
           params: {
             'name': userName,
             'birthDate': birthDateStr,
-            'spreadType': answers['spreadType'] ?? 'single',
-            'cardCount': answers['cardCount'] ?? 1,
-            'selectedCards': answers['selectedCards'] ?? [],
+            'spreadType': tarotData['spreadType'] ?? 'single',
+            'cardCount': tarotData['cardCount'] ?? 1,
+            'selectedCards': tarotData['selectedCards'] ?? [],
             'question': answers['purpose'] ?? '오늘의 운세',
-            'deck': answers['deck'] ?? 'rider_waite',
+            'deck': tarotData['deck'] ?? 'rider_waite',
           },
         );
 
@@ -2536,7 +2870,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case FortuneSurveyType.mbti:
         return 'personality';
       case FortuneSurveyType.newYear:
-        return 'time';
+        return 'newYear';
       case FortuneSurveyType.dailyCalendar:
         return 'daily_calendar';
       case FortuneSurveyType.traditional:
@@ -2558,9 +2892,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case FortuneSurveyType.money:
         return 'money';
       case FortuneSurveyType.luckyItems:
-        return 'lucky_items';
+        return 'lucky-items';
       case FortuneSurveyType.lotto:
-        return 'lottery';
+        return 'lotto';
       case FortuneSurveyType.wish:
         return 'wish';
       case FortuneSurveyType.fortuneCookie:
@@ -2570,7 +2904,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case FortuneSurveyType.exercise:
         return 'health_sports';
       case FortuneSurveyType.sportsGame:
-        return 'sports';
+        return 'match-insight';
       case FortuneSurveyType.dream:
         return 'dream';
       case FortuneSurveyType.celebrity:

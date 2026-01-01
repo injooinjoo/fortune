@@ -261,6 +261,32 @@ class _ExLoverEmotionalResultPageState
 
                 const SizedBox(height: 24),
 
+                // 개인화 분석 섹션 (v3 - 설문 기반)
+                if (_parsedResult.personalizedAnalysis != null &&
+                    _parsedResult.personalizedAnalysis!.yourStory.isNotEmpty)
+                  _buildPersonalizedAnalysisSection(
+                          _parsedResult.personalizedAnalysis!, colors)
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 100.ms)
+                      .slideY(begin: 0.1, end: 0),
+
+                if (_parsedResult.personalizedAnalysis != null &&
+                    _parsedResult.personalizedAnalysis!.yourStory.isNotEmpty)
+                  const SizedBox(height: 24),
+
+                // 스크린샷 분석 섹션 (v3 - Vision API)
+                if (_parsedResult.screenshotAnalysis != null &&
+                    _parsedResult.screenshotAnalysis!.conversationTone.isNotEmpty)
+                  _buildScreenshotAnalysisSection(
+                          _parsedResult.screenshotAnalysis!, colors)
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 150.ms)
+                      .slideY(begin: 0.1, end: 0),
+
+                if (_parsedResult.screenshotAnalysis != null &&
+                    _parsedResult.screenshotAnalysis!.conversationTone.isNotEmpty)
+                  const SizedBox(height: 24),
+
                 // BlurredFortuneContent로 프리미엄 섹션 래핑
                 BlurredFortuneContent(
                   fortuneResult: _fortuneResult,
@@ -1748,6 +1774,494 @@ class _ExLoverEmotionalResultPageState
               ),
             )),
       ],
+    );
+  }
+
+  // 개인화 분석 섹션 (v3 - 설문 기반)
+  Widget _buildPersonalizedAnalysisSection(
+      PersonalizedAnalysis analysis, DSColorScheme colors) {
+    return AppCard(
+      style: AppCardStyle.elevated,
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      colors.accent,
+                      const Color(0xFF8B5CF6),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '맞춤 분석',
+                      style: context.labelSmall.copyWith(
+                        color: colors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '당신의 이야기를 분석했어요',
+                      style: context.bodyLarge.copyWith(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // 당신의 이야기 분석
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: colors.accent.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: colors.accent.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.format_quote_rounded,
+                      size: 16,
+                      color: colors.accent,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '당신의 이야기',
+                      style: context.labelSmall.copyWith(
+                        color: colors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  analysis.yourStory,
+                  style: context.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 감정 패턴 분석
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.psychology_rounded,
+                      size: 16,
+                      color: Color(0xFF8B5CF6),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '감정 패턴',
+                      style: context.labelSmall.copyWith(
+                        color: colors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  analysis.emotionalPattern,
+                  style: context.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 대화 분석 (있는 경우만)
+          if (analysis.chatAnalysis != null &&
+              analysis.chatAnalysis!.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981).withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.chat_bubble_outline_rounded,
+                        size: 16,
+                        color: Color(0xFF10B981),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '대화 분석',
+                        style: context.labelSmall.copyWith(
+                          color: const Color(0xFF10B981),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    analysis.chatAnalysis!,
+                    style: context.bodySmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 16),
+
+          // 핵심 인사이트
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  colors.accent.withValues(alpha: 0.1),
+                  const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_rounded,
+                  color: colors.accent,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '핵심 인사이트',
+                        style: context.labelSmall.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        analysis.coreInsight,
+                        style: context.bodySmall.copyWith(
+                          color: colors.textPrimary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 스크린샷 분석 섹션 (v3 - Vision API)
+  Widget _buildScreenshotAnalysisSection(
+      ScreenshotAnalysis analysis, DSColorScheme colors) {
+    return AppCard(
+      style: AppCardStyle.elevated,
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF3B82F6),
+                      Color(0xFF06B6D4),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.image_search_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '카톡 분석',
+                      style: context.labelSmall.copyWith(
+                        color: const Color(0xFF3B82F6),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '대화 스크린샷을 분석했어요',
+                      style: context.bodyLarge.copyWith(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // 대화 톤 분석
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF3B82F6).withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.record_voice_over_rounded,
+                      size: 16,
+                      color: Color(0xFF3B82F6),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '대화 톤',
+                      style: context.labelSmall.copyWith(
+                        color: const Color(0xFF3B82F6),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  analysis.conversationTone,
+                  style: context.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 감정 흐름
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.timeline_rounded,
+                      size: 16,
+                      color: Color(0xFF06B6D4),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '감정 흐름',
+                      style: context.labelSmall.copyWith(
+                        color: colors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  analysis.emotionalFlow,
+                  style: context.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 관계 역학
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF8B5CF6).withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.people_alt_rounded,
+                      size: 16,
+                      color: Color(0xFF8B5CF6),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '관계 역학',
+                      style: context.labelSmall.copyWith(
+                        color: const Color(0xFF8B5CF6),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  analysis.relationshipDynamics,
+                  style: context.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 주요 순간들
+          if (analysis.keyMoments.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _buildListSection(
+              '주요 순간',
+              analysis.keyMoments,
+              Icons.star_rounded,
+              const Color(0xFFF59E0B),
+              colors,
+            ),
+          ],
+
+          const SizedBox(height: 16),
+
+          // 조언
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                  const Color(0xFF06B6D4).withValues(alpha: 0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.tips_and_updates_rounded,
+                  color: Color(0xFF3B82F6),
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '대화 기반 조언',
+                        style: context.labelSmall.copyWith(
+                          color: const Color(0xFF3B82F6),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        analysis.advice,
+                        style: context.bodySmall.copyWith(
+                          color: colors.textPrimary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

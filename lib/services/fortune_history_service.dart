@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../features/history/domain/models/fortune_history.dart';
@@ -391,6 +393,120 @@ class FortuneHistoryService {
       Logger.warning('[FortuneHistoryService] 운세 삭제 실패 (테이블 없음, 무시): $error');
       return false;
     }
+  }
+
+  /// 오늘 날짜 + 동일 조건의 운세 결과 조회 (캐싱용)
+  Future<FortuneHistory?> getTodayFortuneByConditions({
+    required String fortuneType,
+    required Map<String, dynamic> inputConditions,
+  }) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) {
+        Logger.warning('[FortuneHistoryService] User not authenticated for cache lookup');
+        return null;
+      }
+
+      final now = DateTime.now();
+      final todayStart = DateTime(now.year, now.month, now.day);
+      final todayEnd = DateTime(now.year, now.month, now.day + 1);
+
+      // 조건 해시 생성
+      final conditionsHash = _generateConditionsHash(inputConditions);
+
+      // 오늘 + 같은 타입 + 같은 조건 해시의 운세 조회
+      final response = await _supabase
+          .from(_tableName)
+          .select()
+          .eq('user_id', userId)
+          .eq('fortune_type', fortuneType)
+          .gte('created_at', todayStart.toIso8601String())
+          .lt('created_at', todayEnd.toIso8601String())
+          .maybeSingle();
+
+      if (response == null) {
+        Logger.debug('[FortuneHistoryService] No cached fortune found for $fortuneType');
+        return null;
+      }
+
+      // 조건 해시 비교 (metadata에 저장된 해시와 비교)
+      final savedHash = response['metadata']?['conditions_hash'] as String?;
+      if (savedHash != null && savedHash != conditionsHash) {
+        Logger.debug('[FortuneHistoryService] Conditions hash mismatch for $fortuneType');
+        return null;
+      }
+
+      Logger.info('[FortuneHistoryService] Cache HIT for $fortuneType (hash: $conditionsHash)');
+      return FortuneHistory.fromJson(response);
+    } catch (error) {
+      Logger.warning('[FortuneHistoryService] Cache lookup failed (fallback to API): $error');
+      return null;
+    }
+  }
+
+  /// 조건 해시 생성 (대용량 필드 제외)
+  String _generateConditionsHash(Map<String, dynamic> conditions) {
+    // 제외할 필드 (대용량/변동성)
+    const excludedFields = {
+      'imagePath',
+      'image',
+      'partnerPhoto',
+      'partnerPhotoBase64',
+      'faceImagePath',
+      'faceImage',
+      'photoBase64',
+      'imageBase64',
+    };
+
+    // 필터링된 조건 맵 생성
+    final filtered = Map<String, dynamic>.from(conditions)
+      ..removeWhere((key, value) =>
+          excludedFields.contains(key) ||
+          value == null ||
+          (value is String && value.length > 1000)); // 긴 문자열도 제외
+
+    // 키 정렬하여 일관된 해시 생성
+    final sortedKeys = filtered.keys.toList()..sort();
+    final sortedMap = <String, dynamic>{};
+    for (final key in sortedKeys) {
+      sortedMap[key] = filtered[key];
+    }
+
+    // SHA256 해시 생성 (16자로 축약)
+    final jsonStr = jsonEncode(sortedMap);
+    final hash = sha256.convert(utf8.encode(jsonStr));
+    return hash.toString().substring(0, 16);
+  }
+
+  /// 운세 결과를 히스토리에 저장 (조건 해시 포함)
+  Future<String?> saveFortuneResultWithConditions({
+    required String fortuneType,
+    required String title,
+    required Map<String, dynamic> summary,
+    required Map<String, dynamic> fortuneData,
+    required Map<String, dynamic> inputConditions,
+    Map<String, dynamic>? metadata,
+    List<String>? tags,
+    String? mood,
+    int? score,
+  }) async {
+    // 조건 해시를 metadata에 추가
+    final conditionsHash = _generateConditionsHash(inputConditions);
+    final enrichedMetadata = <String, dynamic>{
+      ...?metadata,
+      'conditions_hash': conditionsHash,
+    };
+
+    return saveFortuneResult(
+      fortuneType: fortuneType,
+      title: title,
+      summary: summary,
+      fortuneData: fortuneData,
+      metadata: enrichedMetadata,
+      tags: tags,
+      mood: mood,
+      score: score,
+    );
   }
 
   /// 최근 7일간 일별 운세 점수 가져오기 (그래프용)

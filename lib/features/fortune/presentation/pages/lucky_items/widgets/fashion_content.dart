@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/design_system.dart';
 import 'info_item.dart';
+import 'fashion_image_section.dart';
 
 /// 패션/뷰티 컨텐츠 - API 데이터 사용 (오행 기반)
 class FashionContent extends StatelessWidget {
   final Map<String, dynamic>? fashionDetail;
   final Map<String, dynamic>? colorDetail;
   final Map<String, dynamic>? jewelryDetail;
+  final String? gender;
 
   const FashionContent({
     super.key,
     this.fashionDetail,
     this.colorDetail,
     this.jewelryDetail,
+    this.gender,
   });
 
   /// 색상 코드 파싱
@@ -116,6 +119,13 @@ class FashionContent extends StatelessWidget {
           if (necklace != null) InfoItem(label: '목걸이', value: necklace),
           if (bracelet != null) InfoItem(label: '팔찌', value: bracelet),
           if (ring != null) InfoItem(label: '반지', value: ring),
+
+          // AI 패션 이미지 생성 섹션
+          FashionImageSection(
+            fashionDetail: fashionDetail,
+            colorDetail: colorDetail,
+            gender: gender,
+          ),
         ],
       ),
     );

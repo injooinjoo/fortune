@@ -108,7 +108,7 @@ serve(async (req) => {
 - 적절한 이모지로 포인트 (✨💫🌟💪❤️ 등)
 - 구체적이고 실행 가능한 조언 포함`
 
-    // 사용자 프롬프트 - 목표 반영
+    // 사용자 프롬프트 - 목표 반영 + 오행 분석 추가
     const userPrompt = `다음 정보를 기반으로 ${targetYear}년 새해 인사이트를 분석해주세요:
 
 **기본 정보**:
@@ -130,7 +130,7 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
 {
   "overallScore": ${targetYear}년 종합 점수 (60-95 사이),
   "summary": "${targetYear}년 한 줄 요약 (30자 이내, ${displayGoalLabel} 관련 언급)",
-  "content": "상세 분석 내용 (200자 이상, ${displayGoalLabel}에 대한 구체적 조언 포함)",
+  "content": "상세 분석 내용 (300자 이상, ${displayGoalLabel}에 대한 구체적 조언 포함)",
   "greeting": "${name}님을 위한 인사말 (50자 이내)",
 
   "goalFortune": {
@@ -138,28 +138,40 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
     "goalLabel": "${displayGoalLabel}",
     "emoji": "${goalEmoji}",
     "title": "${displayGoalLabel} 관련 ${targetYear}년 전망 제목",
-    "prediction": "${displayGoalLabel}에 대한 구체적인 예측과 조언 (150자 이상)",
-    "bestMonths": ["가장 좋은 월 (예: 3월)", "두번째 좋은 월"],
-    "cautionMonths": ["주의할 월"],
+    "prediction": "${displayGoalLabel}에 대한 구체적인 예측과 조언 (200자 이상)",
+    "deepAnalysis": "${displayGoalLabel} 달성을 위한 심화 분석 - 심리학적/전략적 관점 (200자 이상)",
+    "bestMonths": ["가장 좋은 월 (예: 3월)", "두번째 좋은 월", "세번째 좋은 월"],
+    "cautionMonths": ["주의할 월 1", "주의할 월 2"],
+    "quarterlyMilestones": ["1분기 목표/마일스톤", "2분기 목표/마일스톤", "3분기 목표/마일스톤", "4분기 목표/마일스톤"],
+    "riskAnalysis": "${displayGoalLabel} 달성 시 주의해야 할 점과 예상되는 어려움 (100자 이상)",
+    "successFactors": ["성공 요소 1", "성공 요소 2", "성공 요소 3"],
     "actionItems": [
-      "${displayGoalLabel} 달성을 위한 구체적 행동 1",
-      "${displayGoalLabel} 달성을 위한 구체적 행동 2",
-      "${displayGoalLabel} 달성을 위한 구체적 행동 3"
+      "${displayGoalLabel} 달성을 위한 구체적 행동 1 (50자 이상)",
+      "${displayGoalLabel} 달성을 위한 구체적 행동 2 (50자 이상)",
+      "${displayGoalLabel} 달성을 위한 구체적 행동 3 (50자 이상)"
     ]
+  },
+
+  "sajuAnalysis": {
+    "dominantElement": "사용자의 주요 오행 (목/화/토/금/수 중 하나)",
+    "yearElement": "${targetYear}년의 오행 기운",
+    "compatibility": "높음/보통/주의 중 하나",
+    "compatibilityReason": "왜 궁합이 좋은지/주의해야 하는지 설명 (100자 이상)",
+    "elementalAdvice": "오행 기반 ${targetYear}년 조언 (150자 이상)",
+    "balanceElements": ["보완해야 할 오행 1", "보완해야 할 오행 2"],
+    "strengthenTips": ["오행 강화 방법 1", "오행 강화 방법 2", "오행 강화 방법 3"]
   },
 
   "monthlyHighlights": [
     {
       "month": "1월",
-      "theme": "이달의 테마",
+      "theme": "이달의 테마 (4-6자)",
       "score": 점수 (60-95),
-      "advice": "한 줄 조언"
-    },
-    {
-      "month": "2월",
-      "theme": "이달의 테마",
-      "score": 점수 (60-95),
-      "advice": "한 줄 조언"
+      "advice": "이달 조언 (50자 이상)",
+      "energyLevel": "High/Medium/Low 중 하나",
+      "bestDays": ["5일", "15일", "25일"],
+      "recommendedAction": "${displayGoalLabel} 관련 이달 추천 행동",
+      "avoidAction": "이달 피해야 할 것"
     }
   ],
 
@@ -171,20 +183,27 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
     "food": "행운의 음식"
   },
 
+  "actionPlan": {
+    "immediate": ["1-2주 내 실천할 것 1 (50자 이상)", "1-2주 내 실천할 것 2 (50자 이상)"],
+    "shortTerm": ["1-3개월 내 달성할 것 1 (50자 이상)", "1-3개월 내 달성할 것 2 (50자 이상)"],
+    "longTerm": ["6-12개월 목표 1 (50자 이상)", "6-12개월 목표 2 (50자 이상)"]
+  },
+
   "recommendations": [
-    "${displayGoalLabel} 관련 추천 1",
-    "${displayGoalLabel} 관련 추천 2",
-    "${displayGoalLabel} 관련 추천 3"
+    "${displayGoalLabel} 관련 구체적 추천 1 (50자 이상)",
+    "${displayGoalLabel} 관련 구체적 추천 2 (50자 이상)",
+    "${displayGoalLabel} 관련 구체적 추천 3 (50자 이상)"
   ],
 
-  "specialMessage": "${targetYear}년을 맞이하는 ${name}님께 드리는 특별 메시지 (100자 이상, ${displayGoalLabel} 격려 포함)"
+  "specialMessage": "${targetYear}년을 맞이하는 ${name}님께 드리는 특별 메시지 (150자 이상, ${displayGoalLabel} 격려 포함)"
 }
 \`\`\`
 
 **주의**:
 - 반드시 유효한 JSON 형식으로만 응답하세요
-- monthlyHighlights는 1월부터 12월까지 모두 포함해주세요
-- 모든 내용에 **${displayGoalLabel}** 목표를 반영해주세요`
+- monthlyHighlights는 1월부터 12월까지 **12개 모두** 포함해주세요
+- 모든 내용에 **${displayGoalLabel}** 목표를 반영해주세요
+- 각 필드의 최소 글자수를 반드시 지켜주세요`
 
     console.log(`[fortune-new-year] 🔄 LLM 호출 시작... (goal: ${goal})`)
 
@@ -222,11 +241,15 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
 
     const overallScore = fortuneData.overallScore || 75
 
-    // Blur 로직
+    // Blur 로직 (프리미엄 전용 섹션)
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['goalFortune', 'monthlyHighlights', 'luckyItems', 'recommendations']
+      ? ['goalFortune', 'sajuAnalysis', 'actionPlan', 'recommendations', 'specialMessage']
       : []
+
+    // 월별 운세: 1-3월 무료, 4-12월 프리미엄
+    const freeMonths = [1, 2, 3]
+    const blurredMonthIndices = isBlurred ? [3, 4, 5, 6, 7, 8, 9, 10, 11] : [] // 4-12월 (0-indexed: 3-11)
 
     // 운세 데이터 구성
     const fortune = {
@@ -252,9 +275,24 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
         emoji: goalEmoji,
         title: `${displayGoalLabel} 인사이트`,
         prediction: '',
+        deepAnalysis: '',
         bestMonths: [],
         cautionMonths: [],
+        quarterlyMilestones: [],
+        riskAnalysis: '',
+        successFactors: [],
         actionItems: []
+      },
+
+      // 사주 오행 분석 (NEW)
+      sajuAnalysis: fortuneData.sajuAnalysis || {
+        dominantElement: '',
+        yearElement: '',
+        compatibility: '보통',
+        compatibilityReason: '',
+        elementalAdvice: '',
+        balanceElements: [],
+        strengthenTips: []
       },
 
       // 월별 하이라이트
@@ -273,6 +311,13 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
       // 추천 사항
       recommendations: fortuneData.recommendations || [],
 
+      // 시간별 행동 계획 (NEW)
+      actionPlan: fortuneData.actionPlan || {
+        immediate: [],
+        shortTerm: [],
+        longTerm: []
+      },
+
       // 특별 메시지
       specialMessage: fortuneData.specialMessage || '',
 
@@ -286,7 +331,9 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
 
       // 블러 상태
       isBlurred,
-      blurredSections
+      blurredSections,
+      blurredMonthIndices, // 4-12월 블러 (0-indexed: 3-11)
+      freeMonthCount: 3 // 무료 공개 월 수 (1-3월)
     }
 
     // Percentile 계산

@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/app_widgets.dart';
@@ -16,6 +18,7 @@ import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
+import '../../../../widgets/multi_photo_selector.dart';
 
 class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
   const ExLoverFortuneSimplePage({super.key});
@@ -30,8 +33,8 @@ class _ExLoverFortuneSimplePageState
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
-  // 각 섹션의 GlobalKey (자동 스크롤용) - 11개로 확장 (생년월일 추가)
-  final List<GlobalKey> _sectionKeys = List.generate(11, (_) => GlobalKey());
+  // 각 섹션의 GlobalKey (자동 스크롤용) - 12개로 확장 (스크린샷 추가)
+  final List<GlobalKey> _sectionKeys = List.generate(12, (_) => GlobalKey());
 
   // 1. 상대방 이름/닉네임
   final TextEditingController _exNameController = TextEditingController();
@@ -65,6 +68,9 @@ class _ExLoverFortuneSimplePageState
 
   // 10. 카톡/대화 내용 (선택)
   final TextEditingController _chatHistoryController = TextEditingController();
+
+  // 11. 카톡 스크린샷 (선택, 최대 3장)
+  List<XFile> _chatScreenshots = [];
 
   @override
   void dispose() {
@@ -102,6 +108,16 @@ class _ExLoverFortuneSimplePageState
         _mainCuriosity != null;
   }
 
+  /// XFile 리스트를 base64 문자열 리스트로 변환
+  Future<List<String>> _convertPhotosToBase64(List<XFile> photos) async {
+    final List<String> base64List = [];
+    for (final photo in photos) {
+      final bytes = await photo.readAsBytes();
+      base64List.add(base64Encode(bytes));
+    }
+    return base64List;
+  }
+
   void _showMessage(String message) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -134,6 +150,13 @@ class _ExLoverFortuneSimplePageState
 
       Logger.info('[ExLoverFortune] Premium 상태: $isPremium');
 
+      // 스크린샷 base64 변환
+      List<String>? screenshotsBase64;
+      if (_chatScreenshots.isNotEmpty) {
+        Logger.info('[ExLoverFortune] 스크린샷 ${_chatScreenshots.length}장 변환 중...');
+        screenshotsBase64 = await _convertPhotosToBase64(_chatScreenshots);
+      }
+
       final conditions = ExLoverFortuneConditions(
         exName: _exNameController.text.isNotEmpty
             ? _exNameController.text
@@ -150,6 +173,7 @@ class _ExLoverFortuneSimplePageState
         chatHistory: _chatHistoryController.text.isNotEmpty
             ? _chatHistoryController.text
             : null,
+        chatScreenshots: screenshotsBase64,
       );
 
       final fortuneService = UnifiedFortuneService(
@@ -653,6 +677,50 @@ class _ExLoverFortuneSimplePageState
                           contentPadding: const EdgeInsets.all(16),
                         ),
                       ),
+                    ],
+                  ),
+                ),
+
+                // 11. 카톡 스크린샷 (선택)
+                _buildSection(
+                  key: _sectionKeys[11],
+                  index: 11,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '카톡 스크린샷이 있다면 (선택)'),
+                      const SizedBox(height: 4),
+                      Text(
+                        '대화 캡처 이미지를 첨부하면 AI가 대화 톤과 감정을 분석해드려요.',
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      MultiPhotoSelector(
+                        maxPhotos: 3,
+                        title: '스크린샷 첨부 (최대 3장)',
+                        initialPhotos: _chatScreenshots,
+                        onPhotosSelected: (photos) {
+                          setState(() => _chatScreenshots = photos);
+                        },
+                      ),
+                      if (_chatScreenshots.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.check_circle,
+                                color: DSColors.success, size: 16),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${_chatScreenshots.length}장 첨부됨',
+                              style: DSTypography.labelSmall.copyWith(
+                                color: DSColors.success,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),

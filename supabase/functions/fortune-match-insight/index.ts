@@ -265,7 +265,6 @@ serve(async (req) => {
 
     // LLM 호출
     const llm = LLMFactory.createFromConfig('fortune-match-insight');
-    const usageLogger = new UsageLogger(supabase, 'fortune-match-insight');
 
     const systemPrompt = getSystemPrompt(sport, league);
     const userPrompt = getUserPrompt(
@@ -278,18 +277,18 @@ serve(async (req) => {
       birthDate
     );
 
-    const startTime = Date.now();
-
-    const response = await llm.chat({
-      messages: [
+    const response = await llm.generate(
+      [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0.7,
-      max_tokens: 2000,
-    });
+      {
+        temperature: 0.7,
+        maxTokens: 2000,
+      }
+    );
 
-    const duration = Date.now() - startTime;
+    console.log(`✅ [MatchInsight] LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`);
 
     // 응답 파싱
     let result: MatchInsightResponse;
@@ -344,12 +343,19 @@ serve(async (req) => {
     );
 
     // 사용량 로깅
-    await usageLogger.log({
+    await UsageLogger.log({
+      fortuneType: 'match-insight',
       userId,
-      inputTokens: response.usage?.input_tokens || 0,
-      outputTokens: response.usage?.output_tokens || 0,
-      model: llm.modelName,
-      duration,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: {
+        sport,
+        league,
+        homeTeam,
+        awayTeam,
+        favoriteTeam,
+      }
     });
 
     // 최종 응답

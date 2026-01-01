@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../domain/entities/fortune.dart';
+import '../../../fortune/domain/models/match_insight.dart';
 import '../../domain/models/chat_message.dart';
 import '../../domain/models/chat_state.dart';
 
@@ -45,6 +46,8 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     bool isBlurred = false,
     List<String> blurredSections = const [],
     Fortune? fortune,
+    DateTime? selectedDate,
+    MatchInsight? matchInsight,
   }) {
     final message = ChatMessage(
       id: _uuid.v4(),
@@ -56,6 +59,8 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       isBlurred: isBlurred,
       blurredSections: blurredSections,
       fortune: fortune,
+      selectedDate: selectedDate,
+      matchInsight: matchInsight,
     );
     state = state.copyWith(
       messages: [...state.messages, message],

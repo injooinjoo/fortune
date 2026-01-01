@@ -4,17 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/widgets/unified_button.dart';
 import '../../widgets/tarot/tarot_question_selector.dart';
 import '../../widgets/tarot/tarot_spread_selector.dart';
 import '../../widgets/tarot/tarot_multi_card_result.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/utils/logger.dart';
-import '../../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../../services/ad_service.dart';
-import '../../../../../core/utils/subscription_snackbar.dart';
-import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
 import 'widgets/widgets.dart';
 
@@ -113,14 +109,7 @@ class _TarotPageState extends ConsumerState<TarotPage>
               switchOutCurve: Curves.easeInOut,
               child: _buildCurrentStateWidget(),
             ),
-            // ✅ FloatingBottomButton - 타로 결과 화면에서 블러 상태일 때만 표시 (구독자 제외)
-            if (_currentState == TarotFlowState.result && _tarotResult != null && _tarotResult!.isBlurred && !ref.watch(isPremiumProvider))
-              UnifiedButton.floating(
-                text: '남은 운세 모두 보기',
-                onPressed: _showAdAndUnblur,
-                isLoading: false,
-                isEnabled: true,
-              ),
+            // 블러 처리만 유지 - 프리미엄 결제 버튼 제거됨
           ],
         ),
       ),
@@ -430,94 +419,6 @@ class _TarotPageState extends ConsumerState<TarotPage>
     } catch (error, stackTrace) {
       Logger.error('[TarotPage] 타로 운세 생성 실패', error, stackTrace);
       return null;
-    }
-  }
-
-  // ✅ 광고 시청 후 블러 해제 메서드
-  Future<void> _showAdAndUnblur() async {
-    if (_tarotResult == null) return;
-
-    Logger.info('[TarotPage] 광고 시청 후 블러 해제 시작');
-
-    try {
-      final adService = AdService();
-
-      // 광고가 준비 안됐으면 로드 (두 번 클릭 방지)
-      if (!adService.isRewardedAdReady) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('광고를 준비하는 중입니다...'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-
-        // 광고 로드 시작
-        await adService.loadRewardedAd();
-
-        // 로딩 완료 대기 (최대 5초)
-        int waitCount = 0;
-        while (!adService.isRewardedAdReady && waitCount < 10) {
-          await Future.delayed(const Duration(milliseconds: 500));
-          waitCount++;
-        }
-
-        // 타임아웃 처리
-        if (!adService.isRewardedAdReady) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고 로드에 실패했습니다. 잠시 후 다시 시도해주세요.'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-          return;
-        }
-      }
-
-      // 2. 광고 표시
-      Logger.info('[TarotPage] 광고 표시 시작');
-      await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) async {
-          Logger.info('[TarotPage] 광고 보상 획득, 블러 해제');
-
-          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
-          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-          // ✅ 게이지 증가 호출
-          if (mounted) {
-            FortuneCompletionHelper.onFortuneViewed(context, ref, 'tarot');
-          }
-
-          // ✅ 블러 해제 - copyWith로 isBlurred를 false로 변경
-          if (mounted) {
-            setState(() {
-              _tarotResult = _tarotResult!.copyWith(
-                isBlurred: false,
-                blurredSections: [],
-              );
-            });
-            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
-            final tokenState = ref.read(tokenProvider);
-            SubscriptionSnackbar.showAfterAd(
-              context,
-              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-            );
-          }
-        },
-      );
-    } catch (e, stackTrace) {
-      Logger.error('[TarotPage] 광고 표시 실패', e, stackTrace);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('광고 표시에 실패했습니다. 다시 시도해주세요.'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
     }
   }
 

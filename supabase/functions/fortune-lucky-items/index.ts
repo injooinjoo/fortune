@@ -251,7 +251,7 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
 **응답 형식** (반드시 JSON):
 \`\`\`json
 {
-  "title": "${name}님의 오늘 행운 아이템",
+  "title": "${name}님의 오늘 ${categoryLabel} 행운",
   "summary": "오행 분석 결과 한 줄 요약",
   "content": "${name}님의 사주를 분석한 결과... (3-4문장의 상세 본문. 오행 균형, 계절 영향, 오늘 특별히 중요한 포인트 설명)",
   "element": "주요 오행 (금/수/목/화/토)",
@@ -399,7 +399,10 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
       advice: normalizeAdvice(fortuneData.advice),
 
       // 기존 필드 유지 (하위 호환성) - 문자열/배열로 정규화
-      title: fortuneData.title || `${name}님의 오늘 행운 아이템`,
+      title: fortuneData.title || `${name}님의 오늘 ${categoryLabel} 행운`,
+      // ✅ 선택된 카테고리 정보 추가 (UI에서 필터링용)
+      selectedCategory: selectedCategory,
+      selectedCategoryLabel: categoryLabel,
       lucky_summary: fortuneData.summary || '',
       keyword: fortuneData.keyword || '',
       color: normalizeColor(fortuneData.color),

@@ -4,6 +4,7 @@ import '../../domain/models/chat_message.dart';
 import 'chat_career_result_card.dart';
 import 'chat_celebrity_result_card.dart';
 import 'chat_fortune_result_card.dart';
+import 'chat_tarot_result_card.dart';
 import 'chat_match_insight_card.dart';
 import 'chat_ootd_result_card.dart';
 import 'chat_saju_result_card.dart';
@@ -116,6 +117,33 @@ class ChatMessageBubble extends StatelessWidget {
       );
     }
 
+    // 타로 결과 카드 표시
+    if (message.fortune != null &&
+        message.type == ChatMessageType.fortuneResult &&
+        message.fortuneType == 'tarot') {
+      // Fortune의 additionalInfo에서 타로 데이터 추출
+      final additionalInfo = message.fortune!.additionalInfo ?? {};
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatTarotResultCard(
+          data: {
+            'question': additionalInfo['question'] ?? message.fortune!.content,
+            'spreadType': additionalInfo['spreadType'] ?? 'single',
+            'spreadDisplayName': additionalInfo['spreadDisplayName'] ?? '타로 리딩',
+            'cards': additionalInfo['cards'] ?? [],
+            'overallReading': additionalInfo['overallReading'] ?? message.fortune!.content ?? '',
+            'advice': additionalInfo['advice'] ?? '',
+            'energyLevel': additionalInfo['energyLevel'] ?? message.fortune!.overallScore ?? 75,
+            'isBlurred': message.isBlurred,
+            'blurredSections': message.blurredSections,
+          },
+          question: additionalInfo['question'] as String?,
+        ),
+      );
+    }
+
     // 운세 결과 카드 표시 (Fortune 객체가 있는 경우)
     // 전체 너비 사용, 중앙 정렬 (자석효과 제거)
     if (message.fortune != null && message.type == ChatMessageType.fortuneResult) {
@@ -128,6 +156,7 @@ class ChatMessageBubble extends StatelessWidget {
           fortuneType: message.fortuneType ?? 'default',
           typeName: message.text ?? '운세 결과',
           isBlurred: message.isBlurred,
+          selectedDate: message.selectedDate,
         ),
       );
     }

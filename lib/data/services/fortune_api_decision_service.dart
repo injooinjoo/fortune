@@ -281,11 +281,13 @@ class FortuneApiDecisionService {
   /// Fortune 엔티티로 변환
   Fortune _convertToFortune(Map<String, dynamic> data) {
     return Fortune(
-      id: data['id'] as String,
-      userId: data['user_id'] as String,
-      type: data['fortune_type'] as String,
-      content: data['content'] as String,
-      createdAt: DateTime.parse(data['created_at'] as String),
+      id: data['id']?.toString() ?? '',
+      userId: data['user_id']?.toString() ?? '',
+      type: data['fortune_type']?.toString() ?? '',
+      content: data['content']?.toString() ?? '',
+      createdAt: data['created_at'] != null
+          ? DateTime.parse(data['created_at'] as String)
+          : DateTime.now(),
       description: data['description'] as String?,
       overallScore: data['overall_score'] as int?,
       recommendations: (data['recommendations'] as List?)?.cast<String>(),

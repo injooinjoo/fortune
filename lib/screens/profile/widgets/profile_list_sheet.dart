@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/theme/typography_unified.dart';
-import '../../../core/theme/app_theme/fortune_theme_extension.dart';
+import '../../../core/design_system/design_system.dart';
 import '../../../presentation/providers/active_profile_provider.dart';
 import '../../../presentation/providers/auth_provider.dart';
 import '../../../presentation/providers/secondary_profiles_provider.dart';
@@ -17,7 +16,7 @@ class ProfileListSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final fortuneTheme = context.fortuneTheme;
+    final colors = context.colors;
     final activeState = ref.watch(activeProfileProvider);
     final primaryProfileAsync = ref.watch(userProfileProvider);
     final secondaryProfiles = ref.watch(secondaryProfilesProvider);
@@ -25,7 +24,7 @@ class ProfileListSheet extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: fortuneTheme.cardBackground,
+        color: colors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(
@@ -38,7 +37,7 @@ class ProfileListSheet extends ConsumerWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: fortuneTheme.dividerColor,
+                color: colors.divider,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -49,7 +48,7 @@ class ProfileListSheet extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('프로필 선택', style: context.heading2),
+                  Text('프로필 선택', style: context.typography.headingLarge),
                   if (canAdd)
                     TextButton.icon(
                       onPressed: () => _showAddProfile(context),
@@ -59,8 +58,8 @@ class ProfileListSheet extends ConsumerWidget {
                   else
                     Text(
                       '최대 5개',
-                      style: context.bodySmall.copyWith(
-                        color: fortuneTheme.secondaryText,
+                      style: context.typography.bodySmall.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                 ],
@@ -81,7 +80,7 @@ class ProfileListSheet extends ConsumerWidget {
             ),
 
             // 구분선
-            Divider(color: fortuneTheme.dividerColor, height: 1),
+            Divider(color: colors.divider, height: 1),
 
             // 서브 프로필 목록
             secondaryProfiles.when(
@@ -94,13 +93,13 @@ class ProfileListSheet extends ConsumerWidget {
                         Icon(
                           Icons.person_add_outlined,
                           size: 48,
-                          color: fortuneTheme.secondaryText.withValues(alpha: 0.5),
+                          color: colors.textSecondary.withValues(alpha: 0.5),
                         ),
                         const SizedBox(height: 12),
                         Text(
                           '등록된 프로필이 없습니다',
-                          style: context.bodyMedium.copyWith(
-                            color: fortuneTheme.secondaryText,
+                          style: context.typography.bodyMedium.copyWith(
+                            color: colors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -144,8 +143,8 @@ class ProfileListSheet extends ConsumerWidget {
                 padding: const EdgeInsets.all(20),
                 child: Text(
                   '프로필을 불러오지 못했습니다',
-                  style: context.bodyMedium.copyWith(
-                    color: fortuneTheme.errorColor,
+                  style: context.typography.bodyMedium.copyWith(
+                    color: colors.error,
                   ),
                 ),
               ),
@@ -170,11 +169,11 @@ class ProfileListSheet extends ConsumerWidget {
 
   void _showProfileOptions(
       BuildContext context, WidgetRef ref, String profileId) {
-    final fortuneTheme = context.fortuneTheme;
+    final colors = context.colors;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: fortuneTheme.cardBackground,
+      backgroundColor: colors.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -187,7 +186,7 @@ class ProfileListSheet extends ConsumerWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: fortuneTheme.dividerColor,
+                color: colors.divider,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -195,12 +194,12 @@ class ProfileListSheet extends ConsumerWidget {
             ListTile(
               leading: Icon(
                 Icons.edit_outlined,
-                color: fortuneTheme.primaryText,
+                color: colors.textPrimary,
               ),
               title: Text(
                 '수정',
-                style: context.bodyLarge.copyWith(
-                  color: fortuneTheme.primaryText,
+                style: context.typography.bodyLarge.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
               onTap: () {
@@ -211,12 +210,12 @@ class ProfileListSheet extends ConsumerWidget {
             ListTile(
               leading: Icon(
                 Icons.delete_outline,
-                color: fortuneTheme.errorColor,
+                color: colors.error,
               ),
               title: Text(
                 '삭제',
-                style: context.bodyLarge.copyWith(
-                  color: fortuneTheme.errorColor,
+                style: context.typography.bodyLarge.copyWith(
+                  color: colors.error,
                 ),
               ),
               onTap: () async {
@@ -242,28 +241,28 @@ class ProfileListSheet extends ConsumerWidget {
   }
 
   Future<bool?> _showDeleteConfirmation(BuildContext context) {
-    final fortuneTheme = context.fortuneTheme;
+    final colors = context.colors;
 
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: fortuneTheme.cardBackground,
+        backgroundColor: colors.background,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           '프로필 삭제',
-          style: context.heading3.copyWith(color: fortuneTheme.primaryText),
+          style: context.typography.headingMedium.copyWith(color: colors.textPrimary),
         ),
         content: Text(
           '이 프로필을 삭제하시겠습니까?\n삭제된 프로필은 복구할 수 없습니다.',
-          style: context.bodyMedium.copyWith(color: fortuneTheme.secondaryText),
+          style: context.typography.bodyMedium.copyWith(color: colors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               '취소',
-              style: context.buttonMedium.copyWith(
-                color: fortuneTheme.secondaryText,
+              style: context.typography.buttonMedium.copyWith(
+                color: colors.textSecondary,
               ),
             ),
           ),
@@ -271,8 +270,8 @@ class ProfileListSheet extends ConsumerWidget {
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               '삭제',
-              style: context.buttonMedium.copyWith(
-                color: fortuneTheme.errorColor,
+              style: context.typography.buttonMedium.copyWith(
+                color: colors.error,
               ),
             ),
           ),
@@ -302,8 +301,7 @@ class _ProfileListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fortuneTheme = context.fortuneTheme;
-    final primaryColor = Theme.of(context).colorScheme.primary;
+    final colors = context.colors;
 
     return ListTile(
       leading: Container(
@@ -311,32 +309,32 @@ class _ProfileListTile extends StatelessWidget {
         height: 44,
         decoration: BoxDecoration(
           color: isSelected
-              ? primaryColor
-              : primaryColor.withValues(alpha: 0.1),
+              ? colors.accentSecondary
+              : colors.accentSecondary.withValues(alpha: 0.15),
           shape: BoxShape.circle,
         ),
         child: Center(
           child: Text(
             initial,
-            style: context.heading4.copyWith(
-              color: isSelected ? Colors.white : primaryColor,
+            style: context.typography.headingSmall.copyWith(
+              color: isSelected ? Colors.white : colors.accentSecondary,
             ),
           ),
         ),
       ),
       title: Text(
         name,
-        style: context.bodyLarge.copyWith(
-          color: fortuneTheme.primaryText,
+        style: context.typography.bodyLarge.copyWith(
+          color: colors.textPrimary,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: context.bodySmall.copyWith(color: fortuneTheme.secondaryText),
+        style: context.typography.bodySmall.copyWith(color: colors.textSecondary),
       ),
       trailing: isSelected
-          ? Icon(Icons.check_circle, color: primaryColor)
+          ? Icon(Icons.check_circle, color: colors.accentSecondary)
           : null,
       onTap: onTap,
       onLongPress: onLongPress,

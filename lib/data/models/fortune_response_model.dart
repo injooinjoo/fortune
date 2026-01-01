@@ -617,6 +617,184 @@ class FortuneData {
       }
     }
 
+    // Biorhythm fortune: map biorhythm-specific fields to metadata
+    if (json['fortuneType'] == 'biorhythm' || json['type'] == 'biorhythm' ||
+        json['fortune_type'] == 'biorhythm') {
+      score ??= json['overall_score'] as int?;
+
+      // Handle summary as Map or String
+      if (json['summary'] is Map) {
+        final summaryMap = json['summary'] as Map<String, dynamic>;
+        summary ??= summaryMap['status_message'] as String? ??
+                    summaryMap['greeting'] as String?;
+        score ??= summaryMap['overall_score'] as int?;
+      } else {
+        summary ??= json['summary'] as String?;
+      }
+
+      summary ??= json['status_message'] as String?;
+
+      // Extract biorhythm data
+      final physical = json['physical'] as Map<String, dynamic>?;
+      final emotional = json['emotional'] as Map<String, dynamic>?;
+      final intellectual = json['intellectual'] as Map<String, dynamic>?;
+
+      // Store all biorhythm data in metadata for UI access
+      metadata = {
+        ...?metadata,
+        if (physical != null) 'physical': physical,
+        if (emotional != null) 'emotional': emotional,
+        if (intellectual != null) 'intellectual': intellectual,
+        if (json['today_recommendation'] != null) 'today_recommendation': json['today_recommendation'],
+        if (json['weekly_forecast'] != null) 'weekly_forecast': json['weekly_forecast'],
+        if (json['important_dates'] != null) 'important_dates': json['important_dates'],
+        if (json['weekly_activities'] != null) 'weekly_activities': json['weekly_activities'],
+        if (json['personal_analysis'] != null) 'personal_analysis': json['personal_analysis'],
+        if (json['lifestyle_advice'] != null) 'lifestyle_advice': json['lifestyle_advice'],
+        if (json['health_tips'] != null) 'health_tips': json['health_tips'],
+        if (json['greeting'] != null) 'greeting': json['greeting'],
+        'fortuneType': 'biorhythm',
+      };
+
+      // Build content from biorhythm sections
+      final contentParts = <String>[];
+      if (summary != null) contentParts.add(summary);
+
+      // Add biorhythm summary
+      if (physical != null) {
+        contentParts.add('\n\n💪 신체 리듬: ${physical['phase'] ?? ''} (${physical['score']}점)');
+        if (physical['status'] != null) contentParts.add('\n${physical['status']}');
+      }
+      if (emotional != null) {
+        contentParts.add('\n\n💖 감정 리듬: ${emotional['phase'] ?? ''} (${emotional['score']}점)');
+        if (emotional['status'] != null) contentParts.add('\n${emotional['status']}');
+      }
+      if (intellectual != null) {
+        contentParts.add('\n\n🧠 지성 리듬: ${intellectual['phase'] ?? ''} (${intellectual['score']}점)');
+        if (intellectual['status'] != null) contentParts.add('\n${intellectual['status']}');
+      }
+
+      // Add advice from each rhythm
+      if (physical?['advice'] != null || emotional?['advice'] != null || intellectual?['advice'] != null) {
+        contentParts.add('\n\n💡 오늘의 조언');
+        if (physical?['advice'] != null) contentParts.add('\n• 신체: ${physical!['advice']}');
+        if (emotional?['advice'] != null) contentParts.add('\n• 감정: ${emotional!['advice']}');
+        if (intellectual?['advice'] != null) contentParts.add('\n• 지성: ${intellectual!['advice']}');
+      }
+
+      if (contentParts.isNotEmpty) {
+        content = contentParts.join('');
+      }
+
+      // Set advice from today_recommendation or lifestyle_advice
+      advice ??= json['today_recommendation'] as String? ??
+                 json['lifestyle_advice'] as String?;
+    }
+
+    // Wealth fortune: map wealth-specific fields to metadata
+    if (json['fortuneType'] == 'wealth' || json['type'] == 'wealth' ||
+        json['fortune_type'] == 'wealth') {
+      score ??= json['overallScore'] as int? ?? json['score'] as int?;
+      summary ??= json['content'] as String?;
+
+      // Store all wealth data in metadata for ChatFortuneResultCard access
+      metadata = {
+        ...?metadata,
+        if (json['wealthPotential'] != null) 'wealthPotential': json['wealthPotential'],
+        if (json['elementAnalysis'] != null) 'elementAnalysis': json['elementAnalysis'],
+        if (json['goalAdvice'] != null) 'goalAdvice': json['goalAdvice'],
+        if (json['cashflowInsight'] != null) 'cashflowInsight': json['cashflowInsight'],
+        if (json['concernResolution'] != null) 'concernResolution': json['concernResolution'],
+        if (json['investmentInsights'] != null) 'investmentInsights': json['investmentInsights'],
+        if (json['luckyElements'] != null) 'luckyElements': json['luckyElements'],
+        if (json['monthlyFlow'] != null) 'monthlyFlow': json['monthlyFlow'],
+        if (json['actionItems'] != null) 'actionItems': json['actionItems'],
+        if (json['surveyData'] != null) 'surveyData': json['surveyData'],
+        if (json['disclaimer'] != null) 'disclaimer': json['disclaimer'],
+        'fortuneType': 'wealth',
+      };
+
+      // Build comprehensive content from wealth sections
+      final contentParts = <String>[];
+      if (json['content'] != null) contentParts.add(json['content'] as String);
+
+      // Goal advice preview
+      final goalAdvice = json['goalAdvice'] as Map<String, dynamic>?;
+      if (goalAdvice != null) {
+        contentParts.add('\n\n🎯 ${goalAdvice['primaryGoal'] ?? '목표'} 달성 전략');
+        if (goalAdvice['strategy'] != null) contentParts.add('\n${goalAdvice['strategy']}');
+        if (goalAdvice['luckyTiming'] != null) contentParts.add('\n⏰ 유리한 시기: ${goalAdvice['luckyTiming']}');
+        if (goalAdvice['sajuAnalysis'] != null) contentParts.add('\n🔮 ${goalAdvice['sajuAnalysis']}');
+      }
+
+      // Concern resolution preview
+      final concernResolution = json['concernResolution'] as Map<String, dynamic>?;
+      if (concernResolution != null) {
+        contentParts.add('\n\n⚠️ ${concernResolution['primaryConcern'] ?? '고민'} 해결책');
+        if (concernResolution['analysis'] != null) contentParts.add('\n${concernResolution['analysis']}');
+        if (concernResolution['solution'] != null) {
+          final solutions = concernResolution['solution'];
+          if (solutions is List) {
+            contentParts.add('\n해결 방안:');
+            for (final sol in solutions) {
+              contentParts.add('\n• $sol');
+            }
+          } else if (solutions is String) {
+            contentParts.add('\n해결 방안: $solutions');
+          }
+        }
+      }
+
+      // Investment insights preview
+      final investmentInsights = json['investmentInsights'] as Map<String, dynamic>?;
+      final surveyData = json['surveyData'] as Map<String, dynamic>?;
+      final interests = surveyData?['interests'] as List? ?? [];
+
+      if (investmentInsights != null && interests.isNotEmpty) {
+        contentParts.add('\n\n💹 관심 분야 분석');
+
+        // Interest labels mapping
+        const interestLabels = {
+          'realestate': '🏠 부동산',
+          'side': '💼 부업/N잡',
+          'stock': '📈 주식',
+          'crypto': '🪙 코인',
+          'saving': '💰 저축/예금',
+          'business': '🏢 사업',
+        };
+
+        for (final interest in interests) {
+          final insight = investmentInsights[interest] as Map<String, dynamic>?;
+          if (insight != null) {
+            final label = interestLabels[interest] ?? interest;
+            final insightScore = insight['score'];
+            contentParts.add('\n\n$label ${insightScore != null ? "($insightScore점)" : ""}');
+            if (insight['analysis'] != null) contentParts.add('\n${insight['analysis']}');
+            if (insight['timing'] != null) contentParts.add('\n⏰ ${insight['timing']}');
+            if (insight['caution'] != null) contentParts.add('\n⚠️ ${insight['caution']}');
+          }
+        }
+      }
+
+      // Action items preview
+      final actionItems = json['actionItems'] as List?;
+      if (actionItems != null && actionItems.isNotEmpty) {
+        contentParts.add('\n\n📋 실천 항목');
+        for (final item in actionItems) {
+          contentParts.add('\n$item');
+        }
+      }
+
+      if (contentParts.isNotEmpty) {
+        content = contentParts.join('');
+      }
+
+      // Set advice from actionItems
+      if (actionItems != null && actionItems.isNotEmpty) {
+        advice ??= actionItems.first.toString();
+      }
+    }
+
     return FortuneData(
       id: json['id'],
       userId: json['userId'],

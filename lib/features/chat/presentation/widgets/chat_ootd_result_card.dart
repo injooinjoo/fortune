@@ -524,11 +524,11 @@ class ChatOotdResultCard extends StatelessWidget {
           ),
           const SizedBox(height: DSSpacing.xs),
           SizedBox(
-            height: 80,
+            height: 100, // 80 → 100: 오버플로우 수정
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: items.length,
-              separatorBuilder: (_, __) => const SizedBox(width: DSSpacing.xs),
+              separatorBuilder: (_, __) => const SizedBox(width: DSSpacing.sm),
               itemBuilder: (context, index) {
                 final item = items[index] as Map<String, dynamic>;
                 return _buildRecommendedItemChip(context, item);
@@ -551,21 +551,43 @@ class ChatOotdResultCard extends StatelessWidget {
     final reason = item['reason'] as String? ?? '';
 
     return Container(
-      width: 140,
+      width: 150, // 140 → 150: 더 넓게
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: colors.surface,
+        gradient: LinearGradient(
+          colors: [
+            colors.surface,
+            colors.surface.withValues(alpha: 0.8),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
+          color: const Color(0xFF10B981).withValues(alpha: 0.2),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: colors.textPrimary.withValues(alpha: 0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // 오버플로우 방지
         children: [
           Row(
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 18)),
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                ),
+                child: Text(emoji, style: const TextStyle(fontSize: 16)),
+              ),
               const SizedBox(width: DSSpacing.xs),
               Expanded(
                 child: Text(
@@ -580,14 +602,17 @@ class ChatOotdResultCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            reason,
-            style: context.labelSmall.copyWith(
-              color: colors.textSecondary,
+          const SizedBox(height: 6),
+          Flexible(
+            child: Text(
+              reason,
+              style: context.labelSmall.copyWith(
+                color: colors.textSecondary,
+                height: 1.3,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

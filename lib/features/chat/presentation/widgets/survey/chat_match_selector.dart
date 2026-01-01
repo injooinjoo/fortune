@@ -61,6 +61,41 @@ extension SportsRegionExtension on SportsRegion {
         ];
     }
   }
+
+  /// 특정 종목에 해당하는 리그만 반환
+  List<LeagueInfo> leaguesForSport(SportType? sportType) {
+    if (sportType == null) return leagues;
+    return leagues.where((l) => l.sportType == sportType).toList();
+  }
+
+  /// 특정 종목의 리그가 있는지 확인
+  bool hasLeaguesForSport(SportType? sportType) {
+    if (sportType == null) return true;
+    return leagues.any((l) => l.sportType == sportType);
+  }
+}
+
+/// String을 SportType으로 변환
+SportType? sportTypeFromString(String? sportId) {
+  if (sportId == null) return null;
+  switch (sportId) {
+    case 'baseball':
+      return SportType.baseball;
+    case 'soccer':
+      return SportType.soccer;
+    case 'basketball':
+      return SportType.basketball;
+    case 'volleyball':
+      return SportType.volleyball;
+    case 'esports':
+      return SportType.esports;
+    case 'american_football':
+      return SportType.americanFootball;
+    case 'fighting':
+      return SportType.fighting;
+    default:
+      return null;
+  }
 }
 
 /// 리그 정보
@@ -99,6 +134,21 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
   SportsRegion? _selectedRegion;
   LeagueInfo? _selectedLeague;
   SportsGame? _selectedGame;
+
+  /// 선택된 종목 (String → SportType)
+  SportType? get _selectedSportType => sportTypeFromString(widget.selectedSport);
+
+  /// 필터링된 지역 목록 (선택된 종목의 리그가 있는 지역만)
+  List<SportsRegion> get _filteredRegions {
+    return SportsRegion.values
+        .where((r) => r.hasLeaguesForSport(_selectedSportType))
+        .toList();
+  }
+
+  /// 필터링된 리그 목록 (선택된 종목의 리그만)
+  List<LeagueInfo> get _filteredLeagues {
+    return _selectedRegion?.leaguesForSport(_selectedSportType) ?? [];
+  }
 
   // 현재 단계 (1: 지역, 2: 리그, 3: 경기)
   int get _currentStep {
@@ -253,9 +303,9 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
         const SizedBox(height: DSSpacing.md),
         Expanded(
           child: ListView.builder(
-            itemCount: SportsRegion.values.length,
+            itemCount: _filteredRegions.length,
             itemBuilder: (context, index) {
-              final region = SportsRegion.values[index];
+              final region = _filteredRegions[index];
               return _buildRegionCard(region, colors, typography);
             },
           ),
@@ -269,7 +319,9 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
     DSColorScheme colors,
     DSTypographyScheme typography,
   ) {
-    final leagueNames = region.leagues.map((l) => l.id).join(', ');
+    // 선택된 종목에 해당하는 리그만 표시
+    final filteredLeaguesForRegion = region.leaguesForSport(_selectedSportType);
+    final leagueNames = filteredLeaguesForRegion.map((l) => l.id).join(', ');
 
     return GestureDetector(
       onTap: () {
@@ -330,7 +382,8 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
   /// Step 2: 리그 선택
   Widget _buildLeagueSelection(
       DSColorScheme colors, DSTypographyScheme typography) {
-    final leagues = _selectedRegion?.leagues ?? [];
+    // 선택된 종목에 해당하는 리그만 표시
+    final leagues = _filteredLeagues;
 
     return Column(
       key: const ValueKey('league'),
