@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/utils/hanja_utils.dart';
 import 'info_item.dart';
 
 /// 여행/장소 컨텐츠 - API 데이터 + 나침반 시각화
@@ -51,8 +52,9 @@ class TravelContent extends StatelessWidget {
 
     // 방향 데이터
     final direction = directionCompass ?? directionDetail?['direction'] ?? '동남';
-    final directionReason =
-        directionDetail?['reason'] ?? '木 기운이 강한 방향으로 행운의 기운이 모입니다';
+    final rawReason =
+        directionDetail?['reason'] ?? '목(木) 기운이 강한 방향으로 행운의 기운이 모입니다';
+    final directionReason = HanjaUtils.formatElementInText(rawReason);
     final hanja = _getDirectionHanja(direction);
     final angle = _getDirectionAngle(direction);
 
@@ -188,7 +190,8 @@ class TravelContent extends StatelessWidget {
     if (place is Map<String, dynamic>) {
       final placeName = place['place'] ?? '추천 장소';
       final category = place['category'] ?? '';
-      final reason = place['reason'] ?? '';
+      final rawReason = place['reason'] ?? '';
+      final reason = HanjaUtils.formatElementInText(rawReason);
       final timing = place['timing'] ?? '';
 
       return Container(

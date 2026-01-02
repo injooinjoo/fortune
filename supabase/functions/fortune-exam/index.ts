@@ -139,62 +139,67 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
 
 {
   "score": 78,
-  "passMessage": "현재 기운이 학업과 잘 맞아 합격 가능성이 높습니다. (80자 이내)",
+  "passMessage": "현재 기운이 학업과 잘 맞아 합격 가능성이 높습니다",
   "passGrade": "A",
 
   "luckyInfo": {
     "luckyTime": "오전 10시-11시",
     "unluckyTime": "오후 3시-4시",
     "luckyColor": "파란색",
-    "luckyColorReason": "집중력과 안정감을 높여줍니다 (30자 이내)",
+    "luckyColorReason": "집중력과 안정감을 높여줍니다",
     "luckyItem": "파란색 볼펜",
-    "luckyItemReason": "마음을 차분하게 해주는 아이템 (30자 이내)",
+    "luckyItemReason": "마음을 차분하게 해주는 아이템",
     "luckyFood": "바나나와 견과류",
-    "luckyFoodReason": "두뇌 활성화와 집중력에 좋습니다 (30자 이내)",
+    "luckyFoodReason": "두뇌 활성화와 집중력에 좋습니다",
     "luckyDirection": "동쪽",
-    "luckyDirectionTip": "시험장에 동쪽 문으로 입장하면 좋은 기운 (30자 이내)"
+    "luckyDirectionTip": "시험장에 동쪽 문으로 입장하면 좋은 기운"
   },
 
   "ddayAdvice": [
-    "${ddayLabel} 맞춤 조언 1 (50자 이내)",
-    "구체적인 실천 방법 2 (50자 이내)",
-    "마음가짐 조언 3 (50자 이내)"
+    "${ddayLabel} 맞춤 핵심 조언",
+    "구체적인 실천 방법",
+    "마음가짐 조언"
   ],
 
   "studyTips": {
-    "todayTip": "오늘의 학습 전략 (50자 이내)",
-    "focusMethod": "집중력 향상 방법 (50자 이내)",
+    "todayTip": "오늘의 학습 전략",
+    "focusMethod": "집중력 향상 방법",
     "bestStudyTime": "오전 9시-12시",
-    "memoryTip": "암기력 향상 팁 (50자 이내)"
+    "memoryTip": "암기력 향상 팁"
   },
 
   "warnings": [
-    "주의사항 1 (30자 이내)",
-    "주의사항 2 (30자 이내)"
+    "첫 번째 주의사항",
+    "두 번째 주의사항"
   ],
 
   "mentalCare": {
-    "anxietyTip": "불안 해소 방법 (50자 이내)",
-    "affirmation": "나는 충분히 준비했다. 내 실력을 믿는다! (50자 이내)",
-    "confidenceTip": "자신감 키우는 방법 (50자 이내)"
+    "anxietyTip": "불안 해소 방법",
+    "affirmation": "나는 충분히 준비했다. 내 실력을 믿는다!",
+    "confidenceTip": "자신감 키우는 방법"
   },
 
   "sajuAnalysis": {
-    "elementStrength": "현재 기운 분석 (50자 이내)",
-    "studyElement": "학업에 유리한 기운 (50자 이내)",
-    "examDayEnergy": "시험일 에너지 분석 (50자 이내)"
+    "elementStrength": "현재 기운 분석",
+    "studyElement": "학업에 유리한 기운",
+    "examDayEnergy": "시험일 에너지 분석"
   },
 
-  "summary": "합격 운이 강한 시기입니다! (30자 이내)",
-  "detailedMessage": "상세한 종합 메시지 (100자 이내)"
+  "summary": "합격 운이 강한 시기입니다!",
+  "detailedMessage": "상세한 종합 메시지"
 }
 
-규칙:
+⚠️ 중요 규칙:
 1. 모든 텍스트는 한국어로 작성
-2. 괄호 안의 글자 수 제한 엄수
-3. 구체적이고 실용적인 조언 제공
-4. ${preparationLabel} 상태를 고려하여 조언 톤 조절
-5. ${ddayLabel}에 맞는 시기적절한 조언`
+2. 절대로 "(xx자 이내)" 같은 글자수 지시문을 출력에 포함하지 마세요
+3. 각 필드별 글자수 제한:
+   - passMessage, summary: 30자 이내
+   - luckyColorReason, luckyItemReason, luckyFoodReason, luckyDirectionTip, warnings: 30자 이내
+   - ddayAdvice, studyTips, mentalCare, sajuAnalysis 각 항목: 50자 이내
+   - detailedMessage: 100자 이내
+4. 구체적이고 실용적인 조언 제공
+5. ${preparationLabel} 상태를 고려하여 조언 톤 조절
+6. ${ddayLabel}에 맞는 시기적절한 조언`
 
       const llm = await LLMFactory.createFromConfigAsync('exam')
 

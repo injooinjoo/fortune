@@ -6,6 +6,7 @@ import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/theme/fortune_theme.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../core/providers/user_settings_provider.dart';
@@ -53,9 +54,10 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     final userSettings = ref.watch(userSettingsProvider);
     final fontScale = userSettings.fontScale;
     final historyState = ref.watch(fortuneHistoryProvider);
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: TossTheme.backgroundWhite,
+      backgroundColor: colors.background,
       appBar: AppHeader(
         title: '운세 기록',
         showBackButton: true,
@@ -63,7 +65,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
         onBackPressed: () => Navigator.of(context).pop(),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list, color: TossTheme.textGray600),
+            icon: Icon(Icons.filter_list, color: colors.textSecondary),
             onPressed: _showFilterOptions,
           ),
         ],
@@ -110,15 +112,16 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                         children: [
                           Text(
                             '이번 달 요약',
-                            style: TossTheme.heading2.copyWith(
+                            style: context.heading2.copyWith(
                               fontWeight: FontWeight.w700,
+                              color: colors.textPrimary,
                             ),
                           ),
                           const Spacer(),
                           Text(
                             DateFormat('yyyy년 MM월').format(DateTime.now()),
-                            style: TossTheme.caption.copyWith(
-                              color: TossTheme.textGray600,
+                            style: context.bodySmall.copyWith(
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -131,15 +134,15 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                               children: [
                                 Text(
                                   '${statistics.monthlyCount}',
-                                  style: TossTheme.heading1.copyWith(
-                                    color: TossTheme.primaryBlue,
+                                  style: context.heading1.copyWith(
+                                    color: colors.accent,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
                                 Text(
                                   '운세 조회',
-                                  style: TossTheme.caption.copyWith(
-                                    color: TossTheme.textGray600,
+                                  style: context.labelLarge.copyWith(
+                                    color: colors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -150,15 +153,15 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                               children: [
                                 Text(
                                   statistics.averageScore.toStringAsFixed(1),
-                                  style: TossTheme.heading1.copyWith(
-                                    color: TossTheme.primaryBlue,
+                                  style: context.heading1.copyWith(
+                                    color: colors.accent,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
                                 Text(
                                   '평균 점수',
-                                  style: TossTheme.caption.copyWith(
-                                    color: TossTheme.textGray600,
+                                  style: context.labelLarge.copyWith(
+                                    color: colors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -169,15 +172,15 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                               children: [
                                 Text(
                                   statistics.mostFrequentCategory,
-                                  style: TossTheme.heading2.copyWith(
-                                    color: TossTheme.primaryBlue,
+                                  style: context.heading2.copyWith(
+                                    color: colors.accent,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
                                 Text(
                                   '자주 본 운세',
-                                  style: TossTheme.caption.copyWith(
-                                    color: TossTheme.textGray600,
+                                  style: context.labelLarge.copyWith(
+                                    color: colors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -254,6 +257,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
   }
 
   Widget _buildEmptyState(double fontScale) {
+    final colors = context.colors;
     return Center(
       child: Container(
         margin: const EdgeInsets.all(TossTheme.spacingXL),
@@ -269,16 +273,17 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               const SizedBox(height: TossTheme.spacingL),
               Text(
                 '아직 운세 기록이 없어요',
-                style: TossTheme.heading2.copyWith(
+                style: context.heading2.copyWith(
                   fontWeight: FontWeight.w700,
+                  color: colors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: TossTheme.spacingS),
               Text(
                 '운세를 보고 나면 여기에 기록됩니다',
-                style: TossTheme.body2.copyWith(
-                  color: TossTheme.textGray600,
+                style: context.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -173,41 +173,12 @@ class WidgetDataService {
     }).toList();
   }
 
-  /// 로또 번호 가져오기
+  /// 로또 번호 생성
+  /// NOTE: fortune-investment는 특정 ticker(주식) 분석용이므로 로또 번호 생성에 적합하지 않음
+  /// 날짜 기반 행운 번호 생성기 사용
   static Future<List<int>> _fetchLottoNumbers(String userId) async {
-    try {
-      final supabase = Supabase.instance.client;
-
-      final response = await supabase.functions.invoke(
-        'fortune-investment',
-        body: {'userId': userId},
-      );
-
-      if (response.status != 200) {
-        Logger.warning('[WidgetDataService] fortune-investment 호출 실패');
-        return _generateDefaultLottoNumbers();
-      }
-
-      final data = response.data as Map<String, dynamic>;
-      final luckyNumbers = data['luckyNumbers'] as List<dynamic>?;
-
-      if (luckyNumbers != null && luckyNumbers.isNotEmpty) {
-        return luckyNumbers.take(5).map((n) => n as int).toList();
-      }
-
-      // additionalInfo에서 로또 번호 찾기
-      final additionalInfo = data['additionalInfo'] as Map<String, dynamic>?;
-      final numbers = additionalInfo?['lottoNumbers'] as List<dynamic>?;
-
-      if (numbers != null && numbers.isNotEmpty) {
-        return numbers.take(5).map((n) => n as int).toList();
-      }
-
-      return _generateDefaultLottoNumbers();
-    } catch (e) {
-      Logger.error('[WidgetDataService] _fetchLottoNumbers 오류: $e');
-      return _generateDefaultLottoNumbers();
-    }
+    // 날짜 기반으로 일관된 행운 번호 생성
+    return _generateDefaultLottoNumbers();
   }
 
   /// 기본 로또 번호 생성 (fallback)

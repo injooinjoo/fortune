@@ -271,7 +271,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           final eventSummary =
               events.isEmpty ? '' : ' (${events.length}개 일정 포함)';
 
-          // 날짜와 이벤트를 함께 저장 (단일 날짜)
+          // 날짜와 이벤트를 함께 저장 (단일 날짜만)
           _handleSurveyAnswerValue(
             {
               'date': date.toIso8601String(),
@@ -289,53 +289,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             '$displayText$eventSummary',
           );
         },
-        // 다중 날짜 선택 지원
-        allowMultipleDates: true,
-        maxSelectableDates: 7,
-        onMultipleDatesConfirmed: (dates, eventsMap) {
-          Navigator.of(context).pop(); // 바텀시트 닫기
-
-          // 다중 날짜 + 날짜별 이벤트 저장
-          final datesList = dates.map((d) => d.toIso8601String()).toList();
-          final eventsPerDate = <String, List<Map<String, dynamic>>>{};
-          int totalEvents = 0;
-
-          for (final entry in eventsMap.entries) {
-            final dateStr = entry.key.toIso8601String();
-            eventsPerDate[dateStr] = entry.value
-                .map((e) => {
-                      'title': e.title,
-                      'description': e.description,
-                      'start_time': e.startTime?.toIso8601String(),
-                      'end_time': e.endTime?.toIso8601String(),
-                      'location': e.location,
-                      'is_all_day': e.isAllDay,
-                    })
-                .toList();
-            totalEvents += entry.value.length;
-          }
-
-          // 표시 텍스트 생성
-          String displayText;
-          if (dates.length == 1) {
-            displayText = DateFormat('yyyy년 M월 d일').format(dates.first);
-          } else {
-            final first = DateFormat('M/d').format(dates.first);
-            final last = DateFormat('M/d').format(dates.last);
-            displayText = '$first ~ $last (${dates.length}일)';
-          }
-          final eventSummary =
-              totalEvents > 0 ? ' ($totalEvents개 일정 포함)' : '';
-
-          _handleSurveyAnswerValue(
-            {
-              'dates': datesList, // 다중 날짜
-              'eventsPerDate': eventsPerDate, // 날짜별 이벤트
-              'isMultipleDates': true,
-            },
-            '$displayText$eventSummary',
-          );
-        },
+        // 단일 날짜 선택만 허용
+        allowMultipleDates: false,
         showQuickOptions: true,
         showEventsAfterSelection: showEvents,
         isCalendarSynced: showEvents,
@@ -1210,6 +1165,53 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       'still_meeting': 'stillMeeting',
     };
     return mapping[value] ?? 'noContact';
+  }
+
+  /// 상대방 이름 정규화 ("몰라", "모름" 등 → 빈 문자열로 변환)
+  /// Edge Function에서 빈 문자열이면 "그 사람"으로 대체
+  String _normalizeExPartnerName(String? value) {
+    if (value == null || value.trim().isEmpty) return '';
+
+    final normalized = value.trim().toLowerCase();
+
+    // "모른다"류 패턴
+    const unknownPatterns = [
+      '몰라',
+      '모름',
+      '모르',
+      '모르겠',
+      '기억안',
+      '기억 안',
+      '생각안',
+      '생각 안',
+      '잊어',
+      '잊었',
+      '없어',
+      '없음',
+      '없다',
+      '패스',
+      '스킵',
+      'skip',
+      'pass',
+      '그냥',
+      '됐어',
+      '안알려',
+      '안 알려',
+      '비밀',
+    ];
+
+    for (final pattern in unknownPatterns) {
+      if (normalized.contains(pattern)) {
+        return ''; // Edge Function에서 "그 사람"으로 대체됨
+      }
+    }
+
+    // 단순 기호만 입력한 경우
+    if (RegExp(r'^[\s\-\.…~?!]+$').hasMatch(normalized)) {
+      return '';
+    }
+
+    return value.trim();
   }
 
   /// 다중 선택 설문 답변 처리 (currentState 등)
@@ -2360,7 +2362,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           fortuneType: 'ex-lover',
           params: {
             'name': userName,
-            'ex_name': answers['exPartnerName'] ?? '',
+            'ex_name': _normalizeExPartnerName(answers['exPartnerName'] as String?),
             'ex_mbti': answers['exPartnerMbti'] ?? 'unknown',
             'ex_birth_date': answers['exPartnerBirthYear'] ?? '',
             'primaryGoal': primaryGoal,

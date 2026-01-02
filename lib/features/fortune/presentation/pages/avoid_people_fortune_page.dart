@@ -970,6 +970,37 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(item.title, style: DSTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                // ✅ 경계 성씨 칩 표시 (NEW)
+                if (item.cautionSurnames.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: item.cautionSurnames.map((surname) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: DSColors.error.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: DSColors.error.withValues(alpha: 0.3)),
+                      ),
+                      child: Text(
+                        '$surname씨 주의',
+                        style: DSTypography.labelSmall.copyWith(
+                          color: DSColors.error,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    )).toList(),
+                  ),
+                ],
+                // ✅ 성씨 경계 이유 (사주 근거)
+                if (item.surnameReason.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '🔮 ${item.surnameReason}',
+                    style: DSTypography.labelSmall.copyWith(color: DSColors.textTertiary),
+                  ),
+                ],
                 if (item.description.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(item.description, style: DSTypography.bodySmall.copyWith(color: DSColors.textSecondary)),
@@ -1137,11 +1168,17 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
     if (data == null || data is! List) return [];
     return data.map<CautionItem>((item) {
       final map = item as Map<String, dynamic>;
+      // ✅ 성씨 배열 파싱
+      final surnames = (map['cautionSurnames'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ?? [];
       return CautionItem(
         title: map['type'] as String? ?? '',
         description: map['reason'] as String? ?? '',
         tip: map['tip'] as String? ?? '',
         severity: map['severity'] as String? ?? 'medium',
+        cautionSurnames: surnames, // ✅ 경계 성씨
+        surnameReason: map['surnameReason'] as String? ?? '', // ✅ 성씨 이유
       );
     }).toList();
   }
@@ -1246,11 +1283,15 @@ class CautionItem {
   final String description;
   final String tip;
   final String severity; // high, medium, low
+  final List<String> cautionSurnames; // ✅ 경계 성씨 (NEW)
+  final String surnameReason; // ✅ 성씨 경계 이유 (NEW)
 
   CautionItem({
     required this.title,
     required this.description,
     required this.tip,
     required this.severity,
+    this.cautionSurnames = const [], // 기본값: 빈 배열
+    this.surnameReason = '', // 기본값: 빈 문자열
   });
 }

@@ -220,6 +220,7 @@ ${categoryFocusPrompt}
 - 오늘 바로 실행 가능한 구체적 제안
 - ${season}철에 특히 효과적인 아이템 우선
 - **선택된 카테고리(${categoryLabel})는 다른 카테고리보다 3배 상세하게!**
+- **오행 표기 형식**: 반드시 "목(木)", "화(火)", "토(土)", "금(金)", "수(水)" 형식 사용. "木" 또는 "목"만 단독 사용 금지!
 
 **추천 카테고리** (각각 reason 포함):
 - 색상: 행운 색상 + 오행 보완 이유 ${selectedCategory === 'color' ? '⭐ (상세히!)' : ''}
@@ -254,7 +255,7 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
   "title": "${name}님의 오늘 ${categoryLabel} 행운",
   "summary": "오행 분석 결과 한 줄 요약",
   "content": "${name}님의 사주를 분석한 결과... (3-4문장의 상세 본문. 오행 균형, 계절 영향, 오늘 특별히 중요한 포인트 설명)",
-  "element": "주요 오행 (금/수/목/화/토)",
+  "element": "주요 오행 - 반드시 '목(木)', '화(火)', '토(土)', '금(金)', '수(水)' 중 하나 선택",
   "keyword": "오늘의 핵심 키워드 3개 (쉼표 구분)",
   "color": {"primary": "메인 행운색", "secondary": "보조 행운색", "reason": "왜 이 색이 좋은지 오행 기반 설명"},
   "fashion": [
@@ -287,10 +288,10 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
     "reason": "방향 추천 이유 (오행 기반)"
   },
   "places": [
-    {"place": "강남역 교보문고", "category": "서점/도서관", "reason": "지식의 水 기운", "timing": "오후 2-5시"},
-    {"place": "근처 대형 백화점 5층", "category": "백화점", "reason": "金 기운 보완", "timing": "저녁 시간"},
-    {"place": "한강공원 잠원지구", "category": "공원/자연", "reason": "木 기운 충전", "timing": "아침 일찍"},
-    {"place": "동네 카페", "category": "카페", "reason": "火 기운과 소통", "timing": "점심 후"},
+    {"place": "강남역 교보문고", "category": "서점/도서관", "reason": "지식의 수(水) 기운", "timing": "오후 2-5시"},
+    {"place": "근처 대형 백화점 5층", "category": "백화점", "reason": "금(金) 기운 보완", "timing": "저녁 시간"},
+    {"place": "한강공원 잠원지구", "category": "공원/자연", "reason": "목(木) 기운 충전", "timing": "아침 일찍"},
+    {"place": "동네 카페", "category": "카페", "reason": "화(火) 기운과 소통", "timing": "점심 후"},
     {"place": "미술관/갤러리", "category": "문화시설", "reason": "창의력 충전", "timing": "오후"}
   ],
   "relationships": [

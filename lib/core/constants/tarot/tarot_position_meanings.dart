@@ -40,13 +40,13 @@ class TarotPositionMeanings {
   /// Celtic Cross 스프레드의 위치 키 목록
   static const List<String> celticCrossPositions = [
     'presentSituation', // 0: 현재 상황
-    'challenge', // 1: 도전/장애물
+    'challenge', // 1: 도전
     'distantPast', // 2: 먼 과거
     'recentPast', // 3: 최근 과거
-    'bestOutcome', // 4: 최선의 결과
-    'nearFuture', // 5: 가까운 미래
-    'selfView', // 6: 자기 인식
-    'environment', // 7: 환경/주변
+    'possibleOutcome', // 4: 가능한 미래
+    'immediateFuture', // 5: 가까운 미래
+    'yourApproach', // 6: 당신의 태도
+    'externalInfluences', // 7: 외부 영향
     'hopesAndFears', // 8: 희망과 두려움
     'finalOutcome', // 9: 최종 결과
   ];
@@ -60,11 +60,11 @@ class TarotPositionMeanings {
 
   /// Relationship 스프레드의 위치 키 목록
   static const List<String> relationshipPositions = [
-    'you', // 0: 당신
-    'partner', // 1: 상대방
-    'relationship', // 2: 관계
-    'challenges', // 3: 도전
-    'advice', // 4: 조언
+    'myFeelings', // 0: 나의 마음
+    'theirFeelings', // 1: 상대의 마음
+    'pastConnection', // 2: 과거의 연결
+    'currentDynamic', // 3: 현재 관계
+    'futureOutlook', // 4: 미래 전망
   ];
 
   /// Single Card 스프레드의 위치 키 목록

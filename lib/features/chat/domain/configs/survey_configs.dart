@@ -391,7 +391,6 @@ final talentSurveyConfig = FortuneSurveyConfig(
 
 /// 타로 목적 옵션
 const _tarotPurposeOptions = [
-  SurveyOption(id: 'general', label: '전체 인사이트', emoji: '✨'),
   SurveyOption(id: 'love', label: '연애/관계', emoji: '💕'),
   SurveyOption(id: 'career', label: '일/커리어', emoji: '💼'),
   SurveyOption(id: 'decision', label: '결정/선택', emoji: '🤔'),

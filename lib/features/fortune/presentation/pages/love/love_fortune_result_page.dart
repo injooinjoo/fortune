@@ -1051,21 +1051,38 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
                   primary,
-                  style: context.bodyMedium.copyWith(
+                  style: context.bodyLarge.copyWith(
                     color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
-                    height: 1.5,
+                    height: 1.6,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  '💡 $reason',
-                  style: context.bodySmall.copyWith(
-                    color: colors.textSecondary,
-                    height: 1.4,
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colors.background,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('💡', style: TextStyle(fontSize: 16)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          reason,
+                          style: context.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.w500,
+                            height: 1.6,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -1074,7 +1091,7 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
 
           // 대안 장소 (블러)
           if (alternatives.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             BlurredFortuneContent(
               fortuneResult: _fortuneResult,
               child: Column(
@@ -1082,25 +1099,40 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
                 children: [
                   Text(
                     '📍 다른 추천 장소',
-                    style: context.labelMedium.copyWith(fontWeight: FontWeight.w600),
+                    style: context.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: colors.textPrimary,
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: alternatives.map((alt) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  const SizedBox(height: 12),
+                  ...alternatives.map((alt) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
                         color: colors.background,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: colors.border),
                       ),
-                      child: Text(
-                        alt,
-                        style: context.labelMedium.copyWith(color: colors.textSecondary),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.place_outlined, size: 18, color: Color(0xFF4CAF50)),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              alt,
+                              style: context.bodyMedium.copyWith(
+                                color: colors.textPrimary,
+                                fontWeight: FontWeight.w500,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    )).toList(),
-                  ),
+                    ),
+                  )),
                 ],
               ),
             ),

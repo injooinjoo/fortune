@@ -15,6 +15,7 @@ import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
+import 'month_highlight_detail_bottom_sheet.dart';
 
 /// 채팅용 운세 결과 리치 카드
 ///
@@ -577,36 +578,27 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
           ],
 
-          // 베스트/워스트 날짜
-          if (bestDate != null || worstDate != null) ...[
+          // 베스트/워스트 날짜 (펼쳐서 표시)
+          if (bestDate != null) ...[
             const SizedBox(height: DSSpacing.md),
-            Row(
-              children: [
-                if (bestDate != null)
-                  Expanded(
-                    child: _buildDateChip(
-                      context,
-                      icon: '✨',
-                      label: '좋은 날',
-                      date: bestDate,
-                      color: const Color(0xFF10B981),
-                      reason: bestDateReason,
-                    ),
-                  ),
-                if (bestDate != null && worstDate != null)
-                  const SizedBox(width: DSSpacing.sm),
-                if (worstDate != null)
-                  Expanded(
-                    child: _buildDateChip(
-                      context,
-                      icon: '⚠️',
-                      label: '주의할 날',
-                      date: worstDate,
-                      color: const Color(0xFFF59E0B),
-                      reason: worstDateReason,
-                    ),
-                  ),
-              ],
+            _buildExpandedDateCard(
+              context,
+              icon: '✨',
+              label: '좋은 날',
+              date: bestDate,
+              color: const Color(0xFF10B981),
+              reason: bestDateReason,
+            ),
+          ],
+          if (worstDate != null) ...[
+            const SizedBox(height: DSSpacing.sm),
+            _buildExpandedDateCard(
+              context,
+              icon: '⚠️',
+              label: '주의할 날',
+              date: worstDate,
+              color: const Color(0xFFF59E0B),
+              reason: worstDateReason,
             ),
           ],
 
@@ -716,8 +708,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
-  /// 날짜 칩 위젯
-  Widget _buildDateChip(
+  /// 날짜 카드 위젯 (펼쳐서 표시 - reason 전체 보임)
+  Widget _buildExpandedDateCard(
     BuildContext context, {
     required String icon,
     required String label,
@@ -729,47 +721,58 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final typography = context.typography;
 
     return Container(
-      padding: const EdgeInsets.all(DSSpacing.sm),
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(DSRadius.sm),
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(icon, style: typography.bodyMedium),
-          const SizedBox(width: DSSpacing.xs),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                    fontSize: 10,
-                  ),
-                ),
-                Text(
-                  date,
-                  style: typography.labelMedium.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                if (reason != null && reason.isNotEmpty)
+          // 헤더: 아이콘 + 라벨 + 날짜
+          Row(
+            children: [
+              Text(icon, style: typography.headingSmall),
+              const SizedBox(width: DSSpacing.sm),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    reason,
+                    label,
                     style: typography.labelSmall.copyWith(
                       color: colors.textSecondary,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-              ],
-            ),
+                  Text(
+                    date,
+                    style: typography.labelLarge.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
+          // reason이 있으면 구분선과 함께 전체 표시
+          if (reason != null && reason.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Container(
+              width: double.infinity,
+              height: 1,
+              color: color.withValues(alpha: 0.2),
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              reason,
+              style: typography.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.5,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -4149,6 +4152,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
     if (goalFortune == null) return const SizedBox.shrink();
 
+    final goalId = goalFortune['goalId'] as String? ?? '';
     final goalLabel = goalFortune['goalLabel'] as String? ?? '새해 목표';
     final emoji = goalFortune['emoji'] as String? ?? '🎯';
     final title = goalFortune['title'] as String? ?? '$goalLabel 분석';
@@ -4159,6 +4163,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final successFactors = (goalFortune['successFactors'] as List<dynamic>?)?.cast<String>() ?? [];
     final actionItems = (goalFortune['actionItems'] as List<dynamic>?)?.cast<String>() ?? [];
     final riskAnalysis = goalFortune['riskAnalysis'] as String? ?? '';
+    final travelRecommendations = goalFortune['travelRecommendations'] as Map<String, dynamic>?;
 
     // 프리미엄 체크 - 블러 처리
     final isBlurred = !isPremium;
@@ -4349,6 +4354,231 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 ),
               ),
             ],
+
+            // 여행 추천지 (travel 목표 전용)
+            if (goalId == 'travel' && travelRecommendations != null) ...[
+              const SizedBox(height: DSSpacing.lg),
+              _buildTravelRecommendationsSection(context, travelRecommendations),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 여행 추천지 섹션 (travel 목표 전용)
+  Widget _buildTravelRecommendationsSection(
+    BuildContext context,
+    Map<String, dynamic> travelRecommendations,
+  ) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    final domestic = (travelRecommendations['domestic'] as List<dynamic>?)
+        ?.cast<Map<String, dynamic>>() ?? [];
+    final international = (travelRecommendations['international'] as List<dynamic>?)
+        ?.cast<Map<String, dynamic>>() ?? [];
+    final travelStyle = travelRecommendations['travelStyle'] as String? ?? '';
+    final travelTips = (travelRecommendations['travelTips'] as List<dynamic>?)
+        ?.cast<String>() ?? [];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 섹션 헤더
+        Row(
+          children: [
+            const Text('🗺️', style: TextStyle(fontSize: 24)),
+            const SizedBox(width: DSSpacing.sm),
+            Text(
+              '추천 여행지',
+              style: typography.headingSmall.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: DSSpacing.md),
+
+        // 여행 스타일
+        if (travelStyle.isNotEmpty) ...[
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.sm),
+            decoration: BoxDecoration(
+              color: colors.accent.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
+              border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
+            ),
+            child: Row(
+              children: [
+                const Text('✨', style: TextStyle(fontSize: 16)),
+                const SizedBox(width: DSSpacing.xs),
+                Expanded(
+                  child: Text(
+                    '당신에게 어울리는 여행 스타일: $travelStyle',
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: DSSpacing.md),
+        ],
+
+        // 국내 여행지
+        if (domestic.isNotEmpty) ...[
+          Row(
+            children: [
+              const Text('🇰🇷', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
+              Text(
+                '국내 추천 여행지',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...domestic.map((dest) => _buildDestinationCard(
+            context,
+            city: dest['city'] as String? ?? '',
+            reason: dest['reason'] as String? ?? '',
+            bestSeason: dest['bestSeason'] as String? ?? '',
+          )),
+          const SizedBox(height: DSSpacing.md),
+        ],
+
+        // 해외 여행지
+        if (international.isNotEmpty) ...[
+          Row(
+            children: [
+              const Text('🌍', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
+              Text(
+                '해외 추천 여행지',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...international.map((dest) => _buildDestinationCard(
+            context,
+            city: dest['city'] as String? ?? '',
+            reason: dest['reason'] as String? ?? '',
+            bestSeason: dest['bestSeason'] as String? ?? '',
+          )),
+          const SizedBox(height: DSSpacing.md),
+        ],
+
+        // 여행 팁
+        if (travelTips.isNotEmpty) ...[
+          Row(
+            children: [
+              const Text('💡', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
+              Text(
+                '여행 팁',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          ...travelTips.map((tip) => Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '• ',
+                  style: typography.bodySmall.copyWith(color: colors.accent),
+                ),
+                Expanded(
+                  child: Text(
+                    tip,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ],
+      ],
+    );
+  }
+
+  /// 여행지 카드
+  Widget _buildDestinationCard(
+    BuildContext context, {
+    required String city,
+    required String reason,
+    required String bestSeason,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.divider),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  city,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (bestSeason.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    bestSeason,
+                    style: typography.labelSmall.copyWith(
+                      color: colors.accent,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          if (reason.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.xs),
+            Text(
+              reason,
+              style: typography.bodySmall.copyWith(
+                color: colors.textSecondary,
+                height: 1.4,
+              ),
+            ),
           ],
         ],
       ),
@@ -4733,20 +4963,31 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
     final energyColor = _getEnergyColor(energyLevel);
 
-    return Container(
-      width: 130,
-      padding: const EdgeInsets.all(DSSpacing.sm),
-      decoration: BoxDecoration(
-        color: isCurrentMonth
-            ? colors.accent.withValues(alpha: 0.1)
-            : colors.backgroundSecondary,
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: isCurrentMonth ? colors.accent : colors.textPrimary.withValues(alpha: 0.1),
-          width: isCurrentMonth ? 2 : 1,
+    return GestureDetector(
+      onTap: isBlurred
+          ? null
+          : () {
+              MonthHighlightDetailBottomSheet.show(
+                context,
+                monthData: monthData,
+                monthNum: monthNum,
+                isCurrentMonth: isCurrentMonth,
+              );
+            },
+      child: Container(
+        width: 130,
+        padding: const EdgeInsets.all(DSSpacing.sm),
+        decoration: BoxDecoration(
+          color: isCurrentMonth
+              ? colors.accent.withValues(alpha: 0.1)
+              : colors.backgroundSecondary,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: isCurrentMonth ? colors.accent : colors.textPrimary.withValues(alpha: 0.1),
+            width: isCurrentMonth ? 2 : 1,
+          ),
         ),
-      ),
-      child: isBlurred
+        child: isBlurred
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -4819,6 +5060,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 ),
               ],
             ),
+      ),
     );
   }
 

@@ -87,11 +87,11 @@ class LocationInfo {
     );
   }
 
-  /// 캐시 유효성 검사 (24시간)
+  /// 캐시 유효성 검사 (1시간)
   bool isValid() {
     final now = DateTime.now();
     final diff = now.difference(timestamp);
-    return diff.inHours < 24;
+    return diff.inHours < 1;
   }
 
   @override

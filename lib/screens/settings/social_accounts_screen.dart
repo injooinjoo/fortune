@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/design_system/design_system.dart';
@@ -76,23 +77,53 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
     }
   }
 
-  IconData _getProviderIcon(String provider) {
+  String? _getProviderAsset(String provider) {
     switch (provider) {
       case 'google':
-        return Icons.g_mobiledata;
+        return 'assets/images/social/google.svg';
       case 'apple':
-        return Icons.apple;
-      case 'facebook':
-        return Icons.facebook;
-      case 'phone':
-        return Icons.phone;
+        return 'assets/images/social/apple.svg';
       case 'kakao':
-        return Icons.chat_bubble;
+        return 'assets/images/social/kakao.svg';
       case 'naver':
-        return Icons.web;
+        return 'assets/images/social/naver.svg';
       default:
-        return Icons.account_circle;
+        return null;
     }
+  }
+
+  Widget _buildProviderIcon(String provider, dynamic colors) {
+    final assetPath = _getProviderAsset(provider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (assetPath != null) {
+      final isApple = provider == 'apple';
+      return SvgPicture.asset(
+        assetPath,
+        width: 22,
+        height: 22,
+        colorFilter: isApple
+            ? ColorFilter.mode(
+                isDark ? Colors.white : Colors.black,
+                BlendMode.srcIn,
+              )
+            : null,
+      );
+    }
+
+    // Fallback for phone and other providers
+    IconData icon;
+    switch (provider) {
+      case 'facebook':
+        icon = Icons.facebook;
+        break;
+      case 'phone':
+        icon = Icons.phone;
+        break;
+      default:
+        icon = Icons.account_circle;
+    }
+    return Icon(icon, size: 22, color: colors.textSecondary);
   }
 
   Widget _buildSectionHeader(String title) {
@@ -141,11 +172,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
       child: Row(
         children: [
           // 아이콘
-          Icon(
-            _getProviderIcon(provider),
-            size: 22,
-            color: colors.textSecondary,
-          ),
+          _buildProviderIcon(provider, colors),
           const SizedBox(width: DSSpacing.md),
 
           // 제목 & 설명

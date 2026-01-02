@@ -189,20 +189,34 @@ function analyzeSajuInvestmentFit(
 }
 
 serve(async (req) => {
+  console.log('💎 [Investment] 요청 수신')
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    console.log('💎 [Step 0] Supabase 클라이언트 생성')
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
+    console.log('💎 [Step 0] Supabase 클라이언트 생성 완료')
 
-    const requestData: InvestmentRequest = await req.json()
+    console.log('💎 [Step 0.5] 요청 body 파싱 시작')
+    let requestData: InvestmentRequest
+    try {
+      requestData = await req.json()
+      console.log('💎 [Step 0.5] 요청 body:', JSON.stringify(requestData).substring(0, 300))
+    } catch (parseErr) {
+      console.error('💎 [Step 0.5] 요청 body 파싱 실패:', parseErr)
+      throw new Error(`요청 body 파싱 실패: ${parseErr}`)
+    }
+
     const { ticker, userId, isPremium = false, sajuData } = requestData
 
     if (!ticker || !ticker.symbol || !ticker.name || !ticker.category) {
+      console.error('💎 [Step 1] ticker 검증 실패:', JSON.stringify(ticker))
       throw new Error('ticker 정보가 필요합니다 (symbol, name, category)')
     }
 
@@ -220,18 +234,25 @@ serve(async (req) => {
     const categoryLabel = categoryLabels[tickerCategory] || '투자'
 
     console.log('💎 [Investment v2] Premium:', isPremium, '| Ticker:', tickerSymbol, tickerName, tickerCategory)
+    console.log('💎 [Step 1] Ticker 검증 통과')
 
     // 캐시 확인 (간소화된 키 - 프로필 정보 없음)
     const today = new Date().toISOString().split('T')[0]
     const cacheKey = `${userId || 'anonymous'}_investment_v2_${today}_${tickerSymbol}_${tickerCategory}`
 
     // ✅ .maybeSingle()은 결과 없을 때 null 반환 (에러 X)
-    const { data: cachedResult } = await supabaseClient
+    console.log('💎 [Step 2] 캐시 확인 시작:', cacheKey)
+    const { data: cachedResult, error: cacheError } = await supabaseClient
       .from('fortune_cache')
       .select('result')
       .eq('cache_key', cacheKey)
       .eq('fortune_type', 'investment')
       .maybeSingle()
+
+    if (cacheError) {
+      console.error('💎 [Step 2] 캐시 조회 에러:', cacheError)
+    }
+    console.log('💎 [Step 2] 캐시 결과:', cachedResult ? '캐시 있음' : '캐시 없음')
 
     if (cachedResult) {
       // 캐시된 결과도 블러 상태 업데이트
@@ -251,7 +272,9 @@ serve(async (req) => {
     }
 
     // LLM 호출
+    console.log('💎 [Step 3] LLM Factory 호출 시작')
     const llm = await LLMFactory.createFromConfigAsync('investment')
+    console.log('💎 [Step 3] LLM Factory 완료')
 
     const systemPrompt = `당신은 ${categoryLabel} 투자 인사이트 전문가입니다.
 사용자가 선택한 종목(${tickerName})에 대해 오늘의 기운과 마음가짐을 인사이트 형식으로 제공합니다.
@@ -328,6 +351,7 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
 마음가짐과 오늘의 인사이트 관점에서 투자 기운을 알려주세요.
 중요: 구체적인 매매 전략, 목표가, 투자 기간은 절대 언급하지 마세요.`
 
+    console.log('💎 [Step 4] LLM generate 호출 시작')
     const response = await llm.generate([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }
@@ -338,6 +362,7 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     })
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+    console.log('💎 [Step 4] LLM 응답 내용 길이:', response.content?.length || 0)
 
     // 사용량 로깅
     await UsageLogger.log({
@@ -358,7 +383,16 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       throw new Error('LLM API 응답 없음')
     }
 
-    const fortuneData = JSON.parse(response.content)
+    console.log('💎 [Step 5] JSON 파싱 시작')
+    let fortuneData
+    try {
+      fortuneData = JSON.parse(response.content)
+      console.log('💎 [Step 5] JSON 파싱 성공, overallScore:', fortuneData.overallScore)
+    } catch (parseError) {
+      console.error('💎 [Step 5] JSON 파싱 실패:', parseError)
+      console.error('💎 [Step 5] 원본 응답:', response.content?.substring(0, 500))
+      throw new Error(`JSON 파싱 실패: ${parseError.message}`)
+    }
 
     // 블러 로직 (프리미엄 아니면 주요 섹션 블러)
     // ✅ 변경: 실제 데이터는 그대로 반환하고 isBlurred/blurredSections만 설정
@@ -435,10 +469,13 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     }
 
     // Percentile 계산
+    console.log('💎 [Step 6] Percentile 계산 시작')
     const percentileData = await calculatePercentile(supabaseClient, 'investment', result.overallScore)
+    console.log('💎 [Step 6] Percentile 계산 완료:', percentileData)
     const resultWithPercentile = addPercentileToResult(result, percentileData)
 
     // 캐싱 (실제 데이터 저장 - _originalData 불필요)
+    console.log('💎 [Step 7] 캐싱 시작')
     await supabaseClient
       .from('fortune_cache')
       .insert({
@@ -449,23 +486,27 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
         created_at: new Date().toISOString()
       })
 
+    // ✅ 응답 형식 통일: 캐시와 동일하게 { fortune, cached, tokensUsed }
+    console.log('💎 [Step 8] 응답 반환 시작')
     return new Response(
       JSON.stringify({
-        success: true,
-        data: resultWithPercentile,
+        fortune: resultWithPercentile,
         cached: false,
         tokensUsed: response.usage?.totalTokens || 0
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
-  } catch (error) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error('❌ [Investment] 전체 에러:', errorMessage)
+    console.error('❌ [Investment] 에러 스택:', error instanceof Error ? error.stack : 'N/A')
     console.error('Error in fortune-investment:', error)
 
     return new Response(
       JSON.stringify({
-        error: error.message,
-        details: error.toString()
+        error: errorMessage,
+        details: String(error)
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },

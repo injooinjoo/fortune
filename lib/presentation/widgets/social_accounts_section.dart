@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/theme/fortune_design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
@@ -31,26 +32,26 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
   final Map<String, SocialProviderInfo> _providers = {
     'google': const SocialProviderInfo(
       name: 'Google',
-      iconType: SocialIconType.network,
-      iconData: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
+      iconType: SocialIconType.asset,
+      iconData: 'assets/images/social/google.svg',
       color: Color(0xFF4285F4),
     ),
     'apple': const SocialProviderInfo(
       name: 'Apple',
-      iconType: SocialIconType.icon,
-      iconData: Icons.apple,
+      iconType: SocialIconType.asset,
+      iconData: 'assets/images/social/apple.svg',
       color: TossDesignSystem.gray900,
     ),
     'kakao': const SocialProviderInfo(
       name: 'Kakao',
-      iconType: SocialIconType.text,
-      iconData: 'K',
+      iconType: SocialIconType.asset,
+      iconData: 'assets/images/social/kakao.svg',
       color: Color(0xFFFEE500),
     ),
     'naver': const SocialProviderInfo(
       name: 'Naver',
-      iconType: SocialIconType.text,
-      iconData: 'N',
+      iconType: SocialIconType.asset,
+      iconData: 'assets/images/social/naver.svg',
       color: Color(0xFF03C75A),
     ),
   };
@@ -291,6 +292,20 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
   
   Widget _buildProviderIcon(SocialProviderInfo providerInfo) {
     switch (providerInfo.iconType) {
+      case SocialIconType.asset:
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isApple = providerInfo.name == 'Apple';
+        return SvgPicture.asset(
+          providerInfo.iconData as String,
+          width: 24,
+          height: 24,
+          colorFilter: isApple
+              ? ColorFilter.mode(
+                  isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900,
+                  BlendMode.srcIn,
+                )
+              : null,
+        );
       case SocialIconType.network:
         return Image.network(
           providerInfo.iconData as String,
@@ -367,6 +382,7 @@ enum SocialIconType {
   network,
   icon,
   text,
+  asset,
 }
 
 class SocialProviderInfo {

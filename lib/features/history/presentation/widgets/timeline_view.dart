@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/constants/fortune_type_names.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../domain/models/fortune_history.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -20,7 +21,8 @@ class TimelineView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final colors = context.colors;
+
     // Group history by month
     final Map<String, List<FortuneHistory>> groupedByMonth = {};
     for (final item in history) {
@@ -44,7 +46,8 @@ class TimelineView extends StatelessWidget {
           Text(
             '운세 타임라인',
             style: context.heading3.copyWith(
-              fontWeight: FontWeight.bold)),
+              fontWeight: FontWeight.bold,
+              color: colors.textPrimary)),
           const SizedBox(height: 20),
           ...sortedMonths.map((monthKey) {
             final monthData = groupedByMonth[monthKey]!;

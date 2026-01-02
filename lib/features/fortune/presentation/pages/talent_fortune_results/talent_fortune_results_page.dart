@@ -557,7 +557,11 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                             ).animate().fadeIn(delay: 600.ms, duration: 400.ms),
                           ),
 
-                          const SizedBox(height: 100),
+                          // ✅ 플로팅 버튼 공간 (버튼 58 + 패딩 16 + safe area)
+                          if (_isBlurred && !ref.watch(isPremiumProvider))
+                            const BottomButtonSpacing(additionalSpacing: 16)
+                          else
+                            const SizedBox(height: 32),
                         ],
                       ),
                     ),

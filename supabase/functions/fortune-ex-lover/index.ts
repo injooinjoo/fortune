@@ -707,7 +707,7 @@ serve(async (req) => {
         `- 이름: ${name}`,
         ``,
         `## 상대방 정보`,
-        `- 이름/닉네임: ${ex_name || '미입력'}`,
+        `- 이름/닉네임: ${ex_name || '그 사람'}`,
         `- MBTI: ${ex_mbti && ex_mbti !== 'unknown' ? ex_mbti : '모름'}`,
         ``,
         `## 이별 정보`,

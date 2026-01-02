@@ -149,7 +149,39 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
       "${displayGoalLabel} 달성을 위한 구체적 행동 1 (50자 이상)",
       "${displayGoalLabel} 달성을 위한 구체적 행동 2 (50자 이상)",
       "${displayGoalLabel} 달성을 위한 구체적 행동 3 (50자 이상)"
-    ]
+    ]${goal === 'travel' ? `,
+    "travelRecommendations": {
+      "domestic": [
+        {
+          "city": "추천 국내 여행지 1 (예: 제주도, 부산, 경주 등)",
+          "reason": "사주/오행 기반으로 이 도시가 좋은 이유 (100자 이상, 기운/에너지 관점)",
+          "bestSeason": "추천 여행 시기 (예: 5월-7월, 봄철)"
+        },
+        {
+          "city": "추천 국내 여행지 2",
+          "reason": "사주 기반 추천 이유 (100자 이상)",
+          "bestSeason": "추천 여행 시기"
+        }
+      ],
+      "international": [
+        {
+          "city": "추천 해외 여행지 1 (예: 도쿄, 방콕, 파리 등)",
+          "reason": "사주/오행 기반으로 이 도시가 좋은 이유 (100자 이상)",
+          "bestSeason": "추천 여행 시기"
+        },
+        {
+          "city": "추천 해외 여행지 2",
+          "reason": "사주 기반 추천 이유 (100자 이상)",
+          "bestSeason": "추천 여행 시기"
+        }
+      ],
+      "travelStyle": "사용자의 사주에 어울리는 여행 스타일 (예: 휴양형, 모험형, 문화탐방형 등)",
+      "travelTips": [
+        "여행 시 도움이 될 팁 1 (사주 기반)",
+        "여행 시 도움이 될 팁 2",
+        "여행 시 도움이 될 팁 3"
+      ]
+    }` : ''}
   },
 
   "sajuAnalysis": {

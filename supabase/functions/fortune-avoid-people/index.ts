@@ -42,6 +42,48 @@ interface AvoidPeopleRequest {
   isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
+// ✅ 성씨-오행 매핑 (일간이 극을 받는 오행의 성씨)
+const SURNAME_ELEMENT_MAP: Record<string, string[]> = {
+  // 木 일간 (갑, 을) → 金이 극함 → 金 성씨 조심
+  '갑': ['김', '신', '백', '유', '장'],
+  '을': ['김', '신', '백', '유', '장'],
+  // 火 일간 (병, 정) → 水가 극함 → 水 성씨 조심
+  '병': ['한', '허', '홍', '함', '현'],
+  '정': ['한', '허', '홍', '함', '현'],
+  // 土 일간 (무, 기) → 木이 극함 → 木 성씨 조심
+  '무': ['이', '임', '엄', '안', '양'],
+  '기': ['이', '임', '엄', '안', '양'],
+  // 金 일간 (경, 신) → 火가 극함 → 火 성씨 조심
+  '경': ['남', '노', '나', '류', '도'],
+  '신': ['남', '노', '나', '류', '도'],
+  // 水 일간 (임, 계) → 土가 극함 → 土 성씨 조심
+  '임': ['황', '오', '우', '원', '위'],
+  '계': ['황', '오', '우', '원', '위'],
+};
+
+// 일간-오행 매핑
+const DAY_STEM_ELEMENT: Record<string, string> = {
+  '갑': '木', '을': '木',
+  '병': '火', '정': '火',
+  '무': '土', '기': '土',
+  '경': '金', '신': '金',
+  '임': '水', '계': '水',
+};
+
+// 극 관계 설명
+const CLASH_EXPLANATION: Record<string, string> = {
+  '갑': '甲木 일간에 庚金이 충돌하는 기운',
+  '을': '乙木 일간에 辛金이 충돌하는 기운',
+  '병': '丙火 일간에 壬水가 충돌하는 기운',
+  '정': '丁火 일간에 癸水가 충돌하는 기운',
+  '무': '戊土 일간에 甲木이 충돌하는 기운',
+  '기': '己土 일간에 乙木이 충돌하는 기운',
+  '경': '庚金 일간에 丙火가 충돌하는 기운',
+  '신': '辛金 일간에 丁火가 충돌하는 기운',
+  '임': '壬水 일간에 戊土가 충돌하는 기운',
+  '계': '癸水 일간에 己土가 충돌하는 기운',
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -84,6 +126,26 @@ serve(async (req) => {
       )
     }
 
+    // ✅ 사용자 사주 정보 조회 (성씨 분석용)
+    let dayStem = ''
+    let cautionSurnames: string[] = []
+    let surnameReason = ''
+
+    if (userId) {
+      const { data: sajuData } = await supabaseClient
+        .from('user_saju')
+        .select('day_stem')
+        .eq('user_id', userId)
+        .single()
+
+      if (sajuData?.day_stem) {
+        dayStem = sajuData.day_stem
+        cautionSurnames = SURNAME_ELEMENT_MAP[dayStem] || []
+        surnameReason = CLASH_EXPLANATION[dayStem] || ''
+        console.log(`[AvoidPeople] 🔮 일간: ${dayStem}, 경계 성씨: ${cautionSurnames.join(', ')}`)
+      }
+    }
+
     // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
     const llm = await LLMFactory.createFromConfigAsync('avoid-people')
     const dayOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'][now.getDay()]
@@ -106,11 +168,13 @@ serve(async (req) => {
 
   "cautionPeople": [
     {
-      "type": "피해야 할 사람 유형 (예: 과도한 요구를 하는 상사)",
-      "reason": "왜 오늘 특히 피해야 하는지 (60자)",
-      "sign": "이런 신호가 보이면 피하세요 (40자)",
-      "tip": "대처법 (60자)",
-      "severity": "high|medium|low"
+      "type": "구체적인 행동 패턴 (예: 의견을 3번 이상 반복하며 고집하는 사람)",
+      "reason": "사주 근거 + 왜 오늘 특히 피해야 하는지 (60자)",
+      "sign": "구체적 신호 (예: 목소리 톤이 갑자기 높아지면, 2초 이상 노려보면)",
+      "tip": "구체적 대처법 (예: '네, 검토해보겠습니다' 한 마디 후 2분 내 자리 이동)",
+      "severity": "high|medium|low",
+      "cautionSurnames": ["성씨1", "성씨2"],
+      "surnameReason": "사주 기반 성씨 경계 이유 (예: 甲木 일간에 庚金 충돌)"
     }
   ],
 
@@ -219,7 +283,19 @@ serve(async (req) => {
 2. severity는 상황의 심각도를 반영 (high: 반드시 피해야 함, medium: 주의, low: 참고)
 3. 한국 전통 운세 요소(띠, 방위, 숫자)와 현대적 요소(사물, 장소)를 조화롭게
 4. luckyElements는 반드시 포함하여 균형 잡힌 결과 제공
-5. 모든 내용은 구체적이고 실용적이어야 함 (추상적 표현 금지)`
+5. 모든 내용은 구체적이고 실용적이어야 함 (추상적 표현 금지)
+
+🚫 절대 금지 표현 (이런 표현 사용 시 무효):
+- "조심하세요", "주의하세요", "피하세요" 단독 사용 금지
+- "~한 사람", "~한 유형" 같은 추상적 표현 금지
+- "좋지 않습니다", "불리합니다" 같은 막연한 평가 금지
+- "오늘은 조용히 지내세요" 같은 당연한 조언 금지
+
+✅ 필수 개인화 요소 (모든 항목에 적용):
+- 구체적 신호: "목소리 톤이 갑자기 높아지면", "같은 말 3번 반복하면"
+- 구체적 시간: "오전 10시~11시 회의 중", "점심 직후 30분간"
+- 구체적 대처법: "'네, 검토해보겠습니다' 한 마디 후 2분 내 자리 이동"
+- 사주 근거: cautionPeople의 경우 반드시 cautionSurnames와 surnameReason 포함`
 
     const userPrompt = `📅 날짜 정보:
 - 날짜: ${now.toLocaleDateString('ko-KR')}
@@ -236,6 +312,16 @@ serve(async (req) => {
 - 중요한 결정: ${hasImportantDecision ? '있음' : '없음'}
 - 민감한 대화: ${hasSensitiveConversation ? '있음' : '없음'}
 - 팀 프로젝트: ${hasTeamProject ? '있음' : '없음'}
+
+🔮 사주 정보 (성씨 분석용):
+- 일간(日干): ${dayStem || '정보 없음'}
+- 일간 오행: ${dayStem ? DAY_STEM_ELEMENT[dayStem] : '정보 없음'}
+- 경계 성씨: ${cautionSurnames.length > 0 ? cautionSurnames.join(', ') + '씨' : '정보 없음'}
+- 성씨 경계 이유: ${surnameReason || '정보 없음'}
+
+⚠️ 성씨 필수 지침:
+${cautionSurnames.length > 0 ? `- cautionPeople의 각 항목에 cautionSurnames: ${JSON.stringify(cautionSurnames.slice(0, 2))} 포함 필수
+- surnameReason: "${surnameReason}" 포함 필수` : '- 사주 정보 없음: 성씨 필드는 빈 배열로 처리'}
 
 💡 컨텍스트 힌트 (각 카테고리에 반영해주세요):
 ${isWeekend ? '- 주말: 가족/친구 관계, 외출/쇼핑 관련 경계대상 포함' : '- 평일: 직장/학교 관련 경계대상 포함'}
