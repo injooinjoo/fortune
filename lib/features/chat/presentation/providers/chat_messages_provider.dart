@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../fortune/domain/models/match_insight.dart';
+import '../../../fortune/domain/models/past_life_result.dart';
 import '../../domain/models/chat_message.dart';
 import '../../domain/models/chat_state.dart';
 
@@ -48,6 +49,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     Fortune? fortune,
     DateTime? selectedDate,
     MatchInsight? matchInsight,
+    PastLifeResult? pastLifeResult,
   }) {
     final message = ChatMessage(
       id: _uuid.v4(),
@@ -61,6 +63,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       fortune: fortune,
       selectedDate: selectedDate,
       matchInsight: matchInsight,
+      pastLifeResult: pastLifeResult,
     );
     state = state.copyWith(
       messages: [...state.messages, message],

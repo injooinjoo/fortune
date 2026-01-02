@@ -12,11 +12,12 @@ import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../widgets/dream_result_widget.dart';
-import '../widgets/floating_dream_topics_widget.dart';
 import '../widgets/fortune_loading_skeleton.dart';
+import '../widgets/floating_dream_topics_widget.dart';
 import '../providers/dream_voice_provider.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
+import '../../../../data/dream_interpretations.dart';
 
 import '../../../../core/widgets/unified_button.dart';
 /// 음성 중심 꿈 해몽 페이지 (ChatGPT 앱 스타일)
@@ -153,7 +154,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
 
         const SizedBox(height: DSSpacing.xl),
 
-        // 플로팅 꿈 주제들
+        // 플로팅 꿈 주제 칩들
         Expanded(
           child: FloatingDreamTopicsWidget(
             onTopicSelected: (topic) {
@@ -257,19 +258,51 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
       final premiumOverride = await DebugPremiumService.getOverrideValue();
       final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
 
-      // 2. UnifiedFortuneService 호출
-      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+      FortuneResult result;
 
-      final result = await fortuneService.getFortune(
-        fortuneType: 'dream',
-        dataSource: FortuneDataSource.api, // 최적화 비활성화
-        inputConditions: {
-          'dream': text,
-          'inputType': 'voice',
-          'isPremium': isPremium,
-        },
-        isPremium: isPremium,
-      );
+      // 2. 하드코딩된 결과가 있는지 확인 (롤링 칩 선택 시)
+      final hardcodedData = DreamInterpretations.getInterpretation(text);
+
+      if (hardcodedData != null) {
+        // ✅ 하드코딩된 결과 사용 (API 호출 없음)
+        Logger.info('[DreamVoice] 🎯 하드코딩 결과 사용: $text');
+
+        // 짧은 딜레이로 자연스러운 로딩 효과
+        await Future.delayed(const Duration(milliseconds: 800));
+
+        if (!mounted) return;
+
+        result = FortuneResult(
+          type: 'dream',
+          title: hardcodedData['title'] as String? ?? text,
+          summary: {
+            'score': hardcodedData['overallScore'],
+            'message': hardcodedData['fortuneMessage'],
+            'emoji': hardcodedData['emoji'],
+          },
+          data: hardcodedData,
+          score: hardcodedData['overallScore'] as int?,
+          isBlurred: !isPremium,
+          blurredSections: isPremium ? [] : ['psychologicalAnalysis', 'advice', 'categories'],
+          createdAt: DateTime.now(),
+        );
+      } else {
+        // ✅ 직접 입력 - API 호출
+        Logger.info('[DreamVoice] 🌐 API 호출: $text');
+
+        final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+        result = await fortuneService.getFortune(
+          fortuneType: 'dream',
+          dataSource: FortuneDataSource.api,
+          inputConditions: {
+            'dream': text,
+            'inputType': 'voice',
+            'isPremium': isPremium,
+          },
+          isPremium: isPremium,
+        );
+      }
 
       if (!mounted) return;
 
@@ -277,7 +310,6 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
       Logger.info('[DreamVoice]   - isBlurred: ${result.isBlurred}');
       Logger.info('[DreamVoice]   - blurredSections: ${result.blurredSections}');
       Logger.info('[DreamVoice]   - data keys: ${result.data.keys.toList()}');
-      Logger.info('[DreamVoice]   - interpretation: ${result.data['interpretation']}');
 
       setState(() {
         _fortuneResult = result;

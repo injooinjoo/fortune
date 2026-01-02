@@ -145,3 +145,21 @@ class TooManyRequestsException extends AppException {
   const TooManyRequestsException([String message = '요청이 너무 많습니다'])
       : super(message: message, code: 'TOO_MANY_REQUESTS');
 }
+
+// Wish Analysis Exception (소원 분석 오류)
+class WishAnalysisException extends AppException {
+  final String? missingField;
+  final dynamic originalError;
+
+  const WishAnalysisException({
+    required super.message,
+    String? code,
+    this.missingField,
+    this.originalError,
+  }) : super(code: code ?? 'WISH_ANALYSIS_ERROR');
+
+  @override
+  String toString() => missingField != null
+      ? 'WishAnalysisException: $message (필드: $missingField)'
+      : 'WishAnalysisException: $message';
+}

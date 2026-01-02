@@ -44,11 +44,6 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
       'color': Color(0xFFEC4899),
     },
     {
-      'question': '오늘의 전체 운세는?',
-      'icon': Icons.star,
-      'color': Color(0xFF7C3AED),
-    },
-    {
       'question': '취업이 언제 될까요?',
       'icon': Icons.work,
       'color': Color(0xFF3B82F6),

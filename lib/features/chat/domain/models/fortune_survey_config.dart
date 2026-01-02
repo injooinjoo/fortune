@@ -134,9 +134,10 @@ enum FortuneSurveyType {
   exercise,       // 운동 추천
   sportsGame,     // 스포츠 경기
 
-  // 인터랙티브 (2개)
+  // 인터랙티브 (3개)
   dream,          // 꿈 해몽
   celebrity,      // 유명인 궁합
+  pastLife,       // 전생탐험
 
   // 가족/반려동물 (3개)
   pet,            // 반려동물 궁합

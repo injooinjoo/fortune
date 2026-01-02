@@ -587,6 +587,47 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         }
       }
 
+      // Wish fortune: build content from analyze-wish response fields
+      // 응답 필드: empathy_message, hope_message, advice (List), encouragement, special_words
+      if (fortuneType == 'wish' && fortuneData['empathy_message'] != null) {
+        final contentParts = <String>[];
+
+        // 공감 메시지
+        if (fortuneData['empathy_message'] != null) {
+          contentParts.add('💝 공감 메시지\n${fortuneData['empathy_message']}');
+        }
+
+        // 희망 메시지
+        if (fortuneData['hope_message'] != null) {
+          contentParts.add('\n\n🌟 희망\n${fortuneData['hope_message']}');
+        }
+
+        // 조언 (List<String> 처리)
+        final advice = fortuneData['advice'];
+        if (advice != null) {
+          if (advice is List && advice.isNotEmpty) {
+            contentParts.add('\n\n💡 조언\n• ${advice.join('\n• ')}');
+          } else if (advice is String && advice.isNotEmpty) {
+            contentParts.add('\n\n💡 조언\n$advice');
+          }
+        }
+
+        // 응원 메시지
+        if (fortuneData['encouragement'] != null) {
+          contentParts.add('\n\n🔥 응원\n${fortuneData['encouragement']}');
+        }
+
+        // 신의 한마디
+        if (fortuneData['special_words'] != null) {
+          contentParts.add('\n\n✨ 신의 한마디\n${fortuneData['special_words']}');
+        }
+
+        if (contentParts.isNotEmpty) {
+          contentText = contentParts.join('');
+          debugPrint('📝 [_getFortuneFromEdgeFunction] Built wish content (${contentText.length} chars)');
+        }
+      }
+
       debugPrint('📝 [_getFortuneFromEdgeFunction] Final content length: ${contentText.length}');
       debugPrint('📝 [_getFortuneFromEdgeFunction] extractedScoreValue: $extractedScoreValue (type: ${extractedScoreValue.runtimeType})');
 
@@ -605,7 +646,9 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         luckyNumber: _parseToInt(fortuneData['luckyNumber']) ?? _parseToInt(fortuneData['lucky_items']?['number']) ?? _parseToInt(fortuneData['luckyItems']?['number']),
         luckyDirection: fortuneData['lucky_items']?['direction'] ?? fortuneData['luckyItems']?['direction'],
         bestTime: fortuneData['lucky_items']?['time'] ?? fortuneData['luckyItems']?['time'],
-        advice: fortuneData['advice'],
+        advice: fortuneData['advice'] is List
+            ? (fortuneData['advice'] as List).join('\n')  // List → String 변환 (wish fortune 대응)
+            : fortuneData['advice'],
         caution: fortuneData['caution'],
         greeting: fortuneData['greeting'],
         hexagonScores: fortuneData['hexagonScores'] != null 
@@ -1064,11 +1107,24 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
 
       debugPrint('🚀 [FortuneApiServiceWithEdgeFunctions] Using Edge Function: $endpoint');
       try {
+        // ✅ 'wish' 타입은 analyze-wish 형식으로 변환
+        Map<String, dynamic>? transformedParams = params;
+        if (fortuneType == 'wish' && params != null) {
+          transformedParams = {
+            ...params,
+            'wish_text': params['wish'] ?? params['wish_text'] ?? '',
+            'category': params['category'] ?? 'other',
+          };
+          // 중복 필드 제거
+          transformedParams.remove('wish');
+          debugPrint('📝 [FortuneApiServiceWithEdgeFunctions] Transformed wish params: wish_text=${transformedParams['wish_text']}, category=${transformedParams['category']}');
+        }
+
         return await _getFortuneFromEdgeFunction(
           endpoint: endpoint,
           userId: userId,
           fortuneType: fortuneType,
-          data: params);
+          data: transformedParams);
       } catch (e) {
         debugPrint('❌ [FortuneApiServiceWithEdgeFunctions] Edge Function failed: $e');
         debugPrint('🔄 [FortuneApiServiceWithEdgeFunctions] Falling back to traditional API');
@@ -1249,13 +1305,16 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
 
   // Wish Fortune
   @override
-  Future<Fortune> getWishFortune({required String userId, required String wish}) async {
+  Future<Fortune> getWishFortune({required String userId, required String wish, String? category}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
         endpoint: EdgeFunctionsEndpoints.getEndpointForType('wish'),
         userId: userId,
         fortuneType: 'wish',
-        data: {'wish': wish}
+        data: {
+          'wish_text': wish,  // ✅ analyze-wish가 기대하는 필드명
+          'category': category ?? 'other',  // ✅ 기본 카테고리
+        }
       );
     }
     return super.getWishFortune(userId: userId, wish: wish);

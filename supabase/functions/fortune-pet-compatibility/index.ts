@@ -58,6 +58,21 @@ const corsHeaders = {
 
 // 반려동물 운세 응답 스키마 정의
 interface PetFortuneResponse {
+  // NEW: 스토리 형식 섹션 (무료)
+  today_story: {
+    opening: string;           // "오늘 아침, 말티즈 뭉치는..."
+    morning_chapter: string;   // 아침 이야기 (80자)
+    afternoon_chapter: string; // 오후 이야기 (80자)
+    evening_chapter: string;   // 저녁 이야기 (80자)
+  };
+
+  // NEW: 품종 맞춤 섹션 (무료)
+  breed_specific: {
+    trait_today: string;       // "오늘 말티즈의 활발함이 빛날 날"
+    health_watch: string;      // "슬개골 주의, 계단 점프 자제"
+    grooming_tip: string;      // "오늘 빗질하면 털이 윤기날 거예요"
+  };
+
   // 1. 오늘의 컨디션 (무료)
   daily_condition: {
     overall_score: number;       // 0-100
@@ -217,6 +232,83 @@ serve(async (req) => {
       '기타': '독특한 매력을 가진 반려동물입니다.'
     }
 
+    // 품종별 상세 특성 데이터베이스 (NEW)
+    const breedTraitsDB: Record<string, Record<string, { healthIssues: string[]; temperament: string; grooming: string; specialNeeds: string[] }>> = {
+      '강아지': {
+        '말티즈': { healthIssues: ['슬개골 탈구', '치아 문제', '눈물 자국'], temperament: '애교 많고 활발함', grooming: '매일 빗질 필요', specialNeeds: ['분리불안 주의', '소형견 관절 케어'] },
+        '푸들': { healthIssues: ['눈 질환', '피부 알러지', '귀 감염'], temperament: '영리하고 활발함', grooming: '정기적 미용 필수', specialNeeds: ['정신적 자극 필요', '털 관리'] },
+        '골든리트리버': { healthIssues: ['고관절 이형성', '피부 알러지', '비만'], temperament: '온순하고 사람 좋아함', grooming: '주 2-3회 빗질', specialNeeds: ['충분한 운동 필수', '더위 주의'] },
+        '시츄': { healthIssues: ['눈 문제', '호흡기', '피부'], temperament: '친근하고 느긋함', grooming: '매일 빗질', specialNeeds: ['더위에 약함', '눈 관리'] },
+        '포메라니안': { healthIssues: ['슬개골', '기관지', '치아'], temperament: '활발하고 경계심 있음', grooming: '주 3회 빗질', specialNeeds: ['낙상 주의', '치아 관리'] },
+        '치와와': { healthIssues: ['슬개골', '저혈당', '치아'], temperament: '용감하고 애착 강함', grooming: '주 1-2회 빗질', specialNeeds: ['추위에 약함', '작은 체구 보호'] },
+        '비숑프리제': { healthIssues: ['눈물 자국', '피부 알러지', '치아'], temperament: '명랑하고 애교 많음', grooming: '매일 빗질, 정기 미용', specialNeeds: ['분리불안 주의', '털 관리'] },
+        '요크셔테리어': { healthIssues: ['슬개골', '치아', '저혈당'], temperament: '활발하고 호기심 많음', grooming: '매일 빗질', specialNeeds: ['추위 주의', '치아 관리'] },
+        '닥스훈트': { healthIssues: ['디스크', '비만', '치아'], temperament: '호기심 많고 고집 있음', grooming: '주 1-2회 빗질', specialNeeds: ['허리 보호', '계단 주의'] },
+        '웰시코기': { healthIssues: ['디스크', '비만', '고관절'], temperament: '활발하고 영리함', grooming: '주 2-3회 빗질', specialNeeds: ['허리 보호', '체중 관리'] },
+        '진돗개': { healthIssues: ['피부', '관절'], temperament: '충성스럽고 용맹함', grooming: '주 2회 빗질', specialNeeds: ['충분한 운동', '사회화 훈련'] },
+        '시바이누': { healthIssues: ['알러지', '슬개골'], temperament: '독립적이고 깔끔함', grooming: '주 2-3회 빗질', specialNeeds: ['털 빠짐 관리', '자존심 존중'] },
+        '라브라도리트리버': { healthIssues: ['고관절', '비만', '눈'], temperament: '친근하고 에너지 넘침', grooming: '주 2회 빗질', specialNeeds: ['충분한 운동', '체중 관리'] },
+        '비글': { healthIssues: ['귀 감염', '비만', '디스크'], temperament: '밝고 호기심 많음', grooming: '주 1회 빗질', specialNeeds: ['냄새 추적 본능', '울타리 필수'] },
+        '불독': { healthIssues: ['호흡기', '피부', '관절'], temperament: '온순하고 느긋함', grooming: '주름 관리 필수', specialNeeds: ['더위에 약함', '과격한 운동 금지'] },
+        '셰틀랜드쉽독': { healthIssues: ['눈', '피부'], temperament: '영리하고 민감함', grooming: '주 3회 빗질', specialNeeds: ['정신적 자극', '털 관리'] },
+        '보더콜리': { healthIssues: ['눈', '고관절'], temperament: '매우 영리하고 활동적', grooming: '주 2-3회 빗질', specialNeeds: ['많은 운동량', '일거리 필요'] },
+        '사모예드': { healthIssues: ['고관절', '눈', '피부'], temperament: '밝고 사교적', grooming: '매일 빗질', specialNeeds: ['더위에 약함', '털 관리'] },
+        '허스키': { healthIssues: ['눈', '고관절'], temperament: '활발하고 독립적', grooming: '주 3회 빗질', specialNeeds: ['많은 운동량', '더위 주의'] },
+        '믹스견': { healthIssues: [], temperament: '다양한 성격', grooming: '털 종류에 따라', specialNeeds: ['개체별 특성 관찰'] }
+      },
+      '고양이': {
+        '페르시안': { healthIssues: ['눈물', '호흡기', '신장'], temperament: '조용하고 온순함', grooming: '매일 빗질 필수', specialNeeds: ['얼굴 관리', '더위 주의'] },
+        '러시안블루': { healthIssues: ['비만', '스트레스'], temperament: '수줍지만 충성스러움', grooming: '주 1-2회 빗질', specialNeeds: ['규칙적 생활', '조용한 환경'] },
+        '스코티시폴드': { healthIssues: ['관절', '연골', '심장'], temperament: '온순하고 애교 많음', grooming: '주 2회 빗질', specialNeeds: ['관절 건강 주의', '편한 환경'] },
+        '브리티시숏헤어': { healthIssues: ['비만', '심장', '신장'], temperament: '차분하고 독립적', grooming: '주 2회 빗질', specialNeeds: ['체중 관리', '운동량 확보'] },
+        '먼치킨': { healthIssues: ['척추', '관절'], temperament: '활발하고 호기심 많음', grooming: '주 1-2회 빗질', specialNeeds: ['높은 곳 주의', '관절 케어'] },
+        '랙돌': { healthIssues: ['심장', '신장'], temperament: '온순하고 사람 좋아함', grooming: '주 2-3회 빗질', specialNeeds: ['실내 생활', '부드러운 대우'] },
+        '뱅갈': { healthIssues: ['심장', '슬개골'], temperament: '활발하고 놀이 좋아함', grooming: '주 1회 빗질', specialNeeds: ['많은 놀이 시간', '자극적 환경'] },
+        '아비시니안': { healthIssues: ['신장', '잇몸'], temperament: '호기심 많고 활동적', grooming: '주 1회 빗질', specialNeeds: ['높은 곳 놀이', '상호작용'] },
+        '메인쿤': { healthIssues: ['심장', '고관절'], temperament: '온순하고 사교적', grooming: '주 2-3회 빗질', specialNeeds: ['큰 공간', '털 관리'] },
+        '샴': { healthIssues: ['호흡기', '눈'], temperament: '수다스럽고 애착 강함', grooming: '주 1회 빗질', specialNeeds: ['관심과 대화', '외로움 주의'] },
+        '터키시앙고라': { healthIssues: ['청각', '심장'], temperament: '영리하고 활발함', grooming: '주 2회 빗질', specialNeeds: ['청각 검사', '털 관리'] },
+        '노르웨이숲': { healthIssues: ['심장', '신장'], temperament: '온순하고 독립적', grooming: '주 2-3회 빗질', specialNeeds: ['털 관리', '운동 공간'] },
+        '코리안숏헤어': { healthIssues: [], temperament: '다양한 성격', grooming: '주 1회 빗질', specialNeeds: ['개체별 특성 관찰'] },
+        '믹스묘': { healthIssues: [], temperament: '다양한 성격', grooming: '털에 따라', specialNeeds: ['개체별 특성 관찰'] }
+      },
+      '토끼': {
+        '네덜란드드워프': { healthIssues: ['치아', '소화기'], temperament: '호기심 많고 활발함', grooming: '주 2회 빗질', specialNeeds: ['작은 체구 보호', '치아 관리'] },
+        '미니렉스': { healthIssues: ['발바닥 염증', '소화기'], temperament: '온순하고 조용함', grooming: '주 1회 빗질', specialNeeds: ['부드러운 바닥', '스트레스 주의'] },
+        '홀랜드롭': { healthIssues: ['귀 감염', '치아'], temperament: '온순하고 사람 좋아함', grooming: '주 2회 빗질', specialNeeds: ['귀 관리', '치아 검사'] },
+        '라이언헤드': { healthIssues: ['치아', '털 뭉침'], temperament: '호기심 많고 친근함', grooming: '매일 빗질', specialNeeds: ['갈기 관리', '더위 주의'] },
+        '믹스토끼': { healthIssues: [], temperament: '다양한 성격', grooming: '털에 따라', specialNeeds: ['개체별 관찰'] }
+      }
+    }
+
+    // 품종 특성 가져오기 함수
+    function getBreedTraits(species: string, breed: string): string {
+      const speciesBreeds = breedTraitsDB[species]
+      if (!speciesBreeds || !breed) {
+        return `${species}의 일반적인 특성을 기반으로 분석합니다.`
+      }
+      const traits = speciesBreeds[breed]
+      if (!traits) {
+        return `${species}의 일반적인 특성을 기반으로 분석합니다.`
+      }
+      return `
+[${breed} 품종 전문 분석]
+• 건강 주의사항: ${traits.healthIssues.join(', ') || '특이사항 없음'}
+• 성격 특성: ${traits.temperament}
+• 털 관리: ${traits.grooming}
+• 특별 케어: ${traits.specialNeeds.join(', ')}`
+    }
+
+    // 성격별 케어 가이드
+    const personalityGuide: Record<string, string> = {
+      '활발함': '에너지 발산 활동 추천, 지루함 주의, 충분한 놀이 시간 필요',
+      '차분함': '조용한 활동 선호, 갑작스러운 변화 스트레스, 안정적 환경 유지',
+      '수줍음': '새로운 환경 적응 시간 필요, 안전한 숨을 공간 제공, 부드러운 접근',
+      '애교쟁이': '스킨십 욕구 높음, 관심받기 좋아함, 칭찬과 애정 표현 중요',
+      '호기심쟁이': '탐험 활동 추천, 안전 확인 필수, 다양한 장난감 제공',
+      '독립적': '개인 공간 존중, 과도한 간섭 주의, 자율성 보장'
+    }
+
     // Pet's Voice 톤 가이드
     const voiceTone: Record<string, string> = {
       '강아지': '밝고 열정적이며 순수한 사랑을 표현. 감탄사와 느낌표 사용. 예: "와아! 오늘도 산책 가요?!"',
@@ -227,26 +319,60 @@ serve(async (req) => {
       '기타': '친근하고 따뜻하게.'
     }
 
-    const systemPrompt = `당신은 반려동물 행동심리학 전문가이자 경험 많은 수의사입니다.
-반려동물의 마음을 읽고, 주인과의 유대감을 깊게 하는 맞춤형 운세를 제공합니다.
+    // 나이별 케어 가이드
+    function getAgeGuide(species: string, age: number): string {
+      if (species === '강아지' || species === '고양이') {
+        if (age <= 1) return '어린 동물: 성장기 영양 중요, 사회화 훈련, 예방접종 확인'
+        if (age <= 7) return '성체: 활동적인 생활, 정기 건강검진, 체중 관리'
+        return '노령기: 관절 케어, 부드러운 운동, 정기 검진 필수, 편안한 환경'
+      }
+      if (species === '토끼') {
+        if (age <= 1) return '어린 토끼: 성장기 영양, 사회화, 안전한 환경'
+        if (age <= 5) return '성체: 활동적 생활, 치아 관리, 균형 잡힌 식단'
+        return '노령기: 관절 케어, 치아 검진, 부드러운 음식'
+      }
+      return '건강한 생활 유지, 정기적 관찰'
+    }
 
-핵심 원칙:
-1. 구체적 수치와 시간 제시 (예: "오전 8시, 20분간 산책")
-2. 이유 설명 필수 - 왜 그런 조언인지 간단히 설명
-3. 종별 특성 반영 - ${pet_species}의 특성: ${speciesTraits[pet_species] || speciesTraits['기타']}
-4. 나이(${pet_age}세) 고려 - 어린 동물, 성체, 노령 동물 각각 다른 조언
-5. 계절(${season}) 반영 - 계절에 맞는 건강/활동 조언
+    const systemPrompt = `당신은 반려동물 행동심리학 박사이자 15년 경력의 수의사입니다.
+특히 ${pet_breed || pet_species} 전문가로서, 이 품종/종류의 고유한 특성을 깊이 이해하고 있습니다.
 
-Pet's Voice 작성 시 (매우 중요!):
-- 해당 동물의 시점에서 1인칭으로 작성
+=== 품종별 전문 지식 (반드시 결과에 반영!) ===
+${getBreedTraits(pet_species, pet_breed)}
+
+=== 입력된 성격 분석 (핵심!) ===
+${pet_personality ? `이 아이는 "${pet_personality}" 성격입니다.
+케어 가이드: ${personalityGuide[pet_personality] || '개체별 성격에 맞춘 케어'}
+→ 모든 활동 추천과 조언에 이 성격 특성을 반드시 반영하세요!` : '성격 정보 미입력 - 종별 일반 특성 기반으로 분석'}
+
+=== 건강 상태 고려 (중요!) ===
+${pet_health_notes ? `특이사항: ${pet_health_notes}
+→ 이 조건을 모든 활동 추천과 breed_specific.health_watch에 반드시 반영하세요!` : '건강 특이사항 없음'}
+
+=== 나이별 케어 ===
+${getAgeGuide(pet_species, pet_age)}
+
+=== 스토리텔링 형식 (today_story 섹션) ===
+"오늘 아침, ${pet_age}살 ${pet_breed || pet_species} ${pet_name}는..." 으로 시작하여
+${pet_personality ? pet_personality + ' 성격을 보여주는' : ''} 아침→점심→저녁 흐름을 자연스럽게 이야기합니다.
+각 chapter는 구체적인 행동과 감정을 담아주세요.
+
+=== Pet's Voice 작성 (매우 중요!) ===
 - ${pet_species} 말투: ${voiceTone[pet_species] || voiceTone['기타']}
-- 반려동물 이름(${pet_name})을 자연스럽게 사용하지 않음 (본인 시점이므로)
-- 주인을 "집사님", "주인님", "엄마/아빠" 등으로 부름
+- 1인칭 시점, 반려동물 이름 사용 X
+- 주인을 "집사님", "엄마/아빠" 등으로
+
+=== 개인화 체크리스트 (응답 전 확인!) ===
+□ today_story에 품종 특성이 드러나는가?
+□ today_story에 성격(${pet_personality || '미입력'})이 반영되었는가?
+□ breed_specific에 품종별 건강 주의사항이 구체적인가?
+□ 건강 특이사항(${pet_health_notes || '없음'})이 반영되었는가?
+□ 나이(${pet_age}세)에 맞는 조언인가?
 
 분량 제약:
-- 각 텍스트 필드: 30-80자 이내 (간결하고 임팩트 있게)
-- 배열 항목: 각 40자 이내
-- Pet's Voice 메시지: 각 50자 이내 (감정 표현 풍부하게)
+- 스토리 각 chapter: 60-80자
+- 일반 텍스트 필드: 30-60자
+- Pet's Voice: 각 50자 이내
 
 반드시 JSON 형식으로만 응답하세요.`
 
@@ -270,9 +396,21 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
 ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
 
 위 정보를 바탕으로 오늘의 반려동물 운세를 생성해주세요.
+특히 품종, 성격, 건강 정보를 적극 활용하여 개인화된 결과를 제공하세요!
 
 응답 JSON 스키마:
 {
+  "today_story": {
+    "opening": "오늘 아침, ${pet_age}살 ${pet_breed || pet_species} ${pet_name}는... (60-80자)",
+    "morning_chapter": "아침 이야기 - ${pet_personality || ''}성격이 드러나는 구체적 행동 (60-80자)",
+    "afternoon_chapter": "오후 이야기 - 주인과의 교감이나 활동 묘사 (60-80자)",
+    "evening_chapter": "저녁 이야기 - 하루 마무리, 편안한 분위기 (60-80자)"
+  },
+  "breed_specific": {
+    "trait_today": "오늘 ${pet_breed || pet_species}의 어떤 품종 특성이 빛날지 (40-60자)",
+    "health_watch": "${pet_breed || pet_species} 품종 건강 주의사항 + 입력된 건강 특이사항 반영 (40-60자)",
+    "grooming_tip": "오늘의 털/피부 관리 팁 (30-50자)"
+  },
   "daily_condition": {
     "overall_score": (0-100 숫자),
     "mood_prediction": "오늘의 기분 예측 (30-80자)",
@@ -392,6 +530,21 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
         emoji: petEmoji
       },
 
+      // NEW: 스토리 섹션 (무료)
+      today_story: fortuneData.today_story || {
+        opening: `오늘 아침, ${pet_age}살 ${pet_breed || pet_species} ${pet_name}는 창가에서 기지개를 켰어요.`,
+        morning_chapter: '아침 햇살을 받으며 활기찬 하루를 시작했어요.',
+        afternoon_chapter: '주인과 함께 즐거운 시간을 보냈어요.',
+        evening_chapter: '따뜻한 저녁 시간, 편안하게 쉬고 있어요.'
+      },
+
+      // NEW: 품종 맞춤 섹션 (무료)
+      breed_specific: fortuneData.breed_specific || {
+        trait_today: `오늘 ${pet_breed || pet_species}의 매력이 빛날 거예요!`,
+        health_watch: '오늘은 특별한 주의사항이 없어요.',
+        grooming_tip: '정기적인 관리로 건강을 유지하세요.'
+      },
+
       // 무료 섹션 (3개)
       daily_condition: fortuneData.daily_condition,
       owner_bond: fortuneData.owner_bond,
@@ -501,7 +654,43 @@ function generateFallbackFortune(petName: string, petSpecies: string, petAge: nu
 
   const template = voiceTemplates[petSpecies] || voiceTemplates['강아지']
 
+  // 스토리 템플릿
+  const storyTemplates: Record<string, { morning: string; afternoon: string; evening: string }> = {
+    '강아지': {
+      morning: '창가에서 새들을 구경하다가 꼬리를 신나게 흔들며 산책 준비를 했어요.',
+      afternoon: '주인과 함께 공원에서 신나게 뛰어놀고 맛있는 간식도 받았어요.',
+      evening: '저녁 산책 후 포근한 방석 위에서 행복하게 잠들 준비를 해요.'
+    },
+    '고양이': {
+      morning: '햇살이 드는 창가에서 그루밍을 하며 우아하게 하루를 시작했어요.',
+      afternoon: '집사가 놀아주려 하지만... 뭐, 조금만 놀아줄게요.',
+      evening: '따뜻한 이불 위에서 그르릉 소리를 내며 편안하게 쉬어요.'
+    },
+    '토끼': {
+      morning: '신선한 건초 냄새에 코를 벌름거리며 기분 좋게 일어났어요.',
+      afternoon: '조용히 당근을 오물오물 먹으며 평화로운 시간을 보냈어요.',
+      evening: '아늑한 집에서 편안하게 털을 정리하며 하루를 마무리해요.'
+    }
+  }
+
+  const storyTemplate = storyTemplates[petSpecies] || storyTemplates['강아지']
+
   return {
+    // NEW: 스토리 섹션
+    today_story: {
+      opening: `오늘 아침, ${petAge}살 ${petSpecies} ${petName}는 창가에서 기지개를 켰어요.`,
+      morning_chapter: storyTemplate.morning,
+      afternoon_chapter: storyTemplate.afternoon,
+      evening_chapter: storyTemplate.evening
+    },
+
+    // NEW: 품종 맞춤 섹션
+    breed_specific: {
+      trait_today: `오늘 ${petSpecies}의 귀여운 매력이 특히 빛날 거예요!`,
+      health_watch: isSenior ? '노령기 건강 관리에 신경 써주세요.' : isYoung ? '성장기 영양 섭취를 챙겨주세요.' : '오늘은 특별한 주의사항이 없어요.',
+      grooming_tip: `${season}철에 맞는 털 관리를 해주세요.`
+    },
+
     daily_condition: {
       overall_score: baseScore,
       mood_prediction: `오늘 ${petName}는 ${energyLevel === 'high' ? '활기차고 장난기 넘치는' : energyLevel === 'low' ? '차분하고 평화로운' : '안정적이고 편안한'} 하루를 보낼 것 같아요.`,

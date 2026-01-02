@@ -21,6 +21,8 @@ import '../../../../core/utils/subscription_snackbar.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/standard_fortune_page_layout.dart';
+import '../widgets/pet_story_timeline.dart';
+import '../widgets/breed_intelligence_card.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
 
@@ -1103,6 +1105,16 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage>
           _buildPetInfoHeader(selectedPet, species, colors),
           const SizedBox(height: 20),
 
+          // ✅ NEW: 스토리 타임라인 (무료)
+          if (data['today_story'] != null)
+            _buildStoryTimeline(data, species, selectedPet, colors),
+          if (data['today_story'] != null) const SizedBox(height: 20),
+
+          // ✅ NEW: 품종 맞춤 인사이트 (무료)
+          if (data['breed_specific'] != null)
+            _buildBreedInsightCard(data, species, selectedPet, colors),
+          if (data['breed_specific'] != null) const SizedBox(height: 20),
+
           // ✅ 육각형 차트
           if (data['hexagonScores'] != null) _buildHexagonChart(data, colors),
           const SizedBox(height: 20),
@@ -1937,6 +1949,46 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage>
               )),
         ],
       ),
+    );
+  }
+
+  // ✅ NEW: 스토리 타임라인 빌더
+  Widget _buildStoryTimeline(
+    Map<String, dynamic> data,
+    PetSpecies species,
+    PetProfile pet,
+    DSColorScheme colors,
+  ) {
+    final story = data['today_story'] as Map<String, dynamic>?;
+    if (story == null) return const SizedBox.shrink();
+
+    return PetStoryTimeline(
+      opening: story['opening'] as String? ?? '',
+      morningChapter: story['morning_chapter'] as String? ?? '',
+      afternoonChapter: story['afternoon_chapter'] as String? ?? '',
+      eveningChapter: story['evening_chapter'] as String? ?? '',
+      petEmoji: species.emoji,
+      petName: pet.name,
+    );
+  }
+
+  // ✅ NEW: 품종 맞춤 인사이트 카드 빌더
+  Widget _buildBreedInsightCard(
+    Map<String, dynamic> data,
+    PetSpecies species,
+    PetProfile pet,
+    DSColorScheme colors,
+  ) {
+    final breedData = data['breed_specific'] as Map<String, dynamic>?;
+    if (breedData == null) return const SizedBox.shrink();
+
+    return BreedIntelligenceCard(
+      breed: pet.breed ?? '믹스',
+      species: species.displayName,
+      traitToday: breedData['trait_today'] as String? ?? '',
+      healthWatch: breedData['health_watch'] as String? ?? '',
+      groomingTip: breedData['grooming_tip'] as String? ?? '',
+      petEmoji: species.emoji,
     );
   }
 }

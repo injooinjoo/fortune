@@ -199,6 +199,8 @@ class EdgeFunctionsEndpoints {
       'exam': examFortune,
       'tarot': tarotFortune,
       'home-fengshui': homeFengshuiFortune,
+      // 소원 분석
+      'wish': analyzeWish,
     };
 
     return endpointMap[fortuneType] ?? '/fortune-$fortuneType';

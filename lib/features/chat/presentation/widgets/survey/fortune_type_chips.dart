@@ -158,6 +158,7 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.faceReading:
       case FortuneSurveyType.personalityDna:
       case FortuneSurveyType.dream:
+      case FortuneSurveyType.pastLife:
       case FortuneSurveyType.wish:
       case FortuneSurveyType.naming:
         return const Color(0xFF9C27B0); // 퍼플
@@ -246,6 +247,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '스포츠 경기';
       case FortuneSurveyType.dream:
         return '꿈 해몽';
+      case FortuneSurveyType.pastLife:
+        return '전생탐험';
       case FortuneSurveyType.celebrity:
         return '유명인 궁합';
       case FortuneSurveyType.pet:
@@ -321,6 +324,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '🏆';
       case FortuneSurveyType.dream:
         return '💭';
+      case FortuneSurveyType.pastLife:
+        return '🔮';
       case FortuneSurveyType.celebrity:
         return '⭐';
       case FortuneSurveyType.pet:

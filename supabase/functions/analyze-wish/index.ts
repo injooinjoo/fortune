@@ -59,6 +59,40 @@ interface WishAnalysisResponse {
   special_words: string;         // 신의 한마디 (50자)
 }
 
+/**
+ * LLM 응답에서 JSON 추출
+ * - ```json ... ``` 마크다운 코드블록 처리
+ * - ``` ... ``` 일반 코드블록 처리
+ * - 순수 JSON 처리
+ * - 앞뒤 텍스트가 있는 JSON 처리
+ */
+function extractJsonFromResponse(content: string): string {
+  // 1. ```json ... ``` 패턴 추출
+  const jsonBlockMatch = content.match(/```json\s*([\s\S]*?)```/)
+  if (jsonBlockMatch) {
+    console.log('📦 JSON 코드블록에서 추출')
+    return jsonBlockMatch[1].trim()
+  }
+
+  // 2. ``` ... ``` 패턴 추출
+  const codeBlockMatch = content.match(/```\s*([\s\S]*?)```/)
+  if (codeBlockMatch) {
+    console.log('📦 코드블록에서 추출')
+    return codeBlockMatch[1].trim()
+  }
+
+  // 3. { ... } 패턴 추출 (가장 바깥쪽 중괄호)
+  const jsonMatch = content.match(/\{[\s\S]*\}/)
+  if (jsonMatch) {
+    console.log('📦 중괄호에서 추출')
+    return jsonMatch[0].trim()
+  }
+
+  // 4. 원본 반환
+  console.log('📦 원본 사용')
+  return content.trim()
+}
+
 serve(async (req) => {
   // CORS preflight 처리
   if (req.method === 'OPTIONS') {
@@ -95,24 +129,14 @@ serve(async (req) => {
 - 긴급도: ${urgency}/5 (긴급도에 따라 메시지의 강도와 구체성 조절)
 ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profile.zodiac}` : ''}
 
-다음 JSON 형식으로 **진심어린 메시지**를 작성해주세요:
+반드시 다음 JSON 형식으로만 응답하세요. 마크다운이나 설명 없이 순수 JSON만 출력하세요:
 
 {
-  "empathy_message": "공감 메시지 (300-400자)\n\n[작성 가이드]\n- 소원에 담긴 진짜 마음을 읽어내기 (예: 취업 소원 → 인정받고 싶은 마음, 불안함)\n- 그 마음이 '당연하고 소중하다'는 것을 전달\n- 혼자가 아니라는 따뜻한 위로\n- 형식: '~~하고 싶으시군요. ~~한 마음이 느껴집니다. ~~하셨을 것 같아요. 그 마음, 참 소중합니다.'\n\n[예시]\n소원: 좋은 회사에 취업하고 싶어요\n공감: '좋은 회사에서 일하고 싶다는 마음, 그 안에는 자신의 능력을 인정받고 싶고, 안정된 미래를 꿈꾸는 간절함이 담겨있네요. 지금까지 얼마나 많은 노력을 하셨을까요. 때론 지치고 불안하셨을 텐데, 그럼에도 포기하지 않고 여기까지 오신 당신의 용기가 대단합니다. 그 마음, 반드시 보상받을 자격이 있습니다.'",
-
-  "hope_message": "희망 메시지 (400-500자)\n\n[작성 가이드]\n- '왜 이룰 수 있는지' 구체적인 근거 제시\n- 이미 가진 강점과 자원을 상기시키기\n- 작은 진전이라도 인정하고 격려\n- 어려움이 영원하지 않다는 것을 구체적 예시로 설명\n- '지금 이 순간'의 의미와 가치 강조\n\n[예시]\n'당신이 이 소원을 이룰 수 있다고 믿는 이유가 있습니다. 첫째, 지금까지 쌓아온 경험과 노력이 있습니다. 그것은 결코 헛되지 않습니다. 둘째, 이렇게 간절히 원하는 마음 자체가 당신을 움직이는 강력한 동력이 됩니다. 셋째, 지금은 보이지 않지만 당신의 노력은 분명 누군가에게 닿고 있습니다.\n\n힘들 땐 잠시 멈춰도 괜찮습니다. 중요한 건 방향을 잃지 않는 것이죠. 지금 이 순간도 당신은 조금씩 나아가고 있습니다. 그 사실을 잊지 마세요.'",
-
-  "advice": [
-    "실천 가능한 구체적 조언 1 (100-150자)\n- 당장 오늘/내일부터 할 수 있는 것\n- '~~하세요'가 아니라 '~~해보는 건 어떨까요?'처럼 부드러운 제안\n- 왜 효과적인지 간단한 이유 포함\n\n[예시] '매일 아침 5분만 투자해서 오늘 하루 이루고 싶은 작은 목표 하나를 적어보는 건 어떨까요? 큰 꿈도 결국 매일의 작은 실천에서 시작됩니다. 적는 행위 자체가 의지를 다지는 데 큰 도움이 됩니다.'",
-
-    "실천 가능한 구체적 조언 2 (100-150자)\n- 카테고리(${category})에 특화된 조언\n- 사용자 상황을 고려한 맞춤형 제안\n\n[예시] '지금 힘들다면, 비슷한 상황을 극복한 사람들의 이야기를 들어보세요. 그들도 처음엔 당신처럼 막막했지만, 결국 길을 찾았습니다. 그 이야기 속에서 당신만의 힌트를 발견할 수 있을 거예요.'",
-
-    "실천 가능한 구체적 조언 3 (100-150자)\n- 긴급도(${urgency}/5)를 고려한 타임라인 제시\n- 작은 성공 경험을 쌓도록 돕는 조언\n\n[예시] '일주일에 하루는 자신에게 '잘 하고 있어'라고 말해주는 시간을 가져보세요. 완벽하지 않아도, 느려도 괜찮습니다. 중요한 건 멈추지 않는 것이니까요. 작은 칭찬이 큰 힘이 됩니다.'"
-  ],
-
-  "encouragement": "응원 메시지 (200-250자)\n\n[작성 가이드]\n- 사용자의 강점을 구체적으로 언급\n- '혼자가 아니다'는 메시지\n- 앞으로의 여정에 대한 믿음 표현\n- 진심이 느껴지는 따뜻한 마무리\n\n[예시]\n'당신의 간절함, 그 포기하지 않는 마음이 정말 아름답습니다. 지금 이 순간도 당신은 충분히 잘 하고 있어요. 힘들 땐 이 메시지를 다시 읽어주세요. 당신의 꿈을 응원하는 사람이 여기 있습니다. 반드시 좋은 날이 올 거예요. 그때까지 함께 걸어가요. 당신을 믿습니다.'",
-
-  "special_words": "신의 한마디 (40-50자)\n\n[작성 가이드]\n- 짧지만 강렬한 메시지\n- 소원의 핵심을 관통하는 한마디\n- 기억에 남는 명언처럼\n\n[예시]\n'당신의 간절함은 이미 반쯤 이루어진 기적입니다'\n'포기하지 않는 당신의 마음이 가장 큰 힘입니다'\n'지금 이 순간, 당신은 충분히 빛나고 있습니다'"
+  "empathy_message": "소원에 담긴 진심을 읽어내고 공감하는 메시지 (300-400자). 형식적인 위로가 아닌 진심어린 공감.",
+  "hope_message": "왜 이 소원이 이루어질 수 있는지 구체적인 이유와 함께 희망을 전달 (400-500자)",
+  "advice": ["오늘부터 실천할 수 있는 구체적인 조언 1 (100-150자)", "카테고리에 맞는 구체적인 조언 2 (100-150자)", "작은 성공을 쌓는 조언 3 (100-150자)"],
+  "encouragement": "혼자가 아니라는 것, 당신을 응원한다는 진심어린 메시지 (200-250자)",
+  "special_words": "소원의 핵심을 관통하는 짧고 강렬한 한마디 (40-50자)"
 }
 
 ⚠️ **절대 금지 사항**:
@@ -185,7 +209,47 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
       throw new Error('LLM API 응답 없음')
     }
 
-    const analysisResult: WishAnalysisResponse = JSON.parse(response.content)
+    // ✅ JSON 추출 및 파싱
+    let analysisResult: WishAnalysisResponse
+    try {
+      const jsonString = extractJsonFromResponse(response.content)
+      console.log('📦 추출된 JSON (앞 500자):', jsonString.substring(0, 500))
+      analysisResult = JSON.parse(jsonString)
+
+      // 필수 필드 검증
+      const requiredFields = ['empathy_message', 'hope_message', 'advice', 'encouragement', 'special_words']
+      for (const field of requiredFields) {
+        if (!(field in analysisResult)) {
+          console.error(`❌ LLM 응답에 필수 필드 누락: ${field}`)
+          console.error('수신된 응답:', JSON.stringify(analysisResult, null, 2))
+          throw new Error(`LLM 응답 검증 실패: ${field} 필드 누락`)
+        }
+      }
+
+      // advice 배열 검증
+      if (!Array.isArray(analysisResult.advice) || analysisResult.advice.length === 0) {
+        console.error('❌ advice 필드가 배열이 아니거나 비어있음')
+        throw new Error('LLM 응답 검증 실패: advice 필드가 유효하지 않음')
+      }
+    } catch (parseError) {
+      if (parseError instanceof SyntaxError) {
+        console.error('❌ JSON 파싱 실패:', parseError)
+        console.error('원본 응답:', response.content)
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'LLM 응답 파싱 실패',
+            message: '소원 분석 응답을 처리할 수 없습니다',
+            code: 'PARSE_ERROR',
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 500,
+          }
+        )
+      }
+      throw parseError // 필드 검증 에러는 상위로 전파
+    }
 
     console.log('✅ 파싱된 분석 결과:', analysisResult)
 
@@ -246,11 +310,30 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
   } catch (error) {
     console.error('❌ 소원 분석 오류:', error)
 
+    // ✅ 에러 타입별 코드 및 메시지
+    let errorCode = 'UNKNOWN_ERROR'
+    let userMessage = '소원 분석 중 오류가 발생했습니다'
+
+    if (error.message?.includes('필수 파라미터')) {
+      errorCode = 'MISSING_PARAMS'
+      userMessage = error.message
+    } else if (error.message?.includes('하루 1회') || error.message?.includes('이미 소원')) {
+      errorCode = 'DAILY_LIMIT'
+      userMessage = error.message
+    } else if (error.message?.includes('LLM') || error.message?.includes('API 응답')) {
+      errorCode = 'LLM_ERROR'
+      userMessage = '신의 응답을 받는 중 오류가 발생했습니다'
+    } else if (error.message?.includes('검증 실패')) {
+      errorCode = 'VALIDATION_ERROR'
+      userMessage = '소원 분석 응답이 불완전합니다'
+    }
+
     return new Response(
       JSON.stringify({
         success: false,
         error: error.message,
-        message: '소원 분석 중 오류가 발생했습니다'
+        message: userMessage,
+        code: errorCode,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

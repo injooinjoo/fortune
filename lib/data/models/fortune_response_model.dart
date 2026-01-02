@@ -795,6 +795,26 @@ class FortuneData {
       }
     }
 
+    // Naming fortune: map naming-specific fields to metadata
+    if (json['fortuneType'] == 'naming' ||
+        json['type'] == 'naming' ||
+        json['fortune_type'] == 'naming') {
+      score ??= json['score'] as int?;
+      summary ??= json['summary'] as String?;
+
+      // Store all naming data in metadata for ChatFortuneResultCard access
+      metadata = {
+        ...?metadata,
+        if (json['recommendedNames'] != null)
+          'recommendedNames': json['recommendedNames'],
+        if (json['ohaengAnalysis'] != null)
+          'ohaengAnalysis': json['ohaengAnalysis'],
+        if (json['namingTips'] != null) 'namingTips': json['namingTips'],
+        if (json['warnings'] != null) 'warnings': json['warnings'],
+        'fortuneType': 'naming',
+      };
+    }
+
     return FortuneData(
       id: json['id'],
       userId: json['userId'],

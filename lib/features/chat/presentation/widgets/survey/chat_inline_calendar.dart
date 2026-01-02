@@ -262,6 +262,13 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.3),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

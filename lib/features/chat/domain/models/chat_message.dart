@@ -1,5 +1,6 @@
 import '../../../../domain/entities/fortune.dart';
 import '../../../fortune/domain/models/match_insight.dart';
+import '../../../fortune/domain/models/past_life_result.dart';
 
 /// 채팅 메시지 유형
 enum ChatMessageType {
@@ -89,6 +90,9 @@ class ChatMessage {
   /// 경기 인사이트 결과 데이터
   final MatchInsight? matchInsight;
 
+  /// 전생탐험 결과 데이터
+  final PastLifeResult? pastLifeResult;
+
   /// 기간별 인사이트: 선택한 날짜 (결과 제목에 표시)
   final DateTime? selectedDate;
 
@@ -107,6 +111,7 @@ class ChatMessage {
     this.sajuFortuneResult,
     this.onboardingInputType,
     this.matchInsight,
+    this.pastLifeResult,
     this.selectedDate,
   });
 
@@ -125,6 +130,7 @@ class ChatMessage {
     Map<String, dynamic>? sajuFortuneResult,
     OnboardingInputType? onboardingInputType,
     MatchInsight? matchInsight,
+    PastLifeResult? pastLifeResult,
     DateTime? selectedDate,
   }) {
     return ChatMessage(
@@ -142,6 +148,7 @@ class ChatMessage {
       sajuFortuneResult: sajuFortuneResult ?? this.sajuFortuneResult,
       onboardingInputType: onboardingInputType ?? this.onboardingInputType,
       matchInsight: matchInsight ?? this.matchInsight,
+      pastLifeResult: pastLifeResult ?? this.pastLifeResult,
       selectedDate: selectedDate ?? this.selectedDate,
     );
   }

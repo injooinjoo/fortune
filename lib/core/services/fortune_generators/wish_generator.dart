@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../errors/exceptions.dart';
 import '../../models/fortune_result.dart';
 import '../../utils/logger.dart';
 
@@ -71,6 +72,20 @@ class WishGenerator {
       final wishData = data['data'] as Map<String, dynamic>;
       Logger.info('[WishGenerator]   📦 Response data keys: ${wishData.keys.toList()}');
 
+      // ✅ 필수 필드 검증
+      const requiredFields = ['empathy_message', 'hope_message', 'advice', 'encouragement', 'special_words'];
+      for (final field in requiredFields) {
+        if (!wishData.containsKey(field)) {
+          Logger.error('[WishGenerator] ❌ 필수 필드 누락: $field');
+          Logger.error('[WishGenerator]   수신된 필드: ${wishData.keys.toList()}');
+          throw WishAnalysisException(
+            message: '소원 분석 응답이 불완전합니다',
+            code: 'MISSING_FIELD',
+            missingField: field,
+          );
+        }
+      }
+
       // 🔄 파싱
       Logger.info('[WishGenerator] 🔄 응답 데이터 파싱 중...');
       final result = _convertToFortuneResult(wishData, inputConditions);
@@ -79,9 +94,30 @@ class WishGenerator {
       Logger.info('[WishGenerator]   📝 Title: ${result.title}');
 
       return result;
+    } on WishAnalysisException {
+      rethrow;
+    } on FormatException catch (e, stackTrace) {
+      Logger.error('[WishGenerator] ❌ JSON 파싱 실패', e, stackTrace);
+      throw WishAnalysisException(
+        message: '소원 분석 응답을 처리할 수 없습니다',
+        code: 'PARSE_ERROR',
+        originalError: e,
+      );
     } catch (e, stackTrace) {
       Logger.error('[WishGenerator] ❌ 소원 분석 실패', e, stackTrace);
-      rethrow;
+
+      String userMessage = '소원 분석 중 오류가 발생했습니다';
+      if (e.toString().contains('timeout')) {
+        userMessage = '응답 시간이 초과되었습니다. 네트워크를 확인해주세요.';
+      } else if (e.toString().contains('SocketException')) {
+        userMessage = '네트워크 연결을 확인해주세요.';
+      }
+
+      throw WishAnalysisException(
+        message: userMessage,
+        code: 'UNKNOWN_ERROR',
+        originalError: e,
+      );
     }
   }
 
@@ -90,11 +126,14 @@ class WishGenerator {
     Map<String, dynamic> wishData,
     Map<String, dynamic> inputConditions,
   ) {
+    // ✅ 새 필드명 사용 (empathy_message)
+    final empathyMessage = wishData['empathy_message'] as String? ?? '';
+
     return FortuneResult(
       type: 'wish',
       title: '소원 빌기 - ${inputConditions['category']}',
       summary: {
-        'message': wishData['divine_message'] ?? '',
+        'message': empathyMessage,
         'wish_text': inputConditions['wish_text'],
         'category': inputConditions['category'],
       },

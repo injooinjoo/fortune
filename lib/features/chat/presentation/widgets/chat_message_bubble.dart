@@ -4,6 +4,7 @@ import '../../domain/models/chat_message.dart';
 import 'chat_career_result_card.dart';
 import 'chat_celebrity_result_card.dart';
 import 'chat_fortune_result_card.dart';
+import 'chat_past_life_result_card.dart';
 import 'chat_tarot_result_card.dart';
 import 'chat_match_insight_card.dart';
 import 'chat_ootd_result_card.dart';
@@ -140,6 +141,20 @@ class ChatMessageBubble extends StatelessWidget {
             'blurredSections': message.blurredSections,
           },
           question: additionalInfo['question'] as String?,
+        ),
+      );
+    }
+
+    // 전생탐험 결과 카드 표시
+    if (message.type == ChatMessageType.fortuneResult &&
+        message.fortuneType == 'past-life' &&
+        message.pastLifeResult != null) {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatPastLifeResultCard(
+          result: message.pastLifeResult!,
         ),
       );
     }

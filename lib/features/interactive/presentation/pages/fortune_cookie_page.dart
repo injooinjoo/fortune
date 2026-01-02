@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:video_player/video_player.dart';
 import '../../../../core/theme/font_config.dart';
+import '../widgets/cookie_shard_break_widget.dart';
 import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/utils/logger.dart';
@@ -15,15 +15,6 @@ import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-
-/// F22: veo3 쿠키 부서지는 영상 경로
-/// 사용자가 veo3로 생성한 영상을 아래 경로에 추가해주세요.
-/// 권장 사양:
-/// - 해상도: 1080x1080 (1:1 정사각형)
-/// - 길이: 2-3초
-/// - 포맷: MP4 (H.264)
-/// - 내용: 포춘쿠키가 부서지면서 종이가 나오는 애니메이션
-const String _kCookieCrackVideoPath = 'assets/videos/cookie_crack.mp4';
 
 /// 포춘쿠키 타입 (U11: 오방색 적용)
 /// 오방색: 청(靑), 적(赤), 황(黃), 백(白), 흑(黑)
@@ -53,26 +44,20 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     with TickerProviderStateMixin {
   // Animation controllers
   late AnimationController _shakeController;
-  late AnimationController _crackController;
   late AnimationController _paperController;
   late AnimationController _floatController;
 
   // Animations
   late Animation<double> _shakeAnimation;
-  late Animation<double> _crackAnimation;
   late Animation<double> _paperAnimation;
   late Animation<double> _floatAnimation;
 
   // State
   CookieType? _selectedCookie;
   bool _isShaking = false;
-  bool _isCracking = false;
   bool _showPaper = false;
   bool _isProcessing = false; // 애니메이션 중복 방지
-
-  // F22: veo3 영상 플레이어
-  VideoPlayerController? _videoController;
-  bool _useVideoAnimation = false; // 영상 파일 존재 여부
+  bool _showShardBreak = false; // 조각 분해 애니메이션 표시
 
   // Fortune content
   String _mainMessage = '';
@@ -87,31 +72,11 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   void initState() {
     super.initState();
     _initializeAnimations();
-    _initializeVideoPlayer(); // F22: 영상 초기화
-  }
-
-  /// F22: veo3 영상 플레이어 초기화
-  Future<void> _initializeVideoPlayer() async {
-    try {
-      _videoController = VideoPlayerController.asset(_kCookieCrackVideoPath);
-      await _videoController!.initialize();
-      _useVideoAnimation = true;
-      Logger.info('F22: Cookie crack video loaded successfully');
-    } catch (e) {
-      // 영상 파일이 없으면 기존 애니메이션 사용
-      _useVideoAnimation = false;
-      Logger.debug('F22: Video not available, using default animation');
-    }
   }
 
   void _initializeAnimations() {
     _shakeController = AnimationController(
       duration: const Duration(milliseconds: 100),
-      vsync: this,
-    );
-
-    _crackController = AnimationController(
-      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
@@ -131,14 +96,6 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     ).animate(CurvedAnimation(
       parent: _shakeController,
       curve: Curves.elasticIn,
-    ));
-
-    _crackAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _crackController,
-      curve: Curves.easeOutBack,
     ));
 
     _paperAnimation = Tween<double>(
@@ -161,10 +118,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   @override
   void dispose() {
     _shakeController.dispose();
-    _crackController.dispose();
     _paperController.dispose();
     _floatController.dispose();
-    _videoController?.dispose(); // F22: 영상 해제
     super.dispose();
   }
 
@@ -366,7 +321,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     return Column(
       children: [
         Text(
-          _isCracking ? '쿠키가 열리고 있어요!' : '쿠키를 탭해서 깨뜨리세요',
+          _showShardBreak ? '쿠키가 열리고 있어요!' : '쿠키를 탭해서 깨뜨리세요',
           style: TextStyle(
             fontFamily: FontConfig.primary,
             fontSize: FontConfig.heading3,
@@ -599,99 +554,80 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   }
 
   Widget _buildCenteredCookie() {
+    // 조각 분해 애니메이션 표시
+    if (_showShardBreak) {
+      return SizedBox(
+        width: 300,
+        height: 300,
+        child: Center(
+          child: CookieShardBreakWidget(
+            imagePath: 'assets/images/fortune_cards/fortune_cookie_fortune.png',
+            size: 220,
+            accentColor: _selectedCookie?.color,
+            onBreakComplete: () {
+              // 분해 완료 후 결과 화면으로
+              setState(() {
+                _showPaper = true;
+              });
+              _paperController.forward();
+              ref.read(fortuneHapticServiceProvider).loadingComplete();
+            },
+          ),
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: _isProcessing ? null : _onCookieTap,
       child: AnimatedBuilder(
-        animation: Listenable.merge([
-          _shakeAnimation,
-          _crackAnimation,
-        ]),
+        animation: _shakeAnimation,
         builder: (context, child) {
           return Transform.translate(
             offset: Offset(
               _isShaking ? _shakeAnimation.value : 0,
               0,
             ),
-            child: Transform.scale(
-              scale: 1.0 - (_crackAnimation.value * 0.1),
-              child: SizedBox(
-                width: 300,
-                height: 300,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Cookie shadow
-                    Positioned(
-                      bottom: 50,
-                      child: Container(
-                        width: 200,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  _selectedCookie!.color.withValues(alpha: 0.3),
-                              blurRadius: 40,
-                              spreadRadius: 20,
-                            ),
-                          ],
-                        ),
+            child: SizedBox(
+              width: 300,
+              height: 300,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Cookie shadow
+                  Positioned(
+                    bottom: 50,
+                    child: Container(
+                      width: 200,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                _selectedCookie!.color.withValues(alpha: 0.3),
+                            blurRadius: 40,
+                            spreadRadius: 20,
+                          ),
+                        ],
                       ),
                     ),
-                    // Cookie body
-                    AnimatedBuilder(
-                      animation: _floatAnimation,
-                      builder: (context, child) {
-                        return Transform.translate(
-                          offset: Offset(0, _floatAnimation.value),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Minhwa Fortune Cookie Image
-                              Image.asset(
-                                'assets/images/fortune_cards/fortune_cookie_fortune.png',
-                                width: 220,
-                                height: 220,
-                                fit: BoxFit.contain,
-                              ),
-                              // F22: Crack effect (영상 또는 기본 애니메이션)
-                              if (_isCracking)
-                                _useVideoAnimation && _videoController != null
-                                    ? // veo3 영상 사용
-                                    ClipRRect(
-                                        borderRadius: BorderRadius.circular(80),
-                                        child: SizedBox(
-                                          width: 220,
-                                          height: 160,
-                                          child: VideoPlayer(_videoController!),
-                                        ),
-                                      )
-                                    : // 기본 애니메이션
-                                    Opacity(
-                                        opacity: _crackAnimation.value
-                                            .clamp(0.0, 1.0),
-                                        child: Container(
-                                          width: 220,
-                                          height: 160,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(80),
-                                          ),
-                                          child: CustomPaint(
-                                            painter: ImprovedCrackPainter(
-                                              progress: _crackAnimation.value,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                  // Cookie body with float animation
+                  AnimatedBuilder(
+                    animation: _floatAnimation,
+                    builder: (context, child) {
+                      return Transform.translate(
+                        offset: Offset(0, _floatAnimation.value),
+                        child: Image.asset(
+                          'assets/images/fortune_cards/fortune_cookie_fortune.png',
+                          width: 220,
+                          height: 220,
+                          fit: BoxFit.contain,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           );
@@ -1045,7 +981,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   }
 
   Future<void> _onCookieTap() async {
-    if (_isProcessing || _isShaking || _isCracking) return;
+    if (_isProcessing || _isShaking || _showShardBreak) return;
 
     final haptic = ref.read(fortuneHapticServiceProvider);
 
@@ -1069,48 +1005,21 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
 
     setState(() {
       _isShaking = false;
-      _isCracking = true;
     });
 
-    // F22: veo3 영상 재생 (있는 경우)
-    if (_useVideoAnimation && _videoController != null) {
-      _videoController!.play();
-    }
-
-    // Get fortune
-    await _getFortune();
-
-    // Crack animation with haptic at 50% point
-    _crackController.addListener(_onCrackProgress);
-    await _crackController.forward();
-    _crackController.removeListener(_onCrackProgress);
-
-    // Show paper with reveal haptic
+    // 햅틱 피드백
     haptic.mysticalReveal();
 
+    // Get fortune data first
+    await _getFortune();
+
+    // 조각 분해 애니메이션 시작
     setState(() {
-      _showPaper = true;
-    });
-
-    // Paper animation
-    await _paperController.forward();
-
-    // 결과 표시 완료
-    haptic.loadingComplete();
-
-    setState(() {
+      _showShardBreak = true;
       _isProcessing = false;
     });
-  }
 
-  bool _crackHapticTriggered = false;
-
-  void _onCrackProgress() {
-    // 균열 애니메이션 50% 지점에서 햅틱
-    if (!_crackHapticTriggered && _crackController.value >= 0.5) {
-      _crackHapticTriggered = true;
-      ref.read(fortuneHapticServiceProvider).cardSelect();
-    }
+    // CookieShardBreakWidget의 onBreakComplete에서 결과 화면 전환 처리
   }
 
   Future<void> _getFortune() async {

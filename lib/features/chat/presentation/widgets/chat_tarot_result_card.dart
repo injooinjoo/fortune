@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
+import '../../../../core/constants/tarot/tarot_position_meanings.dart';
 import '../../../../presentation/providers/token_provider.dart';
 
 /// 채팅용 타로 결과 리치 카드
@@ -546,13 +547,35 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
   }
 
   Widget _buildDetailedInterpretations(DSColorScheme colors, DSTypographyScheme typography) {
+    // 스프레드 타입 파싱
+    final parsedSpreadType = TarotPositionMeanings.parseSpreadType(spreadType);
+
     return Column(
       children: List.generate(cards.length, (index) {
         final card = cards[index] as Map<String, dynamic>;
         final cardNameKr = card['cardNameKr'] as String? ?? '카드';
         final positionName = card['positionName'] as String? ?? '';
-        final interpretation = card['interpretation'] as String? ?? '';
         final isReversed = card['isReversed'] as bool? ?? false;
+        final cardIndex = card['cardIndex'] as int? ?? card['index'] as int? ?? -1;
+
+        // 하드코딩된 해석 가져오기
+        String interpretation = '';
+        if (parsedSpreadType != null && cardIndex >= 0) {
+          final hardcodedInterpretation = TarotPositionMeanings.getInterpretation(
+            cardIndex: cardIndex,
+            spreadType: parsedSpreadType,
+            positionIndex: index,
+            isReversed: isReversed,
+          );
+          if (hardcodedInterpretation != null && hardcodedInterpretation.isNotEmpty) {
+            interpretation = hardcodedInterpretation;
+          }
+        }
+
+        // 하드코딩 해석이 없으면 Edge Function 데이터 사용
+        if (interpretation.isEmpty) {
+          interpretation = card['interpretation'] as String? ?? '';
+        }
 
         return Container(
           margin: const EdgeInsets.only(top: DSSpacing.sm),

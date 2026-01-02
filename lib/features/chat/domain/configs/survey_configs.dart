@@ -532,9 +532,10 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   FortuneSurveyType.health: healthSurveyConfig,
   FortuneSurveyType.exercise: exerciseSurveyConfig,
   FortuneSurveyType.sportsGame: sportsGameSurveyConfig,
-  // 인터랙티브 (2개)
+  // 인터랙티브 (3개)
   FortuneSurveyType.dream: dreamSurveyConfig,
   FortuneSurveyType.celebrity: celebritySurveyConfig,
+  FortuneSurveyType.pastLife: pastLifeSurveyConfig,
   // 가족/반려동물 (3개)
   FortuneSurveyType.pet: petSurveyConfig,
   FortuneSurveyType.family: familySurveyConfig,
@@ -2107,6 +2108,25 @@ const gratitudeSurveyConfig = FortuneSurveyConfig(
       id: 'gratitude3',
       question: '마지막으로 감사한 일을 적어주세요 ✨',
       inputType: SurveyInputType.text,
+    ),
+  ],
+);
+
+// ============================================================
+// PastLife (전생탐험) 설문 설정
+// ============================================================
+
+const pastLifeSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.pastLife,
+  title: '전생탐험',
+  description: 'AI가 당신의 전생을 탐험해드려요',
+  emoji: '🔮',
+  accentColor: FortuneColors.mystical,
+  steps: [
+    SurveyStep(
+      id: 'photo',
+      question: '너의 전생을 읽어볼게 🔮\n사진을 올려주면 더 깊이 들여다볼 수 있어',
+      inputType: SurveyInputType.faceReading,
     ),
   ],
 );

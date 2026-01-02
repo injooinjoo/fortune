@@ -6,6 +6,7 @@ import '../../domain/models/wish_fortune_result.dart';
 import './wish_fortune_result_page.dart';
 import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/errors/exceptions.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -212,13 +213,31 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
           ),
         ),
       );
-    } catch (e) {
-      debugPrint('소원 분석 API 오류: $e');
+    } on WishAnalysisException catch (e) {
+      debugPrint('[WishFortunePage] 소원 분석 예외: ${e.message}');
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        _showErrorDialog('소원 분석 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
+        setState(() => _isLoading = false);
+        _showErrorDialog(e.message);
+      }
+    } on InsufficientTokensException catch (e) {
+      debugPrint('[WishFortunePage] 토큰 부족: ${e.message}');
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _showErrorDialog('복주머니가 부족합니다.\n충전 후 다시 시도해주세요.');
+      }
+    } catch (e) {
+      debugPrint('[WishFortunePage] 소원 분석 API 오류: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+
+        String errorMessage = '소원 분석 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.';
+        if (e.toString().contains('timeout') || e.toString().contains('SocketException')) {
+          errorMessage = '네트워크 연결을 확인해주세요.';
+        } else if (e.toString().contains('DAILY_LIMIT')) {
+          errorMessage = '오늘은 이미 소원을 빌었어요.\n내일 다시 시도해주세요.';
+        }
+
+        _showErrorDialog(errorMessage);
       }
     }
   }

@@ -118,12 +118,16 @@ class IntentDetector {
       // 기타
       'UFC', '미식축구',
     ],
-    // 인터랙티브 (2개)
+    // 인터랙티브 (3개)
     FortuneSurveyType.dream: [
       '꿈', '해몽', '악몽', '길몽', '흉몽', '꿨',
     ],
     FortuneSurveyType.celebrity: [
       '유명인', '연예인', '아이돌', '배우', '가수', '스타',
+    ],
+    FortuneSurveyType.pastLife: [
+      '전생', '과거생', '전생탐험', '이전생', '내전생',
+      '전생이', '과거삶', '전생에', '윤회', '환생',
     ],
     // 가족/반려동물 (3개)
     FortuneSurveyType.pet: [
@@ -255,6 +259,8 @@ class IntentDetector {
         return '꿈 해몽을 해드릴까요?';
       case FortuneSurveyType.celebrity:
         return '좋아하는 유명인과의 궁합을 볼까요?';
+      case FortuneSurveyType.pastLife:
+        return '전생을 탐험해볼까요?';
       // 가족/반려동물
       case FortuneSurveyType.pet:
         return '반려동물과의 궁합을 봐드릴까요?';

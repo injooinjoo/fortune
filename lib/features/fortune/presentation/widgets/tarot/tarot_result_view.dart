@@ -4,6 +4,7 @@ import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../core/constants/tarot_metadata.dart';
+import '../../../../../core/constants/tarot/tarot_position_meanings.dart';
 import '../../../../../core/providers/user_settings_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/loading_states.dart';
@@ -801,23 +802,41 @@ $interpretation''';
 
     final positionMeaning = _getPositionLabel(position);
 
-    // 스토리텔링 스타일의 해석 생성
-    final buffer = StringBuffer();
+    // 스프레드 타입 파싱
+    final spreadType = TarotPositionMeanings.parseSpreadType(widget.spreadType);
 
-    // 위치별 맥락 설명
+    // 하드코딩된 위치별 해석 가져오기
+    String? hardcodedInterpretation;
+    if (spreadType != null) {
+      hardcodedInterpretation = TarotPositionMeanings.getInterpretation(
+        cardIndex: cardIndex,
+        spreadType: spreadType,
+        positionIndex: position,
+        isReversed: false, // TODO: 역방향 정보 추가
+      );
+    }
+
+    // 하드코딩된 해석이 있으면 사용
+    if (hardcodedInterpretation != null && hardcodedInterpretation.isNotEmpty) {
+      return {
+        'cardName': cardInfo.name,
+        'keywords': cardInfo.keywords,
+        'interpretation': hardcodedInterpretation,
+        'element': cardInfo.element,
+        'astrology': cardInfo.astrology,
+      };
+    }
+
+    // Fallback: 기본 해석 생성
+    final buffer = StringBuffer();
     buffer.writeln('$positionMeaning의 자리에 ${cardInfo.name}가 나타났습니다.');
     buffer.writeln();
-
-    // 카드의 핵심 의미
     buffer.writeln('✨ 이 카드가 전하는 의미');
     buffer.writeln(cardInfo.uprightMeaning);
     buffer.writeln();
-
-    // 상황별 조언
     buffer.writeln('💫 당신을 위한 메시지');
     buffer.writeln(cardInfo.advice);
 
-    // 스토리가 있으면 일부 추가
     if (cardInfo.story != null && cardInfo.story!.isNotEmpty) {
       buffer.writeln();
       buffer.writeln('📖 카드의 이야기');

@@ -726,7 +726,7 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
           ),
         ),
         child: Text(
-          '${_selectedGame!.matchTitle} 선택',
+          '이 경기로 선택',
           style: typography.labelLarge.copyWith(
             fontWeight: FontWeight.w600,
             color: Colors.white,

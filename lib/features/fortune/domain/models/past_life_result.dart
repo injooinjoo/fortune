@@ -1,3 +1,48 @@
+/// 전생 스토리 챕터 모델
+class PastLifeChapter {
+  final String title;
+  final String content;
+  final String emoji;
+  final bool isBlurred;
+
+  const PastLifeChapter({
+    required this.title,
+    required this.content,
+    required this.emoji,
+    this.isBlurred = false,
+  });
+
+  factory PastLifeChapter.fromJson(Map<String, dynamic> json) {
+    return PastLifeChapter(
+      title: json['title'] ?? '',
+      content: json['content'] ?? '',
+      emoji: json['emoji'] ?? '📜',
+      isBlurred: json['isBlurred'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'content': content,
+        'emoji': emoji,
+        'isBlurred': isBlurred,
+      };
+
+  PastLifeChapter copyWith({
+    String? title,
+    String? content,
+    String? emoji,
+    bool? isBlurred,
+  }) {
+    return PastLifeChapter(
+      title: title ?? this.title,
+      content: content ?? this.content,
+      emoji: emoji ?? this.emoji,
+      isBlurred: isBlurred ?? this.isBlurred,
+    );
+  }
+}
+
 /// 전생 운세 결과 모델
 ///
 /// 사용자의 전생 신분, 스토리, AI 초상화 정보를 담습니다.
@@ -44,6 +89,21 @@ class PastLifeResult {
   /// 블러 처리된 섹션 목록
   final List<String> blurredSections;
 
+  /// V2: 시나리오 ID
+  final String scenarioId;
+
+  /// V2: 시나리오 카테고리 (royalty, scholarly, entertainment, military, spiritual, common)
+  final String scenarioCategory;
+
+  /// V2: 시나리오 특성 (현명한, 혁신적 등)
+  final String scenarioTrait;
+
+  /// V2: 스토리 챕터 목록
+  final List<PastLifeChapter> chapters;
+
+  /// V2: 얼굴 특징 분석 결과
+  final Map<String, dynamic>? faceFeatures;
+
   const PastLifeResult({
     required this.id,
     required this.pastLifeStatus,
@@ -59,6 +119,11 @@ class PastLifeResult {
     required this.createdAt,
     this.isBlurred = false,
     this.blurredSections = const [],
+    this.scenarioId = '',
+    this.scenarioCategory = '',
+    this.scenarioTrait = '',
+    this.chapters = const [],
+    this.faceFeatures,
   });
 
   /// 성별 한글 표시
@@ -69,6 +134,14 @@ class PastLifeResult {
 
   /// JSON에서 생성
   factory PastLifeResult.fromJson(Map<String, dynamic> json) {
+    // chapters 파싱
+    List<PastLifeChapter> parsedChapters = [];
+    if (json['chapters'] != null) {
+      parsedChapters = (json['chapters'] as List)
+          .map((c) => PastLifeChapter.fromJson(c as Map<String, dynamic>))
+          .toList();
+    }
+
     return PastLifeResult(
       id: json['id'] ?? '',
       pastLifeStatus: json['pastLifeStatus'] ?? json['past_life_status'] ?? '',
@@ -90,6 +163,11 @@ class PastLifeResult {
       blurredSections: json['blurredSections'] != null
           ? List<String>.from(json['blurredSections'])
           : [],
+      scenarioId: json['scenarioId'] ?? json['scenario_id'] ?? '',
+      scenarioCategory: json['scenarioCategory'] ?? json['scenario_category'] ?? '',
+      scenarioTrait: json['scenarioTrait'] ?? json['scenario_trait'] ?? '',
+      chapters: parsedChapters,
+      faceFeatures: json['faceFeatures'] ?? json['face_features'],
     );
   }
 
@@ -109,6 +187,11 @@ class PastLifeResult {
         'createdAt': createdAt.toIso8601String(),
         'isBlurred': isBlurred,
         'blurredSections': blurredSections,
+        'scenarioId': scenarioId,
+        'scenarioCategory': scenarioCategory,
+        'scenarioTrait': scenarioTrait,
+        'chapters': chapters.map((c) => c.toJson()).toList(),
+        'faceFeatures': faceFeatures,
       };
 
   /// copyWith 메서드
@@ -127,6 +210,11 @@ class PastLifeResult {
     DateTime? createdAt,
     bool? isBlurred,
     List<String>? blurredSections,
+    String? scenarioId,
+    String? scenarioCategory,
+    String? scenarioTrait,
+    List<PastLifeChapter>? chapters,
+    Map<String, dynamic>? faceFeatures,
   }) {
     return PastLifeResult(
       id: id ?? this.id,
@@ -143,6 +231,11 @@ class PastLifeResult {
       createdAt: createdAt ?? this.createdAt,
       isBlurred: isBlurred ?? this.isBlurred,
       blurredSections: blurredSections ?? this.blurredSections,
+      scenarioId: scenarioId ?? this.scenarioId,
+      scenarioCategory: scenarioCategory ?? this.scenarioCategory,
+      scenarioTrait: scenarioTrait ?? this.scenarioTrait,
+      chapters: chapters ?? this.chapters,
+      faceFeatures: faceFeatures ?? this.faceFeatures,
     );
   }
 

@@ -47,6 +47,7 @@ import '../widgets/survey/chat_match_selector.dart';
 import '../widgets/survey/chat_onboarding_inputs.dart';
 import '../../../../features/fortune/domain/models/sports_schedule.dart';
 import '../../../../features/fortune/domain/models/match_insight.dart';
+import '../../../../features/fortune/domain/models/past_life_result.dart';
 import '../widgets/guest_login_banner.dart';
 import '../../../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../../../services/fortune_history_service.dart';
@@ -58,7 +59,9 @@ import '../../../fortune/presentation/providers/saju_provider.dart';
 import '../../../../core/services/fortune_generators/fortune_cookie_generator.dart';
 import '../../../fortune/domain/services/lotto_number_generator.dart';
 import '../../../../core/services/unified_calendar_service.dart';
-import '../../../../core/widgets/floating_dream_bubbles.dart';
+import '../../../fortune/presentation/widgets/floating_dream_topics_widget.dart';
+import '../../../../data/dream_interpretations.dart';
+import '../../../interactive/presentation/widgets/cookie_shard_break_widget.dart';
 
 /// Chat-First 메인 홈 페이지
 class ChatHomePage extends ConsumerStatefulWidget {
@@ -97,6 +100,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// 펫 등록 폼 표시 여부
   bool _showPetRegistrationForm = false;
+
+  /// 포춘쿠키 애니메이션 오버레이 표시 여부
+  bool _showCookieAnimation = false;
 
   @override
   void initState() {
@@ -503,6 +509,64 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     });
   }
 
+  /// 포춘쿠키 애니메이션 표시 후 결과 표시
+  void _showFortuneCookieWithAnimation() {
+    setState(() {
+      _showCookieAnimation = true;
+    });
+  }
+
+  /// 포춘쿠키 애니메이션 완료 후 결과 표시
+  Future<void> _onCookieAnimationComplete() async {
+    setState(() {
+      _showCookieAnimation = false;
+    });
+
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
+
+    // 운세 데이터 가져오기
+    try {
+      final cookieResult = await FortuneCookieGenerator.getTodayFortuneCookie();
+      final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+
+      final fortune = Fortune(
+        id: 'fortune-cookie-${DateTime.now().toIso8601String().split('T')[0]}',
+        userId: userId,
+        type: 'fortune-cookie',
+        content: cookieResult.data['message'] as String? ?? '',
+        createdAt: DateTime.now(),
+        overallScore: cookieResult.score,
+        luckyItems: {
+          'lucky_number': cookieResult.data['lucky_number'],
+          'lucky_color': cookieResult.data['lucky_color'],
+          'emoji': cookieResult.data['emoji'],
+        },
+      );
+
+      // 결과 메시지 추가
+      chatNotifier.addFortuneResultMessage(
+        text: '오늘의 메시지',
+        fortuneType: 'fortune-cookie',
+        fortune: fortune,
+        isBlurred: false,
+        blurredSections: [],
+      );
+      _scrollToShowResult();
+
+      // 추천 칩 표시
+      Future.delayed(const Duration(milliseconds: 500), () {
+        chatNotifier.addSystemMessage();
+      });
+    } catch (e) {
+      Logger.error('Fortune Cookie 생성 실패', e);
+      chatNotifier.addAiMessage(
+        '죄송해요, 쿠키를 여는 중 문제가 발생했어요. 😢\n'
+        '잠시 후 다시 시도해주세요.',
+      );
+      _scrollToBottom();
+    }
+  }
+
   void _handleChipTap(RecommendationChip chip) {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
     final surveyNotifier = ref.read(chatSurveyProvider.notifier);
@@ -510,6 +574,14 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 숨쉬기: 웰니스 페이지로 직접 이동
     if (chip.fortuneType == 'breathing') {
       context.push('/wellness/meditation');
+      return;
+    }
+
+    // 포춘쿠키: 인라인 애니메이션 후 결과 표시
+    if (chip.fortuneType == 'fortuneCookie') {
+      chatNotifier.addUserMessage(chip.label);
+      _scrollToBottom();
+      _showFortuneCookieWithAnimation();
       return;
     }
 
@@ -736,6 +808,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return FortuneSurveyType.dream;
       case 'celebrity':
         return FortuneSurveyType.celebrity;
+      case 'pastLife':
+        return FortuneSurveyType.pastLife;
       // 가족/반려동물
       case 'pet':
         return FortuneSurveyType.pet;
@@ -1027,6 +1101,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       case FortuneSurveyType.dream:
         return '$name님, 꿈 이야기를 들려주세요! 💭';
+
+      case FortuneSurveyType.pastLife:
+        return '$name님의 전생을 탐험해볼게요! 🔮';
 
       case FortuneSurveyType.pet:
         return '$name님! 반려동물 궁합을 봐드릴게요. 🐾';
@@ -1400,11 +1477,32 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
       }
 
+      // past-life인 경우 PastLifeResult 구성
+      PastLifeResult? pastLifeResult;
+      if (fortuneTypeStr == 'past-life') {
+        try {
+          final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+          Logger.info('[ChatHome] PastLifeResult 구성 시작: metadata keys=${metadata.keys.toList()}');
+
+          pastLifeResult = PastLifeResult.fromJson({
+            'id': fortune.id,
+            ...metadata,
+            'isBlurred': fortune.isBlurred,
+            'blurredSections': fortune.blurredSections,
+          });
+
+          Logger.info('[ChatHome] PastLifeResult 구성 성공: status=${pastLifeResult.pastLifeStatus}, era=${pastLifeResult.pastLifeEra}');
+        } catch (e, st) {
+          Logger.error('[ChatHome] PastLifeResult 구성 실패', e, st);
+        }
+      }
+
       chatNotifier.addFortuneResultMessage(
         text: typeName,
         fortuneType: fortuneTypeStr,
         fortune: fortune,
         matchInsight: matchInsight,
+        pastLifeResult: pastLifeResult,
         isBlurred: fortune.isBlurred,
         blurredSections: fortune.blurredSections,
         selectedDate: selectedDate,
@@ -1654,11 +1752,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       _showPetRegistrationForm = false;
     });
 
-    // 유저 메시지 추가
-    final chatNotifier = ref.read(chatMessagesProvider.notifier);
-    chatNotifier.addUserMessage('🐾 ${newPet.name} (${newPet.species})');
-
     // Survey 답변에 펫 정보 저장 및 다음 단계로 진행
+    // (addUserMessage는 _handleSurveyAnswerValue 내부에서 자동 호출됨)
     _handleSurveyAnswerValue({
       'id': newPet.id,
       'name': newPet.name,
@@ -1833,7 +1928,55 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       Logger.warning('[ChatHomePage] Cache lookup failed, proceeding to API: $e');
     }
 
-    // 2. 캐시 미스 → API 호출
+    // 2. 꿈 해몽의 경우 하드코딩된 결과 확인 (롤링 칩 선택 시)
+    if (type == FortuneSurveyType.dream) {
+      final dreamContent = answers['dreamContent'] as String?;
+      if (dreamContent != null) {
+        final hardcodedData = DreamInterpretations.getInterpretation(dreamContent);
+        if (hardcodedData != null) {
+          Logger.info('🎯 [ChatHomePage] Using hardcoded dream interpretation: $dreamContent');
+          final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+
+          // 짧은 딜레이로 자연스러운 로딩 효과
+          await Future.delayed(const Duration(milliseconds: 800));
+
+          final fortune = Fortune(
+            id: 'hardcoded_dream_${DateTime.now().millisecondsSinceEpoch}',
+            userId: userId,
+            type: 'dream',
+            content: hardcodedData['interpretation'] as String? ?? '',
+            createdAt: DateTime.now(),
+            overallScore: hardcodedData['overallScore'] as int?,
+            description: hardcodedData['symbolMeaning'] as String?,
+            summary: hardcodedData['fortuneMessage'] as String?,
+            luckyItems: {
+              'color': hardcodedData['luckyColor'],
+              'number': hardcodedData['luckyNumber'],
+            },
+            recommendations: [hardcodedData['advice'] as String? ?? ''],
+            additionalInfo: {
+              'emoji': hardcodedData['emoji'],
+              'title': hardcodedData['title'],
+              'psychologicalAnalysis': hardcodedData['psychologicalAnalysis'],
+              'categories': hardcodedData['categories'],
+            },
+            isBlurred: false, // 하드코딩 결과는 블러 없음
+            blurredSections: const [],
+          );
+
+          // DB 저장
+          _saveFortuneToHistory(
+            fortune: fortune,
+            fortuneType: fortuneType,
+            inputConditions: answers,
+          );
+
+          return fortune;
+        }
+      }
+    }
+
+    // 3. 캐시 미스 → API 호출
     Logger.info('🔄 [ChatHomePage] Cache MISS - calling API for $fortuneType');
     final fortune = await _callFortuneApi(type: type, answers: answers);
 
@@ -2599,6 +2742,19 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           },
         );
 
+      case FortuneSurveyType.pastLife:
+        // ChatFaceReadingFlow에서 수집된 이미지로 전생탐험 API 호출
+        return apiService.getFortune(
+          userId: userId,
+          fortuneType: 'past-life',
+          params: {
+            'name': userName,
+            'birthDate': birthDateStr,
+            'gender': gender,
+            'imagePath': answers['imagePath'],
+          },
+        );
+
       // ============================================================
       // Family / Pet
       // ============================================================
@@ -2833,6 +2989,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return '오늘의 해몽';
       case FortuneSurveyType.celebrity:
         return '오늘의 셀럽 궁합';
+      case FortuneSurveyType.pastLife:
+        return '오늘의 전생탐험';
       case FortuneSurveyType.pet:
         return '오늘의 반려운';
       case FortuneSurveyType.family:
@@ -2909,6 +3067,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return 'dream';
       case FortuneSurveyType.celebrity:
         return 'celebrity';
+      case FortuneSurveyType.pastLife:
+        return 'past-life';
       case FortuneSurveyType.pet:
         return 'pet';
       case FortuneSurveyType.family:
@@ -2940,19 +3100,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
            _showDreamBubbles;
   }
 
-  /// 채팅용 꿈 버블 위젯
+  /// 채팅용 꿈 칩 위젯 (좌우 흔들리는 칩)
   Widget _buildChatDreamBubbles() {
     return SizedBox(
       height: 350,
-      child: FloatingDreamBubbles(
-        bubbleCount: 10,
-        isCompact: true,
+      child: FloatingDreamTopicsWidget(
         onTopicSelected: (topic) {
           setState(() => _showDreamBubbles = false);
-          final dreamText = topic.dreamContentForApi;
           // 자동 제출
           Future.delayed(const Duration(milliseconds: 200), () {
-            _handleTextSurveySubmit(dreamText);
+            _handleTextSurveySubmit(topic);
           });
         },
       ),
@@ -3347,6 +3504,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // 타로 플로우: 스프레드 선택(140) 또는 카드 선택(280)
         // 카드 선택 단계가 더 높으므로 최대값 사용
         padding += 280;
+      } else if (inputType == SurveyInputType.calendar) {
+        // 캘린더 입력: 빠른선택(50) + 월헤더(40) + 요일헤더(30) + 그리드(240) + 선택표시(40) + 확인버튼(50)
+        padding += 450;
+      } else if (inputType == SurveyInputType.matchSelection) {
+        // 경기 선택: 헤더(40) + 리스트(360) + 버튼(60) = maxHeight 420 + 여유
+        padding += 440;
+      } else if (inputType == SurveyInputType.celebritySelection) {
+        // 연예인 선택: 검색(50) + 리스트(300) + 여유
+        padding += 380;
       } else {
         // 기타 입력 타입
         padding += 50;
@@ -3623,6 +3789,43 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                 ),
               ),
             ),
+
+            // 포춘쿠키 애니메이션 오버레이
+            if (_showCookieAnimation)
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: () {}, // 배경 탭 방지
+                  child: Container(
+                    color: colors.background.withValues(alpha: 0.95),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            '🥠',
+                            style: TextStyle(fontSize: 32),
+                          ),
+                          const SizedBox(height: DSSpacing.md),
+                          Text(
+                            '쿠키가 열리고 있어요!',
+                            style: context.typography.bodyLarge.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: DSSpacing.xl),
+                          CookieShardBreakWidget(
+                            imagePath: 'assets/images/fortune_cards/fortune_cookie_fortune.png',
+                            size: 220,
+                            accentColor: const Color(0xFF9333EA),
+                            onBreakComplete: _onCookieAnimationComplete,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
