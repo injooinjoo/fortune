@@ -51,6 +51,86 @@ class _ChatPastLifeResultCardState
     });
   }
 
+  /// 초상화 풀스크린 확대 보기
+  void _showFullScreenPortrait(BuildContext context) {
+    DSHaptics.light();
+
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.95),
+      builder: (context) => GestureDetector(
+        onTap: () => Navigator.of(context).pop(),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: [
+              // 이미지 (핀치 줌 지원)
+              Center(
+                child: InteractiveViewer(
+                  minScale: 0.5,
+                  maxScale: 4.0,
+                  child: SmartImage(
+                    path: widget.result.portraitUrl,
+                    fit: BoxFit.contain,
+                    errorWidget: _buildDefaultPortrait(),
+                  ),
+                ),
+              ),
+
+              // 닫기 버튼
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 16,
+                right: 16,
+                child: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ),
+
+              // 하단 신분 정보
+              Positioned(
+                bottom: MediaQuery.of(context).padding.bottom + 32,
+                left: 0,
+                right: 0,
+                child: Column(
+                  children: [
+                    Text(
+                      '${_getStatusEmoji(widget.result.pastLifeStatusEn)} ${widget.result.pastLifeStatus}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${widget.result.pastLifeEra} • ${widget.result.pastLifeName}',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _showAdAndUnblur() async {
     final adService = AdService();
 
@@ -166,37 +246,42 @@ class _ChatPastLifeResultCardState
           ),
         ),
 
-        // 초상화 이미지
+        // 초상화 이미지 (탭하면 풀스크린)
         Center(
-          child: Container(
-            margin: const EdgeInsets.only(top: DSSpacing.md),
-            width: 200,
-            height: 260,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(DSRadius.md),
-              border: Border.all(
-                color: const Color(0xFF8B4513).withValues(alpha: 0.5),
-                width: 3,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF5D3A1A).withValues(alpha: 0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
+          child: GestureDetector(
+            onTap: widget.result.portraitUrl.isNotEmpty
+                ? () => _showFullScreenPortrait(context)
+                : null,
+            child: Container(
+              margin: const EdgeInsets.only(top: DSSpacing.md),
+              width: 200,
+              height: 260,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                  color: const Color(0xFF8B4513).withValues(alpha: 0.5),
+                  width: 3,
                 ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(DSRadius.md - 2),
-              child: widget.result.portraitUrl.isNotEmpty
-                  ? SmartImage(
-                      path: widget.result.portraitUrl,
-                      width: 200,
-                      height: 260,
-                      fit: BoxFit.cover,
-                      errorWidget: _buildDefaultPortrait(),
-                    )
-                  : _buildDefaultPortrait(),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF5D3A1A).withValues(alpha: 0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(DSRadius.md - 2),
+                child: widget.result.portraitUrl.isNotEmpty
+                    ? SmartImage(
+                        path: widget.result.portraitUrl,
+                        width: 200,
+                        height: 260,
+                        fit: BoxFit.cover,
+                        errorWidget: _buildDefaultPortrait(),
+                      )
+                    : _buildDefaultPortrait(),
+              ),
             ),
           ),
         ),
