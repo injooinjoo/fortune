@@ -304,7 +304,7 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
     "morning": "오전에 하면 좋은 행동",
     "afternoon": "오후에 하면 좋은 행동",
     "evening": "저녁에 하면 좋은 행동",
-    "overall": "오늘 하루 종합 조언 (50자 이내)"
+    "overall": "오늘 하루 종합 조언"
   },
   "todayTip": "💡 오늘 핵심 팁 한 줄"
 }

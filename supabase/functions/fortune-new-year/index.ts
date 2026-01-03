@@ -129,9 +129,9 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
 \`\`\`json
 {
   "overallScore": ${targetYear}년 종합 점수 (60-95 사이),
-  "summary": "${targetYear}년 한 줄 요약 (30자 이내, ${displayGoalLabel} 관련 언급)",
-  "content": "상세 분석 내용 (300자 이상, ${displayGoalLabel}에 대한 구체적 조언 포함)",
-  "greeting": "${name}님을 위한 인사말 (50자 이내)",
+  "summary": "${targetYear}년 한 줄 요약",
+  "content": "상세 분석 내용",
+  "greeting": "${name}님을 위한 인사말",
 
   "goalFortune": {
     "goalId": "${goal || 'general'}",

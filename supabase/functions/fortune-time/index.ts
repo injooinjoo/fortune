@@ -183,12 +183,12 @@ ${mbtiType ? `- MBTI: ${mbtiType}` : ''}
 ${datesInfo.map(d => `  - ${d.displayStr}`).join('\n')}
 ${calendarSection}
 
-**응답 형식** (반드시 JSON):
+**응답 형식** (반드시 JSON, 절대로 "(xx자 이내)" 같은 글자수 지시문을 출력에 포함하지 마세요):
 \`\`\`json
 {
   "overallScore": 기간 전체 평균 점수 (0-100),
-  "summary": "기간 전체 운세 한 줄 요약 (50자 이내)",
-  "periodAdvice": "기간 전체에 대한 종합 조언 (100자 이내)",
+  "summary": "기간 전체 운세 한 줄 요약",
+  "periodAdvice": "기간 전체에 대한 종합 조언",
 
   "bestDate": {
     "date": "YYYY-MM-DD",
@@ -204,9 +204,9 @@ ${calendarSection}
       "date": "YYYY-MM-DD",
       "displayDate": "M월 D일 요일",
       "score": 점수 (0-100),
-      "summary": "하루 요약 (30자 이내)",
-      "content": "상세 내용 (100자 이내)",
-      "advice": "하루 조언 (50자 이내)",
+      "summary": "하루 요약",
+      "content": "상세 내용",
+      "advice": "하루 조언",
       "luckyElements": {
         "colors": ["색상1", "색상2"],
         "numbers": [숫자1, 숫자2],
@@ -560,13 +560,13 @@ ${mbtiType ? `- MBTI: ${mbtiType}` : ''}
 **분석 기간**: ${dateDisplayStr} 하루
 ${calendarSection}
 
-**응답 형식** (반드시 JSON):
+**응답 형식** (반드시 JSON, 절대로 "(xx자 이내)" 같은 글자수 지시문을 출력에 포함하지 마세요):
 \`\`\`json
 {
   "score": 점수 (0-100),
-  "summary": "${dateDisplayStr} 시간 운세 한 줄 요약 (30자 이내)",
-  "content": "상세 분석 내용 (100자 이내)",
-  "advice": "종합 조언 (50자 이내)",
+  "summary": "${dateDisplayStr} 시간 운세 한 줄 요약",
+  "content": "상세 분석 내용",
+  "advice": "종합 조언",
 
   "timeSlots": [
     {

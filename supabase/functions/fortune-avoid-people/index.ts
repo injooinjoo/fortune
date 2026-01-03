@@ -164,7 +164,7 @@ serve(async (req) => {
 다음 JSON 형식으로 응답해주세요:
 {
   "overallScore": 0-100 사이의 경계 지수 (높을수록 주의 필요),
-  "summary": "오늘의 경계대상 핵심 요약 (80자 이내)",
+  "summary": "오늘의 경계대상 핵심 요약",
 
   "cautionPeople": [
     {

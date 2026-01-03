@@ -210,7 +210,7 @@ ${sajuContext}
     "documentType": "건강검진표|처방전|진단서",
     "documentDate": "검진일/처방일/진단일 (YYYY-MM-DD 형식, 없으면 null)",
     "institution": "의료기관명 (없으면 null)",
-    "summary": "문서 전체 요약 (100자 이내)"
+    "summary": "문서 전체 요약"
   },
   "testResults": [
     {
@@ -222,7 +222,7 @@ ${sajuContext}
           "unit": "단위",
           "status": "normal|caution|warning|critical",
           "normalRange": "정상 범위",
-          "interpretation": "해석 (50자 이내)"
+          "interpretation": "해석"
         }
       ]
     }
@@ -230,10 +230,10 @@ ${sajuContext}
   "sajuHealthAnalysis": {
     "dominantElement": "강한 오행 (목/화/토/금/수)",
     "weakElement": "약한 오행",
-    "elementDescription": "오행 균형 설명 (80자 이내)",
+    "elementDescription": "오행 균형 설명",
     "vulnerableOrgans": ["취약 장기 목록"],
     "strengthOrgans": ["강한 장기 목록"],
-    "sajuAdvice": "사주 기반 건강 조언 (150자 이내)"
+    "sajuAdvice": "사주 기반 건강 조언"
   },
   "healthScore": 70,
   "recommendations": {

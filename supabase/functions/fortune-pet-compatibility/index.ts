@@ -431,9 +431,9 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
     "spot": "행운의 장소"
   },
   "pets_voice": {
-    "morning_message": "${pet_species} 시점 아침 메시지 (50자 이내)",
-    "to_owner": "주인에게 전하는 말 (50자 이내)",
-    "secret_wish": "비밀 소원 (50자 이내)"
+    "morning_message": "${pet_species} 시점 아침 메시지",
+    "to_owner": "주인에게 전하는 말",
+    "secret_wish": "비밀 소원"
   },
   "health_insight": {
     "overall": "전반적 건강 상태 (40-80자)",
@@ -442,10 +442,10 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
     "seasonal_tip": "${season}철 건강 팁 (40-60자)"
   },
   "activity_recommendation": {
-    "morning": "아침 추천 활동 (40자 이내)",
-    "afternoon": "오후 추천 활동 (40자 이내)",
-    "evening": "저녁 추천 활동 (40자 이내)",
-    "special_activity": "특별 추천 활동 (40자 이내)"
+    "morning": "아침 추천 활동",
+    "afternoon": "오후 추천 활동",
+    "evening": "저녁 추천 활동",
+    "special_activity": "특별 추천 활동"
   },
   "emotional_care": {
     "primary_emotion": "오늘의 주요 감정 (예: 기대감, 편안함)",

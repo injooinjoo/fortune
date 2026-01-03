@@ -326,7 +326,7 @@ function createUserPrompt(userName: string, userGender: string): string {
   "overview": {
     "faceType": "둥근형|타원형|각진형|역삼각형|긴형|다이아몬드형",
     "faceTypeElement": "수형|목형|화형|토형|금형",
-    "firstImpression": "첫인상과 전반적 기운 (100자 이내)",
+    "firstImpression": "첫인상과 전반적 기운",
     "overallBlessingScore": 70-95
   },
   "ogwan": {
@@ -405,32 +405,32 @@ function createUserPrompt(userName: string, userGender: string): string {
   "fortunes": {
     "wealth": {
       "score": 60-98,
-      "summary": "재물운 요약 (50자 이내)",
-      "detail": "재백궁 기반 분석 (100자 이내)",
+      "summary": "재물운 요약",
+      "detail": "재백궁 기반 분석",
       "advice": "재물 관련 조언"
     },
     "love": {
       "score": 60-98,
-      "summary": "애정운 요약 (50자 이내)",
-      "detail": "처첩궁 기반 분석 (100자 이내)",
+      "summary": "애정운 요약",
+      "detail": "처첩궁 기반 분석",
       "advice": "연애/결혼 관련 조언"
     },
     "career": {
       "score": 60-98,
-      "summary": "직업운 요약 (50자 이내)",
-      "detail": "관록궁 기반 분석 (100자 이내)",
+      "summary": "직업운 요약",
+      "detail": "관록궁 기반 분석",
       "advice": "커리어 관련 조언"
     },
     "health": {
       "score": 60-98,
-      "summary": "건강운 요약 (50자 이내)",
-      "detail": "질액궁 기반 분석 (100자 이내)",
+      "summary": "건강운 요약",
+      "detail": "질액궁 기반 분석",
       "advice": "건강 관련 조언"
     },
     "overall": {
       "score": 60-98,
-      "summary": "총운 요약 (50자 이내)",
-      "detail": "삼정 균형 기반 종합 분석 (100자 이내)",
+      "summary": "총운 요약",
+      "detail": "삼정 균형 기반 종합 분석",
       "advice": "인생 전반 조언"
     }
   },
@@ -454,39 +454,40 @@ function createUserPrompt(userName: string, userGender: string): string {
   },
   "compatibility": {
     "idealPartnerType": "이상형 관상 특징 (눈, 코, 입, 얼굴형 중심)",
-    "idealPartnerDescription": "어울리는 상대의 성격과 외모 특징 설명 (100자 이내)",
+    "idealPartnerDescription": "어울리는 상대의 성격과 외모 특징 설명",
     "compatibilityScore": 60-98
   },
   "marriagePrediction": {
     "earlyAge": "20대 초중반 결혼 가능성 설명",
     "optimalAge": "최적 결혼 시기와 이유",
     "lateAge": "30대 중반 이후 결혼 시 특징",
-    "prediction": "삼정 균형 기반 결혼 운세 종합 (80자 이내)"
+    "prediction": "삼정 균형 기반 결혼 운세 종합"
   },
   "firstImpression": {
     "trustScore": 60-98,
-    "trustDescription": "신뢰감/믿음직함 분석 (50자 이내)",
+    "trustDescription": "신뢰감/믿음직함 분석",
     "approachabilityScore": 60-98,
-    "approachabilityDescription": "친근감/다가가기 쉬움 분석 (50자 이내)",
+    "approachabilityDescription": "친근감/다가가기 쉬움 분석",
     "charismaScore": 60-98,
-    "charismaDescription": "카리스마/존재감 분석 (50자 이내)"
+    "charismaDescription": "카리스마/존재감 분석"
   },
   "faceTypeClassification": {
     "animalType": {
       "primary": "강아지상|고양이상|여우상|토끼상|곰상|늑대상|사슴상|다람쥐상",
       "secondary": "2순위 동물상 (있으면) 또는 null",
       "matchScore": 60-98,
-      "description": "왜 이 동물상에 해당하는지 구체적 근거 (80자 이내)",
+      "description": "왜 이 동물상에 해당하는지 구체적 근거",
       "traits": ["특징1", "특징2", "특징3"]
     },
     "impressionType": {
       "type": "아랍상|두부상|하이브리드",
       "matchScore": 60-98,
-      "description": "인상 분류 근거 (50자 이내)"
+      "description": "인상 분류 근거"
     }
   }
 }
 
+⚠️ 중요: 절대로 "(xx자 이내)" 같은 글자수 지시문을 출력에 포함하지 마세요.
 실제 얼굴 사진을 면밀히 관찰하여 JSON으로 응답하세요. JSON 외의 텍스트는 포함하지 마세요.`
 }
 

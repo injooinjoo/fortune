@@ -157,15 +157,15 @@ serve(async (req) => {
   },
 
   "mentalModel": {
-    "thinkingStyle": "사고 방식 분석 (80자 이내)",
-    "decisionPattern": "의사결정 패턴 분석 (80자 이내)",
-    "learningStyle": "효율적인 학습 방법 (80자 이내)"
+    "thinkingStyle": "사고 방식 분석",
+    "decisionPattern": "의사결정 패턴 분석",
+    "learningStyle": "효율적인 학습 방법"
   },
 
   "collaboration": {
     "goodMatch": ["잘 맞는 타입 1 (이유)", "잘 맞는 타입 2 (이유)", "잘 맞는 타입 3 (이유)"],
     "challenges": ["주의할 타입 1 (이유)", "주의할 타입 2 (이유)"],
-    "teamRole": "팀에서의 최적 역할 (80자 이내)"
+    "teamRole": "팀에서의 최적 역할"
   },
 
   "hexagonScores": {
@@ -184,8 +184,8 @@ serve(async (req) => {
       "description": "재능 상세 설명 (500자)\n- 왜 이 재능이 중요한지\n- 현재 수준 평가\n- 발전 가능성 근거",
       "developmentPath": "6개월 개발 로드맵 (월별 구체적 목표 + 실행 방법)",
       "practicalApplications": ["실전 활용법 1 (구체적)", "실전 활용법 2 (구체적)", "실전 활용법 3 (구체적)"],
-      "monetizationStrategy": "수익화 전략 (100자 이내)",
-      "portfolioBuilding": "포트폴리오 구축 가이드 (100자 이내)",
+      "monetizationStrategy": "수익화 전략",
+      "portfolioBuilding": "포트폴리오 구축 가이드",
       "recommendedResources": ["추천 도서: XX (이유)", "추천 강의: XX (이유)", "추천 커뮤니티: XX (이유)"]
     }
     // 최소 5개, 최대 7개 제공
@@ -234,11 +234,11 @@ serve(async (req) => {
 
   "learningStrategy": {
     "effectiveMethods": [
-      "효율적인 학습법 1 (80자 이내)",
-      "효율적인 학습법 2 (80자 이내)",
-      "효율적인 학습법 3 (80자 이내)"
+      "효율적인 학습법 1",
+      "효율적인 학습법 2",
+      "효율적인 학습법 3"
     ],
-    "timeManagement": "시간 관리 팁 (100자 이내)",
+    "timeManagement": "시간 관리 팁",
     "recommendedBooks": [
       "추천 도서 1: 제목 (저자) - 왜 필독서인지",
       "추천 도서 2: 제목 (저자) - 왜 필독서인지",
@@ -251,7 +251,7 @@ serve(async (req) => {
       "추천 강의 2: 플랫폼/제목 - 이유",
       "추천 강의 3: 플랫폼/제목 - 이유"
     ],
-    "mentorshipAdvice": "멘토링 찾는 방법 (100자 이내)"
+    "mentorshipAdvice": "멘토링 찾는 방법"
   },
 
   "recommendations": [

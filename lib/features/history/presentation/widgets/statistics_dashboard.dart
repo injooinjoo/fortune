@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-// import 'package:fortune/core/utils/formatters.dart';
 import 'package:intl/intl.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 
@@ -59,7 +58,7 @@ class StatisticsDashboard extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 2,
-            childAspectRatio: 1.5,
+            childAspectRatio: 1.2,
             mainAxisSpacing: 16,
             crossAxisSpacing: 16,
             children: [

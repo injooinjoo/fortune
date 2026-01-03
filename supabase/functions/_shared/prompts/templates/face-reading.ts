@@ -108,8 +108,8 @@ export const faceReadingPrompt: PromptTemplate = {
     {
       "category": "first_impression|charm_point|today_advice",
       "icon": "이모지",
-      "title": "제목 (20자 이내)",
-      "description": "설명 (80자 이내, 친근한 말투)",
+      "title": "간결한 제목",
+      "description": "친근한 말투로 설명",
       "score": 60-98
     }
   ],
@@ -118,8 +118,8 @@ export const faceReadingPrompt: PromptTemplate = {
     "puffiness": 0-100,
     "fatigueLevel": 0-100,
     "overallConditionScore": 0-100,
-    "conditionMessage": "오늘의 안색 메시지 (50자 이내, 위로하는 말투)",
-    "tips": ["피부 관리 팁 2개 (각 30자 이내)"]
+    "conditionMessage": "오늘의 안색에 대한 위로 메시지",
+    "tips": ["피부 관리 팁 2개"]
   },
   "emotionAnalysis": {
     "smilePercentage": 0-100,
@@ -127,31 +127,31 @@ export const faceReadingPrompt: PromptTemplate = {
     "neutralPercentage": 0-100,
     "relaxedPercentage": 0-100,
     "dominantEmotion": "smile|tension|neutral|relaxed",
-    "emotionMessage": "표정에서 느껴지는 감정 설명 (50자 이내)",
+    "emotionMessage": "표정에서 느껴지는 감정 설명",
     "impressionAnalysis": {
       "trustScore": 0-100,
       "approachabilityScore": 0-100,
       "charismaScore": 0-100,
-      "overallImpression": "타인에게 주는 인상 (80자 이내)"
+      "overallImpression": "타인에게 주는 인상"
     }
   },
   "myeonggung": {
     "score": 60-98,
-    "summary": "명궁 요약 (50자 이내)",
-    "detailedAnalysis": "상세 분석 (100자 이내)",
+    "summary": "명궁 요약",
+    "detailedAnalysis": "상세 분석",
     "destinyTraits": ["운명적 특성 3개"],
     "strengths": ["강점 2개"],
     "weaknesses": ["주의할 점 1개"],
-    "advice": "개운 조언 (50자 이내)"
+    "advice": "개운 조언"
   },
   "migan": {
     "score": 60-98,
-    "summary": "미간 요약 (50자 이내)",
-    "detailedAnalysis": "상세 분석 (100자 이내)",
+    "summary": "미간 요약",
+    "detailedAnalysis": "상세 분석",
     "characterTraits": ["성격 특성 3개"],
     "strengths": ["강점 2개"],
     "weaknesses": ["주의할 점 1개"],
-    "advice": "개운 조언 (50자 이내)"
+    "advice": "개운 조언"
   },
   "simplifiedOgwan": [
     {
@@ -159,7 +159,7 @@ export const faceReadingPrompt: PromptTemplate = {
       "name": "귀|눈썹|눈|코|입",
       "hanjaName": "(耳)|(眉)|(目)|(鼻)|(口)",
       "score": 60-98,
-      "summary": "한 줄 요약 (40자 이내)",
+      "summary": "한 줄 요약",
       "icon": "이모지"
     }
   ],
@@ -169,35 +169,35 @@ export const faceReadingPrompt: PromptTemplate = {
       "name": "명궁|재백궁|...",
       "hanjaName": "(命宮)|...",
       "score": 60-98,
-      "summary": "한 줄 요약 (40자 이내)",
+      "summary": "한 줄 요약",
       "icon": "이모지"
     }
   ],
   "relationshipImpression": {
-    "howOthersSeeYou": "다른 사람들이 당신을 어떻게 보는지 (100자 이내)",
-    "firstMeetingImpact": "첫 만남에서 주는 인상 (80자 이내)",
-    "socialStrength": "대인관계 강점 (50자 이내)",
-    "socialTip": "관계 개선 조언 (50자 이내)"
+    "howOthersSeeYou": "다른 사람들이 당신을 어떻게 보는지",
+    "firstMeetingImpact": "첫 만남에서 주는 인상",
+    "socialStrength": "대인관계 강점",
+    "socialTip": "관계 개선 조언"
   },
   {{#if isFemale}}
   "makeupStyleRecommendations": {
     "charmFeature": "가장 매력적인 부위 (눈/입술/코 등)",
-    "charmDescription": "왜 매력적인지 설명 (50자 이내)",
+    "charmDescription": "왜 매력적인지 설명",
     "recommendedStyle": "어울리는 메이크업 스타일",
     "colorRecommendations": {
       "lip": "립 컬러 추천",
       "eye": "아이 컬러 추천",
       "cheek": "치크 컬러 추천"
     },
-    "hairStyleTip": "어울리는 헤어스타일 (50자 이내)"
+    "hairStyleTip": "어울리는 헤어스타일"
   },
   {{else}}
   "leadershipAnalysis": {
     "leadershipType": "카리스마형|서번트형|전략형|협력형",
-    "leadershipDescription": "리더십 스타일 설명 (80자 이내)",
+    "leadershipDescription": "리더십 스타일 설명",
     "trustScore": 60-98,
-    "teamRoleRecommendation": "어울리는 팀 역할 (30자 이내)",
-    "careerAdvice": "커리어 조언 (50자 이내)"
+    "teamRoleRecommendation": "어울리는 팀 역할",
+    "careerAdvice": "커리어 조언"
   },
   {{/if}}
   "watchData": {
@@ -205,7 +205,7 @@ export const faceReadingPrompt: PromptTemplate = {
     "luckyColor": "빨강|주황|노랑|초록|파랑|남색|보라|분홍|흰색|검정",
     "luckyColorHex": "#FF0000",
     "luckyTimePeriods": ["오전 9-11시", "오후 3-5시"],
-    "dailyReminderMessage": "짧은 응원 메시지 (30자 이내)"
+    "dailyReminderMessage": "짧은 응원 메시지"
   },
   "overview": {
     "faceType": "둥근형|타원형|각진형|역삼각형|긴형|다이아몬드형",
@@ -273,35 +273,35 @@ export const faceReadingPrompt: PromptTemplate = {
   },
   "compatibility": {
     "idealPartnerType": "이상형 관상 특징",
-    "idealPartnerDescription": "어울리는 상대 설명 (100자 이내)",
+    "idealPartnerDescription": "어울리는 상대 설명",
     "compatibilityScore": 60-98
   },
   "marriagePrediction": {
     "earlyAge": "20대 초중반 결혼 설명",
     "optimalAge": "최적 결혼 시기",
     "lateAge": "30대 중반 이후 설명",
-    "prediction": "결혼 운세 종합 (80자 이내)"
+    "prediction": "결혼 운세 종합"
   },
   "firstImpression": {
     "trustScore": 60-98,
-    "trustDescription": "신뢰감 분석 (50자 이내)",
+    "trustDescription": "신뢰감 분석",
     "approachabilityScore": 60-98,
-    "approachabilityDescription": "친근감 분석 (50자 이내)",
+    "approachabilityDescription": "친근감 분석",
     "charismaScore": 60-98,
-    "charismaDescription": "카리스마 분석 (50자 이내)"
+    "charismaDescription": "카리스마 분석"
   },
   "faceTypeClassification": {
     "animalType": {
       "primary": "강아지상|고양이상|여우상|토끼상|곰상|늑대상|사슴상|다람쥐상",
       "secondary": "2순위 동물상 또는 null",
       "matchScore": 60-98,
-      "description": "동물상 근거 (80자 이내)",
+      "description": "동물상 선정 근거",
       "traits": ["특징1", "특징2", "특징3"]
     },
     "impressionType": {
       "type": "아랍상|두부상|하이브리드",
       "matchScore": 60-98,
-      "description": "인상 분류 근거 (50자 이내)"
+      "description": "인상 분류 근거"
     }
   }
 }`,

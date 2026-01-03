@@ -372,16 +372,16 @@ ${chatAnalysisResult.redFlags && Array.isArray(chatAnalysisResult.redFlags) && c
           role: 'system',
           content: `당신은 연애와 소개팅 전문 상담사입니다. 소개팅의 성공 가능성을 분석하고 실질적인 조언을 제공합니다.
 
-다음 JSON 형식으로 응답해주세요:
+다음 JSON 형식으로 응답해주세요. 절대로 "(xx자 이내)" 같은 글자수 지시문을 출력에 포함하지 마세요:
 {
-  "score": 0-100 사이의 점수 (소개팅 성공 확률),
-  "content": "전체 분석 (100자 이상)",
-  "summary": "한줄 요약 (30자 이내)",
-  "advice": "핵심 조언 (50자 이상)",
+  "score": 0-100 사이의 점수,
+  "content": "전체 분석",
+  "summary": "한줄 요약",
+  "advice": "핵심 조언",
   "successPrediction": {
     "score": 0-100,
-    "message": "예측 메시지 (30자 이내)",
-    "advice": "성공을 위한 조언 (80자 이내)"
+    "message": "예측 메시지",
+    "advice": "성공을 위한 조언"
   },
   "firstImpressionTips": ["첫인상 팁1", "첫인상 팁2", "첫인상 팁3"],
   "conversationTopics": {

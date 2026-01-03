@@ -294,23 +294,23 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 
 # 출력 형식 (반드시 JSON 형식으로)
 {
-  "score": 60-95 사이 정수 (연애운 종합 점수),
-  "content": "핵심 메시지/상세 분석 내용 (100자 이상, 따뜻하고 희망적)",
-  "summary": "한줄 요약 (30자 이내)",
-  "advice": "핵심 조언 (50자 이상)",
+  "score": 60-95 사이 정수,
+  "content": "핵심 메시지와 상세 분석 내용",
+  "summary": "한줄 요약",
+  "advice": "핵심 조언",
   "loveProfile": {
-    "dominantStyle": "지배적 연애 스타일 (헌신형/열정형/친구형/독립형 중 택1)",
-    "attachmentType": "애착 유형 (안정형/불안형/회피형/혼란형 중 택1)",
-    "loveLanguage": "주된 사랑의 언어 (5가지 중 택1)",
-    "communicationStyle": "소통 스타일 (100자 이상)",
-    "conflictResolution": "갈등 해결 방식 (100자 이상)"
+    "dominantStyle": "헌신형/열정형/친구형/독립형 중 택1",
+    "attachmentType": "안정형/불안형/회피형/혼란형 중 택1",
+    "loveLanguage": "5가지 사랑의 언어 중 택1",
+    "communicationStyle": "소통 스타일 설명",
+    "conflictResolution": "갈등 해결 방식 설명"
   },
   "detailedAnalysis": {
     "loveStyle": {
-      "description": "연애 스타일 상세 분석 (100자 이내)",
-      "strengths": ["강점 3가지 (각 20자 이내)"],
-      "tendencies": ["연애 경향 3가지 (각 20자 이내)"],
-      "psychologyInsight": "심리학적 해석 (50자 이내)"
+      "description": "연애 스타일 상세 분석",
+      "strengths": ["강점1", "강점2", "강점3"],
+      "tendencies": ["연애 경향1", "연애 경향2", "연애 경향3"],
+      "psychologyInsight": "심리학적 해석"
     },
     "charmPoints": {
       "primary": "주된 매력 포인트 (50자 이상)",

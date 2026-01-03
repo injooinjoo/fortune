@@ -254,7 +254,7 @@ ${healthAppSection}
     "morning": { "time": "07:00", "title": "운동명", "description": "설명", "duration": "10분", "intensity": "가벼움|중간|높음", "tip": "팁" },
     "afternoon": { "time": "17:30", "title": "운동명", "description": "설명", "duration": "30분", "intensity": "가벼움|중간|높음", "tip": "팁" },
     "weekly": { "summary": "주간 요약", "schedule": { "mon": "활동", "tue": "활동", "wed": "활동", "thu": "활동", "fri": "활동", "sat": "활동", "sun": "활동" } },
-    "overall_tip": "전체 조언 (50자 이내)"
+    "overall_tip": "전체 조언"
   },
   "health_keyword": "오늘의 건강 키워드 2-3단어"
 }
@@ -332,7 +332,7 @@ ${healthAppSection}
 **필드 설명**:
 - morning/afternoon: 시간대별 운동 추천 (time, title, description, duration, intensity, tip)
 - weekly.schedule: 요일별 운동 계획 (mon~sun)
-- overall_tip: 전체 핵심 조언 (50자 이내)
+- overall_tip: 전체 핵심 조언
 - **intensity 값**: "가벼움" | "중간" | "높음" 중 하나
 
 ### 7. health_keyword
@@ -403,13 +403,19 @@ ${healthAppSection}
         finalScore: calculatedScore
       })
 
+      // ✅ exercise_advice가 객체일 경우 overall_tip 추출
+      const exerciseAdvice = parsedResponse.운동조언 || parsedResponse.exercise_advice
+      const adviceText = typeof exerciseAdvice === 'object' && exerciseAdvice?.overall_tip
+        ? exerciseAdvice.overall_tip
+        : (typeof exerciseAdvice === 'string' ? exerciseAdvice : '규칙적인 운동을 하세요')
+
       fortuneData = {
         // ✅ 표준화된 필드명: score, content, summary, advice
         fortuneType: 'health',
         score: calculatedScore,
         content: overallHealthText,
         summary: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강 관리',
-        advice: parsedResponse.운동조언 || parsedResponse.exercise_advice || '규칙적인 운동을 하세요',
+        advice: adviceText,
         // 기존 필드 유지 (하위 호환성)
         title: '건강운',
         fortune_type: 'health',
