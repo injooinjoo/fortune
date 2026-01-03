@@ -443,14 +443,15 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
       inputConditions['health_app_data'] = _healthSummary!.toJson();
     }
 
-    final fortuneResult = await fortuneService.getFortune(
+    await fortuneService.getFortune(
       fortuneType: 'health',
       dataSource: FortuneDataSource.api,
       inputConditions: inputConditions,
     );
 
     if (mounted) {
-      context.push('/health-fortune-result', extra: fortuneResult);
+      // Chat-First: 채팅 화면으로 이동하여 결과 카드 표시
+      context.go('/chat');
     }
   }
 

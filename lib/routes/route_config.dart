@@ -1,4 +1,4 @@
-// route_config.dart - Router configuration separated into smaller, manageable files
+// route_config.dart - Chat-First 아키텍처: 채팅 중심 라우터 설정
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +25,6 @@ import '../screens/premium/premium_screen.dart';
 
 // Import feature pages
 import '../features/trend/presentation/pages/trend_page.dart';
-import '../features/fortune/presentation/pages/fortune_list_page.dart';
 import '../features/notification/presentation/pages/notification_settings_page.dart';
 import '../features/support/presentation/pages/help_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
@@ -34,49 +33,19 @@ import '../features/payment/presentation/pages/token_purchase_page.dart';
 import '../features/payment/presentation/pages/payment_result_page.dart';
 import '../features/settings/presentation/pages/font_settings_page.dart';
 
-// Import pages that need to hide navigation bar
-import '../features/fortune/presentation/pages/moving_fortune_page.dart';
-import '../features/fortune/presentation/pages/home_fengshui_fortune_page.dart';
-import '../features/fortune/presentation/pages/traditional_saju_page.dart';
-import '../features/fortune/presentation/pages/talisman_fortune_page.dart';
-import '../features/fortune/presentation/pages/biorhythm_fortune_page.dart';
-import '../features/fortune/presentation/pages/love_fortune_input_page.dart';
-import '../features/fortune/presentation/pages/ex_lover_fortune_simple_page.dart';
-import '../features/fortune/presentation/pages/ex_lover_emotional_result_page.dart';
-import '../features/fortune/presentation/pages/blind_date_fortune_page.dart';
-import '../features/fortune/presentation/pages/investment_fortune_page.dart';
-import '../features/fortune/presentation/pages/investment_fortune_result_page.dart';
-import '../screens/subscription/subscription_page.dart';
-
-// Import page classes for routes outside shell
+// Import pages outside shell
 import '../features/health/presentation/pages/health_fortune_page.dart';
-import '../features/health/presentation/pages/health_fortune_result_page.dart';
 import '../features/health/presentation/pages/medical_document_result_page.dart';
 import '../features/health/domain/models/medical_document_models.dart';
-import '../core/models/fortune_result.dart';
 import '../features/sports/presentation/pages/sports_fortune_page.dart' show ExerciseFortunePage;
-import '../features/fortune/presentation/pages/compatibility_page.dart';
-import '../features/fortune/presentation/pages/avoid_people_fortune_page.dart';
-// import '../features/fortune/presentation/pages/avoid_people_result_page.dart'; // Removed - file not found
-// import '../features/fortune/domain/models/avoid_person_analysis.dart'; // Removed - file not found
-// import '../features/fortune/presentation/pages/career_fortune_page.dart'; // Removed - unused
-import '../features/fortune/presentation/pages/career_coaching_input_page.dart';
-import '../features/fortune/presentation/pages/career_coaching_result_page.dart';
-import '../features/fortune/domain/models/career_coaching_model.dart';
-import '../features/fortune/presentation/pages/lucky_exam_fortune_page.dart';
 import '../features/interactive/presentation/pages/fortune_cookie_page.dart';
-import '../features/fortune/presentation/pages/celebrity_fortune_page.dart';
-import '../features/fortune/presentation/pages/pet_compatibility_page.dart';
-import '../features/fortune/presentation/pages/family_fortune_page.dart';
-import '../features/fortune/presentation/pages/daily_calendar_fortune_page.dart';
-// import '../features/fortune/presentation/pages/mbti_fortune_page.dart'; // Now in fortuneRoutes
+import '../screens/subscription/subscription_page.dart';
 
 // Import admin pages
 import '../features/admin/pages/celebrity_crawling_page.dart';
 
 // Import route groups
 import 'routes/auth_routes.dart';
-import 'routes/fortune_routes.dart';
 import 'routes/interactive_routes.dart';
 import 'routes/trend_routes.dart';
 import 'routes/wellness_routes.dart';
@@ -92,7 +61,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: '/chat',  // Chat-First 아키텍처: 채팅이 기본 진입점
-    debugLogDiagnostics: false, // Disabled to prevent freezing on real devices
+    debugLogDiagnostics: false,
     observers: kDebugMode ? [RouteObserverLogger()] : [],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
@@ -127,21 +96,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const FaceAiCameraPage(),
       ),
 
-      // Face AI Home (탐구 탭에서 진입 - Chat-First 아키텍처)
+      // Face AI Home (Chat에서 진입)
       GoRoute(
         path: '/fortune/face-ai',
         name: 'fortune-face-ai',
         builder: (context, state) => const FaceAiHomeScreen(),
       ),
 
-      // Shell route that provides persistent navigation
+      // Shell route that provides consistent background
       ShellRoute(
         builder: (context, state, child) => MainShell(
           state: state,
           child: child,
         ),
         routes: [
-          // Chat route (Chat-First 홈 - 0번 탭)
+          // Chat route (Chat-First 홈 - 메인 진입점)
           GoRoute(
             path: '/chat',
             name: 'chat',
@@ -152,7 +121,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
 
-          // Home route (인사이트 - 1번 탭)
+          // Home route (인사이트 - 프로필 바텀시트에서 접근)
           GoRoute(
             path: '/home',
             name: 'home',
@@ -162,7 +131,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               const HomeScreen(),
             ),
           ),
-          
+
           // Profile routes
           GoRoute(
             path: '/profile',
@@ -227,7 +196,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   const FortuneHistoryPage(),
                 ),
               ),
-              // 설정 관련 라우트 (settings_screen.dart에서 통합)
               GoRoute(
                 path: 'social-accounts',
                 name: 'profile-social-accounts',
@@ -278,7 +246,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
 
-          // Feature pages
+          // Trend page (프로필 바텀시트에서 접근)
           GoRoute(
             path: '/trend',
             name: 'trend',
@@ -289,24 +257,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
 
-          // Main fortune page
-          GoRoute(
-            path: '/fortune',
-            name: 'fortune',
-            pageBuilder: (context, state) => PageTransitions.tabTransition(
-              context,
-              state,
-              const FortuneListPage(),
-            ),
-          ),
-
           // Interactive routes (inside shell)
           ...interactiveRoutes,
         ],
       ),
-
-      // Fortune routes (outside shell - no navigation bar for consistent UX)
-      ...fortuneRoutes,
 
       // Wellness routes (outside shell - for focused wellness experience)
       ...wellnessRoutes,
@@ -325,10 +279,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      // Trend content routes (outside shell - 네비게이션 바 숨김)
+      // Trend content routes (outside shell)
       ...trendRoutes,
 
-      // Fortune routes that need to hide navigation bar
+      // Health routes (outside shell)
       GoRoute(
         path: '/health-toss',
         name: 'fortune-health-toss',
@@ -338,19 +292,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           const HealthFortunePage(),
         ),
       ),
-      GoRoute(
-        path: '/health-fortune-result',
-        name: 'health-fortune-result',
-        pageBuilder: (context, state) {
-          final fortuneResult = state.extra as FortuneResult;
-          return PageTransitions.slideTransition(
-            context,
-            state,
-            HealthFortuneResultPage(fortuneResult: fortuneResult),
-          );
-        },
-      ),
-      // Medical Document Analysis Result (건강검진표/처방전/진단서 분석)
       GoRoute(
         path: '/medical-document-result',
         name: 'medical-document-result',
@@ -381,73 +322,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           const ExerciseFortunePage(),
         ),
       ),
-      
-      // Fortune routes that need to hide navigation bar (additional)
-      GoRoute(
-        path: '/compatibility',
-        name: 'fortune-compatibility',
-        pageBuilder: (context, state) {
-          final params = state.uri.queryParameters;
-          return PageTransitions.slideTransition(
-            context,
-            state,
-            CompatibilityPage(initialParams: params.isNotEmpty ? params : null),
-          );
-        },
-      ),
-      GoRoute(
-        path: '/avoid-people',
-        name: 'fortune-avoid-people',
-        builder: (context, state) => const AvoidPeopleFortunePage(),
-      ),
-      GoRoute(
-        path: '/career',
-        name: 'fortune-career',
-        builder: (context, state) => const CareerCoachingInputPage(),
-      ),
-      GoRoute(
-        path: '/career-coaching-result',
-        name: 'career-coaching-result',
-        builder: (context, state) {
-          final input = state.extra as CareerCoachingInput?;
-          if (input == null) {
-            return const CareerCoachingInputPage();
-          }
-          return CareerCoachingResultPage(input: input);
-        },
-      ),
-      GoRoute(
-        path: '/lucky-exam',
-        name: 'fortune-lucky-exam',
-        builder: (context, state) => const LuckyExamFortunePage(),
-      ),
-      // MBTI - now included in fortuneRoutes (moved back to basic_fortune_routes.dart)
 
-      // Celebrity Fortune (outside shell - no navigation bar)
-      GoRoute(
-        path: '/celebrity',
-        name: 'fortune-celebrity',
-        builder: (context, state) => const CelebrityFortuneEnhancedPage(),
-      ),
-      
-      
-      // Family Fortune (outside shell - no navigation bar)
-      GoRoute(
-        path: '/family',
-        name: 'fortune-family',
-        builder: (context, state) => const FamilyFortuneUnifiedPage(),
-      ),
-      
-      // Pet Compatibility (outside shell - no navigation bar)
-      GoRoute(
-        path: '/pet',
-        name: 'fortune-pet',
-        builder: (context, state) => const PetCompatibilityPage(
-          fortuneType: 'pet-compatibility',
-          title: '반려동물 궁합',
-          description: '나와 반려동물의 궁합을 확인해보세요'
-        )),
-      
       // Other routes outside shell
       GoRoute(
         path: '/subscription',
@@ -490,89 +365,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'terms-of-service',
         builder: (context, state) => const TermsOfServicePage(),
       ),
-      
-      // Fortune routes that need to hide navigation bar
-      GoRoute(
-        path: '/moving',
-        name: 'fortune-moving',
-        builder: (context, state) => const MovingFortunePage(),
-      ),
-      GoRoute(
-        path: '/home-fengshui',
-        name: 'fortune-home-fengshui',
-        builder: (context, state) => const HomeFengshuiFortunePage(),
-      ),
-      GoRoute(
-        path: '/daily-calendar',
-        name: 'fortune-daily-calendar',
-        builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>?;
-          return DailyCalendarFortunePage(initialParams: extra);
-        },
-      ),
-      GoRoute(
-        path: '/traditional-saju',
-        name: 'fortune-traditional-saju',
-        builder: (context, state) => const TraditionalSajuPage(),
-      ),
-      // Physiognomy route removed - page deleted
-      GoRoute(
-        path: '/lucky-talisman',
-        name: 'fortune-lucky-talisman',
-        builder: (context, state) => const TalismanFortunePage(),
-      ),
-      GoRoute(
-        path: '/biorhythm',
-        name: 'fortune-biorhythm',
-        builder: (context, state) => const BiorhythmFortunePage(),
-      ),
-      GoRoute(
-        path: '/love',
-        name: 'fortune-love',
-        builder: (context, state) => const LoveFortuneInputPage(),
-      ),
-      GoRoute(
-        path: '/ex-lover-simple',
-        name: 'fortune-ex-lover-simple',
-        builder: (context, state) => const ExLoverFortuneSimplePage(),
-      ),
-      GoRoute(
-        path: '/ex-lover-emotional-result',
-        name: 'fortune-ex-lover-emotional-result',
-        builder: (context, state) {
-          final fortuneResult = state.extra as FortuneResult?;
-          if (fortuneResult == null) {
-            return const ExLoverFortuneSimplePage();
-          }
-          return ExLoverEmotionalResultPage(fortuneResult: fortuneResult);
-        },
-      ),
-      GoRoute(
-        path: '/investment',
-        name: 'fortune-investment',
-        builder: (context, state) => const InvestmentFortunePage(),
-      ),
-      // Investment Fortune Result
-      GoRoute(
-        path: '/fortune/investment/result',
-        name: 'fortune-investment-result',
-        builder: (context, state) {
-          final fortuneResult = state.extra as FortuneResult?;
-          if (fortuneResult == null) {
-            return const FortuneListPage();
-          }
-          return InvestmentFortuneResultPage(fortuneResult: fortuneResult);
-        },
-      ),
-      
-      // Blind Date Fortune (with Edge Function)
-      GoRoute(
-        path: '/blind-date',
-        name: 'fortune-blind-date',
-        builder: (context, state) => const BlindDateFortunePage(),
-      ),
 
-      // Admin routes (outside shell - no navigation bar)
+      // Admin routes (outside shell)
       GoRoute(
         path: '/admin/celebrity-crawling',
         name: 'admin-celebrity-crawling',

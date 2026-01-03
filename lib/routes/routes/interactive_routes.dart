@@ -4,9 +4,6 @@ import '../../features/interactive/presentation/pages/dream_interpretation_page.
 import '../../features/interactive/presentation/pages/psychology_test_page.dart';
 import '../../features/interactive/presentation/pages/tarot_chat_page.dart';
 import '../../features/interactive/presentation/pages/tarot_animated_flow_page.dart';
-import '../../features/fortune/presentation/pages/tarot_storytelling_page.dart';
-import '../../features/fortune/presentation/pages/tarot_summary_page.dart';
-import '../../features/fortune/presentation/pages/tarot_deck_selection_page.dart';
 import '../../features/interactive/presentation/pages/face_reading_page.dart';
 import '../../features/interactive/presentation/pages/taemong_page.dart';
 import '../../features/interactive/presentation/pages/worry_bead_page.dart';
@@ -35,35 +32,6 @@ final interactiveRoutes = [
           return const TarotChatPage();
         },
         routes: [
-          GoRoute(
-            path: 'storytelling',
-            name: 'tarot-storytelling',
-            builder: (context, state) {
-              final extra = state.extra as Map<String, dynamic>?;
-              return TarotStorytellingPage(
-                selectedCards: extra?['selectedCards'],
-                spreadType: extra?['spreadType'] ?? 'three',
-                question: extra?['question']);
-            }),
-          GoRoute(
-            path: 'summary',
-            name: 'tarot-summary',
-            builder: (context, state) {
-              final extra = state.extra as Map<String, dynamic>?;
-              return TarotSummaryPage(
-                cards: extra?['cards'],
-                interpretations: extra?['interpretations'],
-                spreadType: extra?['spreadType'] ?? 'three',
-                question: extra?['question']);
-            }),
-          GoRoute(
-            path: 'deck-selection',
-            name: 'interactive-tarot-deck-selection',
-            builder: (context, state) {
-              return TarotDeckSelectionPage(
-                spreadType: state.uri.queryParameters['spreadType'],
-                initialQuestion: state.uri.queryParameters['question']);
-            }),
           GoRoute(
             path: 'animated-flow',
             name: 'tarot-animated-flow',
