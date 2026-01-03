@@ -105,6 +105,8 @@ supabase/functions/
 │   ├── llm/                   # LLM 관련
 │   │   ├── llm-factory.ts
 │   │   └── prompt-manager.ts
+│   ├── prompts/               # 프롬프트 템플릿
+│   │   └── templates/
 │   ├── utils/                 # 유틸리티
 │   └── types/                 # 타입 정의
 ├── fortune-daily/             # 일일 운세
@@ -167,47 +169,121 @@ EdgeFunctionsEndpoints.getEndpointForType('unknown')  // '/fortune-unknown'
 
 ---
 
-## 현재 Edge Functions 목록 (2024.11.26)
+## 현재 Edge Functions 목록 (2025.01.03)
 
-### 운세 함수 (22개)
+### 운세 함수 (39개)
 
-| 함수명 | 설명 |
+| 함수명 | 설명 | 카테고리 |
+|--------|------|----------|
+| `fortune-avoid-people` | 기피인물 운세 | 인간관계 |
+| `fortune-biorhythm` | 바이오리듬 | 건강/웰빙 |
+| `fortune-blind-date` | 소개팅 운세 | 연애 |
+| `fortune-career` | 직업/커리어 운세 | 직업 |
+| `fortune-celebrity` | 연예인 닮은꼴 운세 | 엔터테인먼트 |
+| `fortune-compatibility` | 궁합 분석 | 연애 |
+| `fortune-daily` | 일일 운세 | 기본 |
+| `fortune-dream` | 꿈 해몽 | 인터랙티브 |
+| `fortune-ex-lover` | 전연인 분석 | 연애 |
+| `fortune-exam` | 시험/수능 운세 | 학업 |
+| `fortune-face-reading` | 관상 분석 | Face AI |
+| `fortune-face-reading-watch` | 관상 Watch (간략) | Face AI |
+| `fortune-family-change` | 가족 변화 운세 | 가족 |
+| `fortune-family-children` | 자녀 운세 | 가족 |
+| `fortune-family-health` | 가족 건강 운세 | 가족 |
+| `fortune-family-relationship` | 가족 관계 운세 | 가족 |
+| `fortune-family-wealth` | 가족 재정 운세 | 가족 |
+| `fortune-health` | 건강 운세 | 건강/웰빙 |
+| `fortune-health-document` | 건강검진표 분석 | 건강/웰빙 |
+| `fortune-home-fengshui` | 집 풍수 | 생활 |
+| `fortune-investment` | 투자 운세 | 재정 |
+| `fortune-love` | 연애 운세 | 연애 |
+| `fortune-lucky-items` | 행운 아이템 | 기본 |
+| `fortune-match-insight` | 매칭 인사이트 | 연애 |
+| `fortune-mbti` | MBTI 운세 | 성격 |
+| `fortune-moving` | 이사 운세 | 생활 |
+| `fortune-naming` | 작명 운세 | 가족 |
+| `fortune-new-year` | 신년 운세 | 특별 |
+| `fortune-ootd` | 오늘의 패션 | 라이프스타일 |
+| `fortune-past-life` | 전생 분석 | 엔터테인먼트 |
+| `fortune-pet-compatibility` | 반려동물 궁합 | 반려동물 |
+| `fortune-premium-saju` | 프리미엄 사주 | 사주 |
+| `fortune-recommend` | 운세 추천 | 시스템 |
+| `fortune-talent` | 재능/적성 운세 | 직업 |
+| `fortune-talisman` | 부적 생성 | 특별 |
+| `fortune-tarot` | 타로 운세 | 인터랙티브 |
+| `fortune-time` | 시간별 운세 | 기본 |
+| `fortune-traditional-saju` | 전통 사주 | 사주 |
+| `fortune-wealth` | 재물 운세 | 재정 |
+
+### 유틸리티 함수 (22개)
+
+| 함수명 | 설명 | 카테고리 |
+|--------|------|----------|
+| `admin-celebrity-face-analysis` | 연예인 얼굴 분석 (관리자) | 관리자 |
+| `admin-update-celebrity-images` | 연예인 이미지 업데이트 | 관리자 |
+| `analyze-wish` | 소원 분석 | 분석 |
+| `calculate-saju` | 사주 계산 | 계산 |
+| `fetch-tickers` | 투자 종목 조회 | 데이터 |
+| `generate-celebrity-character` | 연예인 캐릭터 생성 | 생성 |
+| `generate-fashion-image` | 패션 이미지 생성 | 생성 |
+| `generate-fortune-story` | 운세 스토리 생성 | 생성 |
+| `generate-talisman` | 부적 이미지 생성 | 생성 |
+| `kakao-oauth` | 카카오 OAuth | 인증 |
+| `mbti-energy-tracker` | MBTI 에너지 추적 | 추적 |
+| `naver-oauth` | 네이버 OAuth | 인증 |
+| `payment-verify-purchase` | 결제 검증 | 결제 |
+| `personality-dna` | 성격 DNA 분석 | 분석 |
+| `push-daily-fortune` | 일일 푸시 알림 | 푸시 |
+| `push-winback` | 윈백 푸시 알림 | 푸시 |
+| `soul-consume` | 영혼 소비 | 토큰 |
+| `soul-earn` | 영혼 획득 | 토큰 |
+| `subscription-activate` | 구독 활성화 | 구독 |
+| `subscription-status` | 구독 상태 조회 | 구독 |
+| `token-balance` | 토큰 잔액 조회 | 토큰 |
+| `widget-cache` | 위젯 캐시 | 위젯 |
+
+### 공유 모듈 (1개)
+
+| 폴더명 | 설명 |
 |--------|------|
-| `fortune-avoid-people` | 기피인물 운세 |
-| `fortune-biorhythm` | 바이오리듬 |
-| `fortune-blind-date` | 소개팅 운세 |
-| `fortune-career` | 직업 운세 |
-| `fortune-compatibility` | 궁합 |
-| `fortune-daily` | 일일 운세 |
-| `fortune-dream` | 꿈 해몽 |
-| `fortune-ex-lover` | 전연인 운세 |
-| `fortune-face-reading` | 관상 |
-| `fortune-family-harmony` | 가족 화합 |
-| `fortune-health` | 건강 운세 |
-| `fortune-investment` | 투자 운세 |
-| `fortune-love` | 연애 운세 |
-| `fortune-lucky-items` | 행운 아이템 |
-| `fortune-lucky-series` | 행운 시리즈 |
-| `fortune-mbti` | MBTI 운세 |
-| `fortune-moving` | 이사 운세 |
-| `fortune-pet-compatibility` | 반려동물 궁합 |
-| `fortune-talent` | 재능 운세 |
-| `fortune-time` | 시간별 운세 |
-| `fortune-traditional-saju` | 전통 사주 |
+| `_shared/` | LLM, 프롬프트, 유틸리티, 타입 공유 |
 
-### 유틸리티 함수 (10개)
+---
 
-| 함수명 | 설명 |
-|--------|------|
-| `analyze-wish` | 소원 분석 |
-| `calculate-saju` | 사주 계산 |
-| `fetch-tickers` | 투자 종목 조회 |
-| `generate-fortune-story` | 운세 스토리 생성 |
-| `generate-talisman` | 부적 생성 |
-| `kakao-oauth` | 카카오 OAuth |
-| `mbti-energy-tracker` | MBTI 에너지 추적 |
-| `naver-oauth` | 네이버 OAuth |
-| `personality-dna` | 성격 DNA |
+## 카테고리별 분류
+
+### 기본 운세 (4개)
+`fortune-daily`, `fortune-time`, `fortune-lucky-items`, `fortune-recommend`
+
+### 연애/궁합 (5개)
+`fortune-love`, `fortune-compatibility`, `fortune-blind-date`, `fortune-ex-lover`, `fortune-match-insight`
+
+### 사주/명리 (2개)
+`fortune-traditional-saju`, `fortune-premium-saju`
+
+### 직업/재정 (4개)
+`fortune-career`, `fortune-talent`, `fortune-investment`, `fortune-wealth`
+
+### 건강/웰빙 (3개)
+`fortune-health`, `fortune-health-document`, `fortune-biorhythm`
+
+### 가족 (5개)
+`fortune-family-change`, `fortune-family-children`, `fortune-family-health`, `fortune-family-relationship`, `fortune-family-wealth`, `fortune-naming`
+
+### 인터랙티브 (3개)
+`fortune-dream`, `fortune-tarot`, `fortune-talisman`
+
+### Face AI (2개)
+`fortune-face-reading`, `fortune-face-reading-watch`
+
+### 엔터테인먼트 (2개)
+`fortune-celebrity`, `fortune-past-life`
+
+### 생활 (3개)
+`fortune-moving`, `fortune-home-fengshui`, `fortune-ootd`
+
+### 기타 (3개)
+`fortune-mbti`, `fortune-avoid-people`, `fortune-pet-compatibility`, `fortune-new-year`, `fortune-exam`
 
 ---
 
@@ -303,13 +379,16 @@ path: '/fortune-mbti-new',   // ❌ new 접미사
 
 ---
 
-## 현재 상태 (2024.11.26)
+## 현재 상태 (2025.01.03)
 
 ### 통계
 
 | 항목 | 수치 |
 |------|------|
-| 활성 페이지 파일 | 36개 |
+| Edge Functions (운세) | 39개 |
+| Edge Functions (유틸) | 22개 |
+| Edge Functions (총계) | 61개 |
+| 활성 페이지 파일 | 40+ 개 |
 | 라우트 정의 파일 | 10개 |
 | FortuneTypeNames 항목 | 80+ 개 |
 
@@ -324,4 +403,6 @@ path: '/fortune-mbti-new',   // ❌ new 접미사
 ## 관련 문서
 
 - [02-architecture.md](02-architecture.md) - Clean Architecture 구조
+- [05-fortune-system.md](05-fortune-system.md) - 운세 시스템 개요
 - [06-llm-module.md](06-llm-module.md) - LLM 모듈 및 Edge Function 작성법
+- [21-new-fortune-types.md](21-new-fortune-types.md) - 신규 운세 타입 상세

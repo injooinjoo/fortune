@@ -1,5 +1,7 @@
 # 홈 화면 위젯 시스템 가이드
 
+> 최종 업데이트: 2025.01.03
+
 ## 개요
 
 Fortune 앱의 홈 화면 위젯 시스템은 iOS (WidgetKit)와 Android (AppWidgetProvider)를 지원합니다.

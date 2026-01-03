@@ -1,5 +1,7 @@
 # 상태관리 가이드 (Riverpod StateNotifier)
 
+> 최종 업데이트: 2025.01.03
+
 ## 개요
 
 Fortune App은 **Riverpod StateNotifier 패턴**을 사용합니다.

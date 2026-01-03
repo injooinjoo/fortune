@@ -1,14 +1,60 @@
 # UI 디자인 시스템 가이드
 
+> 최종 업데이트: 2025.01.03
+
 ## 개요
 
 Fortune App은 **한국 전통 미학**을 기반으로 일관된 UI를 구현합니다.
 Toss Design System은 현대적 UI 패턴의 보조 참조로만 사용합니다.
 
+---
+
+## 디자인 시스템 구조 (lib/core/design_system/)
+
+```
+lib/core/design_system/
+├── design_system.dart           # 통합 export
+├── tokens/                      # 디자인 토큰
+│   ├── ds_colors.dart          # 색상 시스템 (오방색 기반)
+│   ├── ds_typography.dart      # 타이포그래피 (나눔명조)
+│   ├── ds_spacing.dart         # 간격 토큰
+│   ├── ds_radius.dart          # 보더 레이더스
+│   ├── ds_shadows.dart         # 먹 번짐 효과
+│   ├── ds_animation.dart       # 애니메이션 곡선
+│   ├── ds_fortune_colors.dart  # 운세별 색상
+│   ├── ds_love_colors.dart     # 연애운 색상
+│   ├── ds_luck_colors.dart     # 행운 색상
+│   └── ds_biorhythm_colors.dart # 바이오리듬 색상
+├── theme/                       # 테마 시스템
+│   ├── ds_theme.dart           # Material3 기반 통합 테마
+│   └── ds_extensions.dart      # BuildContext 확장
+├── components/                  # UI 컴포넌트
+│   ├── ds_button.dart          # 버튼
+│   ├── ds_card.dart            # 카드 (5가지 스타일)
+│   ├── ds_chip.dart            # 칩
+│   ├── ds_text_field.dart      # 입력 필드
+│   ├── ds_modal.dart           # 모달
+│   ├── ds_bottom_sheet.dart    # 바텀시트
+│   ├── ds_toast.dart           # 토스트
+│   ├── ds_loading.dart         # 로딩 표시자
+│   ├── ds_badge.dart           # 뱃지
+│   ├── ds_toggle.dart          # 토글
+│   ├── ds_list_tile.dart       # 리스트 타일
+│   ├── ds_section_header.dart  # 섹션 헤더
+│   ├── hanji_background.dart   # 한지 배경
+│   └── traditional/            # 전통 스타일 컴포넌트
+│       ├── hanji_card.dart     # 한지 카드
+│       ├── seal_stamp_widget.dart # 낙관 (도장)
+│       ├── fortune_header.dart # 운세 헤더
+│       └── traditional_button.dart # 전통 버튼
+└── utils/
+    └── ds_haptics.dart         # 햅틱 피드백
+```
+
 ### 핵심 파일
-- `lib/core/theme/obangseok_colors.dart` - 오방색 색상 시스템 (PRIMARY)
+- `lib/core/design_system/tokens/ds_colors.dart` - 오방색 색상 시스템 (PRIMARY)
 - `lib/core/design_system/components/traditional/hanji_card.dart` - 한지 카드
-- `lib/core/theme/toss_design_system.dart` - Toss 색상 참조 (SECONDARY)
+- `lib/core/theme/obangseok_colors.dart` - 레거시 오방색 (호환용)
 - `lib/core/theme/typography_unified.dart` - 타이포그래피
 
 **전체 디자인 철학**: [docs/design/DESIGN_SYSTEM.md](/docs/design/DESIGN_SYSTEM.md)
@@ -411,25 +457,88 @@ AppBar(
 
 ---
 
-## 간격 및 반경
+## 디자인 토큰 시스템
 
-### 간격 (Spacing)
+### Context 확장 사용법 (권장)
+
 ```dart
+import 'package:fortune/core/design_system/design_system.dart';
+
+// 색상 접근
+Container(
+  color: context.colors.background,
+  child: Text('Hello', style: context.typography.bodyMedium),
+)
+
+// 확장 메서드
+context.isDark        // 다크모드 확인
+context.colors        // DSColorScheme 접근
+context.typography    // DSTypographyScheme 접근
+context.shadows       // DSShadowScheme 접근
+context.spacing       // DSSpacing 접근
+```
+
+### 간격 (DSSpacing)
+
+**파일**: `lib/core/design_system/tokens/ds_spacing.dart`
+
+```dart
+DSSpacing.xxs   // 2px
 DSSpacing.xs    // 4px
 DSSpacing.sm    // 8px
 DSSpacing.md    // 16px
 DSSpacing.lg    // 24px
 DSSpacing.xl    // 32px
 DSSpacing.xxl   // 48px
+DSSpacing.xxxl  // 64px
 ```
 
-### 반경 (Radius)
+### 반경 (DSRadius)
+
+**파일**: `lib/core/design_system/tokens/ds_radius.dart`
+
 ```dart
+DSRadius.none   // 0px
+DSRadius.xs     // 4px
 DSRadius.sm     // 8px
 DSRadius.md     // 12px
 DSRadius.lg     // 16px
 DSRadius.xl     // 24px
+DSRadius.xxl    // 32px
 DSRadius.full   // 9999px (완전 둥근)
+DSRadius.card   // 16px (카드 기본)
+DSRadius.button // 12px (버튼 기본)
+```
+
+### 그림자 (DSShadows)
+
+**파일**: `lib/core/design_system/tokens/ds_shadows.dart`
+
+```dart
+// 먹 번짐 효과 (잉크 워시 스타일)
+DSShadows.none      // 없음
+DSShadows.sm        // 작은 그림자
+DSShadows.md        // 중간 그림자
+DSShadows.lg        // 큰 그림자
+DSShadows.xl        // 매우 큰 그림자
+DSShadows.card      // 카드용 그림자
+DSShadows.elevated  // 강조 그림자
+```
+
+### 애니메이션 (DSAnimation)
+
+**파일**: `lib/core/design_system/tokens/ds_animation.dart`
+
+```dart
+DSAnimation.fast      // 150ms
+DSAnimation.normal    // 250ms
+DSAnimation.slow      // 350ms
+DSAnimation.verySlow  // 500ms
+
+DSAnimation.curveDefault    // Curves.easeInOut
+DSAnimation.curveEaseIn     // Curves.easeIn
+DSAnimation.curveEaseOut    // Curves.easeOut
+DSAnimation.curveBounce     // Curves.bounceOut
 ```
 
 ---

@@ -2050,33 +2050,92 @@ const examSurveyConfig = FortuneSurveyConfig(
 // Moving (이사운) 설문 설정
 // ============================================================
 
-/// 이사 방향 옵션
-const _movingDirectionOptions = [
-  SurveyOption(id: 'east', label: '동쪽', emoji: '🌅'),
-  SurveyOption(id: 'west', label: '서쪽', emoji: '🌇'),
-  SurveyOption(id: 'south', label: '남쪽', emoji: '☀️'),
-  SurveyOption(id: 'north', label: '북쪽', emoji: '❄️'),
-  SurveyOption(id: 'unknown', label: '아직 모름', emoji: '🤔'),
+/// 이사 시기 옵션
+const _movingPeriodOptions = [
+  SurveyOption(id: '1month', label: '1개월 이내', emoji: '🔥'),
+  SurveyOption(id: '3months', label: '3개월 이내', emoji: '📅'),
+  SurveyOption(id: '6months', label: '6개월 이내', emoji: '🗓️'),
+  SurveyOption(id: 'year', label: '1년 이내', emoji: '📆'),
+  SurveyOption(id: 'undecided', label: '아직 미정', emoji: '🤔'),
 ];
 
-/// Moving 설문 설정
+/// 이사 목적 옵션
+const _movingPurposeOptions = [
+  SurveyOption(id: 'work', label: '직장 때문에', emoji: '🏢'),
+  SurveyOption(id: 'marriage', label: '결혼해서', emoji: '💑'),
+  SurveyOption(id: 'education', label: '교육 환경', emoji: '🎓'),
+  SurveyOption(id: 'better_life', label: '더 나은 환경', emoji: '🏡'),
+  SurveyOption(id: 'investment', label: '투자 목적', emoji: '💰'),
+  SurveyOption(id: 'family', label: '가족과 함께', emoji: '👨‍👩‍👧‍👦'),
+  SurveyOption(id: 'other', label: '새로운 시작', emoji: '✨'),
+];
+
+/// 이사 걱정거리 옵션
+const _movingConcernsOptions = [
+  SurveyOption(id: 'direction', label: '방위가 걱정돼요', emoji: '🧭'),
+  SurveyOption(id: 'timing', label: '시기가 맞을까요', emoji: '⏰'),
+  SurveyOption(id: 'adaptation', label: '적응할 수 있을까요', emoji: '😟'),
+  SurveyOption(id: 'neighbors', label: '이웃이 걱정돼요', emoji: '👥'),
+  SurveyOption(id: 'cost', label: '비용이 부담돼요', emoji: '💸'),
+  SurveyOption(id: 'feng_shui', label: '풍수가 궁금해요', emoji: '🏠'),
+];
+
+/// Moving 설문 설정 (6단계 개선 버전)
+///
+/// 1. 현재 지역 → 2. 이사할 지역 → 3. 이사 시기 → 4. 구체적 날짜(조건부)
+/// → 5. 이사 목적 → 6. 걱정사항(선택)
+///
+/// 방향은 두 지역의 좌표를 기반으로 자동 계산됨
 const movingSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.moving,
   title: '이사운',
-  description: '새 보금자리의 길한 방향을 찾아드릴게요!',
+  description: '새 보금자리의 길한 방향과 시기를 찾아드릴게요!',
   emoji: '🏠',
   accentColor: FortuneColors.career,
   steps: [
+    // Step 1: 현재 지역 (필수)
     SurveyStep(
-      id: 'movingDate',
-      question: '이사 예정일이 언제예요? 📅',
-      inputType: SurveyInputType.calendar,
+      id: 'currentArea',
+      question: '현재 어디 살고 있어요? 📍',
+      inputType: SurveyInputType.location,
     ),
+    // Step 2: 이사할 지역 (필수)
     SurveyStep(
-      id: 'direction',
-      question: '이사 방향이 정해졌나요? 🧭',
+      id: 'targetArea',
+      question: '어디로 이사할 예정이에요? 🏠',
+      inputType: SurveyInputType.location,
+    ),
+    // Step 3: 이사 시기 (필수)
+    SurveyStep(
+      id: 'movingPeriod',
+      question: '이사 시기가 정해졌나요? 📅',
       inputType: SurveyInputType.chips,
-      options: _movingDirectionOptions,
+      options: _movingPeriodOptions,
+    ),
+    // Step 4: 구체적인 날짜 (조건부 - 1개월/3개월 이내 선택 시)
+    SurveyStep(
+      id: 'specificDate',
+      question: '구체적인 날짜가 있나요? 🗓️',
+      inputType: SurveyInputType.calendar,
+      isRequired: false,
+      showWhen: {
+        'movingPeriod': ['1month', '3months'],
+      },
+    ),
+    // Step 5: 이사 목적 (필수)
+    SurveyStep(
+      id: 'purpose',
+      question: '이사하는 이유가 뭐예요? 🤔',
+      inputType: SurveyInputType.chips,
+      options: _movingPurposeOptions,
+    ),
+    // Step 6: 걱정거리 (선택, 다중선택)
+    SurveyStep(
+      id: 'concerns',
+      question: '특별히 걱정되는 점이 있나요? 💭',
+      inputType: SurveyInputType.multiSelect,
+      options: _movingConcernsOptions,
+      isRequired: false,
     ),
   ],
 );

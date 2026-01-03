@@ -1,8 +1,19 @@
 # 운세 시스템 가이드
 
+> 최종 업데이트: 2025.01.03
+
 ## 개요
 
 Fortune App의 운세 시스템은 **72% API 비용 절감**을 위한 최적화된 프로세스를 사용합니다.
+
+### 운세 통계 (2025.01.03)
+
+| 항목 | 수치 |
+|------|------|
+| 운세 Edge Functions | 39개 |
+| 유틸리티 Functions | 22개 |
+| 운세 카테고리 | 13개 |
+| 프리미엄 전용 | 8개 |
 
 ---
 
@@ -154,6 +165,111 @@ conditions = {
 }
 ```
 
+### 가족운 (Family)
+```dart
+// family-change, family-children, family-health, family-relationship, family-wealth
+conditions = {
+  'saju': user.sajuData,
+  'family_type': 'change' | 'children' | 'health' | 'relationship' | 'wealth',
+  'family_members': familyMembersList,  // 가족 구성원 사주
+  'date': today,
+}
+```
+
+### 전생/윤회 (Past-Life)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'birth_time': birthTime,
+  // 사주로만 분석, 날짜 무관
+}
+```
+
+### 시험운 (Exam)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'exam_type': 'college' | 'certification' | 'job_interview',
+  'exam_date': examDate,
+}
+```
+
+### 셀럽 매칭 (Celebrity)
+```dart
+conditions = {
+  'user_saju': user.sajuData,
+  'celebrity_id': selectedCelebrityId,
+  // 셀럽 사주는 고정값
+}
+```
+
+### 재물운 (Wealth/Investment)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'investment_type': 'stock' | 'realestate' | 'crypto' | 'general',
+  'date': today,
+}
+```
+
+### 펫 궁합 (Pet Compatibility)
+```dart
+conditions = {
+  'user_saju': user.sajuData,
+  'pet_type': 'dog' | 'cat' | 'bird' | 'etc',
+  'pet_birth_date': petBirthDate,  // optional
+}
+```
+
+### 오늘의 코디 (OOTD)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'gender': 'male' | 'female',
+  'season': currentSeason,
+  'date': today,
+}
+```
+
+### 풍수 인테리어 (Home Fengshui)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'room_type': 'bedroom' | 'living' | 'office' | 'entrance',
+  'direction': houseDirection,
+}
+```
+
+### 신년운세 (New Year)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'year': targetYear,  // 2025, 2026 등
+}
+```
+
+### MBTI 운세 (MBTI)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'mbti': 'INFP' | 'ENTJ' | ...,
+  'date': today,
+}
+```
+
+### 건강 문서 (Health Document)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'health_data': {
+    'blood_pressure': value,
+    'heart_rate': value,
+    'steps': value,
+  },
+  'date': today,
+}
+```
+
 ---
 
 ## 프리미엄 & 광고 시스템
@@ -222,14 +338,37 @@ Future<void> _showAdAndUnblur() async {
 
 ## 토큰/소울 소비율
 
-### 운세 유형별 토큰 소비
+### 운세 유형별 토큰 소비 (39개)
 
-| 유형 | 토큰 | 예시 |
-|------|------|------|
-| **Simple** | 1 | daily, today, tomorrow, lucky-color, lucky-number |
-| **Medium** | 2 | love, career, tarot, dream, biorhythm, mbti |
-| **Complex** | 3 | saju, traditional-saju, tojeong, past-life |
-| **Premium** | 5 | startup, business, lucky-investment, celebrity-match |
+| 유형 | 토큰 | 운세 종류 |
+|------|------|----------|
+| **Simple** | 1 | daily, time, lucky-items, lucky-number, biorhythm |
+| **Medium** | 2 | love, career, mbti, dream, health, talent, avoid-people, new-year |
+| **Complex** | 3 | tarot, saju, traditional-saju, compatibility, blind-date, ex-lover, face-reading, naming |
+| **Premium** | 5 | celebrity, wealth, investment, pet-compatibility, ootd, home-fengshui |
+| **Family** | 3 | family-change, family-children, family-health, family-relationship, family-wealth |
+| **Special** | 4 | past-life, exam, match-insight, premium-saju, talisman, recommend |
+
+### 전체 운세 목록 (39개)
+
+| 카테고리 | 운세 함수 | 토큰 |
+|----------|----------|------|
+| **기본** | fortune-daily, fortune-time | 1 |
+| **행운** | fortune-lucky-items, fortune-biorhythm | 1-2 |
+| **연애** | fortune-love, fortune-blind-date, fortune-ex-lover, fortune-compatibility | 2-3 |
+| **직업** | fortune-career, fortune-talent | 2 |
+| **건강** | fortune-health, fortune-health-document | 2-3 |
+| **성격** | fortune-mbti, fortune-match-insight | 2-4 |
+| **타로** | fortune-tarot | 3 |
+| **사주** | fortune-saju, fortune-traditional-saju, fortune-premium-saju | 3-5 |
+| **관상** | fortune-face-reading, fortune-face-reading-watch | 3 |
+| **꿈** | fortune-dream | 2 |
+| **가족** | fortune-family-change, fortune-family-children, fortune-family-health, fortune-family-relationship, fortune-family-wealth | 3 |
+| **재물** | fortune-wealth, fortune-investment | 2-5 |
+| **특수** | fortune-naming, fortune-pet-compatibility, fortune-celebrity | 3-5 |
+| **환경** | fortune-home-fengshui, fortune-ootd | 5 |
+| **시즌** | fortune-new-year, fortune-exam | 2-4 |
+| **기타** | fortune-avoid-people, fortune-past-life, fortune-talisman, fortune-recommend | 2-4 |
 
 ### 토큰 소비 코드
 
@@ -322,7 +461,7 @@ CREATE INDEX idx_user_fortune_date
 
 ### 가정
 - 일일 사용자: 10,000명
-- 운세 종류: 27개
+- 운세 종류: 39개
 - API 호출 비용: 건당 $0.01
 
 ### 기존 방식 (100% API 호출)

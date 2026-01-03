@@ -44,7 +44,10 @@ import '../widgets/survey/chat_investment_category_selector.dart';
 import '../widgets/survey/chat_investment_ticker_selector.dart';
 import '../widgets/survey/chat_celebrity_selector.dart';
 import '../widgets/survey/chat_match_selector.dart';
+import '../widgets/survey/chat_location_picker.dart';
 import '../widgets/survey/chat_onboarding_inputs.dart';
+import '../../domain/models/location_data.dart';
+import '../../../../core/utils/direction_calculator.dart';
 import '../../../../features/fortune/domain/models/sports_schedule.dart';
 import '../../../../features/fortune/domain/models/match_insight.dart';
 import '../../../../features/fortune/domain/models/past_life_result.dart';
@@ -2897,8 +2900,40 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case FortuneSurveyType.moving:
-        // Edge Function 요구: userId, birthDate, moveType, movingDate, direction
-        // Survey step ids: 'movingDate', 'direction'
+        // 새로운 설문 구조: currentArea, targetArea, movingPeriod, specificDate, purpose, concerns
+        final currentLocation = answers['currentArea'] as LocationData?;
+        final targetLocation = answers['targetArea'] as LocationData?;
+
+        // 방향 자동 계산
+        String direction = 'unknown';
+        String? distanceFormatted;
+        if (currentLocation?.hasCoordinates == true && targetLocation?.hasCoordinates == true) {
+          final directionInfo = DirectionCalculator.getDirectionInfo(
+            fromLat: currentLocation!.latitude!,
+            fromLng: currentLocation.longitude!,
+            toLat: targetLocation!.latitude!,
+            toLng: targetLocation.longitude!,
+          );
+          direction = directionInfo['direction'] as String;
+          distanceFormatted = directionInfo['distanceFormatted'] as String?;
+        } else if (currentLocation != null && targetLocation != null) {
+          // 좌표 없으면 지역명으로 추론
+          direction = DirectionCalculator.inferFromRegionNames(
+            currentLocation.displayName,
+            targetLocation.displayName,
+          ) ?? 'unknown';
+        }
+
+        // 이사 시기 포맷팅
+        final movingPeriod = answers['movingPeriod'] as String? ?? 'undecided';
+        final specificDate = answers['specificDate']?.toString();
+        final movingDate = specificDate ??
+            _formatMovingPeriod(movingPeriod);
+
+        // 걱정사항 (다중선택)
+        final concerns = answers['concerns'];
+        final concernsList = concerns is List ? concerns.cast<String>() : <String>[];
+
         return apiService.getFortune(
           userId: userId,
           fortuneType: 'moving',
@@ -2907,9 +2942,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'birthDate': birthDateStr,
             'gender': gender,
             'moveType': 'residence',
-            'movingDate': answers['movingDate']?.toString() ??
-                DateTime.now().toIso8601String().split('T')[0],
-            'direction': answers['direction'] ?? 'unknown',
+            'currentArea': currentLocation?.displayName ?? '',
+            'targetArea': targetLocation?.displayName ?? '',
+            'currentCoords': currentLocation?.coordsJson,
+            'targetCoords': targetLocation?.coordsJson,
+            'direction': direction,
+            'distance': distanceFormatted,
+            'movingPeriod': movingPeriod,
+            'movingDate': movingDate,
+            'purpose': _mapMovingPurpose(answers['purpose'] as String?),
+            'concerns': concernsList.isNotEmpty ? concernsList.join(', ') : null,
           },
         );
 
@@ -2935,6 +2977,45 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       age--;
     }
     return age;
+  }
+
+  /// 이사 시기 옵션을 날짜 문자열로 변환
+  String _formatMovingPeriod(String period) {
+    final now = DateTime.now();
+    switch (period) {
+      case '1month':
+        return now.add(const Duration(days: 30)).toIso8601String().split('T')[0];
+      case '3months':
+        return now.add(const Duration(days: 90)).toIso8601String().split('T')[0];
+      case '6months':
+        return now.add(const Duration(days: 180)).toIso8601String().split('T')[0];
+      case '1year':
+        return now.add(const Duration(days: 365)).toIso8601String().split('T')[0];
+      case 'undecided':
+      default:
+        return now.add(const Duration(days: 90)).toIso8601String().split('T')[0]; // 기본 3개월
+    }
+  }
+
+  /// 이사 목적 옵션을 한글로 매핑
+  String _mapMovingPurpose(String? purpose) {
+    switch (purpose) {
+      case 'job':
+        return '직장/취업';
+      case 'study':
+        return '학업/유학';
+      case 'marriage':
+        return '결혼/독립';
+      case 'family':
+        return '가족';
+      case 'environment':
+        return '주거환경 개선';
+      case 'investment':
+        return '투자/재테크';
+      case 'other':
+      default:
+        return '기타';
+    }
   }
 
   String _getTypeDisplayName(FortuneSurveyType type) {
@@ -3362,6 +3443,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                 'venue': game.venue,
               },
               '${game.sport.emoji} ${game.matchTitle}',
+            );
+          },
+        );
+
+      case SurveyInputType.location:
+        final questionTitle = surveyState.activeProgress?.currentStep.question ?? '지역을 선택해주세요';
+        return ChatLocationPicker(
+          questionTitle: questionTitle,
+          onLocationSelected: (location) {
+            _handleSurveyAnswerValue(
+              location,
+              '📍 ${location.displayName}',
             );
           },
         );

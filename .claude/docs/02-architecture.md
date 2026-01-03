@@ -1,5 +1,16 @@
 # Clean Architecture 가이드
 
+> 최종 업데이트: 2025.01.03
+
+## 아키텍처 통계
+
+| 항목 | 수치 |
+|------|------|
+| Features | 19개 |
+| Edge Functions | 61개 (fortune 39 + utility 22) |
+| StateNotifier 클래스 | 52개 |
+| 서비스 파일 | 50+ 개 |
+
 ## 아키텍처 목표
 
 **Clean Architecture + Feature Slice Design**
@@ -21,20 +32,38 @@ lib/
 │   ├── components/             # 기본 UI Atoms (TossCard, TossInput 등)
 │   ├── config/                 # 환경설정, Feature Flags
 │   ├── constants/              # 상수 (타로 메타데이터, 운세 데이터 등)
+│   ├── design_system/          # 디자인 시스템 (NEW)
+│   │   ├── tokens/             # DSColors, DSSpacing, DSRadius, DSTypography
+│   │   ├── theme/              # DSTheme, DSExtensions
+│   │   ├── components/         # 전통 컴포넌트 (HanjiCard, SealStamp 등)
+│   │   └── utils/              # DSHaptics
 │   ├── models/                 # 공유 도메인 모델 (Freezed)
 │   ├── network/                # HTTP 클라이언트, 인터셉터
 │   ├── providers/              # 전역 상태 (user_settings_provider 등)
 │   ├── services/               # 비즈니스 로직 서비스 (50+ 파일)
-│   ├── theme/                  # 디자인 시스템 (TossDesignSystem)
+│   ├── theme/                  # 레거시 테마 (TossDesignSystem)
 │   ├── utils/                  # 유틸리티 (날짜, 로거 등)
 │   └── widgets/                # 재사용 위젯 (UnifiedFortuneBaseWidget 등)
-├── features/                   # Feature Slice 모듈
+├── features/                   # Feature Slice 모듈 (19개)
+│   ├── about/                  # 앱 정보
+│   ├── admin/                  # 관리자 기능
 │   ├── chat/                   # 채팅 중심 진입점 (Chat-First)
+│   ├── face_ai/                # 관상 AI (Face Reading)
 │   ├── fortune/                # 운세 기능
-│   ├── talisman/               # 부적 기능
+│   ├── health/                 # 건강 기능
+│   ├── history/                # 히스토리
 │   ├── interactive/            # 타로, 심리테스트
+│   ├── misc/                   # 기타
+│   ├── notification/           # 알림
+│   ├── payment/                # 결제
+│   ├── policy/                 # 정책
 │   ├── profile/                # 프로필 관리
-│   └── [feature]/              # 기타 기능들
+│   ├── settings/               # 설정
+│   ├── sports/                 # 스포츠
+│   ├── support/                # 고객지원
+│   ├── talisman/               # 부적 기능
+│   ├── trend/                  # 트렌드
+│   └── wellness/               # 웰니스
 ├── screens/                    # 페이지 레벨 스크린
 ├── routes/                     # GoRouter 네비게이션
 ├── providers/                  # 최상위 Provider

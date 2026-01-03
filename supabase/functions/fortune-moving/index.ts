@@ -59,6 +59,12 @@ const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+// 좌표 인터페이스
+interface Coordinates {
+  lat: number
+  lng: number
+}
+
 // 요청 인터페이스
 interface MovingFortuneRequest {
   fortune_type?: string
@@ -70,6 +76,83 @@ interface MovingFortuneRequest {
   movingPeriod?: string  // camelCase (Flutter)
   purpose: string
   isPremium?: boolean    // ✅ 프리미엄 사용자 여부
+
+  // ✅ 신규 필드 (v2 - 앱에서 자동 계산)
+  direction?: string                // 앱에서 계산한 8방위 (북/동북/동/동남/남/서남/서/서북)
+  currentCoords?: Coordinates       // 현재 위치 좌표
+  targetCoords?: Coordinates        // 이사 예정지 좌표
+  purposeCategory?: string          // 이사 목적 카테고리 (직장/학교/결혼/가족/환경/투자/기타)
+  concerns?: string[]               // 걱정 사항 배열
+}
+
+// ✅ 8방위 계산 함수 (앱에서 안 보내면 폴백용)
+function calculateDirection(fromLat: number, fromLng: number, toLat: number, toLng: number): string {
+  const directions = ['북', '동북', '동', '동남', '남', '서남', '서', '서북']
+
+  const dLng = toLng - fromLng
+  const dLat = toLat - fromLat
+
+  // atan2로 각도 계산 (북쪽 0도, 시계방향)
+  let angle = Math.atan2(dLng, dLat) * (180 / Math.PI)
+
+  // 음수 각도를 양수로 변환 (0~360도)
+  if (angle < 0) {
+    angle += 360
+  }
+
+  // 8방위로 변환 (각 방위는 45도씩)
+  const index = Math.floor((angle + 22.5) / 45) % 8
+
+  return directions[index]
+}
+
+// ✅ 지역명으로 방향 추론 (좌표 없을 때 폴백)
+function inferDirectionFromRegions(fromRegion: string, toRegion: string): string | null {
+  const regionCoords: Record<string, [number, number]> = {
+    '서울': [37.5665, 126.9780],
+    '부산': [35.1796, 129.0756],
+    '대구': [35.8714, 128.6014],
+    '인천': [37.4563, 126.7052],
+    '광주': [35.1595, 126.8526],
+    '대전': [36.3504, 127.3845],
+    '울산': [35.5384, 129.3114],
+    '세종': [36.4800, 127.2890],
+    '경기': [37.4138, 127.5183],
+    '강원': [37.8228, 128.1555],
+    '충북': [36.6357, 127.4912],
+    '충남': [36.5184, 126.8000],
+    '전북': [35.8203, 127.1089],
+    '전남': [34.8679, 126.9910],
+    '경북': [36.4919, 128.8889],
+    '경남': [35.4606, 128.2132],
+    '제주': [33.4996, 126.5312],
+    '분당': [37.3825, 127.1191],
+    '성남': [37.4200, 127.1267],
+    '수원': [37.2636, 127.0286],
+    '용인': [37.2411, 127.1776],
+    '고양': [37.6584, 126.8320],
+    '안양': [37.3943, 126.9568],
+    '청주': [36.6424, 127.4890],
+    '천안': [36.8151, 127.1139],
+  }
+
+  // 지역명에서 키 추출
+  let fromKey: string | null = null
+  let toKey: string | null = null
+
+  for (const key of Object.keys(regionCoords)) {
+    if (fromRegion.includes(key)) fromKey = key
+    if (toRegion.includes(key)) toKey = key
+  }
+
+  if (!fromKey || !toKey || fromKey === toKey) {
+    return null
+  }
+
+  const from = regionCoords[fromKey]
+  const to = regionCoords[toKey]
+
+  return calculateDirection(from[0], from[1], to[0], to[1])
 }
 
 // UTF-8 안전한 해시 생성 함수 (btoa는 Latin1만 지원하여 한글 불가)
@@ -105,6 +188,28 @@ serve(async (req) => {
     const purpose = requestData.purpose || ''
     const isPremium = requestData.isPremium || false // ✅ 프리미엄 사용자 여부
 
+    // ✅ 신규 필드 (v2)
+    const currentCoords = requestData.currentCoords
+    const targetCoords = requestData.targetCoords
+    const purposeCategory = requestData.purposeCategory || purpose
+    const concerns = requestData.concerns || []
+
+    // ✅ 방향 결정 (우선순위: 앱 계산값 > 좌표 계산 > 지역명 추론)
+    let direction = requestData.direction || ''
+    if (!direction && currentCoords && targetCoords) {
+      direction = calculateDirection(
+        currentCoords.lat, currentCoords.lng,
+        targetCoords.lat, targetCoords.lng
+      )
+      console.log('📍 [Moving] Direction calculated from coords:', direction)
+    }
+    if (!direction) {
+      direction = inferDirectionFromRegions(current_area, target_area) || ''
+      if (direction) {
+        console.log('📍 [Moving] Direction inferred from region names:', direction)
+      }
+    }
+
     if (!current_area || !target_area) {
       throw new Error('현재 지역과 이사갈 지역을 입력해주세요.')
     }
@@ -114,7 +219,11 @@ serve(async (req) => {
       current_area: current_area.substring(0, 50),
       target_area: target_area.substring(0, 50),
       moving_period,
-      purpose
+      purpose,
+      direction,
+      purposeCategory,
+      concerns: concerns.join(', '),
+      hasCoords: !!(currentCoords && targetCoords)
     })
 
     // 캐시 확인 (UTF-8 안전한 해시 사용)
@@ -236,16 +345,40 @@ serve(async (req) => {
 - 모호한 점술 표현 금지 (구체적 날짜, 시간, 방법 제시)
 - 반드시 유효한 JSON 형식으로 출력`
 
+      // ✅ 목적별 조언 세그먼트
+      const purposeAdviceMap: Record<string, string> = {
+        '직장': '출퇴근 편의성, 직장운 상승, 승진/연봉 관련 조언을 중점으로',
+        '학교': '학업운, 집중력 향상, 좋은 학업 환경 조성 관련 조언을 중점으로',
+        '결혼': '부부운, 가정 화목, 신혼생활 행운 관련 조언을 중점으로',
+        '가족': '가족 건강, 화목, 자녀 교육환경 관련 조언을 중점으로',
+        '환경': '주거환경 개선, 생활의 질 향상 관련 조언을 중점으로',
+        '투자': '재물운, 부동산 투자 운세, 자산 증식 관련 조언을 중점으로',
+        '새로운 시작': '새출발의 행운, 긍정적 변화 관련 조언을 중점으로',
+      }
+      const purposeAdvice = purposeAdviceMap[purposeCategory] || purposeAdviceMap['새로운 시작']
+
+      // ✅ 걱정사항별 해소 조언
+      const concernsText = concerns.length > 0
+        ? `\n\n## 걱정 사항 (특별히 해소해줄 것)\n${concerns.map(c => `- ${c}`).join('\n')}`
+        : ''
+
       const userPrompt = `# 이사 상담 요청 정보
 
 ## 이사 정보
 - 현재 거주지: ${current_area}
 - 이사 예정지: ${target_area}
+- 이사 방향: ${direction || '(지역 기반으로 추론 필요)'}
 - 이사 예정 시기: ${moving_period || '미정'}
-- 이사 목적: ${purpose || '새로운 시작'}
+- 이사 목적: ${purposeCategory || '새로운 시작'}
+${concernsText}
 
+## 분석 요청
 위 정보를 바탕으로 전문적이고 상세한 이사운 분석을 JSON 형식으로 제공해주세요.
-특히 ${current_area}에서 ${target_area}로의 방위 분석과 ${moving_period || '향후'} 시기의 적절성을 중점적으로 분석해주세요.`
+
+### 중점 분석 요청
+1. **방위 분석**: ${current_area}에서 ${target_area}으로의 이동은 ${direction ? `**${direction}쪽** 방향입니다. 이 방위` : '방위를 추론하여 해당 방향'}의 풍수적 의미와 길흉을 상세히 분석해주세요.
+2. **시기 적절성**: ${moving_period || '향후'} 시기의 이사 적합성을 분석해주세요.
+3. **목적 맞춤 조언**: ${purposeAdvice} 해주세요.${concerns.length > 0 ? `\n4. **걱정 해소**: 위 걱정 사항들에 대한 구체적인 풍수적 해결책과 안심 조언을 포함해주세요.` : ''}`
 
       // ✅ LLM 호출 (Provider 무관)
       const response = await llm.generate([
@@ -305,6 +438,9 @@ serve(async (req) => {
         target_area,
         moving_period,
         purpose,
+        direction, // ✅ 앱에서 계산한 방향 포함
+        purposeCategory,
+        concerns,
         // 공개 섹션
         moving_score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
         overall_fortune: parsedResponse.overall_fortune || '새로운 터전에서 좋은 기운이 함께 합니다.',

@@ -1,5 +1,15 @@
 # LLM 모듈 가이드 (Edge Function)
 
+> 최종 업데이트: 2025.01.03
+
+## 통계
+
+| 항목 | 수치 |
+|------|------|
+| 운세 Edge Functions | 39개 |
+| 유틸리티 Functions | 22개 |
+| 프롬프트 템플릿 | 39개 |
+
 ## 개요
 
 모든 Supabase Edge Function에서 LLM 호출 시 반드시 `_shared/llm` 모듈을 사용합니다.
@@ -347,13 +357,47 @@ interface Percentile {
 
 ```
 supabase/functions/_shared/prompts/
-├── manager.ts          # PromptManager 클래스
-├── templates/
-│   ├── daily.ts        # 일일운세 템플릿
-│   ├── tarot.ts        # 타로 템플릿
-│   ├── saju.ts         # 사주 템플릿
-│   └── ...             # 기타 운세 템플릿
-└── constants.ts        # 공통 상수
+├── manager.ts              # PromptManager 클래스
+├── constants.ts            # 공통 상수
+└── templates/              # 프롬프트 템플릿 (39개)
+    ├── daily.ts            # 일일운세
+    ├── time.ts             # 시간대별 운세
+    ├── love.ts             # 연애운
+    ├── career.ts           # 직업운
+    ├── health.ts           # 건강운
+    ├── health-document.ts  # 건강문서 분석
+    ├── tarot.ts            # 타로
+    ├── saju.ts             # 사주
+    ├── traditional-saju.ts # 전통사주
+    ├── premium-saju.ts     # 프리미엄 사주
+    ├── compatibility.ts    # 궁합
+    ├── blind-date.ts       # 소개팅
+    ├── ex-lover.ts         # 전 연인
+    ├── face-reading.ts     # 관상 V2
+    ├── mbti.ts             # MBTI
+    ├── match-insight.ts    # 매칭 인사이트
+    ├── dream.ts            # 꿈해몽
+    ├── talent.ts           # 재능
+    ├── avoid-people.ts     # 피할 사람
+    ├── new-year.ts         # 신년운세
+    ├── lucky-items.ts      # 행운아이템
+    ├── biorhythm.ts        # 바이오리듬
+    ├── naming.ts           # 작명
+    ├── exam.ts             # 시험운 (NEW)
+    ├── celebrity.ts        # 셀럽 매칭 (NEW)
+    ├── wealth.ts           # 재물운 (NEW)
+    ├── investment.ts       # 투자운 (NEW)
+    ├── pet-compatibility.ts# 펫 궁합 (NEW)
+    ├── ootd.ts             # 오늘의 코디 (NEW)
+    ├── home-fengshui.ts    # 풍수 인테리어 (NEW)
+    ├── past-life.ts        # 전생 분석 (NEW)
+    ├── talisman.ts         # 부적 생성 (NEW)
+    ├── recommend.ts        # 추천 운세 (NEW)
+    ├── family-change.ts    # 가족 변화운 (NEW)
+    ├── family-children.ts  # 자녀운 (NEW)
+    ├── family-health.ts    # 가족 건강운 (NEW)
+    ├── family-relationship.ts # 가족 관계운 (NEW)
+    └── family-wealth.ts    # 가족 재물운 (NEW)
 ```
 
 ### 프롬프트 템플릿 예시

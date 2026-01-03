@@ -1,5 +1,16 @@
 # 관상 시스템 가이드 (Face Reading System)
 
+> 최종 업데이트: 2025.01.03
+
+## 통계
+
+| 항목 | 수치 |
+|------|------|
+| Edge Functions | 2개 (fortune-face-reading, fortune-face-reading-watch) |
+| Flutter 위젯 | 12개 |
+| V2 스키마 | 활성 |
+| 타겟 사용자 | 2-30대 여성 (1차), 20-40대 남성 (2차) |
+
 ## 개요
 
 AI 기반 얼굴 분석 시스템의 2-30대 여성 타겟 리디자인 문서.
@@ -556,8 +567,52 @@ POST /fortune-face-reading
 
 | 파일 | 설명 |
 |------|------|
-| `supabase/functions/fortune-face-reading/index.ts` | Edge Function |
+| `supabase/functions/fortune-face-reading/index.ts` | 메인 Edge Function |
+| `supabase/functions/fortune-face-reading-watch/index.ts` | Watch 경량 버전 |
 | `supabase/functions/_shared/prompts/templates/face-reading.ts` | 프롬프트 템플릿 |
+
+---
+
+## Watch 위젯 연동 (fortune-face-reading-watch)
+
+### 개요
+
+Apple Watch 및 모바일 위젯용 경량 관상 분석 Edge Function.
+
+### 특징
+
+- **경량화**: 필수 데이터만 반환 (WatchData)
+- **빠른 응답**: 3초 이내 응답 목표
+- **위젯 최적화**: 작은 화면에 적합한 포맷
+
+### Request
+
+```typescript
+{
+  userId: string
+  image?: string           // 캐시된 분석 ID 사용 시 생략
+  cachedAnalysisId?: string
+}
+```
+
+### Response (WatchData)
+
+```typescript
+{
+  luckyDirection: string     // 동|서|남|북|동북|동남|서북|서남
+  luckyColor: string
+  luckyColorHex: string
+  luckyTimePeriods: string[] // ["오전 9-11시", "오후 3-5시"]
+  dailyReminderMessage: string  // 30자 이내 응원 메시지
+  timestamp: string
+}
+```
+
+### 사용 시나리오
+
+1. **iOS 위젯**: 오늘의 행운 방향/색상 표시
+2. **Apple Watch**: 간단한 응원 메시지 표시
+3. **Android 위젯**: Glance 위젯 연동
 
 ---
 

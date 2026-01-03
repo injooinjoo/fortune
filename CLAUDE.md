@@ -1,5 +1,7 @@
 # Fortune Flutter App - Claude Code 가이드
 
+> 최종 업데이트: 2025.01.03
+
 ## 자동 라우팅 (NEW)
 
 사용자 요청을 분석하여 자동으로 적절한 Skill과 Agent를 활성화합니다.
@@ -260,7 +262,7 @@ FortuneChipGrid(
 |------|------|----------|
 | **1 (항상)** | 이 파일 (CLAUDE.md) | 모든 요청 |
 | **2 (키워드)** | 01-06, 18 | 개발 관련 키워드 시 |
-| **3 (요청)** | 07-17 | 명시적 요청 시만 |
+| **3 (요청)** | 07-21 | 명시적 요청 시만 |
 
 ### 문서 참조
 | 문서 | 트리거 키워드 |
@@ -305,7 +307,7 @@ lib/features/fortune/     # 운세 기능 (Clean Architecture)
 supabase/functions/       # Edge Functions (LLMFactory)
 .claude/agents/           # 3개 Agent (feature-orchestrator, fortune-specialist, quality-guardian)
 .claude/skills/           # 6개 Skill (feature-fortune, feature-chat, feature-ui, backend-service, troubleshoot, quality-check)
-.claude/docs/             # 상세 문서 (01-18)
+.claude/docs/             # 상세 문서 (01-21)
 ```
 
 ---

@@ -20,6 +20,7 @@ enum SurveyInputType {
   investmentTicker,   // 투자 종목 선택 (티커 검색)
   celebritySelection, // 유명인 선택 (검색 + 그리드)
   matchSelection,     // 경기 선택 (스포츠 경기 목록)
+  location,           // 지역 선택 (GPS + 검색 + 드롭다운 + 지도)
 }
 
 /// 설문 선택지

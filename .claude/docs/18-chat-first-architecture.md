@@ -1,5 +1,19 @@
 # Chat-First Architecture Guide
 
+> 최종 업데이트: 2025.01.03
+
+## 통계
+
+| 항목 | 수치 |
+|------|------|
+| 총 파일 수 | 46개 |
+| 모델 | 6개 |
+| Provider | 3개 |
+| 페이지 | 1개 |
+| 위젯 | 17개 |
+| Survey 위젯 | 18개 |
+| 결과 카드 | 8개 (NEW) |
+
 ## 개요
 
 Fortune 앱의 핵심 진입점을 채팅 인터페이스로 전환하는 아키텍처 가이드.
@@ -36,24 +50,67 @@ Home(채팅) | 인사이트 | 탐구 | 트렌드 | 프로필
 ## Chat Feature 구조
 
 ```
-lib/features/chat/
+lib/features/chat/                      # 46개 파일
+├── data/
+│   └── services/
+│       └── fortune_recommend_service.dart  # 운세 추천 서비스
 ├── domain/
-│   └── models/
-│       ├── chat_message.dart       # ChatMessage 모델
-│       ├── chat_state.dart         # ChatState 모델
-│       └── recommendation_chip.dart # 추천 칩 모델
+│   ├── models/
+│   │   ├── chat_message.dart           # ChatMessage 모델
+│   │   ├── chat_state.dart             # ChatState 모델
+│   │   ├── recommendation_chip.dart    # 추천 칩 모델
+│   │   ├── ai_recommendation.dart      # AI 추천 모델
+│   │   └── fortune_survey_config.dart  # 설문 설정 모델
+│   ├── configs/
+│   │   └── survey_configs.dart         # 39개 운세 설문 설정
+│   └── services/
+│       └── intent_detector.dart        # 의도 분석 서비스
 ├── presentation/
 │   ├── providers/
-│   │   ├── chat_messages_provider.dart  # StateNotifier
-│   │   └── chat_recommendations_provider.dart
+│   │   ├── chat_messages_provider.dart     # 메인 StateNotifier
+│   │   ├── chat_survey_provider.dart       # 설문 상태 관리
+│   │   └── onboarding_chat_provider.dart   # 온보딩 채팅
 │   ├── pages/
-│   │   └── chat_home_page.dart     # 메인 채팅 페이지
+│   │   └── chat_home_page.dart         # 메인 채팅 페이지
 │   └── widgets/
 │       ├── chat_message_bubble.dart    # 메시지 버블
+│       ├── chat_message_list.dart      # 메시지 리스트
 │       ├── fortune_chip_grid.dart      # 추천 칩 그리드
-│       ├── chat_fortune_section.dart   # 운세 결과 섹션
-│       ├── chat_typing_indicator.dart  # 타이핑 표시
-│       └── chat_welcome_view.dart      # 환영 화면
+│       ├── chat_welcome_view.dart      # 환영 화면
+│       ├── chat_blur_overlay.dart      # 블러 오버레이
+│       ├── guest_login_banner.dart     # 게스트 로그인 배너
+│       ├── profile_bottom_sheet.dart   # 프로필 바텀시트
+│       ├── month_highlight_detail_bottom_sheet.dart  # 월별 하이라이트
+│       │
+│       ├── # 운세별 결과 카드 (8개) ─────────────────
+│       ├── chat_fortune_result_card.dart   # 범용 결과 카드
+│       ├── chat_tarot_result_card.dart     # 타로 결과
+│       ├── chat_saju_result_card.dart      # 사주 결과
+│       ├── chat_career_result_card.dart    # 커리어 결과
+│       ├── chat_celebrity_result_card.dart # 셀럽 매칭 결과
+│       ├── chat_past_life_result_card.dart # 전생 분석 결과
+│       ├── chat_ootd_result_card.dart      # 오늘의 코디 결과
+│       ├── chat_match_insight_card.dart    # 매칭 인사이트 결과
+│       │
+│       └── survey/                     # 설문 위젯 (18개)
+│           ├── fortune_type_chips.dart         # 운세 타입 칩
+│           ├── chat_survey_chips.dart          # 설문 칩
+│           ├── chat_survey_slider.dart         # 슬라이더
+│           ├── chat_date_picker.dart           # 날짜 선택
+│           ├── chat_birth_datetime_picker.dart # 생년월일 선택
+│           ├── chat_profile_selector.dart      # 프로필 선택
+│           ├── chat_match_selector.dart        # 매칭 선택
+│           ├── chat_celebrity_selector.dart    # 셀럽 선택
+│           ├── chat_pet_profile_selector.dart  # 펫 프로필 선택
+│           ├── chat_pet_registration_form.dart # 펫 등록 폼
+│           ├── chat_investment_category_selector.dart  # 투자 카테고리
+│           ├── chat_investment_ticker_selector.dart    # 티커 선택
+│           ├── chat_tarot_flow.dart            # 타로 플로우
+│           ├── chat_face_reading_flow.dart     # 관상 플로우
+│           ├── chat_voice_input.dart           # 음성 입력
+│           ├── chat_image_input.dart           # 이미지 입력
+│           ├── chat_inline_calendar.dart       # 인라인 캘린더
+│           └── chat_onboarding_inputs.dart     # 온보딩 입력
 ```
 
 ---
