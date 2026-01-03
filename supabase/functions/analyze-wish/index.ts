@@ -50,13 +50,40 @@ const corsHeaders = {
 
 // ✅ LLM 모듈 사용 (OpenAI API 설정 제거)
 
-// 소원 분석 응답 스키마 정의 (공감/희망/조언/응원 중심)
+// 소원 분석 응답 스키마 정의 (용 테마 + 게이미피케이션)
 interface WishAnalysisResponse {
-  empathy_message: string;      // 공감 메시지 (150자)
-  hope_message: string;          // 희망과 격려 (200자)
+  // 기존 필드
+  empathy_message: string;       // 공감 메시지 (300자)
+  hope_message: string;          // 희망과 격려 (400자)
   advice: string[];              // 구체적 조언 3개
-  encouragement: string;         // 응원 메시지 (100자)
+  encouragement: string;         // 응원 메시지 (200자)
   special_words: string;         // 신의 한마디 (50자)
+
+  // 🆕 운의 흐름 (데이터 기반 느낌)
+  fortune_flow: {
+    achievement_level: string;   // "매우 높음" | "높음" | "보통" | "노력 필요"
+    lucky_timing: string;        // "오후 2시~4시" 형식
+    keywords: string[];          // 3개 해시태그 ["#인연", "#결단", "#기다림"]
+    helper: string;              // 도움이 되는 사람/행동
+    obstacle: string;            // 주의해야 할 행동
+  };
+
+  // 🆕 행운의 미션 (게이미피케이션)
+  lucky_mission: {
+    item: string;                // "주머니에 동전 하나"
+    item_reason: string;         // 왜 이 아이템인지
+    place: string;               // "탁 트인 공원"
+    place_reason: string;        // 왜 이 장소인지
+    color: string;               // "파란색"
+    color_reason: string;        // 왜 이 색상인지
+  };
+
+  // 🆕 용의 메시지 (스토리텔링)
+  dragon_message: {
+    pearl_message: string;       // 여의주 메시지
+    wisdom: string;              // 용의 지혜
+    power_line: string;          // 짧고 강렬한 한마디 (소원 키워드 포함)
+  };
 }
 
 /**
@@ -111,53 +138,93 @@ serve(async (req) => {
 
     console.log('📝 소원 분석 요청:', { wish_text, category, urgency, user_profile })
 
-    // ✅ 개선된 소원 분석 프롬프트: 진심어린 공감 + 구체적 위로 + 실질적 조언
-    const aiPrompt = `당신은 **깊은 공감 능력을 가진 심리상담가이자 따뜻한 예언자**입니다.
-사용자의 소원에 담긴 진심과 간절함을 읽어내고, 그들의 마음을 진정으로 위로하며, 구체적이고 실천 가능한 희망을 전달합니다.
+    // ✅ 용 테마 소원 분석 프롬프트: 청룡 현자 + 게이미피케이션 + 개인화
+    // 소원 키워드 추출 (power_line에 사용)
+    const wishKeyword = wish_text.length > 10 ? wish_text.substring(0, 10) + '...' : wish_text
 
-🎯 **핵심 원칙** (F-type Counseling):
-1. **진심어린 공감**: 형식적인 위로가 아닌, 상대방의 입장에서 그 마음을 진정으로 이해하고 공감
-2. **구체적인 위로**: "괜찮을 거예요" 같은 추상적 위로가 아닌, 상황에 맞는 구체적이고 따뜻한 위로
-3. **실질적인 조언**: 당장 오늘부터 실천할 수 있는 구체적이고 현실적인 행동 지침
-4. **희망의 근거**: 막연한 긍정이 아닌, "왜 당신은 이룰 수 있는지" 구체적인 이유 제시
-5. **진정성**: 과장되거나 가짜 같은 위로가 아닌, 진심이 느껴지는 메시지
-6. **깊이**: 표면적인 위로가 아닌, 깊이 있는 통찰과 지혜가 담긴 메시지
+    // 카테고리별 행운 색상 매핑
+    const categoryColorMap: Record<string, string> = {
+      'love': '분홍색',
+      'money': '금색',
+      'health': '초록색',
+      'success': '빨간색',
+      'family': '노란색',
+      'study': '파란색',
+      'career': '남색',
+      'other': '보라색'
+    }
+    const luckyColorHint = categoryColorMap[category] || '파란색'
+
+    const aiPrompt = `당신은 **용의 여의주를 관장하는 청룡 현자**입니다.
+사용자의 소원을 듣고, 여의주의 빛으로 그 소원의 운명을 읽습니다.
+동양의 신비로운 용의 지혜로 따뜻한 공감과 구체적인 행운 미션을 전달합니다.
+
+🐉 **청룡 현자의 역할**:
+1. 소원에 담긴 진심을 읽고 깊이 공감합니다
+2. 여의주의 빛으로 성취 가능성을 봅니다 (텍스트로 표현, 숫자 금지)
+3. 오늘 당장 실천할 수 있는 구체적인 행운 미션을 제시합니다
+4. 용의 지혜로 깊이 있는 조언을 전달합니다
+5. 소원 키워드를 메시지에 직접 포함하여 개인화합니다
 
 📋 **사용자 소원 정보**:
 - 소원: "${wish_text}"
+- 소원 키워드: "${wishKeyword}"
 - 카테고리: ${category}
-- 긴급도: ${urgency}/5 (긴급도에 따라 메시지의 강도와 구체성 조절)
+- 긴급도: ${urgency}/5
 ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profile.zodiac}` : ''}
+- 추천 행운 색상: ${luckyColorHint} (카테고리 기반)
 
-반드시 다음 JSON 형식으로만 응답하세요. 마크다운이나 설명 없이 순수 JSON만 출력하세요:
+반드시 다음 JSON 형식으로만 응답하세요:
 
 {
-  "empathy_message": "소원에 담긴 진심을 읽어내고 공감하는 메시지 (300-400자). 형식적인 위로가 아닌 진심어린 공감.",
-  "hope_message": "왜 이 소원이 이루어질 수 있는지 구체적인 이유와 함께 희망을 전달 (400-500자)",
-  "advice": ["오늘부터 실천할 수 있는 구체적인 조언 1 (100-150자)", "카테고리에 맞는 구체적인 조언 2 (100-150자)", "작은 성공을 쌓는 조언 3 (100-150자)"],
-  "encouragement": "혼자가 아니라는 것, 당신을 응원한다는 진심어린 메시지 (200-250자)",
-  "special_words": "소원의 핵심을 관통하는 짧고 강렬한 한마디 (40-50자)"
+  "empathy_message": "소원에 담긴 진심을 읽어내고 공감하는 메시지 (300자). 형식적인 위로가 아닌 진심어린 공감.",
+  "hope_message": "왜 이 소원이 이루어질 수 있는지 구체적인 이유와 함께 희망을 전달 (400자)",
+  "advice": ["오늘부터 실천할 수 있는 구체적인 조언 1 (100자)", "카테고리에 맞는 구체적인 조언 2 (100자)", "작은 성공을 쌓는 조언 3 (100자)"],
+  "encouragement": "혼자가 아니라는 것, 당신을 응원한다는 진심어린 메시지 (200자)",
+  "special_words": "소원의 핵심을 관통하는 짧고 강렬한 한마디 (50자)",
+
+  "fortune_flow": {
+    "achievement_level": "매우 높음 | 높음 | 보통 | 노력 필요 중 하나",
+    "lucky_timing": "오후 2시~4시 형식의 행운의 시간대",
+    "keywords": ["#키워드1", "#키워드2", "#키워드3"],
+    "helper": "도움이 되는 사람이나 행동 (예: 띠가 같은 사람, 파란 옷을 입은 사람)",
+    "obstacle": "주의해야 할 행동 (예: 성급한 결정, 늦은 밤 외출)"
+  },
+
+  "lucky_mission": {
+    "item": "오늘 가지고 다닐 행운 아이템 (예: 주머니에 동전 하나)",
+    "item_reason": "왜 이 아이템이 행운을 가져오는지 (미신적이고 재미있게)",
+    "place": "행운의 장소 (예: 탁 트인 공원, 조용한 카페)",
+    "place_reason": "왜 이 장소가 좋은지",
+    "color": "${luckyColorHint}",
+    "color_reason": "왜 이 색상이 오늘의 행운색인지 (카테고리와 연결)"
+  },
+
+  "dragon_message": {
+    "pearl_message": "오늘 당신의 소원이 용의 여의주에 닿았습니다. 빛이 밝으니 곧 소식이 오겠군요. (100자, 여의주 테마)",
+    "wisdom": "용의 지혜로운 조언. 서두르지 말고 기다리라는 등의 깊이 있는 메시지 (150자)",
+    "power_line": "청룡의 기운이 당신의 [${wishKeyword}]을 지켜보고 있습니다. 당당하게 행동하세요. (소원 키워드 포함, 50자)"
+  }
 }
 
 ⚠️ **절대 금지 사항**:
-1. ❌ 점수, 확률, 퍼센트 등 숫자 데이터
+1. ❌ 점수, 확률, 퍼센트 등 숫자 데이터 (achievement_level은 텍스트로)
 2. ❌ "열심히 하세요", "노력하세요" 같은 뻔한 조언
 3. ❌ 형식적이거나 복붙한 것 같은 위로
 4. ❌ 과장되거나 비현실적인 낙관주의
-5. ❌ 사용자의 감정을 무시하거나 축소하는 표현
 
 ✅ **필수 포함 사항**:
-1. ✅ 소원에 담긴 진짜 마음 읽어내기
-2. ✅ 구체적이고 실천 가능한 조언 (오늘부터 가능한 것)
-3. ✅ 사용자가 이미 가진 강점 상기시키기
-4. ✅ 진심이 느껴지는 따뜻한 위로
-5. ✅ 희망의 구체적인 근거 제시
+1. ✅ power_line에 반드시 소원 키워드 "${wishKeyword}" 포함
+2. ✅ 구체적이고 재미있는 행운 미션 (미신적 요소 가미)
+3. ✅ 용 테마의 신비로운 분위기
+4. ✅ 카테고리별 맞춤 행운 색상 활용
+5. ✅ 오늘부터 당장 실천 가능한 조언
 
 💡 **톤 & 보이스**:
-- 따뜻하지만 진지한 친구처럼
-- 공감하지만 함께 문제를 해결하려는 조언자처럼
-- 격려하지만 현실적인 멘토처럼
-- 위로하지만 힘을 주는 응원자처럼`
+- 신비롭지만 따뜻한 동양의 현자처럼
+- 용의 위엄과 자비로움을 동시에
+- 재미있고 구체적인 행운 미션
+- 개인화된 메시지로 "나를 위한" 느낌`
 
     // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
     const llm = await LLMFactory.createFromConfigAsync('wish')
@@ -165,23 +232,27 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
     const response = await llm.generate([
       {
         role: 'system',
-        content: `당신은 **깊은 공감 능력과 통찰력을 가진 심리상담 전문가이자 따뜻한 예언자**입니다.
+        content: `당신은 **용의 여의주를 관장하는 청룡 현자**입니다.
+하늘 높이 구름 사이에서 천 년을 살아온 지혜로운 용이며, 인간의 소원을 듣고 여의주의 빛으로 그 운명을 읽습니다.
 
-✨ **당신의 역할**:
-1. 사용자의 소원에 담긴 진짜 마음을 읽어내고 진심으로 공감합니다
-2. 형식적인 위로가 아닌, 구체적이고 따뜻한 위로를 전달합니다
-3. 당장 실천할 수 있는 현실적이고 구체적인 조언을 제공합니다
-4. 막연한 긍정이 아닌, 희망의 구체적인 근거를 제시합니다
-5. 사용자가 이미 가진 강점과 자원을 상기시켜 힘을 줍니다
+🐉 **청룡 현자의 정체성**:
+- 동양 신화의 청룡(靑龍)으로, 동쪽을 수호하며 봄과 희망을 상징합니다
+- 여의주(如意珠)를 품고 있어 소원을 읽는 신비로운 능력이 있습니다
+- 위엄 있지만 자비롭고, 신비롭지만 따뜻한 어조로 말합니다
 
-💭 **응답 원칙**:
-- F(Feeling) 유형처럼 감정에 깊이 공감하고 따뜻하게 위로합니다
-- "당신은 할 수 있어요"라는 메시지에 '왜 그런지' 구체적 근거를 함께 제시합니다
-- 점수/확률/통계 등 숫자는 절대 사용하지 않습니다
-- "열심히 하세요", "노력하세요" 같은 뻔한 조언은 하지 않습니다
-- 오늘부터 당장 실천할 수 있는 구체적인 행동을 제안합니다
+✨ **응답 원칙**:
+1. 신비로운 용의 관점에서 소원을 해석합니다 ("여의주에 비친 당신의 소원을 보니...")
+2. 텍스트로만 성취 가능성을 표현합니다 (숫자/점수/확률 절대 금지)
+3. 구체적이고 재미있는 행운 미션을 제시합니다 (미신적 요소 가미)
+4. 소원 키워드를 power_line에 반드시 포함합니다
+5. 뻔한 조언("노력하세요") 대신 오늘 당장 실천 가능한 행동을 제안합니다
 
-🎯 **목표**: 사용자가 이 메시지를 읽고 "진짜 나를 이해해주는구나", "힘이 난다", "해볼 수 있겠다"고 느끼도록 합니다.`
+💎 **여의주의 지혜**:
+- 성급함보다 기다림의 가치를 알려줍니다
+- 작은 행동이 큰 변화를 만든다는 것을 일깨웁니다
+- 혼자가 아니라는 것, 용이 지켜보고 있다는 안도감을 줍니다
+
+🎯 **목표**: 사용자가 "정말 특별한 경험이다", "용이 나를 지켜보고 있구나", "해볼 수 있겠다"고 느끼도록 합니다.`
       },
       {
         role: 'user',
@@ -216,8 +287,8 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
       console.log('📦 추출된 JSON (앞 500자):', jsonString.substring(0, 500))
       analysisResult = JSON.parse(jsonString)
 
-      // 필수 필드 검증
-      const requiredFields = ['empathy_message', 'hope_message', 'advice', 'encouragement', 'special_words']
+      // 필수 필드 검증 (기존 + 새 필드)
+      const requiredFields = ['empathy_message', 'hope_message', 'advice', 'encouragement', 'special_words', 'fortune_flow', 'lucky_mission', 'dragon_message']
       for (const field of requiredFields) {
         if (!(field in analysisResult)) {
           console.error(`❌ LLM 응답에 필수 필드 누락: ${field}`)
@@ -230,6 +301,27 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
       if (!Array.isArray(analysisResult.advice) || analysisResult.advice.length === 0) {
         console.error('❌ advice 필드가 배열이 아니거나 비어있음')
         throw new Error('LLM 응답 검증 실패: advice 필드가 유효하지 않음')
+      }
+
+      // 🆕 fortune_flow 필드 검증
+      const fortuneFlow = analysisResult.fortune_flow
+      if (!fortuneFlow || !fortuneFlow.achievement_level || !fortuneFlow.lucky_timing || !Array.isArray(fortuneFlow.keywords) || fortuneFlow.keywords.length < 3) {
+        console.error('❌ fortune_flow 필드가 불완전함:', fortuneFlow)
+        throw new Error('LLM 응답 검증 실패: fortune_flow 필드가 유효하지 않음')
+      }
+
+      // 🆕 lucky_mission 필드 검증
+      const luckyMission = analysisResult.lucky_mission
+      if (!luckyMission || !luckyMission.item || !luckyMission.place || !luckyMission.color) {
+        console.error('❌ lucky_mission 필드가 불완전함:', luckyMission)
+        throw new Error('LLM 응답 검증 실패: lucky_mission 필드가 유효하지 않음')
+      }
+
+      // 🆕 dragon_message 필드 검증
+      const dragonMessage = analysisResult.dragon_message
+      if (!dragonMessage || !dragonMessage.pearl_message || !dragonMessage.wisdom || !dragonMessage.power_line) {
+        console.error('❌ dragon_message 필드가 불완전함:', dragonMessage)
+        throw new Error('LLM 응답 검증 실패: dragon_message 필드가 유효하지 않음')
       }
     } catch (parseError) {
       if (parseError instanceof SyntaxError) {

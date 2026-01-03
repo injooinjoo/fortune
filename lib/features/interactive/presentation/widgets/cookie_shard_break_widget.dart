@@ -42,9 +42,9 @@ class _CookieShardBreakWidgetState extends State<CookieShardBreakWidget>
   }
 
   void _initializeControllers() {
-    // 메인 분해 애니메이션 (1.2초)
+    // 메인 분해 애니메이션 (2.4초 - 2배 느리게)
     _breakController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 2400),
       vsync: this,
     );
 
@@ -53,9 +53,9 @@ class _CookieShardBreakWidgetState extends State<CookieShardBreakWidget>
       curve: Curves.easeOutCubic,
     );
 
-    // 파티클 애니메이션 (1.5초)
+    // 파티클 애니메이션 (3초 - 2배 느리게)
     _particleController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 3000),
       vsync: this,
     );
 

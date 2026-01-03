@@ -25,6 +25,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     'career',       // 커리어 분석 + 추천 사항
     'investment',   // 투자 분석 + 예측
     'ex-lover',     // 감정 분석 + 조언
+    'celebrity',    // 유명인 궁합: 사주분석 + 전생인연 + 속궁합 등 상세 콘텐츠
     'love',         // 23초 소요 확인됨 (경계 수준)
     'avoid-people', // 15-18초 소요 확인됨
     'new-year',     // 22-28초 소요, 12개월 월별 운세 + 목표별 분석
@@ -427,8 +428,37 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
 
       // Use summary as fallback
       if (contentText.isEmpty && fortuneData['summary'] != null) {
-        contentText = fortuneData['summary'].toString();
-        debugPrint('📝 [_getFortuneFromEdgeFunction] Using summary as content fallback');
+        final summary = fortuneData['summary'];
+        if (summary is Map) {
+          // summary 객체에서 의미 있는 텍스트 필드 추출
+          final oneLine = summary['one_line'] ?? summary['oneLine'];
+          final finalMessage = summary['final_message'] ?? summary['finalMessage'];
+          final statusMessage = summary['status_message'] ?? summary['statusMessage'];
+          final greeting = summary['greeting'];
+
+          // 우선순위: one_line > final_message > status_message > greeting
+          if (oneLine != null && oneLine.toString().isNotEmpty) {
+            contentText = oneLine.toString();
+            if (finalMessage != null && finalMessage.toString().isNotEmpty) {
+              contentText += '\n\n$finalMessage';
+            }
+          } else if (finalMessage != null && finalMessage.toString().isNotEmpty) {
+            contentText = finalMessage.toString();
+          } else if (statusMessage != null && statusMessage.toString().isNotEmpty) {
+            contentText = statusMessage.toString();
+          } else if (greeting != null && greeting.toString().isNotEmpty) {
+            contentText = greeting.toString();
+          } else {
+            // 모든 필드가 없으면 Map의 값들을 조합
+            contentText = summary.values
+                .where((v) => v != null && v is! List && v.toString().isNotEmpty)
+                .join('\n\n');
+          }
+          debugPrint('📝 [_getFortuneFromEdgeFunction] Extracted summary content from Map');
+        } else {
+          contentText = summary.toString();
+        }
+        debugPrint('📝 [_getFortuneFromEdgeFunction] Using summary as content fallback (${contentText.length} chars)');
       }
 
       // Compatibility fortune: build rich content from detailed fields
@@ -629,6 +659,220 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         }
       }
 
+      // Moving fortune: build content from detailed fields
+      if (fortuneType == 'moving') {
+        final contentParts = <String>[];
+
+        // 1. 제목 및 전체 운세
+        final title = fortuneData['title'];
+        if (title != null && title.toString().isNotEmpty) {
+          contentParts.add('🏠 $title');
+        }
+
+        final overallFortune = fortuneData['overall_fortune'] ?? fortuneData['overallFortune'];
+        if (overallFortune != null && overallFortune.toString().isNotEmpty) {
+          contentParts.add('\n\n$overallFortune');
+        }
+
+        // 2. 방향 분석
+        final directionAnalysis = fortuneData['direction_analysis'] ?? fortuneData['directionAnalysis'];
+        if (directionAnalysis is Map) {
+          contentParts.add('\n\n🧭 방향 분석');
+          final direction = directionAnalysis['direction'];
+          final directionMeaning = directionAnalysis['direction_meaning'] ?? directionAnalysis['directionMeaning'];
+          final element = directionAnalysis['element'];
+          final elementEffect = directionAnalysis['element_effect'] ?? directionAnalysis['elementEffect'];
+          final compatibility = directionAnalysis['compatibility'];
+          final compatibilityReason = directionAnalysis['compatibility_reason'] ?? directionAnalysis['compatibilityReason'];
+
+          if (direction != null) contentParts.add('\n• 이사 방향: $direction 방향');
+          if (directionMeaning != null) contentParts.add('\n• 방위 의미: $directionMeaning');
+          if (element != null) contentParts.add('\n• 오행: $element');
+          if (elementEffect != null) contentParts.add('\n• 오행 영향: $elementEffect');
+          if (compatibility != null) contentParts.add('\n• 궁합 점수: $compatibility점');
+          if (compatibilityReason != null) contentParts.add('\n• 궁합 판단: $compatibilityReason');
+        }
+
+        // 3. 시기 분석
+        final timingAnalysis = fortuneData['timing_analysis'] ?? fortuneData['timingAnalysis'];
+        if (timingAnalysis is Map) {
+          contentParts.add('\n\n📅 시기 분석');
+          final seasonLuck = timingAnalysis['season_luck'] ?? timingAnalysis['seasonLuck'];
+          final seasonMeaning = timingAnalysis['season_meaning'] ?? timingAnalysis['seasonMeaning'];
+          final monthLuck = timingAnalysis['month_luck'] ?? timingAnalysis['monthLuck'];
+          final recommendation = timingAnalysis['recommendation'];
+
+          if (seasonLuck != null) contentParts.add('\n• 계절 운: $seasonLuck');
+          if (seasonMeaning != null) contentParts.add('\n• 계절 의미: $seasonMeaning');
+          if (monthLuck != null) contentParts.add('\n• 월 운세: $monthLuck점');
+          if (recommendation != null) contentParts.add('\n• 추천: $recommendation');
+        }
+
+        // 4. 길일/흉일
+        final luckyDates = fortuneData['lucky_dates'] ?? fortuneData['luckyDates'];
+        if (luckyDates is Map) {
+          contentParts.add('\n\n🗓️ 이사 길일');
+          final recommendedDates = luckyDates['recommended_dates'] ?? luckyDates['recommendedDates'];
+          final avoidDates = luckyDates['avoid_dates'] ?? luckyDates['avoidDates'];
+          final bestTime = luckyDates['best_time'] ?? luckyDates['bestTime'];
+          final reason = luckyDates['reason'];
+
+          if (recommendedDates is List && recommendedDates.isNotEmpty) {
+            contentParts.add('\n• 좋은 날: ${recommendedDates.join(', ')}');
+          }
+          if (avoidDates is List && avoidDates.isNotEmpty) {
+            contentParts.add('\n• 피할 날: ${avoidDates.join(', ')}');
+          }
+          if (bestTime != null) contentParts.add('\n• 최적 시간: $bestTime');
+          if (reason != null) contentParts.add('\n• 이유: $reason');
+        }
+
+        // 5. 풍수 팁
+        final fengShuiTips = fortuneData['feng_shui_tips'] ?? fortuneData['fengShuiTips'];
+        if (fengShuiTips is Map) {
+          contentParts.add('\n\n🌿 풍수 인테리어 팁');
+          final entrance = fengShuiTips['entrance'];
+          final livingRoom = fengShuiTips['living_room'] ?? fengShuiTips['livingRoom'];
+          final bedroom = fengShuiTips['bedroom'];
+          final kitchen = fengShuiTips['kitchen'];
+
+          if (entrance != null) contentParts.add('\n• 현관: $entrance');
+          if (livingRoom != null) contentParts.add('\n• 거실: $livingRoom');
+          if (bedroom != null) contentParts.add('\n• 침실: $bedroom');
+          if (kitchen != null) contentParts.add('\n• 부엌: $kitchen');
+        }
+
+        // 6. 지형 분석 (terrain_analysis)
+        final terrainAnalysis = fortuneData['terrain_analysis'] ?? fortuneData['terrainAnalysis'];
+        if (terrainAnalysis is Map) {
+          contentParts.add('\n\n🏔️ 지형 풍수 분석');
+          final terrainType = terrainAnalysis['terrain_type'] ?? terrainAnalysis['terrainType'];
+          final fengShuiQuality = terrainAnalysis['feng_shui_quality'] ?? terrainAnalysis['fengShuiQuality'];
+          final qualityDescription = terrainAnalysis['quality_description'] ?? terrainAnalysis['qualityDescription'];
+          final waterEnergy = terrainAnalysis['water_energy'] ?? terrainAnalysis['waterEnergy'];
+          final mountainEnergy = terrainAnalysis['mountain_energy'] ?? terrainAnalysis['mountainEnergy'];
+          final energyFlow = terrainAnalysis['energy_flow'] ?? terrainAnalysis['energyFlow'];
+
+          if (terrainType != null) contentParts.add('\n• 지형: $terrainType');
+          if (fengShuiQuality != null) contentParts.add('\n• 풍수 점수: $fengShuiQuality점');
+          if (qualityDescription != null) contentParts.add('\n• 평가: $qualityDescription');
+          if (waterEnergy != null) contentParts.add('\n• 수기(水氣): $waterEnergy');
+          if (mountainEnergy != null) contentParts.add('\n• 산기(山氣): $mountainEnergy');
+          if (energyFlow != null) contentParts.add('\n• 기운 흐름: $energyFlow');
+
+          // 사신사 (Four Guardians)
+          final fourGuardians = terrainAnalysis['four_guardians'] ?? terrainAnalysis['fourGuardians'];
+          if (fourGuardians is Map) {
+            final leftDragon = fourGuardians['left_azure_dragon'] ?? fourGuardians['leftAzureDragon'];
+            final rightTiger = fourGuardians['right_white_tiger'] ?? fourGuardians['rightWhiteTiger'];
+            final frontPhoenix = fourGuardians['front_red_phoenix'] ?? fourGuardians['frontRedPhoenix'];
+            final backTurtle = fourGuardians['back_black_turtle'] ?? fourGuardians['backBlackTurtle'];
+
+            if (leftDragon != null || rightTiger != null || frontPhoenix != null || backTurtle != null) {
+              contentParts.add('\n\n🐉 사신사(四神砂) 분석');
+              if (leftDragon != null) contentParts.add('\n• 좌청룡(東): $leftDragon');
+              if (rightTiger != null) contentParts.add('\n• 우백호(西): $rightTiger');
+              if (frontPhoenix != null) contentParts.add('\n• 전주작(南): $frontPhoenix');
+              if (backTurtle != null) contentParts.add('\n• 후현무(北): $backTurtle');
+            }
+          }
+        }
+
+        // 7. 주의사항
+        final cautions = fortuneData['cautions'];
+        if (cautions is Map) {
+          contentParts.add('\n\n⚠️ 주의사항');
+          final movingDay = cautions['moving_day'] ?? cautions['movingDay'];
+          final firstWeek = cautions['first_week'] ?? cautions['firstWeek'];
+          final thingsToAvoid = cautions['things_to_avoid'] ?? cautions['thingsToAvoid'];
+
+          if (movingDay is List && movingDay.isNotEmpty) {
+            contentParts.add('\n\n📦 이사 당일');
+            for (final item in movingDay) {
+              contentParts.add('\n• $item');
+            }
+          }
+          if (firstWeek is List && firstWeek.isNotEmpty) {
+            contentParts.add('\n\n🏡 입주 첫 주');
+            for (final item in firstWeek) {
+              contentParts.add('\n• $item');
+            }
+          }
+          if (thingsToAvoid is List && thingsToAvoid.isNotEmpty) {
+            contentParts.add('\n\n🚫 절대 금지');
+            for (final item in thingsToAvoid) {
+              contentParts.add('\n• $item');
+            }
+          }
+        }
+
+        // 8. 추천 사항
+        final recommendations = fortuneData['recommendations'];
+        if (recommendations is Map) {
+          contentParts.add('\n\n✨ 추천 사항');
+          final beforeMoving = recommendations['before_moving'] ?? recommendations['beforeMoving'];
+          final movingDayRitual = recommendations['moving_day_ritual'] ?? recommendations['movingDayRitual'];
+          final afterMoving = recommendations['after_moving'] ?? recommendations['afterMoving'];
+
+          if (beforeMoving is List && beforeMoving.isNotEmpty) {
+            contentParts.add('\n\n📋 이사 전 준비');
+            for (final item in beforeMoving) {
+              contentParts.add('\n• $item');
+            }
+          }
+          if (movingDayRitual is List && movingDayRitual.isNotEmpty) {
+            contentParts.add('\n\n🎊 이사 당일 행운 의식');
+            for (final item in movingDayRitual) {
+              contentParts.add('\n• $item');
+            }
+          }
+          if (afterMoving is List && afterMoving.isNotEmpty) {
+            contentParts.add('\n\n🌟 입주 후 실천');
+            for (final item in afterMoving) {
+              contentParts.add('\n• $item');
+            }
+          }
+        }
+
+        // 9. 행운 아이템
+        final luckyItems = fortuneData['lucky_items'] ?? fortuneData['luckyItems'];
+        if (luckyItems is Map) {
+          contentParts.add('\n\n🍀 행운 아이템');
+          final items = luckyItems['items'];
+          final colors = luckyItems['colors'];
+          final plants = luckyItems['plants'];
+
+          if (items is List && items.isNotEmpty) {
+            contentParts.add('\n• 행운 물건: ${items.join(', ')}');
+          }
+          if (colors is List && colors.isNotEmpty) {
+            contentParts.add('\n• 행운 색상: ${colors.join(', ')}');
+          }
+          if (plants is List && plants.isNotEmpty) {
+            contentParts.add('\n• 추천 식물: ${plants.join(', ')}');
+          }
+        }
+
+        // 10. 마무리 메시지
+        final summary = fortuneData['summary'];
+        if (summary is Map) {
+          final keywords = summary['keywords'];
+          final finalMessage = summary['final_message'] ?? summary['finalMessage'];
+
+          if (keywords is List && keywords.isNotEmpty) {
+            contentParts.add('\n\n🏷️ 핵심 키워드: ${keywords.join(', ')}');
+          }
+          if (finalMessage != null && finalMessage.toString().isNotEmpty) {
+            contentParts.add('\n\n💝 마무리\n$finalMessage');
+          }
+        }
+
+        if (contentParts.isNotEmpty) {
+          contentText = contentParts.join('');
+          debugPrint('📝 [_getFortuneFromEdgeFunction] Built moving content (${contentText.length} chars)');
+        }
+      }
+
       debugPrint('📝 [_getFortuneFromEdgeFunction] Final content length: ${contentText.length}');
       debugPrint('📝 [_getFortuneFromEdgeFunction] extractedScoreValue: $extractedScoreValue (type: ${extractedScoreValue.runtimeType})');
 
@@ -641,19 +885,38 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         metadata: fortuneData,
         score: extractedScoreValue is int ? extractedScoreValue : (extractedScoreValue is num ? extractedScoreValue.toInt() : null),
         summary: fortuneData['summary'] is Map
-            ? (fortuneData['summary']['status_message'] ?? fortuneData['summary']['greeting'] ?? fortuneData['summary'].toString())
+            ? (fortuneData['summary']['one_line']
+                ?? fortuneData['summary']['oneLine']
+                ?? fortuneData['summary']['status_message']
+                ?? fortuneData['summary']['statusMessage']
+                ?? fortuneData['summary']['greeting']
+                ?? fortuneData['summary']['final_message']
+                ?? fortuneData['summary']['finalMessage'])
             : fortuneData['summary'],
-        luckyColor: fortuneData['luckyColor'] ?? fortuneData['lucky_items']?['color'] ?? fortuneData['luckyItems']?['color'],
-        luckyNumber: _parseToInt(fortuneData['luckyNumber']) ?? _parseToInt(fortuneData['lucky_items']?['number']) ?? _parseToInt(fortuneData['luckyItems']?['number']),
-        luckyDirection: fortuneData['lucky_items']?['direction'] ?? fortuneData['luckyItems']?['direction'],
-        bestTime: fortuneData['lucky_items']?['time'] ?? fortuneData['luckyItems']?['time'],
+        // luckyItems가 Map일 때만 안전하게 접근 (Array일 경우 에러 방지)
+        luckyColor: fortuneData['luckyColor']
+            ?? (fortuneData['lucky_items'] is Map ? fortuneData['lucky_items']['color'] : null)
+            ?? (fortuneData['luckyItems'] is Map ? fortuneData['luckyItems']['color'] : null),
+        luckyNumber: _parseToInt(fortuneData['luckyNumber'])
+            ?? (fortuneData['lucky_items'] is Map ? _parseToInt(fortuneData['lucky_items']['number']) : null)
+            ?? (fortuneData['luckyItems'] is Map ? _parseToInt(fortuneData['luckyItems']['number']) : null),
+        luckyDirection: (fortuneData['lucky_items'] is Map ? fortuneData['lucky_items']['direction'] : null)
+            ?? (fortuneData['luckyItems'] is Map ? fortuneData['luckyItems']['direction'] : null),
+        bestTime: (fortuneData['lucky_items'] is Map ? fortuneData['lucky_items']['time'] : null)
+            ?? (fortuneData['luckyItems'] is Map ? fortuneData['luckyItems']['time'] : null),
         advice: fortuneData['advice'] is List
             ? (fortuneData['advice'] as List).join('\n')  // List → String 변환 (wish fortune 대응)
             : fortuneData['advice'],
         caution: fortuneData['caution'],
         greeting: fortuneData['greeting'],
-        hexagonScores: fortuneData['hexagonScores'] != null 
-            ? Map<String, int>.from(fortuneData['hexagonScores']) 
+        // hexagonScores가 Map이고 값이 int 또는 String일 때 안전하게 변환
+        hexagonScores: (fortuneData['hexagonScores'] != null && fortuneData['hexagonScores'] is Map)
+            ? Map<String, int>.fromEntries(
+                (fortuneData['hexagonScores'] as Map).entries.map((e) {
+                  final value = e.value;
+                  final intValue = value is int ? value : (value is String ? int.tryParse(value) : null);
+                  return intValue != null ? MapEntry(e.key.toString(), intValue) : null;
+                }).whereType<MapEntry<String, int>>())
             : null,
         timeSpecificFortunes: fortuneData['timeSpecificFortunes'],
         birthYearFortunes: fortuneData['birthYearFortunes'],

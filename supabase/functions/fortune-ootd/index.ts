@@ -57,6 +57,8 @@ interface OotdEvaluationResult {
     silhouette: OotdCategory
     styleConsistency: OotdCategory
     accessories: OotdCategory
+    tpoFit: OotdCategory      // 신규: TPO 상황 적합도
+    trendScore: OotdCategory  // 신규: 트렌드 반영도
   }
   highlights: string[]
   softSuggestions: string[]
@@ -144,11 +146,13 @@ const OOTD_SYSTEM_PROMPT = `당신은 10년 경력의 패션 스타일리스트�
 - 5-6점: 좋은 시도예요! 💫 "약간의 포인트만 추가하면 완벽!"
 - 3-4점: 기본기는 좋아요! 🌱 "몇 가지 팁을 드릴게요"
 
-## 세부 평가 항목 (각 10점 만점)
+## 세부 평가 항목 (각 10점 만점, 6개 카테고리)
 - 색상 조화 (colorHarmony): 전체 컬러 밸런스, 톤온톤/톤인톤 매칭
 - 실루엣 (silhouette): 체형에 맞는 핏, 비율, 라인
 - 스타일 일관성 (styleConsistency): 전체적인 무드 통일성
 - 액세서리 (accessories): 포인트 아이템 활용도
+- TPO 적합도 (tpoFit): 상황에 맞는 옷차림인지 (데이트/출근/파티 등)
+- 트렌드 반영 (trendScore): 현재 패션 트렌드 반영도, 시즌 컬러/스타일
 
 반드시 주어진 JSON 형식으로만 응답하세요. JSON 외의 텍스트는 포함하지 마세요.`
 
@@ -192,6 +196,14 @@ ${tpoGuide}
     "accessories": {
       "score": 7.0,
       "feedback": "포인트 아이템이 전체 룩을 살려주고 있어요."
+    },
+    "tpoFit": {
+      "score": 8.5,
+      "feedback": "상황에 딱 맞는 스타일링이에요!"
+    },
+    "trendScore": {
+      "score": 7.5,
+      "feedback": "요즘 트렌드를 잘 반영하고 있어요."
     }
   },
   "highlights": [
@@ -225,18 +237,19 @@ ${tpoGuide}
 // 점수 계산 함수
 // =====================================================
 function calculateTotalScore(result: OotdEvaluationResult): number {
+  // 6개 카테고리 점수 수집 (신규 필드가 없을 경우 기본값 사용)
   const categoryScores = [
-    result.categories.colorHarmony.score,
-    result.categories.silhouette.score,
-    result.categories.styleConsistency.score,
-    result.categories.accessories.score,
+    result.categories.colorHarmony?.score ?? 7.0,
+    result.categories.silhouette?.score ?? 7.0,
+    result.categories.styleConsistency?.score ?? 7.0,
+    result.categories.accessories?.score ?? 7.0,
+    result.categories.tpoFit?.score ?? result.tpoScore ?? 7.0,      // 신규: fallback to tpoScore
+    result.categories.trendScore?.score ?? 7.0,                     // 신규
   ]
   const categoryAvg = categoryScores.reduce((a, b) => a + b, 0) / categoryScores.length
 
-  // 카테고리 평균 70% + TPO 점수 30%
-  const totalScore = categoryAvg * 0.7 + result.tpoScore * 0.3
-
-  return Math.round(totalScore * 10) / 10
+  // 6개 카테고리 평균으로 전체 점수 계산
+  return Math.round(categoryAvg * 10) / 10
 }
 
 // =====================================================

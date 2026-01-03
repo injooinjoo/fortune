@@ -93,8 +93,13 @@ export function getSystemPrompt(fortuneType: string): string {
     "period": "유효 기간"
   }`
 
+  // 현재 날짜 (UTC+9 한국 시간)
+  const now = new Date()
+  const koreaTime = new Date(now.getTime() + 9 * 60 * 60 * 1000)
+  const todayStr = `${koreaTime.getFullYear()}년 ${koreaTime.getMonth() + 1}월 ${koreaTime.getDate()}일`
+
   const specificPrompts: Record<string, string> = {
-    daily: 'Focus on what will happen today specifically. Be precise about timing.',
+    daily: `Focus on what will happen today specifically. Be precise about timing. Today is ${todayStr}.`,
     weekly: 'Provide day-by-day breakdown for the upcoming week.',
     monthly: 'Include important dates and overall monthly trends.',
     yearly: 'Provide seasonal breakdowns and major life events for the year.',
@@ -104,6 +109,15 @@ export function getSystemPrompt(fortuneType: string): string {
     career: 'Emphasize professional growth, opportunities, and challenges.',
     wealth: 'Focus on financial opportunities, investments, and money management.',
     celebrity: 'Focus on the connection between the user and the celebrity, providing unique insights about their compatibility and shared destiny.',
+    talisman: `Create a personalized Korean traditional talisman (부적) fortune reading. Today is ${todayStr}.
+    Focus on:
+    - The protective and blessing powers of the talisman
+    - Specific lucky elements (colors, directions, numbers) for today
+    - Traditional Korean spiritual guidance
+    - How to use and care for the talisman
+
+    The "period" field MUST be set to "${todayStr}" (today's date).
+    Include specific Korean talisman symbols and their meanings.`,
   }
 
   return `${basePrompt}\n\n${specificPrompts[fortuneType] || ''}`

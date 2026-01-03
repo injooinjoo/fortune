@@ -59,6 +59,7 @@ class SecondaryProfilesNotifier
   /// [gender] 성별 male/female (필수)
   /// [isLunar] 음력 여부
   /// [relationship] 관계 family/friend/lover/other
+  /// [familyRelation] 가족 세부 관계 parents/spouse/children/siblings
   /// [mbti] MBTI 성격유형 (선택)
   /// [bloodType] 혈액형 A/B/O/AB (선택)
   Future<SecondaryProfile?> addProfile({
@@ -68,6 +69,7 @@ class SecondaryProfilesNotifier
     required String gender,
     bool isLunar = false,
     String? relationship,
+    String? familyRelation,
     String? mbti,
     String? bloodType,
   }) async {
@@ -87,6 +89,7 @@ class SecondaryProfilesNotifier
         'gender': gender,
         'is_lunar': isLunar,
         'relationship': relationship,
+        'family_relation': familyRelation,
         'mbti': mbti,
         'blood_type': bloodType,
       }).select().single();
@@ -118,6 +121,7 @@ class SecondaryProfilesNotifier
             'gender': profile.gender,
             'is_lunar': profile.isLunar,
             'relationship': profile.relationship,
+            'family_relation': profile.familyRelation,
             'mbti': profile.mbti,
             'blood_type': profile.bloodType,
             'avatar_index': profile.avatarIndex,
@@ -170,6 +174,30 @@ class SecondaryProfilesNotifier
         }
       },
     );
+  }
+
+  /// 가족 관계별 프로필 목록 조회
+  ///
+  /// [familyRelation] 가족 세부 관계 (parents/spouse/children/siblings)
+  /// relationship이 'family'이고 familyRelation이 일치하는 프로필만 반환
+  List<SecondaryProfile> getFamilyProfiles(String familyRelation) {
+    return state.whenOrNull(
+          data: (profiles) => profiles
+              .where((p) =>
+                  p.relationship == 'family' &&
+                  p.familyRelation == familyRelation)
+              .toList(),
+        ) ??
+        [];
+  }
+
+  /// 모든 가족 프로필 조회 (relationship이 'family'인 모든 프로필)
+  List<SecondaryProfile> getAllFamilyProfiles() {
+    return state.whenOrNull(
+          data: (profiles) =>
+              profiles.where((p) => p.relationship == 'family').toList(),
+        ) ??
+        [];
   }
 }
 

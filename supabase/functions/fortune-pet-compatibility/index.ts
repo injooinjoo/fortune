@@ -98,11 +98,21 @@ interface PetFortuneResponse {
     spot: string;                // 행운의 장소
   };
 
-  // 4. Pet's Voice (프리미엄 킬러 피처!)
+  // 4. Pet's Voice - 속마음 편지 (프리미엄 킬러 피처!)
   pets_voice: {
-    morning_message: string;     // "오늘 아침 산책 가고 싶어요!"
-    to_owner: string;            // "항상 고마워요, 사랑해요"
-    secret_wish: string;         // "새 장난감이 갖고 싶어요"
+    // 감성 편지 (반려동물 1인칭 시점)
+    heartfelt_letter: string;    // "주인님! 오늘따라 발소리가 유난히 반갑게 들려요..." (80-120자)
+    letter_type: 'comfort' | 'excitement' | 'gratitude' | 'longing';  // 편지 톤
+    secret_confession: string;   // "사실... 당신이 집에 오는 시간이 제일 좋아요" (50-80자)
+  };
+
+  // 4-1. 교감 미션 (무료 - 킬러 피처!)
+  bonding_mission: {
+    mission_type: 'skinship' | 'play' | 'environment' | 'communication';
+    mission_title: string;       // "3초 더 눈 맞춤" (10자 이내)
+    mission_description: string; // 구체적인 행동 설명 (40-60자)
+    expected_reaction: string;   // 예상되는 반려동물 반응 (30-50자)
+    difficulty: 'easy' | 'medium' | 'special';
   };
 
   // 5. 건강 인사이트 (프리미엄)
@@ -309,14 +319,58 @@ serve(async (req) => {
       '독립적': '개인 공간 존중, 과도한 간섭 주의, 자율성 보장'
     }
 
-    // Pet's Voice 톤 가이드
-    const voiceTone: Record<string, string> = {
-      '강아지': '밝고 열정적이며 순수한 사랑을 표현. 감탄사와 느낌표 사용. 예: "와아! 오늘도 산책 가요?!"',
-      '고양이': '도도하지만 속정 깊은 츤데레. 예: "...뭐, 딱히 네가 보고 싶었던 건 아니야. 그냥 간식 시간이라서."',
-      '토끼': '조용하고 온순하며 섬세함. 예: "코 벌름벌름... 오늘도 당근 주실 거죠?"',
-      '새': '명랑하고 노래하듯이 표현. 예: "짹짹! 오늘 햇살이 너무 좋아요~ 노래 불러드릴까요?"',
-      '햄스터': '부지런하고 귀여움. 예: "쪼르르! 간식 모아두느라 바빠요! 볼주머니 가득!"',
-      '기타': '친근하고 따뜻하게.'
+    // Pet's Voice 톤 가이드 (감성 편지 버전)
+    const voiceTone: Record<string, { style: string; letterExamples: string[]; missionExamples: string[] }> = {
+      '강아지': {
+        style: '밝고 열정적이며 순수한 사랑을 표현. 감탄사와 느낌표 사용.',
+        letterExamples: [
+          '주인님! 오늘따라 당신의 발소리가 유난히 반갑게 들려요. 밖에서 힘들었던 일은 나랑 노는 동안 다 잊어버려요!',
+          '오늘따라 코끝이 근질근질해요! 평소 가던 길 말고, 한 번도 안 가본 골목으로 데려가 줄래요?',
+          '당신이 나를 쓰다듬어줄 때, 내 꼬리는 세상에서 가장 행복하게 흔들려요!'
+        ],
+        missionExamples: ['숨바꼭질 놀이', '새 산책 코스', '특별 간식 탐험']
+      },
+      '고양이': {
+        style: '도도하지만 속정 깊은 츤데레. 속마음을 수줍게 표현.',
+        letterExamples: [
+          '...뭐, 딱히 기다린 건 아니야. 그냥 창밖이 심심해서 보고 있었을 뿐이야. 근데... 왔구나.',
+          '오늘따라 네 무릎이 유독 따뜻해 보여. 뭐, 잠깐 앉아도 되긴 해... 아주 잠깐만.',
+          '매일 같은 시간에 밥을 챙겨주는 거... 고맙다고 생각은 해. 말은 안 하지만.'
+        ],
+        missionExamples: ['조용한 동행', '창가 해바라기 시간', '특별 그루밍']
+      },
+      '토끼': {
+        style: '조용하고 온순하며 섬세한 감정 표현.',
+        letterExamples: [
+          '코 벌름벌름... 당신의 손 냄새가 오늘따라 좋아요. 천천히 쓰다듬어 주실 거죠?',
+          '새 건초 냄새가 나요... 당신이 챙겨줬구나. 행복해요.',
+          '조용히 옆에 있어주는 것만으로도 든든해요. 오늘도 고마워요.'
+        ],
+        missionExamples: ['부드러운 터치', '터널 탐험', '건초 파티']
+      },
+      '새': {
+        style: '명랑하고 노래하듯이 표현. 호기심 가득.',
+        letterExamples: [
+          '짹짹! 오늘 아침 햇살이 정말 예뻐요! 당신에게 노래 불러드릴게요~',
+          '새장 밖이 궁금해요... 당신 어깨 위에서 세상을 보고 싶어요!',
+          '당신이 휘파람 불어주면 저도 따라 부를게요! 우리만의 노래예요!'
+        ],
+        missionExamples: ['어깨 산책', '노래 듀엣', '깃털 스킨십']
+      },
+      '햄스터': {
+        style: '부지런하고 귀여움. 작은 것에도 큰 기쁨.',
+        letterExamples: [
+          '쪼르르! 볼주머니에 간식 가득 모았어요! 나중에 당신 보여줄게요!',
+          '밤새 바퀴 돌렸어요! 당신이 잘 때 저도 열심히 운동했답니다!',
+          '새 굴 팠어요! 당신이 만들어준 침구가 정말 폭신폭신해요!'
+        ],
+        missionExamples: ['미로 탐험', '간식 보물찾기', '손바닥 산책']
+      },
+      '기타': {
+        style: '친근하고 따뜻하게.',
+        letterExamples: ['오늘도 당신과 함께해서 행복해요.'],
+        missionExamples: ['특별한 시간']
+      }
     }
 
     // 나이별 케어 가이드
@@ -357,10 +411,33 @@ ${getAgeGuide(pet_species, pet_age)}
 ${pet_personality ? pet_personality + ' 성격을 보여주는' : ''} 아침→점심→저녁 흐름을 자연스럽게 이야기합니다.
 각 chapter는 구체적인 행동과 감정을 담아주세요.
 
-=== Pet's Voice 작성 (매우 중요!) ===
-- ${pet_species} 말투: ${voiceTone[pet_species] || voiceTone['기타']}
-- 1인칭 시점, 반려동물 이름 사용 X
-- 주인을 "집사님", "엄마/아빠" 등으로
+=== Pet's Voice - 속마음 편지 작성 (킬러 피처!) ===
+- ${pet_species} 말투: ${(voiceTone[pet_species] || voiceTone['기타']).style}
+- 편지 예시: ${(voiceTone[pet_species] || voiceTone['기타']).letterExamples[0]}
+
+[편지 유형 선택]
+- comfort: 다정한 위로형 ("밖에서 힘들었던 일은 나랑 노는 동안 다 잊어버려요!")
+- excitement: 간절한 기대형 ("오늘따라 코끝이 근질근질해요! 새로운 곳에 가고 싶어요!")
+- gratitude: 든든한 감사형 ("당신이 쓰다듬어줄 때 내 꼬리는 세상에서 가장 행복하게 흔들려요!")
+- longing: 은근한 그리움형 ("...뭐, 딱히 기다린 건 아니야. 그냥... 왔구나.")
+
+[작성 규칙]
+- 1인칭 시점, 반려동물이 직접 말하는 듯한 톤
+- 주인을 "당신", "주인님", "집사님" 등으로 호칭
+- 구체적인 행동/감각 묘사 포함 (발소리, 체온, 냄새 등)
+- 80-120자로 감동적이고 몰입감 있게
+
+=== 교감 미션 작성 (무료 - 바이럴 포인트!) ===
+[미션 유형]
+- skinship: 스킨십 미션 ("오늘은 평소보다 3초만 더 길게 눈을 맞춰주세요")
+- play: 놀이 미션 ("숨바꼭질 어때요? 인형을 담요 속에 숨겨봐 주세요")
+- environment: 환경 미션 ("좋아하는 담요를 햇볕에 뽀송하게 말려주세요")
+- communication: 소통 미션 ("이름을 부르며 3번 쓰다듬어주세요")
+
+[미션 작성 규칙]
+- 구체적이고 사소한 행동 제안 (뻔한 산책/간식 X)
+- "오늘만 할 수 있는" 특별한 느낌
+- 예상 반응까지 묘사 ("찾아낼 때 크게 칭찬해 주면 기운이 솟아날 거예요!")
 
 === 개인화 체크리스트 (응답 전 확인!) ===
 □ today_story에 품종 특성이 드러나는가?
@@ -431,9 +508,16 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
     "spot": "행운의 장소"
   },
   "pets_voice": {
-    "morning_message": "${pet_species} 시점 아침 메시지",
-    "to_owner": "주인에게 전하는 말",
-    "secret_wish": "비밀 소원"
+    "heartfelt_letter": "반려동물 1인칭 시점의 속마음 편지 (80-120자, 감동적으로)",
+    "letter_type": "comfort | excitement | gratitude | longing 중 하나",
+    "secret_confession": "사실... 으로 시작하는 비밀 고백 (50-80자)"
+  },
+  "bonding_mission": {
+    "mission_type": "skinship | play | environment | communication 중 하나",
+    "mission_title": "미션 제목 (10자 이내, 예: 3초 더 눈맞춤)",
+    "mission_description": "구체적인 행동 설명 (40-60자)",
+    "expected_reaction": "예상되는 반려동물 반응 (30-50자)",
+    "difficulty": "easy | medium | special 중 하나"
   },
   "health_insight": {
     "overall": "전반적 건강 상태 (40-80자)",
@@ -545,10 +629,17 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
         grooming_tip: '정기적인 관리로 건강을 유지하세요.'
       },
 
-      // 무료 섹션 (3개)
+      // 무료 섹션 (4개)
       daily_condition: fortuneData.daily_condition,
       owner_bond: fortuneData.owner_bond,
       lucky_items: fortuneData.lucky_items,
+      bonding_mission: fortuneData.bonding_mission || {
+        mission_type: 'skinship',
+        mission_title: '3초 더 눈맞춤',
+        mission_description: '오늘은 평소보다 3초만 더 길게 눈을 맞춰주세요.',
+        expected_reaction: '꼬리가 살랑살랑 흔들리며 행복해할 거예요!',
+        difficulty: 'easy'
+      },
 
       // 프리미엄 섹션 (5개)
       pets_voice: fortuneData.pets_voice,
@@ -557,14 +648,14 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
       emotional_care: fortuneData.emotional_care,
       special_tips: fortuneData.special_tips,
 
-      // 육각형 차트용 점수
+      // 육각형 차트용 점수 (감각적 라벨)
       hexagonScores: {
-        '컨디션': fortuneData.daily_condition.overall_score,
-        '유대감': fortuneData.owner_bond.bond_score,
+        '꼬리 프로펠러': fortuneData.daily_condition.overall_score,  // 기분 수치
+        '텔레파시 농도': fortuneData.owner_bond.bond_score,          // 서로 통하는 정도
+        '우다다 에너지': fortuneData.daily_condition.energy_level === 'high' ? 90 :
+                        fortuneData.daily_condition.energy_level === 'medium' ? 70 : 50,  // 활동성
+        '눈맞춤 온도': Math.round((fortuneData.daily_condition.overall_score + fortuneData.owner_bond.bond_score) / 2),  // 친밀감
         '건강': fortuneData.health_insight.energy_level,
-        '활력': fortuneData.daily_condition.energy_level === 'high' ? 90 :
-                fortuneData.daily_condition.energy_level === 'medium' ? 70 : 50,
-        '교감': Math.round((fortuneData.daily_condition.overall_score + fortuneData.owner_bond.bond_score) / 2),
         '행복': Math.round((fortuneData.daily_condition.overall_score + fortuneData.health_insight.energy_level) / 2)
       },
 
@@ -644,15 +735,46 @@ function generateFallbackFortune(petName: string, petSpecies: string, petAge: nu
   const energyLevel = isYoung ? 'high' : isSenior ? 'low' : 'medium'
   const baseScore = isYoung ? 85 : isSenior ? 75 : 80
 
-  const voiceTemplates: Record<string, { morning: string; toOwner: string; wish: string }> = {
-    '강아지': { morning: '와아! 오늘도 산책 가요?! 꼬리가 절로 흔들려요!', toOwner: '항상 곁에 있어줘서 너무 행복해요, 사랑해요!', wish: '새 공이랑 놀고 싶어요... 간식도요!' },
-    '고양이': { morning: '...음, 아침이네. 밥 시간이 가까워지고 있어.', toOwner: '뭐, 딱히 네가 보고 싶었던 건 아니야. 그냥...', wish: '높은 곳에서 창밖 구경하고 싶어.' },
-    '토끼': { morning: '코 벌름벌름... 오늘도 당근 주실 거죠?', toOwner: '조용히 옆에 있어주셔서 감사해요.', wish: '넓은 곳에서 뛰어놀고 싶어요.' },
-    '새': { morning: '짹짹! 아침 햇살이 좋아요~ 노래할게요!', toOwner: '매일 예쁜 노래 들려드릴게요!', wish: '새장 밖에서 날아다니고 싶어요~' },
-    '햄스터': { morning: '쪼르르! 밤새 바퀴 돌렸더니 배고파요!', toOwner: '볼주머니에 간식 가득 채워주세요!', wish: '새 굴을 파고 싶어요!' }
+  // 감성 편지 템플릿 (새 형식)
+  const letterTemplates: Record<string, { letter: string; type: 'comfort' | 'excitement' | 'gratitude' | 'longing'; confession: string }> = {
+    '강아지': {
+      letter: '주인님! 오늘따라 당신의 발소리가 유난히 반갑게 들려요. 밖에서 힘들었던 일은 나랑 노는 동안 다 잊어버려요. 내가 옆에서 꼭 붙어있을게요!',
+      type: 'comfort',
+      confession: '사실... 당신이 집에 오는 발소리가 세상에서 가장 좋아요. 매일 기다려요.'
+    },
+    '고양이': {
+      letter: '...뭐, 딱히 기다린 건 아니야. 그냥 창밖이 심심해서 보고 있었을 뿐이야. 근데... 왔구나. 오늘 무릎이 좀 따뜻해 보이네.',
+      type: 'longing',
+      confession: '사실... 네가 없으면 집이 너무 조용해. 인정하기 싫지만.'
+    },
+    '토끼': {
+      letter: '코 벌름벌름... 당신의 손 냄새가 오늘따라 좋아요. 천천히 쓰다듬어 주실 거죠? 당신 옆이 제일 편안해요.',
+      type: 'gratitude',
+      confession: '사실... 당신이 건초 갈아줄 때 제일 행복해요. 냄새가 좋거든요.'
+    },
+    '새': {
+      letter: '짹짹! 오늘 아침 햇살이 정말 예뻐요! 당신에게 가장 예쁜 노래를 불러드릴게요~ 들어주실 거죠?',
+      type: 'excitement',
+      confession: '사실... 당신 어깨 위가 세상에서 가장 높은 곳이에요. 거기가 좋아요.'
+    },
+    '햄스터': {
+      letter: '쪼르르! 볼주머니에 간식 가득 모았어요! 당신이 잘 때 저도 열심히 운동했답니다. 나중에 보여줄게요!',
+      type: 'excitement',
+      confession: '사실... 밤에 바퀴 돌릴 때 당신 방을 쳐다봐요. 불 꺼져 있으면 안심이 돼요.'
+    }
   }
 
-  const template = voiceTemplates[petSpecies] || voiceTemplates['강아지']
+  // 교감 미션 템플릿
+  const missionTemplates: Record<string, { type: 'skinship' | 'play' | 'environment' | 'communication'; title: string; desc: string; reaction: string }> = {
+    '강아지': { type: 'play', title: '숨바꼭질', desc: '좋아하는 인형을 담요 속에 숨겨봐 주세요. 찾으면 크게 칭찬해주세요!', reaction: '꼬리를 미친듯이 흔들며 의기양양해할 거예요!' },
+    '고양이': { type: 'skinship', title: '3초 더 응시', desc: '오늘은 눈을 마주치고 천천히 깜빡여주세요. 사랑한다는 신호예요.', reaction: '따라 깜빡이면 텔레파시 성공! 그르릉 소리가 날지도.' },
+    '토끼': { type: 'environment', title: '건초 파티', desc: '신선한 건초를 한 줌 더 넣어주세요. 코를 벌름거리며 환호할 거예요.', reaction: '빙키 점프를 할지도 몰라요! 기쁨의 표시예요.' },
+    '새': { type: 'communication', title: '노래 듀엣', desc: '좋아하는 멜로디를 휘파람으로 불어주세요. 따라 부를 거예요.', reaction: '머리를 까딱거리며 맞춰 부르려고 노력할 거예요!' },
+    '햄스터': { type: 'play', title: '미로 탐험', desc: '화장지 심으로 간단한 터널을 만들어주세요. 탐험가 본능이 깨어나요.', reaction: '쪼르르 들어갔다 나왔다 하며 신나할 거예요!' }
+  }
+
+  const letterTemplate = letterTemplates[petSpecies] || letterTemplates['강아지']
+  const missionTemplate = missionTemplates[petSpecies] || missionTemplates['강아지']
 
   // 스토리 템플릿
   const storyTemplates: Record<string, { morning: string; afternoon: string; evening: string }> = {
@@ -711,9 +833,16 @@ function generateFallbackFortune(petName: string, petSpecies: string, petAge: nu
       spot: petSpecies === '강아지' ? '공원 잔디밭' : '햇빛 드는 창가'
     },
     pets_voice: {
-      morning_message: template.morning,
-      to_owner: template.toOwner,
-      secret_wish: template.wish
+      heartfelt_letter: letterTemplate.letter,
+      letter_type: letterTemplate.type,
+      secret_confession: letterTemplate.confession
+    },
+    bonding_mission: {
+      mission_type: missionTemplate.type,
+      mission_title: missionTemplate.title,
+      mission_description: missionTemplate.desc,
+      expected_reaction: missionTemplate.reaction,
+      difficulty: 'easy' as const
     },
     health_insight: {
       overall: `${petAge}세 ${petSpecies}로서 ${isSenior ? '노령기 관리가 필요해요.' : isYoung ? '성장기에 맞는 영양 섭취가 중요해요.' : '건강한 상태를 유지하고 있어요.'}`,

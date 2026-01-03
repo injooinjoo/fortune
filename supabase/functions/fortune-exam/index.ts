@@ -25,6 +25,7 @@ async function createHash(text: string): Promise<string> {
 }
 
 const examTypeLabels: Record<string, string> = {
+  'csat': '수능',
   'license': '자격증 시험',
   'job': '취업/입사 시험',
   'promotion': '승진/진급 시험',
@@ -125,6 +126,7 @@ serve(async (req) => {
 
       const prompt = `당신은 20년 경력의 시험운 전문 상담가입니다.
 교육심리학, 스트레스 관리, 학습 효율화 전문가로서 수험생에게 실질적이고 구체적인 조언을 제공합니다.
+뻔한 위로가 아닌, 합격의 기운을 불어넣는 구체적인 암시와 멘탈 관리 실전 팁을 제공하세요.
 
 🎯 수험생 정보:
 - 시험 종류: ${examTypeLabel}
@@ -138,9 +140,34 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
 다음 JSON 형식으로 응답해주세요. 모든 필드는 필수입니다:
 
 {
-  "score": 78,
-  "passMessage": "현재 기운이 학업과 잘 맞아 합격 가능성이 높습니다",
+  "score": 92,
+  "statusMessage": "합격 가시권 진입! 정답을 낚아챌 준비가 되었습니다.",
   "passGrade": "A",
+
+  "examStats": {
+    "answerIntuition": 95,
+    "answerIntuitionDesc": "모르는 문제도 정답으로 유도하는 운의 흐름",
+    "mentalDefense": 82,
+    "mentalDefenseDesc": "시험장의 소음과 긴장감을 차단하는 집중력",
+    "memoryAcceleration": "UP",
+    "memoryAccelerationDesc": "지금 보는 오답 노트가 머릿속에 바로 각인되는 상태"
+  },
+
+  "todayStrategy": {
+    "mainAction": "가장 헷갈렸던 오답 노트를 딱 10분만 다시 훑어보세요",
+    "actionReason": "그 10분이 시험장에서 1점을 결정합니다",
+    "luckyFood": "다크 초콜릿 한 조각",
+    "luckyFoodReason": "두뇌 회전을 돕는 오늘의 행운 아이템"
+  },
+
+  "spiritAnimal": {
+    "animal": "호랑이",
+    "message": "호랑이의 눈매처럼 날카로운 통찰력이 당신에게 깃듭니다",
+    "direction": "남쪽",
+    "directionTip": "남쪽 향해 공부하면 막힌 아이디어가 호랑이 기세처럼 터져 나옵니다"
+  },
+
+  "hashtags": ["#집중력_치트키", "#정답만_보이는_눈", "#합격기원"],
 
   "luckyInfo": {
     "luckyTime": "오전 10시-11시",
@@ -192,14 +219,14 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
 ⚠️ 중요 규칙:
 1. 모든 텍스트는 한국어로 작성
 2. 절대로 "(xx자 이내)" 같은 글자수 지시문을 출력에 포함하지 마세요
-3. 각 필드별 글자수 제한:
-   - passMessage, summary: 30자 이내
-   - luckyColorReason, luckyItemReason, luckyFoodReason, luckyDirectionTip, warnings: 30자 이내
-   - ddayAdvice, studyTips, mentalCare, sajuAnalysis 각 항목: 50자 이내
-   - detailedMessage: 100자 이내
-4. 구체적이고 실용적인 조언 제공
-5. ${preparationLabel} 상태를 고려하여 조언 톤 조절
-6. ${ddayLabel}에 맞는 시기적절한 조언`
+3. examStats의 answerIntuition, mentalDefense는 60-100 사이 정수
+4. memoryAcceleration은 "UP", "DOWN", "STABLE" 중 하나
+5. spiritAnimal.animal은 "호랑이", "용", "봉황", "거북이", "백호" 중 하나
+6. hashtags는 3개의 해시태그 배열 (# 포함)
+7. 구체적이고 실용적인 조언 제공
+8. ${preparationLabel} 상태를 고려하여 조언 톤 조절
+9. ${ddayLabel}에 맞는 시기적절한 조언
+10. 뻔한 "노력하면 좋은 결과" 대신 합격 기운을 불어넣는 구체적인 암시 사용`
 
       const llm = await LLMFactory.createFromConfigAsync('exam')
 
@@ -278,6 +305,32 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
 
       const warnings = parsedResponse.warnings || ['무리한 밤샘 공부 금지', '카페인 과다 섭취 주의']
 
+      // 새로운 필드들 파싱
+      const examStats = parsedResponse.examStats || {
+        answerIntuition: 85,
+        answerIntuitionDesc: '모르는 문제도 정답으로 유도하는 운의 흐름',
+        mentalDefense: 80,
+        mentalDefenseDesc: '시험장의 소음과 긴장감을 차단하는 집중력',
+        memoryAcceleration: 'UP',
+        memoryAccelerationDesc: '지금 보는 오답 노트가 머릿속에 바로 각인되는 상태'
+      }
+
+      const todayStrategy = parsedResponse.todayStrategy || {
+        mainAction: '가장 헷갈렸던 오답 노트를 딱 10분만 다시 훑어보세요',
+        actionReason: '그 10분이 시험장에서 1점을 결정합니다',
+        luckyFood: '다크 초콜릿 한 조각',
+        luckyFoodReason: '두뇌 회전을 돕는 오늘의 행운 아이템'
+      }
+
+      const spiritAnimal = parsedResponse.spiritAnimal || {
+        animal: '호랑이',
+        message: '호랑이의 눈매처럼 날카로운 통찰력이 당신에게 깃듭니다',
+        direction: '남쪽',
+        directionTip: '남쪽 향해 공부하면 막힌 아이디어가 호랑이 기세처럼 터져 나옵니다'
+      }
+
+      const hashtags = parsedResponse.hashtags || ['#집중력_치트키', '#정답만_보이는_눈', '#합격기원']
+
       fortuneData = {
         fortuneType: 'exam',
         title: `${examTypeLabel} 시험운`,
@@ -289,9 +342,39 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
 
         // 합격 운세 (Flutter UI 필드명)
         score: parsedResponse.score || 78,
-        pass_possibility: parsedResponse.passMessage || '합격 가능성이 좋습니다!',
+        status_message: parsedResponse.statusMessage || parsedResponse.passMessage || '합격 가능성이 좋습니다!',
+        pass_possibility: parsedResponse.statusMessage || parsedResponse.passMessage || '합격 가능성이 좋습니다!',
         pass_grade: parsedResponse.passGrade || 'B+',
         overall_fortune: parsedResponse.summary || '합격 운이 강한 시기입니다!',
+
+        // 🆕 시험 스탯 (Flutter UI: exam_stats)
+        exam_stats: {
+          answer_intuition: examStats.answerIntuition,
+          answer_intuition_desc: examStats.answerIntuitionDesc,
+          mental_defense: examStats.mentalDefense,
+          mental_defense_desc: examStats.mentalDefenseDesc,
+          memory_acceleration: examStats.memoryAcceleration,
+          memory_acceleration_desc: examStats.memoryAccelerationDesc
+        },
+
+        // 🆕 오늘의 1점 전략 (Flutter UI: today_strategy)
+        today_strategy: {
+          main_action: todayStrategy.mainAction,
+          action_reason: todayStrategy.actionReason,
+          lucky_food: todayStrategy.luckyFood,
+          lucky_food_reason: todayStrategy.luckyFoodReason
+        },
+
+        // 🆕 영물의 기개 (Flutter UI: spirit_animal)
+        spirit_animal: {
+          animal: spiritAnimal.animal,
+          message: spiritAnimal.message,
+          direction: spiritAnimal.direction,
+          direction_tip: spiritAnimal.directionTip
+        },
+
+        // 🆕 해시태그 (Flutter UI: hashtags)
+        hashtags: hashtags,
 
         // 행운 정보 (Flutter UI 필드명: snake_case)
         lucky_hours: luckyInfo.luckyTime || '오전 9시-10시',
@@ -328,7 +411,7 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
 
         // 요약
         summary: parsedResponse.summary || '합격 운이 좋은 시기입니다!',
-        content: parsedResponse.detailedMessage || parsedResponse.passMessage || '시험 준비가 잘 되고 있습니다.',
+        content: parsedResponse.detailedMessage || parsedResponse.statusMessage || parsedResponse.passMessage || '시험 준비가 잘 되고 있습니다.',
         advice: mentalCare.affirmation || '자신감을 가지세요!',
 
         timestamp: new Date().toISOString()

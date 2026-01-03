@@ -72,7 +72,7 @@ class WishGenerator {
       final wishData = data['data'] as Map<String, dynamic>;
       Logger.info('[WishGenerator]   📦 Response data keys: ${wishData.keys.toList()}');
 
-      // ✅ 필수 필드 검증
+      // ✅ 필수 필드 검증 (기존)
       const requiredFields = ['empathy_message', 'hope_message', 'advice', 'encouragement', 'special_words'];
       for (final field in requiredFields) {
         if (!wishData.containsKey(field)) {
@@ -84,6 +84,26 @@ class WishGenerator {
             missingField: field,
           );
         }
+      }
+
+      // 🆕 확장 필드 검증 (새 필드 - 경고만 로그)
+      const enhancedFields = ['fortune_flow', 'lucky_mission', 'dragon_message'];
+      for (final field in enhancedFields) {
+        if (!wishData.containsKey(field)) {
+          Logger.warning('[WishGenerator] ⚠️ 확장 필드 누락: $field');
+        }
+      }
+
+      // 🐉 용의 메시지 로깅
+      if (wishData.containsKey('dragon_message')) {
+        final dragonMsg = wishData['dragon_message'] as Map<String, dynamic>?;
+        Logger.info('[WishGenerator]   🐉 power_line: ${dragonMsg?['power_line'] ?? 'N/A'}');
+      }
+
+      // 🎯 행운 미션 로깅
+      if (wishData.containsKey('lucky_mission')) {
+        final mission = wishData['lucky_mission'] as Map<String, dynamic>?;
+        Logger.info('[WishGenerator]   🍀 행운 미션: ${mission?['item'] ?? 'N/A'}');
       }
 
       // 🔄 파싱

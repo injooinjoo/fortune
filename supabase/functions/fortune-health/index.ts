@@ -78,6 +78,200 @@ interface HealthFortuneRequest {
   chronicCondition?: string // ✅ 기저질환 내용
   isPremium?: boolean // ✅ 프리미엄 사용자 여부
   health_app_data?: HealthAppData | null // ✅ 프리미엄 건강앱 데이터
+  // ✅ 신규: 사주 오행 분석용
+  birthDate?: string // YYYY-MM-DD
+  birthTime?: string // HH:MM 또는 "축시 (01:00-03:00)"
+  sajuData?: {
+    element_balance?: { 목: number, 화: number, 토: number, 금: number, 수: number }
+    lacking_element?: string
+    dominant_element?: string
+  } | null
+  // ✅ 신규: 이전 설문 비교용
+  previousSurvey?: {
+    sleep_quality?: number
+    exercise_frequency?: number
+    stress_level?: number
+    meal_regularity?: number
+    created_at?: string
+  } | null
+}
+
+// ============================================================================
+// 오행 분석 관련 (calculate-saju 패턴 참조)
+// ============================================================================
+
+const TIAN_GAN = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계']
+const DI_ZHI = ['자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해']
+
+const TIAN_GAN_WUXING: Record<string, string> = {
+  '갑': '목', '을': '목', '병': '화', '정': '화',
+  '무': '토', '기': '토', '경': '금', '신': '금', '임': '수', '계': '수'
+}
+
+const DI_ZHI_WUXING: Record<string, string> = {
+  '자': '수', '축': '토', '인': '목', '묘': '목', '진': '토', '사': '화',
+  '오': '화', '미': '토', '신': '금', '유': '금', '술': '토', '해': '수'
+}
+
+// ✅ 오행-장부 대응 (건강 조언용)
+const ELEMENT_ORGAN_MAP: Record<string, {
+  organs: string[],
+  symptoms: string[],
+  foods: string[],
+  season: string
+}> = {
+  '목': {
+    organs: ['간', '담'],
+    symptoms: ['눈 피로', '근육 경직', '신경과민', '두통'],
+    foods: ['푸른 채소', '신맛 음식', '매실', '부추', '시금치'],
+    season: '봄'
+  },
+  '화': {
+    organs: ['심장', '소장'],
+    symptoms: ['불면증', '가슴 두근거림', '혈액순환 저하', '안면홍조'],
+    foods: ['붉은 음식', '토마토', '딸기', '파프리카', '고추'],
+    season: '여름'
+  },
+  '토': {
+    organs: ['비장', '위'],
+    symptoms: ['소화불량', '피로감', '식욕부진', '부종'],
+    foods: ['노란 음식', '호박', '고구마', '단맛 음식', '현미'],
+    season: '환절기'
+  },
+  '금': {
+    organs: ['폐', '대장'],
+    symptoms: ['호흡기 문제', '피부 트러블', '면역력 저하', '기침'],
+    foods: ['흰 음식', '무', '도라지', '배', '마늘'],
+    season: '가을'
+  },
+  '수': {
+    organs: ['신장', '방광'],
+    symptoms: ['부종', '허리 통증', '빈뇨', '탈모', '이명'],
+    foods: ['검은 음식', '검은콩', '미역', '다시마', '호두'],
+    season: '겨울'
+  }
+}
+
+// 간단한 오행 균형 계산 (birthDate 기반)
+function calculateSimpleWuxingBalance(birthDate: string): {
+  balance: Record<string, number>,
+  lacking: string,
+  dominant: string
+} {
+  const date = new Date(birthDate)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+
+  // 년주 계산
+  const yearGanIndex = (year - 4) % 10
+  const yearZhiIndex = (year - 4) % 12
+  const yearGan = TIAN_GAN[yearGanIndex < 0 ? yearGanIndex + 10 : yearGanIndex]
+  const yearZhi = DI_ZHI[yearZhiIndex < 0 ? yearZhiIndex + 12 : yearZhiIndex]
+
+  // 일주 계산 (1900.1.1 = 갑진일 기준)
+  const baseDate = new Date(1900, 0, 1)
+  const daysDiff = Math.floor((date.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24))
+  const dayGanIndex = ((0 + daysDiff) % 10 + 10) % 10
+  const dayZhiIndex = ((4 + daysDiff) % 12 + 12) % 12
+  const dayGan = TIAN_GAN[dayGanIndex]
+  const dayZhi = DI_ZHI[dayZhiIndex]
+
+  // 오행 카운트
+  const balance: Record<string, number> = { 목: 0, 화: 0, 토: 0, 금: 0, 수: 0 }
+
+  // 천간 오행
+  if (TIAN_GAN_WUXING[yearGan]) balance[TIAN_GAN_WUXING[yearGan]] += 1
+  if (TIAN_GAN_WUXING[dayGan]) balance[TIAN_GAN_WUXING[dayGan]] += 1
+
+  // 지지 오행
+  if (DI_ZHI_WUXING[yearZhi]) balance[DI_ZHI_WUXING[yearZhi]] += 1
+  if (DI_ZHI_WUXING[dayZhi]) balance[DI_ZHI_WUXING[dayZhi]] += 1
+
+  // 월지 보정 (대략적)
+  const monthZhiIndex = (month + 1) % 12
+  const monthZhi = DI_ZHI[monthZhiIndex]
+  if (DI_ZHI_WUXING[monthZhi]) balance[DI_ZHI_WUXING[monthZhi]] += 0.5
+
+  // 부족/강함 판단
+  const entries = Object.entries(balance)
+  const lacking = entries.reduce((a, b) => a[1] < b[1] ? a : b)[0]
+  const dominant = entries.reduce((a, b) => a[1] > b[1] ? a : b)[0]
+
+  return { balance, lacking, dominant }
+}
+
+// 이전 설문 비교 분석
+function generatePreviousSurveyContext(
+  current: { sleepQuality: number, exerciseFrequency: number, stressLevel: number, mealRegularity: number },
+  previous: { sleep_quality?: number, exercise_frequency?: number, stress_level?: number, meal_regularity?: number, created_at?: string } | null
+): { context: string, feedback: { improvements: string[], concerns: string[], encouragements: string[] } } {
+  if (!previous) {
+    return {
+      context: '(최초 설문입니다. 이번 응답을 기준으로 맞춤 조언을 제공합니다.)',
+      feedback: { improvements: [], concerns: [], encouragements: ['첫 건강 체크! 꾸준히 기록하면 맞춤 조언이 더 정확해집니다.'] }
+    }
+  }
+
+  const sections: string[] = []
+  const feedback = { improvements: [] as string[], concerns: [] as string[], encouragements: [] as string[] }
+
+  // 수면 비교
+  if (previous.sleep_quality !== undefined) {
+    if (current.sleepQuality > previous.sleep_quality) {
+      sections.push(`✅ 수면 품질 개선 (${previous.sleep_quality}→${current.sleepQuality}점)`)
+      feedback.improvements.push('수면 품질이 지난번보다 좋아졌어요!')
+    } else if (current.sleepQuality < previous.sleep_quality) {
+      sections.push(`⚠️ 수면 품질 하락 (${previous.sleep_quality}→${current.sleepQuality}점)`)
+      feedback.concerns.push('수면 품질이 떨어졌습니다. 취침 전 스마트폰 사용을 줄여보세요.')
+    }
+  }
+
+  // 운동 비교
+  if (previous.exercise_frequency !== undefined) {
+    if (current.exerciseFrequency >= 4 && previous.exercise_frequency >= 4) {
+      sections.push(`💪 운동 꾸준히 유지 중 (${current.exerciseFrequency}점)`)
+      feedback.encouragements.push('운동을 꾸준히 하고 계시네요! 현재 페이스를 유지하세요.')
+    } else if (current.exerciseFrequency > previous.exercise_frequency) {
+      sections.push(`✅ 운동 빈도 증가 (${previous.exercise_frequency}→${current.exerciseFrequency}점)`)
+      feedback.improvements.push('운동 빈도가 늘었어요! 좋은 습관입니다.')
+    } else if (current.exerciseFrequency <= 2 && previous.exercise_frequency <= 2) {
+      sections.push(`⚠️ 운동 부족 상태 지속 (${current.exerciseFrequency}점)`)
+      feedback.concerns.push('운동 부족 상태가 지속되고 있습니다. 하루 15분 걷기부터 시작해보세요.')
+    }
+  }
+
+  // 식사 비교
+  if (previous.meal_regularity !== undefined) {
+    if (current.mealRegularity <= 2) {
+      sections.push(`⚠️ 식사 불규칙 (${current.mealRegularity}점)`)
+      feedback.concerns.push('식사가 불규칙합니다. 아침 7:30, 점심 12:30, 저녁 18:30 식사를 권장합니다.')
+    } else if (current.mealRegularity > previous.meal_regularity) {
+      sections.push(`✅ 식사 규칙성 개선 (${previous.meal_regularity}→${current.mealRegularity}점)`)
+      feedback.improvements.push('식사 습관이 좋아졌어요!')
+    }
+  }
+
+  // 스트레스 비교
+  if (previous.stress_level !== undefined) {
+    if (current.stressLevel >= 4) {
+      sections.push(`⚠️ 스트레스 높음 (${current.stressLevel}점)`)
+      feedback.concerns.push('스트레스가 높습니다. 호흡 명상, 산책 등 이완 활동이 필요합니다.')
+    } else if (current.stressLevel < previous.stress_level) {
+      sections.push(`✅ 스트레스 감소 (${previous.stress_level}→${current.stressLevel}점)`)
+      feedback.improvements.push('스트레스가 줄었어요! 좋은 신호입니다.')
+    }
+  }
+
+  const daysSince = previous.created_at
+    ? Math.floor((Date.now() - new Date(previous.created_at).getTime()) / (1000 * 60 * 60 * 24))
+    : null
+
+  const context = sections.length > 0
+    ? `## 지난 설문(${daysSince ? `${daysSince}일 전` : '이전'}) 대비 분석\n${sections.join('\n')}`
+    : '(이전 설문과 큰 변화가 없습니다.)'
+
+  return { context, feedback }
 }
 
 // ✅ 건강 입력값을 설명 레이블로 변환하는 헬퍼 함수
@@ -148,8 +342,34 @@ serve(async (req) => {
       hasChronicCondition = false, // ✅ 기저질환 여부
       chronicCondition = '', // ✅ 기저질환 내용
       isPremium = false, // ✅ 프리미엄 사용자 여부
-      health_app_data = null // ✅ 건강앱 데이터 (프리미엄 전용)
+      health_app_data = null, // ✅ 건강앱 데이터 (프리미엄 전용)
+      // ✅ 신규: 사주 오행 분석용
+      birthDate = null,
+      sajuData = null,
+      // ✅ 신규: 이전 설문 비교용
+      previousSurvey = null
     } = requestData
+
+    // ✅ 오행 분석 (sajuData 우선, 없으면 birthDate로 계산)
+    let elementAnalysis: { balance: Record<string, number>, lacking: string, dominant: string } | null = null
+    if (sajuData?.lacking_element && sajuData?.dominant_element) {
+      elementAnalysis = {
+        balance: sajuData.element_balance || { 목: 1, 화: 1, 토: 1, 금: 1, 수: 1 },
+        lacking: sajuData.lacking_element,
+        dominant: sajuData.dominant_element
+      }
+      console.log('🌿 [Health] 사주 데이터 사용:', elementAnalysis)
+    } else if (birthDate) {
+      elementAnalysis = calculateSimpleWuxingBalance(birthDate)
+      console.log('🌿 [Health] birthDate로 오행 계산:', elementAnalysis)
+    }
+
+    // ✅ 이전 설문 비교 분석
+    const { context: previousSurveyContext, feedback: personalizedFeedback } = generatePreviousSurveyContext(
+      { sleepQuality, exerciseFrequency, stressLevel, mealRegularity },
+      previousSurvey
+    )
+    console.log('📊 [Health] 이전 설문 비교:', previousSurveyContext)
 
     if (!current_condition) {
       throw new Error('현재 건강 상태를 입력해주세요.')
@@ -191,16 +411,40 @@ serve(async (req) => {
       // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
       const llm = await LLMFactory.createFromConfigAsync('health')
 
+      // ✅ 오행 기반 프롬프트 섹션 생성
+      const elementSection = elementAnalysis ? `
+## 🌿 사주 오행 분석 (개인화 핵심!)
+- **부족한 오행**: ${elementAnalysis.lacking} (${ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.organs.join(', ') || '장기'} 취약)
+- **강한 오행**: ${elementAnalysis.dominant}
+- **취약 증상**: ${ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.symptoms.join(', ') || '일반적 증상'}
+- **보충 음식**: ${ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.foods.join(', ') || '균형 잡힌 식단'}
+
+⚠️ **중요**: 위 오행 분석을 반드시 조언에 반영하세요!
+- ${elementAnalysis.lacking} 기운이 부족하므로 ${ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.organs.join('/')} 건강에 특히 주의
+- 식단에 ${ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.foods.slice(0, 3).join(', ')} 포함 권장
+` : ''
+
       const systemPrompt = `당신은 **현대의학 + 한의학 통합 건강코치**입니다.
 삼성서울병원 가정의학과 15년, 한방내과 10년 경력을 보유하고 있습니다.
+${elementSection}
+
+📱 **가독성 최우선 규칙** (모바일 화면 최적화):
+- 모든 텍스트에 **줄바꿈(\\n\\n)** 필수! 긴 문장 덩어리 금지!
+- 핵심 포인트마다 **이모지** 사용 (📊💡✨⚠️💪🍽️🎯)
+- **불릿 포인트(•)** 적극 활용
+- 1문장 = 1포인트 원칙
 
 🎯 **핵심 원칙**:
 1. **구체적 수치와 시간 제시**: "운동하세요" ❌ → "오후 3시, 15분간 걷기" ✅
 2. **이유 설명 필수**: 모든 조언에 "왜"를 포함
 3. **실천 가능한 액션**: 바로 따라할 수 있는 구체적 방법
 4. **경고와 격려 균형**: 무서운 경고만 ❌, 희망적 조언과 함께
+${elementAnalysis ? `5. **오행 기반 조언**: ${elementAnalysis.lacking} 기운 보충 음식/활동 우선 추천` : ''}
 
-⚠️ **절대 금지**: "건강하십니다", "좋습니다", "주의하세요" 같은 막연한 표현`
+⚠️ **절대 금지**:
+- "건강하십니다", "좋습니다", "주의하세요" 같은 막연한 표현
+- 줄바꿈 없이 500자 이상 이어쓰기
+- 이모지 없는 긴 텍스트 블록`
 
       // 건강앱 데이터 섹션 생성
       const healthAppSection = hasHealthAppData ? `
@@ -233,28 +477,50 @@ ${hasChronicCondition ? `- **기저질환**: ${chronicCondition}` : ''}
 - **분석 날짜**: ${new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' })}
 ${healthAppSection}
 
+${previousSurveyContext}
+
 ⚠️ **위 건강 입력 데이터를 반드시 분석에 반영하세요!**
 - 수면 품질이 낮으면 → 수면 개선 조언 제공
 - 운동 빈도가 낮으면 → 운동 권장 조언 제공
 - 스트레스가 높으면 → 스트레스 관리 조언 제공
 - 식사가 불규칙하면 → 식습관 개선 조언 제공
+${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.foods.slice(0, 3).join(', ')} 섭취 권장` : ''}
 
 ---
 
 ## 요청 JSON 형식
 
+⚠️ **가독성 필수 규칙**:
+1. 모든 텍스트는 **줄바꿈(\\n\\n)**으로 문단 구분
+2. 핵심 포인트마다 **이모지** 사용 (📊, 💪, 🍽️, ⚠️, ✅, 💡)
+3. 긴 문장 금지 - **1문장 = 1포인트** 원칙
+4. 불릿 포인트(•) 활용
+
 \`\`\`json
 {
-  "overall_health": "전반 건강 분석 (500자) - 현재 상태 진단 + 원인 분석 + 개선 방향 + 기대 효과",
-  "body_part_advice": "부위별 맞춤 조언 (400자) - 증상 원인 + 관리법 + 예방법",
-  "cautions": ["주의사항1 (150자: 위험 + 조건 + 대처법)", "주의사항2", "주의사항3"],
-  "recommended_activities": ["활동1 (150자: 시간+방법+효과+주의점)", "활동2", "활동3"],
-  "diet_advice": "식습관 조언 (350자) - 추천 음식 3개 + 피할 음식 2개 + 식사 시간표",
+  "overall_health": "📊 전반 분석\\n\\n현재 상태 요약 1문장.\\n\\n💡 원인 분석\\n• 포인트1\\n• 포인트2\\n\\n✨ 개선 방향\\n2주 실천 시 기대효과.",
+  "body_part_advice": "🎯 부위별 조언\\n\\n• 증상 원인: 간단 설명\\n• 관리법: 구체적 방법\\n• 예방법: 일상 팁",
+  "cautions": [
+    "⚠️ 주의1\\n\\n위험 상황 설명.\\n\\n💡 대처법: 구체적 방법",
+    "⚠️ 주의2\\n\\n설명.\\n\\n💡 대처법: 방법",
+    "⚠️ 주의3\\n\\n설명.\\n\\n💡 대처법: 방법"
+  ],
+  "recommended_activities": [
+    "🏃 활동1\\n\\n⏰ 시간: 오후 3시\\n⏱️ 시간: 15분\\n✨ 효과: 세로토닌 분비",
+    "🧘 활동2\\n\\n⏰ 시간: 저녁 9시\\n⏱️ 시간: 10분\\n✨ 효과: 수면 유도",
+    "🚶 활동3\\n\\n⏰ 시간: 아침 7시\\n⏱️ 시간: 20분\\n✨ 효과: 각성 효과"
+  ],
+  "element_foods": [
+    {"item": "음식명", "reason": "오행 기반 이유 (예: 수 기운 보충, 신장 강화)", "timing": "아침/점심/저녁/간식"},
+    {"item": "음식명2", "reason": "오행 기반 이유", "timing": "추천 시간"},
+    {"item": "음식명3", "reason": "오행 기반 이유", "timing": "추천 시간"}
+  ],
+  "diet_advice": "🍽️ 식습관 조언\\n\\n【추천】\\n• ①음식1: 효능 설명\\n• ②음식2: 효능 설명\\n• ③음식3: 효능 설명\\n\\n【피할 것】\\n• ①음식1: 이유\\n• ②음식2: 이유\\n\\n【식사 시간표】\\n• 아침 7:30 / 점심 12:30 / 저녁 18:30",
   "exercise_advice": {
-    "morning": { "time": "07:00", "title": "운동명", "description": "설명", "duration": "10분", "intensity": "가벼움|중간|높음", "tip": "팁" },
-    "afternoon": { "time": "17:30", "title": "운동명", "description": "설명", "duration": "30분", "intensity": "가벼움|중간|높음", "tip": "팁" },
+    "morning": { "time": "07:00", "title": "운동명", "description": "설명", "duration": "10분", "intensity": "가벼움|중간|높음", "tip": "💡 팁" },
+    "afternoon": { "time": "17:30", "title": "운동명", "description": "설명", "duration": "30분", "intensity": "가벼움|중간|높음", "tip": "💡 팁" },
     "weekly": { "summary": "주간 요약", "schedule": { "mon": "활동", "tue": "활동", "wed": "활동", "thu": "활동", "fri": "활동", "sat": "활동", "sun": "활동" } },
-    "overall_tip": "전체 조언"
+    "overall_tip": "💪 전체 조언 1문장"
   },
   "health_keyword": "오늘의 건강 키워드 2-3단어"
 }
@@ -264,35 +530,88 @@ ${healthAppSection}
 
 ## 각 필드 작성 기준 (상세)
 
-### 1. overall_health (전반적인 건강운) - 500자
-**구성**:
-- **첫 문단**: 현재 상태 진단 (수면/운동/스트레스/식사 점수 기반 분석)
-- **둘째 문단**: 가장 주의해야 할 점과 의학적 이유
-- **셋째 문단**: 개선 시 기대 효과 + 희망적 메시지
+### 1. overall_health (전반적인 건강운) - 가독성 중심
+**필수 형식** (줄바꿈 \\n\\n 필수!):
+\`\`\`
+📊 전반 건강 분석
 
-**예시**: "수면 품질 2점, 운동 빈도 4점으로 볼 때 현재 '운동은 열심히 하지만 회복이 안 되는' 전형적인 과훈련 패턴입니다. 수면 중 성장호르몬이 분비되어 근육 회복이 이뤄지는데, 현재 수면 부족으로 운동 효과의 40%만 얻고 있을 가능성이 높습니다. 22시 취침 + 6시간 이상 수면을 2주간 유지하면 같은 운동량으로도 근육통 감소, 체력 향상, 아침 컨디션 개선을 체감하실 수 있습니다."
+현재 수면의 질(2/5)과 식사 규칙성(2/5)이 낮아 전반적인 피로감(fatigue)을 유발하고 있습니다.
 
-### 2. body_part_advice (부위별 건강 조언) - 400자
-**구성**:
-- **증상 원인 분석**: 관심 부위와 현재 건강 상태 연결
-- **일상 관리법**: 스트레칭, 자세 교정, 찜질 등 바로 할 수 있는 방법
-- **장기적 예방법**: 습관 개선, 정기 검진 등
+💡 원인 분석
+• 수면 부족 → 성장호르몬 분비 저하 → 회복력 감소
+• 불규칙한 식사 → 혈당 변동 → 집중력 저하
 
-### 3. cautions (주의사항) - 각 150자
-**구성**: 구체적 위험 + 발생 조건 + 대처법
-**예시**: "오후 4시 이후 카페인 섭취 시 수면 잠복기가 평균 30분 늘어납니다. 커피가 필요하다면 점심 식후 1시까지만, 이후에는 따뜻한 보리차나 루이보스 티로 대체하세요. 이미 마셨다면 저녁 가벼운 산책으로 카페인 대사를 촉진할 수 있습니다."
+✨ 2주 실천 시 기대효과
+• 22시 취침 유지 → 아침 컨디션 30% 개선
+• 규칙적 식사 → 에너지 레벨 안정화
+\`\`\`
 
-### 4. recommended_activities (추천 활동) - 각 150자
-**구성**: 시간 + 방법 + 효과 + 주의점
-**예시**: "오후 3-4시 15분 야외 걷기: 햇볕이 세로토닌 분비를 촉진해 밤 수면 유도 호르몬(멜라토닌) 생성에 도움. 빠른 걷기가 아닌 대화 가능한 속도로, 가능하면 공원이나 나무 있는 곳. 비 오는 날은 실내 계단 오르기로 대체."
+**금지**: 줄바꿈 없이 긴 문장으로 이어쓰기
 
-### 5. diet_advice (식습관 조언) - 350자
-**구성**:
-- **추천 음식 3가지**: 음식명 + 효능 + 섭취 방법
-- **피해야 할 음식 2가지**: 음식명 + 피해야 하는 이유
-- **식사 시간표 예시**: 아침/점심/저녁 권장 시간
+### 2. body_part_advice (부위별 건강 조언) - 가독성 중심
+**필수 형식**:
+\`\`\`
+🎯 부위별 맞춤 조언
 
-**예시**: "【추천】 ①바나나: 트립토판이 수면 호르몬 생성 도움, 저녁 간식으로 ②시금치: 마그네슘 풍부해 근육 이완, 저녁 반찬 ③아몬드 10알: 멜라토닌 함유, 취침 2시간 전 【피할 것】 ①라면/짠 음식: 나트륨이 수분 배출해 야간 각성 유발 ②매운 음식: 위산 분비 증가로 숙면 방해 【시간표】 아침 7:30 / 점심 12:30 / 저녁 18:30 (취침 4시간 전 마무리)"
+피로감(fatigue)은 신체적, 정신적 스트레스, 수면 부족, 영양 불균형 등 다양한 원인에 의해 발생합니다.
+
+📌 일상 관리법
+• 취침 전 스마트폰 사용 자제
+• 미지근한 물로 샤워하여 몸 이완
+• 아침 기상 후 10분 스트레칭
+
+🛡️ 장기적 예방법
+• 규칙적인 수면 패턴 유지
+• 충분한 영양 섭취 + 스트레스 관리
+\`\`\`
+
+### 3. cautions (주의사항) - 가독성 중심
+**필수 형식** (각 항목에 줄바꿈 필수!):
+\`\`\`
+⚠️ 카페인 섭취 주의
+
+오후 4시 이후 카페인 섭취 시 수면 잠복기가 평균 30분 늘어납니다.
+
+💡 대처법
+• 점심 식후 1시까지만 커피
+• 이후에는 보리차/루이보스 티로 대체
+• 이미 마셨다면 가벼운 산책으로 카페인 대사 촉진
+\`\`\`
+
+### 4. recommended_activities (추천 활동) - 가독성 중심
+**필수 형식**:
+\`\`\`
+🚶 야외 걷기
+
+⏰ 시간: 오후 3-4시
+⏱️ 소요: 15분
+📍 장소: 공원, 나무 있는 곳
+
+✨ 효과
+• 햇볕 → 세로토닌 분비 촉진
+• 밤 수면 유도 호르몬(멜라토닌) 생성 도움
+
+💡 Tip: 빠른 걷기 ❌, 대화 가능한 속도 ✅
+\`\`\`
+
+### 5. diet_advice (식습관 조언) - 가독성 중심
+**필수 형식**:
+\`\`\`
+🍽️ 식습관 조언
+
+【추천】
+• ①바나나: 트립토판 → 수면 호르몬 생성, 저녁 간식
+• ②시금치: 마그네슘 → 근육 이완, 저녁 반찬
+• ③아몬드 10알: 멜라토닌 함유, 취침 2시간 전
+
+【피할 것】
+• ①라면/짠 음식: 나트륨 → 야간 각성 유발
+• ②매운 음식: 위산 분비 → 숙면 방해
+
+【식사 시간표】
+• 아침 7:30 / 점심 12:30 / 저녁 18:30
+• 취침 4시간 전 마무리
+\`\`\`
 
 ### 6. exercise_advice (운동 조언) - JSON 객체
 **구조** (반드시 아래 JSON 형식으로 반환):
@@ -342,11 +661,25 @@ ${healthAppSection}
 ---
 
 ## 중요 지침
+
+### 🎯 가독성 필수 (최우선!)
+- 모든 텍스트에 **줄바꿈(\\n\\n)** 필수! 긴 문장 한 덩어리 금지!
+- 핵심 포인트마다 **이모지** 사용 (📊💡✨⚠️💪🍽️)
+- **불릿 포인트(•)** 적극 활용
+- 1문장 = 1포인트 원칙
+
+### 📝 내용 작성
 - 모든 조언에 **구체적 숫자/시간/횟수** 포함 (예: "30분", "3회", "오후 4시")
 - **"왜"**를 반드시 설명 (의학적 근거 간단히)
 - **실천 가능한 액션** 위주로 작성 (바로 따라할 수 있게)
 - 막연한 표현 사용 금지: "좋습니다", "주의하세요", "건강합니다"
 - **희망적 메시지**로 마무리 (실천 시 기대 효과)
+
+### ❌ 금지 패턴 (반드시 피하기)
+- 줄바꿈 없이 500자 이상 이어쓰기
+- 이모지 없는 긴 텍스트 블록
+- 불릿 포인트 없이 나열
+
 - JSON만 반환 (마크다운 코드블록 없이)`
 
       const response = await llm.generate([
@@ -409,6 +742,13 @@ ${healthAppSection}
         ? exerciseAdvice.overall_tip
         : (typeof exerciseAdvice === 'string' ? exerciseAdvice : '규칙적인 운동을 하세요')
 
+      // ✅ 오행 기반 음식 추천 (LLM 응답 또는 기본값)
+      const elementFoods = parsedResponse.element_foods || (elementAnalysis ? [
+        { item: ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.foods[0] || '균형 잡힌 식단', reason: `${elementAnalysis.lacking} 기운 보충`, timing: '아침' },
+        { item: ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.foods[1] || '제철 음식', reason: `${elementAnalysis.lacking} 기운 보충`, timing: '점심' },
+        { item: ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.foods[2] || '가벼운 음식', reason: `${elementAnalysis.lacking} 기운 보충`, timing: '간식' }
+      ] : [])
+
       fortuneData = {
         // ✅ 표준화된 필드명: score, content, summary, advice
         fortuneType: 'health',
@@ -446,7 +786,17 @@ ${healthAppSection}
           sleep: health_app_data!.average_sleep_hours,
           heartRate: health_app_data!.average_heart_rate,
           weight: health_app_data!.weight_kg
-        } : null
+        } : null,
+        // ✅ 신규: 오행 기반 개인화 조언
+        element_advice: elementAnalysis ? {
+          lacking_element: elementAnalysis.lacking,
+          dominant_element: elementAnalysis.dominant,
+          vulnerable_organs: ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.organs || [],
+          vulnerable_symptoms: ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.symptoms || [],
+          recommended_foods: elementFoods
+        } : null,
+        // ✅ 신규: 이전 설문 비교 기반 개인화 피드백
+        personalized_feedback: personalizedFeedback
       }
 
       await supabase.from('fortune_cache').insert({

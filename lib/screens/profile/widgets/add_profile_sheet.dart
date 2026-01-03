@@ -22,12 +22,21 @@ class AddProfileSheet extends ConsumerStatefulWidget {
   /// 커스텀 서브타이틀 (기본: '가족이나 친구의 운세를 확인할 수 있어요')
   final String? subtitle;
 
+  /// 기본 관계 설정 (family/friend/lover/other)
+  final String? defaultRelationship;
+
+  /// 기본 가족 세부 관계 (parents/spouse/children/siblings)
+  /// defaultRelationship이 'family'일 때만 사용
+  final String? defaultFamilyRelation;
+
   const AddProfileSheet({
     super.key,
     this.initialName,
     this.initialBirthDate,
     this.title,
     this.subtitle,
+    this.defaultRelationship,
+    this.defaultFamilyRelation,
   });
 
   @override
@@ -41,6 +50,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
   String _gender = 'male';
   bool _isLunar = false;
   String _relationship = 'family';
+  String? _familyRelation; // 가족 세부 관계
   String? _mbti;
   String? _bloodType;
   bool _isLoading = false;
@@ -51,6 +61,14 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     {'value': 'friend', 'label': '친구', 'emoji': '👫'},
     {'value': 'lover', 'label': '애인', 'emoji': '💑'},
     {'value': 'other', 'label': '기타', 'emoji': '👤'},
+  ];
+
+  // 가족 세부 관계 옵션
+  static const List<Map<String, String>> _familyRelationOptions = [
+    {'value': 'parents', 'label': '부모님', 'emoji': '👴👵'},
+    {'value': 'spouse', 'label': '배우자', 'emoji': '💑'},
+    {'value': 'children', 'label': '자녀', 'emoji': '👶'},
+    {'value': 'siblings', 'label': '형제자매', 'emoji': '👫'},
   ];
 
   // MBTI 목록
@@ -72,6 +90,14 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     }
     if (widget.initialBirthDate != null) {
       _birthDate = widget.initialBirthDate;
+    }
+    // 기본 관계 설정
+    if (widget.defaultRelationship != null) {
+      _relationship = widget.defaultRelationship!;
+    }
+    // 기본 가족 세부 관계 설정
+    if (widget.defaultFamilyRelation != null) {
+      _familyRelation = widget.defaultFamilyRelation;
     }
   }
 
@@ -192,6 +218,14 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
               _buildRelationshipChips(colors),
               const SizedBox(height: 20),
 
+              // 가족 세부 관계 선택 (관계가 '가족'일 때만 표시)
+              if (_relationship == 'family') ...[
+                _buildSectionTitle('가족 구성원'),
+                const SizedBox(height: 12),
+                _buildFamilyRelationChips(colors),
+                const SizedBox(height: 20),
+              ],
+
               // 생년월일 선택
               _buildSectionTitle('생년월일'),
               const SizedBox(height: 8),
@@ -203,7 +237,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                   });
                 },
                 minDate: DateTime(1900),
-                maxDate: DateTime.now(),
+                // maxDate 미지정 → 2100년까지 허용 (출산 예정일 등)
                 showAge: true,
               ),
               const SizedBox(height: 8),
@@ -352,7 +386,33 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           isSelected: isSelected,
           onTap: () {
             HapticFeedback.lightImpact();
-            setState(() => _relationship = option['value']!);
+            setState(() {
+              _relationship = option['value']!;
+              // 가족이 아닌 경우 familyRelation 초기화
+              if (_relationship != 'family') {
+                _familyRelation = null;
+              }
+            });
+          },
+          colors: colors,
+        );
+      }).toList(),
+    );
+  }
+
+  /// 가족 세부 관계 선택 칩
+  Widget _buildFamilyRelationChips(DSColorScheme colors) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: _familyRelationOptions.map((option) {
+        final isSelected = _familyRelation == option['value'];
+        return _buildSelectionChip(
+          label: '${option['emoji']} ${option['label']}',
+          isSelected: isSelected,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            setState(() => _familyRelation = option['value']!);
           },
           colors: colors,
         );
@@ -563,6 +623,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                 gender: _gender,
                 isLunar: _isLunar,
                 relationship: _relationship,
+                familyRelation: _relationship == 'family' ? _familyRelation : null,
                 mbti: _mbti,
                 bloodType: _bloodType,
               );

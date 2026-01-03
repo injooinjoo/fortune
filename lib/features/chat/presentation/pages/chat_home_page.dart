@@ -7,7 +7,9 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/services/personality_dna_service.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../shared/components/profile_header_icon.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
@@ -32,6 +34,7 @@ import '../widgets/survey/fortune_type_chips.dart';
 import '../widgets/survey/chat_survey_chips.dart';
 import '../widgets/survey/chat_image_input.dart';
 import '../widgets/survey/chat_profile_selector.dart';
+import '../widgets/survey/chat_family_profile_selector.dart';
 import '../widgets/survey/chat_pet_profile_selector.dart';
 import '../widgets/survey/chat_date_picker.dart';
 import '../widgets/survey/chat_inline_calendar.dart';
@@ -65,6 +68,7 @@ import '../../../../core/services/unified_calendar_service.dart';
 import '../../../fortune/presentation/widgets/floating_dream_topics_widget.dart';
 import '../../../../data/dream_interpretations.dart';
 import '../../../interactive/presentation/widgets/cookie_shard_break_widget.dart';
+import '../../../../core/services/talisman_generation_service.dart';
 
 /// Chat-First 메인 홈 페이지
 class ChatHomePage extends ConsumerStatefulWidget {
@@ -487,6 +491,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       final cookieResult = await FortuneCookieGenerator.getTodayFortuneCookie();
       final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
 
+      // 모든 쿠키 데이터 포함
       final fortune = Fortune(
         id: 'fortune-cookie-${DateTime.now().toIso8601String().split('T')[0]}',
         userId: userId,
@@ -495,13 +500,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         createdAt: DateTime.now(),
         overallScore: cookieResult.score,
         luckyItems: {
+          'cookie_type': cookieResult.data['cookie_type'],
           'lucky_number': cookieResult.data['lucky_number'],
           'lucky_color': cookieResult.data['lucky_color'],
+          'lucky_color_hex': cookieResult.data['lucky_color_hex'],
+          'lucky_time': cookieResult.data['lucky_time'],
+          'lucky_direction': cookieResult.data['lucky_direction'],
+          'action_mission': cookieResult.data['action_mission'],
           'emoji': cookieResult.data['emoji'],
         },
       );
 
-      // 결과 메시지 추가
+      // 결과 메시지 추가 (포춘쿠키 전용 카드로 표시됨)
       chatNotifier.addFortuneResultMessage(
         text: '오늘의 메시지',
         fortuneType: 'fortune-cookie',
@@ -1117,10 +1127,24 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     _handleSurveyAnswerValue(text.trim(), text.trim());
   }
 
+  /// 감사일기 리액션 메시지 풀
+  static const _gratitudeReactions = [
+    '와, 정말 멋진 일이네요! 💛',
+    '듣기만 해도 제 마음이 다 따뜻해져요 🥰',
+    '그런 순간이 있었군요, 정말 소중하네요 ✨',
+    '일상 속 작은 행복을 발견하셨네요 🌸',
+  ];
+
   /// 범용 설문 답변 처리 (옵션 외 입력: 텍스트, 날짜, 슬라이더 등)
   void _handleSurveyAnswerValue(dynamic value, String displayText) {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
     final surveyNotifier = ref.read(chatSurveyProvider.notifier);
+
+    // 현재 설문 상태 확인 (답변 처리 전)
+    final beforeState = ref.read(chatSurveyProvider);
+    final isGratitude = beforeState.activeProgress?.config.fortuneType ==
+        FortuneSurveyType.gratitude;
+    final gratitudeStepIndex = beforeState.activeProgress?.currentStepIndex ?? 0;
 
     // 사용자 답변 메시지
     chatNotifier.addUserMessage(displayText);
@@ -1129,18 +1153,47 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 답변 처리
     surveyNotifier.answerCurrentStep(value);
 
-    // 다음 질문 또는 완료 처리
-    Future.delayed(const Duration(milliseconds: 300), () {
-      final surveyState = ref.read(chatSurveyProvider);
-
-      if (surveyState.isCompleted) {
-        _handleSurveyComplete(surveyState);
-      } else if (surveyState.activeProgress != null) {
-        final question = _buildDynamicQuestion(surveyState.activeProgress!);
-        chatNotifier.addAiMessage(question);
+    // 감사일기인 경우 리액션 추가
+    if (isGratitude && gratitudeStepIndex < 2) {
+      // 아직 완료되지 않은 경우에만 리액션 표시
+      Future.delayed(const Duration(milliseconds: 300), () {
+        // 랜덤 리액션 선택
+        final reaction = _gratitudeReactions[gratitudeStepIndex % _gratitudeReactions.length];
+        chatNotifier.addAiMessage(reaction);
         _scrollToBottom();
-      }
-    });
+
+        // 다음 질문 표시
+        Future.delayed(const Duration(milliseconds: 500), () {
+          final surveyState = ref.read(chatSurveyProvider);
+          if (surveyState.activeProgress != null && !surveyState.isCompleted) {
+            final question = _buildDynamicQuestion(surveyState.activeProgress!);
+            chatNotifier.addAiMessage(question);
+            _scrollToBottom();
+          }
+        });
+      });
+    } else if (isGratitude && gratitudeStepIndex == 2) {
+      // 마지막 답변 후 완료 처리
+      Future.delayed(const Duration(milliseconds: 300), () {
+        final surveyState = ref.read(chatSurveyProvider);
+        if (surveyState.isCompleted) {
+          _handleSurveyComplete(surveyState);
+        }
+      });
+    } else {
+      // 일반 설문 처리
+      Future.delayed(const Duration(milliseconds: 300), () {
+        final surveyState = ref.read(chatSurveyProvider);
+
+        if (surveyState.isCompleted) {
+          _handleSurveyComplete(surveyState);
+        } else if (surveyState.activeProgress != null) {
+          final question = _buildDynamicQuestion(surveyState.activeProgress!);
+          chatNotifier.addAiMessage(question);
+          _scrollToBottom();
+        }
+      });
+    }
   }
 
   /// 관계 깊이 값 매핑 (Flutter → Edge Function)
@@ -1316,6 +1369,20 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 감사일기 특별 처리 (API 호출 없이 로컬 표시)
     if (completedType == FortuneSurveyType.gratitude) {
       _handleGratitudeComplete(completedData);
+      surveyNotifier.clearCompleted();
+      return;
+    }
+
+    // 성격 DNA 특별 처리 (PersonalityDNAService 사용)
+    if (completedType == FortuneSurveyType.personalityDna) {
+      _handlePersonalityDnaComplete(completedData);
+      surveyNotifier.clearCompleted();
+      return;
+    }
+
+    // 부적 특별 처리 (TalismanGenerationService 사용 - 이미지 생성)
+    if (completedType == FortuneSurveyType.talisman) {
+      _handleTalismanComplete(completedData);
       surveyNotifier.clearCompleted();
       return;
     }
@@ -1531,7 +1598,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     });
   }
 
-  /// 감사일기 완료 처리 (API 호출 없이 로컬 표시)
+  /// 감사일기 완료 처리 (API 호출 없이 로컬 표시 - 일기장 스타일 카드)
   void _handleGratitudeComplete(Map<String, dynamic> data) {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
 
@@ -1539,18 +1606,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final gratitude2 = data['gratitude2'] as String? ?? '';
     final gratitude3 = data['gratitude3'] as String? ?? '';
 
-    chatNotifier.showTypingIndicator();
+    // 마지막 답변에 대한 리액션 표시
+    chatNotifier.addAiMessage('그런 순간이 있었군요, 정말 소중하네요 ✨');
     _scrollToBottom();
 
+    chatNotifier.showTypingIndicator();
+
     Future.delayed(const Duration(milliseconds: 500), () {
-      final today = DateFormat('M월 d일').format(DateTime.now());
-      chatNotifier.addAiMessage(
-        '✨ $today의 감사일기\n\n'
-        '1. $gratitude1\n'
-        '2. $gratitude2\n'
-        '3. $gratitude3\n\n'
-        '오늘도 감사한 마음으로 하루를 보내셨네요! 💛\n'
-        '작은 것에 감사하는 습관이 행복을 키워줘요.',
+      // 일기장 스타일 결과 카드 표시
+      chatNotifier.addGratitudeResultMessage(
+        gratitude1: gratitude1,
+        gratitude2: gratitude2,
+        gratitude3: gratitude3,
       );
       _scrollToBottom();
 
@@ -1559,6 +1626,98 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         chatNotifier.addSystemMessage();
       });
     });
+  }
+
+  /// 성격 DNA 완료 처리
+  void _handlePersonalityDnaComplete(Map<String, dynamic> data) async {
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
+    final userProfileAsync = ref.read(userProfileNotifierProvider);
+    final userProfile = userProfileAsync.valueOrNull;
+    final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+    final userName = userProfile?.name ?? '사용자';
+
+    // 설문 답변 또는 프로필 기본값 사용
+    final mbti = data['mbti'] as String? ?? userProfile?.mbtiType ?? 'INFP';
+    final bloodType = data['bloodType'] as String? ?? userProfile?.bloodType ?? 'O';
+    final zodiac = data['zodiac'] as String? ?? userProfile?.zodiacSign ?? '물병자리';
+    final zodiacAnimal = data['zodiacAnimal'] as String? ?? userProfile?.chineseZodiac ?? '용';
+
+    chatNotifier.showTypingIndicator();
+    _scrollToBottom();
+
+    try {
+      final dna = await PersonalityDNAService.generateDNA(
+        userId: userId,
+        name: userName,
+        mbti: mbti,
+        bloodType: bloodType,
+        zodiac: zodiac,
+        zodiacAnimal: zodiacAnimal,
+      );
+
+      // 프리미엄 상태 확인
+      final isPremium = ref.read(isPremiumProvider);
+
+      // 결과 메시지 추가
+      chatNotifier.addPersonalityDnaResult(
+        dna: dna,
+        isBlurred: !isPremium,
+      );
+      _scrollToBottom();
+
+      // 완료 후 추천 칩 표시
+      Future.delayed(const Duration(milliseconds: 500), () {
+        chatNotifier.addSystemMessage();
+      });
+    } catch (e) {
+      Logger.error('[ChatHomePage] PersonalityDNA generation failed', {'error': e});
+      chatNotifier.addAiMessage(
+        '😢 성격 DNA 분석 중 문제가 발생했어요.\n잠시 후 다시 시도해주세요.',
+      );
+      _scrollToBottom();
+    }
+  }
+
+  /// 부적 생성 완료 처리 (TalismanGenerationService 사용)
+  void _handleTalismanComplete(Map<String, dynamic> data) async {
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
+
+    // 설문 답변에서 카테고리 추출 (survey option id가 TalismanCategory.id와 일치)
+    final purposeId = data['purpose'] as String? ?? 'wealth_career';
+    final category = TalismanCategory.fromId(purposeId) ?? TalismanCategory.wealthCareer;
+
+    chatNotifier.showTypingIndicator();
+    _scrollToBottom();
+
+    try {
+      final service = TalismanGenerationService();
+      final result = await service.generateTalisman(
+        category: category,
+      );
+
+      // 프리미엄 상태 확인
+      final isPremium = ref.read(isPremiumProvider);
+
+      // 결과 메시지 추가 (이미지 URL + 짧은 설명)
+      chatNotifier.addTalismanResult(
+        imageUrl: result.imageUrl,
+        categoryName: result.categoryName,
+        shortDescription: result.shortDescription,
+        isBlurred: !isPremium,
+      );
+      _scrollToBottom();
+
+      // 완료 후 추천 칩 표시
+      Future.delayed(const Duration(milliseconds: 500), () {
+        chatNotifier.addSystemMessage();
+      });
+    } catch (e) {
+      Logger.error('[ChatHomePage] Talisman generation failed', {'error': e});
+      chatNotifier.addAiMessage(
+        '😢 부적 생성 중 문제가 발생했어요.\n잠시 후 다시 시도해주세요.',
+      );
+      _scrollToBottom();
+    }
   }
 
   /// 프로필 생성 완료 처리
@@ -1726,6 +1885,84 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       'birthTime': profile.birthTime,
       'gender': profile.gender,
       'isLunar': profile.isLunar,
+    }, displayText);
+  }
+
+  /// 가족 프로필 선택 처리 (가족운용)
+  void _handleFamilyProfileSelect(SecondaryProfile? profile, String familyRelation) async {
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
+
+    // 가족 관계 한글 이름
+    String familyRelationText;
+    switch (familyRelation) {
+      case 'parents':
+        familyRelationText = '부모님';
+        break;
+      case 'spouse':
+        familyRelationText = '배우자';
+        break;
+      case 'children':
+        familyRelationText = '자녀';
+        break;
+      case 'siblings':
+        familyRelationText = '형제자매';
+        break;
+      default:
+        familyRelationText = '가족';
+    }
+
+    if (profile == null) {
+      // 새로 등록하기 선택 → AddProfileSheet 바텀시트 표시
+      chatNotifier.addUserMessage('$familyRelationText 정보를 새로 등록할게요');
+      _scrollToBottom();
+
+      // AddProfileSheet 바텀시트 표시
+      final result = await showModalBottomSheet<SecondaryProfile>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => AddProfileSheet(
+          defaultRelationship: 'family',
+          defaultFamilyRelation: familyRelation,
+        ),
+      );
+
+      // 프로필 생성 완료 시 자동으로 진행
+      if (result != null && mounted) {
+        chatNotifier.addAiMessage('${result.name}님 정보를 저장했어요! 👨‍👩‍👧‍👦');
+        _scrollToBottom();
+
+        // 생성된 프로필로 진행
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            _handleSurveyAnswerValue({
+              'id': result.id,
+              'name': result.name,
+              'birthDate': result.birthDate,
+              'birthTime': result.birthTime,
+              'gender': result.gender,
+              'isLunar': result.isLunar,
+              'familyRelation': familyRelation,
+            }, '${result.name} ($familyRelationText)');
+          }
+        });
+      } else if (mounted) {
+        chatNotifier.addAiMessage('등록을 취소했어요. 다시 시도하시려면 말씀해주세요!');
+        _scrollToBottom();
+      }
+      return;
+    }
+
+    // 기존 프로필 선택
+    final displayText = '${profile.name} ($familyRelationText)';
+    _handleSurveyAnswerValue({
+      'id': profile.id,
+      'name': profile.name,
+      'birthDate': profile.birthDate,
+      'birthTime': profile.birthTime,
+      'gender': profile.gender,
+      'isLunar': profile.isLunar,
+      'familyRelation': familyRelation,
     }, displayText);
   }
 
@@ -1906,7 +2143,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       '자녀' || 'children' || '아이' || '육아' => 'children',
       '관계' || 'relationship' || '소통' => 'relationship',
       '변화' || 'change' || '이사' || '전환' => 'change',
-      _ => 'all', // default - 종합 운세
+      _ => 'health', // default - 건강운 (fortune-family-all 없음)
     };
   }
 
@@ -2678,18 +2915,42 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // ============================================================
       case FortuneSurveyType.exercise:
         // Survey step ids: 'goal', 'intensity'
-        // Edge Function: fortune-health with exercise_focus
-        final exerciseGoal = answers['goal'] ?? 'health';
-        final exerciseIntensity = answers['intensity'] ?? 'moderate';
+        // Edge Function: fortune-exercise (전용 운동 가이드)
+        final surveyGoal = answers['goal'] ?? 'health';
+        final surveyIntensity = answers['intensity'] ?? 'moderate';
+
+        // 설문 goal → API exerciseGoal 매핑
+        final exerciseGoalMap = {
+          'weight': 'diet',
+          'muscle': 'strength',
+          'health': 'endurance',
+          'stress': 'stress_relief',
+          'flexibility': 'flexibility',
+        };
+
+        // 설문 intensity → experienceLevel/fitnessLevel 매핑
+        final experienceLevelMap = {
+          'light': 'beginner',
+          'moderate': 'intermediate',
+          'intense': 'advanced',
+        };
+        final fitnessLevelMap = {
+          'light': 2,
+          'moderate': 3,
+          'intense': 4,
+        };
+
         return apiService.getFortune(
           userId: userId,
-          fortuneType: 'health',
+          fortuneType: 'exercise',
           params: {
-            'current_condition': 'normal',
-            'concerned_body_parts': ['전체'],
-            'exercise_focus': true,
-            'exercise_goal': exerciseGoal,
-            'exercise_intensity': exerciseIntensity,
+            'exerciseGoal': exerciseGoalMap[surveyGoal] ?? 'endurance',
+            'sportType': 'gym', // 채팅에서는 기본 헬스 추천
+            'weeklyFrequency': 3,
+            'experienceLevel': experienceLevelMap[surveyIntensity] ?? 'intermediate',
+            'fitnessLevel': fitnessLevelMap[surveyIntensity] ?? 3,
+            'injuryHistory': <String>['none'],
+            'preferredTime': 'evening',
           },
         );
 
@@ -2797,18 +3058,31 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case FortuneSurveyType.family:
-        // 통합 가족 운세 Edge Function 사용 (fortune-family)
-        // Survey step ids: 'concern', 'member'
-        final familyConcern = answers['concern'] ?? 'all';
+        // 개별 가족 운세 Edge Function 사용 (fortune-family-{type})
+        // Survey step ids: 'concern', 'member', 'familyProfile'
+        final familyConcern = answers['concern'] ?? 'health';
         final familyType = _getFamilyType(familyConcern);
+
+        // 가족 구성원 프로필 데이터 (familyProfile 단계에서 수집)
+        final familyProfileData = answers['familyProfile'] as Map<String, dynamic>?;
+
         return apiService.getFortune(
           userId: userId,
-          fortuneType: 'family',
+          fortuneType: 'family-$familyType', // fortune-family-health, fortune-family-wealth 등
           params: {
             'name': userName,
             'birthDate': birthDateStr,
             'family_type': familyType,
             'relationship': answers['member'] ?? 'all',
+            // 가족 구성원 정보 추가
+            if (familyProfileData != null) 'familyMember': {
+              'name': familyProfileData['name'],
+              'birthDate': familyProfileData['birthDate'],
+              'birthTime': familyProfileData['birthTime'],
+              'gender': familyProfileData['gender'],
+              'isLunar': familyProfileData['isLunar'] ?? false,
+              'relation': familyProfileData['familyRelation'],
+            },
           },
         );
 
@@ -2824,6 +3098,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'babyGender': answers['gender'] ?? 'unknown',
             'familyName': answers['lastName'] ?? '김',
             'nameStyle': answers['style'] ?? 'modern',
+          },
+        );
+
+      case FortuneSurveyType.babyNickname:
+        // Edge Function 요구: userId, nickname, babyDream (optional)
+        // Survey step ids: 'nickname', 'babyDream'
+        return apiService.getFortune(
+          userId: userId,
+          fortuneType: 'baby-nickname',
+          params: {
+            'nickname': answers['nickname'] ?? '',
+            'babyDream': answers['babyDream'],
           },
         );
 
@@ -3080,6 +3366,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return '오늘의 가족운';
       case FortuneSurveyType.naming:
         return '오늘의 이름운';
+      case FortuneSurveyType.babyNickname:
+        return '태명 이야기';
       case FortuneSurveyType.ootdEvaluation:
         return '오늘의 OOTD';
       case FortuneSurveyType.talisman:
@@ -3087,7 +3375,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case FortuneSurveyType.exam:
         return '오늘의 시험운';
       case FortuneSurveyType.moving:
-        return '오늘의 이직운';
+        return '오늘의 이사운';
       case FortuneSurveyType.profileCreation:
         return '프로필 생성';
       case FortuneSurveyType.gratitude:
@@ -3109,7 +3397,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case FortuneSurveyType.tarot:
         return 'tarot';
       case FortuneSurveyType.mbti:
-        return 'personality';
+        return 'mbti';
       case FortuneSurveyType.newYear:
         return 'newYear';
       case FortuneSurveyType.dailyCalendar:
@@ -3158,6 +3446,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return 'family';
       case FortuneSurveyType.naming:
         return 'naming';
+      case FortuneSurveyType.babyNickname:
+        return 'baby-nickname';
       case FortuneSurveyType.ootdEvaluation:
         return 'ootd-evaluation';
       case FortuneSurveyType.talisman:
@@ -3269,6 +3559,23 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             });
             return const SizedBox.shrink();
           },
+        );
+
+      case SurveyInputType.familyProfile:
+        // 가족 프로필 선택 (가족운)
+        // 이전 단계에서 선택한 member 값을 가져옴
+        final selectedMember = surveyState.activeProgress?.answers['member'] as String?;
+        if (selectedMember == null || selectedMember == 'all') {
+          // 가족 전체 선택 시 이 단계 스킵
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _handleSurveyAnswerValue(null, '가족 전체');
+          });
+          return const SizedBox.shrink();
+        }
+        return ChatFamilyProfileSelector(
+          familyRelation: selectedMember,
+          onSelect: (profile) => _handleFamilyProfileSelect(profile, selectedMember),
+          hintText: currentStep.question,
         );
 
       case SurveyInputType.petProfile:

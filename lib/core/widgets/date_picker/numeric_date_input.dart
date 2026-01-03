@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/fortune_design_system.dart';
 import '../../design_system/design_system.dart';
-import '../../theme/app_spacing.dart';
-import '../../theme/app_dimensions.dart';
 import 'date_picker_utils.dart';
 
 /// 📅 숫자 키패드 날짜 입력 (YYYYMMDD 방식)
@@ -139,14 +136,15 @@ class _NumericDateInputState extends State<NumericDateInput> {
 
       final date = DateTime(year, month, day);
 
-      // 범위 체크
+      // 범위 체크 (maxDate 미설정 시 2100년까지 허용)
+      final effectiveMaxDate = widget.maxDate ?? DateTime(2100, 12, 31);
       if (!DatePickerUtils.isInRange(
         date,
         minDate: widget.minDate,
-        maxDate: widget.maxDate,
+        maxDate: effectiveMaxDate,
       )) {
         final minYear = widget.minDate?.year ?? 1900;
-        final maxYear = widget.maxDate?.year ?? DateTime.now().year;
+        final maxYear = effectiveMaxDate.year;
         setState(() {
           _errorMessage = '$minYear년 ~ $maxYear년 사이 날짜를 입력해주세요';
         });
@@ -200,20 +198,6 @@ class _NumericDateInputState extends State<NumericDateInput> {
     _validateAndNotify();
   }
 
-  /// 커서 위치 계산 (입력 위치 표시)
-  String _getPlaceholder() {
-    final length = _rawInput.length;
-
-    if (length == 0) return 'YYYY년 MM월 DD일';
-    if (length < 4) return '${_rawInput}_년 MM월 DD일';
-    if (length == 4) return '${_rawInput.substring(0, 4)}년 MM월 DD일';
-    if (length < 6) return '${_rawInput.substring(0, 4)}년 ${_rawInput.substring(4)}_월 DD일';
-    if (length == 6) return '${_rawInput.substring(0, 4)}년 ${_rawInput.substring(4, 6)}월 DD일';
-    if (length < 8) return '${_rawInput.substring(0, 4)}년 ${_rawInput.substring(4, 6)}월 ${_rawInput.substring(6)}_일';
-
-    return _formatDisplay(_rawInput);
-  }
-
   int? _calculateAge() {
     if (!widget.showAge) return null;
     if (_rawInput.length != 8) return null;
@@ -231,162 +215,117 @@ class _NumericDateInputState extends State<NumericDateInput> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final age = _calculateAge();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // 라벨 (외부에서 제공 시)
         if (widget.label != null)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.small),
+            padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               widget.label!,
-              style: DSTypography.labelMedium.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textSecondaryDark
-                    : TossDesignSystem.textSecondaryLight,
+              style: context.typography.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colors.textPrimary,
               ),
             ),
           ),
 
-        // 입력 필드
-        Container(
-          padding: AppSpacing.paddingAll16,
-          decoration: BoxDecoration(
-            color: isDark
-                ? TossDesignSystem.grayDark800
-                : TossDesignSystem.gray50,
-            borderRadius: AppDimensions.borderRadiusLarge,
-            border: Border.all(
-              color: _errorMessage != null
-                  ? TossDesignSystem.errorRed
-                  : (isDark
-                      ? TossDesignSystem.borderDark
-                      : TossDesignSystem.borderLight),
-              width: _errorMessage != null ? 2 : 1,
+        // 입력 필드 - TextField와 동일한 스타일
+        TextField(
+          controller: _controller,
+          focusNode: _focusNode,
+          keyboardType: TextInputType.number,
+          style: context.typography.bodyLarge.copyWith(
+            color: colors.textPrimary,
+          ),
+          decoration: InputDecoration(
+            hintText: widget.hintText ?? 'YYYY년 MM월 DD일',
+            hintStyle: context.typography.bodyMedium.copyWith(
+              color: colors.textSecondary,
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.edit_calendar_outlined,
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.tossBlue,
-                    size: 20,
-                  ),
-                  const SizedBox(width: AppSpacing.spacing3),
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      keyboardType: TextInputType.number,
-                      // inputFormatters 제거 - _handleInput에서 숫자 필터링 및 길이 제한 처리
-                      style: DSTypography.bodyLarge.copyWith(
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.2,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: widget.hintText ?? 'YYYY년 MM월 DD일',
-                        hintStyle: DSTypography.bodyLarge.copyWith(
-                          color: isDark
-                              ? TossDesignSystem.textSecondaryDark
-                              : TossDesignSystem.textSecondaryLight,
-                        ),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      onChanged: _handleInput,
-                    ),
-                  ),
-                  if (_rawInput.isNotEmpty)
-                    IconButton(
-                      icon: Icon(
-                        Icons.clear,
-                        color: isDark
-                            ? TossDesignSystem.textSecondaryDark
-                            : TossDesignSystem.textSecondaryLight,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _rawInput = '';
-                          _controller.clear();
-                          _errorMessage = null;
-                        });
-                      },
-                    ),
-                ],
+            filled: true,
+            fillColor: colors.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: _errorMessage != null
+                    ? colors.error.withValues(alpha: 0.6)
+                    : colors.border,
               ),
-
-              // 입력 가이드 (플레이스홀더)
-              if (_rawInput.isNotEmpty && _rawInput.length < 8)
-                Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.spacing2),
-                  child: Text(
-                    _getPlaceholder(),
-                    style: DSTypography.bodySmall.copyWith(
-                      color: isDark
-                          ? TossDesignSystem.textSecondaryDark.withValues(alpha: 0.5)
-                          : TossDesignSystem.textSecondaryLight.withValues(alpha: 0.5),
-                      letterSpacing: 1.2,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: _errorMessage != null
+                    ? colors.error
+                    : Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+            suffixIcon: _rawInput.isNotEmpty
+                ? IconButton(
+                    icon: Icon(
+                      Icons.clear,
+                      color: colors.textSecondary,
+                      size: 20,
                     ),
-                  ),
-                ),
-
-              // 나이 표시
-              if (age != null && age >= 0 && _errorMessage == null)
-                Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.spacing2),
-                  child: Text(
-                    '만 $age세',
-                    style: DSTypography.bodyMedium.copyWith(
-                      color: TossDesignSystem.tossBlue,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-            ],
+                    onPressed: () {
+                      setState(() {
+                        _rawInput = '';
+                        _controller.clear();
+                        _errorMessage = null;
+                      });
+                    },
+                  )
+                : null,
           ),
+          onChanged: _handleInput,
         ),
+
+        // 나이 표시
+        if (age != null && age >= 0 && _errorMessage == null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              '만 $age세',
+              style: context.typography.bodyMedium.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
 
         // 에러 메시지
         if (_errorMessage != null)
           Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.spacing2),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.error_outline,
-                  color: TossDesignSystem.errorRed,
-                  size: 16,
-                ),
-                const SizedBox(width: AppSpacing.spacing1),
-                Text(
-                  _errorMessage!,
-                  style: DSTypography.bodySmall.copyWith(
-                    color: TossDesignSystem.errorRed,
-                  ),
-                ),
-              ],
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              _errorMessage!,
+              style: context.typography.bodySmall.copyWith(
+                color: colors.error,
+              ),
             ),
           ),
 
         // 입력 도움말
         if (_errorMessage == null && _rawInput.isEmpty)
           Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.spacing2),
+            padding: const EdgeInsets.only(top: 8),
             child: Text(
               '예: 20001121 → 2000년 11월 21일',
-              style: DSTypography.bodySmall.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textSecondaryDark
-                    : TossDesignSystem.textSecondaryLight,
+              style: context.typography.bodySmall.copyWith(
+                color: colors.textSecondary,
               ),
             ),
           ),

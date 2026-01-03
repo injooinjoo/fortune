@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/logger.dart';
@@ -23,10 +24,12 @@ import 'fortune_generators/lucky_items_generator.dart';
 import 'fortune_generators/love_generator.dart'; // ✅ 추가
 import 'fortune_generators/talent_generator.dart'; // ✅ 재능 발견 추가
 import 'fortune_generators/traditional_saju_generator.dart'; // ✅ 전통사주 추가
+import 'fortune_generators/exercise_generator.dart'; // ✅ 운동운세 추가
 import 'fortune_optimization_service.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
 import '../../features/fortune/domain/models/conditions/love_fortune_conditions.dart'; // ✅ 추가
 import '../../features/fortune/domain/models/conditions/health_fortune_conditions.dart'; // ✅ 건강운세 추가
+import '../../features/fortune/domain/models/conditions/exercise_fortune_conditions.dart'; // ✅ 운동운세 추가
 
 /// 통합 운세 서비스 (최적화 시스템 통합)
 ///
@@ -297,6 +300,7 @@ class UnifiedFortuneService {
       'love': '연애 분석',
       'career': '직장 분석',
       'health': '건강 체크',
+      'exercise': '오늘의 운동',
       'investment': '투자 인사이트',
       'exam': '시험 가이드',
       'talent': '재능 발견',
@@ -308,6 +312,9 @@ class UnifiedFortuneService {
       'lucky-series': '럭키 시리즈',
       'fortune-celebrity': '연예인 분석',
       'fortune-pet': '반려동물 가이드',
+      'baby-nickname': '태명 이야기',
+      'baby_nickname': '태명 이야기',
+      'babyNickname': '태명 이야기',
     };
     return titles[fortuneType] ?? '분석 결과';
   }
@@ -516,6 +523,14 @@ class UnifiedFortuneService {
             isPremium: isPremium,
           );
 
+        case 'exercise':
+          final exerciseIsPremium = inputConditions['isPremium'] as bool? ?? false;
+          return await ExerciseGenerator.generate(
+            conditions: ExerciseFortuneConditions.fromInputData(inputConditions),
+            supabase: _supabase,
+            isPremium: exerciseIsPremium,
+          );
+
         // ✅ 가족운세 (5가지 concern)
         case 'family-health':
         case 'family-wealth':
@@ -538,6 +553,9 @@ class UnifiedFortuneService {
                   .maybeSingle()
               : null;
 
+          // 가족 구성원 정보 (선택된 프로필)
+          final familyMemberData = inputConditions['familyMember'] as Map<String, dynamic>?;
+
           final familyPayload = {
             ...inputConditions,
             'userId': familyUser?.id ?? 'anonymous',
@@ -546,6 +564,8 @@ class UnifiedFortuneService {
             'birthTime': familyUserProfile?['birth_time'],
             'gender': familyUserProfile?['gender'],
             'isPremium': familyIsPremium,
+            // 가족 구성원 정보 추가
+            if (familyMemberData != null) 'familyMember': familyMemberData,
           };
 
           Logger.info('[UnifiedFortune] 가족운세 API 호출: $endpoint');
@@ -793,6 +813,7 @@ class UnifiedFortuneService {
         case 'celebrity':
         case 'fortune-celebrity':
           // Celebrity Fortune Edge Function 직접 호출
+          // 60초 타임아웃 (LLM 상세 콘텐츠 생성에 시간 소요)
           Logger.info('[UnifiedFortune] 🔄 Celebrity Fortune API 호출 시작');
           Logger.info('[UnifiedFortune] 📋 Request Body: ${jsonEncode(inputConditions)}');
 
@@ -814,6 +835,12 @@ class UnifiedFortuneService {
             final celebrityResponse = await _supabase.functions.invoke(
               'fortune-celebrity',
               body: celebrityPayload,
+            ).timeout(
+              const Duration(seconds: 60),
+              onTimeout: () {
+                Logger.warning('[UnifiedFortune] ⚠️ Celebrity Fortune API 60초 타임아웃');
+                throw TimeoutException('Celebrity Fortune API 요청 시간 초과 (60초)');
+              },
             );
 
             if (celebrityResponse.data == null) {
@@ -841,6 +868,53 @@ class UnifiedFortuneService {
             }
           } on FunctionException catch (e) {
             Logger.error('[UnifiedFortune] ❌ Celebrity Fortune API 에러');
+            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
+            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
+            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
+            rethrow;
+          }
+
+        case 'baby_nickname':
+        case 'baby-nickname':
+        case 'babyNickname':
+          // Baby Nickname (태명) Edge Function 직접 호출
+          final babyNicknameUser = _supabase.auth.currentUser;
+          final babyNicknamePayload = {
+            'userId': babyNicknameUser?.id ?? 'anonymous',
+            'nickname': inputConditions['nickname'],
+            if (inputConditions['babyDream'] != null)
+              'babyDream': inputConditions['babyDream'],
+          };
+
+          try {
+            final babyNicknameResponse = await _supabase.functions.invoke(
+              'fortune-baby-nickname',
+              body: babyNicknamePayload,
+            );
+
+            if (babyNicknameResponse.data == null) {
+              throw Exception('Baby Nickname API 응답 데이터 없음');
+            }
+
+            final babyNicknameResponseData = babyNicknameResponse.data as Map<String, dynamic>;
+            if (babyNicknameResponseData['success'] == true && babyNicknameResponseData.containsKey('data')) {
+              final babyNicknameData = babyNicknameResponseData['data'] as Map<String, dynamic>;
+              Logger.info('[UnifiedFortune] ✅ Baby Nickname API 호출 성공');
+
+              return FortuneResult(
+                type: 'baby-nickname',
+                title: '태명 이야기 - ${babyNicknamePayload['nickname']}',
+                summary: {'message': babyNicknameData['babyMessage'] as String? ?? '아기가 메시지를 전해요'},
+                data: babyNicknameData,
+                createdAt: DateTime.now(),
+                isBlurred: babyNicknameData['isBlurred'] as bool? ?? false,
+                blurredSections: List<String>.from(babyNicknameData['blurredSections'] ?? []),
+              );
+            } else {
+              throw Exception('Baby Nickname API 응답 형식 오류');
+            }
+          } on FunctionException catch (e) {
+            Logger.error('[UnifiedFortune] ❌ Baby Nickname API 에러');
             Logger.error('[UnifiedFortune]   - Status: ${e.status}');
             Logger.error('[UnifiedFortune]   - Details: ${e.details}');
             Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
@@ -1069,6 +1143,10 @@ class UnifiedFortuneService {
         ];
       case 'health':
         return ['health_advice', 'precautions', 'wellness_tips'];
+      case 'exercise':
+        // 무료: recommendedExercise (추천 운동)
+        // 프리미엄: todayRoutine, weeklyPlan, injuryPrevention
+        return ['todayRoutine', 'weeklyPlan', 'injuryPrevention'];
       // ✅ 가족운세 블러 섹션
       case 'family-health':
       case 'family-wealth':
@@ -1100,6 +1178,13 @@ class UnifiedFortuneService {
           'career_fortune',     // 직업운
           'health_fortune',     // 건강운
         ];
+      case 'baby-nickname':
+      case 'baby_nickname':
+      case 'babyNickname':
+        // ✅ 태명 분석 블러 섹션
+        // 무료: 아기 메시지 일부
+        // 블러: 오늘의 태담 미션, 태몽 해석
+        return ['todayMission', 'dreamInterpretation'];
       default:
         // 기본적으로 'advice', 'details', 'recommendations' 블러 처리
         return ['advice', 'details', 'recommendations'];

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import '../../../../core/models/personality_dna_model.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../fortune/domain/models/match_insight.dart';
 import '../../../fortune/domain/models/past_life_result.dart';
@@ -88,6 +89,67 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       sajuFortuneResult: sajuFortuneResult,
       isBlurred: isBlurred,
       blurredSections: blurredSections,
+    );
+    state = state.copyWith(
+      messages: [...state.messages, message],
+      isTyping: false,
+    );
+  }
+
+  /// 성격 DNA 결과 메시지 추가
+  void addPersonalityDnaResult({
+    required PersonalityDNA dna,
+    bool isBlurred = false,
+  }) {
+    final message = ChatMessage(
+      id: _uuid.v4(),
+      type: ChatMessageType.personalityDnaResult,
+      timestamp: DateTime.now(),
+      personalityDna: dna,
+      isBlurred: isBlurred,
+    );
+    state = state.copyWith(
+      messages: [...state.messages, message],
+      isTyping: false,
+    );
+  }
+
+  /// 부적 결과 메시지 추가 (이미지 + 짧은 설명)
+  void addTalismanResult({
+    required String imageUrl,
+    required String categoryName,
+    required String shortDescription,
+    bool isBlurred = false,
+  }) {
+    final message = ChatMessage(
+      id: _uuid.v4(),
+      type: ChatMessageType.talismanResult,
+      timestamp: DateTime.now(),
+      talismanImageUrl: imageUrl,
+      talismanCategoryName: categoryName,
+      talismanShortDescription: shortDescription,
+      isBlurred: isBlurred,
+    );
+    state = state.copyWith(
+      messages: [...state.messages, message],
+      isTyping: false,
+    );
+  }
+
+  /// 감사일기 결과 메시지 추가 (일기장 스타일 카드)
+  void addGratitudeResultMessage({
+    required String gratitude1,
+    required String gratitude2,
+    required String gratitude3,
+  }) {
+    final message = ChatMessage(
+      id: _uuid.v4(),
+      type: ChatMessageType.gratitudeResult,
+      timestamp: DateTime.now(),
+      gratitude1: gratitude1,
+      gratitude2: gratitude2,
+      gratitude3: gratitude3,
+      gratitudeDate: DateTime.now(),
     );
     state = state.copyWith(
       messages: [...state.messages, message],

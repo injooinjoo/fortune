@@ -62,8 +62,9 @@ class _ChatCelebrityResultCardState
   @override
   void initState() {
     super.initState();
-    _isBlurred = widget.fortune.isBlurred;
-    _blurredSections = List<String>.from(widget.fortune.blurredSections);
+    // 블러 제거 - 모든 콘텐츠 바로 표시
+    _isBlurred = false;
+    _blurredSections = [];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -407,21 +408,6 @@ class _ChatCelebrityResultCardState
                               ),
                             ),
                           ),
-                          if (_isBlurred && isBlurredSection)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: colors.textSecondary.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Text(
-                                '🔒',
-                                style: TextStyle(fontSize: 10),
-                              ),
-                            ),
                           const SizedBox(width: DSSpacing.xs),
                           Icon(
                             isExpanded

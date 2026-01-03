@@ -19,21 +19,27 @@ class MbtiDimensionFortune {
   /// 점수 (0-100)
   final int score;
 
+  /// 경고 메시지 (30-50자) - 위기감/긴장감 유발
+  final String? warning;
+
   const MbtiDimensionFortune({
     required this.dimension,
     required this.title,
     required this.fortune,
     required this.tip,
     required this.score,
+    this.warning,
   });
 
   factory MbtiDimensionFortune.fromJson(Map<String, dynamic> json) {
+    final dimension = json['dimension'] as String? ?? '';
     return MbtiDimensionFortune(
-      dimension: json['dimension'] as String? ?? '',
+      dimension: dimension,
       title: json['title'] as String? ?? '',
       fortune: json['fortune'] as String? ?? '',
       tip: json['tip'] as String? ?? '',
       score: (json['score'] as num?)?.toInt() ?? 70,
+      warning: json['warning'] as String? ?? defaultWarnings[dimension],
     );
   }
 
@@ -44,8 +50,12 @@ class MbtiDimensionFortune {
       'fortune': fortune,
       'tip': tip,
       'score': score,
+      if (warning != null) 'warning': warning,
     };
   }
+
+  /// 차원별 경고 아이콘 반환
+  String get warningIcon => dimensionWarningIcons[dimension] ?? '⚠️';
 
   /// 차원별 색상 반환
   Color get color => dimensionColors[dimension] ?? const Color(0xFF6B7280);
@@ -102,6 +112,30 @@ const Map<String, String> dimensionTitles = {
   'F': '감정의 흐름',
   'J': '계획의 날',
   'P': '유연의 날',
+};
+
+/// 차원별 경고 아이콘 매핑
+const Map<String, String> dimensionWarningIcons = {
+  'E': '⚡', // 충동적 행동 주의
+  'I': '🔒', // 고립 주의
+  'N': '🌫️', // 현실 회피 주의
+  'S': '🔍', // 세부 집착 주의
+  'T': '❄️', // 감정 무시 주의
+  'F': '🌊', // 감정 휩쓸림 주의
+  'J': '⏰', // 기회 놓침 주의
+  'P': '🎲', // 즉흥 후회 주의
+};
+
+/// 차원별 기본 경고 메시지
+const Map<String, String> defaultWarnings = {
+  'E': '즉흥적인 약속이 중요한 일정과 충돌할 수 있어요',
+  'I': '혼자만의 시간에 빠져 중요한 기회를 놓칠 수 있어요',
+  'N': '가능성에만 몰두하면 현실적 준비를 놓칠 수 있어요',
+  'S': '세부사항에만 집착하면 큰 흐름을 놓칠 수 있어요',
+  'T': '논리만 앞세우다 중요한 사람의 마음을 잃을 수 있어요',
+  'F': '감정에 휩쓸리면 객관적 판단을 놓칠 수 있어요',
+  'J': '분석적으로 고민만 하다가는 큰 기회를 놓칠 수 있어요',
+  'P': '즉흥적인 결정이 나중에 후회로 돌아올 수 있어요',
 };
 
 /// API 응답에서 dimensions 배열 파싱

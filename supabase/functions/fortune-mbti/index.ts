@@ -47,6 +47,7 @@ interface DimensionFortune {
   fortune: string;        // 운세 텍스트 (50자 이내)
   tip: string;            // 조언 (30자 이내)
   score: number;          // 0-100
+  warning: string;        // 경고 메시지 (30-50자) - 위기감/긴장감 유발
 }
 
 interface MbtiFortuneResponse {
@@ -55,6 +56,7 @@ interface MbtiFortuneResponse {
     // 새로운 4차원 데이터
     dimensions: DimensionFortune[];
     overallScore: number;
+    todayTrap: string;    // 오늘의 함정 (위기감 유발 메시지)
 
     // 기존 호환성 필드
     todayFortune: string;
@@ -234,16 +236,29 @@ function extractDimensions(mbti: string): string[] {
  */
 function extractUserDimensions(
   mbti: string,
-  allDimensions: Record<string, { fortune: string; tip: string; score: number }>
+  allDimensions: Record<string, { fortune: string; tip: string; score: number; warning?: string }>
 ): DimensionFortune[] {
   const userDims = extractDimensions(mbti)
+
+  // 차원별 기본 경고 메시지
+  const defaultWarnings: Record<string, string> = {
+    'E': '즉흥적인 약속이 중요한 일정과 충돌할 수 있어요',
+    'I': '혼자만의 시간에 빠져 중요한 기회를 놓칠 수 있어요',
+    'N': '가능성에만 몰두하면 현실적 준비를 놓칠 수 있어요',
+    'S': '세부사항에만 집착하면 큰 흐름을 놓칠 수 있어요',
+    'T': '논리만 앞세우다 중요한 사람의 마음을 잃을 수 있어요',
+    'F': '감정에 휩쓸리면 객관적 판단을 놓칠 수 있어요',
+    'J': '분석적으로 고민만 하다가는 큰 기회를 놓칠 수 있어요',
+    'P': '즉흥적인 결정이 나중에 후회로 돌아올 수 있어요'
+  }
 
   return userDims.map(dim => ({
     dimension: dim,
     title: DIMENSION_META[dim].title,
     fortune: allDimensions[dim]?.fortune || '오늘은 새로운 가능성이 열리는 날입니다.',
     tip: allDimensions[dim]?.tip || '자신을 믿으세요',
-    score: allDimensions[dim]?.score || 70
+    score: allDimensions[dim]?.score || 70,
+    warning: allDimensions[dim]?.warning || defaultWarnings[dim]
   }))
 }
 
@@ -402,7 +417,7 @@ serve(async (req) => {
       .eq('fortune_type', 'mbti_dimensions')
       .single()
 
-    let allDimensions: Record<string, { fortune: string; tip: string; score: number }>
+    let allDimensions: Record<string, { fortune: string; tip: string; score: number; warning?: string }>
 
     if (cachedDimensions?.result) {
       console.log(`[MBTI-v2] ✅ 캐시 히트 (전역 차원)`)
@@ -415,27 +430,37 @@ serve(async (req) => {
 
       const systemPrompt = `당신은 MBTI 인사이트 전문가입니다.
 오늘의 인사이트를 MBTI 8개 차원별로 생성해주세요.
+특히 각 차원의 약점을 경고하는 "warning" 메시지로 사용자에게 긴장감을 주세요.
 
-각 차원별 특성:
-- E(외향): 사회적 상호작용, 에너지 충전, 활동적 모임, 새로운 만남
-- I(내향): 독립적 시간, 깊은 사고, 에너지 보존, 의미 있는 1:1 대화
-- N(직관): 미래 가능성, 패턴 인식, 큰 그림, 영감과 아이디어
-- S(감각): 현재 순간, 구체적 사실, 실용적 행동, 오감 체험
-- T(사고): 논리적 분석, 객관적 판단, 효율성, 문제 해결
+각 차원별 특성과 경고 예시:
+- E(외향): 사회적 상호작용, 에너지 충전, 활동적 모임
+  → 경고: "즉흥적인 약속이 중요한 일정과 충돌할 수 있어요"
+- I(내향): 독립적 시간, 깊은 사고, 에너지 보존
+  → 경고: "혼자만의 시간에 빠져 중요한 기회를 놓칠 수 있어요"
+- N(직관): 미래 가능성, 패턴 인식, 큰 그림, 영감
+  → 경고: "가능성에만 몰두하면 현실적 준비를 놓칠 수 있어요"
+- S(감각): 현재 순간, 구체적 사실, 실용적 행동
+  → 경고: "세부사항에만 집착하면 큰 흐름을 놓칠 수 있어요"
+- T(사고): 논리적 분석, 객관적 판단, 효율성
+  → 경고: "논리만 앞세우다 중요한 사람의 마음을 잃을 수 있어요"
 - F(감정): 가치 기반 결정, 공감, 조화, 인간관계
+  → 경고: "감정에 휩쓸리면 객관적 판단을 놓칠 수 있어요"
 - J(판단): 계획성, 결정, 완료, 체계적 접근
+  → 경고: "분석적으로 고민만 하다가는 큰 기회를 놓칠 수 있어요"
 - P(인식): 유연성, 적응, 열린 가능성, 즉흥적 기회
+  → 경고: "즉흥적인 결정이 나중에 후회로 돌아올 수 있어요"
 
 다음 JSON 형식으로 정확히 응답해주세요:
 {
-  "E": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 75 },
-  "I": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 68 },
-  "N": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 82 },
-  "S": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 71 },
-  "T": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 79 },
-  "F": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 85 },
-  "J": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 73 },
-  "P": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 77 },
+  "E": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 75, "warning": "30-50자 경고" },
+  "I": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 68, "warning": "30-50자 경고" },
+  "N": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 82, "warning": "30-50자 경고" },
+  "S": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 71, "warning": "30-50자 경고" },
+  "T": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 79, "warning": "30-50자 경고" },
+  "F": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 85, "warning": "30-50자 경고" },
+  "J": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 73, "warning": "30-50자 경고" },
+  "P": { "fortune": "50자 이내 운세", "tip": "30자 이내 조언", "score": 77, "warning": "30-50자 경고" },
+  "todayTrap": "오늘 가장 피해야 할 함정 (50자 이내, 위기감 있게)",
   "luckyColor": "색상 이름",
   "luckyNumber": 1부터 99 사이 숫자
 }
@@ -444,7 +469,9 @@ serve(async (req) => {
 - score는 50-95 사이로 설정 (너무 극단적인 점수 피하기)
 - fortune은 해당 차원의 특성을 반영한 구체적인 오늘의 운세
 - tip은 실행 가능한 짧은 조언
-- 모든 내용은 따뜻하고 긍정적인 톤으로`
+- warning은 해당 차원의 약점/함정을 경고하는 메시지 (위기감+긴장감)
+- todayTrap은 오늘 하루 MBTI 성향으로 인해 피해야 할 가장 큰 함정
+- fortune/tip은 따뜻하게, warning/todayTrap은 긴장감 있게`
 
       const userPrompt = `오늘 날짜: ${new Date().toLocaleDateString('ko-KR')}
 
@@ -475,7 +502,7 @@ serve(async (req) => {
         throw new Error('LLM API 응답 없음')
       }
 
-      let parsedResponse: typeof allDimensions & { luckyColor?: string; luckyNumber?: number }
+      let parsedResponse: typeof allDimensions & { luckyColor?: string; luckyNumber?: number; todayTrap?: string }
       try {
         parsedResponse = JSON.parse(response.content)
       } catch {
@@ -483,21 +510,22 @@ serve(async (req) => {
         throw new Error('LLM 응답 JSON 파싱 실패')
       }
 
-      // 기본값 보장
-      const defaultDim = { fortune: '오늘은 새로운 가능성이 열리는 날입니다.', tip: '자신을 믿으세요', score: 70 }
+      // 기본값 보장 (warning 포함)
+      const defaultDim = { fortune: '오늘은 새로운 가능성이 열리는 날입니다.', tip: '자신을 믿으세요', score: 70, warning: '오늘 하루 자신의 성향을 의식해보세요.' }
       allDimensions = {
-        E: parsedResponse.E || defaultDim,
-        I: parsedResponse.I || defaultDim,
-        N: parsedResponse.N || defaultDim,
-        S: parsedResponse.S || defaultDim,
-        T: parsedResponse.T || defaultDim,
-        F: parsedResponse.F || defaultDim,
-        J: parsedResponse.J || defaultDim,
-        P: parsedResponse.P || defaultDim,
+        E: parsedResponse.E || { ...defaultDim, warning: '즉흥적인 약속이 중요한 일정과 충돌할 수 있어요' },
+        I: parsedResponse.I || { ...defaultDim, warning: '혼자만의 시간에 빠져 중요한 기회를 놓칠 수 있어요' },
+        N: parsedResponse.N || { ...defaultDim, warning: '가능성에만 몰두하면 현실적 준비를 놓칠 수 있어요' },
+        S: parsedResponse.S || { ...defaultDim, warning: '세부사항에만 집착하면 큰 흐름을 놓칠 수 있어요' },
+        T: parsedResponse.T || { ...defaultDim, warning: '논리만 앞세우다 중요한 사람의 마음을 잃을 수 있어요' },
+        F: parsedResponse.F || { ...defaultDim, warning: '감정에 휩쓸리면 객관적 판단을 놓칠 수 있어요' },
+        J: parsedResponse.J || { ...defaultDim, warning: '분석적으로 고민만 하다가는 큰 기회를 놓칠 수 있어요' },
+        P: parsedResponse.P || { ...defaultDim, warning: '즉흥적인 결정이 나중에 후회로 돌아올 수 있어요' },
         // 추가 데이터
         _meta: {
           luckyColor: parsedResponse.luckyColor || '파란색',
-          luckyNumber: parsedResponse.luckyNumber || 7
+          luckyNumber: parsedResponse.luckyNumber || 7,
+          todayTrap: parsedResponse.todayTrap || '오늘은 자신의 MBTI 성향에 따른 편향된 결정을 주의하세요.'
         } as any
       }
 
@@ -559,6 +587,7 @@ serve(async (req) => {
       // 새로운 4차원 데이터
       dimensions: userDimensions,
       overallScore,
+      todayTrap: meta.todayTrap || '오늘은 자신의 MBTI 성향에 따른 편향된 결정을 주의하세요.',
 
       // 기존 호환성 필드
       todayFortune,

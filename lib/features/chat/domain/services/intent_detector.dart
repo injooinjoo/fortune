@@ -268,6 +268,8 @@ class IntentDetector {
         return '가족 운세를 봐드릴까요?';
       case FortuneSurveyType.naming:
         return '아이 이름을 지어드릴까요?';
+      case FortuneSurveyType.babyNickname:
+        return '태명을 지어드릴까요?';
       case FortuneSurveyType.ootdEvaluation:
         return '오늘의 코디를 평가해드릴까요?';
       case FortuneSurveyType.talisman:

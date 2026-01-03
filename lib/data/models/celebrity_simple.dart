@@ -257,6 +257,78 @@ class Celebrity {
     ...aliases,
   ];
 
+  /// 소속 정보 라벨 (그룹명, 팀명 등)
+  /// 예: "IVE 멤버", "토트넘 선수", "T1 선수"
+  String get affiliationLabel {
+    final data = professionData;
+
+    switch (celebrityType) {
+      case CelebrityType.idolMember:
+        final groupName = data?['group_name'] ?? data?['groupName'];
+        if (groupName != null && groupName.toString().isNotEmpty) {
+          return '$groupName 멤버';
+        }
+        return '아이돌 멤버';
+
+      case CelebrityType.athlete:
+        final team = data?['team'];
+        final sport = data?['sport'];
+        if (team != null && team.toString().isNotEmpty) {
+          return '$team 선수';
+        }
+        if (sport != null && sport.toString().isNotEmpty) {
+          return '$sport 선수';
+        }
+        return '운동선수';
+
+      case CelebrityType.proGamer:
+        final team = data?['team'];
+        final game = data?['game'];
+        if (team != null && team.toString().isNotEmpty && team != 'retired') {
+          if (game != null && game.toString().isNotEmpty) {
+            return '$team · $game';
+          }
+          return '$team 선수';
+        }
+        if (game != null && game.toString().isNotEmpty) {
+          return '$game 프로게이머';
+        }
+        return '프로게이머';
+
+      case CelebrityType.streamer:
+        final platform = data?['platform'];
+        if (platform != null && platform.toString().isNotEmpty) {
+          return '$platform 스트리머';
+        }
+        return '스트리머';
+
+      case CelebrityType.politician:
+        final party = data?['party'];
+        final office = data?['currentOffice'] ?? data?['current_office'];
+        if (office != null && office.toString().isNotEmpty) {
+          return office.toString();
+        }
+        if (party != null && party.toString().isNotEmpty) {
+          return '$party';
+        }
+        return '정치인';
+
+      case CelebrityType.business:
+        final company = data?['company'];
+        final position = data?['position'];
+        if (company != null && company.toString().isNotEmpty) {
+          if (position != null && position.toString().isNotEmpty) {
+            return '$company $position';
+          }
+          return '$company';
+        }
+        return '기업인';
+
+      default:
+        return celebrityType.displayName;
+    }
+  }
+
   // Manual JSON serialization
   factory Celebrity.fromJson(Map<String, dynamic> json) {
     return Celebrity(

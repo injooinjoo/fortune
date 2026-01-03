@@ -90,9 +90,10 @@ serve(async (req) => {
   }
 
   try {
+    // ✅ SERVICE_ROLE_KEY 사용 (RLS 우회 - user_saju 테이블 조회용)
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     )
 
     const requestData: AvoidPeopleRequest = await req.json()

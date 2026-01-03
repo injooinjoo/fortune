@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../domain/models/meditation_history.dart';
 import '../../domain/models/meditation_session.dart';
 
 /// 호흡 타이머 상태
@@ -194,4 +197,171 @@ final selectedMeditationDurationProvider = StateProvider<int>((ref) => 1);
 /// 선택된 호흡 패턴
 final selectedBreathingPatternProvider = StateProvider<BreathingPattern>(
   (ref) => BreathingPattern.pattern478,
+);
+
+/// 명상 히스토리 상태
+class MeditationHistoryState {
+  final MeditationStatistics statistics;
+  final List<MeditationHistoryEntry> recentSessions;
+  final bool isLoading;
+
+  const MeditationHistoryState({
+    this.statistics = const MeditationStatistics(),
+    this.recentSessions = const [],
+    this.isLoading = false,
+  });
+
+  MeditationHistoryState copyWith({
+    MeditationStatistics? statistics,
+    List<MeditationHistoryEntry>? recentSessions,
+    bool? isLoading,
+  }) {
+    return MeditationHistoryState(
+      statistics: statistics ?? this.statistics,
+      recentSessions: recentSessions ?? this.recentSessions,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
+}
+
+/// 명상 히스토리 Notifier
+class MeditationHistoryNotifier extends StateNotifier<MeditationHistoryState> {
+  MeditationHistoryNotifier() : super(const MeditationHistoryState()) {
+    _loadHistory();
+  }
+
+  static const _statsKey = 'meditation_statistics';
+  static const _historyKey = 'meditation_history';
+
+  /// 히스토리 로드
+  Future<void> _loadHistory() async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // 통계 로드
+      final statsJson = prefs.getString(_statsKey);
+      MeditationStatistics statistics = const MeditationStatistics();
+      if (statsJson != null) {
+        final statsMap = json.decode(statsJson) as Map<String, dynamic>;
+        statistics = MeditationStatistics.fromJson(statsMap);
+      }
+
+      // 히스토리 로드
+      final historyJson = prefs.getString(_historyKey);
+      List<MeditationHistoryEntry> history = [];
+      if (historyJson != null) {
+        final historyList = json.decode(historyJson) as List;
+        history = historyList
+            .map((e) =>
+                MeditationHistoryEntry.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+
+      state = state.copyWith(
+        statistics: statistics,
+        recentSessions: history,
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+
+  /// 명상 세션 완료 기록
+  Future<void> recordSession({
+    required int durationMinutes,
+    required int completedCycles,
+    required String patternName,
+  }) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // 새 엔트리 생성
+    final entry = MeditationHistoryEntry(
+      id: now.millisecondsSinceEpoch.toString(),
+      date: now,
+      durationMinutes: durationMinutes,
+      completedCycles: completedCycles,
+      patternName: patternName,
+    );
+
+    // 연속 일수 계산
+    int newConsecutiveDays = state.statistics.consecutiveDays;
+    final lastDate = state.statistics.lastMeditationDate;
+
+    if (lastDate != null) {
+      final lastMeditationDay =
+          DateTime(lastDate.year, lastDate.month, lastDate.day);
+      final daysDiff = today.difference(lastMeditationDay).inDays;
+
+      if (daysDiff == 1) {
+        // 연속 유지
+        newConsecutiveDays++;
+      } else if (daysDiff > 1) {
+        // 연속 끊김
+        newConsecutiveDays = 1;
+      }
+      // daysDiff == 0이면 같은 날, 연속일수 유지
+    } else {
+      // 첫 명상
+      newConsecutiveDays = 1;
+    }
+
+    // 새 통계 계산
+    final newTotalSessions = state.statistics.totalSessions + 1;
+    final newTotalMinutes = state.statistics.totalMinutes + durationMinutes;
+
+    // 원석 레벨 계산 (세션 수 기준)
+    int newGemLevel = 0;
+    if (newTotalSessions >= 50) {
+      newGemLevel = 4;
+    } else if (newTotalSessions >= 25) {
+      newGemLevel = 3;
+    } else if (newTotalSessions >= 10) {
+      newGemLevel = 2;
+    } else if (newTotalSessions >= 3) {
+      newGemLevel = 1;
+    }
+
+    final newStatistics = MeditationStatistics(
+      totalSessions: newTotalSessions,
+      totalMinutes: newTotalMinutes,
+      consecutiveDays: newConsecutiveDays,
+      lastMeditationDate: now,
+      currentGemLevel: newGemLevel,
+    );
+
+    // 히스토리 업데이트 (최근 30개만 유지)
+    final newHistory = [entry, ...state.recentSessions].take(30).toList();
+
+    // 상태 업데이트
+    state = state.copyWith(
+      statistics: newStatistics,
+      recentSessions: newHistory,
+    );
+
+    // 저장
+    await _saveHistory();
+  }
+
+  /// 히스토리 저장
+  Future<void> _saveHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_statsKey, json.encode(state.statistics.toJson()));
+      await prefs.setString(
+        _historyKey,
+        json.encode(state.recentSessions.map((e) => e.toJson()).toList()),
+      );
+    } catch (e) {
+      // 저장 실패 무시
+    }
+  }
+}
+
+/// 명상 히스토리 Provider
+final meditationHistoryProvider =
+    StateNotifierProvider<MeditationHistoryNotifier, MeditationHistoryState>(
+  (ref) => MeditationHistoryNotifier(),
 );

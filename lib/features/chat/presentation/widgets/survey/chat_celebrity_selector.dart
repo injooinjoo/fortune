@@ -352,12 +352,14 @@ class _CelebrityCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        celebrity.celebrityType.displayName,
+                        celebrity.affiliationLabel,
                         style: typography.labelSmall.copyWith(
                           color: _getTypeColor(),
                           fontSize: 9,
                           fontWeight: FontWeight.w500,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],

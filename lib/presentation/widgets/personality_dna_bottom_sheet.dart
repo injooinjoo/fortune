@@ -8,6 +8,8 @@ import '../../core/services/personality_dna_service.dart';
 import '../../core/models/personality_dna_model.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../core/theme/typography_unified.dart';
+import '../../features/fortune/presentation/widgets/personality_dna/personality_dna_result_page.dart';
+import '../providers/subscription_provider.dart';
 
 /// 성격 DNA 입력을 위한 BottomSheet
 class PersonalityDNABottomSheet extends ConsumerStatefulWidget {
@@ -778,10 +780,23 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
           _isLoading = false;
         });
 
+        // 프리미엄 상태 확인
+        final isPremium = ref.read(isPremiumProvider);
+
         // BottomSheet 닫기
         Navigator.of(context).pop();
 
-        // 결과 전달 및 결과 페이지로 이동
+        // 결과 페이지로 이동
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PersonalityDnaResultPage(
+              dna: personalityDNA,
+              isPremium: isPremium,
+            ),
+          ),
+        );
+
+        // 콜백도 호출 (채팅에서 결과 메시지 추가용)
         if (widget.onResult != null) {
           widget.onResult!(personalityDNA);
         }

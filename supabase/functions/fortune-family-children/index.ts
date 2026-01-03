@@ -53,6 +53,15 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+interface FamilyMember {
+  name?: string;
+  birthDate?: string;
+  birthTime?: string;
+  gender?: string;
+  isLunar?: boolean;
+  relation?: string;
+}
+
 interface FamilyChildrenRequest {
   userId: string;
   name?: string;
@@ -66,6 +75,7 @@ interface FamilyChildrenRequest {
   relationship: string;
   special_question?: string;
   isPremium?: boolean;
+  familyMember?: FamilyMember;
   sajuData?: {
     year_pillar?: string;
     month_pillar?: string;
@@ -101,10 +111,14 @@ serve(async (req) => {
       relationship,
       special_question,
       isPremium = false,
+      familyMember,
       sajuData
     } = requestData
 
     console.log('👶 [FamilyChildren] User:', userId, '| Members:', family_member_count, '| Premium:', isPremium)
+    if (familyMember) {
+      console.log('👨‍👩‍👧 [FamilyChildren] FamilyMember:', familyMember.name, '|', familyMember.relation)
+    }
 
     // 관계 레이블 매핑
     const relationshipLabels: Record<string, string> = {
@@ -123,11 +137,12 @@ serve(async (req) => {
       'marriage': '결혼/인연',
       'character': '성격/품성'
     }
-    const selectedQuestionLabels = detailed_questions.map(q => questionLabels[q] || q).join(', ')
+    const safeDetailedQuestions = detailed_questions || []
+    const selectedQuestionLabels = safeDetailedQuestions.map(q => questionLabels[q] || q).join(', ') || '전체'
 
     // 캐시 확인
     const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `${userId}_family-children_${today}_${detailed_questions.sort().join('_')}`
+    const cacheKey = `${userId}_family-children_${today}_${safeDetailedQuestions.sort().join('_')}`
 
     const { data: cachedResult } = await supabaseClient
       .from('fortune_cache')
@@ -211,6 +226,17 @@ serve(async (req) => {
   "specialAnswer": "사용자 특별 질문에 대한 상세한 답변 (있는 경우, 250자 내외)"
 }`
 
+    // 가족 구성원 관계 한글화
+    const familyRelationLabels: Record<string, string> = {
+      'parents': '부모님',
+      'spouse': '배우자',
+      'children': '자녀',
+      'siblings': '형제자매'
+    }
+    const familyMemberRelationLabel = familyMember?.relation
+      ? familyRelationLabels[familyMember.relation] || familyMember.relation
+      : null
+
     const userPrompt = `[사용자 정보]
 이름: ${name || '익명'}
 생년월일: ${birthDate || '미제공'}
@@ -222,7 +248,16 @@ ${sajuData?.day_master ? `일주(日主): ${sajuData.day_master}` : ''}
 가족 구성원 수: ${family_member_count}명
 운세 대상: ${relationshipLabel}
 관심 분야: ${selectedQuestionLabels}
+${familyMember ? `
+[운세 대상 가족 구성원]
+이름: ${familyMember.name || '미제공'}
+관계: ${familyMemberRelationLabel || '가족'}
+생년월일: ${familyMember.birthDate || '미제공'}${familyMember.isLunar ? ' (음력)' : ''}
+${familyMember.birthTime ? `출생 시간: ${familyMember.birthTime}` : ''}
+성별: ${familyMember.gender === 'male' ? '남성' : familyMember.gender === 'female' ? '여성' : '미제공'}
 
+위 가족 구성원의 사주를 분석하여 자녀운을 함께 봐주세요.
+` : ''}
 [분석 요청일]
 ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
 

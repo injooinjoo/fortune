@@ -274,71 +274,73 @@ ${celebrityInfo.profession ? `- 직업: ${celebrityInfo.profession}` : ''}
 ${category ? `- 카테고리: ${category}` : ''}
 
 위 정보를 바탕으로 ${name}님과 ${celebrityInfo.name}의 깊은 사주적 궁합을 분석해주세요.
-각 분석 섹션은 300-500자로 풍부하게 스토리텔링 형식으로 작성해주세요.
+
+⚠️ 매우 중요: 각 섹션의 글자수를 반드시 지켜주세요! 너무 짧으면 안 됩니다!
+말투는 친한 친구가 술자리에서 신나게 얘기해주듯이! 이모지도 적절히 넣어주세요! ✨💕
 
 응답 JSON 스키마:
 {
   "overall_score": (50-100 숫자),
   "compatibility_grade": "천생연분" | "특별한 인연" | "좋은 궁합" | "발전 가능" | "노력 필요" 중 택일,
-  "main_message": "${name}님과 ${celebrityInfo.name}의 인연에 대한 핵심 스토리 (300-400자, 스토리텔링 형식)",
+  "main_message": "⚠️ 반드시 350-450자! ${name}님과 ${celebrityInfo.name}의 인연 핵심 스토리. 마치 친구가 '야 근데 진짜 대박인게...' 하고 얘기하듯이! 이모지 넣어서! ✨",
 
   "saju_analysis": {
     "five_elements": {
-      "user_dominant": "${name}님의 주요 오행 (예: 火)",
-      "celebrity_dominant": "${celebrityInfo.name}님의 주요 오행 (예: 水)",
+      "user_dominant": "${name}님의 주요 오행 (예: 火 - 열정 불꽃형!🔥)",
+      "celebrity_dominant": "${celebrityInfo.name}님의 주요 오행 (예: 水 - 깊은 바다형!🌊)",
       "interaction": "상생" | "상극" | "비화" 중 택일,
-      "interpretation": "두 분의 오행 관계에 대한 깊은 해석 (300-500자)"
+      "interpretation": "⚠️ 반드시 450-550자! 두 분의 오행 관계 깊은 해석. 친구한테 설명하듯 재밌게! 전문용어는 쉽게 풀어서!"
     },
     "day_pillar": {
-      "relationship": "일주 간의 관계 (예: 갑기합, 자오충 등)",
-      "interpretation": "일주 궁합에 대한 깊은 해석 (300-500자)"
+      "relationship": "일주 간의 관계 (예: 갑기합토💛 - 운명적 만남!)",
+      "interpretation": "⚠️ 반드시 450-550자! 일주 궁합 깊은 해석. 어려운 용어는 바로 해설! 설레게!"
     },
     "hap_analysis": {
       "has_hap": true/false,
       "hap_type": "천간합" | "지지육합" | "삼합" | null,
-      "interpretation": "합의 의미와 두 분 관계에 미치는 영향 (300-500자)"
+      "interpretation": "⚠️ 반드시 450-550자! 합의 의미와 두 분 관계에 미치는 영향. 운명이라고 느끼게!"
     }
   },
 
   "past_life": {
-    "connection_type": "전생 인연의 유형 (예: 스승과 제자, 형제자매, 연인 등)",
-    "story": "전생에서의 인연 스토리 (300-500자, 스토리텔링 형식으로 감동적으로)",
-    "evidence": ["사주에서 발견한 증거1 (60자)", "증거2 (60자)", "증거3 (60자)"]
+    "connection_type": "전생 인연 유형 (예: 이루지 못한 연인💔, 호위무사⚔️, 궁궐의 예술가🎭)",
+    "story": "⚠️ 반드시 550-650자! 전생 인연 스토리. 드라마보다 재밌게! 영화 시놉시스처럼! 감동적으로! 이모지도!",
+    "evidence": ["증거1 (80자, 구체적!)", "증거2 (80자)", "증거3 (80자)"]
   },
 
   "destined_timing": {
-    "best_year": "인연이 깊어지기 좋은 해 (예: 2025년 을사년)",
-    "best_month": "특히 좋은 달 (예: 6월)",
-    "timing_reason": "그 시기가 좋은 이유에 대한 설명 (200-300자)"
+    "best_year": "인연이 깊어지는 해 (예: 2025년 을사년🐍 - 대박의 해!)",
+    "best_month": "특히 좋은 달 (예: 6월🌸 - 벚꽃 필 때!)",
+    "timing_reason": "⚠️ 반드시 350-400자! 그 시기가 좋은 이유. 기대감 폭발하게! 구체적 상황 상상하게!"
   },
 
   "intimate_compatibility": {
-    "passion_score": (1-10 숫자, 두 분의 에너지 열정도),
-    "chemistry_type": "두 분의 친밀한 에너지 유형 (예: 불꽃 같은 열정, 달빛처럼 은은한 교감, 봄바람처럼 부드러운)",
-    "emotional_connection": "정서적 교감과 마음의 교류에 대한 분석 (300-400자, 시적이고 은유적으로)",
-    "physical_harmony": "신체적 에너지 조화와 기운의 교류에 대한 분석 (300-400자, 오행과 음양 용어를 활용하여 은유적으로 - 직접적 표현 금지)",
-    "intimate_advice": "더 깊은 정서적 유대를 위한 조언 (200-300자)"
+    "passion_score": (1-10 숫자),
+    "chemistry_type": "에너지 유형 (예: 불꽃 같은 열정🔥, 달빛처럼 은은한🌙, 봄바람처럼 부드러운🌸)",
+    "emotional_connection": "⚠️ 반드시 450-500자! 정서적 교감과 마음의 교류. 시적이고 은유적으로! 심장 두근거리게!",
+    "physical_harmony": "⚠️ 반드시 450-500자! 에너지 조화와 기운의 교류. 오행/음양 용어로 은유적으로! 신비롭게!",
+    "intimate_advice": "⚠️ 반드시 300-350자! 더 깊은 정서적 유대를 위한 조언. 실천 가능한 팁으로!"
   },
 
   "detailed_analysis": {
-    "personality_match": "성격 궁합에 대한 깊은 분석 (300-400자)",
-    "energy_compatibility": "에너지 궁합에 대한 깊은 분석 (300-400자)",
-    "life_path_connection": "인생 경로의 연결점 분석 (300-400자)"
+    "personality_match": "⚠️ 반드시 400-500자! 성격 궁합. 구체적 상황 예시와 함께!",
+    "energy_compatibility": "⚠️ 반드시 400-500자! 에너지 궁합. 함께 있을 때 느낌을 상상하게!",
+    "life_path_connection": "⚠️ 반드시 400-500자! 인생 경로 연결점. 신기한 공통점 발견!"
   },
 
-  "strengths": ["장점1 (80자)", "장점2 (80자)", "장점3 (80자)", "장점4 (80자)"],
-  "challenges": ["도전과제1 (80자)", "도전과제2 (80자)", "도전과제3 (80자)"],
-  "recommendations": ["조언1 (100자)", "조언2 (100자)", "조언3 (100자)", "조언4 (100자)"],
+  "strengths": ["장점1 (100자, 구체적!)", "장점2 (100자)", "장점3 (100자)", "장점4 (100자)"],
+  "challenges": ["도전과제1 (100자, 해결법도!)", "도전과제2 (100자)", "도전과제3 (100자)"],
+  "recommendations": ["조언1 (120자, 실천 가능!)", "조언2 (120자)", "조언3 (120자)", "조언4 (120자)"],
 
   "lucky_factors": {
-    "best_time_to_connect": "인연이 깊어지기 좋은 시간대",
-    "lucky_activity": "함께하면 좋은 활동",
-    "shared_interest": "공유하면 좋을 관심사",
-    "lucky_color": "행운의 색상",
-    "lucky_direction": "행운의 방향"
+    "best_time_to_connect": "좋은 시간대 (예: 저녁 7-9시🌙)",
+    "lucky_activity": "함께하면 좋은 활동 (구체적!)",
+    "shared_interest": "공유할 관심사 (예: 음악, 여행)",
+    "lucky_color": "행운 색상 (이유도 간단히!)",
+    "lucky_direction": "행운 방향 (예: 남동쪽에서 좋은 소식!)"
   },
 
-  "special_message": "${celebrityInfo.name}가 ${name}님에게 전하는 영혼의 메시지 컨셉 (100-150자)"
+  "special_message": "⚠️ 반드시 180-220자! ${celebrityInfo.name}가 ${name}님에게 전하는 영혼의 메시지. 감동적으로! 눈물 나게!"
 }`
 
     console.log('🤖 [CelebrityFortune] LLM 호출 시작...')
@@ -474,86 +476,13 @@ ${category ? `- 카테고리: ${category}` : ''}
   }
 })
 
-// 블러 처리 함수
+// 블러 처리 함수 - 블러 비활성화 (모든 콘텐츠 전체 공개)
 function applyBlurring(fortune: any, isPremium: boolean): any {
-  if (isPremium) {
-    return {
-      ...fortune,
-      isBlurred: false,
-      blurredSections: []
-    }
-  }
-
-  // 프리미엄 섹션 블러 처리
-  // 무료: 헤더, main_message, strengths, hexagonScores
-  // 블러: saju_analysis, intimate_compatibility, past_life, destined_timing, detailed_analysis, challenges, lucky_factors, recommendations
-  const blurredSections = [
-    'saju_analysis',
-    'intimate_compatibility',
-    'past_life',
-    'destined_timing',
-    'detailed_analysis',
-    'challenges',
-    'lucky_factors',
-    'recommendations'
-  ]
-
+  // 블러 완전 비활성화 - isPremium 여부와 관계없이 전체 콘텐츠 공개
   return {
     ...fortune,
-    isBlurred: true,
-    blurredSections,
-
-    // 새로운 사주 분석 섹션 블러
-    saju_analysis: {
-      five_elements: {
-        user_dominant: '🔒',
-        celebrity_dominant: '🔒',
-        interaction: '🔒',
-        interpretation: '🔒 광고 시청 후 오행 분석을 확인하세요'
-      },
-      day_pillar: {
-        relationship: '🔒',
-        interpretation: '🔒 광고 시청 후 일주 궁합을 확인하세요'
-      },
-      hap_analysis: {
-        has_hap: false,
-        hap_type: null,
-        interpretation: '🔒 광고 시청 후 합(合) 해석을 확인하세요'
-      }
-    },
-    past_life: {
-      connection_type: '🔒',
-      story: '🔒 광고 시청 후 전생 인연 스토리를 확인하세요',
-      evidence: ['🔒 광고 시청 후 확인', '🔒 광고 시청 후 확인', '🔒 광고 시청 후 확인']
-    },
-    destined_timing: {
-      best_year: '🔒',
-      best_month: '🔒',
-      timing_reason: '🔒 광고 시청 후 운명의 시기를 확인하세요'
-    },
-    intimate_compatibility: {
-      passion_score: 0,
-      chemistry_type: '🔒',
-      emotional_connection: '🔒 광고 시청 후 속궁합 분석을 확인하세요',
-      physical_harmony: '🔒 광고 시청 후 에너지 조화 분석을 확인하세요',
-      intimate_advice: '🔒 광고 시청 후 확인하세요'
-    },
-
-    // 기존 섹션 블러
-    detailed_analysis: {
-      personality_match: '🔒 광고 시청 후 상세 분석을 확인하세요',
-      energy_compatibility: '🔒 광고 시청 후 상세 분석을 확인하세요',
-      life_path_connection: '🔒 광고 시청 후 상세 분석을 확인하세요'
-    },
-    challenges: ['🔒 광고 시청 후 확인', '🔒 광고 시청 후 확인', '🔒 광고 시청 후 확인'],
-    lucky_factors: {
-      best_time_to_connect: '🔒',
-      lucky_activity: '🔒',
-      shared_interest: '🔒',
-      lucky_color: '🔒',
-      lucky_direction: '🔒'
-    },
-    recommendations: ['🔒 광고 시청 후 확인', '🔒 광고 시청 후 확인', '🔒 광고 시청 후 확인', '🔒 광고 시청 후 확인']
+    isBlurred: false,
+    blurredSections: []
   }
 }
 

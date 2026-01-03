@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/chat_message.dart';
 import 'chat_career_result_card.dart';
-import 'chat_celebrity_result_card.dart';
+import 'chat_moving_result_card.dart';
+import 'celebrity/celebrity_card_factory.dart';
 import 'chat_fortune_result_card.dart';
 import 'chat_past_life_result_card.dart';
 import 'chat_tarot_result_card.dart';
 import 'chat_match_insight_card.dart';
 import 'chat_ootd_result_card.dart';
 import 'chat_saju_result_card.dart';
+import 'chat_talisman_result_card.dart';
+import 'chat_gratitude_result_card.dart';
+import 'fortune_cookie_result_card.dart';
+import 'personality_dna_chat_card.dart';
 
 /// 채팅 메시지 버블
 class ChatMessageBubble extends StatelessWidget {
@@ -25,6 +30,20 @@ class ChatMessageBubble extends StatelessWidget {
     final typography = context.typography;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isUser = message.type == ChatMessageType.user;
+
+    // 성격 DNA 결과 카드 표시
+    if (message.type == ChatMessageType.personalityDnaResult &&
+        message.personalityDna != null) {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: PersonalityDnaChatCard(
+          dna: message.personalityDna!,
+          isBlurred: message.isBlurred,
+        ),
+      );
+    }
 
     // 사주 분석 결과 카드 표시
     if (message.type == ChatMessageType.sajuResult && message.sajuData != null) {
@@ -84,21 +103,38 @@ class ChatMessageBubble extends StatelessWidget {
       );
     }
 
-    // 유명인 궁합 결과 카드 표시
+    // 이사운 결과 카드 표시
+    if (message.fortune != null &&
+        message.type == ChatMessageType.fortuneResult &&
+        message.fortuneType == 'moving') {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatMovingResultCard(
+          fortune: message.fortune!,
+          isBlurred: message.isBlurred,
+          blurredSections: message.blurredSections,
+        ),
+      );
+    }
+
+    // 유명인 궁합 결과 카드 표시 (유형별 전용 카드)
     if (message.fortune != null &&
         message.type == ChatMessageType.fortuneResult &&
         message.fortuneType == 'celebrity') {
       // Fortune의 additionalInfo에서 celebrity 정보 추출
       final additionalInfo = message.fortune!.additionalInfo ?? {};
+      final questionType = additionalInfo['question_type'] as String?;
       return Container(
         width: double.infinity,
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatCelebrityResultCard(
+        child: CelebrityCardFactory.build(
           fortune: message.fortune!,
+          questionType: questionType,
           celebrityName: additionalInfo['celebrity_name'] as String?,
           celebrityImageUrl: additionalInfo['celebrity_image_url'] as String?,
-          connectionType: additionalInfo['connection_type'] as String? ?? 'ideal_match',
         ),
       );
     }
@@ -155,6 +191,51 @@ class ChatMessageBubble extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
         child: ChatPastLifeResultCard(
           result: message.pastLifeResult!,
+        ),
+      );
+    }
+
+    // 포춘쿠키 결과 카드 표시
+    if (message.fortune != null &&
+        message.type == ChatMessageType.fortuneResult &&
+        message.fortuneType == 'fortune-cookie') {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: FortuneCookieResultCard(
+          fortune: message.fortune!,
+        ),
+      );
+    }
+
+    // 부적 결과 카드 표시 (이미지 + 짧은 설명)
+    if (message.type == ChatMessageType.talismanResult &&
+        message.talismanImageUrl != null) {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatTalismanResultCard(
+          imageUrl: message.talismanImageUrl!,
+          categoryName: message.talismanCategoryName ?? '부적',
+          shortDescription: message.talismanShortDescription ?? '',
+          isBlurred: message.isBlurred,
+        ),
+      );
+    }
+
+    // 감사일기 결과 카드 표시 (일기장 스타일)
+    if (message.type == ChatMessageType.gratitudeResult) {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+        child: ChatGratitudeResultCard(
+          gratitude1: message.gratitude1 ?? '',
+          gratitude2: message.gratitude2 ?? '',
+          gratitude3: message.gratitude3 ?? '',
+          date: message.gratitudeDate ?? DateTime.now(),
         ),
       );
     }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
@@ -8,6 +7,7 @@ import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/meditation_session.dart';
 import '../providers/wellness_providers.dart';
 import '../widgets/breathing_timer_widget.dart';
+import '../widgets/meditation_completion_sheet.dart';
 
 /// 명상 페이지
 class MeditationPage extends ConsumerStatefulWidget {
@@ -19,6 +19,7 @@ class MeditationPage extends ConsumerStatefulWidget {
 
 class _MeditationPageState extends ConsumerState<MeditationPage> {
   bool _wasRunning = false;
+  bool _hasShownCompletion = false;
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
     // 시작: 재생
     if (current.isRunning && !_wasRunning) {
       soundService.play();
+      _hasShownCompletion = false; // 새 세션 시작 시 플래그 리셋
     }
     // 일시정지: 일시정지
     else if (!current.isRunning && _wasRunning && current.totalSecondsRemaining > 0) {
@@ -55,12 +57,31 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
     else if (!current.isRunning && current.totalSecondsRemaining == current.totalDurationSeconds) {
       soundService.stop();
     }
-    // 시간 끝남: 정지
-    else if (current.totalSecondsRemaining <= 0) {
+    // 시간 끝남: 정지 + 완료 화면 표시
+    else if (current.totalSecondsRemaining <= 0 && !_hasShownCompletion) {
       soundService.stop();
+      _hasShownCompletion = true;
+      _showCompletionSheet(current);
     }
 
     _wasRunning = current.isRunning;
+  }
+
+  /// 명상 완료 결과 화면 표시
+  void _showCompletionSheet(BreathingTimerState state) {
+    final pattern = ref.read(selectedBreathingPatternProvider);
+    final duration = ref.read(selectedMeditationDurationProvider);
+
+    // 타이머 리셋
+    ref.read(breathingTimerProvider.notifier).reset();
+
+    // 완료 sheet 표시
+    MeditationCompletionSheet.show(
+      context,
+      durationMinutes: duration,
+      completedCycles: state.completedCycles,
+      patternName: pattern.name,
+    );
   }
 
   @override

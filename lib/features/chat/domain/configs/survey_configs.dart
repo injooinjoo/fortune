@@ -451,10 +451,10 @@ const _mbtiConfirmOptions = [
 
 /// MBTI 카테고리 옵션 (Step 2용)
 const _mbtiCategoryOptions = [
-  SurveyOption(id: 'overall', label: '오늘의 종합', emoji: '🌟'),
+  SurveyOption(id: 'personality', label: '성향 분석', emoji: '🔍'),
   SurveyOption(id: 'love', label: '연애/관계', emoji: '💕'),
   SurveyOption(id: 'career', label: '직장/커리어', emoji: '💼'),
-  SurveyOption(id: 'all', label: '전체 다 보기', emoji: '📚'),
+  SurveyOption(id: 'growth', label: '자기계발', emoji: '🌱'),
 ];
 
 /// MBTI 설문 설정 (3단계: 확인 → 재선택 → 카테고리)
@@ -535,10 +535,11 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   FortuneSurveyType.dream: dreamSurveyConfig,
   FortuneSurveyType.celebrity: celebritySurveyConfig,
   FortuneSurveyType.pastLife: pastLifeSurveyConfig,
-  // 가족/반려동물 (3개)
+  // 가족/반려동물 (4개)
   FortuneSurveyType.pet: petSurveyConfig,
   FortuneSurveyType.family: familySurveyConfig,
   FortuneSurveyType.naming: namingSurveyConfig,
+  FortuneSurveyType.babyNickname: babyNicknameSurveyConfig,
   // 스타일/패션 (1개)
   FortuneSurveyType.ootdEvaluation: ootdEvaluationSurveyConfig,
   // 실용/결정 (2개)
@@ -717,14 +718,15 @@ const faceReadingSurveyConfig = FortuneSurveyConfig(
 // Talisman (부적) 설문 설정
 // ============================================================
 
-/// 부적 목적 옵션
+/// 부적 목적 옵션 (TalismanCategory.id와 일치)
 const _talismanPurposeOptions = [
-  SurveyOption(id: 'wealth', label: '재물/금전운', emoji: '💰'),
-  SurveyOption(id: 'love', label: '연애/결혼운', emoji: '💕'),
-  SurveyOption(id: 'health', label: '건강/장수', emoji: '💪'),
-  SurveyOption(id: 'success', label: '성공/합격', emoji: '🏆'),
-  SurveyOption(id: 'protection', label: '액막이/보호', emoji: '🛡️'),
-  SurveyOption(id: 'family', label: '가정화목', emoji: '👨‍👩‍👧‍👦'),
+  SurveyOption(id: 'wealth_career', label: '재물/금전운', emoji: '💰'),
+  SurveyOption(id: 'love_relationship', label: '연애/결혼운', emoji: '💕'),
+  SurveyOption(id: 'health_longevity', label: '건강/장수', emoji: '💪'),
+  SurveyOption(id: 'academic_success', label: '성공/합격', emoji: '🏆'),
+  SurveyOption(id: 'disaster_removal', label: '액막이/보호', emoji: '🛡️'),
+  SurveyOption(id: 'home_protection', label: '가정화목', emoji: '👨‍👩‍👧‍👦'),
+  SurveyOption(id: 'disease_prevention', label: '질병퇴치', emoji: '🏥'),
 ];
 
 /// 특별한 상황 옵션
@@ -764,14 +766,84 @@ const talismanSurveyConfig = FortuneSurveyConfig(
 // PersonalityDna (성격 DNA) 설문 설정
 // ============================================================
 
-/// PersonalityDna 설문 설정 (사주 기반, 추가 수집 없음)
+/// 성격 DNA용 혈액형 옵션
+const _personalityDnaBloodTypeOptions = [
+  SurveyOption(id: 'A', label: 'A형', emoji: '🅰️'),
+  SurveyOption(id: 'B', label: 'B형', emoji: '🅱️'),
+  SurveyOption(id: 'O', label: 'O형', emoji: '🅾️'),
+  SurveyOption(id: 'AB', label: 'AB형', emoji: '🆎'),
+];
+
+/// 성격 DNA용 별자리 옵션
+const _personalityDnaZodiacOptions = [
+  SurveyOption(id: '양자리', label: '양자리', emoji: '♈'),
+  SurveyOption(id: '황소자리', label: '황소자리', emoji: '♉'),
+  SurveyOption(id: '쌍둥이자리', label: '쌍둥이자리', emoji: '♊'),
+  SurveyOption(id: '게자리', label: '게자리', emoji: '♋'),
+  SurveyOption(id: '사자자리', label: '사자자리', emoji: '♌'),
+  SurveyOption(id: '처녀자리', label: '처녀자리', emoji: '♍'),
+  SurveyOption(id: '천칭자리', label: '천칭자리', emoji: '♎'),
+  SurveyOption(id: '전갈자리', label: '전갈자리', emoji: '♏'),
+  SurveyOption(id: '궁수자리', label: '궁수자리', emoji: '♐'),
+  SurveyOption(id: '염소자리', label: '염소자리', emoji: '♑'),
+  SurveyOption(id: '물병자리', label: '물병자리', emoji: '♒'),
+  SurveyOption(id: '물고기자리', label: '물고기자리', emoji: '♓'),
+];
+
+/// 성격 DNA용 띠 옵션
+const _personalityDnaZodiacAnimalOptions = [
+  SurveyOption(id: '쥐', label: '쥐띠', emoji: '🐭'),
+  SurveyOption(id: '소', label: '소띠', emoji: '🐮'),
+  SurveyOption(id: '호랑이', label: '호랑이띠', emoji: '🐯'),
+  SurveyOption(id: '토끼', label: '토끼띠', emoji: '🐰'),
+  SurveyOption(id: '용', label: '용띠', emoji: '🐲'),
+  SurveyOption(id: '뱀', label: '뱀띠', emoji: '🐍'),
+  SurveyOption(id: '말', label: '말띠', emoji: '🐴'),
+  SurveyOption(id: '양', label: '양띠', emoji: '🐑'),
+  SurveyOption(id: '원숭이', label: '원숭이띠', emoji: '🐵'),
+  SurveyOption(id: '닭', label: '닭띠', emoji: '🐔'),
+  SurveyOption(id: '개', label: '개띠', emoji: '🐶'),
+  SurveyOption(id: '돼지', label: '돼지띠', emoji: '🐷'),
+];
+
+/// PersonalityDna 설문 설정 (MBTI, 혈액형, 별자리, 띠 수집)
+/// 참고: 프로필에 이미 있는 값은 chat_home_page에서 스킵 처리
 const personalityDnaSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.personalityDna,
   title: '성격 DNA',
-  description: '사주로 보는 당신만의 성격 DNA',
+  description: 'MBTI, 혈액형, 별자리, 띠를 조합한 당신만의 DNA',
   emoji: '🧬',
   accentColor: FortuneColors.career,
-  steps: [], // 추가 수집 없음 (생년월일 기반)
+  steps: [
+    SurveyStep(
+      id: 'mbti',
+      question: 'MBTI가 어떻게 되세요?',
+      inputType: SurveyInputType.chips,
+      options: _mbtiTypeOptions,
+      isRequired: true,
+    ),
+    SurveyStep(
+      id: 'bloodType',
+      question: '혈액형을 선택해주세요',
+      inputType: SurveyInputType.chips,
+      options: _personalityDnaBloodTypeOptions,
+      isRequired: true,
+    ),
+    SurveyStep(
+      id: 'zodiac',
+      question: '별자리가 어떻게 되세요?',
+      inputType: SurveyInputType.chips,
+      options: _personalityDnaZodiacOptions,
+      isRequired: true,
+    ),
+    SurveyStep(
+      id: 'zodiacAnimal',
+      question: '띠가 어떻게 되세요?',
+      inputType: SurveyInputType.chips,
+      options: _personalityDnaZodiacAnimalOptions,
+      isRequired: true,
+    ),
+  ],
 );
 
 // ============================================================
@@ -1780,9 +1852,8 @@ const _celebrityConnectionTypeOptions = [
   SurveyOption(id: 'fan', label: '팬으로', emoji: '⭐'),
 ];
 
-/// Celebrity 관심포인트 옵션
+/// Celebrity 분석 유형 옵션 (유형별 전용 카드)
 const _celebrityInterestOptions = [
-  SurveyOption(id: 'overall', label: '전체 궁합', emoji: '💫'),
   SurveyOption(id: 'personality', label: '성격 궁합', emoji: '🧠'),
   SurveyOption(id: 'love', label: '연애 궁합', emoji: '💕'),
   SurveyOption(id: 'pastLife', label: '전생 인연', emoji: '🌙'),
@@ -1811,10 +1882,10 @@ const celebritySurveyConfig = FortuneSurveyConfig(
     ),
     SurveyStep(
       id: 'interest',
-      question: '특히 궁금한 부분이 있어? ✨',
+      question: '어떤 궁합이 궁금해? ✨',
       inputType: SurveyInputType.chips,
       options: _celebrityInterestOptions,
-      isRequired: false,
+      isRequired: true,
     ),
   ],
 );
@@ -1825,7 +1896,6 @@ const celebritySurveyConfig = FortuneSurveyConfig(
 
 /// Pet 관심포인트 옵션
 const _petInterestOptions = [
-  SurveyOption(id: 'overall', label: '전체 궁합', emoji: '💫'),
   SurveyOption(id: 'personality', label: '성격 궁합', emoji: '🧠'),
   SurveyOption(id: 'activity', label: '활동 궁합', emoji: '🏃'),
   SurveyOption(id: 'care', label: '케어 스타일', emoji: '💕'),
@@ -1861,11 +1931,11 @@ const petSurveyConfig = FortuneSurveyConfig(
 
 /// 가족 관심사 옵션
 const _familyConcernOptions = [
-  SurveyOption(id: 'harmony', label: '화목/관계', emoji: '💕'),
+  SurveyOption(id: 'relationship', label: '화목/관계', emoji: '💕'),
   SurveyOption(id: 'health', label: '건강', emoji: '💪'),
   SurveyOption(id: 'wealth', label: '재물', emoji: '💰'),
-  SurveyOption(id: 'education', label: '자녀 교육', emoji: '📚'),
-  SurveyOption(id: 'overall', label: '전체 운세', emoji: '✨'),
+  SurveyOption(id: 'children', label: '자녀 교육', emoji: '📚'),
+  SurveyOption(id: 'change', label: '변화/이사', emoji: '🔄'),
 ];
 
 /// 가족 구성원 옵션
@@ -1897,12 +1967,29 @@ const familySurveyConfig = FortuneSurveyConfig(
       inputType: SurveyInputType.chips,
       options: _familyMemberOptions,
     ),
+    // 특정 가족 구성원 선택 시 프로필 선택 단계 추가
+    // "가족 전체"(all) 선택 시에는 이 단계 스킵
+    SurveyStep(
+      id: 'familyProfile',
+      question: '가족 정보를 선택해주세요',
+      inputType: SurveyInputType.familyProfile,
+      options: [],
+      showWhen: {
+        'member': ['parents', 'spouse', 'children', 'siblings'],
+      },
+    ),
   ],
 );
 
 // ============================================================
 // Naming (작명) 설문 설정
 // ============================================================
+
+/// 출산 예정일 확인 옵션
+const _namingDueDateKnownOptions = [
+  SurveyOption(id: 'known', label: '알아요', emoji: '📅'),
+  SurveyOption(id: 'unknown', label: '미정이에요', emoji: '🤷'),
+];
 
 /// 성별 옵션
 const _namingGenderOptions = [
@@ -1929,11 +2016,19 @@ const namingSurveyConfig = FortuneSurveyConfig(
   accentColor: FortuneColors.mystical,
   steps: [
     SurveyStep(
+      id: 'dueDateKnown',
+      question: '출산 예정일을 알고 계세요?',
+      inputType: SurveyInputType.chips,
+      options: _namingDueDateKnownOptions,
+    ),
+    SurveyStep(
       id: 'dueDate',
       question: '출산 예정일이 언제인가요?',
       inputType: SurveyInputType.calendar,
       options: [],
-      isRequired: false,
+      showWhen: {
+        'dueDateKnown': ['known'],
+      },
     ),
     SurveyStep(
       id: 'gender',
@@ -1952,6 +2047,33 @@ const namingSurveyConfig = FortuneSurveyConfig(
       question: '원하는 이름 스타일은요?',
       inputType: SurveyInputType.chips,
       options: _namingStyleOptions,
+    ),
+  ],
+);
+
+// ============================================================
+// BabyNickname (태명) 설문 설정
+// ============================================================
+
+/// BabyNickname 설문 설정
+/// 아기 시점 메시지형 - 태아가 부모에게 직접 말하는 1인칭 시점
+const babyNicknameSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.babyNickname,
+  title: '태명 이야기',
+  description: '태명으로 아이와 교감해보세요!',
+  emoji: '👶',
+  accentColor: FortuneColors.love,
+  steps: [
+    SurveyStep(
+      id: 'babyDream',
+      question: '혹시 태몽을 꾸셨나요? 🌙\n어떤 꿈이었는지 알려주세요',
+      inputType: SurveyInputType.text,
+      isRequired: false,
+    ),
+    SurveyStep(
+      id: 'nickname',
+      question: '아이 태명이 뭔가요? 💕',
+      inputType: SurveyInputType.text,
     ),
   ],
 );
@@ -2001,10 +2123,11 @@ const ootdEvaluationSurveyConfig = FortuneSurveyConfig(
 
 /// 시험 종류 옵션
 const _examTypeOptions = [
+  SurveyOption(id: 'csat', label: '수능', emoji: '🎓'),
   SurveyOption(id: 'license', label: '자격증', emoji: '📜'),
   SurveyOption(id: 'job', label: '취업/입사', emoji: '💼'),
   SurveyOption(id: 'promotion', label: '승진/진급', emoji: '📈'),
-  SurveyOption(id: 'school', label: '입시/편입', emoji: '🎓'),
+  SurveyOption(id: 'school', label: '입시/편입', emoji: '🏫'),
   SurveyOption(id: 'language', label: '어학시험', emoji: '🌍'),
   SurveyOption(id: 'other', label: '기타', emoji: '✏️'),
 ];
@@ -2154,17 +2277,17 @@ const gratitudeSurveyConfig = FortuneSurveyConfig(
   steps: [
     SurveyStep(
       id: 'gratitude1',
-      question: '첫 번째로 감사한 일이 뭐예요? 🙏',
+      question: '오늘 당신의 입가를 미소 짓게 했던 아주 사소한 순간은 언제인가요? 😊',
       inputType: SurveyInputType.text,
     ),
     SurveyStep(
       id: 'gratitude2',
-      question: '두 번째로 감사한 일은요? 💫',
+      question: '나를 위해 고생한 내 몸이나 마음에게 해주고 싶은 고마운 한마디가 있을까요? ✨',
       inputType: SurveyInputType.text,
     ),
     SurveyStep(
       id: 'gratitude3',
-      question: '마지막으로 감사한 일을 적어주세요 ✨',
+      question: '오늘 하루 중 가장 따뜻했던 장면 하나를 떠올려 보세요 🍃',
       inputType: SurveyInputType.text,
     ),
   ],

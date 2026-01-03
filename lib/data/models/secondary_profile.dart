@@ -29,6 +29,10 @@ class SecondaryProfile extends Equatable {
   /// 관계 ("family" | "friend" | "lover" | "other")
   final String? relationship;
 
+  /// 가족 세부 관계 ("parents" | "spouse" | "children" | "siblings")
+  /// relationship이 "family"일 때만 사용
+  final String? familyRelation;
+
   /// MBTI 성격유형 (선택)
   final String? mbti;
 
@@ -53,6 +57,7 @@ class SecondaryProfile extends Equatable {
     required this.gender,
     this.isLunar = false,
     this.relationship,
+    this.familyRelation,
     this.mbti,
     this.bloodType,
     this.avatarIndex = 0,
@@ -71,6 +76,7 @@ class SecondaryProfile extends Equatable {
       gender: json['gender'] as String,
       isLunar: json['is_lunar'] as bool? ?? false,
       relationship: json['relationship'] as String?,
+      familyRelation: json['family_relation'] as String?,
       mbti: json['mbti'] as String?,
       bloodType: json['blood_type'] as String?,
       avatarIndex: json['avatar_index'] as int? ?? 0,
@@ -94,6 +100,7 @@ class SecondaryProfile extends Equatable {
       'gender': gender,
       'is_lunar': isLunar,
       'relationship': relationship,
+      'family_relation': familyRelation,
       'mbti': mbti,
       'blood_type': bloodType,
       'avatar_index': avatarIndex,
@@ -139,6 +146,22 @@ class SecondaryProfile extends Equatable {
     }
   }
 
+  /// 가족 세부 관계 표시 텍스트
+  String get familyRelationText {
+    switch (familyRelation) {
+      case 'parents':
+        return '부모님';
+      case 'spouse':
+        return '배우자';
+      case 'children':
+        return '자녀';
+      case 'siblings':
+        return '형제자매';
+      default:
+        return '';
+    }
+  }
+
   /// 이름 첫 글자 (아바타용)
   String get initial => name.isNotEmpty ? name.substring(0, 1) : '?';
 
@@ -152,6 +175,7 @@ class SecondaryProfile extends Equatable {
     String? gender,
     bool? isLunar,
     String? relationship,
+    String? familyRelation,
     String? mbti,
     String? bloodType,
     int? avatarIndex,
@@ -167,6 +191,7 @@ class SecondaryProfile extends Equatable {
       gender: gender ?? this.gender,
       isLunar: isLunar ?? this.isLunar,
       relationship: relationship ?? this.relationship,
+      familyRelation: familyRelation ?? this.familyRelation,
       mbti: mbti ?? this.mbti,
       bloodType: bloodType ?? this.bloodType,
       avatarIndex: avatarIndex ?? this.avatarIndex,
@@ -185,6 +210,7 @@ class SecondaryProfile extends Equatable {
         gender,
         isLunar,
         relationship,
+        familyRelation,
         mbti,
         bloodType,
         avatarIndex,

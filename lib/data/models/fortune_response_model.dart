@@ -214,6 +214,7 @@ class FortuneData {
   final String? relationshipAdvice;
   final int? energyLevel;
   final int? stressLevel;
+  final String? todayTrap;  // 오늘의 함정 (위기감 유발 메시지)
   
   // Compatibility fortune fields
   final int? compatibilityScore;
@@ -282,6 +283,7 @@ class FortuneData {
     this.relationshipAdvice,
     this.energyLevel,
     this.stressLevel,
+    this.todayTrap,
     this.compatibilityScore,
     this.emotionalCompatibility,
     this.communicationStyle,
@@ -307,7 +309,19 @@ class FortuneData {
   factory FortuneData.fromJson(Map<String, dynamic> json) {
     // Handle fortune-specific content mapping
     String? content = json['content'];
-    String? summary = json['summary'];
+
+    // Handle summary being either String or Map
+    String? summary;
+    final rawSummary = json['summary'];
+    if (rawSummary is String) {
+      summary = rawSummary;
+    } else if (rawSummary is Map<String, dynamic>) {
+      // Extract text from summary Map (moving fortune returns this format)
+      summary = rawSummary['one_line'] as String? ??
+                rawSummary['final_message'] as String? ??
+                rawSummary['text'] as String?;
+    }
+
     String? advice = json['advice'];
     int? score = json['score'] ?? json['overall_score'] ?? json['overallScore'];
 
@@ -691,9 +705,11 @@ class FortuneData {
                  json['lifestyle_advice'] as String?;
     }
 
-    // Wealth fortune: map wealth-specific fields to metadata
+    // Wealth/Money fortune: map wealth-specific fields to metadata
     if (json['fortuneType'] == 'wealth' || json['type'] == 'wealth' ||
-        json['fortune_type'] == 'wealth') {
+        json['fortune_type'] == 'wealth' ||
+        json['fortuneType'] == 'money' || json['type'] == 'money' ||
+        json['fortune_type'] == 'money') {
       score ??= json['overallScore'] as int? ?? json['score'] as int?;
       summary ??= json['content'] as String?;
 
@@ -815,6 +831,83 @@ class FortuneData {
       };
     }
 
+    // MBTI fortune: map MBTI-specific fields to metadata (dimensions, todayTrap)
+    // dimensions 필드가 있거나 fortuneType이 mbti인 경우 트리거
+    final isMbtiData = json['fortuneType'] == 'mbti' ||
+        json['type'] == 'mbti' ||
+        json['fortune_type'] == 'mbti' ||
+        json['dimensions'] != null;  // dimensions 필드가 있으면 MBTI 데이터
+
+    if (isMbtiData) {
+      score ??= json['overallScore'] as int? ?? json['score'] as int?;
+      summary ??= json['summary'] as String? ?? json['content'] as String?;
+
+      // Store all MBTI dimension data in metadata for ChatFortuneResultCard access
+      metadata = {
+        ...?metadata,
+        if (json['dimensions'] != null) 'dimensions': json['dimensions'],
+        if (json['todayTrap'] != null) 'todayTrap': json['todayTrap'],
+        if (json['overallScore'] != null) 'overallScore': json['overallScore'],
+        if (json['luckyColor'] != null) 'luckyColor': json['luckyColor'],
+        if (json['luckyNumber'] != null) 'luckyNumber': json['luckyNumber'],
+        if (json['mbtiDescription'] != null) 'mbtiDescription': json['mbtiDescription'],
+        if (json['cognitiveStrengths'] != null) 'cognitiveStrengths': json['cognitiveStrengths'],
+        if (json['challenges'] != null) 'challenges': json['challenges'],
+        'fortuneType': 'mbti',
+      };
+    }
+
+    // Pet compatibility fortune: map pet-specific fields to metadata
+    if (json['fortuneType'] == 'pet-compatibility' ||
+        json['type'] == 'pet-compatibility' ||
+        json['fortune_type'] == 'pet-compatibility') {
+      score ??= json['score'] as int? ?? json['overall_score'] as int?;
+      summary ??= json['summary'] as String?;
+
+      // Store all pet compatibility data in metadata for ChatFortuneResultCard access
+      metadata = {
+        ...?metadata,
+        if (json['pets_voice'] != null) 'pets_voice': json['pets_voice'],
+        if (json['bonding_mission'] != null) 'bonding_mission': json['bonding_mission'],
+        if (json['daily_condition'] != null) 'daily_condition': json['daily_condition'],
+        if (json['owner_bond'] != null) 'owner_bond': json['owner_bond'],
+        if (json['activity_recommendation'] != null) 'activity_recommendation': json['activity_recommendation'],
+        if (json['care_tips'] != null) 'care_tips': json['care_tips'],
+        if (json['health_check'] != null) 'health_check': json['health_check'],
+        if (json['weather_advice'] != null) 'weather_advice': json['weather_advice'],
+        if (json['special_message'] != null) 'special_message': json['special_message'],
+        if (json['pet_info'] != null) 'pet_info': json['pet_info'],
+        'fortuneType': 'pet-compatibility',
+      };
+
+      // Build content from pet fortune sections
+      final contentParts = <String>[];
+      if (summary != null) contentParts.add(summary);
+
+      // Add daily condition preview
+      final dailyCondition = json['daily_condition'] as Map<String, dynamic>?;
+      if (dailyCondition != null) {
+        if (dailyCondition['status'] != null) {
+          contentParts.add('\n\n🐾 오늘의 컨디션: ${dailyCondition['status']}');
+        }
+        if (dailyCondition['description'] != null) {
+          contentParts.add('\n${dailyCondition['description']}');
+        }
+      }
+
+      // Add owner bond preview
+      final ownerBond = json['owner_bond'] as Map<String, dynamic>?;
+      if (ownerBond != null) {
+        if (ownerBond['status'] != null) {
+          contentParts.add('\n\n💕 유대감: ${ownerBond['status']}');
+        }
+      }
+
+      if (contentParts.isNotEmpty) {
+        content = contentParts.join('');
+      }
+    }
+
     return FortuneData(
       id: json['id'],
       userId: json['userId'],
@@ -871,7 +964,8 @@ class FortuneData {
       relationshipAdvice: json['relationshipAdvice'],
       energyLevel: json['energyLevel'],
       stressLevel: json['stressLevel'],
-      
+      todayTrap: json['todayTrap'] as String?,
+
       // Compatibility fortune fields,
     compatibilityScore: json['compatibilityScore'],
       emotionalCompatibility: json['emotionalCompatibility'],

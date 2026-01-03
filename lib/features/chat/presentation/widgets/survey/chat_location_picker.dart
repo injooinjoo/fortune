@@ -396,7 +396,7 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
         ),
         child: Row(
           children: [
-            Icon(Icons.my_location, size: 20, color: colors.accentPrimary),
+            Icon(Icons.my_location, size: 20, color: colors.accent),
             const SizedBox(width: DSSpacing.sm),
             Text(
               '📍 현재 위치 사용하기',

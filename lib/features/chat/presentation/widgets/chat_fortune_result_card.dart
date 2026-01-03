@@ -15,6 +15,9 @@ import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../fortune/domain/models/mbti_dimension_fortune.dart';
+import '../../../fortune/domain/models/wish_fortune_result.dart';
 import 'month_highlight_detail_bottom_sheet.dart';
 
 /// 채팅용 운세 결과 리치 카드
@@ -94,7 +97,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       fortuneType == 'blind-date' ||
       fortuneType == 'love' ||
       fortuneType == 'career' ||
-      fortuneType == 'exam';
+      fortuneType == 'exam' ||
+      fortuneType == 'talisman' ||
+      fortuneType == 'moving';
 
   /// 경계 대상 caution 데이터 존재 여부 체크
   bool get _hasCautionData {
@@ -131,8 +136,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
            metadata['intellectual'] != null;
   }
 
-  /// 재물운 타입 체크
-  bool get _isWealth => fortuneType == 'wealth';
+  /// 재물운 타입 체크 (wealth 또는 money)
+  bool get _isWealth => fortuneType == 'wealth' || fortuneType == 'money';
 
   /// 재물운 데이터 존재 여부 체크
   bool get _hasWealthData {
@@ -178,6 +183,272 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     return metadata['exercise_advice'] != null ||
            metadata['diet_advice'] != null ||
            metadata['overall_health'] != null;
+  }
+
+  /// 운동운 타입 체크
+  /// 'exercise' 또는 'health_sports' (FortuneSurveyType.exercise → _mapSurveyTypeToString)
+  bool get _isExercise => fortuneType == 'exercise' || fortuneType == 'health_sports';
+
+  /// 운동운 데이터 존재 여부 체크
+  bool get _hasExerciseData {
+    // ✅ additionalInfo를 먼저 체크 (FortuneResponseModel.toEntity에서 metadata → additionalInfo로 매핑)
+    final exerciseData = fortune.additionalInfo ?? fortune.metadata ?? {};
+
+    // 디버그 로깅
+    debugPrint('🏋️ [_hasExerciseData] fortuneType: $fortuneType');
+    debugPrint('🏋️ [_hasExerciseData] additionalInfo keys: ${fortune.additionalInfo?.keys.toList()}');
+    debugPrint('🏋️ [_hasExerciseData] metadata keys: ${fortune.metadata?.keys.toList()}');
+    debugPrint('🏋️ [_hasExerciseData] exerciseData keys: ${exerciseData.keys.toList()}');
+    debugPrint('🏋️ [_hasExerciseData] recommendedExercise: ${exerciseData['recommendedExercise'] != null}');
+    debugPrint('🏋️ [_hasExerciseData] todayRoutine: ${exerciseData['todayRoutine'] != null}');
+
+    final hasData = exerciseData['recommendedExercise'] != null ||
+           exerciseData['todayRoutine'] != null ||
+           exerciseData['weeklyPlan'] != null;
+    debugPrint('🏋️ [_hasExerciseData] result: $hasData');
+    return hasData;
+  }
+
+  /// MBTI 타입 체크
+  bool get _isMbti => fortuneType == 'mbti';
+
+  /// MBTI dimensions 데이터 존재 여부 체크
+  bool get _hasMbtiData {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    return metadata['dimensions'] != null;
+  }
+
+  /// MBTI todayTrap 데이터 가져오기
+  String? get _mbtiTodayTrap {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    return metadata?['todayTrap'] as String?;
+  }
+
+  /// MBTI dimensions 데이터 파싱
+  List<MbtiDimensionFortune> get _mbtiDimensions {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    final dimensionsJson = metadata?['dimensions'] as List<dynamic>?;
+    return parseDimensions(dimensionsJson);
+  }
+
+  // ============ 소원 빌기 (Wish) 관련 ============
+
+  /// 소원 빌기 타입 여부
+  bool get _isWish => fortuneType == 'wish';
+
+  /// 소원 빌기 확장 데이터 존재 여부
+  bool get _hasWishData {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    return metadata['dragon_message'] != null ||
+           metadata['fortune_flow'] != null ||
+           metadata['lucky_mission'] != null;
+  }
+
+  /// 소원 빌기 결과 파싱
+  WishFortuneResult? get _wishData {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return null;
+    try {
+      return WishFortuneResult.fromJson(metadata);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // ============ 부적 (Talisman) 관련 ============
+
+  /// 부적 타입 여부
+  bool get _isTalisman => fortuneType == 'talisman';
+
+  /// 부적 상세 데이터 존재 여부
+  bool get _hasTalismanData {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    return metadata['details'] != null ||
+           metadata['luckyItems'] != null ||
+           metadata['warnings'] != null;
+  }
+
+  /// 부적 details 데이터 가져오기
+  Map<String, dynamic>? get _talismanDetails {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return null;
+    final details = metadata['details'];
+    return details is Map<String, dynamic> ? details : null;
+  }
+
+  /// 부적 luckyItems 배열 가져오기
+  List<String> get _talismanLuckyItems {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return [];
+    final items = metadata['luckyItems'];
+    if (items is List) {
+      return items.map((e) => e.toString()).toList();
+    }
+    return [];
+  }
+
+  /// 부적 warnings 배열 가져오기
+  List<String> get _talismanWarnings {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return [];
+    final warnings = metadata['warnings'];
+    if (warnings is List) {
+      return warnings.map((e) => e.toString()).toList();
+    }
+    return [];
+  }
+
+  // ============ 가족운 (Family) 관련 ============
+
+  /// 가족운 타입 체크 (모든 가족운 타입)
+  bool get _isFamily =>
+      fortuneType == 'family' ||
+      fortuneType == 'family-health' ||
+      fortuneType == 'family-wealth' ||
+      fortuneType == 'family-relationship' ||
+      fortuneType == 'family-children' ||
+      fortuneType == 'family-change';
+
+  /// 가족 건강운 타입 체크
+  bool get _isFamilyHealth => fortuneType == 'family-health';
+
+  /// 가족 재물운 타입 체크
+  bool get _isFamilyWealth => fortuneType == 'family-wealth';
+
+  /// 가족 관계운 타입 체크
+  bool get _isFamilyRelationship => fortuneType == 'family-relationship';
+
+  /// 가족 자녀운 타입 체크
+  bool get _isFamilyChildren => fortuneType == 'family-children';
+
+  /// 가족 변화운 타입 체크
+  bool get _isFamilyChange => fortuneType == 'family-change';
+
+  /// 가족운 데이터 존재 여부 체크
+  bool get _hasFamilyData {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    return metadata['familySynergy'] != null ||
+           metadata['monthlyFlow'] != null ||
+           metadata['familyAdvice'] != null ||
+           metadata['recommendations'] != null ||
+           metadata['healthCategories'] != null ||
+           metadata['wealthCategories'] != null ||
+           metadata['relationshipCategories'] != null ||
+           metadata['childrenCategories'] != null ||
+           metadata['changeCategories'] != null;
+  }
+
+  /// 가족운 카테고리 데이터 (타입별 다른 필드명)
+  Map<String, dynamic>? get _familyCategories {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return null;
+    if (_isFamilyHealth) return metadata['healthCategories'] as Map<String, dynamic>?;
+    if (_isFamilyWealth) return metadata['wealthCategories'] as Map<String, dynamic>?;
+    if (_isFamilyRelationship) return metadata['relationshipCategories'] as Map<String, dynamic>?;
+    if (_isFamilyChildren) return metadata['childrenCategories'] as Map<String, dynamic>?;
+    if (_isFamilyChange) return metadata['changeCategories'] as Map<String, dynamic>?;
+    return null;
+  }
+
+  /// 가족운 familySynergy 데이터
+  Map<String, dynamic>? get _familySynergy {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    return metadata?['familySynergy'] as Map<String, dynamic>?;
+  }
+
+  /// 가족운 monthlyFlow 데이터
+  Map<String, dynamic>? get _familyMonthlyFlow {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    return metadata?['monthlyFlow'] as Map<String, dynamic>?;
+  }
+
+  /// 가족운 familyAdvice 데이터
+  Map<String, dynamic>? get _familyAdvice {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    return metadata?['familyAdvice'] as Map<String, dynamic>?;
+  }
+
+  /// 가족운 recommendations 리스트
+  List<String> get _familyRecommendations {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return [];
+    final recs = metadata['recommendations'];
+    if (recs is List) {
+      return recs.map((e) => e.toString()).toList();
+    }
+    return [];
+  }
+
+  /// 가족운 warnings 리스트
+  List<String> get _familyWarnings {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return [];
+    final warnings = metadata['warnings'];
+    if (warnings is List) {
+      return warnings.map((e) => e.toString()).toList();
+    }
+    return [];
+  }
+
+  /// 가족운 specialAnswer
+  String? get _familySpecialAnswer {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    return metadata?['specialAnswer'] as String?;
+  }
+
+  /// 가족운 타입별 특수 조언 데이터 (seasonalAdvice, timingAdvice 등)
+  Map<String, dynamic>? get _familySpecialAdvice {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return null;
+    if (_isFamilyHealth) return metadata['seasonalAdvice'] as Map<String, dynamic>?;
+    if (_isFamilyWealth) return metadata['monthlyTrend'] as Map<String, dynamic>?;
+    if (_isFamilyRelationship) return metadata['communicationAdvice'] as Map<String, dynamic>?;
+    if (_isFamilyChildren) return metadata['educationAdvice'] as Map<String, dynamic>?;
+    if (_isFamilyChange) return metadata['timingAdvice'] as Map<String, dynamic>?;
+    return null;
+  }
+
+  // ============ 반려동물 궁합 (Pet Compatibility) 관련 ============
+
+  /// 펫 궁합 타입 체크
+  bool get _isPetCompatibility => fortuneType == 'pet-compatibility';
+
+  /// 펫 속마음 편지 데이터 존재 여부
+  bool get _hasPetsVoice {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    final petsVoice = metadata['pets_voice'];
+    return petsVoice != null && petsVoice['heartfelt_letter'] != null;
+  }
+
+  /// 펫 속마음 편지 데이터
+  Map<String, dynamic>? get _petsVoice {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    return metadata?['pets_voice'] as Map<String, dynamic>?;
+  }
+
+  /// 교감 미션 데이터 존재 여부
+  bool get _hasBondingMission {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    final mission = metadata['bonding_mission'];
+    return mission != null && mission['mission_title'] != null;
+  }
+
+  /// 교감 미션 데이터
+  Map<String, dynamic>? get _bondingMission {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    return metadata?['bonding_mission'] as Map<String, dynamic>?;
+  }
+
+  /// 펫 정보 데이터
+  Map<String, dynamic>? get _petInfo {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    return metadata?['pet_info'] as Map<String, dynamic>?;
   }
 
   /// 인사이트 민화 이미지 목록 (날짜별 랜덤 선택)
@@ -345,27 +616,80 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           if (_isNaming && _hasNamingData)
             _buildNamingSection(context, isPremium),
 
-          // 시험운 전용 섹션 (exam)
+          // 시험운 전용 섹션 (exam) - 2025 리뉴얼
           if (_isExam && _hasExamData) ...[
-            // 1. D-day & 합격 가능성 배너
-            _buildExamDdaySection(context),
-            // 2. 행운 정보 그리드
+            // 1. 합격 시그널 헤더 (원형 게이지 + 해시태그)
+            _buildExamSignalHeader(context),
+            // 2. 시험 스탯 (프로그레스 바 3개)
+            _buildExamStatsSection(context),
+            // 3. 오늘의 1점 전략
+            _buildTodayStrategySection(context),
+            // 4. 영물의 기개
+            _buildSpiritAnimalSection(context),
+            // 5. 행운 정보 그리드
             _buildExamLuckyInfoSection(context, isPremium),
-            // 3. D-day 맞춤 조언
+            // 6. D-day 맞춤 조언
             _buildExamDdayAdviceSection(context, isPremium),
-            // 4. 공부법 & 집중력
-            _buildExamStudyTipsSection(context, isPremium),
-            // 5. 주의사항
-            _buildExamWarningsSection(context),
-            // 6. 멘탈 관리
+            // 7. 멘탈 관리
             _buildExamMentalCareSection(context, isPremium),
-            // 7. 사주 분석 (Premium)
-            _buildExamSajuSection(context, isPremium),
           ],
 
           // 건강운 전용 섹션들 (health)
           if (_isHealth && _hasHealthData)
             _buildHealthDetailSection(context, isDark),
+
+          // 운동운 전용 섹션들 (exercise)
+          if (_isExercise && _hasExerciseData)
+            _buildExerciseDetailSection(context, isDark),
+
+          // MBTI 전용 섹션들 (mbti)
+          if (_isMbti && _hasMbtiData) ...[
+            // 1. 오늘의 함정 배너 (위기감 유발)
+            if (_mbtiTodayTrap != null)
+              _buildMbtiTodayTrapSection(context),
+            // 2. 차원별 인사이트 카드 (경고 포함)
+            _buildMbtiDimensionCards(context),
+          ],
+
+          // 🐉 소원 빌기 전용 섹션들 (wish)
+          if (_isWish && _hasWishData) ...[
+            _buildWishDragonHeaderSection(context),    // 용의 한마디
+            _buildWishFortuneFlowSection(context),     // 운의 흐름
+            _buildWishLuckyMissionSection(context),    // 행운 미션
+            _buildWishDragonWisdomSection(context),    // 용의 지혜
+            _buildWishEncouragementSection(context),   // 응원 메시지
+            _buildWishAdviceSection(context),          // 조언 리스트
+          ],
+
+          // 🧿 부적 전용 섹션들 (talisman)
+          if (_isTalisman && _hasTalismanData) ...[
+            _buildTalismanDetailsSection(context),      // 세부 운세 (종합/애정/직장/건강/금전)
+            _buildTalismanLuckyItemsSection(context),   // 행운 아이템
+            _buildTalismanWarningsSection(context),     // 주의사항
+          ],
+
+          // 👨‍👩‍👧 가족운 전용 섹션들 (family-health/wealth/relationship/children/change)
+          if (_isFamily && _hasFamilyData) ...[
+            _buildFamilyCategoriesSection(context, isDark),     // 카테고리별 점수
+            _buildFamilySynergySection(context, isDark),        // 가족 조화 분석
+            _buildFamilySpecialAdviceSection(context, isDark),  // 타입별 특수 조언
+            _buildFamilyMonthlyFlowSection(context, isDark),    // 월별 흐름
+            _buildFamilyAdviceTipsSection(context, isDark),     // 가족 조언
+            _buildFamilyRecommendationsSection(context, isDark), // 추천사항
+            _buildFamilyWarningsSection(context, isDark),       // 주의사항
+            if (_familySpecialAnswer != null && _familySpecialAnswer!.isNotEmpty)
+              _buildFamilySpecialAnswerSection(context, isDark), // 특별 질문 답변
+          ],
+
+          // 🐾 펫 궁합 전용 섹션들 (pet-compatibility)
+          if (_isPetCompatibility) ...[
+            // 1. 교감 미션 (FREE - 먼저 표시)
+            if (_hasBondingMission)
+              _buildBondingMissionSection(context),
+            // 2. 펫 속마음 편지 (PREMIUM)
+            if (_hasPetsVoice)
+              _buildPetsVoiceSection(context, isPremium),
+          ],
 
           // 광고 버튼 (avoid-people 블러 상태일 때만)
           if (fortuneType == 'avoid-people' && _isBlurred && !isPremium)
@@ -2465,8 +2789,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     style: typography.labelSmall.copyWith(
                       color: colors.textTertiary,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -5647,7 +5969,16 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
     final primaryConcern = concernResolution['primaryConcern'] as String? ?? '고민';
     final analysis = concernResolution['analysis'] as String? ?? '';
-    final solution = concernResolution['solution'] as String? ?? '';
+    // solution은 String 또는 List일 수 있음
+    final rawSolution = concernResolution['solution'];
+    final String solution;
+    if (rawSolution is List) {
+      solution = rawSolution.map((e) => '• $e').join('\n');
+    } else if (rawSolution is String) {
+      solution = rawSolution;
+    } else {
+      solution = '';
+    }
     final mindset = concernResolution['mindset'] as String? ?? '';
     final sajuPerspective = concernResolution['sajuPerspective'] as String? ?? '';
 
@@ -5834,28 +6165,39 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
     // 분야별 추가 정보
     final additionalInfo = <String, String>{};
+
+    // List 또는 String을 String으로 변환하는 헬퍼
+    String toStringValue(dynamic value) {
+      if (value is List) {
+        return value.join(', ');
+      } else if (value is String) {
+        return value;
+      }
+      return value?.toString() ?? '';
+    }
+
     if (interest == 'realestate') {
-      if (data['recommendedType'] != null) additionalInfo['추천 유형'] = data['recommendedType'];
-      if (data['timing'] != null) additionalInfo['타이밍'] = data['timing'];
-      if (data['direction'] != null) additionalInfo['추천 방향'] = data['direction'];
+      if (data['recommendedType'] != null) additionalInfo['추천 유형'] = toStringValue(data['recommendedType']);
+      if (data['timing'] != null) additionalInfo['타이밍'] = toStringValue(data['timing']);
+      if (data['direction'] != null) additionalInfo['추천 방향'] = toStringValue(data['direction']);
     } else if (interest == 'side') {
-      if (data['recommendedAreas'] != null) additionalInfo['추천 분야'] = data['recommendedAreas'];
-      if (data['incomeExpectation'] != null) additionalInfo['예상 수입'] = data['incomeExpectation'];
-      if (data['startTiming'] != null) additionalInfo['시작 시기'] = data['startTiming'];
+      if (data['recommendedAreas'] != null) additionalInfo['추천 분야'] = toStringValue(data['recommendedAreas']);
+      if (data['incomeExpectation'] != null) additionalInfo['예상 수입'] = toStringValue(data['incomeExpectation']);
+      if (data['startTiming'] != null) additionalInfo['시작 시기'] = toStringValue(data['startTiming']);
     } else if (interest == 'stock') {
-      if (data['recommendedSectors'] != null) additionalInfo['추천 섹터'] = data['recommendedSectors'];
-      if (data['timing'] != null) additionalInfo['매매 타이밍'] = data['timing'];
-      if (data['riskLevel'] != null) additionalInfo['리스크'] = data['riskLevel'];
+      if (data['recommendedSectors'] != null) additionalInfo['추천 섹터'] = toStringValue(data['recommendedSectors']);
+      if (data['timing'] != null) additionalInfo['매매 타이밍'] = toStringValue(data['timing']);
+      if (data['riskLevel'] != null) additionalInfo['리스크'] = toStringValue(data['riskLevel']);
     } else if (interest == 'crypto') {
-      if (data['marketOutlook'] != null) additionalInfo['시장 전망'] = data['marketOutlook'];
-      if (data['timing'] != null) additionalInfo['진입 시기'] = data['timing'];
+      if (data['marketOutlook'] != null) additionalInfo['시장 전망'] = toStringValue(data['marketOutlook']);
+      if (data['timing'] != null) additionalInfo['진입 시기'] = toStringValue(data['timing']);
     } else if (interest == 'saving') {
-      if (data['recommendedProducts'] != null) additionalInfo['추천 상품'] = data['recommendedProducts'];
-      if (data['targetRate'] != null) additionalInfo['목표 금리'] = data['targetRate'];
+      if (data['recommendedProducts'] != null) additionalInfo['추천 상품'] = toStringValue(data['recommendedProducts']);
+      if (data['targetRate'] != null) additionalInfo['목표 금리'] = toStringValue(data['targetRate']);
     } else if (interest == 'business') {
-      if (data['recommendedFields'] != null) additionalInfo['추천 분야'] = data['recommendedFields'];
-      if (data['timing'] != null) additionalInfo['시작 시기'] = data['timing'];
-      if (data['partnerAdvice'] != null) additionalInfo['파트너'] = data['partnerAdvice'];
+      if (data['recommendedFields'] != null) additionalInfo['추천 분야'] = toStringValue(data['recommendedFields']);
+      if (data['timing'] != null) additionalInfo['시작 시기'] = toStringValue(data['timing']);
+      if (data['partnerAdvice'] != null) additionalInfo['파트너'] = toStringValue(data['partnerAdvice']);
     }
 
     final caution = data['caution'] as String? ?? '';
@@ -6247,10 +6589,652 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   // ============================================================
-  // 시험운 전용 섹션들 (Exam Fortune)
+  // 시험운 전용 섹션들 (Exam Fortune) - 2025 리뉴얼
   // ============================================================
 
-  /// 시험운: D-day & 합격 가능성 배너
+  /// 시험운: 합격 시그널 헤더 (원형 게이지 + 해시태그)
+  Widget _buildExamSignalHeader(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+
+    // Edge Function 실제 필드명 사용
+    final examScore = metadata['score'] as int? ?? fortune.overallScore ?? 75;
+    final statusMessage = metadata['status_message'] as String? ??
+                          metadata['pass_possibility'] as String? ??
+                          '합격 가능성이 좋습니다!';
+    final examTypeLabel = metadata['exam_type'] as String? ?? '시험';
+    final hashtags = (metadata['hashtags'] as List?)?.cast<String>() ??
+                     ['#집중력_치트키', '#정답만_보이는_눈', '#합격기원'];
+
+    // D-day 계산
+    int daysRemaining = 0;
+    final examDateStr = metadata['exam_date'] as String?;
+    if (examDateStr != null) {
+      try {
+        final examDate = DateTime.parse(examDateStr);
+        final today = DateTime.now();
+        daysRemaining = examDate.difference(DateTime(today.year, today.month, today.day)).inDays;
+      } catch (_) {}
+    }
+
+    String ddayText;
+    Color ddayColor;
+    if (daysRemaining > 0) {
+      ddayText = 'D-$daysRemaining';
+      ddayColor = daysRemaining <= 7 ? Colors.red : Colors.orange;
+    } else if (daysRemaining == 0) {
+      ddayText = 'D-Day';
+      ddayColor = Colors.red;
+    } else {
+      ddayText = 'D+${daysRemaining.abs()}';
+      ddayColor = colors.textSecondary;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              colors.accent.withValues(alpha: 0.15),
+              colors.accentSecondary.withValues(alpha: 0.1),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+        ),
+        child: Column(
+          children: [
+            // 헤더: 🐯 오늘의 시험운 리포트
+            Text(
+              '🐯 오늘의 시험운 리포트',
+              style: typography.headingSmall.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // D-day 배지 + 시험 종류
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.md,
+                    vertical: DSSpacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ddayColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(DSRadius.full),
+                    border: Border.all(color: ddayColor),
+                  ),
+                  child: Text(
+                    ddayText,
+                    style: typography.labelLarge.copyWith(
+                      color: ddayColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.sm),
+                Text(
+                  examTypeLabel,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.lg),
+
+            // 합격 시그널 원형 게이지
+            Row(
+              children: [
+                // 원형 게이지
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: CircularProgressIndicator(
+                          value: 1,
+                          strokeWidth: 8,
+                          backgroundColor: colors.divider,
+                          valueColor: AlwaysStoppedAnimation(colors.divider),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: CircularProgressIndicator(
+                          value: examScore / 100,
+                          strokeWidth: 8,
+                          backgroundColor: Colors.transparent,
+                          valueColor: AlwaysStoppedAnimation(
+                            examScore >= 80 ? Colors.green :
+                            examScore >= 60 ? Colors.orange : Colors.red,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$examScore',
+                            style: typography.headingMedium.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '/100',
+                            style: typography.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.md),
+
+                // 상태 메시지
+                Expanded(
+                  child: Text(
+                    statusMessage,
+                    style: typography.bodyLarge.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 해시태그
+            Wrap(
+              spacing: DSSpacing.xs,
+              runSpacing: DSSpacing.xs,
+              children: hashtags.map((tag) => Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.full),
+                ),
+                child: Text(
+                  tag,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.accent,
+                  ),
+                ),
+              )).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 시험운: 시험 스탯 (프로그레스 바 3개)
+  Widget _buildExamStatsSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+
+    // exam_stats 객체에서 데이터 추출
+    final examStats = metadata['exam_stats'] as Map<String, dynamic>? ?? {};
+    final answerIntuition = examStats['answer_intuition'] as int? ?? 85;
+    final answerIntuitionDesc = examStats['answer_intuition_desc'] as String? ??
+                                 '모르는 문제도 정답으로 유도하는 운의 흐름';
+    final mentalDefense = examStats['mental_defense'] as int? ?? 80;
+    final mentalDefenseDesc = examStats['mental_defense_desc'] as String? ??
+                               '시험장의 소음과 긴장감을 차단하는 집중력';
+    final memoryAcceleration = examStats['memory_acceleration'] as String? ?? 'UP';
+    final memoryAccelerationDesc = examStats['memory_acceleration_desc'] as String? ??
+                                    '지금 보는 오답 노트가 머릿속에 바로 각인되는 상태';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          border: Border.all(color: colors.divider),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더
+            Row(
+              children: [
+                Text('📊', style: typography.headingSmall),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '오늘의 시험 스탯',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 정답 직관력
+            _buildStatProgressBar(
+              context,
+              label: '정답 직관력',
+              value: answerIntuition,
+              description: answerIntuitionDesc,
+              color: Colors.blue,
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 멘탈 방어력
+            _buildStatProgressBar(
+              context,
+              label: '멘탈 방어력',
+              value: mentalDefense,
+              description: mentalDefenseDesc,
+              color: Colors.green,
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 암기 가속도 (UP/DOWN/STABLE)
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '암기 가속도',
+                            style: typography.bodyMedium.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: DSSpacing.sm,
+                              vertical: DSSpacing.xxs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: memoryAcceleration == 'UP'
+                                  ? Colors.green.withValues(alpha: 0.2)
+                                  : memoryAcceleration == 'DOWN'
+                                      ? Colors.red.withValues(alpha: 0.2)
+                                      : Colors.orange.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(DSRadius.sm),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  memoryAcceleration == 'UP'
+                                      ? Icons.arrow_upward
+                                      : memoryAcceleration == 'DOWN'
+                                          ? Icons.arrow_downward
+                                          : Icons.remove,
+                                  size: 16,
+                                  color: memoryAcceleration == 'UP'
+                                      ? Colors.green
+                                      : memoryAcceleration == 'DOWN'
+                                          ? Colors.red
+                                          : Colors.orange,
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  memoryAcceleration,
+                                  style: typography.labelMedium.copyWith(
+                                    color: memoryAcceleration == 'UP'
+                                        ? Colors.green
+                                        : memoryAcceleration == 'DOWN'
+                                            ? Colors.red
+                                            : Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: DSSpacing.xxs),
+                      Text(
+                        memoryAccelerationDesc,
+                        style: typography.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 시험 스탯용 프로그레스 바 위젯
+  Widget _buildStatProgressBar(
+    BuildContext context, {
+    required String label,
+    required int value,
+    required String description,
+    required Color color,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              label,
+              style: typography.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              '$value%',
+              style: typography.labelLarge.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: DSSpacing.xs),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(DSRadius.sm),
+          child: LinearProgressIndicator(
+            value: value / 100,
+            backgroundColor: colors.divider,
+            valueColor: AlwaysStoppedAnimation(color),
+            minHeight: 8,
+          ),
+        ),
+        const SizedBox(height: DSSpacing.xxs),
+        Text(
+          description,
+          style: typography.labelSmall.copyWith(
+            color: colors.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 시험운: 오늘의 1점 전략
+  Widget _buildTodayStrategySection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+
+    // today_strategy 객체에서 데이터 추출
+    final todayStrategy = metadata['today_strategy'] as Map<String, dynamic>? ?? {};
+    final mainAction = todayStrategy['main_action'] as String? ??
+                       '가장 헷갈렸던 오답 노트를 딱 10분만 다시 훑어보세요';
+    final actionReason = todayStrategy['action_reason'] as String? ??
+                         '그 10분이 시험장에서 1점을 결정합니다';
+    final luckyFood = todayStrategy['lucky_food'] as String? ?? '다크 초콜릿 한 조각';
+    final luckyFoodReason = todayStrategy['lucky_food_reason'] as String? ??
+                            '두뇌 회전을 돕는 오늘의 행운 아이템';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          border: Border.all(color: colors.divider),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더
+            Row(
+              children: [
+                Text('🎯', style: typography.headingSmall),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '오늘의 1점 추가 전략',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 핵심 액션
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: colors.accent.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text('💡', style: typography.bodyLarge),
+                      const SizedBox(width: DSSpacing.xs),
+                      Text(
+                        '핵심 액션',
+                        style: typography.labelMedium.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(
+                    mainAction,
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: DSSpacing.xxs),
+                  Text(
+                    '→ $actionReason',
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: DSSpacing.sm),
+
+            // 럭키 푸드
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: Colors.orange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text('🍫', style: typography.bodyLarge),
+                      const SizedBox(width: DSSpacing.xs),
+                      Text(
+                        '럭키 푸드',
+                        style: typography.labelMedium.copyWith(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(
+                    luckyFood,
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: DSSpacing.xxs),
+                  Text(
+                    luckyFoodReason,
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 시험운: 영물의 기개
+  Widget _buildSpiritAnimalSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+
+    // spirit_animal 객체에서 데이터 추출
+    final spiritAnimal = metadata['spirit_animal'] as Map<String, dynamic>? ?? {};
+    final animal = spiritAnimal['animal'] as String? ?? '호랑이';
+    final message = spiritAnimal['message'] as String? ??
+                    '호랑이의 눈매처럼 날카로운 통찰력이 당신에게 깃듭니다';
+    final direction = spiritAnimal['direction'] as String? ?? '남쪽';
+    final directionTip = spiritAnimal['direction_tip'] as String? ??
+                         '남쪽 향해 공부하면 막힌 아이디어가 호랑이 기세처럼 터져 나옵니다';
+
+    // 영물별 이모지 매핑
+    final animalEmoji = {
+      '호랑이': '🐯',
+      '용': '🐉',
+      '봉황': '🦅',
+      '거북이': '🐢',
+      '백호': '🐅',
+    }[animal] ?? '🐯';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.amber.withValues(alpha: 0.15),
+              Colors.orange.withValues(alpha: 0.1),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더
+            Row(
+              children: [
+                Text(animalEmoji, style: typography.headingMedium),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '$animal의 기개',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 영물 메시지
+            Text(
+              '"$message"',
+              style: typography.bodyLarge.copyWith(
+                color: colors.textPrimary,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 행운의 방향
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: colors.surface.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Row(
+                children: [
+                  Text('💡', style: typography.bodyLarge),
+                  const SizedBox(width: DSSpacing.xs),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '행운의 방향: $direction',
+                          style: typography.labelMedium.copyWith(
+                            color: Colors.amber.shade700,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: DSSpacing.xxs),
+                        Text(
+                          directionTip,
+                          style: typography.labelSmall.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 시험운: D-day & 합격 가능성 배너 (레거시 - 제거 예정)
   Widget _buildExamDdaySection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
@@ -7059,6 +8043,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final bodyPartAdvice = metadata['body_part_advice'] as String?;
     final cautions = metadata['cautions'] as List<dynamic>?;
     final recommendedActivities = metadata['recommended_activities'] as List<dynamic>?;
+    // ✅ 신규: 오행 기반 개인화 조언
+    final elementAdvice = metadata['element_advice'] as Map<String, dynamic>?;
+    final personalizedFeedback = metadata['personalized_feedback'] as Map<String, dynamic>?;
 
     // 건강 accent 색상 (청록)
     const healthAccent = Color(0xFF38A169);
@@ -7083,6 +8070,18 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 ),
               ),
             ),
+            const SizedBox(height: DSSpacing.md),
+          ],
+
+          // ✅ 오행 기반 개인화 조언 (신규)
+          if (elementAdvice != null) ...[
+            _buildElementAdviceSection(context, elementAdvice, isDark, healthAccent, healthAccentLight),
+            const SizedBox(height: DSSpacing.md),
+          ],
+
+          // ✅ 개인화 피드백 (이전 설문 비교 - 신규)
+          if (personalizedFeedback != null) ...[
+            _buildPersonalizedFeedbackSection(context, personalizedFeedback, isDark, healthAccent),
             const SizedBox(height: DSSpacing.md),
           ],
 
@@ -7208,6 +8207,1061 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
+  // ============================================================
+  // 운동운 전용 섹션
+  // ============================================================
+
+  /// 운동운 상세 섹션 (추천 운동, 오늘의 루틴 등)
+  /// 모든 섹션을 상세하게 표시하고 프리미엄 블러 적용
+  Widget _buildExerciseDetailSection(BuildContext context, bool isDark) {
+    final colors = context.colors;
+    final typography = context.typography;
+    // ✅ fortune.additionalInfo 또는 fortune.metadata에 상세 정보가 있음
+    // FortuneResult.data → Fortune.additionalInfo로 매핑됨
+    final exerciseData = fortune.additionalInfo ?? fortune.metadata ?? {};
+
+    // 디버그 로깅
+    debugPrint('🏋️ [_buildExerciseDetailSection] Building exercise detail section');
+    debugPrint('🏋️ [_buildExerciseDetailSection] exerciseData keys: ${exerciseData.keys.toList()}');
+    debugPrint('🏋️ [_buildExerciseDetailSection] exerciseData: $exerciseData');
+
+    final recommendedExercise = exerciseData['recommendedExercise'] as Map<String, dynamic>?;
+    final todayRoutine = exerciseData['todayRoutine'] as Map<String, dynamic>?;
+    final weeklyPlan = exerciseData['weeklyPlan'] as Map<String, dynamic>?;
+    final optimalTime = exerciseData['optimalTime'] as Map<String, dynamic>?;
+    final injuryPrevention = exerciseData['injuryPrevention'] as Map<String, dynamic>?;
+    final nutritionTip = exerciseData['nutritionTip'] as Map<String, dynamic>?;
+
+    debugPrint('🏋️ [_buildExerciseDetailSection] recommendedExercise: $recommendedExercise');
+    debugPrint('🏋️ [_buildExerciseDetailSection] todayRoutine: $todayRoutine');
+    debugPrint('🏋️ [_buildExerciseDetailSection] optimalTime: $optimalTime');
+
+    // 운동 accent 색상 (오렌지)
+    const exerciseAccent = Color(0xFFED8936);
+    const exerciseAccentLight = Color(0xFFFBD38D);
+
+    // 운동 블러 섹션 정의
+    const exerciseBlurredSections = ['todayRoutine', 'weeklyPlan', 'injuryPrevention'];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ============================================================
+          // 🎯 추천 운동 (무료)
+          // ============================================================
+          if (recommendedExercise != null) ...[
+            _buildHealthSection(
+              context,
+              icon: '🎯',
+              title: '오늘의 추천 운동',
+              child: _buildRecommendedExerciseDetail(
+                context,
+                recommendedExercise,
+                exerciseAccent,
+                exerciseAccentLight,
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+          ],
+
+          // ============================================================
+          // ⏰ 최적 운동 시간 (무료)
+          // ============================================================
+          if (optimalTime != null) ...[
+            _buildHealthSection(
+              context,
+              icon: '⏰',
+              title: '오늘의 최적 운동 시간',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.sm,
+                      vertical: DSSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: exerciseAccent.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                    ),
+                    child: Text(
+                      optimalTime['time'] as String? ?? '',
+                      style: typography.labelLarge.copyWith(
+                        color: exerciseAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(
+                    optimalTime['reason'] as String? ?? '',
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+          ],
+
+          // ============================================================
+          // 📋 오늘의 루틴 (프리미엄)
+          // ============================================================
+          if (todayRoutine != null) ...[
+            UnifiedBlurWrapper(
+              isBlurred: _isBlurred,
+              blurredSections: exerciseBlurredSections,
+              sectionKey: 'todayRoutine',
+              fortuneType: 'exercise',
+              sigmaX: 8.0,
+              sigmaY: 8.0,
+              child: _buildHealthSection(
+                context,
+                icon: '📋',
+                title: '오늘의 루틴',
+                child: _buildRoutineDetail(context, todayRoutine, exerciseAccent),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+          ],
+
+          // ============================================================
+          // 📅 주간 계획 (프리미엄)
+          // ============================================================
+          if (weeklyPlan != null) ...[
+            UnifiedBlurWrapper(
+              isBlurred: _isBlurred,
+              blurredSections: exerciseBlurredSections,
+              sectionKey: 'weeklyPlan',
+              fortuneType: 'exercise',
+              sigmaX: 8.0,
+              sigmaY: 8.0,
+              child: _buildHealthSection(
+                context,
+                icon: '📅',
+                title: '주간 운동 계획',
+                child: _buildWeeklyPlanDetail(context, weeklyPlan, exerciseAccent),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+          ],
+
+          // ============================================================
+          // 🛡️ 부상 예방 (프리미엄)
+          // ============================================================
+          if (injuryPrevention != null) ...[
+            UnifiedBlurWrapper(
+              isBlurred: _isBlurred,
+              blurredSections: exerciseBlurredSections,
+              sectionKey: 'injuryPrevention',
+              fortuneType: 'exercise',
+              sigmaX: 8.0,
+              sigmaY: 8.0,
+              child: _buildHealthSection(
+                context,
+                icon: '🛡️',
+                title: '부상 예방 가이드',
+                child: _buildInjuryPreventionDetail(context, injuryPrevention, exerciseAccent),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+          ],
+
+          // ============================================================
+          // 🥗 영양 팁 (무료)
+          // ============================================================
+          if (nutritionTip != null) ...[
+            _buildHealthSection(
+              context,
+              icon: '🥗',
+              title: '영양 팁',
+              child: _buildNutritionTipDetail(context, nutritionTip, exerciseAccent),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 추천 운동 상세 (description, precautions, alternatives 포함)
+  Widget _buildRecommendedExerciseDetail(
+    BuildContext context,
+    Map<String, dynamic> data,
+    Color accentColor,
+    Color accentLightColor,
+  ) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    // primary 구조 또는 flat 구조 둘 다 지원
+    final primary = data['primary'] as Map<String, dynamic>? ?? data;
+    final alternatives = data['alternatives'] as List<dynamic>?;
+
+    final name = primary['name'] as String? ?? '';
+    final description = primary['description'] as String? ?? '';
+    final duration = primary['duration'] as String?;
+    final intensity = primary['intensity'] as String?;
+    final benefits = primary['benefits'] as List<dynamic>?;
+    final precautions = primary['precautions'] as List<dynamic>?;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 운동명 + 강도
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                name,
+                style: typography.labelLarge.copyWith(
+                  color: accentColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            if (intensity != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: _getIntensityColor(intensity).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  _getIntensityLabel(intensity),
+                  style: typography.labelSmall.copyWith(
+                    color: _getIntensityColor(intensity),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+          ],
+        ),
+
+        // 소요 시간
+        if (duration != null) ...[
+          const SizedBox(height: DSSpacing.xs),
+          Row(
+            children: [
+              Icon(Icons.timer_outlined, size: 14, color: colors.textSecondary),
+              const SizedBox(width: 4),
+              Text(
+                duration,
+                style: typography.bodySmall.copyWith(color: colors.textSecondary),
+              ),
+            ],
+          ),
+        ],
+
+        // 설명
+        if (description.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          Text(
+            description,
+            style: typography.bodySmall.copyWith(
+              color: colors.textSecondary,
+              height: 1.5,
+            ),
+          ),
+        ],
+
+        // 효과 태그
+        if (benefits != null && benefits.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          Wrap(
+            spacing: DSSpacing.xs,
+            runSpacing: DSSpacing.xs,
+            children: benefits.map((benefit) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                ),
+                child: Text(
+                  benefit.toString(),
+                  style: typography.labelSmall.copyWith(color: accentColor),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+
+        // 주의사항
+        if (precautions != null && precautions.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          Container(
+            padding: const EdgeInsets.all(DSSpacing.sm),
+            decoration: BoxDecoration(
+              color: Colors.orange.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
+              border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text('⚠️', style: TextStyle(fontSize: 12)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '주의사항',
+                      style: typography.labelSmall.copyWith(
+                        color: Colors.orange[700],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                ...precautions.map((p) => Padding(
+                  padding: const EdgeInsets.only(left: 4, top: 2),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('•', style: typography.bodySmall.copyWith(color: Colors.orange[700])),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          p.toString(),
+                          style: typography.bodySmall.copyWith(
+                            color: Colors.orange[800],
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+              ],
+            ),
+          ),
+        ],
+
+        // 대체 운동
+        if (alternatives != null && alternatives.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.md),
+          Text(
+            '대체 운동',
+            style: typography.labelMedium.copyWith(
+              color: colors.textSecondary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          ...alternatives.map((alt) {
+            final altMap = alt as Map<String, dynamic>;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: accentLightColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    altMap['name'] as String? ?? '',
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (altMap['reason'] != null) ...[
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '- ${altMap['reason']}',
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }),
+        ],
+      ],
+    );
+  }
+
+  /// 강도 라벨
+  String _getIntensityLabel(String intensity) {
+    switch (intensity.toLowerCase()) {
+      case 'low': return '저강도';
+      case 'medium': return '중강도';
+      case 'high': return '고강도';
+      default: return intensity;
+    }
+  }
+
+  /// 강도 색상 (영어/한글 모두 지원)
+  Color _getIntensityColor(String intensity) {
+    switch (intensity.toLowerCase()) {
+      case 'low':
+      case '가벼움':
+      case '저강도':
+        return const Color(0xFF68D391); // 연두
+      case 'medium':
+      case '중간':
+      case '중강도':
+        return const Color(0xFFFFA726); // 주황
+      case 'high':
+      case '높음':
+      case '고강도':
+        return const Color(0xFFEF5350); // 빨강
+      default:
+        return const Color(0xFF38A169);
+    }
+  }
+
+  /// 오늘의 루틴 상세 표시 (헬스/요가/카디오/스포츠)
+  Widget _buildRoutineDetail(
+      BuildContext context, Map<String, dynamic> routine, Color accentColor) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    // 헬스/크로스핏 루틴
+    if (routine['gymRoutine'] != null) {
+      final gym = routine['gymRoutine'] as Map<String, dynamic>;
+      final exercises = gym['exercises'] as List<dynamic>? ?? [];
+      final warmup = gym['warmup'] as Map<String, dynamic>?;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  gym['splitType'] as String? ?? '',
+                  style: typography.labelSmall.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                gym['todayFocus'] as String? ?? '',
+                style: typography.labelLarge.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          if (warmup != null) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Row(
+              children: [
+                const Text('🔥', style: TextStyle(fontSize: 14)),
+                const SizedBox(width: 4),
+                Text(
+                  '워밍업 ${warmup['duration'] ?? '10분'}',
+                  style:
+                      typography.bodySmall.copyWith(color: colors.textSecondary),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: DSSpacing.sm),
+          ...exercises.take(6).map((ex) {
+            final exercise = ex as Map<String, dynamic>;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      exercise['name'] as String? ?? '',
+                      style: typography.bodyMedium
+                          .copyWith(color: colors.textPrimary),
+                    ),
+                  ),
+                  Text(
+                    '${exercise['sets'] ?? 3}세트 × ${exercise['reps'] ?? '8-12'}회',
+                    style: typography.bodySmall.copyWith(color: accentColor),
+                  ),
+                  if (exercise['restSeconds'] != null) ...[
+                    const SizedBox(width: 8),
+                    Text(
+                      '휴식 ${exercise['restSeconds']}초',
+                      style: typography.labelSmall
+                          .copyWith(color: colors.textTertiary),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }),
+          if (exercises.length > 6)
+            Text(
+              '+ ${exercises.length - 6}개 더',
+              style: typography.labelSmall.copyWith(color: colors.textTertiary),
+            ),
+        ],
+      );
+    }
+
+    // 요가/필라테스 루틴
+    if (routine['yogaRoutine'] != null) {
+      final yoga = routine['yogaRoutine'] as Map<String, dynamic>;
+      final poses = yoga['poses'] as List<dynamic>? ?? [];
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            yoga['sequenceName'] as String? ?? '요가 시퀀스',
+            style: typography.labelLarge.copyWith(
+              color: accentColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...poses.take(6).map((p) {
+            final pose = p as Map<String, dynamic>;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                children: [
+                  const Text('🧘', style: TextStyle(fontSize: 14)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      pose['name'] as String? ?? '',
+                      style: typography.bodyMedium
+                          .copyWith(color: colors.textPrimary),
+                    ),
+                  ),
+                  Text(
+                    pose['duration'] as String? ?? '',
+                    style: typography.bodySmall.copyWith(color: accentColor),
+                  ),
+                ],
+              ),
+            );
+          }),
+          if (poses.length > 6)
+            Text(
+              '+ ${poses.length - 6}개 더',
+              style: typography.labelSmall.copyWith(color: colors.textTertiary),
+            ),
+        ],
+      );
+    }
+
+    // 카디오 루틴 (러닝/수영/자전거)
+    if (routine['cardioRoutine'] != null) {
+      final cardio = routine['cardioRoutine'] as Map<String, dynamic>;
+      final intervals = cardio['intervals'] as List<dynamic>? ?? [];
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                cardio['totalDistance'] as String? ?? '',
+                style: typography.labelLarge.copyWith(
+                  color: accentColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '목표 페이스: ${cardio['targetPace'] ?? '-'}',
+                style:
+                    typography.bodySmall.copyWith(color: colors.textSecondary),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...intervals.map((i) {
+            final interval = i as Map<String, dynamic>;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color:
+                          _getIntervalColor(interval['intensity'] as String?),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      interval['phase'] as String? ?? '',
+                      style: typography.bodyMedium
+                          .copyWith(color: colors.textPrimary),
+                    ),
+                  ),
+                  Text(
+                    interval['duration'] as String? ?? '',
+                    style:
+                        typography.bodySmall.copyWith(color: colors.textSecondary),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    interval['intensity'] as String? ?? '',
+                    style: typography.labelSmall.copyWith(color: accentColor),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      );
+    }
+
+    // 스포츠 루틴 (테니스/골프/클라이밍/격투기)
+    if (routine['sportsRoutine'] != null) {
+      final sports = routine['sportsRoutine'] as Map<String, dynamic>;
+      final drills = sports['drills'] as List<dynamic>? ?? [];
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            sports['focusArea'] as String? ?? '오늘의 훈련',
+            style: typography.labelLarge.copyWith(
+              color: accentColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...drills.take(5).map((d) {
+            final drill = d as Map<String, dynamic>;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                children: [
+                  const Text('⚽', style: TextStyle(fontSize: 14)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          drill['name'] as String? ?? '',
+                          style: typography.bodyMedium
+                              .copyWith(color: colors.textPrimary),
+                        ),
+                        if (drill['purpose'] != null)
+                          Text(
+                            drill['purpose'] as String,
+                            style: typography.labelSmall
+                                .copyWith(color: colors.textTertiary),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    drill['duration'] as String? ?? '',
+                    style: typography.bodySmall.copyWith(color: accentColor),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  /// 인터벌 강도 색상
+  Color _getIntervalColor(String? intensity) {
+    if (intensity == null) return Colors.grey;
+    final percent = int.tryParse(intensity.replaceAll('%', '')) ?? 50;
+    if (percent <= 40) return Colors.green;
+    if (percent <= 60) return Colors.yellow.shade700;
+    if (percent <= 80) return Colors.orange;
+    return Colors.red;
+  }
+
+  /// 주간 계획 상세 표시
+  Widget _buildWeeklyPlanDetail(
+      BuildContext context, Map<String, dynamic> weeklyPlan, Color accentColor) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    final summary = weeklyPlan['summary'] as String? ?? '';
+    final schedule = weeklyPlan['schedule'] as Map<String, dynamic>? ?? {};
+
+    final days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    final dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (summary.isNotEmpty) ...[
+          Text(
+            summary,
+            style: typography.bodyMedium.copyWith(color: colors.textPrimary),
+          ),
+          const SizedBox(height: DSSpacing.sm),
+        ],
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(7, (index) {
+            final day = days[index];
+            final activity = schedule[day] as String? ?? '휴식';
+            final isRest = activity == '휴식' || activity.isEmpty;
+
+            return Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 2),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: isRest
+                      ? colors.surface.withValues(alpha: 0.5)
+                      : accentColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isRest
+                        ? colors.border.withValues(alpha: 0.3)
+                        : accentColor.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      dayLabels[index],
+                      style: typography.labelSmall.copyWith(
+                        color: isRest ? colors.textTertiary : accentColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      isRest ? '쉼' : _getShortActivity(activity),
+                      style: typography.labelSmall.copyWith(
+                        color: isRest ? colors.textTertiary : colors.textPrimary,
+                        fontSize: 9,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+
+  /// 활동명 축약
+  String _getShortActivity(String activity) {
+    if (activity.length <= 4) return activity;
+    return '${activity.substring(0, 3)}..';
+  }
+
+  /// 부상 예방 상세 표시
+  Widget _buildInjuryPreventionDetail(BuildContext context,
+      Map<String, dynamic> injuryPrevention, Color accentColor) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    final warnings = injuryPrevention['warnings'] as List<dynamic>? ?? [];
+    final warmup = injuryPrevention['warmup'] as String?;
+    final stretches = injuryPrevention['stretches'] as List<dynamic>? ?? [];
+    final recoveryTips =
+        injuryPrevention['recoveryTips'] as List<dynamic>? ?? [];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (warnings.isNotEmpty) ...[
+          ...warnings.take(3).map((w) => Padding(
+                padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('⚠️', style: TextStyle(fontSize: 14)),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        w as String,
+                        style: typography.bodySmall.copyWith(
+                          color: Colors.orange.shade700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          const SizedBox(height: DSSpacing.xs),
+        ],
+        if (warmup != null && warmup.isNotEmpty) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('🔥', style: TextStyle(fontSize: 14)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  '워밍업: $warmup',
+                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xs),
+        ],
+        if (stretches.isNotEmpty) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('🧘', style: TextStyle(fontSize: 14)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  '스트레칭: ${stretches.take(3).join(', ')}',
+                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xs),
+        ],
+        if (recoveryTips.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            '💡 회복 팁',
+            style: typography.labelMedium.copyWith(
+              color: accentColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          ...recoveryTips.take(2).map((tip) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                  '• $tip',
+                  style:
+                      typography.bodySmall.copyWith(color: colors.textSecondary),
+                ),
+              )),
+        ],
+      ],
+    );
+  }
+
+  /// 영양 팁 상세 표시
+  Widget _buildNutritionTipDetail(
+      BuildContext context, Map<String, dynamic> nutritionTip, Color accentColor) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    final preworkout = nutritionTip['preworkout'] as String?;
+    final postworkout = nutritionTip['postworkout'] as String?;
+    final message = nutritionTip['message'] as String?;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (preworkout != null && preworkout.isNotEmpty) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  '운동 전',
+                  style: typography.labelSmall.copyWith(
+                    color: Colors.green.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  preworkout,
+                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+        ],
+        if (postworkout != null && postworkout.isNotEmpty) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  '운동 후',
+                  style: typography.labelSmall.copyWith(
+                    color: Colors.blue.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  postworkout,
+                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                ),
+              ),
+            ],
+          ),
+        ],
+        if ((preworkout == null || preworkout.isEmpty) &&
+            (postworkout == null || postworkout.isEmpty) &&
+            message != null &&
+            message.isNotEmpty) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('🥗', style: TextStyle(fontSize: 14)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  message,
+                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// 루틴 요약 빌드 (헬스/요가/카디오/스포츠)
+  Widget _buildRoutineSummary(
+      BuildContext context, Map<String, dynamic> routine, Color accentColor) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    // 헬스 루틴
+    if (routine['gymRoutine'] != null) {
+      final gym = routine['gymRoutine'] as Map<String, dynamic>;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${gym['splitType'] ?? ''} - ${gym['todayFocus'] ?? ''}',
+            style: typography.labelLarge.copyWith(
+              color: accentColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            '${(gym['exercises'] as List?)?.length ?? 0}개 운동',
+            style: typography.bodySmall.copyWith(color: colors.textSecondary),
+          ),
+        ],
+      );
+    }
+
+    // 요가 루틴
+    if (routine['yogaRoutine'] != null) {
+      final yoga = routine['yogaRoutine'] as Map<String, dynamic>;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            yoga['sequenceName'] as String? ?? '요가 시퀀스',
+            style: typography.labelLarge.copyWith(
+              color: accentColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            '${(yoga['poses'] as List?)?.length ?? 0}개 동작',
+            style: typography.bodySmall.copyWith(color: colors.textSecondary),
+          ),
+        ],
+      );
+    }
+
+    // 카디오 루틴
+    if (routine['cardioRoutine'] != null) {
+      final cardio = routine['cardioRoutine'] as Map<String, dynamic>;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${cardio['totalDistance'] ?? ''} ${cardio['type'] ?? ''}',
+            style: typography.labelLarge.copyWith(
+              color: accentColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            '목표 페이스: ${cardio['targetPace'] ?? '-'}',
+            style: typography.bodySmall.copyWith(color: colors.textSecondary),
+          ),
+        ],
+      );
+    }
+
+    // 스포츠 루틴
+    if (routine['sportsRoutine'] != null) {
+      final sports = routine['sportsRoutine'] as Map<String, dynamic>;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            sports['focusArea'] as String? ?? '오늘의 훈련',
+            style: typography.labelLarge.copyWith(
+              color: accentColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            '${(sports['drills'] as List?)?.length ?? 0}개 드릴',
+            style: typography.bodySmall.copyWith(color: colors.textSecondary),
+          ),
+        ],
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
   /// 건강운 섹션 공통 wrapper
   Widget _buildHealthSection(
     BuildContext context, {
@@ -7237,6 +9291,272 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         const SizedBox(height: DSSpacing.sm),
         child,
       ],
+    );
+  }
+
+  /// ✅ 오행 기반 개인화 조언 섹션
+  Widget _buildElementAdviceSection(
+    BuildContext context,
+    Map<String, dynamic> elementAdvice,
+    bool isDark,
+    Color healthAccent,
+    Color healthAccentLight,
+  ) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    final lackingElement = elementAdvice['lacking_element'] as String?;
+    final dominantElement = elementAdvice['dominant_element'] as String?;
+    final vulnerableOrgans = elementAdvice['vulnerable_organs'] as List<dynamic>?;
+    final vulnerableSymptoms = elementAdvice['vulnerable_symptoms'] as List<dynamic>?;
+    final recommendedFoods = elementAdvice['recommended_foods'] as List<dynamic>?;
+
+    // 오행 색상 매핑
+    const elementColors = {
+      '목': Color(0xFF38A169), // 녹색
+      '화': Color(0xFFE53E3E), // 빨강
+      '토': Color(0xFFD69E2E), // 황토
+      '금': Color(0xFFA0AEC0), // 은색
+      '수': Color(0xFF3182CE), // 파랑
+    };
+
+    final elementColor = elementColors[lackingElement] ?? healthAccent;
+
+    return _buildHealthSection(
+      context,
+      icon: '🌿',
+      title: '오행 기반 건강 조언',
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              elementColor.withValues(alpha: isDark ? 0.2 : 0.1),
+              elementColor.withValues(alpha: isDark ? 0.1 : 0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: elementColor.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 오행 분석 요약
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: elementColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                  ),
+                  child: Text(
+                    '$lackingElement(${_getElementHanja(lackingElement)}) 기운 부족',
+                    style: typography.labelMedium.copyWith(
+                      color: elementColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.sm),
+                if (dominantElement != null)
+                  Text(
+                    '$dominantElement 기운 강함',
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 취약 장기
+            if (vulnerableOrgans != null && vulnerableOrgans.isNotEmpty) ...[
+              Row(
+                children: [
+                  Text('💪 주의 장기: ', style: typography.labelSmall.copyWith(color: colors.textSecondary)),
+                  Text(
+                    vulnerableOrgans.join(', '),
+                    style: typography.labelSmall.copyWith(
+                      color: elementColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: DSSpacing.xs),
+            ],
+
+            // 취약 증상
+            if (vulnerableSymptoms != null && vulnerableSymptoms.isNotEmpty) ...[
+              Text(
+                '⚠️ 주의 증상: ${vulnerableSymptoms.take(3).join(', ')}',
+                style: typography.bodySmall.copyWith(color: colors.textSecondary),
+              ),
+              const SizedBox(height: DSSpacing.md),
+            ],
+
+            // 추천 음식
+            if (recommendedFoods != null && recommendedFoods.isNotEmpty) ...[
+              Text(
+                '🍽️ 오행 보충 음식',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.sm),
+              ...recommendedFoods.take(3).map((food) {
+                final foodMap = food as Map<String, dynamic>?;
+                final item = foodMap?['item'] as String? ?? food.toString();
+                final reason = foodMap?['reason'] as String?;
+                final timing = foodMap?['timing'] as String?;
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        margin: const EdgeInsets.only(top: 6),
+                        decoration: BoxDecoration(
+                          color: elementColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: DSSpacing.sm),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            style: typography.bodySmall.copyWith(color: colors.textSecondary),
+                            children: [
+                              TextSpan(
+                                text: item,
+                                style: TextStyle(fontWeight: FontWeight.w600, color: colors.textPrimary),
+                              ),
+                              if (timing != null) TextSpan(text: ' ($timing)'),
+                              if (reason != null) TextSpan(text: ' - $reason'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 오행 한자 변환
+  String _getElementHanja(String? element) {
+    const hanjaMap = {'목': '木', '화': '火', '토': '土', '금': '金', '수': '水'};
+    return hanjaMap[element] ?? '';
+  }
+
+  /// ✅ 개인화 피드백 섹션 (이전 설문 비교)
+  Widget _buildPersonalizedFeedbackSection(
+    BuildContext context,
+    Map<String, dynamic> feedback,
+    bool isDark,
+    Color healthAccent,
+  ) {
+    final improvements = (feedback['improvements'] as List<dynamic>?)?.cast<String>() ?? [];
+    final concerns = (feedback['concerns'] as List<dynamic>?)?.cast<String>() ?? [];
+    final encouragements = (feedback['encouragements'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    if (improvements.isEmpty && concerns.isEmpty && encouragements.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return _buildHealthSection(
+      context,
+      icon: '📊',
+      title: '지난 기록 대비 분석',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 개선점 (긍정)
+          ...improvements.map((item) => _buildFeedbackItem(
+            context,
+            icon: '✅',
+            text: item,
+            color: const Color(0xFF38A169),
+            isDark: isDark,
+          )),
+
+          // 격려
+          ...encouragements.map((item) => _buildFeedbackItem(
+            context,
+            icon: '💪',
+            text: item,
+            color: healthAccent,
+            isDark: isDark,
+          )),
+
+          // 주의점 (경고)
+          ...concerns.map((item) => _buildFeedbackItem(
+            context,
+            icon: '⚠️',
+            text: item,
+            color: const Color(0xFFD69E2E),
+            isDark: isDark,
+          )),
+        ],
+      ),
+    );
+  }
+
+  /// 피드백 아이템 빌더
+  Widget _buildFeedbackItem(
+    BuildContext context, {
+    required String icon,
+    required String text,
+    required Color color,
+    required bool isDark,
+  }) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.sm),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: isDark ? 0.15 : 0.08),
+          borderRadius: BorderRadius.circular(DSRadius.sm),
+          border: Border.all(
+            color: color.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(icon, style: const TextStyle(fontSize: 14)),
+            const SizedBox(width: DSSpacing.sm),
+            Expanded(
+              child: Text(
+                text,
+                style: typography.bodySmall.copyWith(
+                  color: colors.textSecondary,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -7498,20 +9818,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
-  /// 운동 강도에 따른 색상
-  Color _getIntensityColor(String intensity) {
-    switch (intensity) {
-      case '가벼움':
-        return const Color(0xFF68D391); // 연두
-      case '중간':
-        return const Color(0xFFFFA726); // 주황
-      case '높음':
-        return const Color(0xFFEF5350); // 빨강
-      default:
-        return const Color(0xFF38A169);
-    }
-  }
-
   /// 주간 운동 계획 그리드
   Widget _buildWeeklyScheduleGrid(
     BuildContext context,
@@ -7724,6 +10030,1992 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// MBTI 오늘의 함정 섹션 (위기감 유발 배너)
+  Widget _buildMbtiTodayTrapSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final todayTrap = _mbtiTodayTrap;
+    if (todayTrap == null) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.sm, DSSpacing.md, 0),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.sm),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFFF6B35).withValues(alpha: 0.15),
+              const Color(0xFFFF9500).withValues(alpha: 0.08),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF6B35).withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Text('⚠️', style: TextStyle(fontSize: 16)),
+            ),
+            const SizedBox(width: DSSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '오늘의 함정',
+                    style: typography.labelMedium.copyWith(
+                      color: const Color(0xFFFF6B35),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    todayTrap,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// MBTI 차원별 인사이트 카드 (경고 포함)
+  Widget _buildMbtiDimensionCards(BuildContext context) {
+    final dimensions = _mbtiDimensions;
+    if (dimensions.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '차원별 인사이트',
+            style: context.typography.labelLarge.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...dimensions.map((dim) => _buildMbtiDimensionCard(context, dim)),
+        ],
+      ),
+    );
+  }
+
+  /// 개별 MBTI 차원 카드
+  Widget _buildMbtiDimensionCard(BuildContext context, MbtiDimensionFortune dimension) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: isDark
+            ? dimension.color.withValues(alpha: 0.15)
+            : dimension.color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: dimension.color.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더: 아이콘 + 타이틀 + 점수
+          Row(
+            children: [
+              Text(dimension.icon, style: const TextStyle(fontSize: 20)),
+              const SizedBox(width: DSSpacing.xs),
+              Expanded(
+                child: Text(
+                  dimension.title,
+                  style: typography.labelMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? dimension.color : dimension.color.withValues(alpha: 0.9),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: dimension.color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(DSRadius.xs),
+                ),
+                child: Text(
+                  '${dimension.score}점',
+                  style: typography.labelSmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? dimension.color : dimension.color.withValues(alpha: 0.9),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          // 운세 텍스트
+          Text(
+            dimension.fortune,
+            style: typography.bodySmall.copyWith(
+              color: colors.textPrimary,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          // 조언
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('💡', style: TextStyle(fontSize: 12, color: colors.textSecondary)),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  dimension.tip,
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          // 경고 섹션 (있을 경우)
+          if (dimension.warning != null && dimension.warning!.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.xs),
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.xs),
+              decoration: BoxDecoration(
+                color: colors.error.withValues(alpha: isDark ? 0.2 : 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.xs),
+                border: Border.all(
+                  color: colors.error.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(dimension.warningIcon, style: const TextStyle(fontSize: 14)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      dimension.warning!,
+                      style: typography.bodySmall.copyWith(
+                        color: isDark ? colors.error : colors.error.withValues(alpha: 0.9),
+                        fontSize: 11,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // ============ 소원 빌기 (Wish) 섹션 빌더 ============
+
+  /// 🐉 용의 한마디 (power_line) 헤더 섹션
+  Widget _buildWishDragonHeaderSection(BuildContext context) {
+    final typography = context.typography;
+    final wishData = _wishData;
+    if (wishData?.dragonMessage == null) return const SizedBox.shrink();
+
+    final dragonMsg = wishData!.dragonMessage!;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF1A237E).withValues(alpha: 0.9),
+            const Color(0xFF0D47A1).withValues(alpha: 0.8),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A237E).withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // 용 아이콘
+          const Text('🐉', style: TextStyle(fontSize: 40)),
+          const SizedBox(height: DSSpacing.sm),
+          // power_line (소원 키워드 포함된 메시지)
+          Text(
+            dragonMsg.powerLine,
+            style: typography.headingSmall.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              height: 1.4,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 📊 운의 흐름 섹션 (achievement_level, timing, keywords, helper/obstacle)
+  Widget _buildWishFortuneFlowSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final wishData = _wishData;
+    if (wishData?.fortuneFlow == null) return const SizedBox.shrink();
+
+    final flow = wishData!.fortuneFlow!;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? colors.surface : colors.background,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 타이틀
+          Row(
+            children: [
+              const Text('📊', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: DSSpacing.xs),
+              Text('운의 흐름', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          // 성취 가능성 레벨
+          _buildFlowItem(context, '✨', '성취 가능성', flow.achievementLevel, _getAchievementColor(flow.achievementLevel)),
+
+          // 행운의 타이밍
+          _buildFlowItem(context, '⏰', '행운의 시간', flow.luckyTiming, colors.accent),
+
+          // 키워드 해시태그
+          if (flow.keywords.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Wrap(
+              spacing: DSSpacing.xs,
+              runSpacing: DSSpacing.xs,
+              children: flow.keywords.map((keyword) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.full),
+                ),
+                child: Text(
+                  keyword,
+                  style: typography.labelSmall.copyWith(color: colors.accent),
+                ),
+              )).toList(),
+            ),
+          ],
+
+          const SizedBox(height: DSSpacing.md),
+
+          // 도움 요소
+          if (flow.helper.isNotEmpty)
+            _buildFlowItem(context, '👤', '도움이 되는 것', flow.helper, colors.success),
+
+          // 주의 요소
+          if (flow.obstacle.isNotEmpty)
+            _buildFlowItem(context, '⚠️', '주의할 것', flow.obstacle, colors.warning),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFlowItem(BuildContext context, String emoji, String label, String value, Color accentColor) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: DSSpacing.xs),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: typography.labelSmall.copyWith(color: colors.textSecondary)),
+                Text(
+                  value,
+                  style: typography.bodyMedium.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getAchievementColor(String level) {
+    switch (level) {
+      case '매우 높음':
+        return const Color(0xFF4CAF50); // Green
+      case '높음':
+        return const Color(0xFF8BC34A); // Light Green
+      case '보통':
+        return const Color(0xFFFFC107); // Amber
+      case '노력 필요':
+        return const Color(0xFFFF9800); // Orange
+      default:
+        return const Color(0xFF9E9E9E); // Grey
+    }
+  }
+
+  /// 🍀 행운 미션 섹션 (item, place, color with reasons)
+  Widget _buildWishLuckyMissionSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final wishData = _wishData;
+    if (wishData?.luckyMission == null) return const SizedBox.shrink();
+
+    final mission = wishData!.luckyMission!;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? colors.surface : colors.background,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 타이틀
+          Row(
+            children: [
+              const Text('🍀', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: DSSpacing.xs),
+              Text('오늘의 행운 미션', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          // 행운 아이템
+          _buildMissionItem(
+            context,
+            emoji: '🎁',
+            title: '행운 아이템',
+            value: mission.item,
+            reason: mission.itemReason,
+          ),
+
+          // 행운 장소
+          _buildMissionItem(
+            context,
+            emoji: '📍',
+            title: '행운 장소',
+            value: mission.place,
+            reason: mission.placeReason,
+          ),
+
+          // 행운 색상
+          _buildMissionItem(
+            context,
+            emoji: '🎨',
+            title: '행운 색상',
+            value: mission.color,
+            reason: mission.colorReason,
+            colorPreview: _getColorFromName(mission.color),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMissionItem(
+    BuildContext context, {
+    required String emoji,
+    required String title,
+    required String value,
+    required String reason,
+    Color? colorPreview,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: isDark ? colors.background.withValues(alpha: 0.5) : colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: DSSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(title, style: typography.labelSmall.copyWith(color: colors.textSecondary)),
+                    if (colorPreview != null) ...[
+                      const SizedBox(width: DSSpacing.xs),
+                      Container(
+                        width: 16,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: colorPreview,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: colors.border),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: typography.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  reason,
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getColorFromName(String colorName) {
+    final colorMap = {
+      '빨간색': Colors.red,
+      '분홍색': Colors.pink,
+      '주황색': Colors.orange,
+      '노란색': Colors.yellow,
+      '금색': const Color(0xFFFFD700),
+      '초록색': Colors.green,
+      '파란색': Colors.blue,
+      '남색': Colors.indigo,
+      '보라색': Colors.purple,
+      '하얀색': Colors.white,
+      '검은색': Colors.black,
+      '회색': Colors.grey,
+    };
+    return colorMap[colorName] ?? Colors.blue;
+  }
+
+  /// 💎 용의 지혜 섹션 (pearl_message, wisdom)
+  Widget _buildWishDragonWisdomSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final wishData = _wishData;
+    if (wishData?.dragonMessage == null) return const SizedBox.shrink();
+
+    final dragonMsg = wishData!.dragonMessage!;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark
+              ? [const Color(0xFF37474F), const Color(0xFF263238)]
+              : [const Color(0xFFF5F5F5), const Color(0xFFEEEEEE)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 여의주 메시지
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('💎', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '여의주의 빛',
+                      style: typography.labelSmall.copyWith(color: colors.textSecondary),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      dragonMsg.pearlMessage,
+                      style: typography.bodyMedium.copyWith(height: 1.5),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: DSSpacing.md),
+          Divider(color: colors.border),
+          const SizedBox(height: DSSpacing.md),
+
+          // 용의 지혜
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('🐲', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '용의 지혜',
+                      style: typography.labelSmall.copyWith(color: colors.textSecondary),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      dragonMsg.wisdom,
+                      style: typography.bodyMedium.copyWith(
+                        fontStyle: FontStyle.italic,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 💪 응원 메시지 섹션
+  Widget _buildWishEncouragementSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final wishData = _wishData;
+    if (wishData == null) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.accent.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 공감 메시지
+          if (wishData.empathyMessage.isNotEmpty) ...[
+            Row(
+              children: [
+                const Text('💬', style: TextStyle(fontSize: 18)),
+                const SizedBox(width: DSSpacing.xs),
+                Text('공감', style: typography.labelMedium.copyWith(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.xs),
+            Text(
+              wishData.empathyMessage,
+              style: typography.bodyMedium.copyWith(height: 1.5),
+            ),
+            const SizedBox(height: DSSpacing.md),
+          ],
+
+          // 희망 메시지
+          if (wishData.hopeMessage.isNotEmpty) ...[
+            Row(
+              children: [
+                const Text('🌟', style: TextStyle(fontSize: 18)),
+                const SizedBox(width: DSSpacing.xs),
+                Text('희망', style: typography.labelMedium.copyWith(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.xs),
+            Text(
+              wishData.hopeMessage,
+              style: typography.bodyMedium.copyWith(height: 1.5),
+            ),
+            const SizedBox(height: DSSpacing.md),
+          ],
+
+          // 응원 메시지
+          if (wishData.encouragement.isNotEmpty) ...[
+            Row(
+              children: [
+                const Text('💪', style: TextStyle(fontSize: 18)),
+                const SizedBox(width: DSSpacing.xs),
+                Text('응원', style: typography.labelMedium.copyWith(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.xs),
+            Text(
+              wishData.encouragement,
+              style: typography.bodyMedium.copyWith(
+                fontWeight: FontWeight.w500,
+                color: colors.accent,
+                height: 1.5,
+              ),
+            ),
+          ],
+
+          // 신의 한마디
+          if (wishData.specialWords.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: colors.accent.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+              ),
+              child: Row(
+                children: [
+                  const Text('✨', style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: DSSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      wishData.specialWords,
+                      style: typography.bodySmall.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colors.accent,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 📝 조언 리스트 섹션
+  Widget _buildWishAdviceSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final wishData = _wishData;
+    if (wishData == null || wishData.advice.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? colors.surface : colors.background,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('📝', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: DSSpacing.xs),
+              Text('오늘의 실천 조언', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          ...wishData.advice.asMap().entries.map((entry) {
+            final index = entry.key;
+            final advice = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: colors.accent.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${index + 1}',
+                        style: typography.labelSmall.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      advice,
+                      style: typography.bodyMedium.copyWith(height: 1.4),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  // ============ 🧿 부적 (Talisman) 전용 섹션 ============
+
+  /// 부적 세부 운세 섹션 (종합/애정/직장/건강/금전)
+  Widget _buildTalismanDetailsSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final details = _talismanDetails;
+    if (details == null || details.isEmpty) return const SizedBox.shrink();
+
+    // 세부 운세 항목들과 아이콘 매핑
+    final detailItems = <Map<String, dynamic>>[
+      {'key': 'overall', 'label': '종합운', 'emoji': '🌟'},
+      {'key': 'love', 'label': '애정운', 'emoji': '💕'},
+      {'key': 'career', 'label': '직장운', 'emoji': '💼'},
+      {'key': 'health', 'label': '건강운', 'emoji': '💚'},
+      {'key': 'wealth', 'label': '금전운', 'emoji': '💰'},
+    ];
+
+    final validItems = detailItems.where((item) {
+      final value = details[item['key']];
+      return value != null && value.toString().isNotEmpty;
+    }).toList();
+
+    if (validItems.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? colors.surface : colors.background,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🧿', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: DSSpacing.xs),
+              Text('세부 운세', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          ...validItems.map((item) {
+            final value = details[item['key']].toString();
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.md),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item['emoji'] as String, style: const TextStyle(fontSize: 18)),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item['label'] as String,
+                          style: typography.labelMedium.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          value,
+                          style: typography.bodyMedium.copyWith(height: 1.5),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// 부적 행운 아이템 섹션
+  Widget _buildTalismanLuckyItemsSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final luckyItems = _talismanLuckyItems;
+    if (luckyItems.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? colors.surface : colors.background,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🍀', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: DSSpacing.xs),
+              Text('행운 아이템', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          Wrap(
+            spacing: DSSpacing.sm,
+            runSpacing: DSSpacing.sm,
+            children: luckyItems.map((item) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: colors.accent.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.full),
+                border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+              ),
+              child: Text(
+                item,
+                style: typography.labelMedium.copyWith(
+                  color: colors.accent,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            )).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 부적 주의사항 섹션
+  Widget _buildTalismanWarningsSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final warnings = _talismanWarnings;
+    if (warnings.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark
+            ? colors.warning.withValues(alpha: 0.1)
+            : colors.warning.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.warning.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('⚠️', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: DSSpacing.xs),
+              Text('주의사항', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          ...warnings.asMap().entries.map((entry) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '•',
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.warning,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      entry.value,
+                      style: typography.bodyMedium.copyWith(height: 1.4),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // 가족운 전용 섹션들 (family-health/wealth/relationship/children/change)
+  // ============================================================
+
+  /// 가족운 섹션 헬퍼 위젯
+  Widget _buildFamilySection(
+    BuildContext context, {
+    required String icon,
+    required String title,
+    required Widget child,
+    Color? accentColor,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+    // accentColor는 child 위젯에서 직접 사용됨
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(icon, style: const TextStyle(fontSize: 18)),
+            const SizedBox(width: DSSpacing.xs),
+            Text(
+              title,
+              style: typography.labelLarge.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: DSSpacing.sm),
+        child,
+      ],
+    );
+  }
+
+  /// 가족운 타입별 액센트 색상
+  Color get _familyAccentColor {
+    if (_isFamilyHealth) return const Color(0xFF38A169);     // 청록 (건강)
+    if (_isFamilyWealth) return const Color(0xFFD69E2E);     // 금색 (재물)
+    if (_isFamilyRelationship) return const Color(0xFFE91E63); // 핑크 (관계)
+    if (_isFamilyChildren) return const Color(0xFF2196F3);   // 파랑 (자녀)
+    if (_isFamilyChange) return const Color(0xFF9C27B0);     // 보라 (변화)
+    return const Color(0xFF9B59B6);
+  }
+
+  /// 가족운 타입별 제목 접두어
+  String get _familyTypePrefix {
+    if (_isFamilyHealth) return '건강';
+    if (_isFamilyWealth) return '재물';
+    if (_isFamilyRelationship) return '관계';
+    if (_isFamilyChildren) return '자녀';
+    if (_isFamilyChange) return '변화';
+    return '가족';
+  }
+
+  /// 1. 카테고리별 점수 섹션
+  Widget _buildFamilyCategoriesSection(BuildContext context, bool isDark) {
+    final categories = _familyCategories;
+    if (categories == null || categories.isEmpty) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final accent = _familyAccentColor;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: _buildFamilySection(
+        context,
+        icon: '📊',
+        title: '$_familyTypePrefix 카테고리별 분석',
+        accentColor: accent,
+        child: Column(
+          children: categories.entries.map((entry) {
+            final category = entry.value as Map<String, dynamic>?;
+            if (category == null) return const SizedBox.shrink();
+
+            final score = category['score'] as int? ?? 0;
+            final title = category['title'] as String? ?? entry.key;
+            final description = category['description'] as String? ?? '';
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+              padding: const EdgeInsets.all(DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: isDark ? colors.backgroundSecondary : colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                  color: colors.border.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: typography.labelMedium.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.sm,
+                          vertical: DSSpacing.xxs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: accent.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(DSRadius.sm),
+                        ),
+                        child: Text(
+                          '$score점',
+                          style: typography.labelSmall.copyWith(
+                            color: accent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (description.isNotEmpty) ...[
+                    const SizedBox(height: DSSpacing.xs),
+                    Text(
+                      description,
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  /// 2. 가족 조화 분석 섹션 (familySynergy)
+  Widget _buildFamilySynergySection(BuildContext context, bool isDark) {
+    final synergy = _familySynergy;
+    if (synergy == null) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final accent = _familyAccentColor;
+
+    final title = synergy['title'] as String? ?? '가족 조화 분석';
+    final compatibility = synergy['compatibility'] as String?;
+    final strengthPoints = synergy['strengthPoints'] as List<dynamic>?;
+    final improvementAreas = synergy['improvementAreas'] as List<dynamic>?;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: _buildFamilySection(
+        context,
+        icon: '💜',
+        title: title,
+        accentColor: accent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (compatibility != null && compatibility.isNotEmpty) ...[
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.sm),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                ),
+                child: Text(
+                  compatibility,
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: DSSpacing.md),
+            ],
+            if (strengthPoints != null && strengthPoints.isNotEmpty) ...[
+              Text(
+                '💪 강점',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+              ...strengthPoints.map((point) => Padding(
+                padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('✓', style: typography.bodySmall.copyWith(color: accent)),
+                    const SizedBox(width: DSSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        point.toString(),
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+              const SizedBox(height: DSSpacing.sm),
+            ],
+            if (improvementAreas != null && improvementAreas.isNotEmpty) ...[
+              Text(
+                '🎯 개선 포인트',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+              ...improvementAreas.map((area) => Padding(
+                padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('→', style: typography.bodySmall.copyWith(color: colors.textTertiary)),
+                    const SizedBox(width: DSSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        area.toString(),
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 3. 타입별 특수 조언 섹션 (seasonalAdvice, timingAdvice, communicationAdvice 등)
+  Widget _buildFamilySpecialAdviceSection(BuildContext context, bool isDark) {
+    final advice = _familySpecialAdvice;
+    if (advice == null || advice.isEmpty) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final accent = _familyAccentColor;
+
+    // 타입별 섹션 제목 & 아이콘
+    String sectionTitle;
+    String sectionIcon;
+    if (_isFamilyHealth) {
+      sectionTitle = '계절별 건강 조언';
+      sectionIcon = '🌿';
+    } else if (_isFamilyWealth) {
+      sectionTitle = '월별 재물운 트렌드';
+      sectionIcon = '📈';
+    } else if (_isFamilyRelationship) {
+      sectionTitle = '소통 조언';
+      sectionIcon = '💬';
+    } else if (_isFamilyChildren) {
+      sectionTitle = '교육 조언';
+      sectionIcon = '📚';
+    } else if (_isFamilyChange) {
+      sectionTitle = '타이밍 조언';
+      sectionIcon = '⏰';
+    } else {
+      sectionTitle = '특별 조언';
+      sectionIcon = '💡';
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: _buildFamilySection(
+        context,
+        icon: sectionIcon,
+        title: sectionTitle,
+        accentColor: accent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: advice.entries.map((entry) {
+            final value = entry.value?.toString() ?? '';
+            if (value.isEmpty) return const SizedBox.shrink();
+
+            // 키를 한글로 변환
+            String label = entry.key;
+            if (label == 'current_season') label = '현재 계절';
+            if (label == 'caution_period') label = '주의 시기';
+            if (label == 'best_activity') label = '추천 활동';
+            if (label == 'best_period') label = '최적 시기';
+            if (label == 'overall_trend') label = '전체 흐름';
+            if (label == 'style') label = '대화 스타일';
+            if (label == 'topic') label = '대화 주제';
+            if (label == 'avoid') label = '피할 주제';
+            if (label == 'study_style') label = '학습 스타일';
+            if (label == 'best_subject') label = '적합 과목';
+            if (label == 'encouragement') label = '격려의 말';
+            if (label == 'best_month') label = '최적의 달';
+            if (label == 'preparation') label = '준비 사항';
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+              padding: const EdgeInsets.all(DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: isDark ? colors.backgroundSecondary : colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(color: colors.border.withValues(alpha: 0.2)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: typography.labelSmall.copyWith(
+                      color: accent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: DSSpacing.xxs),
+                  Text(
+                    value,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  /// 4. 월별 흐름 섹션 (monthlyFlow)
+  Widget _buildFamilyMonthlyFlowSection(BuildContext context, bool isDark) {
+    final flow = _familyMonthlyFlow;
+    if (flow == null) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final accent = _familyAccentColor;
+
+    final current = flow['current'] as String?;
+    final next = flow['next'] as String?;
+    final advice = flow['advice'] as String?;
+
+    if (current == null && next == null && advice == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: _buildFamilySection(
+        context,
+        icon: '📅',
+        title: '월별 $_familyTypePrefix운 흐름',
+        accentColor: accent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (current != null && current.isNotEmpty) ...[
+              _buildFamilyFlowItem(context, '이번 달', current, accent, isDark),
+              const SizedBox(height: DSSpacing.sm),
+            ],
+            if (next != null && next.isNotEmpty) ...[
+              _buildFamilyFlowItem(context, '다음 달', next, colors.textTertiary, isDark),
+              const SizedBox(height: DSSpacing.sm),
+            ],
+            if (advice != null && advice.isNotEmpty) ...[
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.sm),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('💡', style: typography.bodySmall),
+                    const SizedBox(width: DSSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        advice,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textPrimary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFamilyFlowItem(BuildContext context, String label, String content, Color labelColor, bool isDark) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: isDark ? colors.backgroundSecondary : colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: colors.border.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: typography.labelSmall.copyWith(
+              color: labelColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xxs),
+          Text(
+            content,
+            style: typography.bodySmall.copyWith(
+              color: colors.textSecondary,
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 5. 가족 조언 팁 섹션 (familyAdvice)
+  Widget _buildFamilyAdviceTipsSection(BuildContext context, bool isDark) {
+    final advice = _familyAdvice;
+    if (advice == null) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final accent = _familyAccentColor;
+
+    final title = advice['title'] as String? ?? '가족 조언';
+    final tips = advice['tips'] as List<dynamic>?;
+
+    if (tips == null || tips.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: _buildFamilySection(
+        context,
+        icon: '🏠',
+        title: title,
+        accentColor: accent,
+        child: Column(
+          children: tips.asMap().entries.map((entry) {
+            final index = entry.key + 1;
+            final tip = entry.value.toString();
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+              padding: const EdgeInsets.all(DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: isDark ? colors.backgroundSecondary : colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(color: colors.border.withValues(alpha: 0.2)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$index',
+                        style: typography.labelSmall.copyWith(
+                          color: accent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      tip,
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  /// 6. 추천사항 섹션 (recommendations)
+  Widget _buildFamilyRecommendationsSection(BuildContext context, bool isDark) {
+    final recommendations = _familyRecommendations;
+    if (recommendations.isEmpty) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final accent = _familyAccentColor;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: _buildFamilySection(
+        context,
+        icon: '✨',
+        title: '추천 실천 사항',
+        accentColor: accent,
+        child: Column(
+          children: recommendations.map((rec) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('•', style: typography.bodySmall.copyWith(color: accent)),
+                  const SizedBox(width: DSSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      rec,
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  /// 7. 주의사항 섹션 (warnings)
+  Widget _buildFamilyWarningsSection(BuildContext context, bool isDark) {
+    final warnings = _familyWarnings;
+    if (warnings.isEmpty) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    const warningColor = Color(0xFFE53E3E); // 빨간색
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: _buildFamilySection(
+        context,
+        icon: '⚠️',
+        title: '주의사항',
+        accentColor: warningColor,
+        child: Container(
+          padding: const EdgeInsets.all(DSSpacing.sm),
+          decoration: BoxDecoration(
+            color: warningColor.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(DSRadius.md),
+            border: Border.all(color: warningColor.withValues(alpha: 0.2)),
+          ),
+          child: Column(
+            children: warnings.map((warning) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('!', style: typography.bodySmall.copyWith(
+                      color: warningColor,
+                      fontWeight: FontWeight.bold,
+                    )),
+                    const SizedBox(width: DSSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        warning,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 8. 특별 질문 답변 섹션 (specialAnswer)
+  Widget _buildFamilySpecialAnswerSection(BuildContext context, bool isDark) {
+    final answer = _familySpecialAnswer;
+    if (answer == null || answer.isEmpty) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final accent = _familyAccentColor;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: _buildFamilySection(
+        context,
+        icon: '💬',
+        title: '특별 질문에 대한 답변',
+        accentColor: accent,
+        child: Container(
+          padding: const EdgeInsets.all(DSSpacing.md),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                accent.withValues(alpha: 0.1),
+                accent.withValues(alpha: 0.05),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(DSRadius.md),
+            border: Border.all(color: accent.withValues(alpha: 0.3)),
+          ),
+          child: Text(
+            answer,
+            style: typography.bodyMedium.copyWith(
+              color: colors.textPrimary,
+              height: 1.6,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ============ 반려동물 궁합 (Pet Compatibility) UI 빌더 ============
+
+  /// 교감 미션 섹션 (FREE - 블러 없음)
+  Widget _buildBondingMissionSection(BuildContext context) {
+    final mission = _bondingMission;
+    if (mission == null) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final petInfo = _petInfo;
+    final petName = petInfo?['name'] ?? '반려동물';
+
+    // 미션 타입별 이모지와 색상
+    final missionType = mission['mission_type'] as String? ?? 'play';
+    final (emoji, accentColor) = switch (missionType) {
+      'skinship' => ('🤗', const Color(0xFFFF6B9D)),
+      'play' => ('🎾', const Color(0xFF4CAF50)),
+      'environment' => ('🏠', const Color(0xFF2196F3)),
+      'communication' => ('💬', const Color(0xFFFF9800)),
+      _ => ('🐾', colors.accent),
+    };
+
+    // 난이도별 표시
+    final difficulty = mission['difficulty'] as String? ?? 'easy';
+    final difficultyLabel = switch (difficulty) {
+      'easy' => '쉬움 ⭐',
+      'medium' => '보통 ⭐⭐',
+      'special' => '특별 ⭐⭐⭐',
+      _ => '쉬움 ⭐',
+    };
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              accentColor.withValues(alpha: 0.15),
+              accentColor.withValues(alpha: 0.05),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.1),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(DSRadius.lg),
+                  topRight: Radius.circular(DSRadius.lg),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(DSRadius.md),
+                    ),
+                    child: Text(emoji, style: const TextStyle(fontSize: 24)),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '오늘의 교감 미션',
+                          style: typography.labelSmall.copyWith(
+                            color: accentColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          mission['mission_title'] ?? '특별한 시간',
+                          style: typography.headingSmall.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                    ),
+                    child: Text(
+                      difficultyLabel,
+                      style: typography.labelSmall.copyWith(
+                        color: accentColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 미션 설명
+            Padding(
+              padding: const EdgeInsets.all(DSSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    mission['mission_description'] ?? '',
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.5,
+                    ),
+                  ),
+                  if (mission['expected_reaction'] != null) ...[
+                    const SizedBox(height: DSSpacing.md),
+                    Container(
+                      padding: const EdgeInsets.all(DSSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        borderRadius: BorderRadius.circular(DSRadius.sm),
+                        border: Border.all(color: accentColor.withValues(alpha: 0.2)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Text('💭', style: TextStyle(fontSize: 16)),
+                          const SizedBox(width: DSSpacing.xs),
+                          Expanded(
+                            child: Text(
+                              '$petName의 예상 반응: ${mission['expected_reaction']}',
+                              style: typography.bodySmall.copyWith(
+                                color: colors.textSecondary,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 펫 속마음 편지 섹션 (PREMIUM)
+  Widget _buildPetsVoiceSection(BuildContext context, bool isPremium) {
+    final petsVoice = _petsVoice;
+    if (petsVoice == null) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final petInfo = _petInfo;
+    final petName = petInfo?['name'] ?? '반려동물';
+    final petSpecies = petInfo?['species'] ?? 'dog';
+
+    // 편지 타입별 이모지와 색상
+    final letterType = petsVoice['letter_type'] as String? ?? 'comfort';
+    final (emoji, accentColor, bgEmoji) = switch (letterType) {
+      'comfort' => ('🥺', const Color(0xFF9C27B0), '💜'),
+      'excitement' => ('🤩', const Color(0xFFFF9800), '⭐'),
+      'gratitude' => ('🥰', const Color(0xFFE91E63), '💕'),
+      'longing' => ('😢', const Color(0xFF2196F3), '💙'),
+      _ => ('🐾', colors.accent, '💖'),
+    };
+
+    // 펫 종류별 아이콘
+    final petEmoji = switch (petSpecies) {
+      'dog' => '🐕',
+      'cat' => '🐈',
+      'bird' => '🐦',
+      'hamster' => '🐹',
+      'rabbit' => '🐰',
+      'fish' => '🐠',
+      _ => '🐾',
+    };
+
+    final shouldBlur = !isPremium;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: UnifiedBlurWrapper(
+        isBlurred: shouldBlur,
+        blurredSections: shouldBlur ? ['pets_voice'] : [],
+        sectionKey: 'pets_voice',
+        fortuneType: 'pet-compatibility',
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                accentColor.withValues(alpha: 0.12),
+                accentColor.withValues(alpha: 0.04),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            border: Border.all(color: accentColor.withValues(alpha: 0.25)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 편지 헤더
+              Container(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.08),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(DSRadius.lg),
+                    topRight: Radius.circular(DSRadius.lg),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    // 펫 아바타
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: accentColor.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: accentColor.withValues(alpha: 0.3), width: 2),
+                      ),
+                      child: Center(
+                        child: Text(petEmoji, style: const TextStyle(fontSize: 28)),
+                      ),
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '$petName의 속마음 편지',
+                                style: typography.labelMedium.copyWith(
+                                  color: accentColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(emoji, style: const TextStyle(fontSize: 16)),
+                            ],
+                          ),
+                          Text(
+                            'From: $petName  $bgEmoji',
+                            style: typography.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // 편지 본문
+              Padding(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 속마음 편지
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(DSSpacing.md),
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        borderRadius: BorderRadius.circular(DSRadius.md),
+                        boxShadow: [
+                          BoxShadow(
+                            color: accentColor.withValues(alpha: 0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '"${petsVoice['heartfelt_letter'] ?? ''}"',
+                            style: typography.bodyLarge.copyWith(
+                              color: colors.textPrimary,
+                              height: 1.6,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 비밀 고백
+                    if (petsVoice['secret_confession'] != null) ...[
+                      const SizedBox(height: DSSpacing.md),
+                      Container(
+                        padding: const EdgeInsets.all(DSSpacing.sm),
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(DSRadius.sm),
+                          border: Border.all(color: accentColor.withValues(alpha: 0.15)),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('🤫', style: TextStyle(fontSize: 18)),
+                            const SizedBox(width: DSSpacing.xs),
+                            Expanded(
+                              child: Text(
+                                petsVoice['secret_confession'],
+                                style: typography.bodySmall.copyWith(
+                                  color: colors.textSecondary,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    // 서명
+                    const SizedBox(height: DSSpacing.sm),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '- $petName 올림 $petEmoji',
+                        style: typography.labelSmall.copyWith(
+                          color: accentColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

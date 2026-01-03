@@ -326,6 +326,24 @@ serve(async (req) => {
     "energy_flow": "생기/살기 흐름 평가 - 기운의 순환과 정체 여부 (80자 이상)",
     "recommendations": ["지형 보완 방법 3가지 (구체적인 풍수 비보 방법)"]
   },
+  "settlement_index": {
+    "score": 0-100 사이 정수 (정착 용이도 점수),
+    "description": "새 동네에서 얼마나 빠르게 적응할 수 있는지 분석 (80자 이내)",
+    "factors": ["정착에 유리한 요소 3가지 (예: 편의시설 접근성, 교통 편리, 이웃 친화도)"]
+  },
+  "neighborhood_chemistry": {
+    "score": 0-100 사이 정수 (동네 분위기 궁합 점수),
+    "description": "사용자의 성향과 동네 분위기가 얼마나 잘 맞는지 분석 (80자 이내)",
+    "vibe_match": "동네 분위기 한줄 표현 (예: 활기찬/조용한/가족친화적/젊은/전통적)"
+  },
+  "lucky_checklist": [
+    {
+      "id": "ritual_1",
+      "task": "이사 당일 실천할 행운 미션 (예: 쌀과 소금 먼저 들여놓기)",
+      "emoji": "적절한 이모지 (예: 🍚)",
+      "reason": "왜 이 미션이 행운을 부르는지 설명 (50자 이내)"
+    }
+  ],
   "summary": {
     "one_line": "이사운을 한 문장으로 요약",
     "keywords": ["핵심 키워드 3개"],
@@ -419,7 +437,7 @@ ${concernsText}
       // ✅ Blur 로직 적용 (프리미엄이 아니면 상세 분석 블러 처리)
       const isBlurred = !isPremium
       const blurredSections = isBlurred
-        ? ['direction_analysis', 'timing_analysis', 'lucky_dates', 'feng_shui_tips', 'cautions', 'recommendations', 'lucky_items', 'terrain_analysis']
+        ? ['direction_analysis', 'timing_analysis', 'lucky_dates', 'feng_shui_tips', 'cautions', 'recommendations', 'lucky_items', 'terrain_analysis', 'settlement_index', 'neighborhood_chemistry', 'lucky_checklist']
         : []
 
       // ✅ 응답 데이터 구조화 (항상 실제 데이터 반환, 클라이언트에서 블러 처리)
@@ -516,6 +534,29 @@ ${concernsText}
           energy_flow: '기의 흐름 분석 중',
           recommendations: ['분석 중']
         },
+
+        // ✅ NEW: 정착 지수 (새 동네 적응 용이도)
+        settlement_index: parsedResponse.settlement_index || {
+          score: 75,
+          description: '새로운 환경에서의 적응력을 분석 중입니다.',
+          factors: ['편의시설 접근성', '교통 편리', '이웃 친화도']
+        },
+
+        // ✅ NEW: 이웃 케미 (동네 분위기 궁합)
+        neighborhood_chemistry: parsedResponse.neighborhood_chemistry || {
+          score: 70,
+          description: '동네 분위기와의 궁합을 분석 중입니다.',
+          vibe_match: '분석 중'
+        },
+
+        // ✅ NEW: 럭키 체크리스트 (이사 당일 미션)
+        lucky_checklist: parsedResponse.lucky_checklist ||
+          (parsedResponse.recommendations?.moving_day_ritual || ['쌀과 소금 먼저 들여놓기', '현관에서 복 세 번 외치기', '새 빗자루로 청소하기']).map((task: string, idx: number) => ({
+            id: `ritual_${idx + 1}`,
+            task: task,
+            emoji: ['🍚', '🧂', '🧹', '🕯️', '🪴'][idx % 5],
+            reason: '전통적인 이사 행운 의식입니다.'
+          })),
 
         // 요약
         summary: {

@@ -4,19 +4,36 @@ import 'package:fortune/core/utils/logger.dart';
 
 /// 부적 카테고리 Enum
 enum TalismanCategory {
-  diseasePrevention('disease_prevention', '질병 퇴치', ['病退散', '藥神降臨']),
-  loveRelationship('love_relationship', '사랑 성취', ['夫婦和合', '百年好合']),
-  wealthCareer('wealth_career', '재물 운', ['財祿豊盈', '官運亨通']),
-  disasterRemoval('disaster_removal', '삼재 소멸', ['三災消滅']),
-  homeProtection('home_protection', '안택', ['家內平安', '安宅']),
-  academicSuccess('academic_success', '학업 성취', ['及第及第', '文昌帝君']),
-  healthLongevity('health_longevity', '건강 장수', ['無病長壽', '福祿壽']);
+  diseasePrevention('disease_prevention', '질병 퇴치', ['病退散', '藥神降臨'],
+      '질병과 나쁜 기운을 물리치는 부적입니다. 침실이나 현관에 붙여두고, 아침마다 한 번 바라보며 건강을 빌어보세요.'),
+  loveRelationship('love_relationship', '사랑 성취', ['夫婦和合', '百年好合'],
+      '사랑과 좋은 인연을 불러오는 부적입니다. 지갑이나 핸드폰 케이스에 넣어 늘 가까이 지니세요.'),
+  wealthCareer('wealth_career', '재물운', ['財祿豊盈', '官運亨通'],
+      '재물과 성공을 불러오는 부적입니다. 지갑이나 금고 근처에 두고, 매일 아침 바라보며 소원을 빌어보세요.'),
+  disasterRemoval('disaster_removal', '삼재 소멸', ['三災消滅'],
+      '삼재와 액운을 막아주는 부적입니다. 현관문 안쪽에 붙여두고, 외출 전 한 번 바라보세요.'),
+  homeProtection('home_protection', '안택', ['家內平安', '安宅'],
+      '가정의 평안과 화목을 지키는 부적입니다. 거실이나 가족이 모이는 곳에 두고, 온 가족이 함께 바라보세요.'),
+  academicSuccess('academic_success', '학업 성취', ['及第及第', '文昌帝君'],
+      '학업 성취와 합격을 기원하는 부적입니다. 책상 위나 필통에 넣어두고, 공부 전 한 번 바라보세요.'),
+  healthLongevity('health_longevity', '건강 장수', ['無病長壽', '福祿壽'],
+      '건강과 장수를 기원하는 부적입니다. 침대 머리맡이나 거울 옆에 두고, 매일 아침 감사하며 바라보세요.');
 
-  const TalismanCategory(this.id, this.displayName, this.defaultCharacters);
+  const TalismanCategory(this.id, this.displayName, this.defaultCharacters, this.shortDescription);
 
   final String id;
   final String displayName;
   final List<String> defaultCharacters;
+  final String shortDescription;
+
+  /// 카테고리 ID로 TalismanCategory 찾기
+  static TalismanCategory? fromId(String id) {
+    try {
+      return TalismanCategory.values.firstWhere((c) => c.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
 }
 
 /// 부적 이미지 생성 결과
@@ -24,6 +41,8 @@ class TalismanGenerationResult {
   final String? id;
   final String imageUrl;
   final String category;
+  final String categoryName; // 카테고리 한글명 (예: 재물운)
+  final String shortDescription; // 100자 내외 효능 + 사용법
   final List<String> characters;
   final DateTime createdAt;
 
@@ -31,6 +50,8 @@ class TalismanGenerationResult {
     this.id,
     required this.imageUrl,
     required this.category,
+    required this.categoryName,
+    required this.shortDescription,
     required this.characters,
     required this.createdAt,
   });
@@ -40,6 +61,8 @@ class TalismanGenerationResult {
       id: json['id'] as String?,
       imageUrl: (json['imageUrl'] ?? json['image_url']) as String,
       category: json['category'] as String,
+      categoryName: (json['categoryName'] ?? json['category_name'] ?? '') as String,
+      shortDescription: (json['shortDescription'] ?? json['short_description'] ?? '') as String,
       characters: (json['characters'] as List).cast<String>(),
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
@@ -164,10 +187,15 @@ class TalismanGenerationService {
 
       if (response == null) return null;
 
+      final categoryId = response['category'] as String;
+      final cat = TalismanCategory.fromId(categoryId);
+
       return TalismanGenerationResult(
         id: response['id'] as String?,
         imageUrl: response['image_url'] as String,
-        category: response['category'] as String,
+        category: categoryId,
+        categoryName: cat?.displayName ?? categoryId,
+        shortDescription: cat?.shortDescription ?? '',
         characters: (response['characters'] as List).cast<String>(),
         createdAt: DateTime.parse(response['created_at'] as String),
       );
@@ -222,6 +250,8 @@ class TalismanGenerationService {
       id: item['id'] as String,
       imageUrl: item['image_url'] as String,
       category: item['category'] as String,
+      categoryName: category.displayName,
+      shortDescription: category.shortDescription,
       characters: (item['characters'] as List).cast<String>(),
       createdAt: DateTime.parse(item['created_at'] as String),
     );
@@ -263,8 +293,11 @@ class TalismanGenerationService {
 
     final data = response.data as Map<String, dynamic>;
     return TalismanGenerationResult(
+      id: data['id'] as String?,
       imageUrl: data['imageUrl'] as String,
       category: data['category'] as String,
+      categoryName: (data['categoryName'] as String?) ?? category.displayName,
+      shortDescription: (data['shortDescription'] as String?) ?? category.shortDescription,
       characters: (data['characters'] as List).cast<String>(),
       createdAt: DateTime.now(),
     );
@@ -348,6 +381,8 @@ class TalismanGenerationService {
         id: imageResponse['id'] as String,
         imageUrl: imageResponse['image_url'] as String,
         category: imageResponse['category'] as String,
+        categoryName: category.displayName,
+        shortDescription: category.shortDescription,
         characters: (imageResponse['characters'] as List).cast<String>(),
         createdAt: DateTime.parse(imageResponse['created_at'] as String),
       );
@@ -376,15 +411,19 @@ class TalismanGenerationService {
           .order('created_at', ascending: false)
           .limit(limit);
 
-      final talismans = (response as List)
-          .map((json) => TalismanGenerationResult(
-                id: json['id'] as String?,
-                imageUrl: json['image_url'] as String,
-                category: json['category'] as String,
-                characters: (json['characters'] as List).cast<String>(),
-                createdAt: DateTime.parse(json['created_at'] as String),
-              ))
-          .toList();
+      final talismans = (response as List).map((json) {
+        final categoryId = json['category'] as String;
+        final cat = TalismanCategory.fromId(categoryId);
+        return TalismanGenerationResult(
+          id: json['id'] as String?,
+          imageUrl: json['image_url'] as String,
+          category: categoryId,
+          categoryName: cat?.displayName ?? categoryId,
+          shortDescription: cat?.shortDescription ?? '',
+          characters: (json['characters'] as List).cast<String>(),
+          createdAt: DateTime.parse(json['created_at'] as String),
+        );
+      }).toList();
 
       Logger.info('[TalismanGen] ✅ Found ${talismans.length} talismans');
 
@@ -421,6 +460,8 @@ class TalismanGenerationService {
                 id: json['id'] as String?,
                 imageUrl: json['image_url'] as String,
                 category: json['category'] as String,
+                categoryName: category.displayName,
+                shortDescription: category.shortDescription,
                 characters: (json['characters'] as List).cast<String>(),
                 createdAt: DateTime.parse(json['created_at'] as String),
               ))

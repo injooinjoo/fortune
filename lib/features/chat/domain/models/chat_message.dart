@@ -1,4 +1,5 @@
 import '../../../../domain/entities/fortune.dart';
+import '../../../../core/models/personality_dna_model.dart';
 import '../../../fortune/domain/models/match_insight.dart';
 import '../../../fortune/domain/models/past_life_result.dart';
 
@@ -15,6 +16,15 @@ enum ChatMessageType {
 
   /// 사주 분석 결과 (풍부한 위젯 표시)
   sajuResult,
+
+  /// 성격 DNA 결과 (채팅 카드 표시)
+  personalityDnaResult,
+
+  /// 부적 결과 (이미지 + 짧은 설명)
+  talismanResult,
+
+  /// 감사일기 결과 (일기장 스타일 카드)
+  gratitudeResult,
 
   /// 로딩 표시
   loading,
@@ -96,6 +106,30 @@ class ChatMessage {
   /// 기간별 인사이트: 선택한 날짜 (결과 제목에 표시)
   final DateTime? selectedDate;
 
+  /// 성격 DNA 결과 데이터
+  final PersonalityDNA? personalityDna;
+
+  /// 부적 결과: 이미지 URL
+  final String? talismanImageUrl;
+
+  /// 부적 결과: 카테고리 한글명 (예: 재물운)
+  final String? talismanCategoryName;
+
+  /// 부적 결과: 100자 내외 효능 + 사용법
+  final String? talismanShortDescription;
+
+  /// 감사일기 결과: 첫 번째 감사
+  final String? gratitude1;
+
+  /// 감사일기 결과: 두 번째 감사
+  final String? gratitude2;
+
+  /// 감사일기 결과: 세 번째 감사
+  final String? gratitude3;
+
+  /// 감사일기 결과: 작성 날짜
+  final DateTime? gratitudeDate;
+
   const ChatMessage({
     required this.id,
     required this.type,
@@ -113,6 +147,14 @@ class ChatMessage {
     this.matchInsight,
     this.pastLifeResult,
     this.selectedDate,
+    this.personalityDna,
+    this.talismanImageUrl,
+    this.talismanCategoryName,
+    this.talismanShortDescription,
+    this.gratitude1,
+    this.gratitude2,
+    this.gratitude3,
+    this.gratitudeDate,
   });
 
   ChatMessage copyWith({
@@ -132,6 +174,14 @@ class ChatMessage {
     MatchInsight? matchInsight,
     PastLifeResult? pastLifeResult,
     DateTime? selectedDate,
+    PersonalityDNA? personalityDna,
+    String? talismanImageUrl,
+    String? talismanCategoryName,
+    String? talismanShortDescription,
+    String? gratitude1,
+    String? gratitude2,
+    String? gratitude3,
+    DateTime? gratitudeDate,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -150,6 +200,14 @@ class ChatMessage {
       matchInsight: matchInsight ?? this.matchInsight,
       pastLifeResult: pastLifeResult ?? this.pastLifeResult,
       selectedDate: selectedDate ?? this.selectedDate,
+      personalityDna: personalityDna ?? this.personalityDna,
+      talismanImageUrl: talismanImageUrl ?? this.talismanImageUrl,
+      talismanCategoryName: talismanCategoryName ?? this.talismanCategoryName,
+      talismanShortDescription: talismanShortDescription ?? this.talismanShortDescription,
+      gratitude1: gratitude1 ?? this.gratitude1,
+      gratitude2: gratitude2 ?? this.gratitude2,
+      gratitude3: gratitude3 ?? this.gratitude3,
+      gratitudeDate: gratitudeDate ?? this.gratitudeDate,
     );
   }
 }

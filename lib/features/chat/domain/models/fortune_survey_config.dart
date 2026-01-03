@@ -8,8 +8,9 @@ enum SurveyInputType {
   text,        // 텍스트 입력
   grid,        // 그리드 선택
   image,       // 이미지 업로드 (관상)
-  profile,     // 프로필 선택 (궁합)
-  petProfile,  // 펫 프로필 선택 (반려동물)
+  profile,        // 프로필 선택 (궁합)
+  familyProfile,  // 가족 프로필 선택 (가족운)
+  petProfile,     // 펫 프로필 선택 (반려동물)
   voice,       // 음성/텍스트 입력 (꿈분석, 소원)
   date,        // 날짜 선택 (바이오리듬, 스포츠) - 기존 다이얼로그
   calendar,    // 인라인 캘린더 (기간별 운세) - 채팅 내 캘린더 표시
@@ -140,10 +141,11 @@ enum FortuneSurveyType {
   celebrity,      // 유명인 궁합
   pastLife,       // 전생탐험
 
-  // 가족/반려동물 (3개)
+  // 가족/반려동물 (4개)
   pet,            // 반려동물 궁합
   family,         // 가족 운세
   naming,         // 작명
+  babyNickname,   // 태명 분석
 
   // 스타일/패션 (1개)
   ootdEvaluation, // OOTD 평가

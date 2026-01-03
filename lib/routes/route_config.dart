@@ -37,8 +37,7 @@ import '../features/settings/presentation/pages/font_settings_page.dart';
 import '../features/health/presentation/pages/health_fortune_page.dart';
 import '../features/health/presentation/pages/medical_document_result_page.dart';
 import '../features/health/domain/models/medical_document_models.dart';
-import '../features/sports/presentation/pages/sports_fortune_page.dart' show ExerciseFortunePage;
-import '../features/interactive/presentation/pages/fortune_cookie_page.dart';
+import '../features/exercise/presentation/pages/exercise_fortune_page.dart';
 import '../screens/subscription/subscription_page.dart';
 
 // Import admin pages
@@ -80,13 +79,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final isPartial = state.uri.queryParameters['partial'] == 'true';
           return OnboardingPage(isPartialCompletion: isPartial);
         },
-      ),
-
-      // Fortune Cookie (outside shell - no navigation bar)
-      GoRoute(
-        path: '/fortune-cookie',
-        name: 'fortune-cookie',
-        builder: (context, state) => const FortuneCookiePage(),
       ),
 
       // Face AI Camera (outside shell - full screen camera with Face Mesh)

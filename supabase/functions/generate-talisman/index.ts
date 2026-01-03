@@ -21,6 +21,7 @@ interface TalismanPromptConfig {
   geometricPattern: string
   specialElements: string
   defaultCharacters: string[]
+  shortDescription: string // 100자 내외 효능 + 사용법
 }
 
 // 카테고리별 전문적 부적 설정
@@ -34,6 +35,7 @@ const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
     geometricPattern: 'spiral vortex patterns (와문형) representing life energy circulation, radiating from center',
     specialElements: 'protective barrier circles, healing energy symbols',
     defaultCharacters: ['病退散', '藥神降臨'],
+    shortDescription: '질병과 나쁜 기운을 물리치는 부적입니다. 침실이나 현관에 붙여두고, 아침마다 한 번 바라보며 건강을 빌어보세요.',
   },
   love_relationship: {
     purpose: 'love and harmonious relationships (부부화합)',
@@ -44,6 +46,7 @@ const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
     geometricPattern: 'decorative Korean knot patterns (매듭), intertwining circles representing union',
     specialElements: 'heart motifs, flower decorations, clouds',
     defaultCharacters: ['夫婦和合', '百年好合'],
+    shortDescription: '사랑과 좋은 인연을 불러오는 부적입니다. 지갑이나 핸드폰 케이스에 넣어 늘 가까이 지니세요.',
   },
   wealth_career: {
     purpose: 'wealth abundance and career success (재물운)',
@@ -54,6 +57,7 @@ const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
     geometricPattern: 'staircase ascending patterns representing promotion, layered tower shapes',
     specialElements: 'coin motifs, treasure symbols, upward-pointing arrows',
     defaultCharacters: ['財祿豊盈', '官運亨通'],
+    shortDescription: '재물과 성공을 불러오는 부적입니다. 지갑이나 금고 근처에 두고, 매일 아침 바라보며 소원을 빌어보세요.',
   },
   disaster_removal: {
     purpose: 'protection from three disasters - fire, water, wind (삼재소멸)',
@@ -64,6 +68,7 @@ const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
     geometricPattern: 'eight trigrams (팔괘) arranged in circle, triangular repetitive patterns',
     specialElements: 'protective circle barriers, cosmic diagrams, elemental symbols',
     defaultCharacters: ['三災消滅', '厄運退散'],
+    shortDescription: '삼재와 액운을 막아주는 부적입니다. 현관문 안쪽에 붙여두고, 외출 전 한 번 바라보세요.',
   },
   home_protection: {
     purpose: 'home peace and family protection (가내평안)',
@@ -74,6 +79,7 @@ const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
     geometricPattern: 'square and rectangular patterns symbolizing home structure, stable foundations',
     specialElements: 'four directional guardians symbols, doorway motifs, roof patterns',
     defaultCharacters: ['家內平安', '安宅大吉'],
+    shortDescription: '가정의 평안과 화목을 지키는 부적입니다. 거실이나 가족이 모이는 곳에 두고, 온 가족이 함께 바라보세요.',
   },
   academic_success: {
     purpose: 'academic achievement and examination success (급제)',
@@ -84,6 +90,7 @@ const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
     geometricPattern: 'ascending staircase patterns, layered tower shapes representing achievement',
     specialElements: 'book motifs, ascending clouds, scholarly symbols',
     defaultCharacters: ['及第及第', '文昌帝君'],
+    shortDescription: '학업 성취와 합격을 기원하는 부적입니다. 책상 위나 필통에 넣어두고, 공부 전 한 번 바라보세요.',
   },
   health_longevity: {
     purpose: 'health and long life (무병장수)',
@@ -94,6 +101,7 @@ const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
     geometricPattern: 'circular endless patterns representing completeness and cycles of life',
     specialElements: 'peach motifs (longevity), pine trees, clouds of blessing',
     defaultCharacters: ['無病長壽', '福祿壽康'],
+    shortDescription: '건강과 장수를 기원하는 부적입니다. 침대 머리맡이나 거울 옆에 두고, 매일 아침 감사하며 바라보세요.',
   },
 }
 
@@ -274,6 +282,8 @@ serve(async (req) => {
         id: recordId,
         imageUrl,
         category,
+        categoryName: config.purposeKr,
+        shortDescription: config.shortDescription,
         characters: usedCharacters,
       }),
       {

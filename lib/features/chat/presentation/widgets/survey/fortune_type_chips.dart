@@ -161,6 +161,7 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.pastLife:
       case FortuneSurveyType.wish:
       case FortuneSurveyType.naming:
+      case FortuneSurveyType.babyNickname:
         return const Color(0xFF9C27B0); // 퍼플
       case FortuneSurveyType.daily:
       case FortuneSurveyType.luckyItems:
@@ -257,6 +258,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '가족 인사이트';
       case FortuneSurveyType.naming:
         return '작명';
+      case FortuneSurveyType.babyNickname:
+        return '태명';
       case FortuneSurveyType.ootdEvaluation:
         return 'OOTD 평가';
       case FortuneSurveyType.talisman:
@@ -334,6 +337,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '👨‍👩‍👧‍👦';
       case FortuneSurveyType.naming:
         return '📝';
+      case FortuneSurveyType.babyNickname:
+        return '👶';
       case FortuneSurveyType.ootdEvaluation:
         return '👗';
       case FortuneSurveyType.talisman:

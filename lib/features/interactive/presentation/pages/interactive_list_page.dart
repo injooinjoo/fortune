@@ -15,7 +15,7 @@ class InteractiveListPage extends ConsumerWidget {
         title: '포춘 쿠키',
         subtitle: '오늘의 행운 메시지를 확인해보세요',
         icon: Icons.cookie_outlined,
-        route: '/fortune-cookie',
+        route: '/chat', // Chat에서 포춘쿠키 칩 선택
         isAvailable: true,
       ),
       const _InteractiveFeature(
