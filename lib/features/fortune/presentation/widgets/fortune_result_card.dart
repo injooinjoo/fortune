@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'fortune_card.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -65,7 +66,7 @@ class FortuneResultCard extends ConsumerWidget {
           // 커스텀 컨텐츠 (옵션)
           if (customContent != null)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm + 4),
               child: customContent!,
             ),
           
@@ -95,8 +96,8 @@ class FortuneResultCard extends ConsumerWidget {
               .animate()
               .fadeIn(duration: 600.ms, delay: 1200.ms)
               .slideY(begin: 0.2, end: 0),
-          
-          const SizedBox(height: 40),
+
+          const SizedBox(height: DSSpacing.xl + 8),
         ],
       ),
     );
@@ -104,22 +105,35 @@ class FortuneResultCard extends ConsumerWidget {
   
   Widget _buildHeader(BuildContext context, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         children: [
+          // 상단 액션 버튼 (좋아요 + 공유)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FortuneActionButtons(
+                contentId: fortune.id,
+                contentType: fortune.type,
+                shareTitle: fortuneTitle,
+                shareContent: fortune.content,
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             fortuneTitle,
             style: DSTypography.headingMedium.copyWith(
-              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
+              color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             DateTime.now().toString().split(' ')[0],
             style: DSTypography.bodySmall.copyWith(
-              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
+              color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
             ),
           ),
         ],
@@ -130,10 +144,10 @@ class FortuneResultCard extends ConsumerWidget {
   Widget _buildScoreSection(BuildContext context, bool isDark) {
     final score = fortune.overallScore ?? 0;
     final scoreColor = _getScoreColor(score);
-    
+
     return FortuneCard(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         children: [
           CircularPercentIndicator(
@@ -154,16 +168,16 @@ class FortuneResultCard extends ConsumerWidget {
                 Text(
                   '점',
                   style: DSTypography.bodyMedium.copyWith(
-                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
+                    color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
                   ),
                 ),
               ],
             ),
             circularStrokeCap: CircularStrokeCap.round,
             progressColor: scoreColor,
-            backgroundColor: scoreColor.withValues(alpha: 0.1),
+            backgroundColor: scoreColor.withValues(alpha: isDark ? 0.15 : 0.1),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: DSSpacing.lg),
           Text(
             _getScoreMessage(score),
             style: DSTypography.headingSmall.copyWith(
@@ -173,14 +187,14 @@ class FortuneResultCard extends ConsumerWidget {
           ),
           // ✅ 퍼센타일 뱃지 표시 (유효한 경우에만)
           if (fortune.isPercentileValid && fortune.percentile != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: DSSpacing.sm + 4),
             _buildPercentileBadge(fortune.percentile!, isDark),
           ],
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             _getScoreDescription(score),
             style: DSTypography.bodySmall.copyWith(
-              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
+              color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -211,12 +225,12 @@ class FortuneResultCard extends ConsumerWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       decoration: BoxDecoration(
-        color: badgeColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
+        color: badgeColor.withValues(alpha: isDark ? 0.15 : 0.1),
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
-          color: badgeColor.withValues(alpha: 0.3),
+          color: badgeColor.withValues(alpha: isDark ? 0.4 : 0.3),
           width: 1,
         ),
       ),
@@ -243,24 +257,24 @@ class FortuneResultCard extends ConsumerWidget {
   Widget _buildMainContent(BuildContext context, bool isDark) {
     return FortuneCard(
       title: '오늘의 인사이트',
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             FortuneTextCleaner.clean(fortune.content),
             style: DSTypography.bodyMedium.copyWith(
-              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
+              color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
               height: 1.8,
             ),
           ),
           if (fortune.description != null) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: DSSpacing.md),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(DSSpacing.md),
               decoration: BoxDecoration(
-                color: DSColors.accent.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(12),
+                color: DSColors.accent.withValues(alpha: isDark ? 0.08 : 0.05),
+                borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Text(
                 FortuneTextCleaner.clean(fortune.description!),
@@ -278,10 +292,10 @@ class FortuneResultCard extends ConsumerWidget {
   
   Widget _buildLuckyItemsSection(BuildContext context, bool isDark) {
     final luckyItems = fortune.luckyItems!;
-    
+
     return FortuneCard(
       title: '오늘의 행운 아이템',
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
       child: Column(
         children: [
           if (luckyItems['color'] != null)
@@ -329,15 +343,15 @@ class FortuneResultCard extends ConsumerWidget {
     required bool isDark,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
       child: Row(
         children: [
           Container(
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
+              color: color.withValues(alpha: isDark ? 0.15 : 0.1),
+              borderRadius: BorderRadius.circular(DSRadius.sm + 2),
             ),
             child: Icon(
               icon,
@@ -345,7 +359,7 @@ class FortuneResultCard extends ConsumerWidget {
               size: 20,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,14 +367,14 @@ class FortuneResultCard extends ConsumerWidget {
                 Text(
                   title,
                   style: DSTypography.labelSmall.copyWith(
-                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
+                    color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
                   style: DSTypography.bodyMedium.copyWith(
-                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
+                    color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -375,7 +389,7 @@ class FortuneResultCard extends ConsumerWidget {
   Widget _buildRecommendationsSection(BuildContext context, bool isDark) {
     return FortuneCard(
       title: '추천 사항',
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
       child: Column(
         children: fortune.recommendations!.map((recommendation) {
           return Padding(
@@ -388,12 +402,12 @@ class FortuneResultCard extends ConsumerWidget {
                   color: DSColors.success,
                   size: 20,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: DSSpacing.sm + 4),
                 Expanded(
                   child: Text(
                     FortuneTextCleaner.clean(recommendation),
                     style: DSTypography.bodySmall.copyWith(
-                      color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
+                      color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
                       height: 1.5,
                     ),
                   ),
@@ -409,8 +423,8 @@ class FortuneResultCard extends ConsumerWidget {
   Widget _buildWarningsSection(BuildContext context, bool isDark) {
     return FortuneCard(
       title: '주의 사항',
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      backgroundColor: DSColors.warning.withValues(alpha: 0.05),
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
+      backgroundColor: DSColors.warning.withValues(alpha: isDark ? 0.08 : 0.05),
       child: Column(
         children: fortune.warnings!.map((warning) {
           return Padding(
@@ -423,12 +437,12 @@ class FortuneResultCard extends ConsumerWidget {
                   color: DSColors.warning,
                   size: 20,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: DSSpacing.sm + 4),
                 Expanded(
                   child: Text(
                     FortuneTextCleaner.clean(warning),
                     style: DSTypography.bodySmall.copyWith(
-                      color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
+                      color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
                       height: 1.5,
                     ),
                   ),
@@ -443,7 +457,7 @@ class FortuneResultCard extends ConsumerWidget {
   
   Widget _buildActionButtons(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         children: [
           if (onShare != null)
@@ -466,13 +480,13 @@ class FortuneResultCard extends ConsumerWidget {
               width: double.infinity,
             ),
           if (onRetry != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: DSSpacing.sm + 4),
             UnifiedButton.retry(
               onPressed: onRetry,
             ),
           ],
           if (onSave != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: DSSpacing.sm + 4),
             UnifiedButton(
               text: '저장하기',
               onPressed: onSave,

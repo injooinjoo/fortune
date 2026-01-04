@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../core/design_system/tokens/ds_spacing.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 
@@ -6,17 +7,22 @@ import '../../../../../../core/theme/typography_unified.dart';
 class LoveStyleCard extends StatelessWidget {
   final LoveStyle loveStyle;
 
+  // 테마 색상 상수
+  static const Color _loveColor = Color(0xFFFF6B9D);
+
   const LoveStyleCard({super.key, required this.loveStyle});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(DSSpacing.cardPadding),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFFF6B9D).withValues(alpha:0.3),
+          color: _loveColor.withValues(alpha: isDark ? 0.5 : 0.3),
         ),
       ),
       child: Column(
@@ -25,14 +31,14 @@ class LoveStyleCard extends StatelessWidget {
           Row(
             children: [
               const Text('💕', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '연애 스타일',
                 style: context.heading4.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.md),
           // 타이틀
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -50,28 +56,36 @@ class LoveStyleCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           // 설명
           Text(
             loveStyle.description,
             style: context.bodyLarge,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           // 상세 정보
-          _buildDetailItem(context, '💑 데이트할 때', loveStyle.whenDating),
-          const SizedBox(height: 12),
-          _buildDetailItem(context, '💔 이별 후', loveStyle.afterBreakup),
+          _buildDetailItem(context, isDark, '💑 데이트할 때', loveStyle.whenDating),
+          const SizedBox(height: DSSpacing.sm),
+          _buildDetailItem(context, isDark, '💔 이별 후', loveStyle.afterBreakup),
         ],
       ),
     );
   }
 
-  Widget _buildDetailItem(BuildContext context, String label, String content) {
+  Widget _buildDetailItem(
+    BuildContext context,
+    bool isDark,
+    String label,
+    String content,
+  ) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _loveColor.withValues(alpha: isDark ? 0.3 : 0.15),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,11 +93,11 @@ class LoveStyleCard extends StatelessWidget {
           Text(
             label,
             style: context.labelLarge.copyWith(
-              color: const Color(0xFFFF6B9D),
+              color: _loveColor,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             content,
             style: context.bodyMedium,

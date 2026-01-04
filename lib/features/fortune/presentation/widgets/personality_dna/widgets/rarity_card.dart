@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../core/design_system/tokens/ds_spacing.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 
 /// 희귀도 카드
@@ -14,22 +15,23 @@ class RarityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final rarityData = _getRarityData();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(DSSpacing.cardPadding),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            rarityData.color.withValues(alpha:0.1),
-            rarityData.color.withValues(alpha:0.05),
+            rarityData.color.withValues(alpha: isDark ? 0.15 : 0.1),
+            rarityData.color.withValues(alpha: isDark ? 0.08 : 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: rarityData.color.withValues(alpha:0.5),
+          color: rarityData.color.withValues(alpha: isDark ? 0.6 : 0.5),
         ),
       ),
       child: Column(
@@ -37,28 +39,47 @@ class RarityCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text('📊', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: 8),
+              // MBTI 캐릭터 이미지
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  'assets/images/mbti/${mbti.toLowerCase()}.webp',
+                  width: 32,
+                  height: 32,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Text(
+                    '📊',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '희귀도',
                 style: context.heading4.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Row(
             children: [
               // 희귀도 배지
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.md,
+                  vertical: DSSpacing.sm,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [rarityData.color, rarityData.color.withValues(alpha:0.7)],
+                    colors: [
+                      rarityData.color,
+                      rarityData.color.withValues(alpha: 0.7),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: rarityData.color.withValues(alpha:0.3),
+                      color: rarityData.color.withValues(alpha: isDark ? 0.4 : 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -90,29 +111,29 @@ class RarityCard extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withValues(alpha:0.6),
+                          .withValues(alpha: isDark ? 0.75 : 0.6),
                     ),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           // 진행바
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: rarityData.percentage / 100,
-              backgroundColor: rarityData.color.withValues(alpha:0.2),
+              backgroundColor: rarityData.color.withValues(alpha: isDark ? 0.3 : 0.2),
               valueColor: AlwaysStoppedAnimation(rarityData.color),
               minHeight: 8,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '전국 $mbti 유형 중 상위 ${rarityData.percentage.toStringAsFixed(1)}%',
             style: context.labelLarge.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: isDark ? 0.75 : 0.6),
             ),
           ),
         ],
