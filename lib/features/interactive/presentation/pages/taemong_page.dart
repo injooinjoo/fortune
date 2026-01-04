@@ -468,6 +468,7 @@ ${_selectedKeywords.map((keyword) => '• $keyword: ${_getKeywordInterpretation(
       context: context,
       isScrollControlled: true,
       backgroundColor: TossDesignSystem.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => const TokenInsufficientModal(
         requiredTokens: _requiredTokens,
         fortuneType: 'taemong',

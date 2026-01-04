@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
@@ -57,7 +58,7 @@ class _ChatPastLifeResultCardState
 
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.95),
+      barrierColor: DSColors.overlay,
       builder: (context) => GestureDetector(
         onTap: () => Navigator.of(context).pop(),
         child: Scaffold(
@@ -286,40 +287,57 @@ class _ChatPastLifeResultCardState
           ),
         ),
 
-        // 점수 뱃지 (우상단)
+        // 점수 뱃지 + 액션 버튼 (우상단)
         Positioned(
           top: DSSpacing.md,
           right: DSSpacing.md,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.sm,
-              vertical: DSSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: _getScoreColor(widget.result.score),
-              borderRadius: BorderRadius.circular(DSRadius.full),
-              boxShadow: [
-                BoxShadow(
-                  color: _getScoreColor(widget.result.score).withValues(alpha: 0.4),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xs,
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🌙', style: TextStyle(fontSize: 14)),
-                const SizedBox(width: 4),
-                Text(
-                  '${widget.result.score}',
-                  style: context.typography.labelMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                decoration: BoxDecoration(
+                  color: _getScoreColor(widget.result.score),
+                  borderRadius: BorderRadius.circular(DSRadius.full),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _getScoreColor(widget.result.score).withValues(alpha: 0.4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('🌙', style: TextStyle(fontSize: 14)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${widget.result.score}',
+                      style: context.typography.labelMedium.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              // 좋아요 + 공유 버튼
+              FortuneActionButtons(
+                contentId: 'past_life_${widget.result.pastLifeName}_${DateTime.now().millisecondsSinceEpoch}',
+                contentType: 'past_life',
+                shareTitle: '${widget.result.pastLifeStatus} - 전생탐험',
+                shareContent: widget.result.summary.isNotEmpty
+                    ? widget.result.summary
+                    : widget.result.story,
+                iconSize: 18,
+                iconColor: Colors.white.withValues(alpha: 0.9),
+              ),
+            ],
           ),
         ),
       ],

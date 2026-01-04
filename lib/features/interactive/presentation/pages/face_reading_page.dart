@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../core/design_system/tokens/ds_colors.dart';
 import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/utils/logger.dart';
@@ -384,6 +385,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     showModalBottomSheet(
       context: context,
       backgroundColor: TossDesignSystem.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => GlassContainer(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         child: SafeArea(
@@ -691,6 +693,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: TossDesignSystem.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => const TokenInsufficientModal(
         requiredTokens: _requiredTokens,
         fortuneType: 'face-reading',

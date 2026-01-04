@@ -2,6 +2,7 @@ import 'package:fortune/core/theme/fortune_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/tokens/ds_colors.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../data/five_elements_explanations.dart';
 import 'package:fortune/core/theme/app_animations.dart';
@@ -27,6 +28,7 @@ class FiveElementsExplanationBottomSheet extends StatefulWidget {
     return showModalBottomSheet(
       context: context,
       backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      barrierColor: DSColors.overlay,
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,

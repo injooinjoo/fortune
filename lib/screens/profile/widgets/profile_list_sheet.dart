@@ -163,6 +163,7 @@ class ProfileListSheet extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (_) => const AddProfileSheet(),
     );
   }
@@ -174,6 +175,7 @@ class ProfileListSheet extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: colors.background,
+      barrierColor: DSColors.overlay,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),

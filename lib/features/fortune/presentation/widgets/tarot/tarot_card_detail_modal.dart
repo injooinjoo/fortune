@@ -31,6 +31,7 @@ class TarotCardDetailModal extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => TarotCardDetailModal(
         card: card,
         question: question,

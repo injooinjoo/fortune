@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/widgets/smart_image.dart';
@@ -13,7 +15,7 @@ import '../../../../shared/widgets/smart_image.dart';
 /// - neighborhood_chemistry: 이웃 케미 (0-100)
 /// - lucky_checklist: 럭키 가이드 체크리스트
 /// - feng_shui_tips, lucky_dates, terrain_analysis
-class ChatMovingResultCard extends StatefulWidget {
+class ChatMovingResultCard extends ConsumerStatefulWidget {
   final Fortune fortune;
   final bool isBlurred;
   final List<String> blurredSections;
@@ -26,10 +28,10 @@ class ChatMovingResultCard extends StatefulWidget {
   });
 
   @override
-  State<ChatMovingResultCard> createState() => _ChatMovingResultCardState();
+  ConsumerState<ChatMovingResultCard> createState() => _ChatMovingResultCardState();
 }
 
-class _ChatMovingResultCardState extends State<ChatMovingResultCard> {
+class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
   // 체크리스트 로컬 상태 (UI 인터랙션용)
   final Set<String> _checkedItems = {};
 
@@ -160,6 +162,15 @@ class _ChatMovingResultCardState extends State<ChatMovingResultCard> {
                           ],
                         ),
                       ),
+                    ),
+                    // 좋아요 + 공유 버튼
+                    FortuneActionButtons(
+                      contentId: widget.fortune.id.isNotEmpty ? widget.fortune.id : 'moving_${DateTime.now().millisecondsSinceEpoch}',
+                      contentType: 'moving',
+                      shareTitle: '이사운 분석 결과',
+                      shareContent: data['overall_fortune'] as String? ?? widget.fortune.content,
+                      iconSize: 20,
+                      iconColor: Colors.white.withValues(alpha: 0.9),
                     ),
                   ],
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../core/design_system/tokens/ds_colors.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
@@ -49,7 +50,7 @@ class _OverallCardState extends State<OverallCard> {
       context: context,
       barrierDismissible: true,
       barrierLabel: '닫기',
-      barrierColor: Colors.black54,
+      barrierColor: DSColors.overlay,
       transitionDuration: const Duration(milliseconds: 300),
       transitionBuilder: (ctx, a1, a2, child) {
         return ScaleTransition(

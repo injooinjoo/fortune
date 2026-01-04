@@ -4,6 +4,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// OOTD 평가 결과 카드 - 패션 매거진 스타일
 ///
@@ -13,7 +15,7 @@ import '../../../../core/widgets/unified_blur_wrapper.dart';
 /// - 6각형 레이더 차트
 /// - 스타일 처방전
 /// - 셀럽 + 추천 아이템 2열 카드
-class ChatOotdResultCard extends StatelessWidget {
+class ChatOotdResultCard extends ConsumerWidget {
   final Map<String, dynamic> ootdData;
   final bool isBlurred;
   final List<String> blurredSections;
@@ -30,7 +32,7 @@ class ChatOotdResultCard extends StatelessWidget {
   static const Color _lightGreen = Color(0xFF34D399);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -161,6 +163,16 @@ class ChatOotdResultCard extends StatelessWidget {
                 ),
               ),
             ),
+          const SizedBox(width: DSSpacing.xs),
+          // 좋아요 + 공유 버튼
+          FortuneActionButtons(
+            contentId: ootdData['id']?.toString() ?? 'ootd_${DateTime.now().millisecondsSinceEpoch}',
+            contentType: 'ootd',
+            shareTitle: 'OOTD 평가 결과',
+            shareContent: (ootdData['details'] as Map<String, dynamic>?)?['overallComment'] as String? ?? 'AI Style Analysis',
+            iconSize: 20,
+            iconColor: Colors.white.withValues(alpha: 0.9),
+          ),
         ],
       ),
     );

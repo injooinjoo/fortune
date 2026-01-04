@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/personality_dna_model.dart';
+import '../utils/logger.dart';
+import 'unified_fortune_service.dart';
 
 /// 성격 DNA 생성 및 분석 서비스
+///
+/// ✅ 최적화 플로우 통합 (2025.01.04)
+/// - 직접 Edge Function 호출 → UnifiedFortuneService 경유
+/// - 캐시/Cohort Pool/DB 풀 자동 적용
 class PersonalityDNAService {
-  
+
   /// API를 통한 DNA 조합 생성
+  ///
+  /// ✅ 최적화 플로우:
+  /// 1. UnifiedFortuneService.getFortune() 호출
+  /// 2. 개인 캐시 → Cohort Pool → DB 풀 → API 순서
+  /// 3. FortuneResult → PersonalityDNA 변환
   static Future<PersonalityDNA> generateDNA({
     required String userId,
     required String name,
@@ -15,11 +26,16 @@ class PersonalityDNAService {
     required String zodiacAnimal,
   }) async {
     try {
-      // Supabase Edge Function 호출
+      Logger.info('[PersonalityDNAService] 🔮 성격 DNA 생성 시작 (최적화 플로우)');
+
+      // ✅ 최적화 플로우를 통한 API 호출
       final supabase = Supabase.instance.client;
-      final response = await supabase.functions.invoke(
-        'personality-dna',
-        body: {
+      final fortuneService = UnifiedFortuneService(supabase);
+
+      final result = await fortuneService.getFortune(
+        fortuneType: 'personality-dna',
+        dataSource: FortuneDataSource.api, // API 호출 → 최적화 플로우 적용
+        inputConditions: {
           'userId': userId,
           'name': name,
           'mbti': mbti,
@@ -27,21 +43,24 @@ class PersonalityDNAService {
           'zodiac': zodiac,
           'zodiacAnimal': zodiacAnimal,
         },
+        isPremium: false, // 프리미엄 상태는 호출하는 곳에서 처리
       );
 
-      if (response.data == null) {
+      if (result.data.isEmpty) {
         throw Exception('API 응답이 비어있습니다.');
       }
 
+      Logger.info('[PersonalityDNAService] ✅ 최적화 플로우 완료');
+
       // 그라데이션 색상 생성 (기존 로직 활용)
       final gradientColors = _getGradientColors(mbti, zodiacAnimal);
-      
+
       // 기존 점수 시스템 활용 (호환성을 위해)
       final scores = _generateScores(mbti, bloodType, zodiacAnimal);
 
-      // API 응답을 PersonalityDNA 객체로 변환
+      // FortuneResult.data를 PersonalityDNA 객체로 변환
       final personalityDNA = PersonalityDNA.fromApiResponse(
-        response.data,
+        result.data,
         mbti: mbti,
         bloodType: bloodType,
         zodiac: zodiac,
@@ -51,8 +70,8 @@ class PersonalityDNAService {
       );
 
       // dailyFortune이 API 응답에 포함되어 있지 않으면 수동으로 파싱
-      if (personalityDNA.dailyFortune == null && response.data['dailyFortune'] != null) {
-        final dailyFortuneData = response.data['dailyFortune'] as Map<String, dynamic>;
+      if (personalityDNA.dailyFortune == null && result.data['dailyFortune'] != null) {
+        final dailyFortuneData = result.data['dailyFortune'] as Map<String, dynamic>;
         return personalityDNA.copyWith(
           dailyFortune: DailyFortune.fromJson(dailyFortuneData),
         );
@@ -60,6 +79,7 @@ class PersonalityDNAService {
 
       return personalityDNA;
     } catch (e) {
+      Logger.error('[PersonalityDNAService] API 오류, 로컬 폴백: $e');
       // API 오류 시 기존 로컬 로직으로 폴백
       return _generateLocalDNA(
         mbti: mbti,

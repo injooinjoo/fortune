@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 
 /// 감사일기 결과 카드 (일기장 스타일)
 ///
@@ -12,7 +14,7 @@ import '../../../../core/theme/typography_unified.dart';
 /// - 손글씨 느낌의 폰트 스타일
 /// - 하트 아이콘과 부드러운 장식
 /// - 공유 기능
-class ChatGratitudeResultCard extends StatelessWidget {
+class ChatGratitudeResultCard extends ConsumerWidget {
   final String gratitude1;
   final String gratitude2;
   final String gratitude3;
@@ -37,7 +39,7 @@ class ChatGratitudeResultCard extends StatelessWidget {
   static const _goldAccent = Color(0xFFFFD700);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -233,6 +235,16 @@ class ChatGratitudeResultCard extends StatelessWidget {
             size: 20,
             color: isDark ? _pinkAccent : const Color(0xFF8B6914),
           ),
+        ),
+        const SizedBox(width: 8),
+        // 좋아요 + 공유 버튼
+        FortuneActionButtons(
+          contentId: 'gratitude_${date.millisecondsSinceEpoch}',
+          contentType: 'gratitude',
+          shareTitle: '${DateFormat('M월 d일').format(date)}의 감사일기',
+          shareContent: '$gratitude1, $gratitude2, $gratitude3',
+          iconSize: 18,
+          iconColor: isDark ? _pinkAccent : const Color(0xFF8B6914),
         ),
       ],
     );

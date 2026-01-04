@@ -520,6 +520,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => Container(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,

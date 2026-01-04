@@ -12,6 +12,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/widgets/hexagon_chart.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 
 /// 채팅용 유명인 궁합 결과 카드
 ///
@@ -269,6 +270,18 @@ class _ChatCelebrityResultCardState
                 ),
               ],
             ),
+          ),
+          const SizedBox(width: DSSpacing.xs),
+          // 좋아요 + 공유 버튼
+          FortuneActionButtons(
+            contentId: widget.fortune.id ?? 'celebrity_${DateTime.now().millisecondsSinceEpoch}',
+            contentType: 'celebrity',
+            shareTitle: '${widget.celebrityName ?? '유명인'}과의 궁합',
+            shareContent: widget.fortune.message.isNotEmpty
+                ? widget.fortune.message
+                : widget.fortune.content,
+            iconSize: 20,
+            iconColor: colors.textPrimary.withValues(alpha: 0.7),
           ),
         ],
       ),

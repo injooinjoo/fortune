@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 // ignore: unused_import
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../fortune/presentation/widgets/saju/saju_widgets.dart';
 import '../../../fortune/presentation/widgets/saju_element_chart.dart';
 
@@ -16,7 +18,7 @@ import '../../../fortune/presentation/widgets/saju_element_chart.dart';
 /// - 신살: 신살 길흉
 /// - 합충: 합충형파해 관계
 /// - 질문: LLM 운세 응답 (선택적)
-class ChatSajuResultCard extends StatefulWidget {
+class ChatSajuResultCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> sajuData;
   final Map<String, dynamic>? fortuneResult;
   final bool isBlurred;
@@ -31,10 +33,10 @@ class ChatSajuResultCard extends StatefulWidget {
   });
 
   @override
-  State<ChatSajuResultCard> createState() => _ChatSajuResultCardState();
+  ConsumerState<ChatSajuResultCard> createState() => _ChatSajuResultCardState();
 }
 
-class _ChatSajuResultCardState extends State<ChatSajuResultCard>
+class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
     with TickerProviderStateMixin {
   // 애니메이션 컨트롤러 (오행 차트용)
   late AnimationController _animationController;
@@ -167,6 +169,15 @@ class _ChatSajuResultCardState extends State<ChatSajuResultCard>
                 ),
               ],
             ),
+          ),
+          // 좋아요 + 공유 버튼
+          FortuneActionButtons(
+            contentId: widget.sajuData['id']?.toString() ?? 'saju_${DateTime.now().millisecondsSinceEpoch}',
+            contentType: 'saju',
+            shareTitle: '사주 분석 결과',
+            shareContent: '나의 사주팔자 분석 결과입니다.',
+            iconSize: 20,
+            iconColor: Colors.white.withValues(alpha: 0.9),
           ),
           // 확장/축소 버튼
           IconButton(

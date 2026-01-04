@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/design_system/tokens/ds_colors.dart';
 import '../../../../core/theme/typography_unified.dart';
 
 /// ⏰ 시간대별 조언 카드 - ChatGPT Pulse 스타일
@@ -114,7 +115,7 @@ class _TimeSlotItem extends StatelessWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: '닫기',
-      barrierColor: Colors.black54,
+      barrierColor: DSColors.overlay,
       transitionDuration: const Duration(milliseconds: 300),
       transitionBuilder: (ctx, a1, a2, child) {
         return ScaleTransition(

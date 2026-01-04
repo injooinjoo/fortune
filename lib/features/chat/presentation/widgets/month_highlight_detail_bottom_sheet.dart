@@ -27,7 +27,7 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
+      barrierColor: DSColors.overlay,
       builder: (context) => MonthHighlightDetailBottomSheet(
         monthData: monthData,
         monthNum: monthNum,

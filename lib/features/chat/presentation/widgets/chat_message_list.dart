@@ -71,98 +71,30 @@ class ChatMessageList extends StatelessWidget {
   }
 }
 
-/// 타이핑 인디케이터 - 점 3개 bounce 애니메이션
-class _TypingIndicator extends StatefulWidget {
+/// 타이핑 인디케이터 - 전통 매듭 스타일 (구름 말풍선 + 吉祥結 회전)
+class _TypingIndicator extends StatelessWidget {
   const _TypingIndicator();
 
   @override
-  State<_TypingIndicator> createState() => _TypingIndicatorState();
-}
-
-class _TypingIndicatorState extends State<_TypingIndicator>
-    with TickerProviderStateMixin {
-  late List<AnimationController> _controllers;
-  late List<Animation<double>> _animations;
-
-  @override
-  void initState() {
-    super.initState();
-    _controllers = List.generate(
-      3,
-      (index) => AnimationController(
-        duration: const Duration(milliseconds: 600),
-        vsync: this,
-      ),
-    );
-
-    _animations = _controllers.map((controller) {
-      return Tween<double>(begin: 0, end: -8).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-      );
-    }).toList();
-
-    // 순차적으로 애니메이션 시작
-    for (int i = 0; i < 3; i++) {
-      Future.delayed(Duration(milliseconds: i * 150), () {
-        if (mounted) {
-          _controllers[i].repeat(reverse: true);
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    for (final controller in _controllers) {
-      controller.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
     return Container(
       alignment: Alignment.centerLeft,
       padding: const EdgeInsets.symmetric(
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      child: Container(
+      child: CloudBubble(
+        type: CloudBubbleType.ai,
+        showInkBleed: true,
+        cornerAsset: 'assets/images/chat/corner_motif.svg',
+        cornerSize: 16,
         padding: const EdgeInsets.symmetric(
           horizontal: DSSpacing.lg,
           vertical: DSSpacing.md,
         ),
-        decoration: BoxDecoration(
-          color: colors.backgroundSecondary,
-          borderRadius: BorderRadius.circular(DSRadius.lg),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: List.generate(3, (index) {
-            return AnimatedBuilder(
-              animation: _animations[index],
-              builder: (context, child) {
-                return Container(
-                  margin: EdgeInsets.only(
-                    right: index < 2 ? 6 : 0,
-                  ),
-                  child: Transform.translate(
-                    offset: Offset(0, _animations[index].value),
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: colors.textSecondary.withValues(alpha: 0.6),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          }),
+        child: const TraditionalKnotIndicator(
+          size: 24,
+          duration: Duration(seconds: 2),
         ),
       ),
     );

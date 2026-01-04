@@ -60,6 +60,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.6,

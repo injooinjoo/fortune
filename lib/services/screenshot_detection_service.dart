@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import '../core/utils/logger.dart';
 import '../core/services/resilient_service.dart';
 import '../core/theme/fortune_design_system.dart';
+import '../core/design_system/tokens/ds_colors.dart';
 import 'native_platform_service.dart';
 import '../presentation/widgets/enhanced_shareable_fortune_card.dart';
 import '../presentation/widgets/social_share_bottom_sheet.dart';
@@ -118,6 +119,7 @@ class ScreenshotDetectionService extends ResilientService {
       context: context,
       isScrollControlled: true,
       backgroundColor: TossDesignSystem.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => SocialShareBottomSheet(
         fortuneTitle: fortuneTitle,
         fortuneContent: fortuneContent,

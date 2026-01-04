@@ -30,6 +30,7 @@ class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
     return showModalBottomSheet(
       context: context,
       backgroundColor: TossDesignSystem.black.withValues(alpha: 0.0),
+      barrierColor: DSColors.overlay,
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,

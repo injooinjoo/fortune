@@ -112,6 +112,41 @@ class DSFortuneColors {
   static const Color resultBadFortune = Color(0xFF3D3D3D);
 
   // ============================================
+  // CHAT BUBBLE COLORS (채팅 말풍선)
+  // Traditional cloud-style chat bubbles
+  // ============================================
+
+  /// AI bubble background (light mode) - 따뜻한 크림색
+  static const Color aiBubbleLight = Color(0xFFF8F3E8);
+
+  /// AI bubble background (dark mode)
+  static const Color aiBubbleDark = Color(0xFF2D2820);
+
+  /// User bubble background (light mode) - 깨끗한 흰색
+  static const Color userBubbleLight = Color(0xFFFFFDF8);
+
+  /// User bubble background (dark mode)
+  static const Color userBubbleDark = Color(0xFF353535);
+
+  /// Bubble border (light mode) - 담묵 테두리
+  static const Color bubbleBorderLight = Color(0xFFD4C9B8);
+
+  /// Bubble border (dark mode)
+  static const Color bubbleBorderDark = Color(0xFF4A4540);
+
+  /// Get AI bubble background based on dark mode
+  static Color getAiBubbleBackground(bool isDark) =>
+      isDark ? aiBubbleDark : aiBubbleLight;
+
+  /// Get user bubble background based on dark mode
+  static Color getUserBubbleBackground(bool isDark) =>
+      isDark ? userBubbleDark : userBubbleLight;
+
+  /// Get bubble border based on dark mode
+  static Color getBubbleBorder(bool isDark) =>
+      isDark ? bubbleBorderDark : bubbleBorderLight;
+
+  // ============================================
   // ELEMENT COLORS (오행 색상)
   // Five Elements for Saju/Fortune
   // ============================================

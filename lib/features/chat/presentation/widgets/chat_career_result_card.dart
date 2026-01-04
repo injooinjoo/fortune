@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/widgets/smart_image.dart';
 
@@ -13,7 +15,7 @@ import '../../../../shared/widgets/smart_image.dart';
 /// - strengthsAssessment[], improvementAreas[]
 /// - actionPlan.immediate/shortTerm/longTerm
 /// - luckyPeriods[], cautionPeriods[], careerKeywords[]
-class ChatCareerResultCard extends StatelessWidget {
+class ChatCareerResultCard extends ConsumerWidget {
   final Fortune fortune;
   final bool isBlurred;
   final List<String> blurredSections;
@@ -39,7 +41,7 @@ class ChatCareerResultCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -162,6 +164,21 @@ class ChatCareerResultCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+          // 좋아요 + 공유 버튼
+          Positioned(
+            top: DSSpacing.sm,
+            right: DSSpacing.sm,
+            child: FortuneActionButtons(
+              contentId: fortune.id ?? 'career_${DateTime.now().millisecondsSinceEpoch}',
+              contentType: 'career',
+              shareTitle: '커리어 운세',
+              shareContent: fortune.content.length > 100
+                  ? '${fortune.content.substring(0, 100)}...'
+                  : fortune.content,
+              iconSize: 20,
+              iconColor: Colors.white.withValues(alpha: 0.9),
             ),
           ),
         ],

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/constants/tarot/tarot_position_meanings.dart';
 import '../../../../presentation/providers/token_provider.dart';
 
@@ -216,6 +217,18 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
                 fontSize: 10,
               ),
             ),
+          ),
+          const SizedBox(width: DSSpacing.xs),
+          // 좋아요 + 공유 버튼
+          FortuneActionButtons(
+            contentId: data['id']?.toString() ?? 'tarot_${DateTime.now().millisecondsSinceEpoch}',
+            contentType: 'tarot',
+            shareTitle: '타로 리딩',
+            shareContent: overallReading.length > 100
+                ? '${overallReading.substring(0, 100)}...'
+                : overallReading,
+            iconSize: 20,
+            iconColor: Colors.white.withValues(alpha: 0.9),
           ),
         ],
       ),

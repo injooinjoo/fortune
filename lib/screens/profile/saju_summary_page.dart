@@ -404,6 +404,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
     showModalBottomSheet(
       context: context,
       backgroundColor: context.colors.surface,
+      barrierColor: DSColors.overlay,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),

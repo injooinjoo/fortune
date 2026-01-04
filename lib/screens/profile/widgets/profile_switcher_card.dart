@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/design_system/tokens/ds_colors.dart';
 import '../../../core/theme/typography_unified.dart';
 import '../../../core/theme/app_theme/fortune_theme_extension.dart';
 import '../../../presentation/providers/active_profile_provider.dart';
@@ -133,6 +134,7 @@ class ProfileSwitcherCard extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (_) => const ProfileListSheet(),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/design_system/tokens/ds_colors.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../screens/profile/widgets/add_profile_sheet.dart';
 import '../utils/fortune_swipe_helpers.dart';
@@ -215,6 +216,7 @@ class ZodiacFortuneCard extends StatelessWidget {
           context: context,
           isScrollControlled: true,
           backgroundColor: Colors.transparent,
+          barrierColor: DSColors.overlay,
           builder: (_) => const AddProfileSheet(
             title: '가족/친구 추가',
             subtitle: '소중한 사람의 띠별 운세도 함께 확인하세요',

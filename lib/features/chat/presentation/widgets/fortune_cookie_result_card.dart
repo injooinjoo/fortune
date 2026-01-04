@@ -2,7 +2,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/theme/obangseok_colors.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -16,7 +18,7 @@ import '../../../../domain/entities/fortune.dart';
 /// - 행운 요소 2x2 그리드
 /// - 행동 미션 (골드 shimmer)
 /// - 공유 기능
-class FortuneCookieResultCard extends StatefulWidget {
+class FortuneCookieResultCard extends ConsumerStatefulWidget {
   final Fortune fortune;
 
   const FortuneCookieResultCard({
@@ -25,10 +27,10 @@ class FortuneCookieResultCard extends StatefulWidget {
   });
 
   @override
-  State<FortuneCookieResultCard> createState() => _FortuneCookieResultCardState();
+  ConsumerState<FortuneCookieResultCard> createState() => _FortuneCookieResultCardState();
 }
 
-class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
+class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCard> {
   // Fortune 데이터에서 필요한 값 추출
   String get _message => widget.fortune.content;
   String get _cookieType => widget.fortune.luckyItems?['cookie_type'] as String? ?? 'luck';
@@ -246,6 +248,16 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
 
         // 오른쪽: 원형 점수
         _buildCircularScore(widget.fortune.score, isDark),
+        const SizedBox(width: 8),
+        // 좋아요 + 공유 버튼
+        FortuneActionButtons(
+          contentId: widget.fortune.id ?? 'cookie_${DateTime.now().millisecondsSinceEpoch}',
+          contentType: 'cookie',
+          shareTitle: '$_cookieTypeName 포춘쿠키',
+          shareContent: _message,
+          iconSize: 18,
+          iconColor: _goldenAccent,
+        ),
       ],
     );
   }

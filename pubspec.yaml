@@ -243,6 +243,7 @@ flutter:
     - assets/images/
     - assets/videos/
     - assets/images/social/
+    - assets/images/chat/
     - assets/images/face_reading/
     - assets/images/fortune_entry/
     - assets/images/fortune/categories/

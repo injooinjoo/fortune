@@ -8,6 +8,7 @@ import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/providers/user_settings_provider.dart';
 
+import '../../../../core/design_system/tokens/ds_colors.dart';
 import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
@@ -471,6 +472,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
       context: context,
       isScrollControlled: true,
       backgroundColor: TossDesignSystem.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => DreamDetailSheet(entry: entry));
   }
 

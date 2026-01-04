@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
 import '../../../../core/theme/fortune_design_system.dart';
+import '../../../../core/design_system/tokens/ds_colors.dart';
 import '../../services/supabase_storage_service.dart';
 
 class ProfileImagePicker extends StatefulWidget {
@@ -57,6 +58,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
     } else {
       showModalBottomSheet(
         context: context,
+        barrierColor: DSColors.overlay,
         builder: (context) => SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,

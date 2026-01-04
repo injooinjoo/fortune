@@ -784,6 +784,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     showModalBottomSheet(
       context: context,
       backgroundColor: colors.background,
+      barrierColor: DSColors.overlay,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(DSRadius.lg)),
       ),

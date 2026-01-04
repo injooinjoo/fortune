@@ -14,6 +14,7 @@ class ProfileHeaderIcon extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (_) => const ProfileBottomSheet(),
     );
   }

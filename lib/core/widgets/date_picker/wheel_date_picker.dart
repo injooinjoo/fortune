@@ -69,6 +69,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       isScrollControlled: true,
       builder: (context) => _buildWheelPickerModal(),
     );

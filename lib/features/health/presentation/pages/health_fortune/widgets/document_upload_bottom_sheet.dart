@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../../core/design_system/tokens/ds_colors.dart';
 import '../../../../../../core/theme/fortune_theme.dart';
 import '../../../../../../core/theme/fortune_design_system.dart';
 import '../../../../../../core/widgets/unified_button.dart';
@@ -29,6 +30,7 @@ class DocumentUploadBottomSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => DocumentUploadBottomSheet(
         onDocumentSelected: onDocumentSelected,
       ),

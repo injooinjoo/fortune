@@ -28,7 +28,6 @@ class ChatMessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isUser = message.type == ChatMessageType.user;
 
     // 성격 DNA 결과 카드 표시
@@ -257,37 +256,31 @@ class ChatMessageBubble extends StatelessWidget {
       );
     }
 
-    // 일반 텍스트 메시지 (수평 패딩 포함)
+    // 일반 텍스트 메시지 (구름 모양 말풍선)
     return Container(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       padding: const EdgeInsets.symmetric(
         vertical: DSSpacing.xs,
-        horizontal: DSSpacing.md, // ListView에서 제거된 수평 패딩을 여기서 적용
+        horizontal: DSSpacing.md,
       ),
-      child: Container(
+      child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
-        padding: const EdgeInsets.all(DSSpacing.md),
-        decoration: BoxDecoration(
-          color: isUser
-              ? colors.textPrimary
-              : (isDark
-                  ? colors.backgroundSecondary
-                  : colors.surface),
-          borderRadius: BorderRadius.circular(DSRadius.lg),
-          border: isUser
-              ? null
-              : Border.all(
-                  color: colors.textPrimary.withValues(alpha: 0.15),
-                ),
-        ),
-        child: Text(
-          message.text ?? '',
-          style: typography.bodyMedium.copyWith(
-            color: isUser
-                ? colors.background
-                : colors.textPrimary,
+        child: CloudBubble(
+          type: isUser ? CloudBubbleType.user : CloudBubbleType.ai,
+          showInkBleed: !isUser, // AI 메시지에만 잉크 번짐 효과
+          cornerAsset: 'assets/images/chat/corner_motif.svg',
+          cornerSize: 16,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.lg,
+            vertical: DSSpacing.md,
+          ),
+          child: Text(
+            message.text ?? '',
+            style: typography.bodyMedium.copyWith(
+              color: colors.textPrimary,
+            ),
           ),
         ),
       ),

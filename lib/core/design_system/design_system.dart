@@ -93,3 +93,12 @@ export 'components/ds_badge.dart';
 export 'components/ds_loading.dart';
 export 'components/ds_toast.dart';
 export 'components/hanji_background.dart';
+
+// ============================================
+// TRADITIONAL COMPONENTS
+// Korean Traditional styled decorative components
+// ============================================
+
+export 'components/traditional/cloud_bubble.dart';
+export 'components/traditional/cloud_bubble_painter.dart';
+export 'components/traditional/traditional_knot_indicator.dart';

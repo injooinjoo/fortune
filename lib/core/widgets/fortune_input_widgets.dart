@@ -87,6 +87,7 @@ class FortuneInputWidgets {
             await showModalBottomSheet(
               context: context,
               backgroundColor: Colors.transparent,
+              barrierColor: DSColors.overlay,
               builder: (ctx) {
                 final sheetColors = ctx.colors;
                 final sheetTypography = ctx.typography;

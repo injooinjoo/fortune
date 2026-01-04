@@ -322,7 +322,7 @@ serve(async (req) => {
     const requestData = await req.json()
     const {
       userId,
-      name,
+      name: rawName,
       birthDate,
       birthTime,
       gender,
@@ -337,7 +337,12 @@ serve(async (req) => {
       isPremium = false // ✅ 프리미엄 사용자 여부
     } = requestData
 
+    // ✅ name 유효성 검사 - "undefined", "null", 빈 문자열 등 처리
+    const invalidNames = ['undefined', 'null', 'Unknown', ''];
+    const name = (rawName && !invalidNames.includes(rawName)) ? rawName : '회원';
+
     console.log('💎 [Daily] Premium 상태:', isPremium)
+    console.log('👤 [Daily] 사용자 이름:', name, '(원본:', rawName, ')')
     console.log('📍 [Daily] 사용자 위치:', userLocation || location || '미제공')
 
     // ============================================

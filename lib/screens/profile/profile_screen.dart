@@ -1189,6 +1189,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (_) => const ProfileListSheet(),
     );
   }

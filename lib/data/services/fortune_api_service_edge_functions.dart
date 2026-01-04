@@ -41,6 +41,15 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     if (value is String) return int.tryParse(value);
     return null;
   }
+
+  /// 이름 유효성 검사 - "undefined", "null", 빈 문자열 등 처리
+  static String _sanitizeName(dynamic name) {
+    const invalidNames = ['undefined', 'null', 'Unknown', ''];
+    if (name == null) return '회원';
+    final nameStr = name.toString().trim();
+    if (invalidNames.contains(nameStr)) return '회원';
+    return nameStr;
+  }
   
   /// Get weather info optionally (doesn't fail if location permission denied)
   Future<WeatherInfo?> _getWeatherInfoOptional() async {
@@ -194,9 +203,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         ...?data,
         'userId': userId,
         if (userProfileResponse != null) ...{
-          'name': (userProfileResponse['name'] != null && (userProfileResponse['name'] as String).isNotEmpty)
-              ? userProfileResponse['name']
-              : '사용자',  // Default to '사용자' instead of empty string
+          'name': _sanitizeName(userProfileResponse['name']),
           'birthDate': userProfileResponse['birth_date'],
           'birthTime': userProfileResponse['birth_time'],
           'gender': userProfileResponse['gender'],

@@ -32,6 +32,7 @@ class MeditationCompletionSheet extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => MeditationCompletionSheet(
         durationMinutes: durationMinutes,
         completedCycles: completedCycles,

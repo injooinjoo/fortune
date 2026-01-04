@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
+import '../core/design_system/tokens/ds_colors.dart';
 import '../core/theme/fortune_design_system.dart';
 import '../core/theme/font_config.dart';
 
@@ -83,6 +84,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
       showModalBottomSheet(
         context: context,
         backgroundColor: TossDesignSystem.grayDark100,
+        barrierColor: DSColors.overlay,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),

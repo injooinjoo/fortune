@@ -320,6 +320,7 @@ void showCharacterExplanationSheet({
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
+    barrierColor: DSColors.overlay,
     isScrollControlled: true,
     builder: (context) => DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -656,6 +657,7 @@ void showOhangExplanationSheet({
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
+    barrierColor: DSColors.overlay,
     isScrollControlled: true,
     builder: (context) => DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -990,6 +992,7 @@ void showTwelveStageExplanationSheet({
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
+    barrierColor: DSColors.overlay,
     isScrollControlled: true,
     builder: (context) => DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -1284,6 +1287,7 @@ void showSinsalExplanationSheet({
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
+    barrierColor: DSColors.overlay,
     isScrollControlled: true,
     builder: (context) => DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -1576,6 +1580,7 @@ void showHapchungExplanationSheet({
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
+    barrierColor: DSColors.overlay,
     isScrollControlled: true,
     builder: (context) => DraggableScrollableSheet(
       initialChildSize: 0.7,

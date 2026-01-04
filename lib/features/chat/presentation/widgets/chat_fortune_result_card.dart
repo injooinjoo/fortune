@@ -10,6 +10,7 @@ import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -763,6 +764,19 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     ),
                   ),
               ],
+            ),
+          ),
+
+          // 좋아요 + 공유 버튼
+          Positioned(
+            top: DSSpacing.sm,
+            right: DSSpacing.sm,
+            child: FortuneActionButtons(
+              contentId: fortune.id,
+              contentType: fortuneType,
+              shareTitle: typeName,
+              shareContent: fortune.summary ?? fortune.content,
+              iconColor: Colors.white,
             ),
           ),
         ],
