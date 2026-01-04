@@ -215,7 +215,7 @@ async function saveTalismanRecord(
       prompt_used: prompt,
       characters,
       is_public: true, // 공용 풀에 포함
-      model_used: 'gemini-2.0-flash-exp-image-generation',
+      model_used: 'gemini-2.5-flash-preview-05-20',
       created_at: new Date().toISOString(),
     })
     .select('id')

@@ -32,6 +32,13 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractCareerCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -406,6 +413,51 @@ serve(async (req) => {
     const skillAnalysis = analyzeSkills(skills, careerField, currentRole)
     const predictions = generateCareerPredictions(timeHorizon, careerPath, careerField, currentRole)
 
+    // ✅ Cohort Pool 조회 (API 비용 90% 절감)
+    const cohortData = extractCareerCohort({
+      age: requestData.age,
+      birthDate: requestData.birthDate,
+      gender: requestData.gender,
+      industry: industry,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`[Career] Cohort: ${JSON.stringify(cohortData)} -> ${cohortHash.slice(0, 8)}...`)
+
+    const poolResult = await getFromCohortPool(supabase, 'career', cohortHash)
+    if (poolResult) {
+      console.log('[Career] ✅ Cohort Pool 히트!')
+      // 개인화 (이름 치환)
+      const personalizedResult = personalize(poolResult, {
+        userName: requestData.userName || requestData.name,
+        currentRole,
+        careerGoal,
+      }) as Record<string, unknown>
+
+      // 추가 데이터 병합
+      personalizedResult.careerField = careerField
+      personalizedResult.skillAnalysis = skillAnalysis
+      personalizedResult.predictions = predictions
+
+      // 퍼센타일 추가
+      const score = (personalizedResult.score as number) || 75
+      const percentileData = await calculatePercentile(supabase, 'career', score)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // Blur 처리 (Premium 여부)
+      resultWithPercentile.isBlurred = !isPremium
+      resultWithPercentile.blurredSections = !isPremium
+        ? ['predictions', 'skillAnalysis', 'strengthsAssessment', 'improvementAreas', 'actionPlan', 'industryInsights', 'networkingAdvice', 'luckyPeriods', 'cautionPeriods', 'careerKeywords', 'mentorshipAdvice']
+        : []
+
+      return new Response(JSON.stringify({ success: true, data: resultWithPercentile }), {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+    }
+    console.log('[Career] Cohort Pool miss, LLM 호출 필요')
+
     // 캐시 확인 (UTF-8 안전한 SHA-256 해시) - ✅ 핵심 고민도 캐시 키에 포함
     const hash = await createHash(`${fortuneType}_${currentRole}_${timeHorizon}_${careerPath}_${skills.join(',')}_${concern}`)
     const cacheKey = `career_fortune_${hash}`
@@ -559,6 +611,10 @@ ${concernSection}
           fortune_type: 'career',
           expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24시간 캐시
         })
+
+      // ✅ Cohort Pool에 저장 (fire-and-forget)
+      saveToCohortPool(supabase, 'career', cohortHash, cohortData, fortuneData)
+        .catch(e => console.error('[Career] Cohort 저장 오류:', e))
     }
 
     // ✅ 퍼센타일 계산

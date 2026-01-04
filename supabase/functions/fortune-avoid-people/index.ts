@@ -23,6 +23,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractAvoidPeopleCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -105,6 +112,48 @@ serve(async (req) => {
     // 날짜 컨텍스트 분석
     const now = new Date()
     const today = now.toISOString().split('T')[0]
+
+    // ✅ Cohort Pool에서 먼저 조회 (LLM 비용 90% 절감)
+    const cohortData = extractAvoidPeopleCohort({
+      birthDate: (requestData as any).birthDate,
+      context: environment,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log('🚫 [Cohort] Cohort 추출:', JSON.stringify(cohortData), '| Hash:', cohortHash)
+
+    const poolResult = await getFromCohortPool(supabaseClient, 'avoid-people', cohortHash)
+    if (poolResult) {
+      console.log('🚫 [Cohort] Pool HIT! - LLM 호출 생략')
+
+      // 개인화 적용
+      const personalizedResult = personalize(poolResult, {
+        userName: (requestData as any).userName || '회원님',
+        environment: environment || '일상',
+      })
+
+      // Percentile 적용
+      const percentileData = await calculatePercentile(supabaseClient, 'avoid-people', personalizedResult.overallScore || 70)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // 블러 상태 적용
+      if (!isPremium) {
+        resultWithPercentile.isBlurred = true
+        resultWithPercentile.blurredSections = ['avoid_surnames', 'detailed_advice', 'timing_analysis']
+      } else {
+        resultWithPercentile.isBlurred = false
+        resultWithPercentile.blurredSections = []
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: resultWithPercentile,
+          cohortHit: true
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    console.log('🚫 [Cohort] Pool MISS - LLM 호출 필요')
 
     // 캐시 확인
     const cacheKey = `${userId || 'anonymous'}_avoid-people_${today}_${JSON.stringify({environment, moodLevel, stressLevel})}`
@@ -472,6 +521,10 @@ ${environment === '모임' ? '- 모임: 술자리 주의, 충동적 약속 경�
         result: resultWithPercentile,
         created_at: new Date().toISOString()
       })
+
+    // ✅ Cohort Pool에 저장 (비동기, fire-and-forget)
+    saveToCohortPool(supabaseClient, 'avoid-people', cohortHash, cohortData, resultWithPercentile)
+      .catch(e => console.error('[AvoidPeople] Cohort 저장 오류:', e))
 
     return new Response(
       JSON.stringify({

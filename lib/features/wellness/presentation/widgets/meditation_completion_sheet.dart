@@ -85,11 +85,17 @@ class _MeditationCompletionSheetState
     );
 
     _animationController.forward();
-    _recordSession();
+
+    // Provider 수정은 build 이후에 해야 함 (Riverpod 규칙)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _recordSession();
+      }
+    });
   }
 
   Future<void> _recordSession() async {
-    if (_hasRecorded) return;
+    if (_hasRecorded || !mounted) return;
     _hasRecorded = true;
 
     await ref.read(meditationHistoryProvider.notifier).recordSession(

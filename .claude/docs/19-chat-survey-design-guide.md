@@ -1,8 +1,8 @@
 # 채팅 설문 설계 가이드 (Chat Survey Design Guide)
 
-> 모든 운세 유형의 채팅 설문 설계 명세서
+> 모든 인사이트 유형의 채팅 설문 설계 명세서
 > 최종 업데이트: 2025.01.03
-> 총 운세: 39개 (fortune Edge Functions)
+> 총 인사이트: 39개 (fortune Edge Functions)
 
 ---
 
@@ -36,8 +36,8 @@
 
 ### 2. 설문 길이 원칙
 - **최소 설문**: 0~1개 step (daily, fortuneCookie, personalityDna)
-- **표준 설문**: 2~3개 step (대부분의 운세)
-- **상세 설문**: 4~5개 step (career, blindDate 등 복잡한 운세)
+- **표준 설문**: 2~3개 step (대부분의 인사이트)
+- **상세 설문**: 4~5개 step (career, blindDate 등 복잡한 인사이트)
 - **최대 설문**: 6개 step 초과 금지
 
 ### 3. 필수/선택 원칙
@@ -81,20 +81,20 @@
 
 ---
 
-## 1.1 Daily (오늘의 운세)
+## 1.1 Daily (오늘의 메시지)
 
 **FortuneSurveyType**: `daily`
 **기존 페이지**: `daily_calendar_fortune_page.dart` - 캘린더로 날짜 선택
 **현재 채팅**: `steps: []` (설문 없음)
 
 ### 설계 결정
-**현행 유지** - 오늘의 운세는 "오늘"이 핵심이므로 날짜 선택 불필요
+**현행 유지** - 오늘의 메시지는 "오늘"이 핵심이므로 날짜 선택 불필요
 
 ### 최종 설계
 ```dart
 const dailySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.daily,
-  title: '오늘의 운세',
+  title: '오늘의 메시지',
   description: '오늘 하루를 미리 살펴볼까요?',
   emoji: '🌅',
   steps: [], // 바로 API 호출
@@ -107,7 +107,7 @@ const dailySurveyConfig = FortuneSurveyConfig(
 
 ---
 
-## 1.2 Yearly (연간 운세)
+## 1.2 Yearly (연간 인사이트)
 
 **FortuneSurveyType**: `yearly`
 **기존 페이지**: 없음 (신규)
@@ -120,8 +120,8 @@ const dailySurveyConfig = FortuneSurveyConfig(
 ```dart
 const yearlySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.yearly,
-  title: '연간 운세',
-  description: '2025년 한 해 운세를 미리 살펴볼까요?',
+  title: '연간 인사이트',
+  description: '2025년 한 해를 미리 살펴볼까요?',
   emoji: '📅',
   steps: [
     SurveyStep(
@@ -129,7 +129,7 @@ const yearlySurveyConfig = FortuneSurveyConfig(
       question: '특히 궁금한 영역이 있어? 🎯',
       inputType: SurveyInputType.chips,
       options: [
-        SurveyOption(id: 'overall', label: '종합 운세', emoji: '✨'),
+        SurveyOption(id: 'overall', label: '종합 인사이트', emoji: '✨'),
         SurveyOption(id: 'career', label: '커리어/사업', emoji: '💼'),
         SurveyOption(id: 'love', label: '연애/결혼', emoji: '💕'),
         SurveyOption(id: 'money', label: '재물/투자', emoji: '💰'),
@@ -144,7 +144,7 @@ const yearlySurveyConfig = FortuneSurveyConfig(
 
 ---
 
-## 1.3 NewYear (새해 운세)
+## 1.3 NewYear (새해 인사이트)
 
 **FortuneSurveyType**: `newYear`
 **기존 페이지**: 없음 (신규)
@@ -157,7 +157,7 @@ const yearlySurveyConfig = FortuneSurveyConfig(
 ```dart
 const newYearSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.newYear,
-  title: '새해 운세',
+  title: '새해 인사이트',
   description: '새해 복 많이 받으세요! 🎊',
   emoji: '🎊',
   steps: [
@@ -215,7 +215,7 @@ const traditionalSurveyConfig = FortuneSurveyConfig(
         SurveyOption(id: 'comprehensive', label: '종합 분석', emoji: '📜'),
         SurveyOption(id: 'personality', label: '성격/기질', emoji: '🎭'),
         SurveyOption(id: 'destiny', label: '운명/인생 흐름', emoji: '🌊'),
-        SurveyOption(id: 'luck', label: '올해 운세', emoji: '🍀'),
+        SurveyOption(id: 'luck', label: '올해 인사이트', emoji: '🍀'),
         SurveyOption(id: 'relationship', label: '대인관계', emoji: '🤝'),
       ],
     ),
@@ -384,7 +384,7 @@ const tarotSurveyConfig = FortuneSurveyConfig(
       question: '어떤 주제로 타로 볼까? 🃏',
       inputType: SurveyInputType.chips,
       options: [
-        SurveyOption(id: 'general', label: '전체 운세', emoji: '✨'),
+        SurveyOption(id: 'general', label: '전체 인사이트', emoji: '✨'),
         SurveyOption(id: 'love', label: '연애/관계', emoji: '💕'),
         SurveyOption(id: 'career', label: '일/커리어', emoji: '💼'),
         SurveyOption(id: 'decision', label: '결정/선택', emoji: '🤔'),
@@ -442,8 +442,8 @@ const personalityDnaSurveyConfig = FortuneSurveyConfig(
 ```dart
 const mbtiSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.mbti,
-  title: 'MBTI 운세',
-  description: 'MBTI로 보는 오늘의 운세',
+  title: 'MBTI 분석',
+  description: 'MBTI로 보는 오늘의 인사이트',
   emoji: '🧠',
   steps: [
     SurveyStep(
@@ -535,8 +535,8 @@ const biorhythmSurveyConfig = FortuneSurveyConfig(
 ```dart
 final loveSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.love,
-  title: '연애 운세',
-  description: '당신의 사랑 운을 알려드릴게요',
+  title: '연애 인사이트',
+  description: '당신의 사랑 인사이트를 알려드릴게요',
   emoji: '💕',
   steps: [
     // Step 1: 연애 상태
@@ -716,7 +716,7 @@ const avoidPeopleSurveyConfig = FortuneSurveyConfig(
 
 ---
 
-## 4.4 Ex Lover (재회 운세)
+## 4.4 Ex Lover (재회 분석)
 
 **FortuneSurveyType**: `exLover`
 **기존 페이지**: `ex_lover_fortune_simple_page.dart`
@@ -729,7 +729,7 @@ const avoidPeopleSurveyConfig = FortuneSurveyConfig(
 ```dart
 const exLoverSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.exLover,
-  title: '재회 운세',
+  title: '재회 분석',
   description: '재회 가능성을 살펴볼게요',
   emoji: '🔄',
   steps: [
@@ -794,8 +794,8 @@ const exLoverSurveyConfig = FortuneSurveyConfig(
 ```dart
 final blindDateSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.blindDate,
-  title: '소개팅 운세',
-  description: '소개팅 운세를 봐드릴게요!',
+  title: '소개팅 가이드',
+  description: '소개팅 가이드를 봐드릴게요!',
   emoji: '💘',
   steps: [
     // Step 1: 소개팅 유형
@@ -894,7 +894,7 @@ final blindDateSurveyConfig = FortuneSurveyConfig(
 ```dart
 final careerSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.career,
-  title: '커리어 운세',
+  title: '커리어 인사이트',
   description: '당신의 커리어 방향을 알려드릴게요',
   emoji: '💼',
   steps: [
@@ -1016,7 +1016,7 @@ final talentSurveyConfig = FortuneSurveyConfig(
 
 ---
 
-## 5.3 Exam (시험 운세)
+## 5.3 Exam (시험 가이드)
 
 **FortuneSurveyType**: `exam` → **신규 추가 필요**
 **기존 페이지**: `lucky_exam_fortune_page.dart`
@@ -1030,14 +1030,14 @@ final talentSurveyConfig = FortuneSurveyConfig(
 // fortune_survey_config.dart에 enum 추가
 enum FortuneSurveyType {
   // ... 기존 항목
-  exam, // 시험 운세 (추가)
+  exam, // 시험 가이드 (추가)
 }
 
 // survey_configs.dart에 설정 추가
 const examSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.exam,
-  title: '시험 운세',
-  description: '시험/면접 운세를 봐드릴게요!',
+  title: '시험 가이드',
+  description: '시험/면접 가이드를 봐드릴게요!',
   emoji: '📝',
   steps: [
     // Step 1: 시험 유형
@@ -1304,13 +1304,13 @@ const fortuneCookieSurveyConfig = FortuneSurveyConfig(
 // fortune_survey_config.dart에 enum 추가
 enum FortuneSurveyType {
   // ... 기존 항목
-  moving, // 이사 운세 (추가)
+  moving, // 이사 가이드 (추가)
 }
 
 // survey_configs.dart에 설정 추가
 const movingSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.moving,
-  title: '이사 운세',
+  title: '이사 가이드',
   description: '이사 방위와 시기를 알려드려요',
   emoji: '🏠',
   steps: [
@@ -1388,8 +1388,8 @@ FortuneSurveyType.moving: movingSurveyConfig,
 ```dart
 const healthSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.health,
-  title: '건강 운세',
-  description: '오늘의 건강 운세를 봐드릴게요',
+  title: '건강 체크',
+  description: '오늘의 건강 체크를 해드릴게요',
   emoji: '💊',
   steps: [
     SurveyStep(
@@ -1473,7 +1473,7 @@ const exerciseSurveyConfig = FortuneSurveyConfig(
 const sportsGameSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.sportsGame,
   title: '스포츠 경기',
-  description: '경기 운세를 봐드릴게요!',
+  description: '경기 가이드를 봐드릴게요!',
   emoji: '🏆',
   steps: [
     // Step 1: 스포츠 종목
@@ -1653,7 +1653,7 @@ const petSurveyConfig = FortuneSurveyConfig(
 
 ---
 
-## 10.2 Family (가족 운세)
+## 10.2 Family (가족 인사이트)
 
 **FortuneSurveyType**: `family`
 **기존 페이지**: `family_fortune_page.dart`
@@ -1666,8 +1666,8 @@ const petSurveyConfig = FortuneSurveyConfig(
 ```dart
 const familySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.family,
-  title: '가족 운세',
-  description: '가족 운세를 살펴볼게요',
+  title: '가족 인사이트',
+  description: '가족 인사이트를 살펴볼게요',
   emoji: '👨‍👩‍👧‍👦',
   steps: [
     // Step 1: 관심사
@@ -1680,13 +1680,13 @@ const familySurveyConfig = FortuneSurveyConfig(
         SurveyOption(id: 'health', label: '건강', emoji: '💪'),
         SurveyOption(id: 'wealth', label: '재물', emoji: '💰'),
         SurveyOption(id: 'education', label: '자녀 교육', emoji: '📚'),
-        SurveyOption(id: 'overall', label: '전체 운세', emoji: '✨'),
+        SurveyOption(id: 'overall', label: '전체 인사이트', emoji: '✨'),
       ],
     ),
     // Step 2: 가족 구성원
     SurveyStep(
       id: 'member',
-      question: '누구의 운세가 궁금해? 👪',
+      question: '누구의 인사이트가 궁금해? 👪',
       inputType: SurveyInputType.chips,
       options: [
         SurveyOption(id: 'all', label: '가족 전체', emoji: '👨‍👩‍👧‍👦'),
@@ -1877,7 +1877,7 @@ const profileCreationSurveyConfig = FortuneSurveyConfig(
 
 ## 신규 추가 필요 (FortuneSurveyType enum + surveyConfigs 맵)
 
-| 운세 | enum 값 | 상태 |
+| 인사이트 | enum 값 | 상태 |
 |------|---------|------|
 | Talisman (부적) | `talisman` | ❌ 추가 필요 |
 | Exam (시험) | `exam` | ❌ 추가 필요 |
@@ -1885,7 +1885,7 @@ const profileCreationSurveyConfig = FortuneSurveyConfig(
 
 ## 기존 설문 보강 필요
 
-| 운세 | 변경 내용 |
+| 인사이트 | 변경 내용 |
 |------|----------|
 | Traditional Saju | Step 2, 3 추가 (질문 선택 + 커스텀) |
 | Face Reading | Step 1 추가 (분석 포커스) |
@@ -1899,7 +1899,7 @@ const profileCreationSurveyConfig = FortuneSurveyConfig(
 
 ## 현행 유지 (변경 불필요)
 
-| 운세 | 이유 |
+| 인사이트 | 이유 |
 |------|------|
 | Daily | 설문 없음 (오늘 고정) |
 | Yearly | 1개 step 적절 |
@@ -1947,9 +1947,9 @@ class Fortune {
 }
 ```
 
-### 운세별 특수 결과 필드
+### 인사이트별 특수 결과 필드
 
-| 운세 | 특수 필드 |
+| 인사이트 | 특수 필드 |
 |------|----------|
 | Traditional Saju | sajuData (명식, 오행, 지장간 등) |
 | Tarot | selectedCards, cardMeanings |

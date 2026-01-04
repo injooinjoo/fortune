@@ -2,7 +2,7 @@
  * 전생 운세 (Past Life Fortune) Edge Function V2
  *
  * @description 사용자의 전생 신분, 스토리, AI 초상화를 생성합니다.
- * V2: 얼굴 분석 → NanoBanana 이미지 생성, 30개 시나리오, 챕터 구조
+ * V2: 얼굴 분석 → Gemini 이미지 생성, 30개 시나리오, 챕터 구조
  *
  * @endpoint POST /fortune-past-life
  *
@@ -588,8 +588,8 @@ async function generatePortraitWithGemini(prompt: string): Promise<string | null
   }
 
   try {
-    // Gemini 2.0 Flash Experimental 이미지 생성 모델 사용
-    const imageModel = 'gemini-2.0-flash-exp-image-generation'
+    // Gemini 2.5 Flash 이미지 생성 모델 사용 (통일)
+    const imageModel = 'gemini-2.5-flash-preview-05-20'
 
     const requestBody = {
       contents: [

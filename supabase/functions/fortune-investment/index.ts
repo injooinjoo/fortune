@@ -33,6 +33,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractInvestmentCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -235,6 +242,52 @@ serve(async (req) => {
 
     console.log('💎 [Investment v2] Premium:', isPremium, '| Ticker:', tickerSymbol, tickerName, tickerCategory)
     console.log('💎 [Step 1] Ticker 검증 통과')
+
+    // ✅ Cohort Pool에서 먼저 조회 (LLM 비용 90% 절감)
+    const cohortData = extractInvestmentCohort({
+      birthDate: (requestData as any).birthDate,
+      age: (requestData as any).age,
+      sajuData: sajuData ? { dayMaster: { element: sajuData.dayMaster } } : undefined,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log('💎 [Cohort] Cohort 추출:', JSON.stringify(cohortData), '| Hash:', cohortHash)
+
+    const poolResult = await getFromCohortPool(supabaseClient, 'investment', cohortHash)
+    if (poolResult) {
+      console.log('💎 [Cohort] Pool HIT! - LLM 호출 생략')
+
+      // 개인화 적용
+      const personalizedResult = personalize(poolResult, {
+        userName: (requestData as any).userName || '회원님',
+        ticker: tickerSymbol,
+        tickerName: tickerName,
+        categoryLabel: categoryLabel,
+      })
+
+      // Percentile 적용
+      const percentileData = await calculatePercentile(supabaseClient, 'investment', personalizedResult.overallScore || 70)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // 블러 상태 적용
+      if (!isPremium) {
+        resultWithPercentile.isBlurred = true
+        resultWithPercentile.blurredSections = ['timing', 'outlook', 'risks', 'luckyItems']
+      } else {
+        resultWithPercentile.isBlurred = false
+        resultWithPercentile.blurredSections = []
+      }
+
+      return new Response(
+        JSON.stringify({
+          fortune: resultWithPercentile,
+          cached: true,
+          tokensUsed: 0,
+          cohortHit: true
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    console.log('💎 [Cohort] Pool MISS - LLM 호출 필요')
 
     // 캐시 확인 (간소화된 키 - 프로필 정보 없음)
     const today = new Date().toISOString().split('T')[0]
@@ -485,6 +538,10 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
         result: result,
         created_at: new Date().toISOString()
       })
+
+    // ✅ Cohort Pool에 저장 (비동기, fire-and-forget)
+    saveToCohortPool(supabaseClient, 'investment', cohortHash, cohortData, resultWithPercentile)
+      .catch(e => console.error('[Investment] Cohort 저장 오류:', e))
 
     // ✅ 응답 형식 통일: 캐시와 동일하게 { fortune, cached, tokensUsed }
     console.log('💎 [Step 8] 응답 반환 시작')

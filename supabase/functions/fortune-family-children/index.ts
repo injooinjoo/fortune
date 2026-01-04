@@ -47,6 +47,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractFamilyCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -162,6 +169,44 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
+
+    // ===== Cohort Pool 조회 (API 비용 90% 절감) =====
+    const cohortData = extractFamilyCohort({
+      relationship,
+      detailed_questions,
+      concern_label,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`🎯 [FamilyChildren] Cohort: ${JSON.stringify(cohortData)}`)
+
+    const poolResult = await getFromCohortPool(supabaseClient, 'family-children', cohortHash)
+
+    if (poolResult) {
+      console.log('✅ [FamilyChildren] Cohort Pool 히트! LLM 호출 생략')
+
+      const personalized = personalize(poolResult, {
+        userName: name || '회원님',
+        relationship: relationshipLabel,
+      })
+
+      const percentileData = await calculatePercentile(supabaseClient, 'family-children', (personalized as any).overallScore || 75)
+      const resultWithPercentile = addPercentileToResult(personalized, percentileData)
+
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['childCategories', 'educationAdvice', 'parentingGuide', 'monthlyFlow', 'recommendations', 'warnings', 'specialAnswer']
+        : []
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: { ...resultWithPercentile, isBlurred, blurredSections },
+          cohortHit: true,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    // ===== Cohort Pool 미스 - LLM 호출 진행 =====
 
     // LLM 호출
     const llm = await LLMFactory.createFromConfigAsync('family-children')
@@ -366,6 +411,10 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
     // Percentile 계산
     const percentileData = await calculatePercentile(supabaseClient, 'family-children', result.overallScore)
     const resultWithPercentile = addPercentileToResult(result, percentileData)
+
+    // ===== Cohort Pool 저장 (fire-and-forget) =====
+    saveToCohortPool(supabaseClient, 'family-children', cohortHash, cohortData, result)
+      .catch(e => console.error('[FamilyChildren] Cohort 저장 오류:', e))
 
     // 결과 캐싱
     await supabaseClient

@@ -32,6 +32,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractNewYearCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -90,6 +97,78 @@ serve(async (req) => {
 
     // LLM 모듈 생성
     const llm = await LLMFactory.createFromConfigAsync('fortune-new-year')
+
+    // ===== Cohort Pool 조회 =====
+    const cohortData = extractNewYearCohort({ goal, birthDate, zodiacAnimal })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`[fortune-new-year] 🔍 Cohort: ${JSON.stringify(cohortData)}, hash: ${cohortHash.slice(0, 8)}...`)
+
+    const cachedResult = await getFromCohortPool(supabaseClient, 'new-year', cohortHash)
+
+    if (cachedResult) {
+      console.log(`[fortune-new-year] ✅ Cohort Pool HIT!`)
+
+      // Personalize with user-specific data
+      const personalizedResult = personalize(cachedResult, {
+        '{{userName}}': name,
+        '{{name}}': name,
+        '{{targetYear}}': String(targetYear),
+        '{{goalLabel}}': displayGoalLabel,
+        '{{goalEmoji}}': goalEmoji,
+      })
+
+      // Parse and add percentile
+      const fortuneData = typeof personalizedResult === 'string'
+        ? JSON.parse(personalizedResult)
+        : personalizedResult
+
+      const overallScore = fortuneData.overallScore || fortuneData.score || 75
+      const percentileData = await calculatePercentile(supabaseClient, 'new_year', overallScore)
+
+      // Blur 로직
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['goalFortune', 'sajuAnalysis', 'actionPlan', 'recommendations', 'specialMessage']
+        : []
+      const blurredMonthIndices = isBlurred ? [3, 4, 5, 6, 7, 8, 9, 10, 11] : []
+
+      const fortune = {
+        ...fortuneData,
+        id: `new_year_${userId}_${targetYear}`,
+        userId: userId,
+        type: 'new_year',
+        fortuneType: 'new_year',
+        isBlurred,
+        blurredSections,
+        blurredMonthIndices,
+        freeMonthCount: 3,
+        percentile: percentileData.percentile,
+        percentileMessage: percentileData.message,
+        metadata: {
+          ...fortuneData.metadata,
+          year: targetYear,
+          goal: goal,
+          goalLabel: displayGoalLabel,
+          generatedAt: new Date().toISOString(),
+          cohortHit: true,
+        }
+      }
+
+      return new Response(
+        JSON.stringify({
+          fortune: fortune,
+          cached: true,
+          cohortHit: true,
+          tokensUsed: 0
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+          status: 200
+        }
+      )
+    }
+
+    console.log(`[fortune-new-year] 💨 Cohort Pool MISS - LLM 호출 필요`)
 
     // 시스템 프롬프트
     const systemPrompt = `당신은 한국 전통 역학(易學)과 현대 운세를 결합한 새해 인사이트 전문가입니다.
@@ -371,6 +450,11 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
     // Percentile 계산
     const percentileData = await calculatePercentile(supabaseClient, 'new_year', overallScore)
     const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
+
+    // ===== Cohort Pool 저장 (Fire-and-forget) =====
+    saveToCohortPool(supabaseClient, 'new-year', cohortHash, fortuneData)
+      .then(() => console.log(`[fortune-new-year] 💾 Cohort Pool 저장 완료`))
+      .catch((err) => console.error(`[fortune-new-year] ⚠️ Cohort Pool 저장 실패:`, err))
 
     console.log(`[fortune-new-year] ✅ 응답 생성 완료 (score: ${overallScore}, goal: ${goal})`)
 

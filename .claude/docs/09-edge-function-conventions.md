@@ -9,7 +9,7 @@ Supabase Edge Functions의 네이밍 규칙과 개발 가이드라인입니다.
 
 ## 네이밍 규칙
 
-### 1. 운세 함수: `fortune-{type}`
+### 1. 인사이트 함수: `fortune-{type}`
 
 ```bash
 # 올바른 예시
@@ -109,9 +109,9 @@ supabase/functions/
 │   │   └── templates/
 │   ├── utils/                 # 유틸리티
 │   └── types/                 # 타입 정의
-├── fortune-daily/             # 일일 운세
+├── fortune-daily/             # 일일 인사이트
 │   └── index.ts
-├── fortune-investment/        # 투자 운세
+├── fortune-investment/        # 투자 인사이트
 │   └── index.ts
 ├── fetch-tickers/             # 티커 조회 API
 │   └── index.ts
@@ -171,20 +171,20 @@ EdgeFunctionsEndpoints.getEndpointForType('unknown')  // '/fortune-unknown'
 
 ## 현재 Edge Functions 목록 (2025.01.03)
 
-### 운세 함수 (39개)
+### 인사이트 함수 (39개)
 
 | 함수명 | 설명 | 카테고리 |
 |--------|------|----------|
-| `fortune-avoid-people` | 기피인물 운세 | 인간관계 |
+| `fortune-avoid-people` | 기피인물 분석 | 인간관계 |
 | `fortune-biorhythm` | 바이오리듬 | 건강/웰빙 |
-| `fortune-blind-date` | 소개팅 운세 | 연애 |
-| `fortune-career` | 직업/커리어 운세 | 직업 |
-| `fortune-celebrity` | 연예인 닮은꼴 운세 | 엔터테인먼트 |
+| `fortune-blind-date` | 소개팅 가이드 | 연애 |
+| `fortune-career` | 직업/커리어 인사이트 | 직업 |
+| `fortune-celebrity` | 연예인 닮은꼴 분석 | 엔터테인먼트 |
 | `fortune-compatibility` | 궁합 분석 | 연애 |
-| `fortune-daily` | 일일 운세 | 기본 |
+| `fortune-daily` | 일일 인사이트 | 기본 |
 | `fortune-dream` | 꿈 해몽 | 인터랙티브 |
 | `fortune-ex-lover` | 전연인 분석 | 연애 |
-| `fortune-exam` | 시험/수능 운세 | 학업 |
+| `fortune-exam` | 시험/수능 가이드 | 학업 |
 | `fortune-face-reading` | 관상 분석 | Face AI |
 | `fortune-face-reading-watch` | 관상 Watch (간략) | Face AI |
 | `fortune-family-change` | 가족 변화 운세 | 가족 |

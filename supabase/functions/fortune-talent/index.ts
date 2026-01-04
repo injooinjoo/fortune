@@ -55,6 +55,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractTalentCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -100,6 +107,54 @@ serve(async (req) => {
     } = requestData
 
     console.log('💎 [Talent] Premium 상태:', isPremium, '| 이력서:', hasResume ? '있음' : '없음')
+
+    // ✅ Cohort Pool 조회 (캐시보다 먼저 확인 - 비용 최적화)
+    const cohortData = extractTalentCohort({
+      birthDate: (requestData as any).birthDate,
+      age: (requestData as any).age,
+      gender: (requestData as any).gender,
+      talentArea: talentArea,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log('🔍 [Talent] Checking cohort pool:', { cohortHash, cohortData })
+
+    const cohortResult = await getFromCohortPool(supabaseClient, 'talent', cohortHash)
+    if (cohortResult) {
+      console.log('✅ [Talent] Cohort pool hit! Personalizing result...')
+
+      // 개인화 데이터 준비
+      const personalData = {
+        userName: (requestData as any).userName || (requestData as any).name || '회원님',
+        skills: currentSkills.join(', '),
+        goals: goals,
+      }
+
+      // 템플릿 개인화
+      const personalizedResult = personalize(cohortResult, personalData) as any
+
+      // 퍼센타일 계산
+      const percentileData = await calculatePercentile(supabaseClient, 'talent', personalizedResult.overallScore || 75)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['description', 'roadmap', 'skillRecommendations', 'mentalModel']
+        : []
+
+      const finalResult = {
+        ...resultWithPercentile,
+        isBlurred,
+        blurredSections,
+      }
+
+      console.log('✅ [Talent] Returning cohort result')
+      return new Response(
+        JSON.stringify({ success: true, data: finalResult, cached: true, tokensUsed: 0 }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    console.log('🔄 [Talent] Cohort pool miss, checking cache...')
 
     // 캐시 확인 (이력서 포함 여부도 캐시 키에 반영)
     const today = new Date().toISOString().split('T')[0]
@@ -417,6 +472,10 @@ ${resumeText.slice(0, 3000)}${resumeText.length > 3000 ? '...(이하 생략)' : 
         result: resultWithPercentile,
         created_at: new Date().toISOString()
       })
+
+    // ✅ Cohort Pool에 저장 (비동기, fire-and-forget)
+    saveToCohortPool(supabaseClient, 'talent', cohortHash, cohortData, resultWithPercentile)
+      .catch(e => console.error('[Talent] Cohort 저장 오류:', e))
 
     return new Response(
       JSON.stringify({

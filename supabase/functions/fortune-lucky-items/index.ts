@@ -63,6 +63,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractLuckyItemsCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -156,11 +163,7 @@ serve(async (req) => {
     console.log(`[fortune-lucky-items] 📅 Today: ${year}년 ${month}월 ${day}일 (${weekday}) ${timeOfDay}, ${season}`)
     console.log(`[fortune-lucky-items] 🎯 선택된 관심사:`, interests)
 
-    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
-    const llm = await LLMFactory.createFromConfigAsync('fortune-lucky-items')
-
     // ✅ 카테고리 집중 로직 (선택된 카테고리에 3배 상세한 정보 제공)
-    // NOTE: 'all' 옵션 제거됨 - 반드시 하나의 카테고리만 선택
     const categoryFocusMap: Record<string, string> = {
       'food': '🍽️ 음식/음료',
       'fashion': '👔 패션/액세서리',
@@ -172,6 +175,52 @@ serve(async (req) => {
       'health': '💪 운동/건강',
       'lifestyle': '🏠 라이프스타일'
     };
+
+    // ✅ Cohort Pool 조회 (API 비용 90% 절감)
+    const cohortData = extractLuckyItemsCohort({ category: interests?.[0], interests })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`[fortune-lucky-items] 🔍 Cohort: ${JSON.stringify(cohortData)}, Hash: ${cohortHash.substring(0, 16)}...`)
+
+    const cachedResult = await getFromCohortPool(supabaseClient, 'lucky-items', cohortHash)
+    if (cachedResult) {
+      console.log(`[fortune-lucky-items] ✅ Cohort Pool HIT! 캐시된 결과 사용`)
+
+      // 개인화 후처리
+      const personalizedResult = personalize(cachedResult, {
+        userName: name,
+        birthDate,
+        gender,
+        interests,
+      })
+
+      // ✅ Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['fashion', 'food', 'jewelry', 'material', 'places', 'relationships', 'advice']
+        : []
+
+      // ✅ Percentile 계산
+      const percentileData = await calculatePercentile(supabaseClient, 'lucky-items', personalizedResult.score || 75)
+      const resultWithPercentile = addPercentileToResult({
+        ...personalizedResult,
+        fortuneType: 'lucky-items',
+        selectedCategory: interests?.[0] || 'fashion',
+        selectedCategoryLabel: categoryFocusMap[interests?.[0] || 'fashion'] || 'fashion',
+        timestamp: new Date().toISOString(),
+        isBlurred,
+        blurredSections,
+      }, percentileData)
+
+      return new Response(
+        JSON.stringify({ success: true, data: resultWithPercentile }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+
+    console.log(`[fortune-lucky-items] ⚡ Cohort Pool MISS - LLM 호출 필요`)
+
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('fortune-lucky-items')
 
     // 'all' 제거됨 - 기본값을 'fashion'으로 변경
     const selectedCategory = interests?.[0] || 'fashion';
@@ -445,6 +494,11 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
     // ✅ Percentile 계산 추가
     const percentileData = await calculatePercentile(supabaseClient, 'lucky-items', resultData.score)
     const resultDataWithPercentile = addPercentileToResult(resultData, percentileData)
+
+    // ✅ Cohort Pool에 저장 (비동기, 에러 무시)
+    saveToCohortPool(supabaseClient, 'lucky-items', cohortHash, cohortData, resultData)
+      .then(() => console.log(`[fortune-lucky-items] 💾 Cohort Pool에 저장 완료`))
+      .catch((err) => console.warn(`[fortune-lucky-items] ⚠️ Cohort Pool 저장 실패 (무시됨):`, err.message))
 
     const result: LuckyItemsResponse = {
       success: true,

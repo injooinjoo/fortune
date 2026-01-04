@@ -23,6 +23,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractWealthCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -225,6 +232,80 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
+
+    // ===== Cohort Pool 조회 =====
+    const cohortData = extractWealthCohort({ goal, risk, urgency })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`🔍 [Wealth] Cohort: ${cohortHash.slice(0, 8)}...`, cohortData)
+
+    const poolResult = await getFromCohortPool(supabaseClient, 'wealth', cohortHash)
+
+    if (poolResult) {
+      console.log(`✅ [Wealth] Cohort Pool HIT - 개인화 적용`)
+      const personalizedResult = personalize(poolResult, {
+        userName: userName || '회원님',
+        goal: GOAL_LABELS[goal] || goal,
+        concern: CONCERN_LABELS[concern] || concern,
+        income: INCOME_LABELS[income] || income,
+        expense: EXPENSE_LABELS[expense] || expense,
+        risk: RISK_LABELS[risk] || risk,
+        urgency: URGENCY_LABELS[urgency] || urgency,
+        interests: interests.map(i => INTEREST_LABELS[i] || i).join(', '),
+      })
+
+      // 사주 분석 결과 (로컬 계산)
+      const elementAnalysisLocal = analyzeWealthElements(
+        sajuData?.fiveElements,
+        sajuData?.dayMaster || ''
+      )
+
+      // Percentile 계산
+      const percentileData = await calculatePercentile(supabaseClient, 'wealth', personalizedResult.overallScore || personalizedResult.score || 70)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // 블러 로직
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['goalAdvice', 'cashflowInsight', 'concernResolution', 'investmentInsights', 'monthlyFlow', 'actionItems']
+        : []
+
+      const finalResult = {
+        ...resultWithPercentile,
+        elementAnalysis: {
+          ...elementAnalysisLocal,
+          ...resultWithPercentile.elementAnalysis,
+        },
+        userId,
+        userName,
+        surveyData: { goal, concern, income, expense, risk, interests, urgency },
+        isBlurred,
+        blurredSections,
+        created_at: new Date().toISOString(),
+      }
+
+      // 결과 캐싱
+      await supabaseClient
+        .from('fortune_cache')
+        .insert({
+          cache_key: cacheKey,
+          fortune_type: 'wealth',
+          user_id: userId || null,
+          result: finalResult,
+          created_at: new Date().toISOString()
+        })
+
+      return new Response(
+        JSON.stringify({
+          fortune: finalResult,
+          cached: false,
+          fromCohortPool: true,
+          tokensUsed: 0
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+
+    console.log(`🔄 [Wealth] Cohort Pool MISS - LLM 호출`)
 
     // LLM 호출
     const llm = await LLMFactory.createFromConfigAsync('wealth')
@@ -481,6 +562,10 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
     // Percentile 계산
     const percentileData = await calculatePercentile(supabaseClient, 'wealth', result.overallScore)
     const resultWithPercentile = addPercentileToResult(result, percentileData)
+
+    // ===== Cohort Pool 저장 (fire-and-forget) =====
+    saveToCohortPool(supabaseClient, 'wealth', cohortHash, cohortData, result)
+      .catch(e => console.error('[Wealth] Cohort 저장 오류:', e))
 
     // 캐싱
     await supabaseClient

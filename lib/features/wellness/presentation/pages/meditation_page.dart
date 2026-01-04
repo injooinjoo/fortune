@@ -21,11 +21,16 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
   bool _wasRunning = false;
   bool _hasShownCompletion = false;
 
+  // dispose에서 ref 사용 불가하므로 참조 저장
+  MeditationSoundService? _soundService;
+
   @override
   void initState() {
     super.initState();
     // 초기 설정
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _soundService = ref.read(meditationSoundServiceProvider);
       final pattern = ref.read(selectedBreathingPatternProvider);
       final duration = ref.read(selectedMeditationDurationProvider);
       ref.read(breathingTimerProvider.notifier).setPattern(pattern);
@@ -35,8 +40,8 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
 
   @override
   void dispose() {
-    // 페이지 나갈 때 음악 정지
-    ref.read(meditationSoundServiceProvider).stop();
+    // 저장된 참조 사용 (ref는 dispose 후 사용 불가)
+    _soundService?.stop();
     super.dispose();
   }
 

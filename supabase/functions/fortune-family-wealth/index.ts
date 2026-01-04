@@ -46,6 +46,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractFamilyCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -161,6 +168,70 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
+
+    // ===== Cohort Pool 조회 =====
+    const cohortData = extractFamilyCohort({
+      relationship,
+      detailed_questions: safeDetailedQuestions,
+      concern_label,
+    })
+    const cohortHash = generateCohortHash(cohortData)
+    console.log(`🔍 [FamilyWealth] Cohort: ${cohortHash}`, cohortData)
+
+    const poolResult = await getFromCohortPool(supabaseClient, 'family-wealth', cohortHash)
+
+    if (poolResult) {
+      console.log(`✅ [FamilyWealth] Cohort Pool HIT - 개인화 적용`)
+      const personalizedResult = personalize(poolResult, {
+        userName: name || '회원님',
+        familyMemberCount: String(family_member_count),
+        relationshipLabel,
+        selectedQuestionLabels,
+        specialQuestion: special_question || '',
+      })
+
+      // Percentile 계산
+      const percentileData = await calculatePercentile(supabaseClient, 'family-wealth', personalizedResult.overallScore || personalizedResult.score || 75)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['wealthCategories', 'monthlyTrend', 'familySynergy', 'monthlyFlow', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
+        : []
+
+      const finalResult = {
+        ...resultWithPercentile,
+        userId,
+        isBlurred,
+        blurredSections,
+        created_at: new Date().toISOString(),
+      }
+
+      // 결과 캐싱
+      await supabaseClient
+        .from('fortune_cache')
+        .insert({
+          cache_key: cacheKey,
+          fortune_type: 'family-wealth',
+          user_id: userId,
+          result: finalResult,
+          created_at: new Date().toISOString()
+        })
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: finalResult,
+          cached: false,
+          fromCohortPool: true,
+          tokensUsed: 0
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+
+    console.log(`🔄 [FamilyWealth] Cohort Pool MISS - LLM 호출`)
 
     // LLM 호출
     const llm = await LLMFactory.createFromConfigAsync('family-wealth')
@@ -365,6 +436,10 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
     // Percentile 계산
     const percentileData = await calculatePercentile(supabaseClient, 'family-wealth', result.overallScore)
     const resultWithPercentile = addPercentileToResult(result, percentileData)
+
+    // ===== Cohort Pool 저장 (fire-and-forget) =====
+    saveToCohortPool(supabaseClient, 'family-wealth', cohortHash, cohortData, result)
+      .catch(e => console.error('[FamilyWealth] Cohort 저장 오류:', e))
 
     // 결과 캐싱
     await supabaseClient

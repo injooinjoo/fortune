@@ -49,6 +49,13 @@ import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts"
+import {
+  extractPetCompatibilityCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 // B04: encodeHex import 제거 - 직접 hex 변환 사용
 
 const corsHeaders = {
@@ -225,6 +232,54 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
+
+    // ===== Cohort Pool 조회 =====
+    const cohortData = extractPetCompatibilityCohort({ petType: pet_species, birthDate })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`[fortune-pet-compatibility] 🔍 Cohort: ${JSON.stringify(cohortData)}, hash: ${cohortHash.slice(0, 8)}...`)
+
+    const cohortResult = await getFromCohortPool(supabaseClient, 'pet-compatibility', cohortHash)
+    if (cohortResult) {
+      console.log(`[fortune-pet-compatibility] ✅ Cohort Pool HIT!`)
+
+      // Personalize with user-specific data
+      const personalizedResult = personalize(cohortResult, {
+        '{{userName}}': name || '회원님',
+        '{{name}}': name || '회원님',
+        '{{petName}}': pet_name || '반려동물',
+        '{{pet_name}}': pet_name || '반려동물',
+        '{{petSpecies}}': pet_species || '반려동물',
+        '{{pet_species}}': pet_species || '반려동물',
+        '{{petAge}}': String(pet_age || 1),
+        '{{pet_age}}': String(pet_age || 1),
+        '{{petBreed}}': pet_breed || pet_species,
+        '{{pet_breed}}': pet_breed || pet_species,
+      })
+
+      const fortune = typeof personalizedResult === 'string'
+        ? JSON.parse(personalizedResult)
+        : personalizedResult
+
+      // 블러 처리 적용
+      const processedFortune = applyBlurring(fortune, isPremium)
+
+      // Percentile 계산
+      const percentileData = await calculatePercentile(supabaseClient, 'pet-compatibility', fortune.score || fortune.overallScore || 80)
+      const fortuneWithPercentile = addPercentileToResult(processedFortune, percentileData)
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: fortuneWithPercentile,
+          cached: true,
+          cohortHit: true,
+          tokensUsed: 0
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+
+    console.log(`[fortune-pet-compatibility] 💨 Cohort Pool MISS - LLM 호출 필요`)
 
     // LLM 호출
     const llm = LLMFactory.createFromConfig('fortune-pet')
@@ -676,6 +731,11 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
     } catch (cacheError) {
       console.warn('⚠️ [PetFortune] 캐시 저장 실패:', cacheError)
     }
+
+    // ===== Cohort Pool 저장 (Fire-and-forget) =====
+    saveToCohortPool(supabaseClient, 'pet-compatibility', cohortHash, cohortData, fortune)
+      .then(() => console.log(`[fortune-pet-compatibility] 💾 Cohort Pool 저장 완료`))
+      .catch((err) => console.error(`[fortune-pet-compatibility] ⚠️ Cohort Pool 저장 실패:`, err))
 
     // 블러 처리 적용
     const processedFortune = applyBlurring(fortune, isPremium)

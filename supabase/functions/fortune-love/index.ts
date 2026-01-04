@@ -32,6 +32,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractLoveCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 // TypeScript 인터페이스 정의
 interface LoveFortuneRequest {
@@ -645,6 +652,59 @@ serve(async (req) => {
       )
     }
 
+    // ✅ Cohort Pool 조회 (API 비용 90% 절감)
+    const cohortData = extractLoveCohort({
+      age: params.age,
+      gender: params.gender,
+      relationshipStatus: params.relationshipStatus,
+      birthDate: undefined, // Love fortune doesn't use zodiac
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`[fortune-love] 🔍 Cohort: ${JSON.stringify(cohortData)}, Hash: ${cohortHash.substring(0, 16)}...`)
+
+    const cohortPoolResult = await getFromCohortPool(supabase, 'love', cohortHash)
+    if (cohortPoolResult) {
+      console.log(`[fortune-love] ✅ Cohort Pool HIT! 캐시된 결과 사용`)
+
+      // 개인화 후처리
+      const personalizedResult = personalize(cohortPoolResult, {
+        userName: params.userName || '회원님',
+        age: params.age,
+        gender: params.gender,
+        relationshipStatus: params.relationshipStatus,
+        datingStyles: params.datingStyles,
+        charmPoints: params.charmPoints,
+      })
+
+      // ✅ Blur 로직 적용
+      const isPremium = params.isPremium ?? false
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['loveProfile', 'detailedAnalysis', 'predictions', 'actionPlan']
+        : []
+
+      // ✅ Percentile 계산
+      const percentileData = await calculatePercentile(supabase, 'love', personalizedResult.score || 75)
+      const resultWithPercentile = addPercentileToResult({
+        ...personalizedResult,
+        fortuneType: 'love',
+        personalInfo: {
+          age: params.age,
+          gender: params.gender,
+          relationshipStatus: params.relationshipStatus,
+        },
+        isBlurred,
+        blurredSections,
+      }, percentileData)
+
+      return new Response(
+        JSON.stringify({ success: true, data: resultWithPercentile }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+
+    console.log(`[fortune-love] ⚡ Cohort Pool MISS - LLM 호출 필요`)
+
     // AI 연애운세 생성
     console.log('AI 연애운세 생성 시작...')
     const fortuneData = await generateLoveFortune(params)
@@ -875,6 +935,11 @@ serve(async (req) => {
 
     // 캐시 저장
     await saveCachedFortune(params.userId, params, response.data)
+
+    // ✅ Cohort Pool에 저장 (비동기, 에러 무시)
+    saveToCohortPool(supabase, 'love', cohortHash, cohortData, response.data)
+      .then(() => console.log(`[fortune-love] 💾 Cohort Pool에 저장 완료`))
+      .catch((err) => console.warn(`[fortune-love] ⚠️ Cohort Pool 저장 실패 (무시됨):`, err.message))
 
     console.log('연애운세 생성 완료')
     return new Response(

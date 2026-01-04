@@ -26,6 +26,13 @@ import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import { extractUsername, fetchInstagramProfileImage, downloadAndEncodeImage } from '../_shared/instagram/scraper.ts'
+import {
+  extractBlindDateCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -276,6 +283,46 @@ serve(async (req) => {
       }
     }
 
+    // ✅ Cohort Pool에서 먼저 조회 (LLM 비용 90% 절감)
+    const cohortData = extractBlindDateCohort({
+      birthDate: requestData.birthDate,
+      gender: requestData.gender,
+      dateGoal: requestData.idealFirstDate, // 이상형 데이트 스타일로 dateGoal 추정
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log('💕 [Cohort] Cohort 추출:', JSON.stringify(cohortData), '| Hash:', cohortHash)
+
+    const poolResult = await getFromCohortPool(supabaseClient, 'blind-date', cohortHash)
+    if (poolResult) {
+      console.log('💕 [Cohort] Pool HIT! - LLM 호출 생략')
+
+      // 개인화 적용
+      const personalizedResult = personalize(poolResult, {
+        userName: requestData.name || '회원님',
+        meetingDate: requestData.meetingDate || '오늘',
+        meetingType: requestData.meetingType || '소개팅',
+      })
+
+      // Percentile 적용
+      const percentileData = await calculatePercentile(supabaseClient, 'blind-date', personalizedResult.score || 70)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // 블러 상태 적용
+      if (!isPremium) {
+        resultWithPercentile.isBlurred = true
+        resultWithPercentile.blurredSections = ['conversation_tips', 'hidden_signals', 'success_strategy']
+      } else {
+        resultWithPercentile.isBlurred = false
+        resultWithPercentile.blurredSections = []
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, data: resultWithPercentile, cohortHit: true }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
+      )
+    }
+    console.log('💕 [Cohort] Pool MISS - LLM 호출 필요')
+
     // Cache key 생성
     const today = new Date().toISOString().split('T')[0]
     const cacheKey = `${userId || 'anonymous'}_blind-date_${today}_${analysisType}_${meetingDate}_${confidence}`
@@ -502,6 +549,10 @@ ${photoAnalysisText}${chatAnalysisText}
           result: result,
           created_at: new Date().toISOString()
         })
+
+      // ✅ Cohort Pool에 저장 (비동기, fire-and-forget)
+      saveToCohortPool(supabaseClient, 'blind-date', cohortHash, cohortData, result)
+        .catch(e => console.error('[BlindDate] Cohort 저장 오류:', e))
 
       // ✅ 퍼센타일 계산
       const percentileData = await calculatePercentile(supabaseClient, 'blind-date', result.score)

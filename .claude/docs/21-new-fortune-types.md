@@ -1,34 +1,34 @@
-# 신규 운세 타입 가이드
+# 신규 인사이트 타입 가이드
 
 > 최종 업데이트: 2025.01.03
 
 ## 개요
 
-2024-2025년에 추가된 신규 운세 타입들을 정리한 문서입니다.
-기존 22개에서 39개로 확장되어 **18개 신규 운세**가 추가되었습니다.
+2024-2025년에 추가된 신규 인사이트 타입들을 정리한 문서입니다.
+기존 22개에서 39개로 확장되어 **18개 신규 인사이트**가 추가되었습니다.
 
 ---
 
-## 신규 운세 목록 (18개)
+## 신규 인사이트 목록 (18개)
 
-| 카테고리 | 운세 | Edge Function | 토큰 |
+| 카테고리 | 인사이트 | Edge Function | 토큰 |
 |----------|------|---------------|------|
-| **가족** | 가족 변화운 | fortune-family-change | 3 |
-| **가족** | 자녀운 | fortune-family-children | 3 |
-| **가족** | 가족 건강운 | fortune-family-health | 3 |
-| **가족** | 가족 관계운 | fortune-family-relationship | 3 |
-| **가족** | 가족 재물운 | fortune-family-wealth | 3 |
+| **가족** | 가족 변화 인사이트 | fortune-family-change | 3 |
+| **가족** | 자녀 인사이트 | fortune-family-children | 3 |
+| **가족** | 가족 건강 체크 | fortune-family-health | 3 |
+| **가족** | 가족 관계 인사이트 | fortune-family-relationship | 3 |
+| **가족** | 가족 재물 인사이트 | fortune-family-wealth | 3 |
 | **특수** | 전생 분석 | fortune-past-life | 4 |
 | **특수** | 셀럽 매칭 | fortune-celebrity | 5 |
 | **특수** | 매칭 인사이트 | fortune-match-insight | 4 |
-| **특수** | 추천 운세 | fortune-recommend | 4 |
+| **특수** | 추천 인사이트 | fortune-recommend | 4 |
 | **특수** | 부적 생성 | fortune-talisman | 4 |
-| **시즌** | 시험운 | fortune-exam | 4 |
-| **시즌** | 신년운세 | fortune-new-year | 2 |
+| **시즌** | 시험 가이드 | fortune-exam | 4 |
+| **시즌** | 신년 인사이트 | fortune-new-year | 2 |
 | **건강** | 건강 문서 분석 | fortune-health-document | 3 |
 | **환경** | 풍수 인테리어 | fortune-home-fengshui | 5 |
 | **환경** | 오늘의 코디 | fortune-ootd | 5 |
-| **재물** | 재물운 | fortune-wealth | 5 |
+| **재물** | 재물 인사이트 | fortune-wealth | 5 |
 | **펫** | 펫 궁합 | fortune-pet-compatibility | 5 |
 | **사주** | 프리미엄 사주 | fortune-premium-saju | 5 |
 

@@ -31,6 +31,13 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractCompatibilityCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -246,6 +253,45 @@ serve(async (req) => {
       person1_name,
       person2_name
     })
+
+    // ✅ Cohort Pool 조회 (API 비용 90% 절감)
+    const cohortData = extractCompatibilityCohort({
+      person1_birth_date,
+      person2_birth_date,
+      person1_gender: requestData.person1_gender || 'male',
+      person2_gender: requestData.person2_gender || 'female',
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`[Compatibility] Cohort: ${JSON.stringify(cohortData)} -> ${cohortHash.slice(0, 8)}...`)
+
+    const poolResult = await getFromCohortPool(supabase, 'compatibility', cohortHash)
+    if (poolResult) {
+      console.log('[Compatibility] ✅ Cohort Pool 히트!')
+      // 개인화 (이름 치환)
+      const personalizedResult = personalize(poolResult, {
+        person1_name,
+        person2_name,
+      }) as Record<string, unknown>
+
+      // 퍼센타일 추가
+      const score = (personalizedResult.score as number) || 75
+      const percentileData = await calculatePercentile(supabase, 'compatibility', score)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // Blur 처리 (Premium 여부)
+      resultWithPercentile.isBlurred = !isPremium
+      resultWithPercentile.blurredSections = !isPremium
+        ? ['detailed_scores', 'analysis', 'advice']
+        : []
+
+      return new Response(JSON.stringify({ success: true, data: resultWithPercentile }), {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+    }
+    console.log('[Compatibility] Cohort Pool miss, LLM 호출 필요')
 
     // 캐시 확인 (UTF-8 안전한 SHA-256 해시)
     const hash = await createHash(`${person1_name}_${person1_birth_date}_${person2_name}_${person2_birth_date}`)
@@ -470,6 +516,10 @@ serve(async (req) => {
           fortune_type: 'compatibility',
           expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24시간 캐시
         })
+
+      // ✅ Cohort Pool에 저장 (fire-and-forget)
+      saveToCohortPool(supabase, 'compatibility', cohortHash, cohortData, fortuneData)
+        .catch(e => console.error('[Compatibility] Cohort 저장 오류:', e))
     }
 
     // ✅ 퍼센타일 계산

@@ -28,6 +28,13 @@ import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { extractUsername, fetchInstagramProfileImage, downloadAndEncodeImage } from '../_shared/instagram/scraper.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 import { initializePrompts, PromptManager } from '../_shared/prompts/index.ts'
+import {
+  extractFaceReadingCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -616,6 +623,56 @@ serve(async (req) => {
       throw new Error('No image data provided')
     }
 
+    // ===== Cohort Pool 조회 (API 비용 절감) =====
+    // 관상은 이미지 기반이라 hit율이 낮지만, 동일 성별/연령대 재사용 가능
+    const cohortData = extractFaceReadingCohort({
+      gender: userGender,
+      ageGroup: userAgeGroup,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+
+    if (Object.keys(cohortData).length > 0) {
+      console.log(`🎯 [FaceReading] Cohort: ${JSON.stringify(cohortData)}`)
+
+      const poolResult = await getFromCohortPool(supabase, 'face-reading', cohortHash)
+
+      if (poolResult) {
+        console.log('✅ [FaceReading] Cohort Pool 히트! LLM 호출 생략')
+
+        // 개인화 (플레이스홀더 치환)
+        const personalized = personalize(poolResult, {
+          userName: userName || '귀하',
+        })
+
+        // 백분위 추가
+        const percentileData = await calculatePercentile(supabase, 'face-reading', personalized.score || 75)
+        const resultWithPercentile = addPercentileToResult(personalized, percentileData)
+
+        // 블러 설정
+        const isBlurred = !isPremium
+        const blurredSections = isBlurred
+          ? ['personality', 'wealth_fortune', 'love_fortune', 'health_fortune', 'career_fortune', 'special_features', 'advice', 'full_analysis']
+          : []
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            data: {
+              ...resultWithPercentile,
+              isBlurred,
+              blurredSections,
+            },
+            cached: false,
+            cohortHit: true,
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
+          }
+        )
+      }
+    }
+    // ===== Cohort Pool 미스 - LLM 호출 진행 =====
+
     // =====================================================
     // 2. LLM 호출 (JSON Mode)
     // =====================================================
@@ -984,6 +1041,12 @@ serve(async (req) => {
       if (insertError) {
         console.error('Error saving fortune:', insertError)
       }
+    }
+
+    // ===== Cohort Pool 저장 (fire-and-forget) =====
+    if (Object.keys(cohortData).length > 0) {
+      saveToCohortPool(supabase, 'face-reading', cohortHash, cohortData, fortuneResponseWithPercentile)
+        .catch(e => console.error('[FaceReading] Cohort 저장 오류:', e))
     }
 
     return new Response(

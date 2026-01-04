@@ -34,6 +34,13 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractExLoverCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
@@ -524,6 +531,52 @@ serve(async (req) => {
       time_since_breakup
     })
 
+    // ✅ Cohort Pool에서 먼저 조회 (LLM 비용 90% 절감)
+    const cohortData = extractExLoverCohort({
+      emotionState: current_emotion,
+      timeElapsed: time_since_breakup,
+      contactStatus: contact_status,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log('💝 [Cohort] Cohort 추출:', JSON.stringify(cohortData), '| Hash:', cohortHash)
+
+    const poolResult = await getFromCohortPool(supabase, 'ex-lover', cohortHash)
+    if (poolResult) {
+      console.log('💝 [Cohort] Pool HIT! - LLM 호출 생략')
+
+      // 개인화 적용
+      const personalizedResult = personalize(poolResult, {
+        userName: name || '회원님',
+        exName: ex_name || '그분',
+        breakupReason: coreReason || '',
+      })
+
+      // Percentile 적용
+      const percentileData = await calculatePercentile(supabase, 'ex-lover', personalizedResult.score || 50)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // 블러 상태 적용
+      if (!isPremium) {
+        resultWithPercentile.isBlurred = true
+        resultWithPercentile.blurredSections = ['hidden_thoughts', 'reunion_strategy', 'chat_analysis']
+      } else {
+        resultWithPercentile.isBlurred = false
+        resultWithPercentile.blurredSections = []
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        data: resultWithPercentile,
+        cohortHit: true
+      }), {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+    }
+    console.log('💝 [Cohort] Pool MISS - LLM 호출 필요')
+
     // 캐시 키 생성 (v2 - 목표 + 핵심 요소 기반)
     const hash = await createHash(`${name}_${primaryGoal}_${coreReason}_${time_since_breakup}_${breakup_initiator}_${contact_status}_${relationshipDepth}`)
     const cacheKey = `ex_lover_fortune_v2_${hash}`
@@ -966,6 +1019,10 @@ serve(async (req) => {
         fortune_type: 'ex_lover',
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       })
+
+      // ✅ Cohort Pool에 저장 (비동기, fire-and-forget)
+      saveToCohortPool(supabase, 'ex-lover', cohortHash, cohortData, fortuneData)
+        .catch(e => console.error('[ExLover] Cohort 저장 오류:', e))
     }
 
     // ✅ Percentile 계산 추가

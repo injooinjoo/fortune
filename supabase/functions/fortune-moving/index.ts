@@ -51,6 +51,13 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractMovingCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -240,6 +247,57 @@ serve(async (req) => {
       console.log('✅ Cache hit for moving fortune')
       fortuneData = cachedResult.result
     } else {
+      // ===== Cohort Pool 조회 =====
+      const cohortData = extractMovingCohort({ direction, birthDate: undefined })
+      const cohortHash = await generateCohortHash(cohortData)
+      console.log(`[fortune-moving] 🔍 Cohort: ${JSON.stringify(cohortData)}, hash: ${cohortHash.slice(0, 8)}...`)
+
+      const cohortResult = await getFromCohortPool(supabase, 'moving', cohortHash)
+      if (cohortResult) {
+        console.log(`[fortune-moving] ✅ Cohort Pool HIT!`)
+
+        // Personalize with user-specific data
+        const personalizedResult = personalize(cohortResult, {
+          '{{currentArea}}': current_area || '현재 지역',
+          '{{current_area}}': current_area || '현재 지역',
+          '{{targetArea}}': target_area || '이사 예정지',
+          '{{target_area}}': target_area || '이사 예정지',
+          '{{movingPeriod}}': moving_period || '미정',
+          '{{moving_period}}': moving_period || '미정',
+          '{{purpose}}': purpose || '새로운 시작',
+          '{{direction}}': direction || '미정',
+        })
+
+        fortuneData = typeof personalizedResult === 'string'
+          ? JSON.parse(personalizedResult)
+          : personalizedResult
+
+        // Blur 처리
+        const isBlurred = !isPremium
+        const blurredSections = isBlurred
+          ? ['direction_analysis', 'timing_analysis', 'lucky_dates', 'feng_shui_tips', 'cautions', 'recommendations', 'lucky_items', 'terrain_analysis', 'settlement_index', 'neighborhood_chemistry', 'lucky_checklist']
+          : []
+        fortuneData.isBlurred = isBlurred
+        fortuneData.blurredSections = blurredSections
+
+        // Percentile 계산
+        const percentileData = await calculatePercentile(supabase, 'moving', fortuneData.score || 80)
+        const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
+
+        return new Response(JSON.stringify({
+          success: true,
+          data: fortuneDataWithPercentile,
+          cached: true,
+          cohortHit: true,
+        }), {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+        })
+      }
+
+      console.log(`[fortune-moving] 💨 Cohort Pool MISS - LLM 호출 필요`)
       console.log('🔄 Cache miss, calling LLM API')
 
       // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
@@ -583,6 +641,11 @@ ${concernsText}
           fortune_type: 'moving',
           expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24시간 캐시
         })
+
+      // ===== Cohort Pool 저장 (Fire-and-forget) =====
+      saveToCohortPool(supabase, 'moving', cohortHash, cohortData, fortuneData)
+        .then(() => console.log(`[fortune-moving] 💾 Cohort Pool 저장 완료`))
+        .catch((err) => console.error(`[fortune-moving] ⚠️ Cohort Pool 저장 실패:`, err))
     }
 
     // ✅ 퍼센타일 계산

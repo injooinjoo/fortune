@@ -16,7 +16,7 @@ class FortuneTypeNames {
     // Traditional Analysis (전통 분석)
     'traditional': '전통 분석',
     'saju': '생년월일 분석',
-    'traditional-saju': '전통 사주 분석',
+    'traditional-saju': '전통 생년월일 분석',
     'tarot': 'Insight Cards',
     'saju-psychology': '성격 심리 분석',
     'tojeong': '전통 해석',

@@ -19,8 +19,8 @@
 Fortune 앱의 핵심 진입점을 채팅 인터페이스로 전환하는 아키텍처 가이드.
 
 **핵심 원칙**:
-1. 모든 운세 → 채팅 인터페이스로 통합 진입
-2. 운세 결과 → 채팅 메시지로 변환 표시
+1. 모든 인사이트 → 채팅 인터페이스로 통합 진입
+2. 인사이트 결과 → 채팅 메시지로 변환 표시
 3. 추천 칩 → 컨텍스트 기반 동적 큐레이션
 
 ---
@@ -36,8 +36,8 @@ Home(채팅) | 인사이트 | 탐구 | 트렌드 | 프로필
 | 탭 | 경로 | 역할 |
 |----|------|------|
 | Home | `/chat` | 통합 채팅 진입점 (NEW) |
-| 인사이트 | `/home` | 일일 운세 대시보드 |
-| 탐구 | `/fortune` | 운세 카테고리 + Face AI |
+| 인사이트 | `/home` | 일일 인사이트 대시보드 |
+| 탐구 | `/fortune` | 인사이트 카테고리 + Face AI |
 | 트렌드 | `/trend` | 트렌드 콘텐츠 |
 | 프로필 | `/profile` | 설정 + Premium |
 
@@ -53,7 +53,7 @@ Home(채팅) | 인사이트 | 탐구 | 트렌드 | 프로필
 lib/features/chat/                      # 46개 파일
 ├── data/
 │   └── services/
-│       └── fortune_recommend_service.dart  # 운세 추천 서비스
+│       └── fortune_recommend_service.dart  # 인사이트 추천 서비스
 ├── domain/
 │   ├── models/
 │   │   ├── chat_message.dart           # ChatMessage 모델
@@ -62,7 +62,7 @@ lib/features/chat/                      # 46개 파일
 │   │   ├── ai_recommendation.dart      # AI 추천 모델
 │   │   └── fortune_survey_config.dart  # 설문 설정 모델
 │   ├── configs/
-│   │   └── survey_configs.dart         # 39개 운세 설문 설정
+│   │   └── survey_configs.dart         # 39개 인사이트 설문 설정
 │   └── services/
 │       └── intent_detector.dart        # 의도 분석 서비스
 ├── presentation/
@@ -82,7 +82,7 @@ lib/features/chat/                      # 46개 파일
 │       ├── profile_bottom_sheet.dart   # 프로필 바텀시트
 │       ├── month_highlight_detail_bottom_sheet.dart  # 월별 하이라이트
 │       │
-│       ├── # 운세별 결과 카드 (8개) ─────────────────
+│       ├── # 인사이트별 결과 카드 (8개) ─────────────────
 │       ├── chat_fortune_result_card.dart   # 범용 결과 카드
 │       ├── chat_tarot_result_card.dart     # 타로 결과
 │       ├── chat_saju_result_card.dart      # 사주 결과
@@ -93,7 +93,7 @@ lib/features/chat/                      # 46개 파일
 │       ├── chat_match_insight_card.dart    # 매칭 인사이트 결과
 │       │
 │       └── survey/                     # 설문 위젯 (18개)
-│           ├── fortune_type_chips.dart         # 운세 타입 칩
+│           ├── fortune_type_chips.dart         # 인사이트 타입 칩
 │           ├── chat_survey_chips.dart          # 설문 칩
 │           ├── chat_survey_slider.dart         # 슬라이더
 │           ├── chat_date_picker.dart           # 날짜 선택
@@ -139,7 +139,7 @@ class ChatMessage {
   final bool isBlurred;
   final List<String> blurredSections;
 
-  // 운세 결과용
+  // 인사이트 결과용
   final String? fortuneType;
   final String? sectionKey;
 
@@ -219,7 +219,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     state = state.copyWith(isTyping: false);
   }
 
-  // 운세 결과 → 채팅 메시지 변환 후 추가
+  // 인사이트 결과 → 채팅 메시지 변환 후 추가
   Future<void> addFortuneResult(FortuneResult result) async {
     final messages = FortuneResultConverter.convert(result);
 
@@ -266,7 +266,7 @@ final chatMessagesProvider =
 2. **상세 섹션**: 개별 메시지로 분리, 블러 적용
 3. **후속 추천**: 마지막에 추천 칩 표시
 
-### FortuneResultConverter
+### FortuneResultConverter (인사이트 결과 변환)
 
 ```dart
 class FortuneResultConverter {
@@ -344,9 +344,9 @@ class FortuneResultConverter {
 
 ### 원칙
 
-1. **관련성**: 현재 운세와 연관된 유형 우선
+1. **관련성**: 현재 인사이트와 연관된 유형 우선
 2. **컨텍스트**: 시간대, 사용자 프로필 반영
-3. **인기도**: 인기 운세 보조 추천
+3. **인기도**: 인기 인사이트 보조 추천
 4. **제한**: 최대 5개 칩 표시
 
 ### 큐레이션 로직
@@ -367,7 +367,7 @@ List<RecommendationChip> curateChips({
   // 2. 프로필 기반 (최대 1개)
   if (profile?.mbti != null) {
     chips.add(RecommendationChip(
-      label: 'MBTI 운세',
+      label: 'MBTI 분석',
       fortuneType: 'mbti',
       icon: Icons.psychology,
     ));
@@ -376,7 +376,7 @@ List<RecommendationChip> curateChips({
   // 3. 시간 기반 (최대 1개)
   if (_isNightTime(now)) {
     chips.add(RecommendationChip(
-      label: '내일 운세',
+      label: '내일 인사이트',
       fortuneType: 'tomorrow',
       icon: Icons.nights_stay,
     ));
@@ -396,19 +396,19 @@ List<RecommendationChip> curateChips({
 ```dart
 const List<RecommendationChip> defaultChips = [
   RecommendationChip(
-    label: '오늘 운세',
+    label: '오늘의 메시지',
     fortuneType: 'daily',
     icon: Icons.wb_sunny_outlined,
     color: Color(0xFF7C3AED),
   ),
   RecommendationChip(
-    label: '연애운',
+    label: '연애 인사이트',
     fortuneType: 'love',
     icon: Icons.favorite_outline,
     color: Color(0xFFEC4899),
   ),
   RecommendationChip(
-    label: '재물운',
+    label: '재물 인사이트',
     fortuneType: 'money',
     icon: Icons.attach_money,
     color: Color(0xFF16A34A),
@@ -420,7 +420,7 @@ const List<RecommendationChip> defaultChips = [
     color: Color(0xFF9333EA),
   ),
   RecommendationChip(
-    label: '꿈해몽',
+    label: '꿈 분석',
     fortuneType: 'dream',
     icon: Icons.cloud_outlined,
     color: Color(0xFF2563EB),
@@ -462,7 +462,7 @@ const List<RecommendationChip> defaultChips = [
 | AI: [타이핑 중...]                |
 |                                  |
 | AI: +------------------------+   |
-|     | 연애운 점수: 85점       |   |
+|     | 연애 점수: 85점         |   |
 |     | 오늘은 좋은 만남이...   |   |
 |     +------------------------+   |
 |                                  |
@@ -472,7 +472,7 @@ const List<RecommendationChip> defaultChips = [
 |     | [잠금 해제]            |   |
 |     +------------------------+   |
 |                                  |
-|     [궁합 보기] [내일 운세]        |
+|     [궁합 보기] [내일 인사이트]    |
 +----------------------------------+
 |        [광고 보고 잠금 해제]        |
 +----------------------------------+
@@ -569,7 +569,7 @@ class ChatFortuneSection extends ConsumerWidget {
 | [02-architecture.md](02-architecture.md) | 전체 아키텍처 |
 | [03-ui-design-system.md](03-ui-design-system.md) | 채팅 UI 스타일 |
 | [04-state-management.md](04-state-management.md) | StateNotifier 패턴 |
-| [05-fortune-system.md](05-fortune-system.md) | 운세 조회 프로세스 |
+| [05-fortune-system.md](05-fortune-system.md) | 인사이트 조회 프로세스 |
 
 ---
 

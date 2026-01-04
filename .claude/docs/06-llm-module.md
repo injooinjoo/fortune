@@ -6,7 +6,7 @@
 
 | 항목 | 수치 |
 |------|------|
-| 운세 Edge Functions | 39개 |
+| 인사이트 Edge Functions | 39개 |
 | 유틸리티 Functions | 22개 |
 | 프롬프트 템플릿 | 39개 |
 
@@ -68,7 +68,7 @@ const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions',
 })
 
 // WRONG - 프롬프트 하드코딩 금지
-const prompt = '당신은 운세 전문가입니다...'  // 템플릿 사용!
+const prompt = '당신은 인사이트 전문가입니다...'  // 템플릿 사용!
 ```
 
 ---
@@ -94,7 +94,7 @@ supabase functions deploy fortune-{type}
 
 ## Edge Function 작성 체크리스트
 
-새로운 운세 Edge Function 작성 시 **반드시 확인**:
+새로운 인사이트 Edge Function 작성 시 **반드시 확인**:
 
 - [ ] `LLMFactory.createFromConfig()` 사용
 - [ ] `PromptManager` 사용 (프롬프트 템플릿화)

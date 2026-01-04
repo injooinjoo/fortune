@@ -33,6 +33,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractSajuCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -75,6 +82,61 @@ serve(async (req) => {
 
     console.log('💎 [Traditional-Saju] Premium 상태:', isPremium)
     console.log('📋 [Traditional-Saju] 질문:', question)
+
+    // ===== Cohort Pool 조회 (API 비용 90% 절감) =====
+    const cohortData = extractSajuCohort({
+      dayMaster: sajuData?.pillar?.day?.heavenlyStem,
+      dominantElement: sajuData?.dominantElement,
+      question: question,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+
+    if (Object.keys(cohortData).length > 0) {
+      console.log(`🎯 [Traditional-Saju] Cohort: ${JSON.stringify(cohortData)}`)
+
+      const poolResult = await getFromCohortPool(supabaseClient, 'traditional-saju', cohortHash)
+
+      if (poolResult) {
+        console.log('✅ [Traditional-Saju] Cohort Pool 히트! LLM 호출 생략')
+
+        // 개인화 (플레이스홀더 치환)
+        const personalized = personalize(poolResult, {
+          userName: (requestData as any).userName || '회원님',
+          question: question,
+          sajuPillars: sajuData?.pillar ?
+            `${sajuData.pillar.year?.heavenlyStem || ''}${sajuData.pillar.year?.earthlyBranch || ''} ${sajuData.pillar.month?.heavenlyStem || ''}${sajuData.pillar.month?.earthlyBranch || ''} ${sajuData.pillar.day?.heavenlyStem || ''}${sajuData.pillar.day?.earthlyBranch || ''} ${sajuData.pillar.time?.heavenlyStem || ''}${sajuData.pillar.time?.earthlyBranch || ''}` : '',
+          dominantElement: sajuData?.dominantElement || '목',
+          lackingElement: sajuData?.lackingElement || '수',
+        })
+
+        // 백분위 추가
+        const resultWithPercentile = addPercentileToResult(
+          personalized,
+          calculatePercentile(75)
+        )
+
+        // 블러 설정
+        const isBlurred = !isPremium
+        const blurredSections = isBlurred ? ['answer', 'advice', 'supplement'] : []
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            data: {
+              ...resultWithPercentile,
+              isBlurred,
+              blurredSections,
+            },
+            cohortHit: true,
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+            status: 200
+          }
+        )
+      }
+    }
+    // ===== Cohort Pool 미스 - LLM 호출 진행 =====
 
     // 사주 데이터 추출
     const dominantElement = sajuData?.dominantElement || '목'
@@ -207,6 +269,12 @@ serve(async (req) => {
         isBlurred,
         blurredSections
       }
+    }
+
+    // ===== Cohort Pool 저장 (fire-and-forget) =====
+    if (Object.keys(cohortData).length > 0) {
+      saveToCohortPool(supabaseClient, 'traditional-saju', cohortHash, cohortData, fortuneResponse.data)
+        .catch(e => console.error('[Traditional-Saju] Cohort 저장 오류:', e))
     }
 
     return new Response(

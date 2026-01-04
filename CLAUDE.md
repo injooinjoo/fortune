@@ -17,7 +17,7 @@
 
 ### Agent 협업
 - **feature-orchestrator**: 모든 요청의 진입점, 자동 라우팅
-- **fortune-specialist**: 운세 도메인 결정 (토큰, 블러, 입력 필드)
+- **fortune-specialist**: 인사이트 도메인 결정 (토큰, 블러, 입력 필드)
 - **quality-guardian**: 모든 코드 생성 후 품질 검증
 
 **우선순위**: 사용자 명시적 요청 > 프로젝트 규칙 > 글로벌 SuperClaude
@@ -249,8 +249,8 @@ FortuneChipGrid(
 | 탭 | 경로 | 역할 |
 |----|------|------|
 | Home | `/chat` | 통합 채팅 진입점 |
-| 인사이트 | `/home` | 일일 운세 대시보드 |
-| 탐구 | `/fortune` | 운세 카테고리 + Face AI |
+| 인사이트 | `/home` | 일일 인사이트 대시보드 |
+| 탐구 | `/fortune` | 인사이트 카테고리 + Face AI |
 | 트렌드 | `/trend` | 트렌드 콘텐츠 |
 | 프로필 | `/profile` | 설정 + Premium |
 
@@ -271,7 +271,7 @@ FortuneChipGrid(
 | [02-architecture](.claude/docs/02-architecture.md) | 아키텍처, Feature, 레이어 |
 | [03-ui-design-system](.claude/docs/03-ui-design-system.md) | UI, 색상, 폰트, 다크모드 |
 | [04-state-management](.claude/docs/04-state-management.md) | Provider, 상태, State |
-| [05-fortune-system](.claude/docs/05-fortune-system.md) | 운세, Fortune, 토큰 |
+| [05-fortune-system](.claude/docs/05-fortune-system.md) | 인사이트, Fortune, 토큰 |
 | [06-llm-module](.claude/docs/06-llm-module.md) | Edge Function, LLM, API |
 | [18-chat-first-architecture](.claude/docs/18-chat-first-architecture.md) | 채팅, chat, 대화, 추천 칩, Home |
 
@@ -303,7 +303,7 @@ UI/페이지 수정 완료 시 자동으로 QA 제안:
 
 ```
 lib/features/chat/        # 채팅 진입점 (Chat-First)
-lib/features/fortune/     # 운세 기능 (Clean Architecture)
+lib/features/fortune/     # 인사이트 기능 (Clean Architecture)
 supabase/functions/       # Edge Functions (LLMFactory)
 .claude/agents/           # 3개 Agent (feature-orchestrator, fortune-specialist, quality-guardian)
 .claude/skills/           # 6개 Skill (feature-fortune, feature-chat, feature-ui, backend-service, troubleshoot, quality-check)
@@ -315,7 +315,7 @@ supabase/functions/       # Edge Functions (LLMFactory)
 ## Skill 사용법
 
 ### /sc:feature-fortune
-새 운세 기능 전체 생성 (Edge Function + 모델 + 서비스 + 페이지 + 라우트)
+새 인사이트 기능 전체 생성 (Edge Function + 모델 + 서비스 + 페이지 + 라우트)
 ```
 /sc:feature-fortune 펫궁합
 ```
@@ -329,7 +329,7 @@ supabase/functions/       # Edge Functions (LLMFactory)
 ### /sc:feature-ui
 UI만 변경 (Presentation 레이어만)
 ```
-/sc:feature-ui 일일운세 결과 카드 리디자인
+/sc:feature-ui 일일 인사이트 결과 카드 리디자인
 ```
 
 ### /sc:backend-service

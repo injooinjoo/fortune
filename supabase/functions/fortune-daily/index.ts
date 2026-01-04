@@ -33,6 +33,12 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile } from '../_shared/percentile/calculator.ts'
+import {
+  extractDailyCohort,
+  getFromCohortPool,
+  personalize,
+  saveToCohortPool,
+} from '../_shared/cohort/index.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -307,6 +313,12 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
+    // Service Role 클라이언트 (Cohort Pool 접근용 - RLS 우회)
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+
     const requestData = await req.json()
     const {
       userId,
@@ -327,6 +339,70 @@ serve(async (req) => {
 
     console.log('💎 [Daily] Premium 상태:', isPremium)
     console.log('📍 [Daily] 사용자 위치:', userLocation || location || '미제공')
+
+    // ============================================
+    // 🚀 Cohort Pool 조회 (API 비용 90% 절감)
+    // ============================================
+    // 온디맨드 Pool 저장을 위해 cohortData를 외부에 선언
+    let dailyCohortData: { period: string; zodiac: string; element: string } | null = null;
+
+    if (birthDate) {
+      try {
+        dailyCohortData = extractDailyCohort({
+          birthDate,
+          now: date ? new Date(date) : undefined,
+        });
+        const cohortData = dailyCohortData;
+
+        console.log(`🔍 [Cohort] Daily 조회 시도:`, JSON.stringify(cohortData));
+
+        const cachedResult = await getFromCohortPool(supabaseAdmin, 'daily', cohortData);
+
+        if (cachedResult) {
+          console.log('✅ [Cohort] Pool에서 결과 반환 (LLM 호출 절약!)');
+
+          // 개인화 처리
+          const personalizedFortune = personalize(cachedResult, {
+            name,
+            userName: name,
+            birthDate,
+            age: birthDate ? new Date().getFullYear() - new Date(birthDate).getFullYear() : 20,
+          });
+
+          // 퍼센타일 계산 (캐시된 점수 사용)
+          const cachedScore = (personalizedFortune as any).overall_score || 75;
+          const percentileData = await calculatePercentile(
+            supabaseClient,
+            'daily',
+            cachedScore
+          );
+
+          return new Response(
+            JSON.stringify({
+              fortune: {
+                ...personalizedFortune,
+                percentile: percentileData.percentile,
+                totalTodayViewers: percentileData.totalTodayViewers,
+                isPercentileValid: percentileData.isPercentileValid,
+              },
+              storySegments: [],  // 캐시된 결과에서는 스토리 제외
+              cached: true,
+              tokensUsed: 0,
+              cohortHit: true,
+            }),
+            {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+              status: 200,
+            }
+          );
+        } else {
+          console.log('⚠️ [Cohort] Pool에 결과 없음, LLM 호출로 진행');
+        }
+      } catch (cohortError) {
+        console.error('[Cohort] 조회 실패 (무시하고 계속):', cohortError);
+      }
+    }
+    // ============================================
 
     // 클라이언트에서 전달받은 날짜 또는 한국 시간대로 현재 날짜 생성
     const today = date
@@ -1564,6 +1640,28 @@ serve(async (req) => {
     saveWidgetCache(supabaseClient, userId, fortune, categories).catch(err => {
       console.warn('[widget-cache] 저장 실패 (무시):', err.message)
     })
+
+    // ✅ Cohort Pool 온디맨드 저장 (백그라운드, 비동기 - 응답 지연 없음)
+    // Pool이 50개 미만일 때만 저장되어 자연스럽게 축적됨
+    if (dailyCohortData) {
+      // 템플릿화: 개인 정보를 플레이스홀더로 대체
+      const userName = name || '회원님';
+      const fortuneTemplate = {
+        ...fortune,
+        // 개인화 필드는 플레이스홀더로 대체
+        greeting: fortune.greeting?.replace(userName, '{{userName}}') || '',
+        content: fortune.content?.replace(userName, '{{userName}}') || '',
+        description: fortune.description?.replace(userName, '{{userName}}') || '',
+      };
+
+      saveToCohortPool(supabaseAdmin, 'daily', dailyCohortData, fortuneTemplate).then(saved => {
+        if (saved) {
+          console.log('✅ [Cohort] Pool에 새 결과 저장됨');
+        }
+      }).catch(err => {
+        console.warn('[Cohort] Pool 저장 실패 (무시):', err.message);
+      });
+    }
 
     // 운세와 스토리를 함께 반환
     return new Response(

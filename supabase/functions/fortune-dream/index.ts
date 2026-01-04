@@ -30,6 +30,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractDreamCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -366,6 +373,70 @@ serve(async (req) => {
     const dreamType = classifyDreamType(analysis)
     console.log('🔍 [Step 5] Dream type classified:', dreamType)
 
+    // ✅ Cohort Pool 조회 (캐시보다 먼저 확인 - 비용 최적화)
+    const cohortData = extractDreamCohort({
+      dream,
+      dreamCategory: dreamType,
+      emotion: (requestData as any).dreamEmotion || 'neutral',
+      birthDate: (requestData as any).birthDate || null,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log('🔍 [Step 5.1] Checking cohort pool:', { cohortHash, cohortData })
+
+    const cohortResult = await getFromCohortPool(supabase, 'dream', cohortHash)
+    if (cohortResult) {
+      console.log('✅ [Step 5.2] Cohort pool hit! Personalizing result...')
+
+      // 개인화 데이터 준비
+      const personalData = {
+        userName: (requestData as any).userName || (requestData as any).name || '회원님',
+        dreamContent: dream,
+        specificSymbols: analysis.symbolAnalysis.map(s => s.symbol).join(', '),
+      }
+
+      // 템플릿 개인화
+      const personalizedResult = personalize(cohortResult, personalData) as any
+
+      // 분석 데이터 병합
+      personalizedResult.analysis = {
+        ...personalizedResult.analysis,
+        symbolAnalysis: analysis.symbolAnalysis,
+        scenes: analysis.scenes,
+        luckyElements: analysis.luckyElements,
+        warningElements: analysis.warningElements,
+      }
+
+      // 퍼센타일 계산
+      const percentileData = await calculatePercentile(supabase, 'dream', personalizedResult.score || 75)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['psychologicalInsight', 'todayGuidance', 'symbolAnalysis', 'actionAdvice']
+        : []
+
+      const finalResult = {
+        ...resultWithPercentile,
+        dream,
+        inputType,
+        date: date || new Date().toISOString().split('T')[0],
+        dreamType,
+        isBlurred,
+        blurredSections,
+        timestamp: new Date().toISOString(),
+      }
+
+      console.log('✅ [Step 5.3] Returning cohort result')
+      return new Response(JSON.stringify({ success: true, data: finalResult }), {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+    }
+    console.log('🔄 [Step 5.2] Cohort pool miss, checking cache...')
+
     // 캐시 확인 (✅ UTF-8 안전 해시 생성)
     const encoder = new TextEncoder()
     const data = encoder.encode(dream + dreamType)
@@ -583,6 +654,10 @@ serve(async (req) => {
           expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24시간 캐시
         })
       console.log('✅ [Step 16] Result cached')
+
+      // ✅ Cohort Pool에 저장 (비동기, fire-and-forget)
+      saveToCohortPool(supabase, 'dream', cohortHash, cohortData, fortuneData)
+        .catch(e => console.error('[Dream] Cohort 저장 오류:', e))
     }
 
     // ✅ 퍼센타일 계산 (표준 score 필드 사용)

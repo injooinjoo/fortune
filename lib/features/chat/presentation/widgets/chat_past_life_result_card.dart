@@ -36,7 +36,7 @@ class _ChatPastLifeResultCardState
     extends ConsumerState<ChatPastLifeResultCard> {
   bool _isBlurred = false;
   List<String> _blurredSections = [];
-  bool _isStoryExpanded = false;
+  bool _isStoryExpanded = true; // 기본으로 펼쳐서 시작
 
   @override
   void initState() {

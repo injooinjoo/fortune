@@ -19,6 +19,14 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractTarotCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 // CORS 헤더
 const corsHeaders = {
@@ -249,6 +257,55 @@ serve(async (req: Request) => {
 
     console.log(`🎴 타로 리딩 요청 - 사용자: ${userId}, 스프레드: ${spreadType}, 카드: [${cardIndices.join(', ')}]`)
 
+    // Supabase 클라이언트 생성
+    const supabaseClient = createClient(supabaseUrl, supabaseKey)
+
+    // ===== Cohort Pool 조회 (API 비용 절감) =====
+    // 타로는 선택 카드가 다양해서 Pool hit율은 낮지만, 동일 카드 조합 재사용 가능
+    const cohortData = extractTarotCohort({
+      spreadType: spreadType,
+      question: question,
+      selectedCards: cardIndices,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+
+    if (Object.keys(cohortData).length > 0) {
+      console.log(`🎯 [Tarot] Cohort: ${JSON.stringify(cohortData)}`)
+
+      const poolResult = await getFromCohortPool(supabaseClient, 'tarot', cohortHash)
+
+      if (poolResult) {
+        console.log('✅ [Tarot] Cohort Pool 히트! LLM 호출 생략')
+
+        // 개인화 (플레이스홀더 치환)
+        const personalized = personalize(poolResult, {
+          userName: userName || '회원님',
+          question: question,
+        })
+
+        // 백분위 추가
+        const resultWithPercentile = addPercentileToResult(
+          personalized,
+          calculatePercentile(personalized.energyLevel || 70)
+        )
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            data: {
+              ...resultWithPercentile,
+              timestamp: new Date().toISOString(),
+              isBlurred: false,
+              blurredSections: [],
+            },
+            cohortHit: true,
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+    }
+    // ===== Cohort Pool 미스 - LLM 호출 진행 =====
+
     // 포지션 정보 가져오기
     const positions = SPREAD_POSITIONS[spreadType] || SPREAD_POSITIONS['single']
 
@@ -373,6 +430,12 @@ serve(async (req: Request) => {
       model: llmResult.model,
       response: llmResult,
     }).catch(console.error)
+
+    // ===== Cohort Pool 저장 (fire-and-forget) =====
+    if (Object.keys(cohortData).length > 0) {
+      saveToCohortPool(supabaseClient, 'tarot', cohortHash, cohortData, response.data)
+        .catch(e => console.error('[Tarot] Cohort 저장 오류:', e))
+    }
 
     console.log(`🎴 타로 리딩 완료 - ${cardResults.length}장, 에너지: ${response.data.energyLevel}`)
 

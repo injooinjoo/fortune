@@ -11,6 +11,13 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractExamCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
@@ -116,11 +123,42 @@ serve(async (req) => {
 
     let fortuneData: any
 
+    // ===== Cohort Pool 조회 =====
+    const cohortData = extractExamCohort({ examType, birthDate })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`[fortune-exam] 🔍 Cohort: ${JSON.stringify(cohortData)}, hash: ${cohortHash.slice(0, 8)}...`)
+
     if (cachedResult?.result) {
       console.log('Cache hit for exam fortune')
       fortuneData = cachedResult.result
     } else {
-      console.log('Cache miss, calling LLM API')
+      // Cohort Pool 조회
+      const cohortResult = await getFromCohortPool(supabase, 'exam', cohortHash)
+
+      if (cohortResult) {
+        console.log(`[fortune-exam] ✅ Cohort Pool HIT!`)
+
+        // Personalize
+        const personalizedResult = personalize(cohortResult, {
+          '{{examType}}': examTypeLabel,
+          '{{examDate}}': examDate,
+          '{{daysRemaining}}': String(daysRemaining),
+          '{{preparation}}': preparationLabel,
+        })
+
+        fortuneData = typeof personalizedResult === 'string'
+          ? JSON.parse(personalizedResult)
+          : personalizedResult
+
+        // 동적 필드 업데이트
+        fortuneData.exam_type = examTypeLabel
+        fortuneData.exam_date = examDate
+        fortuneData.days_remaining = daysRemaining
+        fortuneData.dday_stage = ddayStage
+        fortuneData.preparation_status = preparationLabel
+        fortuneData.timestamp = new Date().toISOString()
+      } else {
+        console.log('[fortune-exam] 💨 Cohort Pool MISS - LLM 호출 필요')
 
       const ddayLabel = daysRemaining > 0 ? `D-${daysRemaining}` : daysRemaining === 0 ? 'D-Day' : `D+${Math.abs(daysRemaining)}`
 
@@ -425,6 +463,12 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
           fortune_type: 'exam',
           expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
         })
+
+      // ===== Cohort Pool 저장 (Fire-and-forget) =====
+      saveToCohortPool(supabase, 'exam', cohortHash, fortuneData)
+        .then(() => console.log(`[fortune-exam] 💾 Cohort Pool 저장 완료`))
+        .catch((err) => console.error(`[fortune-exam] ⚠️ Cohort Pool 저장 실패:`, err))
+      } // Close cohort miss else block
     }
 
     const percentileData = await calculatePercentile(supabase, 'exam', fortuneData.score)

@@ -274,10 +274,10 @@ final loveSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// Daily (오늘의 운세) 설문 설정
+// Daily (오늘의 인사이트) 설문 설정
 // ============================================================
 
-/// Daily 설문 설정 (설문 스킵 - 바로 운세 조회)
+/// Daily 설문 설정 (설문 스킵 - 바로 조회)
 final dailySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.daily,
   title: '오늘의 인사이트',
@@ -555,7 +555,7 @@ List<SurveyOption> getPositionsForField(String fieldId) {
 }
 
 // ============================================================
-// NewYear (새해 운세) 설문 설정
+// NewYear (새해 인사이트) 설문 설정
 // ============================================================
 
 /// 새해 목표 옵션
@@ -588,7 +588,7 @@ const newYearSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// DailyCalendar (기간별 운세) 설문 설정
+// DailyCalendar (기간별 인사이트) 설문 설정
 // ============================================================
 
 /// 캘린더 연동 옵션
@@ -598,7 +598,7 @@ const _calendarSyncOptions = [
 ];
 
 /// DailyCalendar 설문 설정
-/// 플로우: 캘린더 연동 → 날짜 선택 → (동적) 일정 표시 → 운세 생성
+/// 플로우: 캘린더 연동 → 날짜 선택 → (동적) 일정 표시 → 인사이트 생성
 const dailyCalendarSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.dailyCalendar,
   title: '기간별 인사이트',
@@ -1261,7 +1261,7 @@ const exLoverSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// BlindDate (소개팅 운세) 설문 설정
+// BlindDate (소개팅 가이드) 설문 설정
 // ============================================================
 
 /// 소개팅 유형 옵션
@@ -1359,7 +1359,7 @@ final blindDateSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// Money (재물운/투자운세) 설문 설정
+// Money (재물/투자 인사이트) 설문 설정
 // ============================================================
 
 /// 재물 목표 옵션
@@ -1607,7 +1607,7 @@ const fortuneCookieSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// Health (건강 운세) 설문 설정
+// Health (건강 체크) 설문 설정
 // ============================================================
 
 /// 건강 고민 옵션
@@ -1926,7 +1926,7 @@ const petSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// Family (가족 운세) 설문 설정
+// Family (가족 인사이트) 설문 설정
 // ============================================================
 
 /// 가족 관심사 옵션
@@ -1963,7 +1963,7 @@ const familySurveyConfig = FortuneSurveyConfig(
     ),
     SurveyStep(
       id: 'member',
-      question: '누구의 운세가 궁금하세요?',
+      question: '누구에 대해 알아볼까요?',
       inputType: SurveyInputType.chips,
       options: _familyMemberOptions,
     ),
@@ -2145,7 +2145,7 @@ const _examPreparationOptions = [
 const examSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.exam,
   title: '시험운',
-  description: '시험 합격 운세를 봐드릴게요!',
+  description: '시험 합격 가이드를 드릴게요!',
   emoji: '📝',
   accentColor: FortuneColors.career,
   steps: [
@@ -2297,6 +2297,33 @@ const gratitudeSurveyConfig = FortuneSurveyConfig(
 // PastLife (전생탐험) 설문 설정
 // ============================================================
 
+/// 전생 시대 예감 옵션
+const _pastLifeEraVibeOptions = [
+  SurveyOption(id: 'joseon_royal', label: '조선 왕실', emoji: '👑'),
+  SurveyOption(id: 'joseon_scholar', label: '조선 선비', emoji: '📜'),
+  SurveyOption(id: 'joseon_common', label: '조선 서민', emoji: '🏡'),
+  SurveyOption(id: 'warrior', label: '전쟁터의 무사', emoji: '⚔️'),
+  SurveyOption(id: 'artist', label: '예술가/기생', emoji: '🎨'),
+  SurveyOption(id: 'unknown', label: '모르겠어', emoji: '🌫️'),
+];
+
+/// 전생에서 궁금한 것 옵션
+const _pastLifeCuriosityOptions = [
+  SurveyOption(id: 'identity', label: '나는 누구였을까?', emoji: '🪞'),
+  SurveyOption(id: 'story', label: '어떤 삶을 살았을까?', emoji: '📖'),
+  SurveyOption(id: 'karma', label: '현생과 연결된 인연', emoji: '🔗'),
+  SurveyOption(id: 'lesson', label: '전생이 남긴 교훈', emoji: '💡'),
+];
+
+/// 전생 기억 느낌 옵션
+const _pastLifeFeelingOptions = [
+  SurveyOption(id: 'deja_vu', label: '데자뷔를 자주 느껴', emoji: '👁️'),
+  SurveyOption(id: 'old_soul', label: '나이보다 성숙하다는 말을 들어', emoji: '🧓'),
+  SurveyOption(id: 'specific_era', label: '특정 시대에 끌려', emoji: '⏳'),
+  SurveyOption(id: 'recurring_dream', label: '반복되는 꿈이 있어', emoji: '💭'),
+  SurveyOption(id: 'none', label: '딱히 없어', emoji: '🤷'),
+];
+
 const pastLifeSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.pastLife,
   title: '전생탐험',
@@ -2304,9 +2331,33 @@ const pastLifeSurveyConfig = FortuneSurveyConfig(
   emoji: '🔮',
   accentColor: FortuneColors.mystical,
   steps: [
+    // Step 1: 전생에서 가장 궁금한 것
+    SurveyStep(
+      id: 'curiosity',
+      question: '전생에서 가장 궁금한 게 뭐야? 🔮',
+      inputType: SurveyInputType.chips,
+      options: _pastLifeCuriosityOptions,
+    ),
+    // Step 2: 전생 시대 예감 (선택)
+    SurveyStep(
+      id: 'eraVibe',
+      question: '혹시 전생이 어느 시대였을 것 같아? ✨',
+      inputType: SurveyInputType.chips,
+      options: _pastLifeEraVibeOptions,
+      isRequired: false,
+    ),
+    // Step 3: 전생 기억 느낌 (선택)
+    SurveyStep(
+      id: 'feeling',
+      question: '평소에 이런 느낌 받은 적 있어? 🌙',
+      inputType: SurveyInputType.chips,
+      options: _pastLifeFeelingOptions,
+      isRequired: false,
+    ),
+    // Step 4: 사진 업로드 (핵심)
     SurveyStep(
       id: 'photo',
-      question: '너의 전생을 읽어볼게 🔮\n사진을 올려주면 더 깊이 들여다볼 수 있어',
+      question: '이제 너의 전생을 읽어볼게 🔮\n사진을 올려주면 AI가 전생 초상화도 그려줄 수 있어',
       inputType: SurveyInputType.faceReading,
     ),
   ],

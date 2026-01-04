@@ -32,6 +32,13 @@ import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
+import {
+  extractHealthCohort,
+  generateCohortHash,
+  getFromCohortPool,
+  saveToCohortPool,
+  personalize,
+} from '../_shared/cohort/index.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
@@ -388,6 +395,55 @@ serve(async (req) => {
       hasChronicCondition,
       chronicCondition
     })
+
+    // ✅ Cohort Pool 조회 (API 비용 90% 절감)
+    const cohortData = extractHealthCohort({
+      birthDate: birthDate || '',
+      gender: (requestData as any).gender,
+    })
+    const cohortHash = await generateCohortHash(cohortData)
+    console.log(`[Health] Cohort: ${JSON.stringify(cohortData)} -> ${cohortHash.slice(0, 8)}...`)
+
+    const poolResult = await getFromCohortPool(supabase, 'health', cohortHash)
+    if (poolResult) {
+      console.log('[Health] ✅ Cohort Pool 히트!')
+      // 개인화
+      const personalizedResult = personalize(poolResult, {
+        userName: (requestData as any).userName || (requestData as any).name || '회원님',
+        condition: current_condition,
+        concernedParts: concerned_body_parts.join(', '),
+      }) as Record<string, unknown>
+
+      // 오행 분석 추가 (있는 경우)
+      if (elementAnalysis) {
+        personalizedResult.element_advice = {
+          lacking_element: elementAnalysis.lacking,
+          dominant_element: elementAnalysis.dominant,
+          vulnerable_organs: ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.organs || [],
+          vulnerable_symptoms: ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.symptoms || [],
+          recommended_foods: ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.foods || []
+        }
+      }
+
+      // 퍼센타일 추가
+      const score = (personalizedResult.score as number) || 75
+      const percentileData = await calculatePercentile(supabase, 'health', score)
+      const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
+
+      // Blur 처리
+      resultWithPercentile.isBlurred = !isPremium
+      resultWithPercentile.blurredSections = !isPremium
+        ? ['recommendations', 'cautions', 'element_advice', 'personalized_feedback']
+        : []
+
+      return new Response(JSON.stringify({ success: true, data: resultWithPercentile }), {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+    }
+    console.log('[Health] Cohort Pool miss, LLM 호출 필요')
 
     // 모든 건강 입력을 캐시 키에 포함 (개인화된 결과)
     const healthInputs = `${current_condition}_${concerned_body_parts.join(',')}_s${sleepQuality}e${exerciseFrequency}t${stressLevel}m${mealRegularity}`
@@ -805,6 +861,10 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
         fortune_type: 'health',
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       })
+
+      // ✅ Cohort Pool에 저장 (fire-and-forget)
+      saveToCohortPool(supabase, 'health', cohortHash, cohortData, fortuneData)
+        .catch(e => console.error('[Health] Cohort 저장 오류:', e))
     }
 
     // ✅ 퍼센타일 계산
