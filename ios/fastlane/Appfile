@@ -3,6 +3,6 @@
 app_identifier("com.beyond.fortune")
 apple_id("ink595@g.harvard.edu")
 
-# Team ID - uncomment and fill if needed
-# team_id("YOUR_TEAM_ID")
-# itc_team_id("YOUR_ITC_TEAM_ID")
+# Team ID
+team_id("5F7CN7Y54D")
+itc_team_id("5F7CN7Y54D")
