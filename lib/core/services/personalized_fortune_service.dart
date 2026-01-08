@@ -2,12 +2,12 @@ import '../../data/models/user_profile.dart';
 
 /// 사용자 프로필 기반 맞춤형 운세 컨텐츠 생성 서비스
 class PersonalizedFortuneService {
-  
   /// 사용자 나이 계산
   static int calculateAge(DateTime birthDate) {
     final now = DateTime.now();
     int age = now.year - birthDate.year;
-    if (now.month < birthDate.month || (now.month == birthDate.month && now.day < birthDate.day)) {
+    if (now.month < birthDate.month ||
+        (now.month == birthDate.month && now.day < birthDate.day)) {
       age--;
     }
     return age;
@@ -28,99 +28,100 @@ class PersonalizedFortuneService {
 
   /// 맞춤형 "할 일" 생성
   static List<String> getPersonalizedTodos(UserProfile? profile) {
-    if (profile == null) return _getDefaultTodos();
-    
-    final age = calculateAge(profile.birthDate!);
+    if (profile?.birthDate == null) return _getDefaultTodos();
+    final age = calculateAge(profile!.birthDate!);
     final ageGroup = getAgeGroup(age);
-    final gender = profile.gender ?? 'male';
-    
+    final gender = profile.gender.value;
+
     final todoMap = _getTodoDatabase();
     final key = '${gender}_$ageGroup';
-    
+
     return todoMap[key] ?? _getDefaultTodos();
   }
 
   /// 맞춤형 "피할 일" 생성
   static List<String> getPersonalizedAvoids(UserProfile? profile) {
     if (profile == null) return _getDefaultAvoids();
-    
+
     final age = calculateAge(profile.birthDate!);
     final ageGroup = getAgeGroup(age);
-    final gender = profile.gender ?? 'male';
-    
+    final gender = profile.gender.value;
+
     final avoidMap = _getAvoidDatabase();
     final key = '${gender}_$ageGroup';
-    
+
     return avoidMap[key] ?? _getDefaultAvoids();
   }
 
   /// 맞춤형 조언 생성
   static String getPersonalizedAdvice(UserProfile? profile) {
     if (profile == null) return '차분한 마음으로 계획을 세우면 좋은 결과를 얻을 수 있어요';
-    
+
     final age = calculateAge(profile.birthDate!);
     final ageGroup = getAgeGroup(age);
-    final gender = profile.gender ?? 'male';
-    
+    final gender = profile.gender.value;
+
     final adviceMap = _getAdviceDatabase();
     final key = '${gender}_$ageGroup';
-    
+
     return adviceMap[key] ?? '차분한 마음으로 계획을 세우면 좋은 결과를 얻을 수 있어요';
   }
 
   /// 맞춤형 시간대별 활동 생성
-  static List<Map<String, dynamic>> getPersonalizedHourlyActivities(UserProfile? profile) {
+  static List<Map<String, dynamic>> getPersonalizedHourlyActivities(
+      UserProfile? profile) {
     if (profile == null) return _getDefaultActivities();
-    
+
     final age = calculateAge(profile.birthDate!);
     final ageGroup = getAgeGroup(age);
-    final gender = profile.gender ?? 'male';
-    
+    final gender = profile.gender.value;
+
     final activitiesMap = _getActivitiesDatabase();
     final key = '${gender}_$ageGroup';
-    
+
     return activitiesMap[key] ?? _getDefaultActivities();
   }
 
   /// 맞춤형 인간관계 조언 생성
-  static Map<String, String> getPersonalizedRelationships(UserProfile? profile) {
+  static Map<String, String> getPersonalizedRelationships(
+      UserProfile? profile) {
     if (profile == null) return _getDefaultRelationships();
-    
+
     final age = calculateAge(profile.birthDate!);
     final ageGroup = getAgeGroup(age);
-    final gender = profile.gender ?? 'male';
-    
+    final gender = profile.gender.value;
+
     final relationshipMap = _getRelationshipDatabase();
     final key = '${gender}_$ageGroup';
-    
+
     return relationshipMap[key] ?? _getDefaultRelationships();
   }
 
   /// 맞춤형 금전운 조언 생성
   static String getPersonalizedMoneyAdvice(UserProfile? profile) {
     if (profile == null) return '신중한 투자 고려\n큰 지출은 피하기\n계획적인 소비';
-    
+
     final age = calculateAge(profile.birthDate!);
     final ageGroup = getAgeGroup(age);
-    final gender = profile.gender ?? 'male';
-    
+    final gender = profile.gender.value;
+
     final moneyAdviceMap = _getMoneyAdviceDatabase();
     final key = '${gender}_$ageGroup';
-    
+
     return moneyAdviceMap[key] ?? '신중한 투자 고려\n큰 지출은 피하기\n계획적인 소비';
   }
 
   /// 맞춤형 건강 조언 생성
   static String getPersonalizedHealthAdvice(UserProfile? profile) {
     if (profile == null) return '충분한 수분 섭취\n목과 어깨 스트레칭\n규칙적인 식사';
-    
+
     final age = calculateAge(profile.birthDate!);
     final ageGroup = getAgeGroup(age);
-    final gender = profile.gender ?? 'male';
-    
+    final gender = profile.gender.value;
+
     final healthAdviceMap = _getHealthAdviceDatabase();
     final key = '${gender}_$ageGroup';
-    
+
     return healthAdviceMap[key] ?? '충분한 수분 섭취\n목과 어깨 스트레칭\n규칙적인 식사';
   }
 
@@ -164,7 +165,7 @@ class PersonalizedFortuneService {
         '은퇴 후 준비 시작',
         '건강 관리 우선하기',
       ],
-      
+
       // 20대 초반 여성
       'female_20s_early': [
         '새로운 분야 도전해보기',

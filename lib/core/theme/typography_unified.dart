@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/font_config.dart';
 import 'package:fortune/core/theme/font_size_system.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// 통합 타이포그래피 시스템
@@ -20,6 +19,8 @@ import 'package:google_fonts/google_fonts.dart';
 /// Text('본문', style: TypographyUnified.bodyMedium)
 /// ```
 class TypographyUnified {
+  static const Color _textPrimaryLight = Color(0xFF1A1A1A);
+  static const Color _textPrimaryDark = Color(0xFFFFFFFF);
   // ==========================================
   // FONT FAMILIES (FontConfig 참조)
   // ==========================================
@@ -377,14 +378,14 @@ class TypographyUnified {
   /// 라이트모드용 TextStyle 생성
   static TextStyle withLightColor(TextStyle style, {Color? color}) {
     return style.copyWith(
-      color: color ?? TossDesignSystem.textPrimaryLight,
+      color: color ?? _textPrimaryLight,
     );
   }
 
   /// 다크모드용 TextStyle 생성
   static TextStyle withDarkColor(TextStyle style, {Color? color}) {
     return style.copyWith(
-      color: color ?? TossDesignSystem.textPrimaryDark,
+      color: color ?? _textPrimaryDark,
     );
   }
 
@@ -401,6 +402,33 @@ class TypographyUnified {
     } else {
       return withLightColor(style, color: lightColor);
     }
+  }
+
+  /// Material TextTheme mapped to unified typography
+  static TextTheme materialTextTheme({required Brightness brightness}) {
+    final textColor =
+        brightness == Brightness.dark ? _textPrimaryDark : _textPrimaryLight;
+
+    return TextTheme(
+      displayLarge: displayLarge,
+      displayMedium: displayMedium,
+      displaySmall: displaySmall,
+      headlineLarge: heading1,
+      headlineMedium: heading2,
+      headlineSmall: heading3,
+      titleLarge: heading4,
+      titleMedium: bodyLarge,
+      titleSmall: bodyMedium,
+      bodyLarge: bodyLarge,
+      bodyMedium: bodyMedium,
+      bodySmall: bodySmall,
+      labelLarge: labelLarge,
+      labelMedium: labelMedium,
+      labelSmall: labelSmall,
+    ).apply(
+      bodyColor: textColor,
+      displayColor: textColor,
+    );
   }
 }
 

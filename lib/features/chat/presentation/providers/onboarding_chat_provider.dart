@@ -122,7 +122,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
 
         // 로그아웃 이벤트 감지
         if (authState.event == AuthChangeEvent.signedOut) {
-          debugPrint('🔍 [OnboardingChatNotifier] User signed out - resetting onboarding');
+          debugPrint(
+              '🔍 [OnboardingChatNotifier] User signed out - resetting onboarding');
           _resetForGuestUser();
         }
       });
@@ -142,15 +143,18 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
       isCheckingStatus: false,
     );
 
-    debugPrint('🔍 [OnboardingChatNotifier] State reset for guest: needsOnboarding=${state.needsOnboarding}');
+    debugPrint(
+        '🔍 [OnboardingChatNotifier] State reset for guest: needsOnboarding=${state.needsOnboarding}');
   }
 
   /// 온보딩 필요 여부 확인
   Future<void> _checkOnboardingStatus() async {
     // 이미 온보딩이 진행 중이면 상태를 덮어쓰지 않음
     // ✅ isCheckingStatus가 false면 startOnboarding()이 이미 호출됨 → 무시
-    if (state.currentStep != OnboardingStep.welcome || !state.isCheckingStatus) {
-      debugPrint('🔍 [_checkOnboardingStatus] Skipping (step: ${state.currentStep}, isChecking: ${state.isCheckingStatus})');
+    if (state.currentStep != OnboardingStep.welcome ||
+        !state.isCheckingStatus) {
+      debugPrint(
+          '🔍 [_checkOnboardingStatus] Skipping (step: ${state.currentStep}, isChecking: ${state.isCheckingStatus})');
       if (state.isCheckingStatus) {
         state = state.copyWith(isCheckingStatus: false);
       }
@@ -171,7 +175,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
 
         // ✅ 비동기 작업 후 재확인: startOnboarding()이 호출됐으면 무시
         if (!state.isCheckingStatus) {
-          debugPrint('🔍 [_checkOnboardingStatus] startOnboarding() was called during async, aborting');
+          debugPrint(
+              '🔍 [_checkOnboardingStatus] startOnboarding() was called during async, aborting');
           return;
         }
 
@@ -186,8 +191,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
         }
 
         // 소셜 로그인에서 이름 가져오기
-        final socialName = user.userMetadata?['full_name'] ??
-            user.userMetadata?['name'];
+        final socialName =
+            user.userMetadata?['full_name'] ?? user.userMetadata?['name'];
         if (socialName != null && socialName.toString().isNotEmpty) {
           state = state.copyWith(name: socialName.toString());
         }
@@ -195,7 +200,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
 
       // ✅ 비동기 작업 후 재확인
       if (!state.isCheckingStatus) {
-        debugPrint('🔍 [_checkOnboardingStatus] startOnboarding() was called during async, aborting');
+        debugPrint(
+            '🔍 [_checkOnboardingStatus] startOnboarding() was called during async, aborting');
         return;
       }
 
@@ -204,11 +210,13 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
 
       // ✅ 비동기 작업 후 재확인
       if (!state.isCheckingStatus) {
-        debugPrint('🔍 [_checkOnboardingStatus] startOnboarding() was called during async, aborting');
+        debugPrint(
+            '🔍 [_checkOnboardingStatus] startOnboarding() was called during async, aborting');
         return;
       }
 
-      if (localProfile != null && localProfile['onboarding_completed'] == true) {
+      if (localProfile != null &&
+          localProfile['onboarding_completed'] == true) {
         state = state.copyWith(
           needsOnboarding: false,
           currentStep: OnboardingStep.completed,
@@ -236,7 +244,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
       needsOnboarding: true,
       isCheckingStatus: false,
     );
-    debugPrint('🔍 [startOnboarding] State reset: needsOnboarding=${state.needsOnboarding}, currentStep=${state.currentStep}');
+    debugPrint(
+        '🔍 [startOnboarding] State reset: needsOnboarding=${state.needsOnboarding}, currentStep=${state.currentStep}');
 
     final chatNotifier = _ref.read(chatMessagesProvider.notifier);
 
@@ -327,7 +336,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
       name: cleanedName,
       currentStep: OnboardingStep.birthDate,
     );
-    debugPrint('🔍 [submitName] raw: $name, cleaned: $cleanedName, newStep: ${state.currentStep}');
+    debugPrint(
+        '🔍 [submitName] raw: $name, cleaned: $cleanedName, newStep: ${state.currentStep}');
 
     // UI 메시지는 비동기로 추가 (상태 변경 후)
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -359,8 +369,7 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
     final chatNotifier = _ref.read(chatMessagesProvider.notifier);
 
     // 포맷팅된 날짜 표시
-    final formattedDate =
-        '${date.year}년 ${date.month}월 ${date.day}일';
+    final formattedDate = '${date.year}년 ${date.month}월 ${date.day}일';
     chatNotifier.addUserMessage(formattedDate);
 
     state = state.copyWith(birthDate: date);
@@ -401,8 +410,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
   void _askForBirthTime() {
     final chatNotifier = _ref.read(chatMessagesProvider.notifier);
 
-    chatNotifier.addAiMessage(
-        '사주를 더 정확하게 보려면\n태어난 시간도 알려주세요.\n\n모르시면 "모름"을 선택하셔도 돼요.');
+    chatNotifier
+        .addAiMessage('사주를 더 정확하게 보려면\n태어난 시간도 알려주세요.\n\n모르시면 "모름"을 선택하셔도 돼요.');
 
     // 온보딩 입력 메시지 추가
     final message = ChatMessage(
@@ -678,12 +687,14 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
         id: user?.id ?? '',
         name: state.name!,
         email: user?.email ?? '',
-        birthDate: state.birthDate!.toIso8601String(),
+        birthDate: state.birthDate,
         birthTime: birthTimeString,
         mbti: state.mbti,
         gender: state.gender ?? Gender.other,
-        zodiacSign: FortuneDateUtils.getZodiacSign(state.birthDate!.toIso8601String()),
-        chineseZodiac: FortuneDateUtils.getChineseZodiac(state.birthDate!.toIso8601String()),
+        zodiacSign:
+            FortuneDateUtils.getZodiacSign(state.birthDate!.toIso8601String()),
+        chineseZodiac: FortuneDateUtils.getChineseZodiac(
+            state.birthDate!.toIso8601String()),
         onboardingCompleted: true,
         subscriptionStatus: SubscriptionStatus.free,
         fortuneCount: 0,

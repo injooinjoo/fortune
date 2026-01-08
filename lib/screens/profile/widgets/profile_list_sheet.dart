@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/design_system/design_system.dart';
 import '../../../presentation/providers/active_profile_provider.dart';
-import '../../../presentation/providers/auth_provider.dart';
+import '../../../presentation/providers/providers.dart';
 import '../../../presentation/providers/secondary_profiles_provider.dart';
 import 'add_profile_sheet.dart';
 
@@ -18,7 +18,7 @@ class ProfileListSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final activeState = ref.watch(activeProfileProvider);
-    final primaryProfileAsync = ref.watch(userProfileProvider);
+    final primaryProfile = ref.watch(primaryUserProfileProvider);
     final secondaryProfiles = ref.watch(secondaryProfilesProvider);
     final canAdd = ref.watch(canAddSecondaryProfileProvider);
 
@@ -68,9 +68,9 @@ class ProfileListSheet extends ConsumerWidget {
 
             // 본인 프로필
             _ProfileListTile(
-              name: primaryProfileAsync.valueOrNull?.name ?? '나',
+              name: primaryProfile?.name ?? '나',
               subtitle: '본인',
-              initial: (primaryProfileAsync.valueOrNull?.name ?? '나')
+              initial: (primaryProfile?.name ?? '나')
                   .substring(0, 1),
               isSelected: activeState.isPrimary,
               onTap: () {
@@ -252,11 +252,13 @@ class ProfileListSheet extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           '프로필 삭제',
-          style: context.typography.headingMedium.copyWith(color: colors.textPrimary),
+          style: context.typography.headingMedium
+              .copyWith(color: colors.textPrimary),
         ),
         content: Text(
           '이 프로필을 삭제하시겠습니까?\n삭제된 프로필은 복구할 수 없습니다.',
-          style: context.typography.bodyMedium.copyWith(color: colors.textSecondary),
+          style: context.typography.bodyMedium
+              .copyWith(color: colors.textSecondary),
         ),
         actions: [
           TextButton(
@@ -333,7 +335,8 @@ class _ProfileListTile extends StatelessWidget {
       ),
       subtitle: Text(
         subtitle,
-        style: context.typography.bodySmall.copyWith(color: colors.textSecondary),
+        style:
+            context.typography.bodySmall.copyWith(color: colors.textSecondary),
       ),
       trailing: isSelected
           ? Icon(Icons.check_circle, color: colors.accentSecondary)

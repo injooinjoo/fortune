@@ -1,0 +1,1173 @@
+{
+  "results": [
+    {
+      "success": true,
+      "assetId": "daily_mascot_main",
+      "filePath": "./assets/images/fortune/mascot/daily/mascot_dog_main.png"
+    },
+    {
+      "success": true,
+      "assetId": "daily_mascot_celebrate",
+      "filePath": "./assets/images/fortune/mascot/daily/mascot_dog_celebrate.png"
+    },
+    {
+      "success": true,
+      "assetId": "daily_mascot_sad",
+      "filePath": "./assets/images/fortune/mascot/daily/mascot_dog_sad.png"
+    },
+    {
+      "success": true,
+      "assetId": "daily_mascot_thinking",
+      "filePath": "./assets/images/fortune/mascot/daily/mascot_dog_thinking.png"
+    },
+    {
+      "success": true,
+      "assetId": "daily_bg_gradient",
+      "filePath": "./assets/images/fortune/bg/bg_daily_gradient.png"
+    },
+    {
+      "success": true,
+      "assetId": "icon_love",
+      "filePath": "./assets/images/fortune/icons/categories/icon_category_love.png"
+    },
+    {
+      "success": true,
+      "assetId": "icon_money",
+      "filePath": "./assets/images/fortune/icons/categories/icon_category_money.png"
+    },
+    {
+      "success": true,
+      "assetId": "icon_work",
+      "filePath": "./assets/images/fortune/icons/categories/icon_category_work.png"
+    },
+    {
+      "success": true,
+      "assetId": "icon_study",
+      "filePath": "./assets/images/fortune/icons/categories/icon_category_study.png"
+    },
+    {
+      "success": true,
+      "assetId": "icon_health",
+      "filePath": "./assets/images/fortune/icons/categories/icon_category_health.png"
+    },
+    {
+      "success": true,
+      "assetId": "love_couple_spring",
+      "filePath": "./assets/images/fortune/love/couple_spring_park.png"
+    },
+    {
+      "success": true,
+      "assetId": "tarot_card_back",
+      "filePath": "./assets/images/fortune/tarot/tarot_card_back.png"
+    },
+    {
+      "success": true,
+      "assetId": "tarot_bg_starry",
+      "filePath": "./assets/images/fortune/bg/bg_tarot_starry.png"
+    },
+    {
+      "success": true,
+      "assetId": "face_animal_dog",
+      "filePath": "./assets/images/fortune/face-reading/animals/animal_face_dog.png"
+    },
+    {
+      "success": true,
+      "assetId": "face_animal_cat",
+      "filePath": "./assets/images/fortune/face-reading/animals/animal_face_cat.png"
+    },
+    {
+      "success": true,
+      "assetId": "face_animal_rabbit",
+      "filePath": "./assets/images/fortune/face-reading/animals/animal_face_rabbit.png"
+    },
+    {
+      "success": true,
+      "assetId": "face_animal_fox",
+      "filePath": "./assets/images/fortune/face-reading/animals/animal_face_fox.png"
+    },
+    {
+      "success": true,
+      "assetId": "face_animal_bear",
+      "filePath": "./assets/images/fortune/face-reading/animals/animal_face_bear.png"
+    },
+    {
+      "success": true,
+      "assetId": "compatibility_ducks",
+      "filePath": "./assets/images/fortune/compatibility/mandarin_ducks_pair.png"
+    },
+    {
+      "success": true,
+      "assetId": "compatibility_yin_yang",
+      "filePath": "./assets/images/fortune/compatibility/yin_yang_symbol.png"
+    },
+    {
+      "success": true,
+      "assetId": "newyear_phoenix",
+      "filePath": "./assets/images/fortune/new-year/phoenix_main.png"
+    },
+    {
+      "success": true,
+      "assetId": "newyear_dragons",
+      "filePath": "./assets/images/fortune/new-year/twin_dragons.png"
+    },
+    {
+      "success": true,
+      "assetId": "talisman_wealth",
+      "filePath": "./assets/images/fortune/talisman/talisman_wealth.png"
+    },
+    {
+      "success": true,
+      "assetId": "talisman_love",
+      "filePath": "./assets/images/fortune/talisman/talisman_love.png"
+    },
+    {
+      "success": true,
+      "assetId": "talisman_protection",
+      "filePath": "./assets/images/fortune/talisman/talisman_protection.png"
+    },
+    {
+      "success": true,
+      "assetId": "career_mascot_main",
+      "filePath": "./assets/images/fortune/career/mascot_career.png"
+    },
+    {
+      "success": true,
+      "assetId": "career_icon_briefcase",
+      "filePath": "./assets/images/fortune/icons/career/icon_briefcase.png"
+    },
+    {
+      "success": true,
+      "assetId": "career_icon_chart",
+      "filePath": "./assets/images/fortune/icons/career/icon_chart_up.png"
+    },
+    {
+      "success": true,
+      "assetId": "health_mascot_main",
+      "filePath": "./assets/images/fortune/health/mascot_health.png"
+    },
+    {
+      "success": true,
+      "assetId": "health_icon_heart",
+      "filePath": "./assets/images/fortune/icons/health/icon_heart_pulse.png"
+    },
+    {
+      "success": true,
+      "assetId": "dream_mascot_main",
+      "filePath": "./assets/images/fortune/dream/mascot_dream.png"
+    },
+    {
+      "success": true,
+      "assetId": "dream_icon_cloud",
+      "filePath": "./assets/images/fortune/icons/dream/icon_cloud.png"
+    },
+    {
+      "success": true,
+      "assetId": "dream_icon_moon",
+      "filePath": "./assets/images/fortune/icons/dream/icon_crescent.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_intj",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_intj.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_intp",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_intp.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_entj",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_entj.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_entp",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_entp.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_infj",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_infj.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_infp",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_infp.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_enfj",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_enfj.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_enfp",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_enfp.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_istj",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_istj.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_isfj",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_isfj.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_estj",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_estj.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_esfj",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_esfj.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_istp",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_istp.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_isfp",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_isfp.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_estp",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_estp.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_esfp",
+      "filePath": "./assets/images/fortune/mbti/characters/mbti_esfp.png"
+    },
+    {
+      "success": true,
+      "assetId": "wealth_mascot_main",
+      "filePath": "./assets/images/fortune/wealth/mascot_wealth.png"
+    },
+    {
+      "success": true,
+      "assetId": "wealth_icon_coin",
+      "filePath": "./assets/images/fortune/icons/wealth/icon_gold_coin.png"
+    },
+    {
+      "success": true,
+      "assetId": "wealth_icon_ingot",
+      "filePath": "./assets/images/fortune/icons/wealth/icon_gold_ingot.png"
+    },
+    {
+      "success": true,
+      "assetId": "investment_mascot_main",
+      "filePath": "./assets/images/fortune/investment/mascot_investment.png"
+    },
+    {
+      "success": true,
+      "assetId": "investment_icon_stocks",
+      "filePath": "./assets/images/fortune/icons/investment/icon_stocks.png"
+    },
+    {
+      "success": true,
+      "assetId": "exam_mascot_main",
+      "filePath": "./assets/images/fortune/exam/mascot_exam.png"
+    },
+    {
+      "success": true,
+      "assetId": "exam_icon_book",
+      "filePath": "./assets/images/fortune/icons/exam/icon_book.png"
+    },
+    {
+      "success": true,
+      "assetId": "exam_icon_pencil",
+      "filePath": "./assets/images/fortune/icons/exam/icon_pencil.png"
+    },
+    {
+      "success": true,
+      "assetId": "talent_mascot_main",
+      "filePath": "./assets/images/fortune/talent/mascot_talent.png"
+    },
+    {
+      "success": true,
+      "assetId": "talent_icon_star",
+      "filePath": "./assets/images/fortune/icons/talent/icon_talent_star.png"
+    },
+    {
+      "success": true,
+      "assetId": "blinddate_mascot_main",
+      "filePath": "./assets/images/fortune/blind-date/mascot_blinddate.png"
+    },
+    {
+      "success": true,
+      "assetId": "blinddate_icon_hearts",
+      "filePath": "./assets/images/fortune/icons/blind-date/icon_hearts.png"
+    },
+    {
+      "success": true,
+      "assetId": "pastlife_mascot_main",
+      "filePath": "./assets/images/fortune/past-life/mascot_pastlife.png"
+    },
+    {
+      "success": true,
+      "assetId": "pastlife_icon_hourglass",
+      "filePath": "./assets/images/fortune/icons/past-life/icon_hourglass.png"
+    },
+    {
+      "success": true,
+      "assetId": "daily_hero_high",
+      "filePath": "./assets/images/fortune/heroes/daily/daily_hero_sunny.webp"
+    },
+    {
+      "success": true,
+      "assetId": "daily_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/daily/daily_hero_cloudy.webp"
+    },
+    {
+      "success": true,
+      "assetId": "daily_hero_low",
+      "filePath": "./assets/images/fortune/heroes/daily/daily_hero_stormy.webp"
+    },
+    {
+      "success": true,
+      "assetId": "love_hero_high",
+      "filePath": "./assets/images/fortune/heroes/love/love_hero_blooming.webp"
+    },
+    {
+      "success": true,
+      "assetId": "love_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/love/love_hero_stable.webp"
+    },
+    {
+      "success": true,
+      "assetId": "love_hero_low",
+      "filePath": "./assets/images/fortune/heroes/love/love_hero_waiting.webp"
+    },
+    {
+      "success": true,
+      "assetId": "career_hero_high",
+      "filePath": "./assets/images/fortune/heroes/career/career_hero_promotion.webp"
+    },
+    {
+      "success": true,
+      "assetId": "career_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/career/career_hero_stable.webp"
+    },
+    {
+      "success": true,
+      "assetId": "career_hero_low",
+      "filePath": "./assets/images/fortune/heroes/career/career_hero_challenge.webp"
+    },
+    {
+      "success": true,
+      "assetId": "health_hero_high",
+      "filePath": "./assets/images/fortune/heroes/health/health_hero_vitality.webp"
+    },
+    {
+      "success": true,
+      "assetId": "health_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/health/health_hero_balance.webp"
+    },
+    {
+      "success": true,
+      "assetId": "health_hero_low",
+      "filePath": "./assets/images/fortune/heroes/health/health_hero_caution.webp"
+    },
+    {
+      "success": true,
+      "assetId": "investment_hero_high",
+      "filePath": "./assets/images/fortune/heroes/investment/invest_hero_bull.webp"
+    },
+    {
+      "success": true,
+      "assetId": "investment_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/investment/invest_hero_neutral.webp"
+    },
+    {
+      "success": true,
+      "assetId": "investment_hero_low",
+      "filePath": "./assets/images/fortune/heroes/investment/invest_hero_bear.webp"
+    },
+    {
+      "success": true,
+      "assetId": "tarot_hero_high",
+      "filePath": "./assets/images/fortune/heroes/tarot/tarot_hero_mystical.webp"
+    },
+    {
+      "success": true,
+      "assetId": "tarot_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/tarot/tarot_hero_mystical.webp"
+    },
+    {
+      "success": true,
+      "assetId": "tarot_hero_low",
+      "filePath": "./assets/images/fortune/heroes/tarot/tarot_hero_mystical.webp"
+    },
+    {
+      "success": true,
+      "assetId": "dream_hero_high",
+      "filePath": "./assets/images/fortune/heroes/dream/dream_hero_auspicious.webp"
+    },
+    {
+      "success": true,
+      "assetId": "dream_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/dream/dream_hero_mysterious.webp"
+    },
+    {
+      "success": true,
+      "assetId": "dream_hero_low",
+      "filePath": "./assets/images/fortune/heroes/dream/dream_hero_warning.webp"
+    },
+    {
+      "success": true,
+      "assetId": "exam_hero_high",
+      "filePath": "./assets/images/fortune/heroes/exam/exam_hero_grade_a.webp"
+    },
+    {
+      "success": true,
+      "assetId": "exam_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/exam/exam_hero_grade_b.webp"
+    },
+    {
+      "success": true,
+      "assetId": "exam_hero_low",
+      "filePath": "./assets/images/fortune/heroes/exam/exam_hero_grade_c.webp"
+    },
+    {
+      "success": true,
+      "assetId": "compatibility_hero_high",
+      "filePath": "./assets/images/fortune/heroes/compatibility/compat_hero_perfect.webp"
+    },
+    {
+      "success": true,
+      "assetId": "compatibility_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/compatibility/compat_hero_good.webp"
+    },
+    {
+      "success": true,
+      "assetId": "compatibility_hero_low",
+      "filePath": "./assets/images/fortune/heroes/compatibility/compat_hero_challenging.webp"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_hero_high",
+      "filePath": "./assets/images/fortune/heroes/mbti/mbti_hero_energy.webp"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/mbti/mbti_hero_balanced.webp"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_hero_low",
+      "filePath": "./assets/images/fortune/heroes/mbti/mbti_hero_recharge.webp"
+    },
+    {
+      "success": true,
+      "assetId": "past_life_hero_high",
+      "filePath": "./assets/images/fortune/heroes/past-life/pastlife_hero_royal.webp"
+    },
+    {
+      "success": true,
+      "assetId": "past_life_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/past-life/pastlife_hero_scholar.webp"
+    },
+    {
+      "success": true,
+      "assetId": "past_life_hero_low",
+      "filePath": "./assets/images/fortune/heroes/past-life/pastlife_hero_common.webp"
+    },
+    {
+      "success": true,
+      "assetId": "wish_hero_high",
+      "filePath": "./assets/images/fortune/heroes/wish/wish_hero_dragon.webp"
+    },
+    {
+      "success": true,
+      "assetId": "wish_hero_medium",
+      "filePath": "./assets/images/fortune/heroes/wish/wish_hero_star.webp"
+    },
+    {
+      "success": true,
+      "assetId": "wish_hero_low",
+      "filePath": "./assets/images/fortune/heroes/wish/wish_hero_fountain.webp"
+    },
+    {
+      "success": true,
+      "assetId": "daily_icon_morning",
+      "filePath": "./assets/images/fortune/icons/daily/icon_time_morning.png"
+    },
+    {
+      "success": true,
+      "assetId": "daily_icon_afternoon",
+      "filePath": "./assets/images/fortune/icons/daily/icon_time_afternoon.png"
+    },
+    {
+      "success": true,
+      "assetId": "daily_icon_evening",
+      "filePath": "./assets/images/fortune/icons/daily/icon_time_evening.png"
+    },
+    {
+      "success": true,
+      "assetId": "love_couple_cafe",
+      "filePath": "./assets/images/fortune/love/couple_cafe_date.png"
+    },
+    {
+      "success": true,
+      "assetId": "love_cherry_branch",
+      "filePath": "./assets/images/fortune/love/decorations/cherry_blossom_branch.png"
+    },
+    {
+      "success": true,
+      "assetId": "love_cherry_petals",
+      "filePath": "./assets/images/fortune/love/decorations/cherry_petals_falling.png"
+    },
+    {
+      "success": true,
+      "assetId": "love_frame_scroll",
+      "filePath": "./assets/images/fortune/frames/frame_scroll_fashion.png"
+    },
+    {
+      "success": true,
+      "assetId": "love_bg_watercolor",
+      "filePath": "./assets/images/fortune/bg/bg_love_watercolor.png"
+    },
+    {
+      "success": true,
+      "assetId": "tarot_star_gold",
+      "filePath": "./assets/images/fortune/tarot/decorations/decoration_gold_star.png"
+    },
+    {
+      "success": true,
+      "assetId": "tarot_moon",
+      "filePath": "./assets/images/fortune/tarot/decorations/decoration_crescent_moon.png"
+    },
+    {
+      "success": true,
+      "assetId": "tarot_crystal_ball",
+      "filePath": "./assets/images/fortune/tarot/icon_crystal_ball.png"
+    },
+    {
+      "success": true,
+      "assetId": "compatibility_stamp_a",
+      "filePath": "./assets/images/fortune/compatibility/stamps/stamp_grade_a_plus.png"
+    },
+    {
+      "success": true,
+      "assetId": "newyear_cranes",
+      "filePath": "./assets/images/fortune/new-year/three_cranes.png"
+    },
+    {
+      "success": true,
+      "assetId": "newyear_sunrise",
+      "filePath": "./assets/images/fortune/new-year/landscape_sunrise.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_rat",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_rat.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_ox",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_ox.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_tiger",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_tiger.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_rabbit",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_rabbit.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_dragon",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_dragon.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_snake",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_snake.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_horse",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_horse.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_sheep",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_sheep.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_monkey",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_monkey.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_rooster",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_rooster.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_dog",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_dog.png"
+    },
+    {
+      "success": true,
+      "assetId": "zodiac_pig",
+      "filePath": "./assets/images/fortune/zodiac/zodiac_pig.png"
+    },
+    {
+      "success": true,
+      "assetId": "talisman_exam",
+      "filePath": "./assets/images/fortune/talisman/talisman_exam.png"
+    },
+    {
+      "success": true,
+      "assetId": "element_wood",
+      "filePath": "./assets/images/fortune/saju/elements/element_wood.png"
+    },
+    {
+      "success": true,
+      "assetId": "element_fire",
+      "filePath": "./assets/images/fortune/saju/elements/element_fire.png"
+    },
+    {
+      "success": true,
+      "assetId": "element_earth",
+      "filePath": "./assets/images/fortune/saju/elements/element_earth.png"
+    },
+    {
+      "success": true,
+      "assetId": "element_metal",
+      "filePath": "./assets/images/fortune/saju/elements/element_metal.png"
+    },
+    {
+      "success": true,
+      "assetId": "element_water",
+      "filePath": "./assets/images/fortune/saju/elements/element_water.png"
+    },
+    {
+      "success": true,
+      "assetId": "career_icon_handshake",
+      "filePath": "./assets/images/fortune/icons/career/icon_handshake.png"
+    },
+    {
+      "success": true,
+      "assetId": "career_icon_lightbulb",
+      "filePath": "./assets/images/fortune/icons/career/icon_idea.png"
+    },
+    {
+      "success": true,
+      "assetId": "career_bg_modern",
+      "filePath": "./assets/images/fortune/bg/bg_career.png"
+    },
+    {
+      "success": true,
+      "assetId": "health_icon_sleep",
+      "filePath": "./assets/images/fortune/icons/health/icon_sleep.png"
+    },
+    {
+      "success": true,
+      "assetId": "health_icon_nutrition",
+      "filePath": "./assets/images/fortune/icons/health/icon_nutrition.png"
+    },
+    {
+      "success": true,
+      "assetId": "health_bg_wellness",
+      "filePath": "./assets/images/fortune/bg/bg_health.png"
+    },
+    {
+      "success": true,
+      "assetId": "dream_symbol_flying",
+      "filePath": "./assets/images/fortune/dream/symbols/symbol_flying.png"
+    },
+    {
+      "success": true,
+      "assetId": "dream_symbol_water",
+      "filePath": "./assets/images/fortune/dream/symbols/symbol_water.png"
+    },
+    {
+      "success": true,
+      "assetId": "dream_symbol_teeth",
+      "filePath": "./assets/images/fortune/dream/symbols/symbol_teeth.png"
+    },
+    {
+      "success": true,
+      "assetId": "dream_bg_ethereal",
+      "filePath": "./assets/images/fortune/bg/bg_dream.png"
+    },
+    {
+      "success": true,
+      "assetId": "mbti_bg_gradient",
+      "filePath": "./assets/images/fortune/bg/bg_mbti.png"
+    },
+    {
+      "success": true,
+      "assetId": "wealth_icon_piggybank",
+      "filePath": "./assets/images/fortune/icons/wealth/icon_piggybank.png"
+    },
+    {
+      "success": true,
+      "assetId": "wealth_icon_wallet",
+      "filePath": "./assets/images/fortune/icons/wealth/icon_wallet.png"
+    },
+    {
+      "success": true,
+      "assetId": "wealth_bg_luxury",
+      "filePath": "./assets/images/fortune/bg/bg_wealth.png"
+    },
+    {
+      "success": true,
+      "assetId": "investment_icon_crypto",
+      "filePath": "./assets/images/fortune/icons/investment/icon_crypto.png"
+    },
+    {
+      "success": true,
+      "assetId": "investment_bg_finance",
+      "filePath": "./assets/images/fortune/bg/bg_investment.png"
+    },
+    {
+      "success": true,
+      "assetId": "exam_icon_certificate",
+      "filePath": "./assets/images/fortune/icons/exam/icon_certificate.png"
+    },
+    {
+      "success": true,
+      "assetId": "exam_bg_study",
+      "filePath": "./assets/images/fortune/bg/bg_exam.png"
+    },
+    {
+      "success": true,
+      "assetId": "talent_icon_palette",
+      "filePath": "./assets/images/fortune/icons/talent/icon_palette.png"
+    },
+    {
+      "success": true,
+      "assetId": "talent_bg_creative",
+      "filePath": "./assets/images/fortune/bg/bg_talent.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_clover",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_clover.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_horseshoe",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_horseshoe.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_ladybug",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_ladybug.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_rainbow",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_rainbow.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_coin",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_coin.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_star",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_star.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_heart",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_heart.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_gem",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_gem.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_key",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_key.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_item_feather",
+      "filePath": "./assets/images/fortune/items/lucky/lucky_feather.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_korean_dokkaebi",
+      "filePath": "./assets/images/fortune/items/lucky/korean/lucky_kr_dokkaebi.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_korean_norigae",
+      "filePath": "./assets/images/fortune/items/lucky/korean/lucky_kr_norigae.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_korean_bokjumeoni",
+      "filePath": "./assets/images/fortune/items/lucky/korean/lucky_kr_bokjumeoni.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_korean_dancheong",
+      "filePath": "./assets/images/fortune/items/lucky/korean/lucky_kr_dancheong.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_korean_haetae",
+      "filePath": "./assets/images/fortune/items/lucky/korean/lucky_kr_haetae.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_dog",
+      "filePath": "./assets/images/fortune/pets/pet_dog.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_cat",
+      "filePath": "./assets/images/fortune/pets/pet_cat.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_rabbit",
+      "filePath": "./assets/images/fortune/pets/pet_rabbit.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_hamster",
+      "filePath": "./assets/images/fortune/pets/pet_hamster.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_bird",
+      "filePath": "./assets/images/fortune/pets/pet_bird.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_fish",
+      "filePath": "./assets/images/fortune/pets/pet_fish.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_turtle",
+      "filePath": "./assets/images/fortune/pets/pet_turtle.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_hedgehog",
+      "filePath": "./assets/images/fortune/pets/pet_hedgehog.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_guinea_pig",
+      "filePath": "./assets/images/fortune/pets/pet_guinea_pig.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_ferret",
+      "filePath": "./assets/images/fortune/pets/pet_ferret.png"
+    },
+    {
+      "success": true,
+      "assetId": "pet_bg_gradient",
+      "filePath": "./assets/images/fortune/bg/bg_pet.png"
+    },
+    {
+      "success": true,
+      "assetId": "blinddate_bg_romantic",
+      "filePath": "./assets/images/fortune/bg/bg_blinddate.png"
+    },
+    {
+      "success": true,
+      "assetId": "pastlife_bg_ethereal",
+      "filePath": "./assets/images/fortune/bg/bg_pastlife.png"
+    },
+    {
+      "success": true,
+      "assetId": "family_mascot_main",
+      "filePath": "./assets/images/fortune/family/mascot_family.png"
+    },
+    {
+      "success": true,
+      "assetId": "family_icon_home",
+      "filePath": "./assets/images/fortune/icons/family/icon_home.png"
+    },
+    {
+      "success": true,
+      "assetId": "exercise_mascot_main",
+      "filePath": "./assets/images/fortune/exercise/mascot_exercise.png"
+    },
+    {
+      "success": true,
+      "assetId": "exercise_icon_dumbbell",
+      "filePath": "./assets/images/fortune/icons/exercise/icon_dumbbell.png"
+    },
+    {
+      "success": true,
+      "assetId": "moving_mascot_main",
+      "filePath": "./assets/images/fortune/moving/mascot_moving.png"
+    },
+    {
+      "success": true,
+      "assetId": "moving_icon_house",
+      "filePath": "./assets/images/fortune/icons/moving/icon_new_home.png"
+    },
+    {
+      "success": true,
+      "assetId": "naming_mascot_main",
+      "filePath": "./assets/images/fortune/naming/mascot_naming.png"
+    },
+    {
+      "success": true,
+      "assetId": "naming_icon_brush",
+      "filePath": "./assets/images/fortune/icons/naming/icon_brush.png"
+    },
+    {
+      "success": true,
+      "assetId": "biorhythm_mascot_main",
+      "filePath": "./assets/images/fortune/biorhythm/mascot_biorhythm.png"
+    },
+    {
+      "success": true,
+      "assetId": "biorhythm_icon_waves",
+      "filePath": "./assets/images/fortune/icons/biorhythm/icon_biorhythm.png"
+    },
+    {
+      "success": true,
+      "assetId": "ootd_mascot_main",
+      "filePath": "./assets/images/fortune/ootd/mascot_ootd.png"
+    },
+    {
+      "success": true,
+      "assetId": "ootd_icon_hanger",
+      "filePath": "./assets/images/fortune/icons/ootd/icon_hanger.png"
+    },
+    {
+      "success": true,
+      "assetId": "time_icon_morning",
+      "filePath": "./assets/images/fortune/icons/time/icon_morning.png"
+    },
+    {
+      "success": true,
+      "assetId": "time_icon_afternoon",
+      "filePath": "./assets/images/fortune/icons/time/icon_afternoon.png"
+    },
+    {
+      "success": true,
+      "assetId": "time_icon_evening",
+      "filePath": "./assets/images/fortune/icons/time/icon_evening.png"
+    },
+    {
+      "success": true,
+      "assetId": "time_icon_night",
+      "filePath": "./assets/images/fortune/icons/time/icon_night.png"
+    },
+    {
+      "success": true,
+      "assetId": "avoid_mascot_main",
+      "filePath": "./assets/images/fortune/avoid-people/mascot_avoid.png"
+    },
+    {
+      "success": true,
+      "assetId": "avoid_icon_shield",
+      "filePath": "./assets/images/fortune/icons/avoid-people/icon_shield.png"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_red",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_red.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_orange",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_orange.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_yellow",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_yellow.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_green",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_green.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_blue",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_blue.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_purple",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_purple.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_pink",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_pink.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_white",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_white.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_black",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_black.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_gold",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_gold.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_silver",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_silver.webp"
+    },
+    {
+      "success": true,
+      "assetId": "lucky_color_coral",
+      "filePath": "./assets/images/fortune/icons/lucky/lucky_color_coral.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_work",
+      "filePath": "./assets/images/fortune/icons/section/section_work.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_relationship",
+      "filePath": "./assets/images/fortune/icons/section/section_relationship.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_health",
+      "filePath": "./assets/images/fortune/icons/section/section_health.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_money",
+      "filePath": "./assets/images/fortune/icons/section/section_money.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_study",
+      "filePath": "./assets/images/fortune/icons/section/section_study.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_rest",
+      "filePath": "./assets/images/fortune/icons/section/section_rest.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_warning",
+      "filePath": "./assets/images/fortune/icons/section/section_warning.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_advice",
+      "filePath": "./assets/images/fortune/icons/section/section_advice.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_lucky",
+      "filePath": "./assets/images/fortune/icons/section/section_lucky.webp"
+    },
+    {
+      "success": true,
+      "assetId": "section_icon_action",
+      "filePath": "./assets/images/fortune/icons/section/section_action.webp"
+    },
+    {
+      "success": true,
+      "assetId": "family_bg_warm",
+      "filePath": "./assets/images/fortune/bg/bg_family.png"
+    },
+    {
+      "success": true,
+      "assetId": "exercise_bg_active",
+      "filePath": "./assets/images/fortune/bg/bg_exercise.png"
+    },
+    {
+      "success": true,
+      "assetId": "moving_bg_fresh",
+      "filePath": "./assets/images/fortune/bg/bg_moving.png"
+    },
+    {
+      "success": true,
+      "assetId": "naming_bg_elegant",
+      "filePath": "./assets/images/fortune/bg/bg_naming.png"
+    },
+    {
+      "success": true,
+      "assetId": "biorhythm_bg_rhythm",
+      "filePath": "./assets/images/fortune/bg/bg_biorhythm.png"
+    },
+    {
+      "success": true,
+      "assetId": "ootd_bg_fashion",
+      "filePath": "./assets/images/fortune/bg/bg_ootd.png"
+    },
+    {
+      "success": true,
+      "assetId": "exlover_mascot_main",
+      "filePath": "./assets/images/fortune/ex-lover/mascot_exlover.png"
+    },
+    {
+      "success": true,
+      "assetId": "exlover_icon_heartbreak",
+      "filePath": "./assets/images/fortune/icons/ex-lover/icon_mending_heart.png"
+    },
+    {
+      "success": true,
+      "assetId": "celebrity_mascot_main",
+      "filePath": "./assets/images/fortune/celebrity/mascot_celebrity.png"
+    },
+    {
+      "success": true,
+      "assetId": "celebrity_icon_star",
+      "filePath": "./assets/images/fortune/icons/celebrity/icon_celebrity_star.png"
+    },
+    {
+      "success": true,
+      "assetId": "fengshui_mascot_main",
+      "filePath": "./assets/images/fortune/fengshui/mascot_fengshui.png"
+    },
+    {
+      "success": true,
+      "assetId": "fengshui_icon_compass",
+      "filePath": "./assets/images/fortune/icons/fengshui/icon_compass.png"
+    },
+    {
+      "success": true,
+      "assetId": "fengshui_icon_yinyang",
+      "filePath": "./assets/images/fortune/icons/fengshui/icon_yinyang.png"
+    },
+    {
+      "success": true,
+      "assetId": "fengshui_bg_harmony",
+      "filePath": "./assets/images/fortune/bg/bg_fengshui.png"
+    }
+  ],
+  "options": {
+    "api": "gemini"
+  },
+  "timestamp": "2026-01-06T10:53:30.396Z"
+}

@@ -2,8 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer' as developer;
 
 import '../../data/models/secondary_profile.dart';
-import 'auth_provider.dart';
+import 'providers.dart';
 import 'secondary_profiles_provider.dart';
+import 'user_profile_notifier.dart';
 
 /// 활성 프로필 타입
 enum ActiveProfileType {
@@ -55,32 +56,92 @@ class ActiveProfileState {
 /// 어떤 프로필로 운세를 조회할지 결정
 final activeProfileProvider =
     StateNotifierProvider<ActiveProfileNotifier, ActiveProfileState>((ref) {
-  return ActiveProfileNotifier();
+  return ActiveProfileNotifier(ref);
 });
 
 /// 활성 프로필 상태 관리 클래스
 class ActiveProfileNotifier extends StateNotifier<ActiveProfileState> {
-  ActiveProfileNotifier() : super(const ActiveProfileState());
+  final Ref _ref;
+
+  ActiveProfileNotifier(this._ref) : super(const ActiveProfileState()) {
+    _restoreSelection();
+  }
 
   /// 본인 프로필로 전환
   void switchToPrimary() {
-    developer.log('🔄 ActiveProfile: 본인 프로필로 전환');
-    state = const ActiveProfileState(type: ActiveProfileType.primary);
+    activatePrimary();
   }
 
   /// 서브 프로필로 전환
   void switchToSecondary(String profileId) {
-    developer.log('🔄 ActiveProfile: 서브 프로필로 전환 - $profileId');
+    final profiles = _ref.read(secondaryProfilesProvider).valueOrNull ?? [];
+    if (profiles.isEmpty) return;
+    final profile = profiles.firstWhere(
+      (p) => p.id == profileId,
+      orElse: () => profiles.first,
+    );
+    activateSecondary(profile);
+  }
+
+  Future<void> activatePrimary() async {
+    developer.log('🔄 ActiveProfile: 본인 프로필로 전환');
+    state = const ActiveProfileState(type: ActiveProfileType.primary);
+    await _ref.read(storageServiceProvider).saveActiveProfileSelection(
+          type: 'primary',
+        );
+    _ref.read(userProfileNotifierProvider.notifier).clearOverride();
+  }
+
+  /// 서브 프로필로 전환
+  Future<void> activateSecondary(SecondaryProfile profile) async {
+    developer.log('🔄 ActiveProfile: 서브 프로필로 전환 - ${profile.id}');
     state = ActiveProfileState(
       type: ActiveProfileType.secondary,
-      secondaryProfileId: profileId,
+      secondaryProfileId: profile.id,
     );
+    await _ref.read(storageServiceProvider).saveActiveProfileSelection(
+          type: 'secondary',
+          secondaryProfileId: profile.id,
+        );
+    _ref.read(userProfileNotifierProvider.notifier).applySecondaryProfile(profile);
   }
 
   /// 초기화 (로그아웃 시 등)
   void reset() {
     developer.log('🔄 ActiveProfile: 초기화');
     state = const ActiveProfileState();
+    _ref.read(userProfileNotifierProvider.notifier).clearOverride();
+  }
+
+  Future<void> _restoreSelection() async {
+    final storage = _ref.read(storageServiceProvider);
+    final selection = await storage.getActiveProfileSelection();
+    final type = selection['type'];
+    final secondaryId = selection['secondaryProfileId'];
+
+    if (type == 'secondary' && secondaryId != null) {
+      state = ActiveProfileState(
+        type: ActiveProfileType.secondary,
+        secondaryProfileId: secondaryId,
+      );
+
+      await _ref.read(userProfileNotifierProvider.notifier).loadProfile();
+      await _ref.read(secondaryProfilesProvider.notifier).refresh();
+      final profiles = _ref.read(secondaryProfilesProvider).valueOrNull ?? [];
+      if (profiles.isEmpty) {
+        await activatePrimary();
+        return;
+      }
+
+      final profile = profiles.firstWhere(
+        (p) => p.id == secondaryId,
+        orElse: () => profiles.first,
+      );
+
+      _ref.read(userProfileNotifierProvider.notifier).applySecondaryProfile(
+            profile,
+          );
+    }
   }
 }
 

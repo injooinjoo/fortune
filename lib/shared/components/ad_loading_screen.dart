@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../presentation/providers/auth_provider.dart';
+import '../../presentation/providers/providers.dart';
 import '../../core/components/fortune_loading_screen.dart';
 import '../../core/design_system/design_system.dart';
 
@@ -145,7 +145,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                   // 실제 광고 배너 (플레이스홀더)
                   Container(
                     height: 50,
-                    margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: DSSpacing.md),
                     decoration: BoxDecoration(
                       color: colors.border.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(DSRadius.sm),

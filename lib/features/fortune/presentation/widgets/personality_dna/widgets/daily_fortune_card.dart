@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/design_system/tokens/ds_spacing.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
 import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/widgets/section_card.dart';
+import '../../../../../../core/constants/fortune_card_images.dart';
 
 /// 데일리 운세 카드
 class DailyFortuneCard extends StatelessWidget {
@@ -18,28 +20,12 @@ class DailyFortuneCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.cardPadding),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: _primaryColor.withValues(alpha: isDark ? 0.5 : 0.3),
-        ),
-      ),
+    return SectionCard(
+      title: '오늘의 데일리 운세',
+      sectionKey: 'lucky',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Text('🔮', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: DSSpacing.sm),
-              Text(
-                '오늘의 데일리',
-                style: context.heading4.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
           const SizedBox(height: DSSpacing.md),
           // 럭키 아이템 그리드
           Row(
@@ -48,10 +34,11 @@ class DailyFortuneCard extends StatelessWidget {
                 child: _buildLuckyItem(
                   context,
                   isDark,
-                  '🎨',
                   '럭키 컬러',
                   dailyFortune.luckyColor,
                   const Color(0xFFE91E63),
+                  iconPath: FortuneCardImages.getLuckyColorIcon(
+                      dailyFortune.luckyColor),
                 ),
               ),
               const SizedBox(width: DSSpacing.sm),
@@ -59,10 +46,11 @@ class DailyFortuneCard extends StatelessWidget {
                 child: _buildLuckyItem(
                   context,
                   isDark,
-                  '🔢',
                   '럭키 넘버',
                   dailyFortune.luckyNumber.toString(),
                   const Color(0xFF2196F3),
+                  iconPath: FortuneCardImages.getLuckyNumberIcon(
+                      dailyFortune.luckyNumber),
                 ),
               ),
               const SizedBox(width: DSSpacing.sm),
@@ -70,10 +58,10 @@ class DailyFortuneCard extends StatelessWidget {
                 child: _buildLuckyItem(
                   context,
                   isDark,
-                  '⚡',
                   '에너지',
                   '${dailyFortune.energyLevel}%',
                   const Color(0xFFFF9800),
+                  emoji: '⚡',
                 ),
               ),
             ],
@@ -196,14 +184,9 @@ class DailyFortuneCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLuckyItem(
-    BuildContext context,
-    bool isDark,
-    String emoji,
-    String label,
-    String value,
-    Color color,
-  ) {
+  Widget _buildLuckyItem(BuildContext context, bool isDark, String label,
+      String value, Color color,
+      {String? emoji, String? iconPath}) {
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: DSSpacing.sm,
@@ -218,8 +201,18 @@ class DailyFortuneCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 24)),
-          const SizedBox(height: DSSpacing.xs),
+          if (iconPath != null)
+            Image.asset(
+              iconPath,
+              width: 32,
+              height: 32,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) =>
+                  Text(emoji ?? '✨', style: const TextStyle(fontSize: 24)),
+            )
+          else
+            Text(emoji ?? '✨', style: const TextStyle(fontSize: 24)),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             value,
             style: context.bodyLarge.copyWith(
@@ -231,7 +224,10 @@ class DailyFortuneCard extends StatelessWidget {
           Text(
             label,
             style: context.labelLarge.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: isDark ? 0.75 : 0.6),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: isDark ? 0.75 : 0.6),
             ),
           ),
         ],

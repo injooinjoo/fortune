@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fortune/core/theme/font_size_system.dart';
+import 'package:fortune/core/theme/typography_unified.dart';
 import '../tokens/ds_colors.dart';
 import '../tokens/ds_radius.dart';
 import '../tokens/ds_spacing.dart';
@@ -40,20 +42,23 @@ class DSTheme {
   }) {
     final isDark = brightness == Brightness.dark;
     final colors = DSColorScheme(brightness);
-
-    final baseTheme = isDark ? ThemeData.dark() : ThemeData.light();
+    final baseTextTheme = TypographyUnified.materialTextTheme(
+      brightness: brightness,
+    );
+    final scaleFactor = fontScale / FontSizeSystem.scaleFactor;
+    final textTheme = scaleFactor == 1.0
+        ? baseTextTheme
+        : baseTextTheme.apply(fontSizeFactor: scaleFactor);
 
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
       primaryColor: colors.accent,
       scaffoldBackgroundColor: colors.background,
+      fontFamily: DSTypography.fontFamily,
 
       // Font scale
-      textTheme: baseTheme.textTheme.apply(
-        fontSizeFactor: fontScale,
-        fontFamily: DSTypography.fontFamily,
-      ),
+      textTheme: textTheme,
 
       // Color Scheme
       colorScheme: ColorScheme(

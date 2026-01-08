@@ -36,6 +36,7 @@ class DailyFortuneApi {
       'userId': userId,
       if (date != null) 'date': date.toIso8601String(),
       if (userProfileResponse != null) ...{
+        'name': userProfileResponse['name'] ?? '회원',
         'birthDate': userProfileResponse['birth_date'],
         'birthTime': userProfileResponse['birth_time'],
         'gender': userProfileResponse['gender'],
@@ -73,6 +74,7 @@ class DailyFortuneApi {
             endpoint,
             data: {
               ...queryParams,
+              'name': userProfileResponse['name'] ?? '회원',
               'birthDate': userProfileResponse['birth_date'],
               'birthTime': userProfileResponse['birth_time'],
               'gender': userProfileResponse['gender'],

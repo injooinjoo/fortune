@@ -13,7 +13,7 @@ import 'steps/birth_input_step.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
   final bool isPartialCompletion;
-  
+
   const OnboardingPage({
     super.key,
     this.isPartialCompletion = false,
@@ -136,11 +136,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       // List of default/placeholder names that should trigger name input step
       final defaultNames = ['사용자', 'Apple 사용자', 'Google 사용자', 'user'];
       final hasRealName = _name.isNotEmpty &&
-                          !defaultNames.contains(_name) &&
-                          !_name.startsWith('kakao_');
+          !defaultNames.contains(_name) &&
+          !_name.startsWith('kakao_');
 
-      debugPrint('📱 [Onboarding] Provider: $provider, isSocialLogin: $_isSocialLogin');
-      debugPrint('📱 [Onboarding] Current name: $_name, hasRealName: $hasRealName');
+      debugPrint(
+          '📱 [Onboarding] Provider: $provider, isSocialLogin: $_isSocialLogin');
+      debugPrint(
+          '📱 [Onboarding] Current name: $_name, hasRealName: $hasRealName');
 
       // Only skip name step if user already has a real name
       // For social login users without real name: show name step with skip option
@@ -177,8 +179,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       // 페이지 전환 햅틱
       ref.read(fortuneHapticServiceProvider).pageSnap();
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut);
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     } else if (_currentStep == 1 && _birthDate != null) {
       // Allow submission even if birth time is not provided (default to 12:00)
       _birthTime ??= const TimeOfDay(hour: 12, minute: 0);
@@ -194,8 +195,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         _currentStep--;
       });
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut);
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     }
   }
 
@@ -249,26 +249,28 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   Future<void> _handleSubmit() async {
     try {
       // 프로필 데이터 준비
-      final birthTimeString = _birthTime != null 
-        ? '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}'
-        : '12:00';
-        
+      final birthTimeString = _birthTime != null
+          ? '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}'
+          : '12:00';
+
       final profile = UserProfile(
-        id: _currentUser?.id ?? '',
-        name: _name,
-        email: _currentUser?.email ?? '',
-        birthDate: _birthDate!.toIso8601String(),
-        birthTime: birthTimeString,
-        mbti: null,
-        gender: Gender.other,
-        zodiacSign: FortuneDateUtils.getZodiacSign(_birthDate!.toIso8601String()),
-        chineseZodiac: FortuneDateUtils.getChineseZodiac(_birthDate!.toIso8601String()),
-        onboardingCompleted: true,
-        subscriptionStatus: SubscriptionStatus.free,
-        fortuneCount: 0,
-        premiumFortunesCount: 0,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now());
+          id: _currentUser?.id ?? '',
+          name: _name,
+          email: _currentUser?.email ?? '',
+          birthDate: _birthDate,
+          birthTime: birthTimeString,
+          mbti: null,
+          gender: Gender.other,
+          zodiacSign:
+              FortuneDateUtils.getZodiacSign(_birthDate!.toIso8601String()),
+          chineseZodiac:
+              FortuneDateUtils.getChineseZodiac(_birthDate!.toIso8601String()),
+          onboardingCompleted: true,
+          subscriptionStatus: SubscriptionStatus.free,
+          fortuneCount: 0,
+          premiumFortunesCount: 0,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now());
 
       // 로컬 스토리지에 저장
       await _storageService.saveUserProfile(profile.toJson());
@@ -287,7 +289,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             'onboarding_completed': true,
             'zodiac_sign': profile.zodiacSign,
             'chinese_zodiac': profile.chineseZodiac,
-            'updated_at': DateTime.now().toIso8601String()});
+            'updated_at': DateTime.now().toIso8601String()
+          });
           debugPrint('Supabase에 프로필 동기화 완료');
 
           // 사주 계산은 백그라운드에서 처리 (UI 블로킹 제거)
@@ -309,8 +312,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     } catch (e) {
       debugPrint('프로필 저장 오류: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: const Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
             backgroundColor: context.colors.error));
       }
@@ -344,17 +346,20 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             },
             onNext: _nextStep,
             allowSkip: _isSocialLogin,
-            onSkip: _isSocialLogin ? () {
-              // Set default name for social login users who skip
-              if (_name.isEmpty) {
-                final provider = _currentUser?.appMetadata['provider'] as String?;
-                _name = _currentUser?.email?.split('@').first ??
-                        (provider == 'apple' ? 'Apple 사용자' : 'Google 사용자');
-              }
-              _nextStep();
-            } : null,
+            onSkip: _isSocialLogin
+                ? () {
+                    // Set default name for social login users who skip
+                    if (_name.isEmpty) {
+                      final provider =
+                          _currentUser?.appMetadata['provider'] as String?;
+                      _name = _currentUser?.email?.split('@').first ??
+                          (provider == 'apple' ? 'Apple 사용자' : 'Google 사용자');
+                    }
+                    _nextStep();
+                  }
+                : null,
           ),
-          
+
           // Step 2: Birth Date & Time
           BirthInputStep(
             initialDate: _birthDate,
@@ -376,7 +381,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       ),
     );
   }
-  
+
   @override
   void dispose() {
     _pageController.dispose();

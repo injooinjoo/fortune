@@ -218,7 +218,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
           );
         },
         loading: () => const Center(child: LoadingIndicator()),
-        error: (error, stack) => const Center(
+        error: (error, stack) => Center(
           child: Text(
             '운세 기록을 불러올 수 없습니다',
             style: DSTypography.labelMedium,

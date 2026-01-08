@@ -20,6 +20,7 @@ import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../fortune/domain/models/mbti_dimension_fortune.dart';
 import '../../../fortune/domain/models/wish_fortune_result.dart';
 import 'month_highlight_detail_bottom_sheet.dart';
+import '../../../../presentation/widgets/fortune_infographic/fortune_infographic_facade.dart';
 
 /// 채팅용 운세 결과 리치 카드
 ///
@@ -41,7 +42,8 @@ class ChatFortuneResultCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ChatFortuneResultCard> createState() => _ChatFortuneResultCardState();
+  ConsumerState<ChatFortuneResultCard> createState() =>
+      _ChatFortuneResultCardState();
 }
 
 class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
@@ -53,8 +55,16 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     super.initState();
     _isBlurred = widget.isBlurred;
     _blurredSections = widget.isBlurred && widget.fortuneType == 'avoid-people'
-        ? ['cautionPeople', 'cautionObjects', 'cautionColors', 'cautionNumbers',
-           'cautionAnimals', 'cautionPlaces', 'cautionTimes', 'cautionDirections']
+        ? [
+            'cautionPeople',
+            'cautionObjects',
+            'cautionColors',
+            'cautionNumbers',
+            'cautionAnimals',
+            'cautionPlaces',
+            'cautionTimes',
+            'cautionDirections'
+          ]
         : [];
   }
 
@@ -69,6 +79,48 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       return '${selectedDate!.month}월 ${selectedDate!.day}일의 내 이야기';
     }
     return '오늘의 내 이야기';
+  }
+
+  DateTime _getCsatDate(DateTime now) {
+    int year = now.year;
+    DateTime csatDate = _thirdThursdayOfNovember(year);
+    final today = DateTime(now.year, now.month, now.day);
+    if (today.isAfter(csatDate)) {
+      year += 1;
+      csatDate = _thirdThursdayOfNovember(year);
+    }
+    return csatDate;
+  }
+
+  DateTime _thirdThursdayOfNovember(int year) {
+    int count = 0;
+    for (int day = 1; day <= 30; day += 1) {
+      final date = DateTime(year, 11, day);
+      if (date.weekday == DateTime.thursday) {
+        count += 1;
+        if (count == 3) {
+          return date;
+        }
+      }
+    }
+    return DateTime(year, 11, 1);
+  }
+
+  DateTime? _parseExamDate(String? value) {
+    if (value == null || value.isEmpty) return null;
+    try {
+      final parsed = DateTime.parse(value);
+      return DateTime(parsed.year, parsed.month, parsed.day);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  DateTime? _resolveExamDate(String examTypeLabel, String? examDateStr) {
+    if (examTypeLabel == '수능') {
+      return _getCsatDate(DateTime.now());
+    }
+    return _parseExamDate(examDateStr);
   }
 
   /// 오늘의 운세 타입 체크 (설문 기반 아닌 운세)
@@ -106,11 +158,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   bool get _hasCautionData {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return false;
-    return metadata['cautionPeople'] != null || metadata['cautionObjects'] != null;
+    return metadata['cautionPeople'] != null ||
+        metadata['cautionObjects'] != null;
   }
 
   /// 경계 대상 caution 데이터 가져오기
-  Map<String, dynamic>? get _cautionData => fortune.metadata ?? fortune.additionalInfo;
+  Map<String, dynamic>? get _cautionData =>
+      fortune.metadata ?? fortune.additionalInfo;
 
   /// 바이오리듬 타입 체크
   bool get _isBiorhythm => fortuneType == 'biorhythm';
@@ -133,8 +187,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return false;
     return metadata['physical'] != null ||
-           metadata['emotional'] != null ||
-           metadata['intellectual'] != null;
+        metadata['emotional'] != null ||
+        metadata['intellectual'] != null;
   }
 
   /// 재물운 타입 체크 (wealth 또는 money)
@@ -145,8 +199,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return false;
     return metadata['goalAdvice'] != null ||
-           metadata['investmentInsights'] != null ||
-           metadata['concernResolution'] != null;
+        metadata['investmentInsights'] != null ||
+        metadata['concernResolution'] != null;
   }
 
   /// 작명 타입 체크
@@ -157,11 +211,20 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return false;
     return metadata['recommendedNames'] != null ||
-           metadata['ohaengAnalysis'] != null;
+        metadata['ohaengAnalysis'] != null;
   }
 
   /// 시험운 타입 체크
   bool get _isExam => fortuneType == 'exam';
+
+  /// 수능 전용 타입 체크
+  bool get _isCsatExam {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    final examType = metadata['exam_type'] as String?;
+    final examCategory = metadata['exam_category'] as String?;
+    return examCategory == 'csat' || examType == '수능';
+  }
 
   /// 시험운 데이터 존재 여부 체크
   bool get _hasExamData {
@@ -169,9 +232,18 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     if (metadata == null) return false;
     // Edge Function 실제 필드명: pass_possibility, cautions, study_methods, lucky_hours
     return metadata['pass_possibility'] != null ||
-           metadata['cautions'] != null ||
-           metadata['study_methods'] != null ||
-           metadata['lucky_hours'] != null;
+        metadata['cautions'] != null ||
+        metadata['study_methods'] != null ||
+        metadata['lucky_hours'] != null;
+  }
+
+  bool get _hasCsatData {
+    final metadata = fortune.metadata ?? fortune.additionalInfo;
+    if (metadata == null) return false;
+    return metadata['csat_focus'] != null ||
+        metadata['csat_roadmap'] != null ||
+        metadata['csat_routine'] != null ||
+        metadata['csat_checklist'] != null;
   }
 
   /// 건강운 타입 체크
@@ -182,13 +254,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return false;
     return metadata['exercise_advice'] != null ||
-           metadata['diet_advice'] != null ||
-           metadata['overall_health'] != null;
+        metadata['diet_advice'] != null ||
+        metadata['overall_health'] != null;
   }
 
   /// 운동운 타입 체크
   /// 'exercise' 또는 'health_sports' (FortuneSurveyType.exercise → _mapSurveyTypeToString)
-  bool get _isExercise => fortuneType == 'exercise' || fortuneType == 'health_sports';
+  bool get _isExercise =>
+      fortuneType == 'exercise' || fortuneType == 'health_sports';
 
   /// 운동운 데이터 존재 여부 체크
   bool get _hasExerciseData {
@@ -197,15 +270,20 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
     // 디버그 로깅
     debugPrint('🏋️ [_hasExerciseData] fortuneType: $fortuneType');
-    debugPrint('🏋️ [_hasExerciseData] additionalInfo keys: ${fortune.additionalInfo?.keys.toList()}');
-    debugPrint('🏋️ [_hasExerciseData] metadata keys: ${fortune.metadata?.keys.toList()}');
-    debugPrint('🏋️ [_hasExerciseData] exerciseData keys: ${exerciseData.keys.toList()}');
-    debugPrint('🏋️ [_hasExerciseData] recommendedExercise: ${exerciseData['recommendedExercise'] != null}');
-    debugPrint('🏋️ [_hasExerciseData] todayRoutine: ${exerciseData['todayRoutine'] != null}');
+    debugPrint(
+        '🏋️ [_hasExerciseData] additionalInfo keys: ${fortune.additionalInfo?.keys.toList()}');
+    debugPrint(
+        '🏋️ [_hasExerciseData] metadata keys: ${fortune.metadata?.keys.toList()}');
+    debugPrint(
+        '🏋️ [_hasExerciseData] exerciseData keys: ${exerciseData.keys.toList()}');
+    debugPrint(
+        '🏋️ [_hasExerciseData] recommendedExercise: ${exerciseData['recommendedExercise'] != null}');
+    debugPrint(
+        '🏋️ [_hasExerciseData] todayRoutine: ${exerciseData['todayRoutine'] != null}');
 
     final hasData = exerciseData['recommendedExercise'] != null ||
-           exerciseData['todayRoutine'] != null ||
-           exerciseData['weeklyPlan'] != null;
+        exerciseData['todayRoutine'] != null ||
+        exerciseData['weeklyPlan'] != null;
     debugPrint('🏋️ [_hasExerciseData] result: $hasData');
     return hasData;
   }
@@ -243,8 +321,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return false;
     return metadata['dragon_message'] != null ||
-           metadata['fortune_flow'] != null ||
-           metadata['lucky_mission'] != null;
+        metadata['fortune_flow'] != null ||
+        metadata['lucky_mission'] != null;
   }
 
   /// 소원 빌기 결과 파싱
@@ -268,8 +346,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return false;
     return metadata['details'] != null ||
-           metadata['luckyItems'] != null ||
-           metadata['warnings'] != null;
+        metadata['luckyItems'] != null ||
+        metadata['warnings'] != null;
   }
 
   /// 부적 details 데이터 가져오기
@@ -333,25 +411,30 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return false;
     return metadata['familySynergy'] != null ||
-           metadata['monthlyFlow'] != null ||
-           metadata['familyAdvice'] != null ||
-           metadata['recommendations'] != null ||
-           metadata['healthCategories'] != null ||
-           metadata['wealthCategories'] != null ||
-           metadata['relationshipCategories'] != null ||
-           metadata['childrenCategories'] != null ||
-           metadata['changeCategories'] != null;
+        metadata['monthlyFlow'] != null ||
+        metadata['familyAdvice'] != null ||
+        metadata['recommendations'] != null ||
+        metadata['healthCategories'] != null ||
+        metadata['wealthCategories'] != null ||
+        metadata['relationshipCategories'] != null ||
+        metadata['childrenCategories'] != null ||
+        metadata['changeCategories'] != null;
   }
 
   /// 가족운 카테고리 데이터 (타입별 다른 필드명)
   Map<String, dynamic>? get _familyCategories {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return null;
-    if (_isFamilyHealth) return metadata['healthCategories'] as Map<String, dynamic>?;
-    if (_isFamilyWealth) return metadata['wealthCategories'] as Map<String, dynamic>?;
-    if (_isFamilyRelationship) return metadata['relationshipCategories'] as Map<String, dynamic>?;
-    if (_isFamilyChildren) return metadata['childrenCategories'] as Map<String, dynamic>?;
-    if (_isFamilyChange) return metadata['changeCategories'] as Map<String, dynamic>?;
+    if (_isFamilyHealth)
+      return metadata['healthCategories'] as Map<String, dynamic>?;
+    if (_isFamilyWealth)
+      return metadata['wealthCategories'] as Map<String, dynamic>?;
+    if (_isFamilyRelationship)
+      return metadata['relationshipCategories'] as Map<String, dynamic>?;
+    if (_isFamilyChildren)
+      return metadata['childrenCategories'] as Map<String, dynamic>?;
+    if (_isFamilyChange)
+      return metadata['changeCategories'] as Map<String, dynamic>?;
     return null;
   }
 
@@ -405,11 +488,16 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   Map<String, dynamic>? get _familySpecialAdvice {
     final metadata = fortune.metadata ?? fortune.additionalInfo;
     if (metadata == null) return null;
-    if (_isFamilyHealth) return metadata['seasonalAdvice'] as Map<String, dynamic>?;
-    if (_isFamilyWealth) return metadata['monthlyTrend'] as Map<String, dynamic>?;
-    if (_isFamilyRelationship) return metadata['communicationAdvice'] as Map<String, dynamic>?;
-    if (_isFamilyChildren) return metadata['educationAdvice'] as Map<String, dynamic>?;
-    if (_isFamilyChange) return metadata['timingAdvice'] as Map<String, dynamic>?;
+    if (_isFamilyHealth)
+      return metadata['seasonalAdvice'] as Map<String, dynamic>?;
+    if (_isFamilyWealth)
+      return metadata['monthlyTrend'] as Map<String, dynamic>?;
+    if (_isFamilyRelationship)
+      return metadata['communicationAdvice'] as Map<String, dynamic>?;
+    if (_isFamilyChildren)
+      return metadata['educationAdvice'] as Map<String, dynamic>?;
+    if (_isFamilyChange)
+      return metadata['timingAdvice'] as Map<String, dynamic>?;
     return null;
   }
 
@@ -489,255 +577,392 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isPremium = ref.watch(isPremiumProvider);
+    final customChildren = _buildCustomLayout(context, isDark, isPremium);
 
     return Container(
       width: double.infinity,
-      // 수평 마진은 ListView 패딩이 아닌 카드 자체에서 적용
       margin: const EdgeInsets.symmetric(
         vertical: DSSpacing.sm,
-        horizontal: DSSpacing.md, // 화면 가장자리와의 여백
+        horizontal: DSSpacing.md,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
+      child: DSCard.hanji(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: customChildren ?? [
+            // 이미지 헤더
+            _buildImageHeader(context),
+
+            // 점수 섹션
+            if (fortune.overallScore != null) _buildScoreSection(context),
+
+            // 인사말/총평
+            if (fortune.greeting != null || fortune.summary != null)
+              _buildSummarySection(context),
+
+            // 경계 대상 미리보기 (avoid-people) - 블러 상태일 때만 표시
+            if (fortuneType == 'avoid-people' && _hasCautionData && _isBlurred)
+              _buildCautionPreviewSection(context),
+
+            // 경계 대상 블러 섹션 (avoid-people)
+            if (fortuneType == 'avoid-people' && _hasCautionData)
+              _buildCautionBlurredSections(context, isDark, isPremium),
+
+            // 본문 content 표시 (daily, compatibility, love, career 등)
+            if (_shouldShowContent &&
+                fortune.content.isNotEmpty &&
+                fortuneType != 'avoid-people')
+              _buildContentSection(context),
+
+            // 기간별 인사이트 상세 데이터 (daily_calendar)
+            if (fortuneType == 'daily_calendar')
+              _buildDailyCalendarSection(context),
+
+            // 카테고리/육각형 점수 표시 (content 표시하지 않는 타입만)
+            if (!_shouldShowContent) ...[
+              if (fortune.categories != null && fortune.categories!.isNotEmpty)
+                _buildCategoriesSection(context),
+              if (fortune.hexagonScores != null &&
+                  fortune.hexagonScores!.isNotEmpty)
+                _buildHexagonScoresSection(context),
+            ],
+
+            // 추천 사항
+            if (fortune.recommendations != null &&
+                fortune.recommendations!.isNotEmpty)
+              _buildRecommendationsSection(context),
+
+            // 행운 아이템
+            if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+              _buildLuckyItemsSection(context),
+
+            // lucky-items 전용: 상세 섹션 표시
+            if (fortuneType == 'lucky-items')
+              _buildLuckyItemsDetailSections(context),
+
+            // talent 전용: 상세 섹션 표시
+            if (fortuneType == 'talent') _buildTalentDetailSections(context),
+
+            // biorhythm 전용: 3가지 리듬 상세 표시
+            if (_isBiorhythm && _hasBiorhythmData)
+              _buildBiorhythmDetailSection(context),
+
+            // lotto 전용: 로또 번호 공 표시
+            if (_isLottoType) _buildLottoNumbersSection(context),
+
+            // love 전용: 상세 추천 섹션 (데이트 장소, 패션, 악세서리 등)
+            if (fortuneType == 'love' && _hasLoveRecommendations)
+              _buildLoveRecommendationsSection(context),
+
+            // 연간 운세 전용 섹션들 (new_year, yearly)
+            if (_isYearlyFortune) ...[
+              // 1. 목표별 맞춤 분석
+              _buildGoalFortuneSection(context, isPremium),
+              // 2. 오행 분석
+              _buildSajuAnalysisSection(context, isPremium),
+              // 3. 월별 하이라이트 (1-3월 무료, 4-12월 프리미엄)
+              _buildMonthlyHighlightsSection(context, isPremium),
+              // 4. 행동 계획
+              _buildActionPlanSection(context, isPremium),
+              // 5. 특별 메시지
+              _buildSpecialMessageSection(context, isPremium),
+            ],
+
+            // 재물운 전용 섹션들 (wealth)
+            if (_isWealth && _hasWealthData) ...[
+              // 1. 선택한 관심 분야 태그
+              _buildWealthInterestsSection(context),
+              // 2. 목표 맞춤 조언
+              _buildWealthGoalAdviceSection(context, isPremium),
+              // 3. 고민 해결책
+              _buildWealthConcernSection(context, isPremium),
+              // 4. 관심 분야별 투자 인사이트
+              _buildWealthInvestmentInsightsSection(context, isPremium),
+              // 5. 월별 흐름
+              _buildWealthMonthlyFlowSection(context, isPremium),
+              // 6. 실천 항목
+              _buildWealthActionItemsSection(context, isPremium),
+            ],
+
+            // 작명 전용 섹션 (naming) - 추천 이름 목록
+            if (_isNaming && _hasNamingData)
+              _buildNamingSection(context, isPremium),
+
+            // 시험운 전용 섹션 (exam) - 2025 리뉴얼
+            if (_isExam && _hasExamData) ...[
+              if (_isCsatExam && _hasCsatData) ...[
+                _buildCsatSignalHeader(context),
+                _buildCsatFocusSection(context),
+                _buildCsatRoadmapSection(context),
+                _buildCsatRoutineSection(context),
+                _buildCsatChecklistSection(context),
+                _buildExamDdayAdviceSection(context, isPremium),
+                _buildExamMentalCareSection(context, isPremium),
+              ] else ...[
+                // 1. 합격 시그널 헤더 (원형 게이지 + 해시태그)
+                _buildExamSignalHeader(context),
+                // 2. 시험 스탯 (프로그레스 바 3개)
+                _buildExamStatsSection(context),
+                // 3. 오늘의 1점 전략
+                _buildTodayStrategySection(context),
+                // 4. 영물의 기개
+                _buildSpiritAnimalSection(context),
+                // 5. 행운 정보 그리드
+                _buildExamLuckyInfoSection(context, isPremium),
+                // 6. D-day 맞춤 조언
+                _buildExamDdayAdviceSection(context, isPremium),
+                // 7. 멘탈 관리
+                _buildExamMentalCareSection(context, isPremium),
+              ],
+            ],
+
+            // 건강운 전용 섹션들 (health)
+            if (_isHealth && _hasHealthData)
+              _buildHealthDetailSection(context, isDark),
+
+            // 운동운 전용 섹션들 (exercise)
+            if (_isExercise && _hasExerciseData)
+              _buildExerciseDetailSection(context, isDark),
+
+            // MBTI 전용 섹션들 (mbti)
+            if (_isMbti && _hasMbtiData) ...[
+              // 1. 오늘의 함정 배너 (위기감 유발)
+              if (_mbtiTodayTrap != null) _buildMbtiTodayTrapSection(context),
+              // 2. 차원별 인사이트 카드 (경고 포함)
+              _buildMbtiDimensionCards(context),
+            ],
+
+            // 🐉 소원 빌기 전용 섹션들 (wish)
+            if (_isWish && _hasWishData) ...[
+              _buildWishDragonHeaderSection(context), // 용의 한마디
+              _buildWishFortuneFlowSection(context), // 운의 흐름
+              _buildWishLuckyMissionSection(context), // 행운 미션
+              _buildWishDragonWisdomSection(context), // 용의 지혜
+              _buildWishEncouragementSection(context), // 응원 메시지
+              _buildWishAdviceSection(context), // 조언 리스트
+            ],
+
+            // 🧿 부적 전용 섹션들 (talisman)
+            if (_isTalisman && _hasTalismanData) ...[
+              _buildTalismanDetailsSection(context), // 세부 운세 (종합/애정/직장/건강/금전)
+              _buildTalismanLuckyItemsSection(context), // 행운 아이템
+              _buildTalismanWarningsSection(context), // 주의사항
+            ],
+
+            // 👨‍👩‍👧 가족운 전용 섹션들 (family-health/wealth/relationship/children/change)
+            if (_isFamily && _hasFamilyData) ...[
+              _buildFamilyCategoriesSection(context, isDark), // 카테고리별 점수
+              _buildFamilySynergySection(context, isDark), // 가족 조화 분석
+              _buildFamilySpecialAdviceSection(context, isDark), // 타입별 특수 조언
+              _buildFamilyMonthlyFlowSection(context, isDark), // 월별 흐름
+              _buildFamilyAdviceTipsSection(context, isDark), // 가족 조언
+              _buildFamilyRecommendationsSection(context, isDark), // 추천사항
+              _buildFamilyWarningsSection(context, isDark), // 주의사항
+              if (_familySpecialAnswer != null &&
+                  _familySpecialAnswer!.isNotEmpty)
+                _buildFamilySpecialAnswerSection(context, isDark), // 특별 질문 답변
+            ],
+
+            // 🐾 펫 궁합 전용 섹션들 (pet-compatibility)
+            if (_isPetCompatibility) ...[
+              // 1. 교감 미션 (FREE - 먼저 표시)
+              if (_hasBondingMission) _buildBondingMissionSection(context),
+              // 2. 펫 속마음 편지 (PREMIUM)
+              if (_hasPetsVoice) _buildPetsVoiceSection(context, isPremium),
+            ],
+
+            // 광고 버튼 (avoid-people 블러 상태일 때만)
+            if (fortuneType == 'avoid-people' && _isBlurred && !isPremium)
+              _buildAdUnlockButton(context),
+
+            const SizedBox(height: DSSpacing.sm),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 이미지 헤더
-          _buildImageHeader(context),
-
-          // 점수 섹션
-          if (fortune.overallScore != null) _buildScoreSection(context),
-
-          // 인사말/총평
-          if (fortune.greeting != null || fortune.summary != null)
-            _buildSummarySection(context),
-
-          // 경계 대상 미리보기 (avoid-people) - 블러 상태일 때만 표시
-          if (fortuneType == 'avoid-people' && _hasCautionData && _isBlurred)
-            _buildCautionPreviewSection(context),
-
-          // 경계 대상 블러 섹션 (avoid-people)
-          if (fortuneType == 'avoid-people' && _hasCautionData)
-            _buildCautionBlurredSections(context, isDark, isPremium),
-
-          // 본문 content 표시 (daily, compatibility, love, career 등)
-          if (_shouldShowContent && fortune.content.isNotEmpty && fortuneType != 'avoid-people')
-            _buildContentSection(context),
-
-          // 기간별 인사이트 상세 데이터 (daily_calendar)
-          if (fortuneType == 'daily_calendar')
-            _buildDailyCalendarSection(context),
-
-          // 카테고리/육각형 점수 표시 (content 표시하지 않는 타입만)
-          if (!_shouldShowContent) ...[
-            if (fortune.categories != null && fortune.categories!.isNotEmpty)
-              _buildCategoriesSection(context),
-            if (fortune.hexagonScores != null &&
-                fortune.hexagonScores!.isNotEmpty)
-              _buildHexagonScoresSection(context),
-          ],
-
-          // 추천 사항
-          if (fortune.recommendations != null &&
-              fortune.recommendations!.isNotEmpty)
-            _buildRecommendationsSection(context),
-
-          // 행운 아이템
-          if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
-            _buildLuckyItemsSection(context),
-
-          // lucky-items 전용: 상세 섹션 표시
-          if (fortuneType == 'lucky-items')
-            _buildLuckyItemsDetailSections(context),
-
-          // talent 전용: 상세 섹션 표시
-          if (fortuneType == 'talent')
-            _buildTalentDetailSections(context),
-
-          // biorhythm 전용: 3가지 리듬 상세 표시
-          if (_isBiorhythm && _hasBiorhythmData)
-            _buildBiorhythmDetailSection(context),
-
-          // lotto 전용: 로또 번호 공 표시
-          if (_isLottoType)
-            _buildLottoNumbersSection(context),
-
-          // love 전용: 상세 추천 섹션 (데이트 장소, 패션, 악세서리 등)
-          if (fortuneType == 'love' && _hasLoveRecommendations)
-            _buildLoveRecommendationsSection(context),
-
-          // 연간 운세 전용 섹션들 (new_year, yearly)
-          if (_isYearlyFortune) ...[
-            // 1. 목표별 맞춤 분석
-            _buildGoalFortuneSection(context, isPremium),
-            // 2. 오행 분석
-            _buildSajuAnalysisSection(context, isPremium),
-            // 3. 월별 하이라이트 (1-3월 무료, 4-12월 프리미엄)
-            _buildMonthlyHighlightsSection(context, isPremium),
-            // 4. 행동 계획
-            _buildActionPlanSection(context, isPremium),
-            // 5. 특별 메시지
-            _buildSpecialMessageSection(context, isPremium),
-          ],
-
-          // 재물운 전용 섹션들 (wealth)
-          if (_isWealth && _hasWealthData) ...[
-            // 1. 선택한 관심 분야 태그
-            _buildWealthInterestsSection(context),
-            // 2. 목표 맞춤 조언
-            _buildWealthGoalAdviceSection(context, isPremium),
-            // 3. 고민 해결책
-            _buildWealthConcernSection(context, isPremium),
-            // 4. 관심 분야별 투자 인사이트
-            _buildWealthInvestmentInsightsSection(context, isPremium),
-            // 5. 월별 흐름
-            _buildWealthMonthlyFlowSection(context, isPremium),
-            // 6. 실천 항목
-            _buildWealthActionItemsSection(context, isPremium),
-          ],
-
-          // 작명 전용 섹션 (naming) - 추천 이름 목록
-          if (_isNaming && _hasNamingData)
-            _buildNamingSection(context, isPremium),
-
-          // 시험운 전용 섹션 (exam) - 2025 리뉴얼
-          if (_isExam && _hasExamData) ...[
-            // 1. 합격 시그널 헤더 (원형 게이지 + 해시태그)
-            _buildExamSignalHeader(context),
-            // 2. 시험 스탯 (프로그레스 바 3개)
-            _buildExamStatsSection(context),
-            // 3. 오늘의 1점 전략
-            _buildTodayStrategySection(context),
-            // 4. 영물의 기개
-            _buildSpiritAnimalSection(context),
-            // 5. 행운 정보 그리드
-            _buildExamLuckyInfoSection(context, isPremium),
-            // 6. D-day 맞춤 조언
-            _buildExamDdayAdviceSection(context, isPremium),
-            // 7. 멘탈 관리
-            _buildExamMentalCareSection(context, isPremium),
-          ],
-
-          // 건강운 전용 섹션들 (health)
-          if (_isHealth && _hasHealthData)
-            _buildHealthDetailSection(context, isDark),
-
-          // 운동운 전용 섹션들 (exercise)
-          if (_isExercise && _hasExerciseData)
-            _buildExerciseDetailSection(context, isDark),
-
-          // MBTI 전용 섹션들 (mbti)
-          if (_isMbti && _hasMbtiData) ...[
-            // 1. 오늘의 함정 배너 (위기감 유발)
-            if (_mbtiTodayTrap != null)
-              _buildMbtiTodayTrapSection(context),
-            // 2. 차원별 인사이트 카드 (경고 포함)
-            _buildMbtiDimensionCards(context),
-          ],
-
-          // 🐉 소원 빌기 전용 섹션들 (wish)
-          if (_isWish && _hasWishData) ...[
-            _buildWishDragonHeaderSection(context),    // 용의 한마디
-            _buildWishFortuneFlowSection(context),     // 운의 흐름
-            _buildWishLuckyMissionSection(context),    // 행운 미션
-            _buildWishDragonWisdomSection(context),    // 용의 지혜
-            _buildWishEncouragementSection(context),   // 응원 메시지
-            _buildWishAdviceSection(context),          // 조언 리스트
-          ],
-
-          // 🧿 부적 전용 섹션들 (talisman)
-          if (_isTalisman && _hasTalismanData) ...[
-            _buildTalismanDetailsSection(context),      // 세부 운세 (종합/애정/직장/건강/금전)
-            _buildTalismanLuckyItemsSection(context),   // 행운 아이템
-            _buildTalismanWarningsSection(context),     // 주의사항
-          ],
-
-          // 👨‍👩‍👧 가족운 전용 섹션들 (family-health/wealth/relationship/children/change)
-          if (_isFamily && _hasFamilyData) ...[
-            _buildFamilyCategoriesSection(context, isDark),     // 카테고리별 점수
-            _buildFamilySynergySection(context, isDark),        // 가족 조화 분석
-            _buildFamilySpecialAdviceSection(context, isDark),  // 타입별 특수 조언
-            _buildFamilyMonthlyFlowSection(context, isDark),    // 월별 흐름
-            _buildFamilyAdviceTipsSection(context, isDark),     // 가족 조언
-            _buildFamilyRecommendationsSection(context, isDark), // 추천사항
-            _buildFamilyWarningsSection(context, isDark),       // 주의사항
-            if (_familySpecialAnswer != null && _familySpecialAnswer!.isNotEmpty)
-              _buildFamilySpecialAnswerSection(context, isDark), // 특별 질문 답변
-          ],
-
-          // 🐾 펫 궁합 전용 섹션들 (pet-compatibility)
-          if (_isPetCompatibility) ...[
-            // 1. 교감 미션 (FREE - 먼저 표시)
-            if (_hasBondingMission)
-              _buildBondingMissionSection(context),
-            // 2. 펫 속마음 편지 (PREMIUM)
-            if (_hasPetsVoice)
-              _buildPetsVoiceSection(context, isPremium),
-          ],
-
-          // 광고 버튼 (avoid-people 블러 상태일 때만)
-          if (fortuneType == 'avoid-people' && _isBlurred && !isPremium)
-            _buildAdUnlockButton(context),
-
-          const SizedBox(height: DSSpacing.sm),
-        ],
       ),
     );
   }
 
+  List<Widget>? _buildCustomLayout(
+    BuildContext context,
+    bool isDark,
+    bool isPremium,
+  ) {
+    if (_isDailyFortune) {
+      return _buildDailyLayout(context);
+    }
+    if (_isYearlyFortune) {
+      return _buildYearlyLayout(context, isPremium);
+    }
+    if (fortuneType == 'love') {
+      return _buildLoveLayout(context);
+    }
+    if (_isWealth) {
+      return _buildWealthLayout(context, isPremium);
+    }
+    if (_isHealth) {
+      return _buildHealthLayout(context, isDark);
+    }
+    return null;
+  }
+
+  /// 연간 운세 전용 레이아웃 (히어로 이미지만 사용, 중복 제거)
+  List<Widget> _buildYearlyLayout(BuildContext context, bool isPremium) {
+    return [
+      // 히어로 이미지만 (점수 섹션 중복 제거)
+      _buildImageHeader(context),
+      // 인사말/총평
+      if (fortune.greeting != null || fortune.summary != null)
+        _buildSummarySection(context),
+      // 본문 content
+      if (fortune.content.isNotEmpty)
+        _buildContentSection(context),
+      // 행운 아이템
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+        _buildLuckyItemsSection(context),
+      // 연간 운세 전용 섹션들
+      _buildGoalFortuneSection(context, isPremium),
+      _buildSajuAnalysisSection(context, isPremium),
+      _buildMonthlyHighlightsSection(context, isPremium),
+      _buildActionPlanSection(context, isPremium),
+      _buildSpecialMessageSection(context, isPremium),
+      const SizedBox(height: DSSpacing.sm),
+    ];
+  }
+
+  List<Widget> _buildDailyLayout(BuildContext context) {
+    return [
+      _buildImageHeader(context),
+      _buildDailySnapshotSection(context),
+      if (fortune.content.isNotEmpty) _buildDailyStorySection(context),
+      if (fortuneType == 'daily_calendar') _buildDailyCalendarSection(context),
+      if (fortune.timeSpecificFortunes != null &&
+          fortune.timeSpecificFortunes!.isNotEmpty)
+        _buildDailyTimelineSection(context),
+      if (fortune.categories != null && fortune.categories!.isNotEmpty)
+        _buildCategoriesSection(context),
+      if (fortune.hexagonScores != null && fortune.hexagonScores!.isNotEmpty)
+        _buildHexagonScoresSection(context),
+      if (fortune.recommendations != null &&
+          fortune.recommendations!.isNotEmpty)
+        _buildRecommendationsSection(context),
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+        _buildLuckyItemsSection(context),
+      const SizedBox(height: DSSpacing.sm),
+    ];
+  }
+
+  List<Widget> _buildLoveLayout(BuildContext context) {
+    return [
+      _buildLoveHeader(context),
+      if (fortune.overallScore != null) _buildLoveTemperatureSection(context),
+      if (fortune.greeting != null || fortune.summary != null)
+        _buildLoveMoodSection(context),
+      if (fortune.content.isNotEmpty) _buildLoveMessageSection(context),
+      if (fortune.hexagonScores != null && fortune.hexagonScores!.isNotEmpty)
+        _buildLoveChemistrySection(context),
+      if (_hasLoveRecommendations) _buildLoveRecommendationsSection(context),
+      if (fortune.recommendations != null &&
+          fortune.recommendations!.isNotEmpty)
+        _buildRecommendationsSection(context),
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+        _buildLuckyItemsSection(context),
+      const SizedBox(height: DSSpacing.sm),
+    ];
+  }
+
+  List<Widget> _buildWealthLayout(
+    BuildContext context,
+    bool isPremium,
+  ) {
+    return [
+      _buildWealthHeader(context),
+      _buildWealthSnapshotSection(context),
+      if (_hasWealthData) ...[
+        _buildWealthInterestsSection(context),
+        _buildWealthFocusRow(context, isPremium),
+        _buildWealthInvestmentInsightsSection(context, isPremium),
+        _buildWealthMonthlyFlowSection(context, isPremium),
+        _buildWealthActionItemsSection(context, isPremium),
+      ],
+      if (fortune.recommendations != null &&
+          fortune.recommendations!.isNotEmpty)
+        _buildRecommendationsSection(context),
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+        _buildLuckyItemsSection(context),
+      const SizedBox(height: DSSpacing.sm),
+    ];
+  }
+
+  List<Widget> _buildHealthLayout(
+    BuildContext context,
+    bool isDark,
+  ) {
+    return [
+      _buildHealthHeader(context),
+      _buildHealthOverviewSection(context),
+      if (fortune.content.isNotEmpty) _buildHealthMessageSection(context),
+      if (_hasHealthData) _buildHealthDetailSection(context, isDark),
+      if (fortune.recommendations != null &&
+          fortune.recommendations!.isNotEmpty)
+        _buildRecommendationsSection(context),
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+        _buildLuckyItemsSection(context),
+      const SizedBox(height: DSSpacing.sm),
+    ];
+  }
+
   Widget _buildImageHeader(BuildContext context) {
-    final colors = context.colors;
     final typography = context.typography;
     // daily/yearly fortune은 민화 이미지 사용, 그 외는 기존 이미지
+    final score = fortune.overallScore ?? 75;
+    final heroImage = FortuneCardImages.getHeroImage(fortuneType, score);
+
     final imagePath = _isDailyFortune
         ? _getTodayMinhwaImage()
         : _isYearlyFortune
             ? _getYearlyMinhwaImage()
-            : FortuneCardImages.getImagePath(fortuneType);
+            : heroImage;
 
     return SizedBox(
-      height: 140,
+      height: 180,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // 배경 이미지
+          // 1. 배경 이미지
           SmartImage(
             path: imagePath,
             fit: BoxFit.cover,
-          ),
-
-          // 반투명 오버레이 (텍스트 가독성용, 색상 그라데이션 제거)
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
+            errorWidget: SmartImage(
+              path: FortuneCardImages.getImagePath(fortuneType),
+              fit: BoxFit.cover,
             ),
           ),
 
-          // 타이틀
+          // 2. 프리미엄 오버레이
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.6),
+                ],
+              ),
+            ),
+          ),
+
+          // 3. 타이틀
           Positioned(
             left: DSSpacing.md,
             right: DSSpacing.md,
             bottom: DSSpacing.md,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   _isDailyFortune
@@ -750,8 +975,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     fontWeight: FontWeight.bold,
                     shadows: [
                       Shadow(
-                        color: colors.textPrimary.withValues(alpha: 0.3),
-                        blurRadius: 4,
+                        color: Colors.black.withValues(alpha: 0.5),
+                        blurRadius: 8,
                       ),
                     ],
                   ),
@@ -767,7 +992,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
           ),
 
-          // 좋아요 + 공유 버튼
+          // 4. 액션 버튼
           Positioned(
             top: DSSpacing.sm,
             right: DSSpacing.sm,
@@ -777,6 +1002,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               shareTitle: typeName,
               shareContent: fortune.summary ?? fortune.content,
               iconColor: Colors.white,
+              iconSize: 20,
             ),
           ),
         ],
@@ -784,53 +1010,1103 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
-  Widget _buildScoreSection(BuildContext context) {
-    final colors = context.colors;
+  Widget _buildLoveHeader(BuildContext context) {
+    final score = fortune.overallScore ?? 75;
+    final heroImage = FortuneCardImages.getHeroImage('love', score);
+
+    return _buildThemedHeader(
+      context,
+      title: typeName,
+      subtitle: '오늘의 설렘 지수',
+      imagePath: heroImage,
+      accentColor: const Color(0xFFEC4899),
+      badge: 'LOVE',
+    );
+  }
+
+  Widget _buildWealthHeader(BuildContext context) {
+    final score = fortune.overallScore ?? 75;
+    final heroImage = FortuneCardImages.getHeroImage('money', score);
+
+    return _buildThemedHeader(
+      context,
+      title: typeName,
+      subtitle: '오늘의 자산 흐름',
+      imagePath: heroImage,
+      accentColor: const Color(0xFF10B981),
+      badge: 'WEALTH',
+    );
+  }
+
+  Widget _buildHealthHeader(BuildContext context) {
+    final score = fortune.overallScore ?? 75;
+    final heroImage = FortuneCardImages.getHeroImage('health', score);
+
+    return _buildThemedHeader(
+      context,
+      title: typeName,
+      subtitle: '컨디션 체크 리포트',
+      imagePath: heroImage,
+      accentColor: const Color(0xFF38A169),
+      badge: 'HEALTH',
+    );
+  }
+
+  Widget _buildThemedHeader(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required String imagePath,
+    required Color accentColor,
+    String? badge,
+  }) {
     final typography = context.typography;
-    final score = fortune.overallScore ?? 0;
 
-    return Padding(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      child: Row(
+    return SizedBox(
+      height: 200,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          // 점수 원형
-          _FortuneScoreCircle(
-            score: score,
-            size: 72,
+          SmartImage(
+            path: imagePath,
+            fit: BoxFit.cover,
+            errorWidget: SmartImage(
+              path: FortuneCardImages.getImagePath(fortuneType),
+              fit: BoxFit.cover,
+            ),
           ),
-          const SizedBox(width: DSSpacing.md),
-
-          // 점수 설명
-          Expanded(
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  accentColor.withValues(alpha: 0.15),
+                  Colors.black.withValues(alpha: 0.65),
+                ],
+              ),
+            ),
+          ),
+          if (badge != null)
+            Positioned(
+              top: DSSpacing.sm,
+              left: DSSpacing.sm,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(DSRadius.full),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.4),
+                  ),
+                ),
+                child: Text(
+                  badge,
+                  style: typography.labelSmall.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+            ),
+          Positioned(
+            top: DSSpacing.sm,
+            right: DSSpacing.sm,
+            child: FortuneActionButtons(
+              contentId: fortune.id,
+              contentType: fortuneType,
+              shareTitle: typeName,
+              shareContent: fortune.summary ?? fortune.content,
+              iconColor: Colors.white,
+              iconSize: 20,
+            ),
+          ),
+          Positioned(
+            left: DSSpacing.md,
+            right: DSSpacing.md,
+            bottom: DSSpacing.md,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '종합 운세',
+                  title,
+                  style: typography.headingSmall.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
                   style: typography.labelMedium.copyWith(
-                    color: colors.textSecondary,
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  _getScoreDescription(score),
-                  style: typography.bodyMedium.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.w600,
+                if (fortune.period != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    _getPeriodLabel(fortune.period!),
+                    style: typography.labelSmall.copyWith(
+                      color: Colors.white.withValues(alpha: 0.8),
+                    ),
                   ),
-                ),
-                Text(
-                  _getScoreAdvice(score),
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textTertiary,
-                  ),
-                ),
+                ],
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildDailySnapshotSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final summary = _resolveSummaryText();
+    final weatherSummary = _resolveWeatherSummary();
+    final tip = fortune.specialTip;
+    final score = fortune.overallScore;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: colors.textPrimary.withValues(alpha: 0.08),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: colors.textPrimary.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (score != null)
+                  _FortuneScoreCircle(
+                    score: score,
+                    size: 64,
+                    textColor: colors.accent,
+                    borderColor: colors.accent.withValues(alpha: 0.3),
+                  ),
+                if (score != null) const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '오늘의 스냅샷',
+                        style: typography.labelMedium.copyWith(
+                          color: colors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        summary,
+                        style: typography.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (tip != null && tip.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.sm),
+              _buildInfoChip(
+                context,
+                label: '오늘의 팁',
+                value: tip,
+                color: colors.accent,
+              ),
+            ],
+            if (weatherSummary != null && weatherSummary.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.xs),
+              _buildInfoChip(
+                context,
+                label: '날씨 흐름',
+                value: weatherSummary,
+                color: colors.accentSecondary,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDailyStorySection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              colors.backgroundSecondary,
+              colors.surface,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: colors.textPrimary.withValues(alpha: 0.06),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.auto_stories_rounded,
+                  size: 18,
+                  color: colors.accent,
+                ),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '오늘의 이야기',
+                  style: typography.labelMedium.copyWith(
+                    color: colors.accent,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              fortune.content,
+              style: typography.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDailyTimelineSection(BuildContext context) {
+    final typography = context.typography;
+    final slots = fortune.timeSpecificFortunes ?? [];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.schedule_rounded,
+                size: 18,
+                color: context.colors.accent,
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '하루 흐름',
+                style: typography.labelMedium.copyWith(
+                  color: context.colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          SizedBox(
+            height: 150,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: slots.length,
+              separatorBuilder: (_, __) => const SizedBox(width: DSSpacing.sm),
+              itemBuilder: (context, index) {
+                return _buildDailyTimelineCard(context, slots[index]);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDailyTimelineCard(
+    BuildContext context,
+    TimeSpecificFortune slot,
+  ) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final scoreColor = _getScoreColor(slot.score);
+
+    return Container(
+      width: 180,
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: scoreColor.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            slot.time,
+            style: typography.labelSmall.copyWith(
+              color: colors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            slot.title,
+            style: typography.labelMedium.copyWith(
+              color: colors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Expanded(
+            child: Text(
+              slot.description,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: typography.bodySmall.copyWith(
+                color: colors.textSecondary,
+                height: 1.4,
+              ),
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: scoreColor.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
+            ),
+            child: Text(
+              '${slot.score}점',
+              style: typography.labelSmall.copyWith(
+                color: scoreColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoveTemperatureSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final score = fortune.overallScore ?? 0;
+    const loveAccent = Color(0xFFEC4899);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              loveAccent.withValues(alpha: 0.12),
+              loveAccent.withValues(alpha: 0.04),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: loveAccent.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            _FortuneScoreCircle(
+              score: score,
+              size: 70,
+              textColor: loveAccent,
+              borderColor: loveAccent.withValues(alpha: 0.4),
+            ),
+            const SizedBox(width: DSSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '연애 온도',
+                    style: typography.labelMedium.copyWith(
+                      color: colors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _getScoreDescription(score),
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoveMoodSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final summary = fortune.summary ?? fortune.greeting ?? '';
+
+    if (summary.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: colors.accentSecondary.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text('💗', style: typography.bodyLarge),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '오늘의 무드',
+                  style: typography.labelMedium.copyWith(
+                    color: colors.accentSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              summary,
+              style: typography.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoveMessageSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              colors.accentSecondary.withValues(alpha: 0.08),
+              colors.surface,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: colors.accentSecondary.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.favorite_rounded,
+                  size: 18,
+                  color: colors.accentSecondary,
+                ),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '연애 메시지',
+                  style: typography.labelMedium.copyWith(
+                    color: colors.accentSecondary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              fortune.content,
+              style: typography.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoveChemistrySection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    const loveAccent = Color(0xFFEC4899);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: loveAccent.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text('💞', style: typography.bodyLarge),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '관계 밸런스',
+                  style: typography.labelMedium.copyWith(
+                    color: colors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            FortuneInfographicWidgets.buildRadarChart(
+              scores: fortune.hexagonScores!,
+              size: 220,
+              primaryColor: loveAccent,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWealthSnapshotSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final summary = _resolveSummaryText();
+    final score = fortune.overallScore;
+    const wealthAccent = Color(0xFF10B981);
+
+    final chips = <Map<String, String>>[];
+    if (fortune.specialTip != null && fortune.specialTip!.isNotEmpty) {
+      chips.add({'label': '키워드', 'value': fortune.specialTip!});
+    }
+    final luckyItems = fortune.luckyItems ?? {};
+    if (luckyItems['number'] != null) {
+      chips.add({'label': '행운 숫자', 'value': luckyItems['number'].toString()});
+    }
+    if (luckyItems['color'] != null) {
+      chips.add({'label': '행운 컬러', 'value': luckyItems['color'].toString()});
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              wealthAccent.withValues(alpha: 0.12),
+              colors.surface,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: wealthAccent.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                if (score != null)
+                  _FortuneScoreCircle(
+                    score: score,
+                    size: 64,
+                    textColor: wealthAccent,
+                    borderColor: wealthAccent.withValues(alpha: 0.4),
+                  ),
+                if (score != null) const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '오늘의 재물 스냅샷',
+                        style: typography.labelMedium.copyWith(
+                          color: colors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        summary,
+                        style: typography.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (chips.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.sm),
+              Wrap(
+                spacing: DSSpacing.xs,
+                runSpacing: DSSpacing.xs,
+                children: chips
+                    .map(
+                      (chip) => _buildInlineChip(
+                        context,
+                        label: chip['label']!,
+                        value: chip['value']!,
+                        color: wealthAccent,
+                      ),
+                    )
+                    .toList(),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWealthFocusRow(BuildContext context, bool isPremium) {
+    return Column(
+      children: [
+        _buildWealthGoalAdviceSection(context, isPremium),
+        _buildWealthConcernSection(context, isPremium),
+      ],
+    );
+  }
+
+  Widget _buildHealthOverviewSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final overallHealth = metadata['overall_health'] as String? ?? '';
+    final summary = _resolveSummaryText();
+    final score = fortune.overallScore;
+    const healthAccent = Color(0xFF38A169);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: healthAccent.withValues(alpha: 0.25),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (score != null)
+                  _FortuneScoreCircle(
+                    score: score,
+                    size: 64,
+                    textColor: healthAccent,
+                    borderColor: healthAccent.withValues(alpha: 0.4),
+                  ),
+                if (score != null) const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '컨디션 요약',
+                        style: typography.labelMedium.copyWith(
+                          color: colors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        summary,
+                        style: typography.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (overallHealth.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.sm),
+              Text(
+                overallHealth,
+                style: typography.bodySmall.copyWith(
+                  color: colors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHealthMessageSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    const healthAccent = Color(0xFF38A169);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              healthAccent.withValues(alpha: 0.08),
+              colors.surface,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: healthAccent.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.health_and_safety_rounded,
+                  size: 18,
+                  color: healthAccent,
+                ),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '오늘의 건강 메시지',
+                  style: typography.labelMedium.copyWith(
+                    color: healthAccent,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              fortune.content,
+              style: typography.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoChip(
+    BuildContext context, {
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    final typography = context.typography;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: color.withValues(alpha: 0.2),
+        ),
+      ),
+      child: RichText(
+        text: TextSpan(
+          style: typography.bodySmall.copyWith(
+            color: color,
+            height: 1.4,
+          ),
+          children: [
+            TextSpan(text: '$label · '),
+            TextSpan(
+              text: value,
+              style: typography.bodySmall.copyWith(
+                color: context.colors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInlineChip(
+    BuildContext context, {
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    final typography = context.typography;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(DSRadius.full),
+        border: Border.all(
+          color: color.withValues(alpha: 0.25),
+        ),
+      ),
+      child: Text(
+        '$label: $value',
+        style: typography.labelSmall.copyWith(
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  String _resolveSummaryText() {
+    final summary = fortune.summary?.trim();
+    if (summary != null && summary.isNotEmpty) {
+      return summary;
+    }
+    final greeting = fortune.greeting?.trim();
+    if (greeting != null && greeting.isNotEmpty) {
+      return greeting;
+    }
+    final fallback = fortune.content.trim();
+    if (fallback.isEmpty) {
+      return '오늘의 흐름을 정리했어요.';
+    }
+    return _truncateText(fallback, 120);
+  }
+
+  String _truncateText(String text, int maxLength) {
+    if (text.length <= maxLength) return text;
+    return '${text.substring(0, maxLength)}...';
+  }
+
+  String? _resolveWeatherSummary() {
+    final weather = fortune.weatherSummary;
+    if (weather == null) return null;
+    final summary = weather['summary'] as String?;
+    if (summary != null && summary.isNotEmpty) return summary;
+    final description = weather['description'] as String?;
+    if (description != null && description.isNotEmpty) return description;
+    final condition = weather['condition'] as String?;
+    if (condition != null && condition.isNotEmpty) return condition;
+    return null;
+  }
+
+  Widget _buildScoreSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final score = fortune.overallScore ?? 0;
+    final scoreTags = _buildScoreTags();
+    final scoreColor = _getScoreColor(score);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colors.surface,
+              colors.surfaceSecondary,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: scoreColor.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _FortuneScoreCircle(
+              score: score,
+              size: 72,
+              textColor: colors.textPrimary,
+              borderColor: scoreColor,
+            ),
+            const SizedBox(width: DSSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '종합 운세',
+                    style: typography.labelMedium.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _getScoreDescription(score),
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  if (scoreTags.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: DSSpacing.xs,
+                      runSpacing: DSSpacing.xs,
+                      children: scoreTags
+                          .map((tag) => _ScoreTagChip(text: tag))
+                          .toList(),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<String> _buildScoreTags() {
+    final tags = <String>[];
+
+    if (fortune.isPercentileValid && fortune.percentile != null) {
+      tags.add('상위 ${fortune.percentile}%');
+    }
+
+    final luckyItems = fortune.luckyItems ?? {};
+    final luckyColor = luckyItems['color'] as String?;
+    if (luckyColor != null && luckyColor.isNotEmpty) {
+      tags.add('행운색 $luckyColor');
+    }
+
+    final luckyNumberValue = luckyItems['number'] ?? luckyItems['numbers'];
+    if (luckyNumberValue != null) {
+      if (luckyNumberValue is List) {
+        final numbers = luckyNumberValue.map((n) => n.toString()).join(', ');
+        if (numbers.isNotEmpty) {
+          tags.add('행운숫자 $numbers');
+        }
+      } else {
+        tags.add('행운숫자 $luckyNumberValue');
+      }
+    }
+
+    if (tags.length < 2 && fortune.specialTip != null) {
+      final tip = fortune.specialTip!.trim();
+      if (tip.isNotEmpty) {
+        tags.add(tip);
+      }
+    }
+
+    return tags.take(2).toList();
   }
 
   /// 전체 본문 내용 표시 (오늘의 운세용)
@@ -974,7 +2250,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               final date = fortuneMap['date'] as String? ?? '';
               final score = fortuneMap['score'] as int? ?? 0;
               final summary = fortuneMap['summary'] as String? ??
-                             fortuneMap['content'] as String? ?? '';
+                  fortuneMap['content'] as String? ??
+                  '';
 
               return _buildDailyFortuneItem(
                 context,
@@ -1256,25 +2533,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final typography = context.typography;
     final categories = fortune.categories!;
 
-    final categoryItems = <Widget>[];
-    categories.forEach((key, value) {
-      if (value is Map<String, dynamic>) {
-        final score = value['score'] as int?;
-        final description = value['description'] as String?;
-        final emoji = _getCategoryEmoji(key);
-
-        categoryItems.add(
-          _FortuneCategoryTile(
-            title: _getCategoryTitle(key),
-            emoji: emoji,
-            score: score,
-            description: description ?? '',
-          ),
-        );
-      }
-    });
-
-    if (categoryItems.isEmpty) return const SizedBox.shrink();
+    if (categories.isEmpty) return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -1292,7 +2551,10 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
           ),
           const SizedBox(height: DSSpacing.sm),
-          ...categoryItems,
+          FortuneInfographicWidgets.buildCategoryCards(
+            categories,
+            isDarkMode: Theme.of(context).brightness == Brightness.dark,
+          ),
         ],
       ),
     );
@@ -1319,18 +2581,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
           ),
           const SizedBox(height: DSSpacing.sm),
-          Wrap(
-            spacing: DSSpacing.sm,
-            runSpacing: DSSpacing.sm,
-            children: scores.entries.map((entry) {
-              final emoji = _getCategoryEmoji(entry.key);
-              final title = _getCategoryTitle(entry.key);
-              return _HexagonScoreChip(
-                emoji: emoji,
-                title: title,
-                score: entry.value,
-              );
-            }).toList(),
+          Center(
+            child: FortuneInfographicWidgets.buildRadarChart(
+              scores: scores,
+              size: 220,
+              primaryColor: colors.accent,
+            ),
           ),
         ],
       ),
@@ -1404,72 +2660,38 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   Widget _buildLuckyItemsSection(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-    final items = fortune.luckyItems!;
-
-    final luckyWidgets = <Widget>[];
-
-    if (items['color'] != null) {
-      luckyWidgets.add(_LuckyItemChip(
-        emoji: '🎨',
-        label: '행운색',
-        value: items['color'].toString(),
-      ));
-    }
-    if (items['number'] != null) {
-      luckyWidgets.add(_LuckyItemChip(
-        emoji: '🔢',
-        label: '행운숫자',
-        value: items['number'].toString(),
-      ));
-    }
-    if (items['direction'] != null) {
-      luckyWidgets.add(_LuckyItemChip(
-        emoji: '🧭',
-        label: '행운방향',
-        value: items['direction'].toString(),
-      ));
-    }
-    if (items['time'] != null) {
-      luckyWidgets.add(_LuckyItemChip(
-        emoji: '⏰',
-        label: '행운시간',
-        value: items['time'].toString(),
-      ));
+    if (fortune.luckyItems == null || fortune.luckyItems!.isEmpty) {
+      return const SizedBox.shrink();
     }
 
-    if (luckyWidgets.isEmpty) return const SizedBox.shrink();
+    final luckyItems = fortune.luckyItems!;
+    final luckyNumberValue = luckyItems['number'] ?? luckyItems['numbers'];
+    final luckyNumbers = <String>[];
+    if (luckyNumberValue is List) {
+      luckyNumbers.addAll(luckyNumberValue.map((n) => n.toString()));
+    } else if (luckyNumberValue != null) {
+      luckyNumbers.add(luckyNumberValue.toString());
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.md,
         vertical: DSSpacing.sm,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '🍀 행운 아이템',
-            style: typography.labelLarge.copyWith(
-              color: colors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: DSSpacing.sm),
-          Wrap(
-            spacing: DSSpacing.sm,
-            runSpacing: DSSpacing.sm,
-            children: luckyWidgets,
-          ),
-        ],
+      child: FortuneInfographicWidgets.buildTossStyleLuckyTags(
+        luckyColor: luckyItems['color'] as String?,
+        luckyFood: luckyItems['food'] as String?,
+        luckyNumbers: luckyNumbers,
+        luckyDirection: luckyItems['direction'] as String?,
       ),
     );
   }
 
   String _getPeriodLabel(String period) {
     // 로또/행운번호는 항상 오늘 날짜 표시
-    if (widget.fortuneType == 'lucky-number' || widget.fortuneType == 'lotto' || widget.fortuneType == 'lottery') {
+    if (widget.fortuneType == 'lucky-number' ||
+        widget.fortuneType == 'lotto' ||
+        widget.fortuneType == 'lottery') {
       final now = DateTime.now();
       return '${now.year}년 ${now.month}월 ${now.day}일';
     }
@@ -1627,7 +2849,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
 
             const SizedBox(height: DSSpacing.sm),
-            Divider(height: 1, color: colors.textPrimary.withValues(alpha: 0.1)),
+            Divider(
+                height: 1, color: colors.textPrimary.withValues(alpha: 0.1)),
             const SizedBox(height: DSSpacing.sm),
 
             // 경계인물 미리보기
@@ -1639,7 +2862,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 title: previewPerson['type'] as String? ?? '',
                 description: previewPerson['reason'] as String? ?? '',
                 severity: previewPerson['severity'] as String? ?? 'medium',
-                cautionSurnames: (previewPerson['cautionSurnames'] as List<dynamic>?)?.cast<String>(),
+                cautionSurnames:
+                    (previewPerson['cautionSurnames'] as List<dynamic>?)
+                        ?.cast<String>(),
                 surnameReason: previewPerson['surnameReason'] as String?,
               ),
 
@@ -1760,26 +2985,29 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 Wrap(
                   spacing: 6,
                   runSpacing: 4,
-                  children: cautionSurnames.map((surname) =>
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: colors.error.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(DSRadius.xs),
-                        border: Border.all(
-                          color: colors.error.withValues(alpha: 0.3),
+                  children: cautionSurnames
+                      .map(
+                        (surname) => Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: colors.error.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(DSRadius.xs),
+                            border: Border.all(
+                              color: colors.error.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Text(
+                            '$surname씨',
+                            style: typography.labelSmall.copyWith(
+                              color: colors.error,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        '$surname씨',
-                        style: typography.labelSmall.copyWith(
-                          color: colors.error,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ),
-                  ).toList(),
+                      )
+                      .toList(),
                 ),
               ],
               if (surnameReason != null && surnameReason.isNotEmpty) ...[
@@ -1800,7 +3028,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 경계 대상 블러 처리된 섹션들 (8개 카테고리)
-  Widget _buildCautionBlurredSections(BuildContext context, bool isDark, bool isPremium) {
+  Widget _buildCautionBlurredSections(
+      BuildContext context, bool isDark, bool isPremium) {
     final data = _cautionData;
 
     if (data == null) return const SizedBox.shrink();
@@ -1832,9 +3061,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
           if (items.isEmpty) return const SizedBox.shrink();
 
-          final shouldBlur = _isBlurred &&
-              _blurredSections.contains(sectionKey) &&
-              !isPremium;
+          final shouldBlur =
+              _isBlurred && _blurredSections.contains(sectionKey) && !isPremium;
 
           return Padding(
             padding: const EdgeInsets.only(bottom: DSSpacing.sm),
@@ -1911,13 +3139,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             if (item is! Map<String, dynamic>) return const SizedBox.shrink();
 
             final itemTitle = item['type'] as String? ??
-                              item['item'] as String? ??
-                              item['color'] as String? ??
-                              item['number']?.toString() ??
-                              item['animal'] as String? ??
-                              item['place'] as String? ??
-                              item['time'] as String? ??
-                              item['direction'] as String? ?? '';
+                item['item'] as String? ??
+                item['color'] as String? ??
+                item['number']?.toString() ??
+                item['animal'] as String? ??
+                item['place'] as String? ??
+                item['time'] as String? ??
+                item['direction'] as String? ??
+                '';
             final itemReason = item['reason'] as String? ?? '';
             final severity = item['severity'] as String? ?? 'medium';
 
@@ -1964,33 +3193,43 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                           ),
                         // 경계 성씨 표시 (cautionPeople만 해당)
                         if (title == '경계인물') ...[
-                          if ((item['cautionSurnames'] as List<dynamic>?)?.isNotEmpty == true) ...[
+                          if ((item['cautionSurnames'] as List<dynamic>?)
+                                  ?.isNotEmpty ==
+                              true) ...[
                             const SizedBox(height: DSSpacing.xs),
                             Wrap(
                               spacing: 6,
                               runSpacing: 4,
-                              children: (item['cautionSurnames'] as List<dynamic>).map((surname) =>
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: colors.error.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(DSRadius.sm),
-                                    border: Border.all(
-                                      color: colors.error.withValues(alpha: 0.3),
+                              children: (item['cautionSurnames']
+                                      as List<dynamic>)
+                                  .map(
+                                    (surname) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            colors.error.withValues(alpha: 0.1),
+                                        borderRadius:
+                                            BorderRadius.circular(DSRadius.sm),
+                                        border: Border.all(
+                                          color: colors.error
+                                              .withValues(alpha: 0.3),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        '$surname씨 주의',
+                                        style: typography.labelSmall.copyWith(
+                                          color: colors.error,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  child: Text(
-                                    '$surname씨 주의',
-                                    style: typography.labelSmall.copyWith(
-                                      color: colors.error,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ).toList(),
+                                  )
+                                  .toList(),
                             ),
                           ],
-                          if ((item['surnameReason'] as String?)?.isNotEmpty == true) ...[
+                          if ((item['surnameReason'] as String?)?.isNotEmpty ==
+                              true) ...[
                             const SizedBox(height: DSSpacing.xs),
                             Text(
                               '🔮 ${item['surnameReason']}',
@@ -2030,12 +3269,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   end: Alignment.bottomCenter,
                   colors: [
                     (isDark
-                        ? TossDesignSystem.backgroundDark
-                        : TossDesignSystem.backgroundLight)
+                            ? TossDesignSystem.backgroundDark
+                            : TossDesignSystem.backgroundLight)
                         .withValues(alpha: 0.3),
                     (isDark
-                        ? TossDesignSystem.backgroundDark
-                        : TossDesignSystem.backgroundLight)
+                            ? TossDesignSystem.backgroundDark
+                            : TossDesignSystem.backgroundLight)
                         .withValues(alpha: 0.7),
                   ],
                 ),
@@ -2049,9 +3288,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 Icons.lock_outline,
                 size: 28,
                 color: colors.textSecondary.withValues(alpha: 0.5),
-              )
-                  .animate(onPlay: (controller) => controller.repeat())
-                  .shimmer(
+              ).animate(onPlay: (controller) => controller.repeat()).shimmer(
                     duration: 2000.ms,
                     color: colors.accentSecondary.withValues(alpha: 0.2),
                   ),
@@ -2159,7 +3396,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
           // 게이지 증가
           if (mounted) {
-            FortuneCompletionHelper.onFortuneViewed(context, ref, 'avoid-people');
+            FortuneCompletionHelper.onFortuneViewed(
+                context, ref, 'avoid-people');
           }
 
           // 블러 해제
@@ -2194,7 +3432,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final typography = context.typography;
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
 
-    final recommendedNames = metadata['recommendedNames'] as List<dynamic>? ?? [];
+    final recommendedNames =
+        metadata['recommendedNames'] as List<dynamic>? ?? [];
     final ohaengAnalysis = metadata['ohaengAnalysis'] as Map<String, dynamic>?;
 
     if (recommendedNames.isEmpty) {
@@ -2298,13 +3537,15 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 개별 이름 카드 빌드
-  Widget _buildNameCard(BuildContext context, Map<String, dynamic> name, int rank, bool isBlurred) {
+  Widget _buildNameCard(BuildContext context, Map<String, dynamic> name,
+      int rank, bool isBlurred) {
     final colors = context.colors;
     final typography = context.typography;
 
     final koreanName = name['koreanName'] as String? ?? '';
     final hanjaName = name['hanjaName'] as String? ?? '';
-    final hanjaMeaning = (name['hanjaMeaning'] as List<dynamic>?)?.cast<String>() ?? [];
+    final hanjaMeaning =
+        (name['hanjaMeaning'] as List<dynamic>?)?.cast<String>() ?? [];
     final totalScore = name['totalScore'] as int? ?? 0;
     final analysis = name['analysis'] as String? ?? '';
     final compatibility = name['compatibility'] as String? ?? '';
@@ -2379,7 +3620,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                         vertical: DSSpacing.xs,
                       ),
                       decoration: BoxDecoration(
-                        color: _getScoreColor(totalScore).withValues(alpha: 0.15),
+                        color:
+                            _getScoreColor(totalScore).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(DSRadius.sm),
                       ),
                       child: Text(
@@ -2484,7 +3726,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.lock, size: 16, color: Colors.white),
+                            const Icon(Icons.lock,
+                                size: 16, color: Colors.white),
                             const SizedBox(width: DSSpacing.xs),
                             Text(
                               '프리미엄 전용',
@@ -2528,7 +3771,10 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final todayRecRaw = metadata['today_recommendation'];
     final String? todayRec = todayRecRaw is String
         ? todayRecRaw
-        : (todayRecRaw is Map ? todayRecRaw['text']?.toString() ?? todayRecRaw['recommendation']?.toString() : null);
+        : (todayRecRaw is Map
+            ? todayRecRaw['text']?.toString() ??
+                todayRecRaw['recommendation']?.toString()
+            : null);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
@@ -2815,20 +4061,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   /// 바이오리듬 phase 한글 변환
   String _getPhaseKorean(String phase) => switch (phase.toLowerCase()) {
-    'high' => '최고조',
-    'rising' => '상승 중',
-    'transition' => '전환기',
-    'declining' => '하강 중',
-    'recharge' => '재충전',
-    _ => phase,
-  };
+        'high' => '최고조',
+        'rising' => '상승 중',
+        'transition' => '전환기',
+        'declining' => '하강 중',
+        'recharge' => '재충전',
+        _ => phase,
+      };
 
   /// 연애운 상세 추천 섹션 빌드 (love 전용)
   Widget _buildLoveRecommendationsSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
-    final recommendations = metadata['recommendations'] as Map<String, dynamic>?;
+    final recommendations =
+        metadata['recommendations'] as Map<String, dynamic>?;
 
     if (recommendations == null) return const SizedBox.shrink();
 
@@ -2863,12 +4110,17 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               title: '데이트 장소',
               data: recommendations['dateSpots'] as Map<String, dynamic>,
               fields: ['primary', 'timeRecommendation', 'reason'],
-              fieldLabels: {'primary': '추천 장소', 'timeRecommendation': '추천 시간', 'reason': '이유'},
+              fieldLabels: {
+                'primary': '추천 장소',
+                'timeRecommendation': '추천 시간',
+                'reason': '이유'
+              },
             ),
 
           // 패션 추천
           if (recommendations['fashion'] != null)
-            _buildLoveFashionCard(context, recommendations['fashion'] as Map<String, dynamic>),
+            _buildLoveFashionCard(
+                context, recommendations['fashion'] as Map<String, dynamic>),
 
           // 악세서리 추천
           if (recommendations['accessories'] != null)
@@ -2907,7 +4159,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
           // 대화 주제 추천
           if (recommendations['conversation'] != null)
-            _buildLoveConversationCard(context, recommendations['conversation'] as Map<String, dynamic>),
+            _buildLoveConversationCard(context,
+                recommendations['conversation'] as Map<String, dynamic>),
 
           const SizedBox(height: DSSpacing.sm),
         ],
@@ -2978,21 +4231,24 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     ),
                     const SizedBox(height: 2),
                     ...value.take(3).map((item) => Padding(
-                      padding: const EdgeInsets.only(left: DSSpacing.xs),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('•', style: typography.bodySmall.copyWith(color: colors.accent)),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              item.toString(),
-                              style: typography.bodySmall.copyWith(color: colors.textPrimary),
-                            ),
+                          padding: const EdgeInsets.only(left: DSSpacing.xs),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('•',
+                                  style: typography.bodySmall
+                                      .copyWith(color: colors.accent)),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  item.toString(),
+                                  style: typography.bodySmall
+                                      .copyWith(color: colors.textPrimary),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    )),
+                        )),
                   ],
                 ),
               );
@@ -3026,7 +4282,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 패션 추천 카드 빌드 (상세)
-  Widget _buildLoveFashionCard(BuildContext context, Map<String, dynamic> data) {
+  Widget _buildLoveFashionCard(
+      BuildContext context, Map<String, dynamic> data) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -3092,7 +4349,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
           // 피해야 할 스타일
           if (data['avoidFashion'] != null && data['avoidFashion'] is List)
-            _buildFashionListRow(context, '⚠️ 피할 것', data['avoidFashion'] as List, isWarning: true),
+            _buildFashionListRow(
+                context, '⚠️ 피할 것', data['avoidFashion'] as List,
+                isWarning: true),
         ],
       ),
     );
@@ -3129,7 +4388,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
-  Widget _buildFashionListRow(BuildContext context, String label, List items, {bool isWarning = false}) {
+  Widget _buildFashionListRow(BuildContext context, String label, List items,
+      {bool isWarning = false}) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -3148,22 +4408,26 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           Wrap(
             spacing: DSSpacing.xs,
             runSpacing: DSSpacing.xxs,
-            children: items.take(4).map((item) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: isWarning
-                    ? colors.error.withValues(alpha: 0.1)
-                    : colors.accent.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-              ),
-              child: Text(
-                item.toString(),
-                style: typography.labelSmall.copyWith(
-                  color: isWarning ? colors.error : colors.accent,
-                  fontSize: 11,
-                ),
-              ),
-            )).toList(),
+            children: items
+                .take(4)
+                .map((item) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: isWarning
+                            ? colors.error.withValues(alpha: 0.1)
+                            : colors.accent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.sm),
+                      ),
+                      child: Text(
+                        item.toString(),
+                        style: typography.labelSmall.copyWith(
+                          color: isWarning ? colors.error : colors.accent,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ))
+                .toList(),
           ),
         ],
       ),
@@ -3171,7 +4435,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 대화 추천 카드 빌드
-  Widget _buildLoveConversationCard(BuildContext context, Map<String, dynamic> data) {
+  Widget _buildLoveConversationCard(
+      BuildContext context, Map<String, dynamic> data) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -3212,21 +4477,22 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
             const SizedBox(height: 4),
             ...(data['topics'] as List).take(3).map((topic) => Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('💡', style: typography.labelSmall),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      topic.toString(),
-                      style: typography.bodySmall.copyWith(color: colors.textPrimary),
-                    ),
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('💡', style: typography.labelSmall),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          topic.toString(),
+                          style: typography.bodySmall
+                              .copyWith(color: colors.textPrimary),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
 
           // 대화 시작 문장
@@ -3238,20 +4504,20 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
             const SizedBox(height: 4),
             ...(data['openers'] as List).take(2).map((opener) => Container(
-              margin: const EdgeInsets.only(bottom: 4),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: colors.accent.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-              ),
-              child: Text(
-                '"${opener.toString()}"',
-                style: typography.bodySmall.copyWith(
-                  color: colors.textPrimary,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            )),
+                  margin: const EdgeInsets.only(bottom: 4),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                  ),
+                  child: Text(
+                    '"${opener.toString()}"',
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textPrimary,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                )),
           ],
 
           // 피해야 할 주제
@@ -3263,21 +4529,22 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
             const SizedBox(height: 4),
             ...(data['avoid'] as List).take(2).map((topic) => Padding(
-              padding: const EdgeInsets.only(bottom: 2),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('❌', style: typography.labelSmall),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      topic.toString(),
-                      style: typography.bodySmall.copyWith(color: colors.textSecondary),
-                    ),
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('❌', style: typography.labelSmall),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          topic.toString(),
+                          style: typography.bodySmall
+                              .copyWith(color: colors.textSecondary),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
 
           // 팁
@@ -3297,7 +4564,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   Expanded(
                     child: Text(
                       data['tip'].toString(),
-                      style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                      style: typography.bodySmall
+                          .copyWith(color: colors.textPrimary),
                     ),
                   ),
                 ],
@@ -3321,7 +4589,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final mentalModel = data['mentalModel'] as Map<String, dynamic>? ?? {};
     final weeklyPlan = data['weeklyPlan'] as List<dynamic>? ?? [];
     final collaboration = data['collaboration'] as Map<String, dynamic>? ?? {};
-    final resumeAnalysis = data['resumeAnalysis'] as Map<String, dynamic>? ?? {};
+    final resumeAnalysis =
+        data['resumeAnalysis'] as Map<String, dynamic>? ?? {};
 
     // 데이터가 없으면 빈 위젯 반환
     if (description.isEmpty && talentInsights.isEmpty && mentalModel.isEmpty) {
@@ -3367,7 +4636,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               icon: '🌟',
               title: 'TOP 재능',
               child: Column(
-                children: talentInsights.take(3).toList().asMap().entries.map((entry) {
+                children: talentInsights
+                    .take(3)
+                    .toList()
+                    .asMap()
+                    .entries
+                    .map((entry) {
                   final index = entry.key;
                   final insight = entry.value as Map<String, dynamic>? ?? {};
                   final talent = insight['talent'] as String? ?? '';
@@ -3394,10 +4668,19 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: index == 0
-                                  ? [const Color(0xFFFFD700), const Color(0xFFFFA500)]
+                                  ? [
+                                      const Color(0xFFFFD700),
+                                      const Color(0xFFFFA500)
+                                    ]
                                   : index == 1
-                                      ? [const Color(0xFFC0C0C0), const Color(0xFFA8A8A8)]
-                                      : [const Color(0xFFCD7F32), const Color(0xFFB8860B)],
+                                      ? [
+                                          const Color(0xFFC0C0C0),
+                                          const Color(0xFFA8A8A8)
+                                        ]
+                                      : [
+                                          const Color(0xFFCD7F32),
+                                          const Color(0xFFB8860B)
+                                        ],
                             ),
                             shape: BoxShape.circle,
                           ),
@@ -3429,10 +4712,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                                     ),
                                   ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: _getTalentScoreColor(potential).withValues(alpha: 0.15),
-                                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                                      color: _getTalentScoreColor(potential)
+                                          .withValues(alpha: 0.15),
+                                      borderRadius:
+                                          BorderRadius.circular(DSRadius.sm),
                                     ),
                                     child: Text(
                                       '$potential점',
@@ -3504,7 +4790,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           ],
 
           // 협업 궁합 (간략하게)
-          if (collaboration.isNotEmpty && collaboration['teamRole'] != null) ...[
+          if (collaboration.isNotEmpty &&
+              collaboration['teamRole'] != null) ...[
             const SizedBox(height: DSSpacing.md),
             _buildTalentSection(
               context,
@@ -3515,7 +4802,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 decoration: BoxDecoration(
                   color: colors.accent.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: Border.all(color: colors.accent.withValues(alpha: 0.15)),
+                  border:
+                      Border.all(color: colors.accent.withValues(alpha: 0.15)),
                 ),
                 child: Row(
                   children: [
@@ -3539,7 +4827,15 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           if (weeklyPlan.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.md),
             Builder(builder: (context) {
-              final weekdays = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
+              final weekdays = [
+                '월요일',
+                '화요일',
+                '수요일',
+                '목요일',
+                '금요일',
+                '토요일',
+                '일요일'
+              ];
               final today = DateTime.now().weekday; // 1=월, 7=일
 
               return _buildTalentSection(
@@ -3551,7 +4847,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     final plan = dayPlan as Map<String, dynamic>? ?? {};
                     final day = plan['day'] as String? ?? '';
                     final focus = plan['focus'] as String? ?? '';
-                    final activities = plan['activities'] as List<dynamic>? ?? [];
+                    final activities =
+                        plan['activities'] as List<dynamic>? ?? [];
 
                     // 오늘인지 확인
                     final dayIndex = weekdays.indexOf(day);
@@ -3582,7 +4879,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                                 Text(
                                   day.isNotEmpty ? day.substring(0, 1) : '',
                                   style: typography.labelMedium.copyWith(
-                                    color: isToday ? colors.accent : colors.textSecondary,
+                                    color: isToday
+                                        ? colors.accent
+                                        : colors.textSecondary,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -3656,7 +4955,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                       context,
                       icon: '📈',
                       title: '보완 필요 스킬',
-                      content: (resumeAnalysis['skillGaps'] as List<dynamic>).join('\n'),
+                      content: (resumeAnalysis['skillGaps'] as List<dynamic>)
+                          .join('\n'),
                     ),
                     const SizedBox(height: DSSpacing.sm),
                   ],
@@ -3676,7 +4976,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                       context,
                       icon: '💎',
                       title: '숨은 재능',
-                      content: (resumeAnalysis['hiddenPotentials'] as List<dynamic>).join('\n'),
+                      content:
+                          (resumeAnalysis['hiddenPotentials'] as List<dynamic>)
+                              .join('\n'),
                     ),
                     const SizedBox(height: DSSpacing.sm),
                   ],
@@ -3759,7 +5061,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 적성 운세 섹션 빌더
-  Widget _buildTalentSection(BuildContext context, {
+  Widget _buildTalentSection(
+    BuildContext context, {
     required String icon,
     required String title,
     required Widget child,
@@ -3790,7 +5093,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 멘탈 모델 개별 아이템 빌더
-  Widget _buildMentalModelItem(BuildContext context, {
+  Widget _buildMentalModelItem(
+    BuildContext context, {
     required String emoji,
     required String label,
     required String value,
@@ -3851,7 +5155,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     // 카테고리별 표시 여부
     final showFashion = showAll || selectedCategory == 'fashion';
     final showFood = showAll || selectedCategory == 'food';
-    final showColor = showAll || selectedCategory == 'color' || selectedCategory == 'fashion';
+    final showColor =
+        showAll || selectedCategory == 'color' || selectedCategory == 'fashion';
     final showPlace = showAll || selectedCategory == 'place';
     final showNumber = showAll || selectedCategory == 'number';
 
@@ -3862,16 +5167,31 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final direction = data['direction'] as String? ?? '';
     final numbers = data['numbers'] as List<dynamic>? ?? [];
     final relationships = data['relationships'] as List<dynamic>? ?? [];
-    final advice = data['advice'] as String? ?? data['lucky_advice'] as String? ?? '';
-    final luckySummary = data['lucky_summary'] as String? ?? data['summary'] as String? ?? '';
+    final advice =
+        data['advice'] as String? ?? data['lucky_advice'] as String? ?? '';
+    final luckySummary =
+        data['lucky_summary'] as String? ?? data['summary'] as String? ?? '';
 
     // ✅ 상세 필드 우선 사용 (reason, timing 포함)
-    final foodDetail = data['foodDetail'] as List<dynamic>? ?? data['food'] as List<dynamic>? ?? [];
-    final fashionDetail = data['fashionDetail'] as List<dynamic>? ?? data['fashion'] as List<dynamic>? ?? [];
-    final colorDetail = data['colorDetail'] as Map<String, dynamic>? ?? (data['colorDetail'] is Map ? data['colorDetail'] as Map<String, dynamic> : <String, dynamic>{});
-    final placesDetail = data['placesDetail'] as List<dynamic>? ?? data['places'] as List<dynamic>? ?? [];
-    final jewelryDetail = data['jewelryDetail'] as List<dynamic>? ?? data['jewelry'] as List<dynamic>? ?? [];
-    final materialDetail = data['materialDetail'] as List<dynamic>? ?? data['material'] as List<dynamic>? ?? [];
+    final foodDetail = data['foodDetail'] as List<dynamic>? ??
+        data['food'] as List<dynamic>? ??
+        [];
+    final fashionDetail = data['fashionDetail'] as List<dynamic>? ??
+        data['fashion'] as List<dynamic>? ??
+        [];
+    final colorDetail = data['colorDetail'] as Map<String, dynamic>? ??
+        (data['colorDetail'] is Map
+            ? data['colorDetail'] as Map<String, dynamic>
+            : <String, dynamic>{});
+    final placesDetail = data['placesDetail'] as List<dynamic>? ??
+        data['places'] as List<dynamic>? ??
+        [];
+    final jewelryDetail = data['jewelryDetail'] as List<dynamic>? ??
+        data['jewelry'] as List<dynamic>? ??
+        [];
+    final materialDetail = data['materialDetail'] as List<dynamic>? ??
+        data['material'] as List<dynamic>? ??
+        [];
     final numbersExplanation = data['numbersExplanation'] as String? ?? '';
     final avoidNumbers = data['avoidNumbers'] as List<dynamic>? ?? [];
     final todayTip = data['todayTip'] as String? ?? '';
@@ -3889,7 +5209,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         children: [
           // 오늘 날짜 배지
           Container(
-            padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs, horizontal: DSSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+                vertical: DSSpacing.xs, horizontal: DSSpacing.sm),
             decoration: BoxDecoration(
               color: colors.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -3923,16 +5244,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   if (element.isNotEmpty)
                     Container(
                       margin: const EdgeInsets.only(bottom: DSSpacing.sm),
-                      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
                       decoration: BoxDecoration(
-                        color: _getLuckyElementColor(element).withValues(alpha: 0.1),
+                        color: _getLuckyElementColor(element)
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(DSRadius.full),
-                        border: Border.all(color: _getLuckyElementColor(element).withValues(alpha: 0.3)),
+                        border: Border.all(
+                            color: _getLuckyElementColor(element)
+                                .withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(_getLuckyElementEmoji(element), style: const TextStyle(fontSize: 14)),
+                          Text(_getLuckyElementEmoji(element),
+                              style: const TextStyle(fontSize: 14)),
                           const SizedBox(width: DSSpacing.xs),
                           Text(
                             '오행: $element',
@@ -3965,21 +5291,26 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               child: Wrap(
                 spacing: DSSpacing.xs,
                 runSpacing: DSSpacing.xs,
-                children: keyword.split(',').map((k) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
-                  decoration: BoxDecoration(
-                    color: colors.warning.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(DSRadius.full),
-                    border: Border.all(color: colors.warning.withValues(alpha: 0.3)),
-                  ),
-                  child: Text(
-                    k.trim(),
-                    style: typography.labelSmall.copyWith(
-                      color: colors.warning,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                )).toList(),
+                children: keyword
+                    .split(',')
+                    .map((k) => Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                          decoration: BoxDecoration(
+                            color: colors.warning.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(DSRadius.full),
+                            border: Border.all(
+                                color: colors.warning.withValues(alpha: 0.3)),
+                          ),
+                          child: Text(
+                            k.trim(),
+                            style: typography.labelSmall.copyWith(
+                              color: colors.warning,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ))
+                    .toList(),
               ),
             ),
 
@@ -3996,33 +5327,39 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   Wrap(
                     spacing: DSSpacing.sm,
                     runSpacing: DSSpacing.sm,
-                    children: numbers.map((n) => Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [colors.info, colors.info.withValues(alpha: 0.7)],
-                        ),
-                        borderRadius: BorderRadius.circular(DSRadius.full),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colors.info.withValues(alpha: 0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        n.toString(),
-                        style: typography.headingMedium.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )).toList(),
+                    children: numbers
+                        .map((n) => Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    colors.info,
+                                    colors.info.withValues(alpha: 0.7)
+                                  ],
+                                ),
+                                borderRadius:
+                                    BorderRadius.circular(DSRadius.full),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colors.info.withValues(alpha: 0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                n.toString(),
+                                style: typography.headingMedium.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ))
+                        .toList(),
                   ),
                   // 숫자 설명
                   if (numbersExplanation.isNotEmpty) ...[
@@ -4046,17 +5383,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   if (avoidNumbers.isNotEmpty) ...[
                     const SizedBox(height: DSSpacing.md),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
                       decoration: BoxDecoration(
                         color: colors.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(DSRadius.sm),
-                        border: Border.all(color: colors.error.withValues(alpha: 0.2)),
+                        border: Border.all(
+                            color: colors.error.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('⚠️ ', style: TextStyle(fontSize: 14)),
-                          Text('피해야 할 숫자: ', style: typography.labelSmall.copyWith(color: colors.error)),
+                          Text('피해야 할 숫자: ',
+                              style: typography.labelSmall
+                                  .copyWith(color: colors.error)),
                           Text(
                             avoidNumbers.join(', '),
                             style: typography.bodySmall.copyWith(
@@ -4239,7 +5580,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   if (item is Map) {
                     return _buildDetailedItemCard(
                       context,
-                      item: item['place']?.toString() ?? item['item']?.toString() ?? '',
+                      item: item['place']?.toString() ??
+                          item['item']?.toString() ??
+                          '',
                       reason: item['reason']?.toString() ?? '',
                       timing: item['timing']?.toString(),
                       accentColor: colors.success,
@@ -4265,21 +5608,27 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               title: '궁합 좋은 사람',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: relationships.map((rel) => Padding(
-                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('• ', style: TextStyle(color: colors.textSecondary, fontSize: 14)),
-                      Expanded(
-                        child: Text(
-                          rel.toString(),
-                          style: typography.bodySmall.copyWith(color: colors.textPrimary),
-                        ),
-                      ),
-                    ],
-                  ),
-                )).toList(),
+                children: relationships
+                    .map((rel) => Padding(
+                          padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('• ',
+                                  style: TextStyle(
+                                      color: colors.textSecondary,
+                                      fontSize: 14)),
+                              Expanded(
+                                child: Text(
+                                  rel.toString(),
+                                  style: typography.bodySmall
+                                      .copyWith(color: colors.textPrimary),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ))
+                    .toList(),
               ),
             ),
 
@@ -4294,7 +5643,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 decoration: BoxDecoration(
                   color: colors.accent.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
-                  border: Border.all(color: colors.accent.withValues(alpha: 0.15)),
+                  border:
+                      Border.all(color: colors.accent.withValues(alpha: 0.15)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -4354,7 +5704,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 행운 아이템 섹션 빌더
-  Widget _buildLuckySection(BuildContext context, {
+  Widget _buildLuckySection(
+    BuildContext context, {
     required String icon,
     required String title,
     required Widget child,
@@ -4388,7 +5739,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 행운 아이템 칩 빌더
-  Widget _buildLuckyChip(BuildContext context, {
+  Widget _buildLuckyChip(
+    BuildContext context, {
     required String icon,
     required String label,
     required String value,
@@ -4398,7 +5750,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final typography = context.typography;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
       decoration: BoxDecoration(
         color: chipColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -4435,28 +5788,32 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 아이템 목록을 칩 형태로 표시
-  Widget _buildLuckyItemsChips(BuildContext context, List<dynamic> items, Color chipColor) {
+  Widget _buildLuckyItemsChips(
+      BuildContext context, List<dynamic> items, Color chipColor) {
     final colors = context.colors;
     final typography = context.typography;
 
     return Wrap(
       spacing: DSSpacing.xs,
       runSpacing: DSSpacing.xs,
-      children: items.map((item) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
-        decoration: BoxDecoration(
-          color: chipColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(DSRadius.sm),
-          border: Border.all(color: chipColor.withValues(alpha: 0.2)),
-        ),
-        child: Text(
-          item.toString(),
-          style: typography.labelSmall.copyWith(
-            color: colors.textPrimary,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      )).toList(),
+      children: items
+          .map((item) => Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                decoration: BoxDecoration(
+                  color: chipColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                  border: Border.all(color: chipColor.withValues(alpha: 0.2)),
+                ),
+                child: Text(
+                  item.toString(),
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ))
+          .toList(),
     );
   }
 
@@ -4508,7 +5865,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               if (cleanTiming != null && cleanTiming.isNotEmpty)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.xs, vertical: 2),
                   decoration: BoxDecoration(
                     color: accentColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -4590,18 +5948,24 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final title = goalFortune['title'] as String? ?? '$goalLabel 분석';
     final prediction = goalFortune['prediction'] as String? ?? '';
     final deepAnalysis = goalFortune['deepAnalysis'] as String? ?? '';
-    final bestMonths = (goalFortune['bestMonths'] as List<dynamic>?)?.cast<String>() ?? [];
-    final cautionMonths = (goalFortune['cautionMonths'] as List<dynamic>?)?.cast<String>() ?? [];
-    final successFactors = (goalFortune['successFactors'] as List<dynamic>?)?.cast<String>() ?? [];
-    final actionItems = (goalFortune['actionItems'] as List<dynamic>?)?.cast<String>() ?? [];
+    final bestMonths =
+        (goalFortune['bestMonths'] as List<dynamic>?)?.cast<String>() ?? [];
+    final cautionMonths =
+        (goalFortune['cautionMonths'] as List<dynamic>?)?.cast<String>() ?? [];
+    final successFactors =
+        (goalFortune['successFactors'] as List<dynamic>?)?.cast<String>() ?? [];
+    final actionItems =
+        (goalFortune['actionItems'] as List<dynamic>?)?.cast<String>() ?? [];
     final riskAnalysis = goalFortune['riskAnalysis'] as String? ?? '';
-    final travelRecommendations = goalFortune['travelRecommendations'] as Map<String, dynamic>?;
+    final travelRecommendations =
+        goalFortune['travelRecommendations'] as Map<String, dynamic>?;
 
     // 프리미엄 체크 - 블러 처리
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -4621,7 +5985,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               if (isBlurred)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -4646,7 +6011,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 decoration: BoxDecoration(
                   color: colors.accent.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
+                  border:
+                      Border.all(color: colors.accent.withValues(alpha: 0.2)),
                 ),
                 child: Text(
                   prediction,
@@ -4684,13 +6050,15 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 children: [
                   if (bestMonths.isNotEmpty)
                     Expanded(
-                      child: _buildMonthBadges(context, '✨ 좋은 달', bestMonths, const Color(0xFF10B981)),
+                      child: _buildMonthBadges(context, '✨ 좋은 달', bestMonths,
+                          const Color(0xFF10B981)),
                     ),
                   if (bestMonths.isNotEmpty && cautionMonths.isNotEmpty)
                     const SizedBox(width: DSSpacing.sm),
                   if (cautionMonths.isNotEmpty)
                     Expanded(
-                      child: _buildMonthBadges(context, '⚠️ 주의할 달', cautionMonths, const Color(0xFFF59E0B)),
+                      child: _buildMonthBadges(context, '⚠️ 주의할 달',
+                          cautionMonths, const Color(0xFFF59E0B)),
                     ),
                 ],
               ),
@@ -4710,17 +6078,22 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: successFactors.map((factor) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    factor,
-                    style: typography.labelSmall.copyWith(color: const Color(0xFF10B981)),
-                  ),
-                )).toList(),
+                children: successFactors
+                    .map((factor) => Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            factor,
+                            style: typography.labelSmall
+                                .copyWith(color: const Color(0xFF10B981)),
+                          ),
+                        ))
+                    .toList(),
               ),
             ],
 
@@ -4736,28 +6109,28 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               const SizedBox(height: DSSpacing.xs),
               ...actionItems.asMap().entries.map((entry) => Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${entry.key + 1}. ',
-                      style: typography.bodySmall.copyWith(
-                        color: colors.accent,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        entry.value,
-                        style: typography.bodySmall.copyWith(
-                          color: colors.textPrimary,
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${entry.key + 1}. ',
+                          style: typography.bodySmall.copyWith(
+                            color: colors.accent,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
+                        Expanded(
+                          child: Text(
+                            entry.value,
+                            style: typography.bodySmall.copyWith(
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )),
+                  )),
             ],
 
             // 주의 사항
@@ -4790,7 +6163,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             // 여행 추천지 (travel 목표 전용)
             if (goalId == 'travel' && travelRecommendations != null) ...[
               const SizedBox(height: DSSpacing.lg),
-              _buildTravelRecommendationsSection(context, travelRecommendations),
+              _buildTravelRecommendationsSection(
+                  context, travelRecommendations),
             ],
           ],
         ],
@@ -4807,12 +6181,16 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final typography = context.typography;
 
     final domestic = (travelRecommendations['domestic'] as List<dynamic>?)
-        ?.cast<Map<String, dynamic>>() ?? [];
-    final international = (travelRecommendations['international'] as List<dynamic>?)
-        ?.cast<Map<String, dynamic>>() ?? [];
+            ?.cast<Map<String, dynamic>>() ??
+        [];
+    final international =
+        (travelRecommendations['international'] as List<dynamic>?)
+                ?.cast<Map<String, dynamic>>() ??
+            [];
     final travelStyle = travelRecommendations['travelStyle'] as String? ?? '';
     final travelTips = (travelRecommendations['travelTips'] as List<dynamic>?)
-        ?.cast<String>() ?? [];
+            ?.cast<String>() ??
+        [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -4878,11 +6256,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           ),
           const SizedBox(height: DSSpacing.sm),
           ...domestic.map((dest) => _buildDestinationCard(
-            context,
-            city: dest['city'] as String? ?? '',
-            reason: dest['reason'] as String? ?? '',
-            bestSeason: dest['bestSeason'] as String? ?? '',
-          )),
+                context,
+                city: dest['city'] as String? ?? '',
+                reason: dest['reason'] as String? ?? '',
+                bestSeason: dest['bestSeason'] as String? ?? '',
+              )),
           const SizedBox(height: DSSpacing.md),
         ],
 
@@ -4903,11 +6281,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           ),
           const SizedBox(height: DSSpacing.sm),
           ...international.map((dest) => _buildDestinationCard(
-            context,
-            city: dest['city'] as String? ?? '',
-            reason: dest['reason'] as String? ?? '',
-            bestSeason: dest['bestSeason'] as String? ?? '',
-          )),
+                context,
+                city: dest['city'] as String? ?? '',
+                reason: dest['reason'] as String? ?? '',
+                bestSeason: dest['bestSeason'] as String? ?? '',
+              )),
           const SizedBox(height: DSSpacing.md),
         ],
 
@@ -4928,26 +6306,27 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           ),
           const SizedBox(height: DSSpacing.xs),
           ...travelTips.map((tip) => Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '• ',
-                  style: typography.bodySmall.copyWith(color: colors.accent),
-                ),
-                Expanded(
-                  child: Text(
-                    tip,
-                    style: typography.bodySmall.copyWith(
-                      color: colors.textSecondary,
-                      height: 1.4,
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '• ',
+                      style:
+                          typography.bodySmall.copyWith(color: colors.accent),
                     ),
-                  ),
+                    Expanded(
+                      child: Text(
+                        tip,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
         ],
       ],
     );
@@ -4987,7 +6366,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               if (bestSeason.isNotEmpty)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -5018,7 +6398,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 월 배지 빌더 헬퍼
-  Widget _buildMonthBadges(BuildContext context, String title, List<String> months, Color color) {
+  Widget _buildMonthBadges(
+      BuildContext context, String title, List<String> months, Color color) {
     final typography = context.typography;
     final colors = context.colors;
 
@@ -5035,17 +6416,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         Wrap(
           spacing: 4,
           runSpacing: 4,
-          children: months.map((month) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              month,
-              style: typography.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600),
-            ),
-          )).toList(),
+          children: months
+              .map((month) => Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      month,
+                      style: typography.labelSmall
+                          .copyWith(color: color, fontWeight: FontWeight.w600),
+                    ),
+                  ))
+              .toList(),
         ),
       ],
     );
@@ -5063,15 +6448,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final dominantElement = sajuAnalysis['dominantElement'] as String? ?? '';
     final yearElement = sajuAnalysis['yearElement'] as String? ?? '';
     final compatibility = sajuAnalysis['compatibility'] as String? ?? '보통';
-    final compatibilityReason = sajuAnalysis['compatibilityReason'] as String? ?? '';
+    final compatibilityReason =
+        sajuAnalysis['compatibilityReason'] as String? ?? '';
     final elementalAdvice = sajuAnalysis['elementalAdvice'] as String? ?? '';
-    final balanceElements = (sajuAnalysis['balanceElements'] as List<dynamic>?)?.cast<String>() ?? [];
-    final strengthenTips = (sajuAnalysis['strengthenTips'] as List<dynamic>?)?.cast<String>() ?? [];
+    final balanceElements =
+        (sajuAnalysis['balanceElements'] as List<dynamic>?)?.cast<String>() ??
+            [];
+    final strengthenTips =
+        (sajuAnalysis['strengthenTips'] as List<dynamic>?)?.cast<String>() ??
+            [];
 
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -5091,7 +6482,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               if (isBlurred)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -5114,7 +6506,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    _getLuckyElementColor(dominantElement).withValues(alpha: 0.1),
+                    _getLuckyElementColor(dominantElement)
+                        .withValues(alpha: 0.1),
                     _getLuckyElementColor(yearElement).withValues(alpha: 0.1),
                   ],
                 ),
@@ -5135,9 +6528,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   ),
                   const SizedBox(height: DSSpacing.md),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: _getCompatibilityColor(compatibility).withValues(alpha: 0.2),
+                      color: _getCompatibilityColor(compatibility)
+                          .withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -5172,7 +6567,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 decoration: BoxDecoration(
                   color: colors.accent.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
-                  border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
+                  border:
+                      Border.all(color: colors.accent.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -5205,24 +6601,29 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                         children: [
                           Text(
                             '⚖️ 보완 필요',
-                            style: typography.labelSmall.copyWith(color: colors.textSecondary),
+                            style: typography.labelSmall
+                                .copyWith(color: colors.textSecondary),
                           ),
                           const SizedBox(height: 4),
                           Wrap(
                             spacing: 4,
-                            children: balanceElements.map((e) => Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: _getLuckyElementColor(e).withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${_getLuckyElementEmoji(e)} $e',
-                                style: typography.labelSmall.copyWith(
-                                  color: _getLuckyElementColor(e),
-                                ),
-                              ),
-                            )).toList(),
+                            children: balanceElements
+                                .map((e) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: _getLuckyElementColor(e)
+                                            .withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        '${_getLuckyElementEmoji(e)} $e',
+                                        style: typography.labelSmall.copyWith(
+                                          color: _getLuckyElementColor(e),
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
                           ),
                         ],
                       ),
@@ -5232,20 +6633,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               if (strengthenTips.isNotEmpty) ...[
                 const SizedBox(height: DSSpacing.sm),
                 ...strengthenTips.map((tip) => Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('• ', style: TextStyle(fontSize: 12)),
-                      Expanded(
-                        child: Text(
-                          tip,
-                          style: typography.bodySmall.copyWith(color: colors.textSecondary),
-                        ),
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('• ', style: TextStyle(fontSize: 12)),
+                          Expanded(
+                            child: Text(
+                              tip,
+                              style: typography.bodySmall
+                                  .copyWith(color: colors.textSecondary),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )),
+                    )),
               ],
             ],
           ],
@@ -5279,7 +6681,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(_getLuckyElementEmoji(element), style: const TextStyle(fontSize: 20)),
+                Text(_getLuckyElementEmoji(element),
+                    style: const TextStyle(fontSize: 20)),
                 Text(
                   element,
                   style: typography.labelSmall.copyWith(
@@ -5297,19 +6700,27 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   String _getCompatibilityEmoji(String compatibility) {
     switch (compatibility) {
-      case '높음': return '💫';
-      case '보통': return '🔄';
-      case '주의': return '⚡';
-      default: return '🔄';
+      case '높음':
+        return '💫';
+      case '보통':
+        return '🔄';
+      case '주의':
+        return '⚡';
+      default:
+        return '🔄';
     }
   }
 
   Color _getCompatibilityColor(String compatibility) {
     switch (compatibility) {
-      case '높음': return const Color(0xFF10B981);
-      case '보통': return const Color(0xFF3B82F6);
-      case '주의': return const Color(0xFFF59E0B);
-      default: return const Color(0xFF9E9E9E);
+      case '높음':
+        return const Color(0xFF10B981);
+      case '보통':
+        return const Color(0xFF3B82F6);
+      case '주의':
+        return const Color(0xFFF59E0B);
+      default:
+        return const Color(0xFF9E9E9E);
     }
   }
 
@@ -5318,15 +6729,19 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final colors = context.colors;
     final typography = context.typography;
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
-    final monthlyHighlights = (metadata['monthlyHighlights'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [];
-    final blurredMonthIndices = (metadata['blurredMonthIndices'] as List<dynamic>?)?.cast<int>() ?? [];
+    final monthlyHighlights = (metadata['monthlyHighlights'] as List<dynamic>?)
+            ?.cast<Map<String, dynamic>>() ??
+        [];
+    final blurredMonthIndices =
+        (metadata['blurredMonthIndices'] as List<dynamic>?)?.cast<int>() ?? [];
 
     if (monthlyHighlights.isEmpty) return const SizedBox.shrink();
 
     final currentMonth = DateTime.now().month;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -5359,7 +6774,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               separatorBuilder: (_, __) => const SizedBox(width: DSSpacing.sm),
               itemBuilder: (context, index) {
                 final monthData = monthlyHighlights[index];
-                final isBlurredMonth = !isPremium && blurredMonthIndices.contains(index);
+                final isBlurredMonth =
+                    !isPremium && blurredMonthIndices.contains(index);
                 final monthNum = index + 1;
                 final isCurrentMonth = monthNum == currentMonth;
 
@@ -5415,93 +6831,103 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               : colors.backgroundSecondary,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: isCurrentMonth ? colors.accent : colors.textPrimary.withValues(alpha: 0.1),
+            color: isCurrentMonth
+                ? colors.accent
+                : colors.textPrimary.withValues(alpha: 0.1),
             width: isCurrentMonth ? 2 : 1,
           ),
         ),
         child: isBlurred
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$monthNum월',
-                  style: typography.labelMedium.copyWith(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: DSSpacing.sm),
-                Icon(Icons.lock_outline, color: colors.textTertiary, size: 24),
-                const SizedBox(height: DSSpacing.xs),
-                Text(
-                  '프리미엄',
-                  style: typography.labelSmall.copyWith(color: colors.accent),
-                ),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '$monthNum월',
-                      style: typography.labelMedium.copyWith(
-                        color: isCurrentMonth ? colors.accent : colors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$monthNum월',
+                    style: typography.labelMedium.copyWith(
+                      color: colors.textSecondary,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: energyColor.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '$score점',
-                        style: typography.labelSmall.copyWith(
-                          color: energyColor,
+                  ),
+                  const SizedBox(height: DSSpacing.sm),
+                  Icon(Icons.lock_outline,
+                      color: colors.textTertiary, size: 24),
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(
+                    '프리미엄',
+                    style: typography.labelSmall.copyWith(color: colors.accent),
+                  ),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '$monthNum월',
+                        style: typography.labelMedium.copyWith(
+                          color: isCurrentMonth
+                              ? colors.accent
+                              : colors.textPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: DSSpacing.xs),
-                Text(
-                  theme,
-                  style: typography.bodySmall.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.w600,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: energyColor.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '$score점',
+                          style: typography.labelSmall.copyWith(
+                            color: energyColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Expanded(
-                  child: Text(
-                    advice,
-                    style: typography.labelSmall.copyWith(
-                      color: colors.textSecondary,
-                      height: 1.3,
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(
+                    theme,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w600,
                     ),
-                    maxLines: 3,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 4),
+                  Expanded(
+                    child: Text(
+                      advice,
+                      style: typography.labelSmall.copyWith(
+                        color: colors.textSecondary,
+                        height: 1.3,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }
 
   Color _getEnergyColor(String energyLevel) {
     switch (energyLevel) {
-      case 'High': return const Color(0xFF10B981);
-      case 'Medium': return const Color(0xFF3B82F6);
-      case 'Low': return const Color(0xFFF59E0B);
-      default: return const Color(0xFF9E9E9E);
+      case 'High':
+        return const Color(0xFF10B981);
+      case 'Medium':
+        return const Color(0xFF3B82F6);
+      case 'Low':
+        return const Color(0xFFF59E0B);
+      default:
+        return const Color(0xFF9E9E9E);
     }
   }
 
@@ -5514,9 +6940,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
     if (actionPlan == null) return const SizedBox.shrink();
 
-    final immediate = (actionPlan['immediate'] as List<dynamic>?)?.cast<String>() ?? [];
-    final shortTerm = (actionPlan['shortTerm'] as List<dynamic>?)?.cast<String>() ?? [];
-    final longTerm = (actionPlan['longTerm'] as List<dynamic>?)?.cast<String>() ?? [];
+    final immediate =
+        (actionPlan['immediate'] as List<dynamic>?)?.cast<String>() ?? [];
+    final shortTerm =
+        (actionPlan['shortTerm'] as List<dynamic>?)?.cast<String>() ?? [];
+    final longTerm =
+        (actionPlan['longTerm'] as List<dynamic>?)?.cast<String>() ?? [];
 
     if (immediate.isEmpty && shortTerm.isEmpty && longTerm.isEmpty) {
       return const SizedBox.shrink();
@@ -5525,7 +6954,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -5544,7 +6974,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               if (isBlurred)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -5557,19 +6988,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           if (isBlurred)
             _buildBlurredPlaceholder(context, '맞춤 행동 계획을 확인하세요')
           else ...[
             if (immediate.isNotEmpty)
-              _buildActionPlanCategory(context, '⚡ 지금 바로 (1-2주)', immediate, const Color(0xFFEF4444)),
+              _buildActionPlanCategory(context, '⚡ 지금 바로 (1-2주)', immediate,
+                  const Color(0xFFEF4444)),
             if (shortTerm.isNotEmpty) ...[
               const SizedBox(height: DSSpacing.md),
-              _buildActionPlanCategory(context, '📆 단기 (1-3개월)', shortTerm, const Color(0xFFF59E0B)),
+              _buildActionPlanCategory(
+                  context, '📆 단기 (1-3개월)', shortTerm, const Color(0xFFF59E0B)),
             ],
             if (longTerm.isNotEmpty) ...[
               const SizedBox(height: DSSpacing.md),
-              _buildActionPlanCategory(context, '🎯 장기 (6-12개월)', longTerm, const Color(0xFF10B981)),
+              _buildActionPlanCategory(
+                  context, '🎯 장기 (6-12개월)', longTerm, const Color(0xFF10B981)),
             ],
           ],
         ],
@@ -5577,7 +7010,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
-  Widget _buildActionPlanCategory(BuildContext context, String title, List<String> items, Color color) {
+  Widget _buildActionPlanCategory(
+      BuildContext context, String title, List<String> items, Color color) {
     final typography = context.typography;
     final colors = context.colors;
 
@@ -5600,20 +7034,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           ),
           const SizedBox(height: DSSpacing.xs),
           ...items.map((item) => Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('• ', style: TextStyle(color: color, fontSize: 12)),
-                Expanded(
-                  child: Text(
-                    item,
-                    style: typography.bodySmall.copyWith(color: colors.textPrimary),
-                  ),
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('• ', style: TextStyle(color: color, fontSize: 12)),
+                    Expanded(
+                      child: Text(
+                        item,
+                        style: typography.bodySmall
+                            .copyWith(color: colors.textPrimary),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     );
@@ -5626,12 +7061,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
     final specialMessage = metadata['specialMessage'] as String?;
 
-    if (specialMessage == null || specialMessage.isEmpty) return const SizedBox.shrink();
+    if (specialMessage == null || specialMessage.isEmpty)
+      return const SizedBox.shrink();
 
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
@@ -5662,7 +7099,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                         ),
                         Text(
                           '프리미엄으로 확인하세요',
-                          style: typography.labelSmall.copyWith(color: colors.accent),
+                          style: typography.labelSmall
+                              .copyWith(color: colors.accent),
                         ),
                       ],
                     ),
@@ -5766,7 +7204,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     if (interests.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -5784,11 +7223,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             children: interests.map((interest) {
               final label = _interestLabels[interest] ?? interest;
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: colors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+                  border:
+                      Border.all(color: colors.accent.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   label,
@@ -5825,7 +7266,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -5845,7 +7287,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               if (isBlurred)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -5869,7 +7312,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 decoration: BoxDecoration(
                   color: colors.accent.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: Border.all(color: colors.accent.withValues(alpha: 0.2)),
+                  border:
+                      Border.all(color: colors.accent.withValues(alpha: 0.2)),
                 ),
                 child: Text(
                   strategy,
@@ -5977,11 +7421,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final colors = context.colors;
     final typography = context.typography;
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
-    final concernResolution = metadata['concernResolution'] as Map<String, dynamic>?;
+    final concernResolution =
+        metadata['concernResolution'] as Map<String, dynamic>?;
 
     if (concernResolution == null) return const SizedBox.shrink();
 
-    final primaryConcern = concernResolution['primaryConcern'] as String? ?? '고민';
+    final primaryConcern =
+        concernResolution['primaryConcern'] as String? ?? '고민';
     final analysis = concernResolution['analysis'] as String? ?? '';
     // solution은 String 또는 List일 수 있음
     final rawSolution = concernResolution['solution'];
@@ -5994,12 +7440,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       solution = '';
     }
     final mindset = concernResolution['mindset'] as String? ?? '';
-    final sajuPerspective = concernResolution['sajuPerspective'] as String? ?? '';
+    final sajuPerspective =
+        concernResolution['sajuPerspective'] as String? ?? '';
 
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -6031,7 +7479,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 decoration: BoxDecoration(
                   color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.3)),
+                  border: Border.all(
+                      color: const Color(0xFFF59E0B).withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   analysis,
@@ -6108,20 +7557,24 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 4. 투자 인사이트 섹션 (관심 분야별)
-  Widget _buildWealthInvestmentInsightsSection(BuildContext context, bool isPremium) {
+  Widget _buildWealthInvestmentInsightsSection(
+      BuildContext context, bool isPremium) {
     final colors = context.colors;
     final typography = context.typography;
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
-    final investmentInsights = metadata['investmentInsights'] as Map<String, dynamic>?;
+    final investmentInsights =
+        metadata['investmentInsights'] as Map<String, dynamic>?;
     final surveyData = metadata['surveyData'] as Map<String, dynamic>?;
     final interests = (surveyData?['interests'] as List?)?.cast<String>() ?? [];
 
-    if (investmentInsights == null || interests.isEmpty) return const SizedBox.shrink();
+    if (investmentInsights == null || interests.isEmpty)
+      return const SizedBox.shrink();
 
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -6141,7 +7594,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               if (isBlurred)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -6159,7 +7613,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             _buildBlurredPlaceholder(context, '분야별 상세 분석을 확인하세요')
           else
             ...interests.map((interest) {
-              final insightData = investmentInsights[interest] as Map<String, dynamic>?;
+              final insightData =
+                  investmentInsights[interest] as Map<String, dynamic>?;
               if (insightData == null) return const SizedBox.shrink();
               return _buildWealthInsightCard(context, interest, insightData);
             }),
@@ -6169,7 +7624,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 투자 인사이트 개별 카드
-  Widget _buildWealthInsightCard(BuildContext context, String interest, Map<String, dynamic> data) {
+  Widget _buildWealthInsightCard(
+      BuildContext context, String interest, Map<String, dynamic> data) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -6191,27 +7647,43 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     }
 
     if (interest == 'realestate') {
-      if (data['recommendedType'] != null) additionalInfo['추천 유형'] = toStringValue(data['recommendedType']);
-      if (data['timing'] != null) additionalInfo['타이밍'] = toStringValue(data['timing']);
-      if (data['direction'] != null) additionalInfo['추천 방향'] = toStringValue(data['direction']);
+      if (data['recommendedType'] != null)
+        additionalInfo['추천 유형'] = toStringValue(data['recommendedType']);
+      if (data['timing'] != null)
+        additionalInfo['타이밍'] = toStringValue(data['timing']);
+      if (data['direction'] != null)
+        additionalInfo['추천 방향'] = toStringValue(data['direction']);
     } else if (interest == 'side') {
-      if (data['recommendedAreas'] != null) additionalInfo['추천 분야'] = toStringValue(data['recommendedAreas']);
-      if (data['incomeExpectation'] != null) additionalInfo['예상 수입'] = toStringValue(data['incomeExpectation']);
-      if (data['startTiming'] != null) additionalInfo['시작 시기'] = toStringValue(data['startTiming']);
+      if (data['recommendedAreas'] != null)
+        additionalInfo['추천 분야'] = toStringValue(data['recommendedAreas']);
+      if (data['incomeExpectation'] != null)
+        additionalInfo['예상 수입'] = toStringValue(data['incomeExpectation']);
+      if (data['startTiming'] != null)
+        additionalInfo['시작 시기'] = toStringValue(data['startTiming']);
     } else if (interest == 'stock') {
-      if (data['recommendedSectors'] != null) additionalInfo['추천 섹터'] = toStringValue(data['recommendedSectors']);
-      if (data['timing'] != null) additionalInfo['매매 타이밍'] = toStringValue(data['timing']);
-      if (data['riskLevel'] != null) additionalInfo['리스크'] = toStringValue(data['riskLevel']);
+      if (data['recommendedSectors'] != null)
+        additionalInfo['추천 섹터'] = toStringValue(data['recommendedSectors']);
+      if (data['timing'] != null)
+        additionalInfo['매매 타이밍'] = toStringValue(data['timing']);
+      if (data['riskLevel'] != null)
+        additionalInfo['리스크'] = toStringValue(data['riskLevel']);
     } else if (interest == 'crypto') {
-      if (data['marketOutlook'] != null) additionalInfo['시장 전망'] = toStringValue(data['marketOutlook']);
-      if (data['timing'] != null) additionalInfo['진입 시기'] = toStringValue(data['timing']);
+      if (data['marketOutlook'] != null)
+        additionalInfo['시장 전망'] = toStringValue(data['marketOutlook']);
+      if (data['timing'] != null)
+        additionalInfo['진입 시기'] = toStringValue(data['timing']);
     } else if (interest == 'saving') {
-      if (data['recommendedProducts'] != null) additionalInfo['추천 상품'] = toStringValue(data['recommendedProducts']);
-      if (data['targetRate'] != null) additionalInfo['목표 금리'] = toStringValue(data['targetRate']);
+      if (data['recommendedProducts'] != null)
+        additionalInfo['추천 상품'] = toStringValue(data['recommendedProducts']);
+      if (data['targetRate'] != null)
+        additionalInfo['목표 금리'] = toStringValue(data['targetRate']);
     } else if (interest == 'business') {
-      if (data['recommendedFields'] != null) additionalInfo['추천 분야'] = toStringValue(data['recommendedFields']);
-      if (data['timing'] != null) additionalInfo['시작 시기'] = toStringValue(data['timing']);
-      if (data['partnerAdvice'] != null) additionalInfo['파트너'] = toStringValue(data['partnerAdvice']);
+      if (data['recommendedFields'] != null)
+        additionalInfo['추천 분야'] = toStringValue(data['recommendedFields']);
+      if (data['timing'] != null)
+        additionalInfo['시작 시기'] = toStringValue(data['timing']);
+      if (data['partnerAdvice'] != null)
+        additionalInfo['파트너'] = toStringValue(data['partnerAdvice']);
     }
 
     final caution = data['caution'] as String? ?? '';
@@ -6255,7 +7727,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: scoreColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -6289,30 +7762,30 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             const Divider(height: 1),
             const SizedBox(height: DSSpacing.sm),
             ...additionalInfo.entries.map((entry) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 80,
-                    child: Text(
-                      entry.key,
-                      style: typography.labelSmall.copyWith(
-                        color: colors.textTertiary,
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(
+                          entry.key,
+                          style: typography.labelSmall.copyWith(
+                            color: colors.textTertiary,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      entry.value,
-                      style: typography.bodySmall.copyWith(
-                        color: colors.textSecondary,
+                      Expanded(
+                        child: Text(
+                          entry.value,
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
 
           // 주의사항
@@ -6365,12 +7838,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
     final monthlyFlow = metadata['monthlyFlow'] as List<dynamic>?;
 
-    if (monthlyFlow == null || monthlyFlow.isEmpty) return const SizedBox.shrink();
+    if (monthlyFlow == null || monthlyFlow.isEmpty)
+      return const SizedBox.shrink();
 
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -6402,7 +7877,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 itemCount: monthlyFlow.length,
                 itemBuilder: (context, index) {
                   final monthData = monthlyFlow[index] as Map<String, dynamic>;
-                  final month = monthData['month'] as String? ?? '${index + 1}월';
+                  final month =
+                      monthData['month'] as String? ?? '${index + 1}월';
                   final score = monthData['score'] as int? ?? 50;
                   final trend = monthData['trend'] as String? ?? '';
                   final tip = monthData['tip'] as String? ?? '';
@@ -6417,11 +7893,16 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 월별 흐름 개별 카드
-  Widget _buildMonthFlowCard(BuildContext context, String month, int score, String trend, String tip) {
+  Widget _buildMonthFlowCard(
+      BuildContext context, String month, int score, String trend, String tip) {
     final colors = context.colors;
     final typography = context.typography;
 
-    final trendEmoji = trend == 'up' ? '📈' : trend == 'down' ? '📉' : '➡️';
+    final trendEmoji = trend == 'up'
+        ? '📈'
+        : trend == 'down'
+            ? '📉'
+            : '➡️';
     final scoreColor = score >= 80
         ? const Color(0xFF10B981)
         : score >= 60
@@ -6489,14 +7970,16 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final colors = context.colors;
     final typography = context.typography;
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
-    final actionItems = (metadata['actionItems'] as List<dynamic>?)?.cast<String>() ?? [];
+    final actionItems =
+        (metadata['actionItems'] as List<dynamic>?)?.cast<String>() ?? [];
 
     if (actionItems.isEmpty) return const SizedBox.shrink();
 
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -6528,7 +8011,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 decoration: BoxDecoration(
                   color: colors.accent.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: Border.all(color: colors.accent.withValues(alpha: 0.1)),
+                  border:
+                      Border.all(color: colors.accent.withValues(alpha: 0.1)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -6570,7 +8054,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 재물운 정보 카드 빌더
-  Widget _buildWealthInfoCard(BuildContext context, String title, String content, Color accentColor) {
+  Widget _buildWealthInfoCard(
+      BuildContext context, String title, String content, Color accentColor) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -6606,30 +8091,28 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   // 시험운 전용 섹션들 (Exam Fortune) - 2025 리뉴얼
   // ============================================================
 
-  /// 시험운: 합격 시그널 헤더 (원형 게이지 + 해시태그)
-  Widget _buildExamSignalHeader(BuildContext context) {
+  /// 수능 전용: 시그널 헤더
+  Widget _buildCsatSignalHeader(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
 
-    // Edge Function 실제 필드명 사용
     final examScore = metadata['score'] as int? ?? fortune.overallScore ?? 75;
     final statusMessage = metadata['status_message'] as String? ??
-                          metadata['pass_possibility'] as String? ??
-                          '합격 가능성이 좋습니다!';
-    final examTypeLabel = metadata['exam_type'] as String? ?? '시험';
+        metadata['pass_possibility'] as String? ??
+        '실전 감각이 올라오는 시기입니다.';
     final hashtags = (metadata['hashtags'] as List?)?.cast<String>() ??
-                     ['#집중력_치트키', '#정답만_보이는_눈', '#합격기원'];
+        ['#수능실전감각', '#실수관리', '#루틴고정'];
+    final examTypeLabel = metadata['exam_type'] as String? ?? '수능';
 
-    // D-day 계산
     int daysRemaining = 0;
     final examDateStr = metadata['exam_date'] as String?;
-    if (examDateStr != null) {
-      try {
-        final examDate = DateTime.parse(examDateStr);
-        final today = DateTime.now();
-        daysRemaining = examDate.difference(DateTime(today.year, today.month, today.day)).inDays;
-      } catch (_) {}
+    final examDate = _resolveExamDate(examTypeLabel, examDateStr);
+    if (examDate != null) {
+      final today = DateTime.now();
+      daysRemaining = examDate
+          .difference(DateTime(today.year, today.month, today.day))
+          .inDays;
     }
 
     String ddayText;
@@ -6646,7 +8129,514 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              colors.accent.withValues(alpha: 0.18),
+              colors.accentSecondary.withValues(alpha: 0.12),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+        ),
+        child: Column(
+          children: [
+            Text(
+              '🧭 수능 실전 리포트',
+              style: typography.headingSmall.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.md,
+                    vertical: DSSpacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ddayColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(DSRadius.full),
+                    border: Border.all(color: ddayColor),
+                  ),
+                  child: Text(
+                    ddayText,
+                    style: typography.labelLarge.copyWith(
+                      color: ddayColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.sm),
+                Text(
+                  examTypeLabel,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.lg),
+            Row(
+              children: [
+                SizedBox(
+                  width: 76,
+                  height: 76,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 76,
+                        height: 76,
+                        child: CircularProgressIndicator(
+                          value: 1,
+                          strokeWidth: 6,
+                          backgroundColor: colors.divider,
+                          valueColor: AlwaysStoppedAnimation(colors.divider),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 76,
+                        height: 76,
+                        child: CircularProgressIndicator(
+                          value: examScore / 100,
+                          strokeWidth: 6,
+                          backgroundColor: Colors.transparent,
+                          valueColor: AlwaysStoppedAnimation(
+                            examScore >= 80
+                                ? Colors.green
+                                : examScore >= 60
+                                    ? Colors.orange
+                                    : Colors.red,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$examScore',
+                            style: typography.headingSmall.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '/100',
+                            style: typography.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.md),
+                Expanded(
+                  child: Text(
+                    statusMessage,
+                    style: typography.bodyLarge.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.md),
+            Wrap(
+              spacing: DSSpacing.xs,
+              runSpacing: DSSpacing.xs,
+              children: hashtags
+                  .map((tag) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.sm,
+                          vertical: DSSpacing.xxs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(DSRadius.full),
+                        ),
+                        child: Text(
+                          tag,
+                          style: typography.labelSmall.copyWith(
+                            color: colors.accent,
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 수능 전용: 과목 집중 가이드
+  Widget _buildCsatFocusSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final focusList = (metadata['csat_focus'] as List<dynamic>?)
+            ?.cast<Map<String, dynamic>>() ??
+        [];
+
+    if (focusList.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('📌', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '과목 집중 포인트',
+                style: typography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+          ...focusList.map((item) {
+            final subject = item['subject'] as String? ?? '과목';
+            final focus = item['focus'] as String? ?? '';
+            final tip = item['tip'] as String? ?? '';
+            return Container(
+              margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(color: colors.divider),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: DSSpacing.sm, vertical: DSSpacing.xxs),
+                    decoration: BoxDecoration(
+                      color: colors.accent.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                    ),
+                    child: Text(
+                      subject,
+                      style: typography.labelMedium.copyWith(
+                        color: colors.accent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          focus,
+                          style: typography.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (tip.isNotEmpty) ...[
+                          const SizedBox(height: DSSpacing.xxs),
+                          Text(
+                            tip,
+                            style: typography.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// 수능 전용: D-day 로드맵
+  Widget _buildCsatRoadmapSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final roadmap = (metadata['csat_roadmap'] as List<dynamic>?)
+            ?.cast<Map<String, dynamic>>() ??
+        [];
+
+    if (roadmap.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🗺️', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                'D-day 로드맵',
+                style: typography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+          ...roadmap.map((item) {
+            final phase = item['phase'] as String? ?? '';
+            final action = item['action'] as String? ?? '';
+            final caution = item['caution'] as String? ?? '';
+            return Container(
+              margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: colors.accentSecondary.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                    color: colors.accentSecondary.withValues(alpha: 0.2)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    phase,
+                    style: typography.labelMedium.copyWith(
+                      color: colors.accentSecondary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(
+                    action,
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (caution.isNotEmpty) ...[
+                    const SizedBox(height: DSSpacing.xxs),
+                    Text(
+                      caution,
+                      style: typography.labelSmall.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// 수능 전용: 당일 루틴
+  Widget _buildCsatRoutineSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final routine =
+        (metadata['csat_routine'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    if (routine.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🧠', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '당일 루틴',
+                style: typography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+          ...routine.asMap().entries.map((entry) {
+            final index = entry.key + 1;
+            final text = entry.value;
+            return Container(
+              margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+              padding: const EdgeInsets.all(DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+                border: Border.all(color: colors.divider),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: colors.accent.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$index',
+                        style: typography.labelSmall.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      text,
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// 수능 전용: 체크리스트
+  Widget _buildCsatChecklistSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+    final checklist =
+        (metadata['csat_checklist'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    if (checklist.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('✅', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '수능 체크리스트',
+                style: typography.headingSmall.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.md),
+          Wrap(
+            spacing: DSSpacing.xs,
+            runSpacing: DSSpacing.xs,
+            children: checklist.map((item) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.accentSecondary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(DSRadius.full),
+                  border: Border.all(
+                      color: colors.accentSecondary.withValues(alpha: 0.2)),
+                ),
+                child: Text(
+                  item,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.accentSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 시험운: 합격 시그널 헤더 (원형 게이지 + 해시태그)
+  Widget _buildExamSignalHeader(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+
+    // Edge Function 실제 필드명 사용
+    final examScore = metadata['score'] as int? ?? fortune.overallScore ?? 75;
+    final statusMessage = metadata['status_message'] as String? ??
+        metadata['pass_possibility'] as String? ??
+        '합격 가능성이 좋습니다!';
+    final examTypeLabel = metadata['exam_type'] as String? ?? '시험';
+    final hashtags = (metadata['hashtags'] as List?)?.cast<String>() ??
+        ['#집중력_치트키', '#정답만_보이는_눈', '#합격기원'];
+
+    // D-day 계산
+    int daysRemaining = 0;
+    final examDateStr = metadata['exam_date'] as String?;
+    final examDate = _resolveExamDate(examTypeLabel, examDateStr);
+    if (examDate != null) {
+      final today = DateTime.now();
+      daysRemaining = examDate
+          .difference(DateTime(today.year, today.month, today.day))
+          .inDays;
+    }
+
+    String ddayText;
+    Color ddayColor;
+    if (daysRemaining > 0) {
+      ddayText = 'D-$daysRemaining';
+      ddayColor = daysRemaining <= 7 ? Colors.red : Colors.orange;
+    } else if (daysRemaining == 0) {
+      ddayText = 'D-Day';
+      ddayColor = Colors.red;
+    } else {
+      ddayText = 'D+${daysRemaining.abs()}';
+      ddayColor = colors.textSecondary;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.lg),
         decoration: BoxDecoration(
@@ -6734,8 +8724,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                           strokeWidth: 8,
                           backgroundColor: Colors.transparent,
                           valueColor: AlwaysStoppedAnimation(
-                            examScore >= 80 ? Colors.green :
-                            examScore >= 60 ? Colors.orange : Colors.red,
+                            examScore >= 80
+                                ? Colors.green
+                                : examScore >= 60
+                                    ? Colors.orange
+                                    : Colors.red,
                           ),
                         ),
                       ),
@@ -6780,22 +8773,24 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             Wrap(
               spacing: DSSpacing.xs,
               runSpacing: DSSpacing.xs,
-              children: hashtags.map((tag) => Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: DSSpacing.sm,
-                  vertical: DSSpacing.xxs,
-                ),
-                decoration: BoxDecoration(
-                  color: colors.accent.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(DSRadius.full),
-                ),
-                child: Text(
-                  tag,
-                  style: typography.labelSmall.copyWith(
-                    color: colors.accent,
-                  ),
-                ),
-              )).toList(),
+              children: hashtags
+                  .map((tag) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.sm,
+                          vertical: DSSpacing.xxs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(DSRadius.full),
+                        ),
+                        child: Text(
+                          tag,
+                          style: typography.labelSmall.copyWith(
+                            color: colors.accent,
+                          ),
+                        ),
+                      ))
+                  .toList(),
             ),
           ],
         ),
@@ -6813,16 +8808,19 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final examStats = metadata['exam_stats'] as Map<String, dynamic>? ?? {};
     final answerIntuition = examStats['answer_intuition'] as int? ?? 85;
     final answerIntuitionDesc = examStats['answer_intuition_desc'] as String? ??
-                                 '모르는 문제도 정답으로 유도하는 운의 흐름';
+        '모르는 문제도 정답으로 유도하는 운의 흐름';
     final mentalDefense = examStats['mental_defense'] as int? ?? 80;
-    final mentalDefenseDesc = examStats['mental_defense_desc'] as String? ??
-                               '시험장의 소음과 긴장감을 차단하는 집중력';
-    final memoryAcceleration = examStats['memory_acceleration'] as String? ?? 'UP';
-    final memoryAccelerationDesc = examStats['memory_acceleration_desc'] as String? ??
-                                    '지금 보는 오답 노트가 머릿속에 바로 각인되는 상태';
+    final mentalDefenseDesc =
+        examStats['mental_defense_desc'] as String? ?? '시험장의 소음과 긴장감을 차단하는 집중력';
+    final memoryAcceleration =
+        examStats['memory_acceleration'] as String? ?? 'UP';
+    final memoryAccelerationDesc =
+        examStats['memory_acceleration_desc'] as String? ??
+            '지금 보는 오답 노트가 머릿속에 바로 각인되는 상태';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
@@ -7011,17 +9009,19 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
 
     // today_strategy 객체에서 데이터 추출
-    final todayStrategy = metadata['today_strategy'] as Map<String, dynamic>? ?? {};
+    final todayStrategy =
+        metadata['today_strategy'] as Map<String, dynamic>? ?? {};
     final mainAction = todayStrategy['main_action'] as String? ??
-                       '가장 헷갈렸던 오답 노트를 딱 10분만 다시 훑어보세요';
-    final actionReason = todayStrategy['action_reason'] as String? ??
-                         '그 10분이 시험장에서 1점을 결정합니다';
+        '가장 헷갈렸던 오답 노트를 딱 10분만 다시 훑어보세요';
+    final actionReason =
+        todayStrategy['action_reason'] as String? ?? '그 10분이 시험장에서 1점을 결정합니다';
     final luckyFood = todayStrategy['lucky_food'] as String? ?? '다크 초콜릿 한 조각';
-    final luckyFoodReason = todayStrategy['lucky_food_reason'] as String? ??
-                            '두뇌 회전을 돕는 오늘의 행운 아이템';
+    final luckyFoodReason =
+        todayStrategy['lucky_food_reason'] as String? ?? '두뇌 회전을 돕는 오늘의 행운 아이템';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
@@ -7145,25 +9145,28 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
 
     // spirit_animal 객체에서 데이터 추출
-    final spiritAnimal = metadata['spirit_animal'] as Map<String, dynamic>? ?? {};
+    final spiritAnimal =
+        metadata['spirit_animal'] as Map<String, dynamic>? ?? {};
     final animal = spiritAnimal['animal'] as String? ?? '호랑이';
-    final message = spiritAnimal['message'] as String? ??
-                    '호랑이의 눈매처럼 날카로운 통찰력이 당신에게 깃듭니다';
+    final message =
+        spiritAnimal['message'] as String? ?? '호랑이의 눈매처럼 날카로운 통찰력이 당신에게 깃듭니다';
     final direction = spiritAnimal['direction'] as String? ?? '남쪽';
     final directionTip = spiritAnimal['direction_tip'] as String? ??
-                         '남쪽 향해 공부하면 막힌 아이디어가 호랑이 기세처럼 터져 나옵니다';
+        '남쪽 향해 공부하면 막힌 아이디어가 호랑이 기세처럼 터져 나옵니다';
 
     // 영물별 이모지 매핑
     final animalEmoji = {
-      '호랑이': '🐯',
-      '용': '🐉',
-      '봉황': '🦅',
-      '거북이': '🐢',
-      '백호': '🐅',
-    }[animal] ?? '🐯';
+          '호랑이': '🐯',
+          '용': '🐉',
+          '봉황': '🦅',
+          '거북이': '🐢',
+          '백호': '🐅',
+        }[animal] ??
+        '🐯';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
@@ -7256,19 +9259,22 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
     // Edge Function 실제 필드명 사용
     final examScore = metadata['score'] as int? ?? fortune.overallScore ?? 75;
-    final passMessage = metadata['pass_possibility'] as String? ?? '합격 가능성이 좋습니다!';
+    final passMessage =
+        metadata['pass_possibility'] as String? ?? '합격 가능성이 좋습니다!';
     final examKeyword = metadata['exam_keyword'] as String? ?? '합격';
-    final examTypeLabel = metadata['exam_type'] as String? ?? metadata['title'] as String? ?? '시험';
+    final examTypeLabel = metadata['exam_type'] as String? ??
+        metadata['title'] as String? ??
+        '시험';
 
     // D-day 계산: exam_date에서 계산
     int daysRemaining = 0;
     final examDateStr = metadata['exam_date'] as String?;
-    if (examDateStr != null) {
-      try {
-        final examDate = DateTime.parse(examDateStr);
-        final today = DateTime.now();
-        daysRemaining = examDate.difference(DateTime(today.year, today.month, today.day)).inDays;
-      } catch (_) {}
+    final examDate = _resolveExamDate(examTypeLabel, examDateStr);
+    if (examDate != null) {
+      final today = DateTime.now();
+      daysRemaining = examDate
+          .difference(DateTime(today.year, today.month, today.day))
+          .inDays;
     }
 
     // D-day 텍스트
@@ -7286,7 +9292,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
@@ -7363,8 +9370,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                       strokeWidth: 10,
                       backgroundColor: Colors.transparent,
                       valueColor: AlwaysStoppedAnimation(
-                        examScore >= 80 ? Colors.green :
-                        examScore >= 60 ? Colors.orange : Colors.red,
+                        examScore >= 80
+                            ? Colors.green
+                            : examScore >= 60
+                                ? Colors.orange
+                                : Colors.red,
                       ),
                     ),
                   ),
@@ -7428,7 +9438,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final timePoint = metadata['time_point'] as String? ?? '';
 
     // 아무 데이터도 없으면 표시하지 않음
-    if (luckyHours.isEmpty && focusSubject.isEmpty) return const SizedBox.shrink();
+    if (luckyHours.isEmpty && focusSubject.isEmpty)
+      return const SizedBox.shrink();
 
     final isBlurred = !isPremium;
 
@@ -7458,7 +9469,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -7476,7 +9488,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           if (isBlurred)
             _buildBlurredPlaceholder(context, '프리미엄으로 행운 정보 확인')
           else
@@ -7493,7 +9504,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   decoration: BoxDecoration(
                     color: colors.accent.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(DSRadius.sm),
-                    border: Border.all(color: colors.accent.withValues(alpha: 0.1)),
+                    border:
+                        Border.all(color: colors.accent.withValues(alpha: 0.1)),
                   ),
                   child: Row(
                     children: [
@@ -7552,7 +9564,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final isBlurred = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -7570,7 +9583,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           if (isBlurred)
             _buildBlurredPlaceholder(context, 'D-day 조언 확인하기')
           else
@@ -7583,7 +9595,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 decoration: BoxDecoration(
                   color: colors.accentSecondary.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
-                  border: Border.all(color: colors.accentSecondary.withValues(alpha: 0.1)),
+                  border: Border.all(
+                      color: colors.accentSecondary.withValues(alpha: 0.1)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -7631,7 +9644,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
 
     // Edge Function 실제 필드명 사용: study_methods (배열)
-    final studyMethods = (metadata['study_methods'] as List<dynamic>?)?.cast<String>() ?? [];
+    final studyMethods =
+        (metadata['study_methods'] as List<dynamic>?)?.cast<String>() ?? [];
 
     if (studyMethods.isEmpty) return const SizedBox.shrink();
 
@@ -7646,7 +9660,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     }).toList();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -7664,7 +9679,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           if (isBlurred)
             _buildBlurredPlaceholder(context, '공부법 팁 확인하기')
           else
@@ -7719,12 +9733,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
 
     // Edge Function 실제 필드명 사용: cautions (배열)
-    final warnings = (metadata['cautions'] as List<dynamic>?)?.cast<String>() ?? [];
+    final warnings =
+        (metadata['cautions'] as List<dynamic>?)?.cast<String>() ?? [];
 
     if (warnings.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -7784,15 +9800,18 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
     // Edge Function 실제 필드명 사용
     final positiveMessage = metadata['positive_message'] as String? ?? '';
-    final strengths = (metadata['strengths'] as List<dynamic>?)?.cast<String>() ?? [];
+    final strengths =
+        (metadata['strengths'] as List<dynamic>?)?.cast<String>() ?? [];
 
-    if (positiveMessage.isEmpty && strengths.isEmpty) return const SizedBox.shrink();
+    if (positiveMessage.isEmpty && strengths.isEmpty)
+      return const SizedBox.shrink();
 
     final isBlurred = !isPremium;
     final affirmation = positiveMessage; // positive_message를 affirmation으로 사용
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -7810,7 +9829,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           if (isBlurred)
             _buildBlurredPlaceholder(context, '멘탈 관리 팁 확인하기')
           else ...[
@@ -7827,7 +9845,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     ],
                   ),
                   borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+                  border:
+                      Border.all(color: colors.accent.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   children: [
@@ -7884,7 +9903,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 시험운: 멘탈 팁 카드 빌더
-  Widget _buildExamMentalTipCard(BuildContext context, String emoji, String title, String content) {
+  Widget _buildExamMentalTipCard(
+      BuildContext context, String emoji, String title, String content) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -7943,7 +9963,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final examDayEnergy = sajuAnalysis['examDayEnergy'] as String? ?? '';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -7980,7 +10001,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           if (isBlurred)
             _buildBlurredPlaceholder(context, '사주 분석 확인하기')
           else ...[
@@ -7997,7 +10017,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 시험운: 사주 분석 아이템 빌더
-  Widget _buildExamSajuItem(BuildContext context, String emoji, String title, String content) {
+  Widget _buildExamSajuItem(
+      BuildContext context, String emoji, String title, String content) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -8056,10 +10077,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final overallHealth = metadata['overall_health'] as String?;
     final bodyPartAdvice = metadata['body_part_advice'] as String?;
     final cautions = metadata['cautions'] as List<dynamic>?;
-    final recommendedActivities = metadata['recommended_activities'] as List<dynamic>?;
+    final recommendedActivities =
+        metadata['recommended_activities'] as List<dynamic>?;
     // ✅ 신규: 오행 기반 개인화 조언
     final elementAdvice = metadata['element_advice'] as Map<String, dynamic>?;
-    final personalizedFeedback = metadata['personalized_feedback'] as Map<String, dynamic>?;
+    final personalizedFeedback =
+        metadata['personalized_feedback'] as Map<String, dynamic>?;
 
     // 건강 accent 색상 (청록)
     const healthAccent = Color(0xFF38A169);
@@ -8089,13 +10112,15 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
           // ✅ 오행 기반 개인화 조언 (신규)
           if (elementAdvice != null) ...[
-            _buildElementAdviceSection(context, elementAdvice, isDark, healthAccent, healthAccentLight),
+            _buildElementAdviceSection(context, elementAdvice, isDark,
+                healthAccent, healthAccentLight),
             const SizedBox(height: DSSpacing.md),
           ],
 
           // ✅ 개인화 피드백 (이전 설문 비교 - 신규)
           if (personalizedFeedback != null) ...[
-            _buildPersonalizedFeedbackSection(context, personalizedFeedback, isDark, healthAccent),
+            _buildPersonalizedFeedbackSection(
+                context, personalizedFeedback, isDark, healthAccent),
             const SizedBox(height: DSSpacing.md),
           ],
 
@@ -8123,7 +10148,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               icon: '🏃',
               title: '오늘의 운동',
               child: exerciseAdvice is Map<String, dynamic>
-                  ? _buildStructuredExerciseAdvice(context, exerciseAdvice, isDark, healthAccent, healthAccentLight)
+                  ? _buildStructuredExerciseAdvice(context, exerciseAdvice,
+                      isDark, healthAccent, healthAccentLight)
                   : Text(
                       exerciseAdvice.toString(),
                       style: typography.bodySmall.copyWith(
@@ -8165,7 +10191,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('•', style: typography.bodySmall.copyWith(color: colors.textSecondary)),
+                        Text('•',
+                            style: typography.bodySmall
+                                .copyWith(color: colors.textSecondary)),
                         const SizedBox(width: DSSpacing.xs),
                         Expanded(
                           child: Text(
@@ -8186,7 +10214,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           ],
 
           // 추천 활동
-          if (recommendedActivities != null && recommendedActivities.isNotEmpty) ...[
+          if (recommendedActivities != null &&
+              recommendedActivities.isNotEmpty) ...[
             _buildHealthSection(
               context,
               icon: '✨',
@@ -8198,7 +10227,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('•', style: typography.bodySmall.copyWith(color: healthAccent)),
+                        Text('•',
+                            style: typography.bodySmall
+                                .copyWith(color: healthAccent)),
                         const SizedBox(width: DSSpacing.xs),
                         Expanded(
                           child: Text(
@@ -8235,18 +10266,23 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final exerciseData = fortune.additionalInfo ?? fortune.metadata ?? {};
 
     // 디버그 로깅
-    debugPrint('🏋️ [_buildExerciseDetailSection] Building exercise detail section');
-    debugPrint('🏋️ [_buildExerciseDetailSection] exerciseData keys: ${exerciseData.keys.toList()}');
+    debugPrint(
+        '🏋️ [_buildExerciseDetailSection] Building exercise detail section');
+    debugPrint(
+        '🏋️ [_buildExerciseDetailSection] exerciseData keys: ${exerciseData.keys.toList()}');
     debugPrint('🏋️ [_buildExerciseDetailSection] exerciseData: $exerciseData');
 
-    final recommendedExercise = exerciseData['recommendedExercise'] as Map<String, dynamic>?;
+    final recommendedExercise =
+        exerciseData['recommendedExercise'] as Map<String, dynamic>?;
     final todayRoutine = exerciseData['todayRoutine'] as Map<String, dynamic>?;
     final weeklyPlan = exerciseData['weeklyPlan'] as Map<String, dynamic>?;
     final optimalTime = exerciseData['optimalTime'] as Map<String, dynamic>?;
-    final injuryPrevention = exerciseData['injuryPrevention'] as Map<String, dynamic>?;
+    final injuryPrevention =
+        exerciseData['injuryPrevention'] as Map<String, dynamic>?;
     final nutritionTip = exerciseData['nutritionTip'] as Map<String, dynamic>?;
 
-    debugPrint('🏋️ [_buildExerciseDetailSection] recommendedExercise: $recommendedExercise');
+    debugPrint(
+        '🏋️ [_buildExerciseDetailSection] recommendedExercise: $recommendedExercise');
     debugPrint('🏋️ [_buildExerciseDetailSection] todayRoutine: $todayRoutine');
     debugPrint('🏋️ [_buildExerciseDetailSection] optimalTime: $optimalTime');
 
@@ -8255,7 +10291,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     const exerciseAccentLight = Color(0xFFFBD38D);
 
     // 운동 블러 섹션 정의
-    const exerciseBlurredSections = ['todayRoutine', 'weeklyPlan', 'injuryPrevention'];
+    const exerciseBlurredSections = [
+      'todayRoutine',
+      'weeklyPlan',
+      'injuryPrevention'
+    ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
@@ -8337,7 +10377,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 context,
                 icon: '📋',
                 title: '오늘의 루틴',
-                child: _buildRoutineDetail(context, todayRoutine, exerciseAccent),
+                child:
+                    _buildRoutineDetail(context, todayRoutine, exerciseAccent),
               ),
             ),
             const SizedBox(height: DSSpacing.md),
@@ -8358,7 +10399,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 context,
                 icon: '📅',
                 title: '주간 운동 계획',
-                child: _buildWeeklyPlanDetail(context, weeklyPlan, exerciseAccent),
+                child:
+                    _buildWeeklyPlanDetail(context, weeklyPlan, exerciseAccent),
               ),
             ),
             const SizedBox(height: DSSpacing.md),
@@ -8379,7 +10421,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 context,
                 icon: '🛡️',
                 title: '부상 예방 가이드',
-                child: _buildInjuryPreventionDetail(context, injuryPrevention, exerciseAccent),
+                child: _buildInjuryPreventionDetail(
+                    context, injuryPrevention, exerciseAccent),
               ),
             ),
             const SizedBox(height: DSSpacing.md),
@@ -8393,7 +10436,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               context,
               icon: '🥗',
               title: '영양 팁',
-              child: _buildNutritionTipDetail(context, nutritionTip, exerciseAccent),
+              child: _buildNutritionTipDetail(
+                  context, nutritionTip, exerciseAccent),
             ),
           ],
         ],
@@ -8464,7 +10508,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               const SizedBox(width: 4),
               Text(
                 duration,
-                style: typography.bodySmall.copyWith(color: colors.textSecondary),
+                style:
+                    typography.bodySmall.copyWith(color: colors.textSecondary),
               ),
             ],
           ),
@@ -8532,24 +10577,26 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 ),
                 const SizedBox(height: 4),
                 ...precautions.map((p) => Padding(
-                  padding: const EdgeInsets.only(left: 4, top: 2),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('•', style: typography.bodySmall.copyWith(color: Colors.orange[700])),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          p.toString(),
-                          style: typography.bodySmall.copyWith(
-                            color: Colors.orange[800],
-                            height: 1.4,
+                      padding: const EdgeInsets.only(left: 4, top: 2),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('•',
+                              style: typography.bodySmall
+                                  .copyWith(color: Colors.orange[700])),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              p.toString(),
+                              style: typography.bodySmall.copyWith(
+                                color: Colors.orange[800],
+                                height: 1.4,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                )),
+                    )),
               ],
             ),
           ),
@@ -8612,10 +10659,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   /// 강도 라벨
   String _getIntensityLabel(String intensity) {
     switch (intensity.toLowerCase()) {
-      case 'low': return '저강도';
-      case 'medium': return '중강도';
-      case 'high': return '고강도';
-      default: return intensity;
+      case 'low':
+        return '저강도';
+      case 'medium':
+        return '중강도';
+      case 'high':
+        return '고강도';
+      default:
+        return intensity;
     }
   }
 
@@ -8688,8 +10739,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 const SizedBox(width: 4),
                 Text(
                   '워밍업 ${warmup['duration'] ?? '10분'}',
-                  style:
-                      typography.bodySmall.copyWith(color: colors.textSecondary),
+                  style: typography.bodySmall
+                      .copyWith(color: colors.textSecondary),
                 ),
               ],
             ),
@@ -8833,8 +10884,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   ),
                   Text(
                     interval['duration'] as String? ?? '',
-                    style:
-                        typography.bodySmall.copyWith(color: colors.textSecondary),
+                    style: typography.bodySmall
+                        .copyWith(color: colors.textSecondary),
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -8917,8 +10968,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 주간 계획 상세 표시
-  Widget _buildWeeklyPlanDetail(
-      BuildContext context, Map<String, dynamic> weeklyPlan, Color accentColor) {
+  Widget _buildWeeklyPlanDetail(BuildContext context,
+      Map<String, dynamic> weeklyPlan, Color accentColor) {
     final typography = context.typography;
     final colors = context.colors;
 
@@ -8973,7 +11024,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     Text(
                       isRest ? '쉼' : _getShortActivity(activity),
                       style: typography.labelSmall.copyWith(
-                        color: isRest ? colors.textTertiary : colors.textPrimary,
+                        color:
+                            isRest ? colors.textTertiary : colors.textPrimary,
                         fontSize: 9,
                       ),
                       textAlign: TextAlign.center,
@@ -9041,7 +11093,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               Expanded(
                 child: Text(
                   '워밍업: $warmup',
-                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                  style:
+                      typography.bodySmall.copyWith(color: colors.textPrimary),
                 ),
               ),
             ],
@@ -9057,7 +11110,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               Expanded(
                 child: Text(
                   '스트레칭: ${stretches.take(3).join(', ')}',
-                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                  style:
+                      typography.bodySmall.copyWith(color: colors.textPrimary),
                 ),
               ),
             ],
@@ -9078,8 +11132,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Text(
                   '• $tip',
-                  style:
-                      typography.bodySmall.copyWith(color: colors.textSecondary),
+                  style: typography.bodySmall
+                      .copyWith(color: colors.textSecondary),
                 ),
               )),
         ],
@@ -9088,8 +11142,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 영양 팁 상세 표시
-  Widget _buildNutritionTipDetail(
-      BuildContext context, Map<String, dynamic> nutritionTip, Color accentColor) {
+  Widget _buildNutritionTipDetail(BuildContext context,
+      Map<String, dynamic> nutritionTip, Color accentColor) {
     final typography = context.typography;
     final colors = context.colors;
 
@@ -9122,7 +11176,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               Expanded(
                 child: Text(
                   preworkout,
-                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                  style:
+                      typography.bodySmall.copyWith(color: colors.textPrimary),
                 ),
               ),
             ],
@@ -9151,7 +11206,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               Expanded(
                 child: Text(
                   postworkout,
-                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                  style:
+                      typography.bodySmall.copyWith(color: colors.textPrimary),
                 ),
               ),
             ],
@@ -9169,7 +11225,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               Expanded(
                 child: Text(
                   message,
-                  style: typography.bodySmall.copyWith(color: colors.textPrimary),
+                  style:
+                      typography.bodySmall.copyWith(color: colors.textPrimary),
                 ),
               ),
             ],
@@ -9321,9 +11378,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
     final lackingElement = elementAdvice['lacking_element'] as String?;
     final dominantElement = elementAdvice['dominant_element'] as String?;
-    final vulnerableOrgans = elementAdvice['vulnerable_organs'] as List<dynamic>?;
-    final vulnerableSymptoms = elementAdvice['vulnerable_symptoms'] as List<dynamic>?;
-    final recommendedFoods = elementAdvice['recommended_foods'] as List<dynamic>?;
+    final vulnerableOrgans =
+        elementAdvice['vulnerable_organs'] as List<dynamic>?;
+    final vulnerableSymptoms =
+        elementAdvice['vulnerable_symptoms'] as List<dynamic>?;
+    final recommendedFoods =
+        elementAdvice['recommended_foods'] as List<dynamic>?;
 
     // 오행 색상 매핑
     const elementColors = {
@@ -9364,7 +11424,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
                   decoration: BoxDecoration(
                     color: elementColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -9393,7 +11454,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             if (vulnerableOrgans != null && vulnerableOrgans.isNotEmpty) ...[
               Row(
                 children: [
-                  Text('💪 주의 장기: ', style: typography.labelSmall.copyWith(color: colors.textSecondary)),
+                  Text('💪 주의 장기: ',
+                      style: typography.labelSmall
+                          .copyWith(color: colors.textSecondary)),
                   Text(
                     vulnerableOrgans.join(', '),
                     style: typography.labelSmall.copyWith(
@@ -9407,10 +11470,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ],
 
             // 취약 증상
-            if (vulnerableSymptoms != null && vulnerableSymptoms.isNotEmpty) ...[
+            if (vulnerableSymptoms != null &&
+                vulnerableSymptoms.isNotEmpty) ...[
               Text(
                 '⚠️ 주의 증상: ${vulnerableSymptoms.take(3).join(', ')}',
-                style: typography.bodySmall.copyWith(color: colors.textSecondary),
+                style:
+                    typography.bodySmall.copyWith(color: colors.textSecondary),
               ),
               const SizedBox(height: DSSpacing.md),
             ],
@@ -9449,11 +11514,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                       Expanded(
                         child: RichText(
                           text: TextSpan(
-                            style: typography.bodySmall.copyWith(color: colors.textSecondary),
+                            style: typography.bodySmall
+                                .copyWith(color: colors.textSecondary),
                             children: [
                               TextSpan(
                                 text: item,
-                                style: TextStyle(fontWeight: FontWeight.w600, color: colors.textPrimary),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: colors.textPrimary),
                               ),
                               if (timing != null) TextSpan(text: ' ($timing)'),
                               if (reason != null) TextSpan(text: ' - $reason'),
@@ -9485,9 +11553,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     bool isDark,
     Color healthAccent,
   ) {
-    final improvements = (feedback['improvements'] as List<dynamic>?)?.cast<String>() ?? [];
-    final concerns = (feedback['concerns'] as List<dynamic>?)?.cast<String>() ?? [];
-    final encouragements = (feedback['encouragements'] as List<dynamic>?)?.cast<String>() ?? [];
+    final improvements =
+        (feedback['improvements'] as List<dynamic>?)?.cast<String>() ?? [];
+    final concerns =
+        (feedback['concerns'] as List<dynamic>?)?.cast<String>() ?? [];
+    final encouragements =
+        (feedback['encouragements'] as List<dynamic>?)?.cast<String>() ?? [];
 
     if (improvements.isEmpty && concerns.isEmpty && encouragements.isEmpty) {
       return const SizedBox.shrink();
@@ -9502,30 +11573,30 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         children: [
           // 개선점 (긍정)
           ...improvements.map((item) => _buildFeedbackItem(
-            context,
-            icon: '✅',
-            text: item,
-            color: const Color(0xFF38A169),
-            isDark: isDark,
-          )),
+                context,
+                icon: '✅',
+                text: item,
+                color: const Color(0xFF38A169),
+                isDark: isDark,
+              )),
 
           // 격려
           ...encouragements.map((item) => _buildFeedbackItem(
-            context,
-            icon: '💪',
-            text: item,
-            color: healthAccent,
-            isDark: isDark,
-          )),
+                context,
+                icon: '💪',
+                text: item,
+                color: healthAccent,
+                isDark: isDark,
+              )),
 
           // 주의점 (경고)
           ...concerns.map((item) => _buildFeedbackItem(
-            context,
-            icon: '⚠️',
-            text: item,
-            color: const Color(0xFFD69E2E),
-            isDark: isDark,
-          )),
+                context,
+                icon: '⚠️',
+                text: item,
+                color: const Color(0xFFD69E2E),
+                isDark: isDark,
+              )),
         ],
       ),
     );
@@ -9625,17 +11696,18 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             healthAccentLight: healthAccentLight,
           ),
 
-        if (weekly != null)
-          const SizedBox(height: DSSpacing.md),
+        if (weekly != null) const SizedBox(height: DSSpacing.md),
 
         // 주간 운동 계획 그리드
         if (weekly != null)
-          _buildWeeklyScheduleGrid(context, weekly, isDark, healthAccent, healthAccentLight),
+          _buildWeeklyScheduleGrid(
+              context, weekly, isDark, healthAccent, healthAccentLight),
 
         // 전체 조언 배너
         if (overallTip != null && overallTip.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildOverallTipBanner(context, overallTip, isDark, healthAccent, healthAccentLight),
+          _buildOverallTipBanner(
+              context, overallTip, isDark, healthAccent, healthAccentLight),
         ],
       ],
     );
@@ -9718,7 +11790,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               // 시간 뱃지
               if (time.isNotEmpty)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: healthAccent.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(DSRadius.xs),
@@ -9756,9 +11829,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             runSpacing: 6,
             children: [
               if (duration.isNotEmpty)
-                _buildExerciseInfoBadge(context, Icons.timer_outlined, duration, isDark, healthAccent),
+                _buildExerciseInfoBadge(context, Icons.timer_outlined, duration,
+                    isDark, healthAccent),
               if (intensity.isNotEmpty)
-                _buildExerciseInfoBadge(context, Icons.speed_outlined, intensity, isDark, _getIntensityColor(intensity)),
+                _buildExerciseInfoBadge(context, Icons.speed_outlined,
+                    intensity, isDark, _getIntensityColor(intensity)),
             ],
           ),
 
@@ -9887,7 +11962,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         // 7일 그리드
         LayoutBuilder(
           builder: (context, constraints) {
-            final itemWidth = (constraints.maxWidth - 36) / 7; // 36 = 6 gaps * 6px
+            final itemWidth =
+                (constraints.maxWidth - 36) / 7; // 36 = 6 gaps * 6px
 
             return Wrap(
               spacing: 6,
@@ -9933,16 +12009,16 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         ? (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05))
         : healthAccent.withValues(alpha: isDark ? 0.2 : 0.1);
 
-    final borderColor = isRest
-        ? Colors.transparent
-        : healthAccent.withValues(alpha: 0.3);
+    final borderColor =
+        isRest ? Colors.transparent : healthAccent.withValues(alpha: 0.3);
 
     final textColor = isRest
         ? colors.textSecondary.withValues(alpha: 0.6)
         : (isDark ? healthAccentLight : healthAccent);
 
     // 긴 텍스트 자르기
-    final truncated = activity.length <= 6 ? activity : '${activity.substring(0, 4)}...';
+    final truncated =
+        activity.length <= 6 ? activity : '${activity.substring(0, 4)}...';
 
     return Container(
       width: width,
@@ -10056,7 +12132,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     if (todayTrap == null) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.sm, DSSpacing.md, 0),
+      padding: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.sm, DSSpacing.md, 0),
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.sm),
         decoration: BoxDecoration(
@@ -10119,7 +12196,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     if (dimensions.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
+      padding: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -10138,7 +12216,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 개별 MBTI 차원 카드
-  Widget _buildMbtiDimensionCard(BuildContext context, MbtiDimensionFortune dimension) {
+  Widget _buildMbtiDimensionCard(
+      BuildContext context, MbtiDimensionFortune dimension) {
     final colors = context.colors;
     final typography = context.typography;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -10168,7 +12247,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   dimension.title,
                   style: typography.labelMedium.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: isDark ? dimension.color : dimension.color.withValues(alpha: 0.9),
+                    color: isDark
+                        ? dimension.color
+                        : dimension.color.withValues(alpha: 0.9),
                   ),
                 ),
               ),
@@ -10182,7 +12263,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   '${dimension.score}점',
                   style: typography.labelSmall.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: isDark ? dimension.color : dimension.color.withValues(alpha: 0.9),
+                    color: isDark
+                        ? dimension.color
+                        : dimension.color.withValues(alpha: 0.9),
                   ),
                 ),
               ),
@@ -10202,7 +12285,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('💡', style: TextStyle(fontSize: 12, color: colors.textSecondary)),
+              Text('💡',
+                  style: TextStyle(fontSize: 12, color: colors.textSecondary)),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
@@ -10231,13 +12315,16 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(dimension.warningIcon, style: const TextStyle(fontSize: 14)),
+                  Text(dimension.warningIcon,
+                      style: const TextStyle(fontSize: 14)),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       dimension.warning!,
                       style: typography.bodySmall.copyWith(
-                        color: isDark ? colors.error : colors.error.withValues(alpha: 0.9),
+                        color: isDark
+                            ? colors.error
+                            : colors.error.withValues(alpha: 0.9),
                         fontSize: 11,
                         height: 1.4,
                       ),
@@ -10263,7 +12350,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final dragonMsg = wishData!.dragonMessage!;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -10314,7 +12402,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final flow = wishData!.fortuneFlow!;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? colors.surface : colors.background,
@@ -10329,16 +12418,20 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             children: [
               const Text('📊', style: TextStyle(fontSize: 20)),
               const SizedBox(width: DSSpacing.xs),
-              Text('운의 흐름', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+              Text('운의 흐름',
+                  style: typography.labelLarge
+                      .copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: DSSpacing.md),
 
           // 성취 가능성 레벨
-          _buildFlowItem(context, '✨', '성취 가능성', flow.achievementLevel, _getAchievementColor(flow.achievementLevel)),
+          _buildFlowItem(context, '✨', '성취 가능성', flow.achievementLevel,
+              _getAchievementColor(flow.achievementLevel)),
 
           // 행운의 타이밍
-          _buildFlowItem(context, '⏰', '행운의 시간', flow.luckyTiming, colors.accent),
+          _buildFlowItem(
+              context, '⏰', '행운의 시간', flow.luckyTiming, colors.accent),
 
           // 키워드 해시태그
           if (flow.keywords.isNotEmpty) ...[
@@ -10346,17 +12439,21 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             Wrap(
               spacing: DSSpacing.xs,
               runSpacing: DSSpacing.xs,
-              children: flow.keywords.map((keyword) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
-                decoration: BoxDecoration(
-                  color: colors.accent.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(DSRadius.full),
-                ),
-                child: Text(
-                  keyword,
-                  style: typography.labelSmall.copyWith(color: colors.accent),
-                ),
-              )).toList(),
+              children: flow.keywords
+                  .map((keyword) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                        decoration: BoxDecoration(
+                          color: colors.accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(DSRadius.full),
+                        ),
+                        child: Text(
+                          keyword,
+                          style: typography.labelSmall
+                              .copyWith(color: colors.accent),
+                        ),
+                      ))
+                  .toList(),
             ),
           ],
 
@@ -10364,17 +12461,20 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
           // 도움 요소
           if (flow.helper.isNotEmpty)
-            _buildFlowItem(context, '👤', '도움이 되는 것', flow.helper, colors.success),
+            _buildFlowItem(
+                context, '👤', '도움이 되는 것', flow.helper, colors.success),
 
           // 주의 요소
           if (flow.obstacle.isNotEmpty)
-            _buildFlowItem(context, '⚠️', '주의할 것', flow.obstacle, colors.warning),
+            _buildFlowItem(
+                context, '⚠️', '주의할 것', flow.obstacle, colors.warning),
         ],
       ),
     );
   }
 
-  Widget _buildFlowItem(BuildContext context, String emoji, String label, String value, Color accentColor) {
+  Widget _buildFlowItem(BuildContext context, String emoji, String label,
+      String value, Color accentColor) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -10389,7 +12489,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: typography.labelSmall.copyWith(color: colors.textSecondary)),
+                Text(label,
+                    style: typography.labelSmall
+                        .copyWith(color: colors.textSecondary)),
                 Text(
                   value,
                   style: typography.bodyMedium.copyWith(
@@ -10431,7 +12533,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final mission = wishData!.luckyMission!;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? colors.surface : colors.background,
@@ -10446,7 +12549,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             children: [
               const Text('🍀', style: TextStyle(fontSize: 20)),
               const SizedBox(width: DSSpacing.xs),
-              Text('오늘의 행운 미션', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+              Text('오늘의 행운 미션',
+                  style: typography.labelLarge
+                      .copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: DSSpacing.md),
@@ -10499,7 +12604,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       margin: const EdgeInsets.only(bottom: DSSpacing.md),
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark ? colors.background.withValues(alpha: 0.5) : colors.surface,
+        color:
+            isDark ? colors.background.withValues(alpha: 0.5) : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
@@ -10513,7 +12619,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               children: [
                 Row(
                   children: [
-                    Text(title, style: typography.labelSmall.copyWith(color: colors.textSecondary)),
+                    Text(title,
+                        style: typography.labelSmall
+                            .copyWith(color: colors.textSecondary)),
                     if (colorPreview != null) ...[
                       const SizedBox(width: DSSpacing.xs),
                       Container(
@@ -10531,7 +12639,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: typography.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+                  style: typography.bodyMedium
+                      .copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -10578,7 +12687,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final dragonMsg = wishData!.dragonMessage!;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -10606,7 +12716,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   children: [
                     Text(
                       '여의주의 빛',
-                      style: typography.labelSmall.copyWith(color: colors.textSecondary),
+                      style: typography.labelSmall
+                          .copyWith(color: colors.textSecondary),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -10635,7 +12746,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   children: [
                     Text(
                       '용의 지혜',
-                      style: typography.labelSmall.copyWith(color: colors.textSecondary),
+                      style: typography.labelSmall
+                          .copyWith(color: colors.textSecondary),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -10663,7 +12775,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     if (wishData == null) return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: colors.accent.withValues(alpha: 0.1),
@@ -10679,7 +12792,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               children: [
                 const Text('💬', style: TextStyle(fontSize: 18)),
                 const SizedBox(width: DSSpacing.xs),
-                Text('공감', style: typography.labelMedium.copyWith(fontWeight: FontWeight.bold)),
+                Text('공감',
+                    style: typography.labelMedium
+                        .copyWith(fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: DSSpacing.xs),
@@ -10696,7 +12811,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               children: [
                 const Text('🌟', style: TextStyle(fontSize: 18)),
                 const SizedBox(width: DSSpacing.xs),
-                Text('희망', style: typography.labelMedium.copyWith(fontWeight: FontWeight.bold)),
+                Text('희망',
+                    style: typography.labelMedium
+                        .copyWith(fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: DSSpacing.xs),
@@ -10713,7 +12830,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               children: [
                 const Text('💪', style: TextStyle(fontSize: 18)),
                 const SizedBox(width: DSSpacing.xs),
-                Text('응원', style: typography.labelMedium.copyWith(fontWeight: FontWeight.bold)),
+                Text('응원',
+                    style: typography.labelMedium
+                        .copyWith(fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: DSSpacing.xs),
@@ -10764,10 +12883,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final typography = context.typography;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final wishData = _wishData;
-    if (wishData == null || wishData.advice.isEmpty) return const SizedBox.shrink();
+    if (wishData == null || wishData.advice.isEmpty)
+      return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? colors.surface : colors.background,
@@ -10781,11 +12902,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             children: [
               const Text('📝', style: TextStyle(fontSize: 20)),
               const SizedBox(width: DSSpacing.xs),
-              Text('오늘의 실천 조언', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+              Text('오늘의 실천 조언',
+                  style: typography.labelLarge
+                      .copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           ...wishData.advice.asMap().entries.map((entry) {
             final index = entry.key;
             final advice = entry.value;
@@ -10854,7 +12976,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     if (validItems.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? colors.surface : colors.background,
@@ -10868,11 +12991,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             children: [
               const Text('🧿', style: TextStyle(fontSize: 20)),
               const SizedBox(width: DSSpacing.xs),
-              Text('세부 운세', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+              Text('세부 운세',
+                  style: typography.labelLarge
+                      .copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           ...validItems.map((item) {
             final value = details[item['key']].toString();
             return Padding(
@@ -10880,7 +13004,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item['emoji'] as String, style: const TextStyle(fontSize: 18)),
+                  Text(item['emoji'] as String,
+                      style: const TextStyle(fontSize: 18)),
                   const SizedBox(width: DSSpacing.sm),
                   Expanded(
                     child: Column(
@@ -10919,7 +13044,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     if (luckyItems.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? colors.surface : colors.background,
@@ -10933,29 +13059,34 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             children: [
               const Text('🍀', style: TextStyle(fontSize: 20)),
               const SizedBox(width: DSSpacing.xs),
-              Text('행운 아이템', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+              Text('행운 아이템',
+                  style: typography.labelLarge
+                      .copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           Wrap(
             spacing: DSSpacing.sm,
             runSpacing: DSSpacing.sm,
-            children: luckyItems.map((item) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
-              decoration: BoxDecoration(
-                color: colors.accent.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(DSRadius.full),
-                border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
-              ),
-              child: Text(
-                item,
-                style: typography.labelMedium.copyWith(
-                  color: colors.accent,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            )).toList(),
+            children: luckyItems
+                .map((item) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: colors.accent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(DSRadius.full),
+                        border: Border.all(
+                            color: colors.accent.withValues(alpha: 0.3)),
+                      ),
+                      child: Text(
+                        item,
+                        style: typography.labelMedium.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ))
+                .toList(),
           ),
         ],
       ),
@@ -10971,7 +13102,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     if (warnings.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: isDark
@@ -10987,11 +13119,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             children: [
               const Text('⚠️', style: TextStyle(fontSize: 20)),
               const SizedBox(width: DSSpacing.xs),
-              Text('주의사항', style: typography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+              Text('주의사항',
+                  style: typography.labelLarge
+                      .copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           ...warnings.asMap().entries.map((entry) {
             return Padding(
               padding: const EdgeInsets.only(bottom: DSSpacing.sm),
@@ -11061,11 +13194,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   /// 가족운 타입별 액센트 색상
   Color get _familyAccentColor {
-    if (_isFamilyHealth) return const Color(0xFF38A169);     // 청록 (건강)
-    if (_isFamilyWealth) return const Color(0xFFD69E2E);     // 금색 (재물)
+    if (_isFamilyHealth) return const Color(0xFF38A169); // 청록 (건강)
+    if (_isFamilyWealth) return const Color(0xFFD69E2E); // 금색 (재물)
     if (_isFamilyRelationship) return const Color(0xFFE91E63); // 핑크 (관계)
-    if (_isFamilyChildren) return const Color(0xFF2196F3);   // 파랑 (자녀)
-    if (_isFamilyChange) return const Color(0xFF9C27B0);     // 보라 (변화)
+    if (_isFamilyChildren) return const Color(0xFF2196F3); // 파랑 (자녀)
+    if (_isFamilyChange) return const Color(0xFF9C27B0); // 보라 (변화)
     return const Color(0xFF9B59B6);
   }
 
@@ -11082,7 +13215,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   /// 1. 카테고리별 점수 섹션
   Widget _buildFamilyCategoriesSection(BuildContext context, bool isDark) {
     final categories = _familyCategories;
-    if (categories == null || categories.isEmpty) return const SizedBox.shrink();
+    if (categories == null || categories.isEmpty)
+      return const SizedBox.shrink();
 
     final colors = context.colors;
     final typography = context.typography;
@@ -11217,24 +13351,26 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               const SizedBox(height: DSSpacing.xs),
               ...strengthPoints.map((point) => Padding(
-                padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('✓', style: typography.bodySmall.copyWith(color: accent)),
-                    const SizedBox(width: DSSpacing.xs),
-                    Expanded(
-                      child: Text(
-                        point.toString(),
-                        style: typography.bodySmall.copyWith(
-                          color: colors.textSecondary,
-                          height: 1.4,
+                    padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('✓',
+                            style:
+                                typography.bodySmall.copyWith(color: accent)),
+                        const SizedBox(width: DSSpacing.xs),
+                        Expanded(
+                          child: Text(
+                            point.toString(),
+                            style: typography.bodySmall.copyWith(
+                              color: colors.textSecondary,
+                              height: 1.4,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              )),
+                  )),
               const SizedBox(height: DSSpacing.sm),
             ],
             if (improvementAreas != null && improvementAreas.isNotEmpty) ...[
@@ -11247,24 +13383,26 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               ),
               const SizedBox(height: DSSpacing.xs),
               ...improvementAreas.map((area) => Padding(
-                padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('→', style: typography.bodySmall.copyWith(color: colors.textTertiary)),
-                    const SizedBox(width: DSSpacing.xs),
-                    Expanded(
-                      child: Text(
-                        area.toString(),
-                        style: typography.bodySmall.copyWith(
-                          color: colors.textSecondary,
-                          height: 1.4,
+                    padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('→',
+                            style: typography.bodySmall
+                                .copyWith(color: colors.textTertiary)),
+                        const SizedBox(width: DSSpacing.xs),
+                        Expanded(
+                          child: Text(
+                            area.toString(),
+                            style: typography.bodySmall.copyWith(
+                              color: colors.textSecondary,
+                              height: 1.4,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              )),
+                  )),
             ],
           ],
         ),
@@ -11400,7 +13538,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               const SizedBox(height: DSSpacing.sm),
             ],
             if (next != null && next.isNotEmpty) ...[
-              _buildFamilyFlowItem(context, '다음 달', next, colors.textTertiary, isDark),
+              _buildFamilyFlowItem(
+                  context, '다음 달', next, colors.textTertiary, isDark),
               const SizedBox(height: DSSpacing.sm),
             ],
             if (advice != null && advice.isNotEmpty) ...[
@@ -11434,7 +13573,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
-  Widget _buildFamilyFlowItem(BuildContext context, String label, String content, Color labelColor, bool isDark) {
+  Widget _buildFamilyFlowItem(BuildContext context, String label,
+      String content, Color labelColor, bool isDark) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -11564,7 +13704,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('•', style: typography.bodySmall.copyWith(color: accent)),
+                  Text('•',
+                      style: typography.bodySmall.copyWith(color: accent)),
                   const SizedBox(width: DSSpacing.xs),
                   Expanded(
                     child: Text(
@@ -11614,10 +13755,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('!', style: typography.bodySmall.copyWith(
-                      color: warningColor,
-                      fontWeight: FontWeight.bold,
-                    )),
+                    Text('!',
+                        style: typography.bodySmall.copyWith(
+                          color: warningColor,
+                          fontWeight: FontWeight.bold,
+                        )),
                     const SizedBox(width: DSSpacing.xs),
                     Expanded(
                       child: Text(
@@ -11712,7 +13854,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     };
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -11772,7 +13915,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -11808,7 +13952,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                       decoration: BoxDecoration(
                         color: colors.surface,
                         borderRadius: BorderRadius.circular(DSRadius.sm),
-                        border: Border.all(color: accentColor.withValues(alpha: 0.2)),
+                        border: Border.all(
+                            color: accentColor.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         children: [
@@ -11871,7 +14016,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final shouldBlur = !isPremium;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: UnifiedBlurWrapper(
         isBlurred: shouldBlur,
         blurredSections: shouldBlur ? ['pets_voice'] : [],
@@ -11912,10 +14058,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                       decoration: BoxDecoration(
                         color: accentColor.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
-                        border: Border.all(color: accentColor.withValues(alpha: 0.3), width: 2),
+                        border: Border.all(
+                            color: accentColor.withValues(alpha: 0.3),
+                            width: 2),
                       ),
                       child: Center(
-                        child: Text(petEmoji, style: const TextStyle(fontSize: 28)),
+                        child: Text(petEmoji,
+                            style: const TextStyle(fontSize: 28)),
                       ),
                     ),
                     const SizedBox(width: DSSpacing.sm),
@@ -11992,7 +14141,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                         decoration: BoxDecoration(
                           color: accentColor.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(DSRadius.sm),
-                          border: Border.all(color: accentColor.withValues(alpha: 0.15)),
+                          border: Border.all(
+                              color: accentColor.withValues(alpha: 0.15)),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -12039,10 +14189,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 class _FortuneScoreCircle extends StatefulWidget {
   final int score;
   final double size;
+  final Color? textColor;
+  final Color? borderColor;
 
   const _FortuneScoreCircle({
     required this.score,
     this.size = 72,
+    this.textColor,
+    this.borderColor,
   });
 
   @override
@@ -12061,8 +14215,8 @@ class _FortuneScoreCircleState extends State<_FortuneScoreCircle>
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    _animation = Tween<double>(begin: 0, end: widget.score / 100)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _animation = Tween<double>(begin: 0, end: widget.score / 100).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward();
   }
 
@@ -12076,6 +14230,13 @@ class _FortuneScoreCircleState extends State<_FortuneScoreCircle>
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
+    final accentColor =
+        widget.borderColor ?? _getScoreColor(widget.score);
+    final progressColor = accentColor.withValues(alpha: 1);
+    final backgroundColor = accentColor.withValues(alpha: 0.15);
+    final textColor = widget.textColor ?? colors.textPrimary;
+    final labelColor =
+        widget.textColor?.withValues(alpha: 0.8) ?? colors.textSecondary;
 
     return AnimatedBuilder(
       animation: _animation,
@@ -12089,8 +14250,8 @@ class _FortuneScoreCircleState extends State<_FortuneScoreCircle>
           child: CustomPaint(
             painter: _ScoreCirclePainter(
               progress: progress,
-              backgroundColor: colors.textPrimary.withValues(alpha: 0.1),
-              progressColor: _getScoreColor(widget.score),
+              backgroundColor: backgroundColor,
+              progressColor: progressColor,
             ),
             child: Center(
               child: Column(
@@ -12099,14 +14260,14 @@ class _FortuneScoreCircleState extends State<_FortuneScoreCircle>
                   Text(
                     '$displayScore',
                     style: typography.headingMedium.copyWith(
-                      color: colors.textPrimary,
+                      color: textColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
                     '점',
                     style: typography.labelSmall.copyWith(
-                      color: colors.textSecondary,
+                      color: labelColor,
                     ),
                   ),
                 ],
@@ -12171,6 +14332,38 @@ class _ScoreCirclePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _ScoreCirclePainter oldDelegate) {
     return oldDelegate.progress != progress;
+  }
+}
+
+class _ScoreTagChip extends StatelessWidget {
+  final String text;
+
+  const _ScoreTagChip({
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(DSRadius.full),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.35),
+        ),
+      ),
+      child: Text(
+        text,
+        style: context.typography.labelSmall.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 }
 
@@ -12326,71 +14519,6 @@ class _HexagonScoreChip extends StatelessWidget {
     if (score >= 60) return const Color(0xFF3B82F6);
     if (score >= 40) return const Color(0xFFF59E0B);
     return const Color(0xFFEF4444);
-  }
-}
-
-/// 행운 아이템 칩
-class _LuckyItemChip extends StatelessWidget {
-  final String emoji;
-  final String label;
-  final String value;
-
-  const _LuckyItemChip({
-    required this.emoji,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.sm,
-        vertical: DSSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            colors.accentSecondary.withValues(alpha: 0.1),
-            colors.accentSecondary.withValues(alpha: 0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: colors.accentSecondary.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 14)),
-          const SizedBox(width: 4),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: typography.labelSmall.copyWith(
-                  color: colors.textTertiary,
-                  fontSize: 10,
-                ),
-              ),
-              Text(
-                value,
-                style: typography.labelMedium.copyWith(
-                  color: colors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 }
 

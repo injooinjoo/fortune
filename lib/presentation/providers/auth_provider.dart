@@ -29,15 +29,16 @@ final authTokenProvider = FutureProvider<String?>((ref) async {
 // Current user provider
 final userProvider = StreamProvider<User?>((ref) {
   final client = ref.watch(supabaseClientProvider);
-  
+
   Logger.info('🔍 [userProvider] Creating user provider stream');
   Logger.info('user: ${client.auth.currentUser?.id}');
   Logger.info('email: ${client.auth.currentUser?.email}');
-  
+
   // Listen to auth state changes
   ref.listen(authStateProvider, (previous, next) {
     Logger.info('🔍 [userProvider] Auth state changed');
-    Logger.info('🔍 [userProvider] Previous: ${previous?.value?.session?.user.id}');
+    Logger.info(
+        '🔍 [userProvider] Previous: ${previous?.value?.session?.user.id}');
     Logger.info('🔍 [userProvider] Next: ${next.value?.session?.user.id}');
     Logger.info('🔍 [userProvider] Session: ${next.value?.session != null}');
     Logger.info('type: ${next.value?.event}');
@@ -49,49 +50,8 @@ final userProvider = StreamProvider<User?>((ref) {
   } else {
     Logger.info('found: ${user.id}');
   }
-  
-  return Stream.value(user);
-});
 
-// User profile provider with auto-creation using helper
-final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
-  Logger.info('🔍 [userProfileProvider] Creating user profile provider');
-  
-  final client = ref.watch(supabaseClientProvider);
-  final user = client.auth.currentUser;
-  
-  Logger.info('user: ${user?.id}');
-  Logger.info('email: ${user?.email}');
-  
-  if (user == null) {
-    Logger.info('❌ [userProfileProvider] No user found, returning null');
-    return null;
-  }
-  
-  try {
-    Logger.info('🔍 [userProfileProvider] Ensuring user profile exists...');
-    // Use helper function to ensure profile exists
-    final profileData = await SupabaseHelper.ensureUserProfile(
-      userId: user.id,
-      email: user.email ?? 'unknown@example.com',
-      name: user.userMetadata?['name'] as String? ?? 
-            user.userMetadata?['full_name'],
-      profileImageUrl: user.userMetadata?['avatar_url']);
-    
-    Logger.info('Profile data returned: ${profileData != null}');
-    if (profileData != null) {
-      Logger.info('Supabase initialized successfully');
-      final profile = UserProfile.fromJson(profileData);
-      Logger.info('✅ [userProfileProvider] Profile created successfully');
-      return profile;
-    }
-    
-    Logger.info('❌ [userProfileProvider] Profile data is null');
-    return null;
-  } catch (e) {
-    Logger.warning('[userProfileProvider] 사용자 프로필 조회/생성 실패 (선택적 기능, 기본 프로필 사용): $e');
-    return null;
-  }
+  return Stream.value(user);
 });
 
 // Auth service provider
@@ -106,44 +66,40 @@ final authServiceProvider = Provider<AuthService>((ref) {
 class AuthService {
   final SupabaseClient _client;
   final UserStatisticsService _statisticsService;
-  
+
   AuthService(this._client, this._statisticsService);
-  
+
   User? get currentUser => _client.auth.currentUser;
   bool get isAuthenticated => currentUser != null;
-  
-  Future<AuthResponse> signUp({
-    required String email,
-    required String password,
-    Map<String, dynamic>? metadata}) async {
+
+  Future<AuthResponse> signUp(
+      {required String email,
+      required String password,
+      Map<String, dynamic>? metadata}) async {
     try {
-      final response = await _client.auth.signUp(
-        email: email,
-        password: password,
-        data: metadata);
-      
+      final response = await _client.auth
+          .signUp(email: email, password: password, data: metadata);
+
       if (response.user != null) {
         Logger.securityCheckpoint('up: ${response.user!.id}');
       }
-      
+
       return response;
     } catch (e) {
       Logger.error('Sign up failed', e);
       rethrow;
     }
   }
-  
-  Future<AuthResponse> signIn({
-    required String email,
-    required String password}) async {
+
+  Future<AuthResponse> signIn(
+      {required String email, required String password}) async {
     try {
-      final response = await _client.auth.signInWithPassword(
-        email: email,
-        password: password);
-      
+      final response = await _client.auth
+          .signInWithPassword(email: email, password: password);
+
       if (response.user != null) {
         Logger.securityCheckpoint('in: ${response.user!.id}');
-        
+
         // Update consecutive days on sign in
         try {
           await _statisticsService.updateConsecutiveDays(response.user!.id);
@@ -152,14 +108,14 @@ class AuthService {
           // Don't throw - this is not critical for sign in
         }
       }
-      
+
       return response;
     } catch (e) {
       Logger.error('Sign in failed', e);
       rethrow;
     }
   }
-  
+
   Future<void> signOut() async {
     try {
       await _client.auth.signOut();
@@ -169,7 +125,7 @@ class AuthService {
       rethrow;
     }
   }
-  
+
   Future<void> resetPassword(String email) async {
     try {
       await _client.auth.resetPasswordForEmail(email);
@@ -179,18 +135,13 @@ class AuthService {
       rethrow;
     }
   }
-  
-  Future<UserResponse> updateUser({
-    String? email,
-    String? password,
-    Map<String, dynamic>? metadata}) async {
+
+  Future<UserResponse> updateUser(
+      {String? email, String? password, Map<String, dynamic>? metadata}) async {
     try {
       final response = await _client.auth.updateUser(
-        UserAttributes(
-          email: email,
-          password: password,
-          data: metadata));
-      
+          UserAttributes(email: email, password: password, data: metadata));
+
       Logger.info('User updated');
       return response;
     } catch (e) {
@@ -198,24 +149,24 @@ class AuthService {
       rethrow;
     }
   }
-  
+
   Future<UserProfile?> ensureUserProfile() async {
     final user = currentUser;
     if (user == null) return null;
-    
+
     try {
       // Use helper function to ensure profile exists
       final profileData = await SupabaseHelper.ensureUserProfile(
-        userId: user.id,
-        email: user.email ?? 'unknown@example.com',
-        name: user.userMetadata?['name'] as String? ?? 
+          userId: user.id,
+          email: user.email ?? 'unknown@example.com',
+          name: user.userMetadata?['name'] as String? ??
               user.userMetadata?['full_name'],
-        profileImageUrl: user.userMetadata?['avatar_url']);
-      
+          profileImageUrl: user.userMetadata?['avatar_url']);
+
       if (profileData != null) {
         return UserProfile.fromJson(profileData);
       }
-      
+
       return null;
     } catch (e) {
       Logger.error('Failed to ensure user profile', e);

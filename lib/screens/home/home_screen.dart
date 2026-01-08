@@ -1,9 +1,11 @@
-// 홈 화면은 기본적으로 StoryHomeScreen을 사용
-// StoryHomeScreen이 내부적으로 스토리/Tinder 페이지를 선택
-export 'story_home_screen.dart' show StoryHomeScreen;
+import 'package:flutter/material.dart';
+import '../../features/chat/presentation/pages/chat_home_page.dart';
 
-import 'story_home_screen.dart';
-
-class HomeScreen extends StoryHomeScreen {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const ChatHomePage();
+  }
 }

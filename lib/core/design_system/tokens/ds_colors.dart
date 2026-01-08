@@ -19,47 +19,47 @@ class DSColors {
   // LIGHT MODE COLORS - Traditional Korean (한국 전통)
   // ============================================
 
-  /// Primary accent color - Muted Indigo (청색)
-  static const Color accent = Color(0xFF4A5568);
+  /// Primary accent color - 쪽빛 (Deep Indigo)
+  static const Color accent = Color(0xFF2C3E50);
 
   /// Accent hover/pressed state
-  static const Color accentHover = Color(0xFF3C4759);
+  static const Color accentHover = Color(0xFF1E2B38);
 
   /// Lighter accent for backgrounds
-  static const Color accentLight = Color(0xFFE8EBF0);
+  static const Color accentLight = Color(0xFFE2E8F0);
 
-  /// Secondary accent - Vermilion Red (주색) for seals/stamps
-  static const Color accentSecondary = Color(0xFFC53030);
+  /// Secondary accent - 다홍색 (Vermilion Red) for seals/stamps
+  static const Color accentSecondary = Color(0xFFC0392B);
 
   /// Secondary accent hover
-  static const Color accentSecondaryHover = Color(0xFFAB2424);
+  static const Color accentSecondaryHover = Color(0xFF9B2D22);
 
-  /// Tertiary accent - Aged Gold (황금색) for highlights/badges
-  static const Color accentTertiary = Color(0xFFB7950B);
+  /// Tertiary accent - 황토색 (Ocher) for highlights/badges
+  static const Color accentTertiary = Color(0xFFD35400);
 
-  /// Page background - Hanji paper (한지색)
-  static const Color background = Color(0xFFF5F0E6);
+  /// Page background - 한지색 (Hanji paper)
+  static const Color background = Color(0xFFF2F0E9);
 
-  /// Secondary background - Light tan (담황색)
-  static const Color backgroundSecondary = Color(0xFFEDE7D9);
+  /// Secondary background - 담황색 (Light tan/Slightly darker Hanji)
+  static const Color backgroundSecondary = Color(0xFFEBE7DF);
 
   /// Tertiary background - Subtle hanji
-  static const Color backgroundTertiary = Color(0xFFE8E0D0);
+  static const Color backgroundTertiary = Color(0xFFE2DED5);
 
-  /// Card/modal surface - Clean paper (백지색)
-  static const Color surface = Color(0xFFFAF7F0);
+  /// Card/modal surface - 소색 (Off-white paper)
+  static const Color surface = Color(0xFFFDFEFE);
 
   /// Nested surface
-  static const Color surfaceSecondary = Color(0xFFF5F0E6);
+  static const Color surfaceSecondary = Color(0xFFF2F0E9);
 
-  /// Primary text - Ink black (먹색)
-  static const Color textPrimary = Color(0xFF2C2C2C);
+  /// Primary text - 깊은 먹색 (Ink black)
+  static const Color textPrimary = Color(0xFF1A1A1A);
 
-  /// Secondary text - Gray ink (회먹색)
-  static const Color textSecondary = Color(0xFF5C5C5C);
+  /// Secondary text - 회먹색 (Gray ink)
+  static const Color textSecondary = Color(0xFF7A7A7A);
 
-  /// Tertiary text - Light ink (담먹색)
-  static const Color textTertiary = Color(0xFF8B8B8B);
+  /// Tertiary text - 담먹색 (Light ink)
+  static const Color textTertiary = Color(0xFF969696);
 
   /// Disabled text
   static const Color textDisabled = Color(0xFFB8B0A0);
@@ -82,11 +82,11 @@ class DSColors {
   /// Toggle thumb
   static const Color toggleThumb = Color(0xFFFAF7F0);
 
-  /// CTA button background - Vermilion seal (주색 인장)
-  static const Color ctaBackground = Color(0xFFC53030);
+  /// CTA button background - Vermilion seal (다홍색 인장)
+  static const Color ctaBackground = Color(0xFFC0392B);
 
   /// CTA button text
-  static const Color ctaForeground = Color(0xFFFAF7F0);
+  static const Color ctaForeground = Color(0xFFF2F0E9);
 
   /// Secondary button background
   static const Color secondaryBackground = Color(0xFFEDE7D9);
@@ -159,13 +159,13 @@ class DSColors {
   static const Color surfaceSecondaryDark = Color(0xFF2D2D2D);
 
   /// Primary text dark - Hanji white (한지색)
-  static const Color textPrimaryDark = Color(0xFFF5F0E6);
+  static const Color textPrimaryDark = Color(0xFFFFFFFF);
 
   /// Secondary text dark
-  static const Color textSecondaryDark = Color(0xFFB8B0A0);
+  static const Color textSecondaryDark = Color(0xFF9CA3AF);
 
   /// Tertiary text dark
-  static const Color textTertiaryDark = Color(0xFF8B8B8B);
+  static const Color textTertiaryDark = Color(0xFFD1D6DB);
 
   /// Disabled text dark
   static const Color textDisabledDark = Color(0xFF5C5C5C);
@@ -290,45 +290,71 @@ class DSColorScheme {
   bool get isDark => brightness == Brightness.dark;
 
   Color get accent => isDark ? DSColors.accentDark : DSColors.accent;
-  Color get accentHover => isDark ? DSColors.accentHoverDark : DSColors.accentHover;
-  Color get accentLight => isDark ? DSColors.accentLightDark : DSColors.accentLight;
-  Color get accentSecondary => isDark ? DSColors.accentSecondaryDark : DSColors.accentSecondary;
-  Color get accentSecondaryHover => isDark ? DSColors.accentSecondaryHoverDark : DSColors.accentSecondaryHover;
-  Color get accentTertiary => isDark ? DSColors.accentTertiaryDark : DSColors.accentTertiary;
+  Color get accentHover =>
+      isDark ? DSColors.accentHoverDark : DSColors.accentHover;
+  Color get accentLight =>
+      isDark ? DSColors.accentLightDark : DSColors.accentLight;
+  Color get accentSecondary =>
+      isDark ? DSColors.accentSecondaryDark : DSColors.accentSecondary;
+  Color get accentSecondaryHover => isDark
+      ? DSColors.accentSecondaryHoverDark
+      : DSColors.accentSecondaryHover;
+  Color get accentTertiary =>
+      isDark ? DSColors.accentTertiaryDark : DSColors.accentTertiary;
 
-  Color get background => isDark ? DSColors.backgroundDark : DSColors.background;
-  Color get backgroundSecondary => isDark ? DSColors.backgroundSecondaryDark : DSColors.backgroundSecondary;
-  Color get backgroundTertiary => isDark ? DSColors.backgroundTertiaryDark : DSColors.backgroundTertiary;
+  Color get background =>
+      isDark ? DSColors.backgroundDark : DSColors.background;
+  Color get backgroundSecondary =>
+      isDark ? DSColors.backgroundSecondaryDark : DSColors.backgroundSecondary;
+  Color get backgroundTertiary =>
+      isDark ? DSColors.backgroundTertiaryDark : DSColors.backgroundTertiary;
 
   Color get surface => isDark ? DSColors.surfaceDark : DSColors.surface;
-  Color get surfaceSecondary => isDark ? DSColors.surfaceSecondaryDark : DSColors.surfaceSecondary;
+  Color get surfaceSecondary =>
+      isDark ? DSColors.surfaceSecondaryDark : DSColors.surfaceSecondary;
 
-  Color get textPrimary => isDark ? DSColors.textPrimaryDark : DSColors.textPrimary;
-  Color get textSecondary => isDark ? DSColors.textSecondaryDark : DSColors.textSecondary;
-  Color get textTertiary => isDark ? DSColors.textTertiaryDark : DSColors.textTertiary;
-  Color get textDisabled => isDark ? DSColors.textDisabledDark : DSColors.textDisabled;
+  Color get textPrimary =>
+      isDark ? DSColors.textPrimaryDark : DSColors.textPrimary;
+  Color get textSecondary =>
+      isDark ? DSColors.textSecondaryDark : DSColors.textSecondary;
+  Color get textTertiary =>
+      isDark ? DSColors.textTertiaryDark : DSColors.textTertiary;
+  Color get textDisabled =>
+      isDark ? DSColors.textDisabledDark : DSColors.textDisabled;
 
   Color get border => isDark ? DSColors.borderDark : DSColors.border;
-  Color get borderFocus => isDark ? DSColors.borderFocusDark : DSColors.borderFocus;
+  Color get borderFocus =>
+      isDark ? DSColors.borderFocusDark : DSColors.borderFocus;
   Color get divider => isDark ? DSColors.dividerDark : DSColors.divider;
 
-  Color get toggleActive => isDark ? DSColors.toggleActiveDark : DSColors.toggleActive;
-  Color get toggleInactive => isDark ? DSColors.toggleInactiveDark : DSColors.toggleInactive;
-  Color get toggleThumb => isDark ? DSColors.toggleThumbDark : DSColors.toggleThumb;
+  Color get toggleActive =>
+      isDark ? DSColors.toggleActiveDark : DSColors.toggleActive;
+  Color get toggleInactive =>
+      isDark ? DSColors.toggleInactiveDark : DSColors.toggleInactive;
+  Color get toggleThumb =>
+      isDark ? DSColors.toggleThumbDark : DSColors.toggleThumb;
 
-  Color get ctaBackground => isDark ? DSColors.ctaBackgroundDark : DSColors.ctaBackground;
-  Color get ctaForeground => isDark ? DSColors.ctaForegroundDark : DSColors.ctaForeground;
-  Color get secondaryBackground => isDark ? DSColors.secondaryBackgroundDark : DSColors.secondaryBackground;
-  Color get secondaryForeground => isDark ? DSColors.secondaryForegroundDark : DSColors.secondaryForeground;
+  Color get ctaBackground =>
+      isDark ? DSColors.ctaBackgroundDark : DSColors.ctaBackground;
+  Color get ctaForeground =>
+      isDark ? DSColors.ctaForegroundDark : DSColors.ctaForeground;
+  Color get secondaryBackground =>
+      isDark ? DSColors.secondaryBackgroundDark : DSColors.secondaryBackground;
+  Color get secondaryForeground =>
+      isDark ? DSColors.secondaryForegroundDark : DSColors.secondaryForeground;
 
   Color get success => isDark ? DSColors.successDark : DSColors.success;
-  Color get successBackground => isDark ? DSColors.successBackgroundDark : DSColors.successBackground;
+  Color get successBackground =>
+      isDark ? DSColors.successBackgroundDark : DSColors.successBackground;
   Color get error => isDark ? DSColors.errorDark : DSColors.error;
-  Color get errorBackground => isDark ? DSColors.errorBackgroundDark : DSColors.errorBackground;
+  Color get errorBackground =>
+      isDark ? DSColors.errorBackgroundDark : DSColors.errorBackground;
   Color get warning => isDark ? DSColors.warningDark : DSColors.warning;
-  Color get warningBackground => isDark ? DSColors.warningBackgroundDark : DSColors.warningBackground;
+  Color get warningBackground =>
+      isDark ? DSColors.warningBackgroundDark : DSColors.warningBackground;
   Color get info => isDark ? DSColors.infoDark : DSColors.info;
-  Color get infoBackground => isDark ? DSColors.infoBackgroundDark : DSColors.infoBackground;
+  Color get infoBackground =>
+      isDark ? DSColors.infoBackgroundDark : DSColors.infoBackground;
 
   Color get overlay => isDark ? DSColors.overlayDark : DSColors.overlay;
 }

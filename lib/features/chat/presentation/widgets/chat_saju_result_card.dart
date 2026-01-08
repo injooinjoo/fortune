@@ -5,6 +5,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
+import '../../../../core/widgets/infographic/headers/saju_info_header.dart';
 import '../../../fortune/presentation/widgets/saju/saju_widgets.dart';
 import '../../../fortune/presentation/widgets/saju_element_chart.dart';
 
@@ -111,8 +112,8 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 헤더
-          _buildHeader(context),
+          // 인포그래픽 헤더 (Hero + 오행 밸런스 통합)
+          _buildInfoHeader(context),
           // 섹션들
           _buildSections(context),
         ],
@@ -120,76 +121,72 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildInfoHeader(BuildContext context) {
+    final colors = context.colors;
+    final data = widget.sajuData;
 
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [const Color(0xFF7C3AED), const Color(0xFF6D28D9)]
-              : [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    // 사주 팔자 데이터 추출
+    Map<String, dynamic>? pillars;
+    final myungsik = data['myungsik'] as Map<String, dynamic>?;
+    if (myungsik != null) {
+      pillars = {
+        'year': {'sky': myungsik['yearSky'], 'earth': myungsik['yearEarth']},
+        'month': {'sky': myungsik['monthSky'], 'earth': myungsik['monthEarth']},
+        'day': {'sky': myungsik['daySky'], 'earth': myungsik['dayEarth']},
+        'hour': {'sky': myungsik['hourSky'], 'earth': myungsik['hourEarth']},
+      };
+    }
+
+    // 강/약 오행 찾기
+    String? strongElement;
+    String? weakElement;
+    final balance = _elementBalance;
+    if (balance.isNotEmpty) {
+      final sorted = balance.entries.toList()
+        ..sort((a, b) => (b.value as num).compareTo(a.value as num));
+      if (sorted.isNotEmpty) strongElement = sorted.first.key;
+      if (sorted.length > 1) weakElement = sorted.last.key;
+    }
+
+    return Stack(
+      children: [
+        // 인포그래픽 헤더
+        SajuInfoHeader(
+          birthDate: data['birthDate'] as String?,
+          birthTime: data['birthTime'] as String?,
+          pillars: pillars,
+          elements: balance.isNotEmpty ? balance : null,
+          strongElement: strongElement,
+          weakElement: weakElement,
+          advice: widget.fortuneResult?['advice'] as String?,
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(DSSpacing.xs),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(DSRadius.sm),
-            ),
-            child: const Icon(
-              Icons.auto_stories_rounded,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: DSSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '사주 분석 결과',
-                  style: context.heading3.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+        // 액션 버튼 오버레이
+        Positioned(
+          top: DSSpacing.sm,
+          right: DSSpacing.sm,
+          child: Row(
+            children: [
+              FortuneActionButtons(
+                contentId: widget.sajuData['id']?.toString() ??
+                    'saju_${DateTime.now().millisecondsSinceEpoch}',
+                contentType: 'saju',
+                shareTitle: '사주 분석 결과',
+                shareContent: '나의 사주팔자 분석 결과입니다.',
+                iconSize: 20,
+                iconColor: colors.textSecondary,
+              ),
+              IconButton(
+                onPressed: _toggleAllSections,
+                icon: Icon(
+                  _areAllExpanded ? Icons.unfold_less : Icons.unfold_more,
+                  color: colors.textSecondary,
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  '四柱命理',
-                  style: context.labelSmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
-            ),
+                tooltip: _areAllExpanded ? '모두 접기' : '모두 펼치기',
+              ),
+            ],
           ),
-          // 좋아요 + 공유 버튼
-          FortuneActionButtons(
-            contentId: widget.sajuData['id']?.toString() ?? 'saju_${DateTime.now().millisecondsSinceEpoch}',
-            contentType: 'saju',
-            shareTitle: '사주 분석 결과',
-            shareContent: '나의 사주팔자 분석 결과입니다.',
-            iconSize: 20,
-            iconColor: Colors.white.withValues(alpha: 0.9),
-          ),
-          // 확장/축소 버튼
-          IconButton(
-            onPressed: _toggleAllSections,
-            icon: Icon(
-              _areAllExpanded ? Icons.unfold_less : Icons.unfold_more,
-              color: Colors.white,
-            ),
-            tooltip: _areAllExpanded ? '모두 접기' : '모두 펼치기',
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

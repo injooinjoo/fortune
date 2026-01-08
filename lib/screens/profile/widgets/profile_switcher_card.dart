@@ -5,8 +5,8 @@ import '../../../core/design_system/tokens/ds_colors.dart';
 import '../../../core/theme/typography_unified.dart';
 import '../../../core/theme/app_theme/fortune_theme_extension.dart';
 import '../../../presentation/providers/active_profile_provider.dart';
-import '../../../presentation/providers/auth_provider.dart';
 import '../../../presentation/providers/secondary_profiles_provider.dart';
+import '../../../presentation/providers/providers.dart';
 import 'profile_list_sheet.dart';
 
 /// 프로필 스위처 카드 (프로필 화면 상단)
@@ -30,7 +30,8 @@ class ProfileSwitcherCard extends ConsumerWidget {
 
     if (activeState.isPrimary) {
       profileName = primaryProfileAsync.valueOrNull?.name ?? '나';
-      profileInitial = profileName.isNotEmpty ? profileName.substring(0, 1) : '나';
+      profileInitial =
+          profileName.isNotEmpty ? profileName.substring(0, 1) : '나';
     } else {
       final activeSecondary = ref.watch(activeSecondaryProfileProvider);
       profileName = activeSecondary?.name ?? '프로필';
@@ -53,7 +54,10 @@ class ProfileSwitcherCard extends ConsumerWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Center(

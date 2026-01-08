@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 
 class StorageService {
   static const String _userProfileKey = 'userProfile';
+  static const String _activeProfileOverrideKey = 'activeProfileOverride';
   static const String _recentFortunesKey = 'recentFortunes';
   static const String _lastUpdateDateKey = 'fortune_last_update_date';
   static const String _guestModeKey = 'isGuestMode';
@@ -14,11 +15,21 @@ class StorageService {
   static const String _loveFortuneInputKey = 'loveFortuneInput';
   static const String _dreamResultKey = 'dreamInterpretationResult';
   static const String _fortuneGaugeKey = 'fortune_gauge_progress';
+  static const String _activeProfileTypeKey = 'active_profile_type';
+  static const String _activeSecondaryProfileIdKey = 'active_secondary_profile_id';
 
   static const _uuid = Uuid();
 
   Future<Map<String, dynamic>?> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
+    final overrideString = prefs.getString(_activeProfileOverrideKey);
+    if (overrideString != null) {
+      try {
+        return json.decode(overrideString) as Map<String, dynamic>;
+      } catch (e) {
+        await prefs.remove(_activeProfileOverrideKey);
+      }
+    }
     final profileString = prefs.getString(_userProfileKey);
     
     if (profileString != null) {
@@ -39,6 +50,16 @@ class StorageService {
   Future<void> clearUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userProfileKey);
+  }
+
+  Future<void> saveActiveProfileOverride(Map<String, dynamic> profile) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_activeProfileOverrideKey, json.encode(profile));
+  }
+
+  Future<void> clearActiveProfileOverride() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_activeProfileOverrideKey);
   }
 
   Future<List<Map<String, dynamic>>> getRecentFortunes() async {
@@ -159,6 +180,29 @@ class StorageService {
   Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+  }
+
+  Future<void> saveActiveProfileSelection({
+    required String type,
+    String? secondaryProfileId,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_activeProfileTypeKey, type);
+    if (secondaryProfileId == null) {
+      await prefs.remove(_activeSecondaryProfileIdKey);
+    } else {
+      await prefs.setString(_activeSecondaryProfileIdKey, secondaryProfileId);
+    }
+  }
+
+  Future<Map<String, String?>> getActiveProfileSelection() async {
+    final prefs = await SharedPreferences.getInstance();
+    final type = prefs.getString(_activeProfileTypeKey);
+    final secondaryId = prefs.getString(_activeSecondaryProfileIdKey);
+    return {
+      'type': type,
+      'secondaryProfileId': secondaryId,
+    };
   }
   
   // 문제가 있는 캐시 데이터 정리

@@ -121,7 +121,6 @@ dependencies:
   file_picker: ^8.1.2 # PDF/문서 선택용
   screenshot: ^3.0.0
   camera: ^0.11.0+2 # 실시간 카메라 프리뷰
-  google_mlkit_face_mesh_detection: ^0.3.0 # Face Mesh 시각화
   image: ^4.3.0 # 이미지 처리
   # image_gallery_saver: ^2.0.3  # AGP 8.x compatibility issue
   path_provider: ^2.1.5
@@ -244,9 +243,72 @@ flutter:
     - assets/videos/
     - assets/images/social/
     - assets/images/chat/
+    - assets/images/chat/backgrounds/
     - assets/images/face_reading/
     - assets/images/fortune_entry/
     - assets/images/fortune/categories/
+    - assets/images/fortune/bg/
+    - assets/images/fortune/heroes/daily/
+    - assets/images/fortune/heroes/love/
+    - assets/images/fortune/heroes/career/
+    - assets/images/fortune/heroes/health/
+    - assets/images/fortune/heroes/investment/
+    - assets/images/fortune/heroes/tarot/
+    - assets/images/fortune/heroes/dream/
+    - assets/images/fortune/heroes/exam/
+    - assets/images/fortune/heroes/compatibility/
+    - assets/images/fortune/heroes/mbti/
+    - assets/images/fortune/heroes/past-life/
+    - assets/images/fortune/heroes/wish/
+    - assets/images/fortune/icons/categories/
+    - assets/images/fortune/icons/lucky/
+    - assets/images/fortune/icons/section/
+    - assets/images/fortune/icons/career/
+    - assets/images/fortune/icons/health/
+    - assets/images/fortune/icons/dream/
+    - assets/images/fortune/icons/wealth/
+    - assets/images/fortune/icons/investment/
+    - assets/images/fortune/icons/exam/
+    - assets/images/fortune/icons/talent/
+    - assets/images/fortune/icons/blind-date/
+    - assets/images/fortune/icons/past-life/
+    - assets/images/fortune/icons/family/
+    - assets/images/fortune/icons/exercise/
+    - assets/images/fortune/icons/moving/
+    - assets/images/fortune/icons/naming/
+    - assets/images/fortune/icons/biorhythm/
+    - assets/images/fortune/icons/ootd/
+    - assets/images/fortune/icons/avoid-people/
+    - assets/images/fortune/icons/ex-lover/
+    - assets/images/fortune/icons/celebrity/
+    - assets/images/fortune/icons/fengshui/
+    - assets/images/fortune/mascot/daily/
+    - assets/images/fortune/career/
+    - assets/images/fortune/health/
+    - assets/images/fortune/dream/
+    - assets/images/fortune/wealth/
+    - assets/images/fortune/investment/
+    - assets/images/fortune/exam/
+    - assets/images/fortune/talent/
+    - assets/images/fortune/blind-date/
+    - assets/images/fortune/past-life/
+    - assets/images/fortune/family/
+    - assets/images/fortune/exercise/
+    - assets/images/fortune/moving/
+    - assets/images/fortune/naming/
+    - assets/images/fortune/biorhythm/
+    - assets/images/fortune/ootd/
+    - assets/images/fortune/avoid-people/
+    - assets/images/fortune/ex-lover/
+    - assets/images/fortune/celebrity/
+    - assets/images/fortune/fengshui/
+    - assets/images/fortune/mbti/characters/
+    - assets/images/fortune/zodiac/
+    - assets/images/fortune/talisman/
+    - assets/images/fortune/items/lucky/
+    - assets/images/fortune/items/lucky/korean/
+    - assets/images/fortune/saju/elements/
+    - assets/images/fortune/pets/
     - assets/images/tarot/
     - assets/images/tarot/decks/
     - assets/images/tarot/decks/rider_waite/
@@ -354,17 +416,17 @@ flutter_launcher_icons:
 
 # Splash Screen Configuration
 flutter_native_splash:
-  color: "#F5F0E6" # 크림색 한지 배경
-  color_dark: "#1A1A1A" # 다크 모드 배경
+  color: "#F7F3E9" # 미색 (Misaek) 한지 배경
+  color_dark: "#1C1C1C" # 흑색 (Heuk) 다크 모드 배경
   image: "assets/images/zpzg_logo_light.png" # 知 로고 (라이트)
   image_dark: "assets/images/zpzg_logo_dark.png" # 知 로고 (다크)
 
   # Android 12+ specific
   android_12:
-    color: "#F5F0E6"
-    color_dark: "#1A1A1A"
-    icon_background_color: "#F5F0E6"
-    icon_background_color_dark: "#1A1A1A"
+    color: "#F7F3E9"
+    color_dark: "#1C1C1C"
+    icon_background_color: "#F7F3E9"
+    icon_background_color_dark: "#1C1C1C"
 
   # Platform specific options
   android: true

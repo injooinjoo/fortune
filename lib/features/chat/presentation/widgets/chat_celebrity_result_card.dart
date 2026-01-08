@@ -13,6 +13,7 @@ import '../../../../presentation/widgets/hexagon_chart.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
+import '../../../../core/constants/fortune_card_images.dart';
 
 /// 채팅용 유명인 궁합 결과 카드
 ///
@@ -114,7 +115,6 @@ class _ChatCelebrityResultCardState
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isPremium = ref.watch(isPremiumProvider);
 
@@ -124,164 +124,174 @@ class _ChatCelebrityResultCardState
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
+      child: DSCard.hanji(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 1. 헤더 (유명인 + 점수)
+            _buildHeader(context).animate().fadeIn(duration: 400.ms),
+
+            // 2. 육각형 차트 (무료)
+            if (widget.fortune.hexagonScores != null)
+              _buildHexagonChart(context)
+                  .animate()
+                  .fadeIn(duration: 500.ms, delay: 100.ms),
+
+            // 3. 메인 메시지 (무료)
+            _buildMainMessage(context)
+                .animate()
+                .fadeIn(duration: 500.ms, delay: 200.ms),
+
+            // 4. 블러 섹션들 (접히는 형태)
+            _buildBlurredSections(context, isDark)
+                .animate()
+                .fadeIn(duration: 500.ms, delay: 300.ms),
+
+            // 5. 언락 버튼 (블러 상태 + 비구독자)
+            if (_isBlurred && !isPremium)
+              _buildUnlockButton(context)
+                  .animate()
+                  .fadeIn(duration: 500.ms, delay: 400.ms),
+
+            const SizedBox(height: DSSpacing.sm),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 1. 헤더 (유명인 + 점수)
-          _buildHeader(context).animate().fadeIn(duration: 400.ms),
-
-          // 2. 육각형 차트 (무료)
-          if (widget.fortune.hexagonScores != null)
-            _buildHexagonChart(context)
-                .animate()
-                .fadeIn(duration: 500.ms, delay: 100.ms),
-
-          // 3. 메인 메시지 (무료)
-          _buildMainMessage(context)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 200.ms),
-
-          // 4. 블러 섹션들 (접히는 형태)
-          _buildBlurredSections(context, isDark)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 300.ms),
-
-          // 5. 언락 버튼 (블러 상태 + 비구독자)
-          if (_isBlurred && !isPremium)
-            _buildUnlockButton(context)
-                .animate()
-                .fadeIn(duration: 500.ms, delay: 400.ms),
-
-          const SizedBox(height: DSSpacing.sm),
-        ],
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
-    final colors = context.colors;
     final typography = context.typography;
     final score = widget.fortune.score;
+    final heroImage = FortuneCardImages.getHeroImage('compatibility', score);
 
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFFE91E63).withValues(alpha: 0.15),
-            const Color(0xFF9C27B0).withValues(alpha: 0.1),
-          ],
-        ),
-      ),
-      child: Row(
+    return SizedBox(
+      height: 180,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          // 유명인 아바타
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color(0xFFE91E63).withValues(alpha: 0.2),
-              border: Border.all(
-                color: const Color(0xFFE91E63).withValues(alpha: 0.4),
-                width: 2,
+          // 1. 프리미엄 배경
+          SmartImage(
+            path: heroImage,
+            fit: BoxFit.cover,
+            errorWidget: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFFE91E63).withValues(alpha: 0.2),
+                    const Color(0xFF9C27B0).withValues(alpha: 0.15),
+                  ],
+                ),
               ),
             ),
-            child: ClipOval(
-              child: widget.celebrityImageUrl != null
-                  ? SmartImage(
-                      path: widget.celebrityImageUrl!,
-                      width: 56,
-                      height: 56,
-                      fit: BoxFit.cover,
-                      errorWidget: _buildDefaultAvatar(),
-                    )
-                  : _buildDefaultAvatar(),
-            ),
           ),
-          const SizedBox(width: DSSpacing.md),
-
-          // 이름 + 관계
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${widget.celebrityName ?? '유명인'}과의 궁합',
-                  style: typography.headingSmall.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _getConnectionTypeLabel(widget.connectionType),
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // 점수 배지
+          // 2. 오버레이
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.sm,
-              vertical: DSSpacing.xs,
-            ),
             decoration: BoxDecoration(
-              color: _getScoreColor(score),
-              borderRadius: BorderRadius.circular(DSRadius.full),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.6),
+                ],
+              ),
             ),
-            child: Column(
+          ),
+          // 3. 내용
+          Positioned(
+            left: DSSpacing.md,
+            right: DSSpacing.md,
+            bottom: DSSpacing.md,
+            child: Row(
               children: [
-                Text(
-                  '$score',
-                  style: typography.headingMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                // 유명인 아바타 (작게)
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.2),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      width: 2,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: widget.celebrityImageUrl != null
+                        ? SmartImage(
+                            path: widget.celebrityImageUrl!,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                            errorWidget: _buildDefaultAvatar(),
+                          )
+                        : _buildDefaultAvatar(),
                   ),
                 ),
-                Text(
-                  '점',
-                  style: typography.labelSmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 10,
+                const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${widget.celebrityName ?? '유명인'}과의 궁합',
+                        style: typography.headingSmall.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        _getConnectionTypeLabel(widget.connectionType),
+                        style: typography.labelSmall.copyWith(
+                          color: Colors.white.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _getScoreColor(score).withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '$score점',
+                    style: typography.labelMedium.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: DSSpacing.xs),
-          // 좋아요 + 공유 버튼
-          FortuneActionButtons(
-            contentId: widget.fortune.id ?? 'celebrity_${DateTime.now().millisecondsSinceEpoch}',
-            contentType: 'celebrity',
-            shareTitle: '${widget.celebrityName ?? '유명인'}과의 궁합',
-            shareContent: widget.fortune.message.isNotEmpty
-                ? widget.fortune.message
-                : widget.fortune.content,
-            iconSize: 20,
-            iconColor: colors.textPrimary.withValues(alpha: 0.7),
+          Positioned(
+            top: DSSpacing.sm,
+            right: DSSpacing.sm,
+            child: FortuneActionButtons(
+              contentId: widget.fortune.id,
+              contentType: 'celebrity',
+              shareTitle: '${widget.celebrityName ?? '유명인'}과의 궁합',
+              shareContent: widget.fortune.message.isNotEmpty
+                  ? widget.fortune.message
+                  : widget.fortune.content,
+              iconSize: 20,
+              iconColor: Colors.white,
+            ),
           ),
         ],
       ),
@@ -348,28 +358,28 @@ class _ChatCelebrityResultCardState
         _SectionData(
           key: 'saju_analysis',
           title: '사주 분석',
-          emoji: '🎴',
+          iconKey: 'advice',
           content: _buildSajuContent(context),
         ),
       if (_intimateCompatibility != null)
         _SectionData(
           key: 'intimate_compatibility',
           title: '속궁합 분석',
-          emoji: '💕',
+          iconKey: 'relationship',
           content: _buildIntimateContent(context),
         ),
       if (_pastLife != null)
         _SectionData(
           key: 'past_life',
           title: '전생 인연',
-          emoji: '🌙',
+          iconKey: 'rest',
           content: _buildPastLifeContent(context),
         ),
       if (_destinedTiming != null)
         _SectionData(
           key: 'destined_timing',
           title: '운명의 시기',
-          emoji: '⏰',
+          iconKey: 'timing',
           content: _buildDestinedTimingContent(context),
         ),
     ];
@@ -389,9 +399,7 @@ class _ChatCelebrityResultCardState
           return Container(
             margin: const EdgeInsets.only(bottom: DSSpacing.xs),
             decoration: BoxDecoration(
-              color: isDark
-                  ? colors.backgroundSecondary
-                  : colors.surface,
+              color: isDark ? colors.backgroundSecondary : colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
                 color: colors.textPrimary.withValues(alpha: 0.1),
@@ -409,9 +417,12 @@ class _ChatCelebrityResultCardState
                       padding: const EdgeInsets.all(DSSpacing.sm),
                       child: Row(
                         children: [
-                          Text(section.emoji,
-                              style: const TextStyle(fontSize: 18)),
-                          const SizedBox(width: DSSpacing.xs),
+                          Image.asset(
+                            FortuneCardImages.getSectionIcon(section.iconKey),
+                            width: 32,
+                            height: 32,
+                          ),
+                          const SizedBox(width: DSSpacing.sm),
                           Expanded(
                             child: Text(
                               section.title,
@@ -485,8 +496,7 @@ class _ChatCelebrityResultCardState
     final colors = context.colors;
     final typography = context.typography;
 
-    final description =
-        _intimateCompatibility?['description'] as String? ?? '';
+    final description = _intimateCompatibility?['description'] as String? ?? '';
     final score = _intimateCompatibility?['score'] as int?;
 
     return Column(
@@ -742,13 +752,13 @@ class _ChatCelebrityResultCardState
 class _SectionData {
   final String key;
   final String title;
-  final String emoji;
+  final String iconKey;
   final Widget content;
 
   _SectionData({
     required this.key,
     required this.title,
-    required this.emoji,
+    required this.iconKey,
     required this.content,
   });
 }

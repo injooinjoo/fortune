@@ -58,6 +58,9 @@ class BreathingTimerNotifier extends StateNotifier<BreathingTimerState> {
 
   Timer? _timer;
   int _currentPhaseTotalSeconds = 4;
+  DateTime? _lastTick;
+  int _phaseElapsedMs = 0;
+  int _totalElapsedMs = 0;
 
   /// 패턴 설정
   void setPattern(BreathingPattern pattern) {
@@ -68,6 +71,7 @@ class BreathingTimerNotifier extends StateNotifier<BreathingTimerState> {
       phaseSecondsRemaining: pattern.inhale,
     );
     _currentPhaseTotalSeconds = pattern.inhale;
+    _phaseElapsedMs = 0;
   }
 
   /// 시간 설정 (분 단위)
@@ -78,6 +82,7 @@ class BreathingTimerNotifier extends StateNotifier<BreathingTimerState> {
       totalSecondsRemaining: totalSeconds,
       totalDurationSeconds: totalSeconds,
     );
+    _totalElapsedMs = 0;
   }
 
   /// 시작
@@ -85,12 +90,14 @@ class BreathingTimerNotifier extends StateNotifier<BreathingTimerState> {
     if (state.isRunning) return;
 
     state = state.copyWith(isRunning: true);
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+    _lastTick = DateTime.now();
+    _timer = Timer.periodic(const Duration(milliseconds: 16), (_) => _tick());
   }
 
   /// 일시정지
   void pause() {
     _timer?.cancel();
+    _lastTick = null;
     state = state.copyWith(isRunning: false);
   }
 
@@ -98,6 +105,9 @@ class BreathingTimerNotifier extends StateNotifier<BreathingTimerState> {
   void reset() {
     _timer?.cancel();
     _currentPhaseTotalSeconds = state.pattern.inhale;
+    _phaseElapsedMs = 0;
+    _totalElapsedMs = 0;
+    _lastTick = null;
     state = BreathingTimerState(
       pattern: state.pattern,
       phaseSecondsRemaining: state.pattern.inhale,
@@ -113,23 +123,53 @@ class BreathingTimerNotifier extends StateNotifier<BreathingTimerState> {
       return;
     }
 
-    final newPhaseSeconds = state.phaseSecondsRemaining - 1;
-    final newTotalSeconds = state.totalSecondsRemaining - 1;
-
-    // 현재 단계 진행도 계산
-    final progress =
-        1.0 - (newPhaseSeconds / _currentPhaseTotalSeconds);
-
-    if (newPhaseSeconds <= 0) {
-      // 다음 단계로 전환
-      _moveToNextPhase();
-    } else {
-      state = state.copyWith(
-        phaseSecondsRemaining: newPhaseSeconds,
-        totalSecondsRemaining: newTotalSeconds,
-        progress: progress.clamp(0.0, 1.0),
-      );
+    final now = DateTime.now();
+    if (_lastTick == null) {
+      _lastTick = now;
+      return;
     }
+    final deltaMs = now.difference(_lastTick!).inMilliseconds;
+    if (deltaMs <= 0) return;
+    _lastTick = now;
+
+    _phaseElapsedMs += deltaMs;
+    _totalElapsedMs += deltaMs;
+
+    int newTotalSeconds = state.totalSecondsRemaining;
+    while (_totalElapsedMs >= 1000 && newTotalSeconds > 0) {
+      _totalElapsedMs -= 1000;
+      newTotalSeconds -= 1;
+    }
+
+    while (_phaseElapsedMs >= _currentPhaseTotalSeconds * 1000) {
+      _phaseElapsedMs -= _currentPhaseTotalSeconds * 1000;
+      _moveToNextPhase();
+    }
+
+    final phaseSecondsRemaining = (_currentPhaseTotalSeconds -
+            (_phaseElapsedMs / 1000).floor())
+        .clamp(0, _currentPhaseTotalSeconds)
+        .toInt();
+    final progress =
+        (_phaseElapsedMs / (_currentPhaseTotalSeconds * 1000))
+            .clamp(0.0, 1.0);
+
+    if (newTotalSeconds <= 0) {
+      _timer?.cancel();
+      state = state.copyWith(
+        isRunning: false,
+        totalSecondsRemaining: 0,
+        phaseSecondsRemaining: phaseSecondsRemaining,
+        progress: progress,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      phaseSecondsRemaining: phaseSecondsRemaining,
+      totalSecondsRemaining: newTotalSeconds,
+      progress: progress,
+    );
   }
 
   void _moveToNextPhase() {
@@ -172,7 +212,6 @@ class BreathingTimerNotifier extends StateNotifier<BreathingTimerState> {
     state = state.copyWith(
       currentPhase: nextPhase,
       phaseSecondsRemaining: nextPhaseDuration,
-      totalSecondsRemaining: state.totalSecondsRemaining - 1,
       completedCycles: completedCycles,
       progress: 0.0,
     );

@@ -22,10 +22,12 @@ class MedicalDocumentResultPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MedicalDocumentResultPage> createState() => _MedicalDocumentResultPageState();
+  ConsumerState<MedicalDocumentResultPage> createState() =>
+      _MedicalDocumentResultPageState();
 }
 
-class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResultPage> {
+class _MedicalDocumentResultPageState
+    extends ConsumerState<MedicalDocumentResultPage> {
   final MedicalDocumentService _service = MedicalDocumentService();
 
   bool _isLoading = true;
@@ -65,14 +67,14 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
         uploadResult: widget.uploadResult,
         birthDate: userProfile?.birthDate?.toIso8601String().split('T').first,
         birthTime: userProfile?.birthTime,
-        gender: userProfile?.gender,
+        gender: userProfile?.gender.value,
       );
 
       // 토큰 소비
       await ref.read(tokenProvider.notifier).consumeTokens(
-        fortuneType: 'health-document',
-        amount: 3,
-      );
+            fortuneType: 'health-document',
+            amount: 3,
+          );
 
       setState(() {
         _result = result;
@@ -93,7 +95,9 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: isDark
+          ? TossDesignSystem.backgroundDark
+          : TossDesignSystem.backgroundLight,
       appBar: _buildAppBar(isDark),
       body: _isLoading
           ? _buildLoadingView(isDark)
@@ -111,13 +115,15 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
         onPressed: () => context.pop(),
         icon: Icon(
           Icons.arrow_back_ios_new_rounded,
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+          color:
+              isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
         ),
       ),
       title: Text(
         '검진 분석 결과',
         style: TossTheme.heading3.copyWith(
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+          color:
+              isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
         ),
       ),
       centerTitle: true,
@@ -144,14 +150,18 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           Text(
             '문서를 분석하고 있어요',
             style: TossTheme.heading3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '신령이 검진 결과를 꼼꼼히 살피고 있습니다...',
             style: TossTheme.body2.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossTheme.textGray600,
             ),
           ),
         ],
@@ -175,14 +185,18 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
             Text(
               '분석 중 오류가 발생했어요',
               style: TossTheme.heading3.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                color: isDark
+                    ? TossDesignSystem.textPrimaryDark
+                    : TossTheme.textBlack,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               _error ?? '알 수 없는 오류',
               style: TossTheme.body2.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                color: isDark
+                    ? TossDesignSystem.textSecondaryDark
+                    : TossTheme.textGray600,
               ),
               textAlign: TextAlign.center,
             ),
@@ -320,7 +334,9 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           Text(
             doc.summary,
             style: TossTheme.body2.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossTheme.textGray600,
               height: 1.5,
             ),
           ),
@@ -335,7 +351,8 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
       icon: Icons.analytics_outlined,
       iconColor: const Color(0xFF10B981),
       title: '검사 항목 분석',
-      subtitle: '총 ${_result!.totalTestItems}개 항목 중 ${_result!.cautionItemCount}개 주의',
+      subtitle:
+          '총 ${_result!.totalTestItems}개 항목 중 ${_result!.cautionItemCount}개 주의',
       child: Column(
         children: _result!.testResults.map((category) {
           return _buildTestCategory(category, isDark);
@@ -354,7 +371,9 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
             category.category,
             style: TossTheme.body2.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossTheme.textBlack,
             ),
           ),
         ),
@@ -385,7 +404,9 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
                   item.name,
                   style: TossTheme.body2.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                    color: isDark
+                        ? TossDesignSystem.textPrimaryDark
+                        : TossTheme.textBlack,
                   ),
                 ),
               ),
@@ -420,7 +441,9 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
               Text(
                 '(정상: ${item.normalRange})',
                 style: TossTheme.caption.copyWith(
-                  color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
+                  color: isDark
+                      ? TossDesignSystem.textTertiaryDark
+                      : TossTheme.textGray500,
                 ),
               ),
             ],
@@ -430,7 +453,9 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
             Text(
               item.interpretation,
               style: TossTheme.caption.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                color: isDark
+                    ? TossDesignSystem.textSecondaryDark
+                    : TossTheme.textGray600,
               ),
             ),
           ],
@@ -452,16 +477,20 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           // 오행 균형
           Row(
             children: [
-              _buildElementChip('강함', saju.dominantElement, const Color(0xFF10B981), isDark),
+              _buildElementChip(
+                  '강함', saju.dominantElement, const Color(0xFF10B981), isDark),
               const SizedBox(width: 8),
-              _buildElementChip('약함', saju.weakElement, const Color(0xFFEF4444), isDark),
+              _buildElementChip(
+                  '약함', saju.weakElement, const Color(0xFFEF4444), isDark),
             ],
           ),
           const SizedBox(height: 12),
           Text(
             saju.elementDescription,
             style: TossTheme.body2.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossTheme.textGray600,
               height: 1.5,
             ),
           ),
@@ -469,9 +498,11 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
 
           // 취약/강한 장기
           if (saju.vulnerableOrgans.isNotEmpty)
-            _buildOrganList('주의 필요 장기', saju.vulnerableOrgans, const Color(0xFFEF4444), isDark),
+            _buildOrganList('주의 필요 장기', saju.vulnerableOrgans,
+                const Color(0xFFEF4444), isDark),
           if (saju.strengthOrgans.isNotEmpty)
-            _buildOrganList('튼튼한 장기', saju.strengthOrgans, const Color(0xFF10B981), isDark),
+            _buildOrganList(
+                '튼튼한 장기', saju.strengthOrgans, const Color(0xFF10B981), isDark),
 
           const SizedBox(height: 12),
           Container(
@@ -483,13 +514,16 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.tips_and_updates_rounded, color: Color(0xFF8B5CF6), size: 18),
+                const Icon(Icons.tips_and_updates_rounded,
+                    color: Color(0xFF8B5CF6), size: 18),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     saju.sajuAdvice,
                     style: TossTheme.body2.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                      color: isDark
+                          ? TossDesignSystem.textSecondaryDark
+                          : TossTheme.textGray600,
                       height: 1.4,
                     ),
                   ),
@@ -502,7 +536,8 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
     );
   }
 
-  Widget _buildElementChip(String label, String element, Color color, bool isDark) {
+  Widget _buildElementChip(
+      String label, String element, Color color, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -516,7 +551,9 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           Text(
             label,
             style: TossTheme.caption.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossTheme.textGray600,
             ),
           ),
           const SizedBox(width: 6),
@@ -532,7 +569,8 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
     );
   }
 
-  Widget _buildOrganList(String title, List<String> organs, Color color, bool isDark) {
+  Widget _buildOrganList(
+      String title, List<String> organs, Color color, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -541,27 +579,32 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           Text(
             '$title: ',
             style: TossTheme.caption.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossTheme.textGray600,
             ),
           ),
           Expanded(
             child: Wrap(
               spacing: 6,
               runSpacing: 4,
-              children: organs.map((organ) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  organ,
-                  style: TossTheme.caption.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              )).toList(),
+              children: organs
+                  .map((organ) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          organ,
+                          style: TossTheme.caption.copyWith(
+                            color: color,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ))
+                  .toList(),
             ),
           ),
         ],
@@ -580,21 +623,25 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (rec.urgent.isNotEmpty) ...[
-            _buildRecommendationGroup('긴급', rec.urgent, const Color(0xFFEF4444), isDark),
+            _buildRecommendationGroup(
+                '긴급', rec.urgent, const Color(0xFFEF4444), isDark),
             const SizedBox(height: 12),
           ],
           if (rec.general.isNotEmpty) ...[
-            _buildRecommendationGroup('일반', rec.general, const Color(0xFF3B82F6), isDark),
+            _buildRecommendationGroup(
+                '일반', rec.general, const Color(0xFF3B82F6), isDark),
             const SizedBox(height: 12),
           ],
           if (rec.lifestyle.isNotEmpty)
-            _buildRecommendationGroup('생활습관', rec.lifestyle, const Color(0xFF10B981), isDark),
+            _buildRecommendationGroup(
+                '생활습관', rec.lifestyle, const Color(0xFF10B981), isDark),
         ],
       ),
     );
   }
 
-  Widget _buildRecommendationGroup(String title, List<String> items, Color color, bool isDark) {
+  Widget _buildRecommendationGroup(
+      String title, List<String> items, Color color, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -620,23 +667,25 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
         ),
         const SizedBox(height: 8),
         ...items.map((item) => Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('• ', style: TossTheme.body2.copyWith(color: color)),
-              Expanded(
-                child: Text(
-                  item,
-                  style: TossTheme.body2.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-                    height: 1.4,
+              padding: const EdgeInsets.only(left: 16, bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('• ', style: TossTheme.body2.copyWith(color: color)),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: TossTheme.body2.copyWith(
+                        color: isDark
+                            ? TossDesignSystem.textSecondaryDark
+                            : TossTheme.textGray600,
+                        height: 1.4,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        )),
+            )),
       ],
     );
   }
@@ -663,11 +712,14 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
               '추천 운동',
               style: TossTheme.body2.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                color: isDark
+                    ? TossDesignSystem.textPrimaryDark
+                    : TossTheme.textBlack,
               ),
             ),
             const SizedBox(height: 8),
-            ...regimen.exercise.map((exercise) => _buildExerciseAdvice(exercise, isDark)),
+            ...regimen.exercise
+                .map((exercise) => _buildExerciseAdvice(exercise, isDark)),
             const SizedBox(height: 16),
           ],
 
@@ -677,28 +729,33 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
               '생활 양생',
               style: TossTheme.body2.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                color: isDark
+                    ? TossDesignSystem.textPrimaryDark
+                    : TossTheme.textBlack,
               ),
             ),
             const SizedBox(height: 8),
             ...regimen.lifestyle.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.check_circle_rounded, size: 16, color: Color(0xFF10B981)),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      item,
-                      style: TossTheme.body2.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.check_circle_rounded,
+                          size: 16, color: Color(0xFF10B981)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          item,
+                          style: TossTheme.body2.copyWith(
+                            color: isDark
+                                ? TossDesignSystem.textSecondaryDark
+                                : TossTheme.textGray600,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
         ],
       ),
@@ -707,7 +764,8 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
 
   Widget _buildDietAdvice(DietAdvice advice, bool isDark) {
     final isRecommend = advice.isRecommend;
-    final color = isRecommend ? const Color(0xFF10B981) : const Color(0xFFEF4444);
+    final color =
+        isRecommend ? const Color(0xFF10B981) : const Color(0xFFEF4444);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -740,26 +798,35 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           Wrap(
             spacing: 6,
             runSpacing: 6,
-            children: advice.items.map((item) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.surfaceBackgroundDark : Colors.white,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                item,
-                style: TossTheme.caption.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                ),
-              ),
-            )).toList(),
+            children: advice.items
+                .map((item) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? TossDesignSystem.surfaceBackgroundDark
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        item,
+                        style: TossTheme.caption.copyWith(
+                          color: isDark
+                              ? TossDesignSystem.textPrimaryDark
+                              : TossTheme.textBlack,
+                        ),
+                      ),
+                    ))
+                .toList(),
           ),
           if (advice.reason.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
               advice.reason,
               style: TossTheme.caption.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                color: isDark
+                    ? TossDesignSystem.textSecondaryDark
+                    : TossTheme.textGray600,
               ),
             ),
           ],
@@ -773,7 +840,9 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary,
+        color: isDark
+            ? TossDesignSystem.surfaceBackgroundDark
+            : TossTheme.backgroundSecondary,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -784,7 +853,8 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
               color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.directions_run_rounded, color: Color(0xFF3B82F6), size: 20),
+            child: const Icon(Icons.directions_run_rounded,
+                color: Color(0xFF3B82F6), size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -795,13 +865,17 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
                   exercise.type,
                   style: TossTheme.body2.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                    color: isDark
+                        ? TossDesignSystem.textPrimaryDark
+                        : TossTheme.textBlack,
                   ),
                 ),
                 Text(
                   '${exercise.frequency} · ${exercise.duration}',
                   style: TossTheme.caption.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                    color: isDark
+                        ? TossDesignSystem.textSecondaryDark
+                        : TossTheme.textGray600,
                   ),
                 ),
                 if (exercise.benefit.isNotEmpty)
@@ -823,7 +897,9 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary,
+        color: isDark
+            ? TossDesignSystem.surfaceBackgroundDark
+            : TossTheme.backgroundSecondary,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -832,14 +908,18 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           Icon(
             Icons.info_outline_rounded,
             size: 18,
-            color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
+            color: isDark
+                ? TossDesignSystem.textTertiaryDark
+                : TossTheme.textGray500,
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               '이 분석 결과는 참고 자료이며, 의사의 전문적 진단을 대체하지 않습니다. 정확한 건강 상담은 의료 전문가와 상담하세요.',
               style: TossTheme.caption.copyWith(
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
+                color: isDark
+                    ? TossDesignSystem.textTertiaryDark
+                    : TossTheme.textGray500,
                 height: 1.4,
               ),
             ),
@@ -894,14 +974,18 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
                       title,
                       style: TossTheme.body1.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                        color: isDark
+                            ? TossDesignSystem.textPrimaryDark
+                            : TossTheme.textBlack,
                       ),
                     ),
                     if (subtitle != null)
                       Text(
                         subtitle,
                         style: TossTheme.caption.copyWith(
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                          color: isDark
+                              ? TossDesignSystem.textSecondaryDark
+                              : TossTheme.textGray600,
                         ),
                       ),
                   ],
@@ -924,14 +1008,18 @@ class _MedicalDocumentResultPageState extends ConsumerState<MedicalDocumentResul
           Text(
             '$label: ',
             style: TossTheme.caption.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossTheme.textGray600,
             ),
           ),
           Text(
             value,
             style: TossTheme.body2.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossTheme.textBlack,
             ),
           ),
         ],

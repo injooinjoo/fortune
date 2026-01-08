@@ -4,15 +4,15 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:google_mlkit_face_mesh_detection/google_mlkit_face_mesh_detection.dart';
 import 'package:image/image.dart' as img;
 import 'dart:developer' as developer;
 
-import 'face_mesh_painter.dart';
-import '../../services/face_mesh_service.dart';
+import 'face_guide_overlay.dart';
+import '../../services/face_detection_service.dart';
 
 /// Face AI 카메라 위젯
-/// 실시간 Face Mesh 오버레이가 적용된 카메라 프리뷰
+/// iOS: Vision Framework로 실시간 얼굴 감지
+/// Android: 가이드 프레임 표시
 class FaceAiCameraWidget extends StatefulWidget {
   /// 사진 촬영 완료 콜백 (Base64 인코딩된 이미지)
   final ValueChanged<String> onImageCaptured;
@@ -20,18 +20,18 @@ class FaceAiCameraWidget extends StatefulWidget {
   /// 촬영 취소 콜백
   final VoidCallback? onCancel;
 
-  /// Face Mesh 표시 여부
-  final bool showMesh;
+  /// Face 감지 오버레이 표시 여부
+  final bool showOverlay;
 
-  /// 메쉬 색상
-  final Color meshColor;
+  /// 액센트 색상
+  final Color accentColor;
 
   const FaceAiCameraWidget({
     super.key,
     required this.onImageCaptured,
     this.onCancel,
-    this.showMesh = true,
-    this.meshColor = const Color(0xFF00FFFF),
+    this.showOverlay = true,
+    this.accentColor = const Color(0xFF00FFFF),
   });
 
   @override
@@ -47,26 +47,25 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
   bool _isFrontCamera = true;
   String? _errorMessage;
 
-  // Face Mesh
-  final FaceMeshService _meshService = FaceMeshService();
-  List<FaceMesh> _meshes = [];
+  // Face Detection (iOS only)
+  final FaceDetectionService _detectionService = FaceDetectionService();
+  FaceDetectionResult? _detectionResult;
   Size? _imageSize;
-  InputImageRotation _rotation = InputImageRotation.rotation0deg;
-  bool _meshEnabled = true;
+  bool _overlayEnabled = true;
+  Timer? _detectionTimer;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _meshService.initialize();
     _initializeCamera();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _detectionTimer?.cancel();
     _controller?.dispose();
-    _meshService.dispose();
     super.dispose();
   }
 
@@ -77,6 +76,7 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
     }
 
     if (state == AppLifecycleState.inactive) {
+      _detectionTimer?.cancel();
       _controller?.dispose();
     } else if (state == AppLifecycleState.resumed) {
       _initializeCamera();
@@ -105,20 +105,23 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
 
   Future<void> _setupCamera(CameraDescription camera) async {
     _controller?.dispose();
+    _detectionTimer?.cancel();
 
     _controller = CameraController(
       camera,
-      ResolutionPreset.medium, // 성능을 위해 medium 사용
+      ResolutionPreset.medium,
       enableAudio: false,
-      imageFormatGroup: ImageFormatGroup.nv21, // ML Kit 호환 포맷
+      imageFormatGroup: Platform.isIOS
+          ? ImageFormatGroup.bgra8888
+          : ImageFormatGroup.jpeg,
     );
 
     try {
       await _controller!.initialize();
 
-      // 이미지 스트림 시작 (Face Mesh 감지용)
-      if (widget.showMesh && _meshEnabled) {
-        await _controller!.startImageStream(_processImage);
+      // iOS에서만 실시간 얼굴 감지
+      if (Platform.isIOS && widget.showOverlay && _overlayEnabled) {
+        _startDetection();
       }
 
       if (mounted) {
@@ -133,43 +136,58 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
     }
   }
 
-  /// 카메라 이미지 처리 (Face Mesh 감지)
-  Future<void> _processImage(CameraImage image) async {
-    if (!_meshEnabled || _controller == null) return;
-
-    final camera = _controller!.description;
-    final meshes = await _meshService.detectFromCameraImage(image, camera);
-
-    if (mounted) {
-      setState(() {
-        _meshes = meshes;
-        _imageSize = Size(image.width.toDouble(), image.height.toDouble());
-        _rotation = _getRotation(camera);
-      });
-    }
+  /// 주기적 얼굴 감지 시작 (iOS)
+  void _startDetection() {
+    _detectionTimer?.cancel();
+    _detectionTimer = Timer.periodic(
+      const Duration(milliseconds: 300),
+      (_) => _captureAndDetect(),
+    );
   }
 
-  InputImageRotation _getRotation(CameraDescription camera) {
-    final sensorOrientation = camera.sensorOrientation;
-    switch (sensorOrientation) {
-      case 90:
-        return InputImageRotation.rotation90deg;
-      case 180:
-        return InputImageRotation.rotation180deg;
-      case 270:
-        return InputImageRotation.rotation270deg;
-      default:
-        return InputImageRotation.rotation0deg;
+  /// 현재 프레임 캡처 후 얼굴 감지
+  Future<void> _captureAndDetect() async {
+    if (_controller == null ||
+        !_controller!.value.isInitialized ||
+        _detectionService.isProcessing ||
+        _isTakingPicture) {
+      return;
+    }
+
+    try {
+      final XFile file = await _controller!.takePicture();
+      final bytes = await file.readAsBytes();
+
+      // 이미지 크기 저장
+      final image = img.decodeImage(bytes);
+      if (image != null) {
+        _imageSize = Size(image.width.toDouble(), image.height.toDouble());
+      }
+
+      // 얼굴 감지
+      final result = await _detectionService.detectFromImageData(bytes);
+
+      // 임시 파일 삭제
+      try {
+        await File(file.path).delete();
+      } catch (_) {
+        // 파일 삭제 실패 무시
+      }
+
+      if (mounted) {
+        setState(() {
+          _detectionResult = result;
+        });
+      }
+    } catch (e) {
+      // 에러 무시 (프레임 스킵)
     }
   }
 
   Future<void> _switchCamera() async {
     if (_cameras == null || _cameras!.length < 2) return;
 
-    // 이미지 스트림 중지
-    if (_controller?.value.isStreamingImages ?? false) {
-      await _controller?.stopImageStream();
-    }
+    _detectionTimer?.cancel();
 
     final currentDirection = _controller?.description.lensDirection;
     final newCamera = _cameras!.firstWhere(
@@ -180,21 +198,16 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
     await _setupCamera(newCamera);
   }
 
-  Future<void> _toggleMesh() async {
+  Future<void> _toggleOverlay() async {
     setState(() {
-      _meshEnabled = !_meshEnabled;
-      if (!_meshEnabled) {
-        _meshes = [];
+      _overlayEnabled = !_overlayEnabled;
+      if (!_overlayEnabled) {
+        _detectionResult = null;
+        _detectionTimer?.cancel();
+      } else if (Platform.isIOS) {
+        _startDetection();
       }
     });
-
-    if (_controller?.value.isStreamingImages ?? false) {
-      await _controller?.stopImageStream();
-    }
-
-    if (_meshEnabled && widget.showMesh) {
-      await _controller?.startImageStream(_processImage);
-    }
   }
 
   Future<void> _takePicture() async {
@@ -205,13 +218,9 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
     }
 
     setState(() => _isTakingPicture = true);
+    _detectionTimer?.cancel();
 
     try {
-      // 이미지 스트림 중지
-      if (_controller?.value.isStreamingImages ?? false) {
-        await _controller?.stopImageStream();
-      }
-
       final XFile file = await _controller!.takePicture();
       final bytes = await file.readAsBytes();
 
@@ -281,11 +290,11 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(color: widget.meshColor),
+            CircularProgressIndicator(color: widget.accentColor),
             const SizedBox(height: 16),
             Text(
               'Face AI 준비 중...',
-              style: TextStyle(color: widget.meshColor),
+              style: TextStyle(color: widget.accentColor),
             ),
           ],
         ),
@@ -319,6 +328,9 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
   }
 
   Widget _buildCameraView() {
+    final isGuideMode = _detectionService.isGuideMode;
+    final hasFace = _detectionResult != null;
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -337,21 +349,27 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
           ),
         ),
 
-        // Face Mesh 오버레이
-        if (widget.showMesh && _meshEnabled && _meshes.isNotEmpty && _imageSize != null)
-          FaceMeshOverlay(
-            meshes: _meshes,
-            imageSize: _imageSize!,
-            rotation: _rotation,
-            cameraLensDirection: _isFrontCamera
-                ? CameraLensDirection.front
-                : CameraLensDirection.back,
-            meshColor: widget.meshColor,
-            enablePulse: true,
-          ),
+        // 오버레이: iOS는 바운딩 박스, Android는 가이드
+        if (widget.showOverlay && _overlayEnabled)
+          isGuideMode
+              ? FaceGuideOverlay(accentColor: widget.accentColor)
+              : (_imageSize != null
+                  ? FaceDetectionOverlay(
+                      detectionResult: _detectionResult,
+                      imageSize: _imageSize!,
+                      cameraLensDirection: _isFrontCamera
+                          ? CameraLensDirection.front
+                          : CameraLensDirection.back,
+                      accentColor: widget.accentColor,
+                      enablePulse: true,
+                    )
+                  : const SizedBox.shrink()),
 
-        // 얼굴 감지 안내
-        if (widget.showMesh && _meshEnabled && _meshes.isEmpty)
+        // 얼굴 감지 안내 (iOS에서 얼굴 미감지 시)
+        if (widget.showOverlay &&
+            _overlayEnabled &&
+            !isGuideMode &&
+            !hasFace)
           Center(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -362,11 +380,11 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.face, color: widget.meshColor, size: 24),
+                  Icon(Icons.face, color: widget.accentColor, size: 24),
                   const SizedBox(width: 8),
                   Text(
                     '얼굴을 화면에 맞춰주세요',
-                    style: TextStyle(color: widget.meshColor),
+                    style: TextStyle(color: widget.accentColor),
                   ),
                 ],
               ),
@@ -388,11 +406,11 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
               ),
               Row(
                 children: [
-                  // 메쉬 토글 버튼
+                  // 오버레이 토글 버튼
                   _buildControlButton(
-                    icon: _meshEnabled ? Icons.grid_on : Icons.grid_off,
-                    onPressed: _toggleMesh,
-                    isActive: _meshEnabled,
+                    icon: _overlayEnabled ? Icons.grid_on : Icons.grid_off,
+                    onPressed: _toggleOverlay,
+                    isActive: _overlayEnabled,
                   ),
                   const SizedBox(width: 12),
                   // 카메라 전환 버튼
@@ -433,19 +451,17 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Face AI 상태 표시
-                _buildStatusIndicator(),
+                _buildStatusIndicator(hasFace, isGuideMode),
                 const SizedBox(height: 24),
 
                 // 촬영 버튼
-                _buildCaptureButton(),
+                _buildCaptureButton(hasFace || isGuideMode),
 
                 const SizedBox(height: 16),
 
                 // 안내 텍스트
                 Text(
-                  _meshes.isNotEmpty
-                      ? '얼굴이 감지되었습니다. 촬영해주세요!'
-                      : '얼굴이 가이드 안에 들어오도록 해주세요',
+                  _getGuideText(hasFace, isGuideMode),
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 14, // 예외: 카메라 UI
@@ -459,18 +475,25 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
     );
   }
 
-  Widget _buildStatusIndicator() {
-    final hasface = _meshes.isNotEmpty;
+  String _getGuideText(bool hasFace, bool isGuideMode) {
+    if (isGuideMode) {
+      return '얼굴이 가이드 안에 들어오도록 해주세요';
+    }
+    return hasFace ? '얼굴이 감지되었습니다. 촬영해주세요!' : '얼굴이 가이드 안에 들어오도록 해주세요';
+  }
+
+  Widget _buildStatusIndicator(bool hasFace, bool isGuideMode) {
+    final isActive = hasFace || isGuideMode;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: hasface
-            ? widget.meshColor.withValues(alpha: 0.2)
+        color: isActive
+            ? widget.accentColor.withValues(alpha: 0.2)
             : Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: hasface
-              ? widget.meshColor.withValues(alpha: 0.5)
+          color: isActive
+              ? widget.accentColor.withValues(alpha: 0.5)
               : Colors.white.withValues(alpha: 0.3),
         ),
       ),
@@ -481,12 +504,12 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: hasface ? widget.meshColor : Colors.grey,
+              color: isActive ? widget.accentColor : Colors.grey,
               shape: BoxShape.circle,
-              boxShadow: hasface
+              boxShadow: isActive
                   ? [
                       BoxShadow(
-                        color: widget.meshColor.withValues(alpha: 0.5),
+                        color: widget.accentColor.withValues(alpha: 0.5),
                         blurRadius: 8,
                         spreadRadius: 2,
                       ),
@@ -496,9 +519,11 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
           ),
           const SizedBox(width: 8),
           Text(
-            hasface ? 'Face AI 활성화' : 'Face AI 대기 중',
+            isGuideMode
+                ? 'Face AI 가이드 모드'
+                : (hasFace ? 'Face AI 활성화' : 'Face AI 대기 중'),
             style: TextStyle(
-              color: hasface ? widget.meshColor : Colors.white70,
+              color: isActive ? widget.accentColor : Colors.white70,
               fontWeight: FontWeight.w500,
               fontSize: 12, // 예외: 카메라 UI
             ),
@@ -515,7 +540,7 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
   }) {
     return Material(
       color: isActive
-          ? widget.meshColor.withValues(alpha: 0.3)
+          ? widget.accentColor.withValues(alpha: 0.3)
           : Colors.black.withValues(alpha: 0.3),
       shape: const CircleBorder(),
       child: InkWell(
@@ -525,7 +550,7 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
           padding: const EdgeInsets.all(12),
           child: Icon(
             icon,
-            color: isActive ? widget.meshColor : Colors.white,
+            color: isActive ? widget.accentColor : Colors.white,
             size: 24,
           ),
         ),
@@ -533,8 +558,7 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
     );
   }
 
-  Widget _buildCaptureButton() {
-    final hasFace = _meshes.isNotEmpty;
+  Widget _buildCaptureButton(bool isReady) {
     return GestureDetector(
       onTap: _isTakingPicture ? null : _takePicture,
       child: Container(
@@ -543,13 +567,13 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: hasFace ? widget.meshColor : Colors.white,
+            color: isReady ? widget.accentColor : Colors.white,
             width: 4,
           ),
-          boxShadow: hasFace
+          boxShadow: isReady
               ? [
                   BoxShadow(
-                    color: widget.meshColor.withValues(alpha: 0.4),
+                    color: widget.accentColor.withValues(alpha: 0.4),
                     blurRadius: 16,
                     spreadRadius: 4,
                   ),
@@ -561,7 +585,7 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
           decoration: BoxDecoration(
             color: _isTakingPicture
                 ? Colors.grey
-                : (hasFace ? widget.meshColor : Colors.white),
+                : (isReady ? widget.accentColor : Colors.white),
             shape: BoxShape.circle,
           ),
           child: _isTakingPicture

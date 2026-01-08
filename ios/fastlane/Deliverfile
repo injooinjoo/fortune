@@ -2,7 +2,7 @@
 
 # App Store Connect information
 app_identifier "com.beyond.fortune"
-username "your-apple-id@example.com"
+username "ink595@g.harvard.edu"
 
 # Metadata and screenshots
 force true # Skip HTML report verification
@@ -13,21 +13,21 @@ submit_for_review false
 # Phased release
 phased_release true
 
-# Price tier (0 = free)
-price_tier 0
+# Price tier - managed in App Store Connect directly
+# price_tier 0
 
 # Age rating configuration
 app_rating_config_path "./fastlane/metadata/app_rating_config.json"
 
 # App review information
 app_review_information(
-  first_name: "John",
-  last_name: "Doe",
-  phone_number: "+1 123 456 7890",
-  email_address: "review@beyond.com",
-  demo_user: "test@beyond.com",
-  demo_password: "TestPassword123!",
-  notes: "This app provides AI-based fortune telling services. Test account provided for review."
+  first_name: "Injoo",
+  last_name: "Kim",
+  phone_number: "+821050606843",
+  email_address: "injoo1222@naver.com",
+  demo_user: "injoo1222@naver.com",
+  demo_password: "Dlswn@123",
+  notes: "This is an ENTERTAINMENT app. All content is AI-generated for FUN only. NOT a fortune-telling app. Test: Login with provided account, try 'Face AI' feature."
 )
 
 # Automatic release

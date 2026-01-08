@@ -4,13 +4,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthService {
   final _supabase = Supabase.instance.client;
 
-  @Deprecated('Use SocialAuthService.signInWithGoogle() instead for better performance')
+  @Deprecated(
+      'Use SocialAuthService.signInWithGoogle() instead for better performance')
   Future<void> signInWithGoogle() async {
     // This method is deprecated. Use SocialAuthService for OAuth login
     throw UnimplementedError(
-      'Google Sign-In has been moved to SocialAuthService. '
-      'Please use SocialAuthService.signInWithGoogle() instead.'
-    );
+        'Google Sign-In has been moved to SocialAuthService. '
+        'Please use SocialAuthService.signInWithGoogle() instead.');
   }
 
   Future<AuthResponse> signInWithKakao() async {
@@ -18,22 +18,22 @@ class AuthService {
     throw UnimplementedError('Kakao login is not implemented yet');
   }
 
-  @Deprecated('Use SocialAuthService.signInWithApple() instead for better performance')
+  @Deprecated(
+      'Use SocialAuthService.signInWithApple() instead for better performance')
   Future<void> signInWithApple() async {
     // This method is deprecated. Use SocialAuthService for OAuth login
     throw UnimplementedError(
-      'Apple Sign-In has been moved to SocialAuthService. '
-      'Please use SocialAuthService.signInWithApple() instead.'
-    );
+        'Apple Sign-In has been moved to SocialAuthService. '
+        'Please use SocialAuthService.signInWithApple() instead.');
   }
 
-  @Deprecated('Use SocialAuthService.signInWithNaver() instead for better performance')
+  @Deprecated(
+      'Use SocialAuthService.signInWithNaver() instead for better performance')
   Future<void> signInWithNaver() async {
     // This method is deprecated. Use SocialAuthService for OAuth login
     throw UnimplementedError(
-      'Naver Sign-In has been moved to SocialAuthService. '
-      'Please use SocialAuthService.signInWithNaver() instead.'
-    );
+        'Naver Sign-In has been moved to SocialAuthService. '
+        'Please use SocialAuthService.signInWithNaver() instead.');
   }
 
   Future<void> signOut() async {
@@ -41,7 +41,7 @@ class AuthService {
   }
 
   User? get currentUser => _supabase.auth.currentUser;
-  
+
   Session? get currentSession => _supabase.auth.currentSession;
 
   Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
@@ -58,10 +58,10 @@ class AuthService {
           .maybeSingle();
 
       if (response == null) return false;
-      
+
       return response['onboarding_completed'] == true;
     } catch (e) {
-      debugPrint('Fortune cached');
+      debugPrint('⚠️ AuthService.hasUserProfile failed: $e');
       return false;
     }
   }

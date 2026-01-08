@@ -13,6 +13,8 @@ import 'widgets/celebrity_card.dart';
 import 'widgets/rarity_card.dart';
 import 'widgets/daily_fortune_card.dart';
 import 'widgets/power_color_card.dart';
+import '../../../../../core/widgets/fortune_hero_section.dart';
+import '../../../../../core/widgets/section_card.dart';
 
 /// 성격 DNA 결과 페이지
 class PersonalityDnaResultPage extends ConsumerWidget {
@@ -39,64 +41,13 @@ class PersonalityDnaResultPage extends ConsumerWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
-          // 헤더
-          SliverAppBar(
-            expandedHeight: 200,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: dna.gradientColors.isNotEmpty
-                        ? dna.gradientColors
-                        : [const Color(0xFF8B5CF6), const Color(0xFFEC4899)],
-                  ),
-                ),
-                child: SafeArea(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 40),
-                      Text(
-                        dna.emoji,
-                        style: const TextStyle(fontSize: 48),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        dna.title,
-                        style: context.heading2.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          'DNA 코드: ${dna.dnaCode}',
-                          style: context.bodyMedium.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+          // 1. 프리미엄 히어로 섹션 (AI 배경 + 마스코트 + 점수)
+          FortuneHeroSection(
+            fortuneType: 'mbti',
+            score: dna.scores['overall'] ?? 85,
+            summary: dna.title,
+            hashtags: dna.traits,
+            onBackPressed: () => Navigator.of(context).pop(),
           ),
 
           // 콘텐츠
@@ -121,7 +72,11 @@ class PersonalityDnaResultPage extends ConsumerWidget {
                     blurredSections: _blurredSections,
                     sectionKey: 'love_style',
                     fortuneType: 'personality_dna',
-                    child: LoveStyleCard(loveStyle: dna.loveStyle!),
+                    child: SectionCard(
+                      title: '연애 스타일',
+                      sectionKey: 'relationship',
+                      child: LoveStyleCard(loveStyle: dna.loveStyle!),
+                    ),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -133,7 +88,11 @@ class PersonalityDnaResultPage extends ConsumerWidget {
                     blurredSections: _blurredSections,
                     sectionKey: 'work_style',
                     fortuneType: 'personality_dna',
-                    child: WorkStyleCard(workStyle: dna.workStyle!),
+                    child: SectionCard(
+                      title: '업무 스타일',
+                      sectionKey: 'work',
+                      child: WorkStyleCard(workStyle: dna.workStyle!),
+                    ),
                   ),
                   const SizedBox(height: 16),
                 ],

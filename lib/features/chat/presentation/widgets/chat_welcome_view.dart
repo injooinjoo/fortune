@@ -65,9 +65,9 @@ class ChatWelcomeView extends StatelessWidget {
             ),
             const SizedBox(height: DSSpacing.md),
 
-            // 추천 칩 그리드
+            // 추천 칩 그리드 (시작 시 3개만 표시)
             FortuneChipGrid(
-              chips: defaultChips,
+              chips: initialChips,
               onChipTap: onChipTap,
             ),
           ],

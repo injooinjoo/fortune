@@ -26,12 +26,12 @@ class _FaceAiCameraPageState extends ConsumerState<FaceAiCameraPage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Face AI 카메라 위젯 (Face Mesh 포함)
+          // Face AI 카메라 위젯
           FaceAiCameraWidget(
             onImageCaptured: _onImageCaptured,
             onCancel: () => context.pop(),
-            showMesh: true,
-            meshColor: const Color(0xFF00FFFF), // Cyan 색상
+            showOverlay: true,
+            accentColor: const Color(0xFF00FFFF), // Cyan 색상
           ),
 
           // 처리 중 오버레이

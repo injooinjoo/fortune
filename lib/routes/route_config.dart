@@ -10,6 +10,7 @@ import '../features/face_ai/presentation/pages/face_ai_home_screen.dart';
 import '../features/face_ai/presentation/pages/face_ai_camera_page.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/profile_edit_page.dart';
+import '../screens/profile/account_deletion_page.dart';
 import '../screens/profile/saju_detail_page.dart';
 import '../screens/profile/elements_detail_page.dart';
 import '../screens/profile/profile_verification_page.dart';
@@ -30,7 +31,6 @@ import '../features/support/presentation/pages/help_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
 import '../features/payment/presentation/pages/token_purchase_page.dart';
-import '../features/payment/presentation/pages/payment_result_page.dart';
 import '../features/settings/presentation/pages/font_settings_page.dart';
 
 // Import pages outside shell
@@ -59,7 +59,7 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: '/chat',  // Chat-First 아키텍처: 채팅이 기본 진입점
+    initialLocation: '/splash', // Premium Splash Screen으로 진입점 변경 (기존: /chat)
     debugLogDiagnostics: false,
     observers: kDebugMode ? [RouteObserverLogger()] : [],
     errorBuilder: (context, state) => Scaffold(
@@ -137,7 +137,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'edit',
                 name: 'profile-edit',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const ProfileEditPage(),
@@ -146,7 +147,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'saju',
                 name: 'profile-saju',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const SajuDetailPage(),
@@ -155,7 +157,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'saju-summary',
                 name: 'profile-saju-summary',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const SajuSummaryPage(),
@@ -164,7 +167,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'elements',
                 name: 'profile-elements',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const ElementsDetailPage(),
@@ -173,7 +177,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'verification',
                 name: 'profile-verification',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const ProfileVerificationPage(),
@@ -182,7 +187,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'history',
                 name: 'profile-history',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const FortuneHistoryPage(),
@@ -191,7 +197,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'social-accounts',
                 name: 'profile-social-accounts',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const SocialAccountsScreen(),
@@ -200,7 +207,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'phone-management',
                 name: 'profile-phone-management',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const PhoneManagementScreen(),
@@ -209,7 +217,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'notifications',
                 name: 'profile-notifications',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const NotificationSettingsPage(),
@@ -218,10 +227,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'font',
                 name: 'profile-font',
-                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
                   context,
                   state,
                   const FontSettingsPage(),
+                ),
+              ),
+              GoRoute(
+                path: 'account-deletion',
+                name: 'profile-account-deletion',
+                pageBuilder: (context, state) =>
+                    PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const AccountDeletionPage(),
                 ),
               ),
             ],
@@ -325,22 +345,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/token-purchase',
         name: 'token-purchase',
         builder: (context, state) => const TokenPurchasePage(),
-      ),
-      GoRoute(
-        path: '/payment-result',
-        name: 'payment-result',
-        builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>?;
-          return PaymentResultPage(
-            isSuccess: extra?['isSuccess'] ?? false,
-            message: extra?['message'],
-            productName: extra?['productName'],
-            amount: extra?['amount'],
-            transactionId: extra?['transactionId'],
-            tokenAmount: extra?['tokenAmount'],
-            errorCode: extra?['errorCode'],
-          );
-        },
       ),
       GoRoute(
         path: '/help',

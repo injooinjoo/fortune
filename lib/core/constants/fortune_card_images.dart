@@ -204,6 +204,383 @@ class FortuneCardImages {
     return modernGradients[fortuneType] ?? modernGradients['default']!;
   }
 
+// ============================================================================
+  // HERO IMAGES - Score-based backgrounds for result pages
+  // ============================================================================
+
+  /// Hero background images by fortune type and score level
+  /// high: score >= 70, medium: score 40-69, low: score < 40
+  static const Map<String, Map<String, String>> heroImages = {
+    'daily': {
+      'high': 'assets/images/fortune/heroes/daily/daily_hero_sunny.webp',
+      'medium': 'assets/images/fortune/heroes/daily/daily_hero_cloudy.webp',
+      'low': 'assets/images/fortune/heroes/daily/daily_hero_stormy.webp',
+    },
+    'love': {
+      'high': 'assets/images/fortune/heroes/love/love_hero_blooming.webp',
+      'medium': 'assets/images/fortune/heroes/love/love_hero_stable.webp',
+      'low': 'assets/images/fortune/heroes/love/love_hero_waiting.webp',
+    },
+    'career': {
+      'high': 'assets/images/fortune/heroes/career/career_hero_promotion.webp',
+      'medium': 'assets/images/fortune/heroes/career/career_hero_stable.webp',
+      'low': 'assets/images/fortune/heroes/career/career_hero_challenge.webp',
+    },
+    'health': {
+      'high': 'assets/images/fortune/heroes/health/health_hero_vitality.webp',
+      'medium': 'assets/images/fortune/heroes/health/health_hero_balance.webp',
+      'low': 'assets/images/fortune/heroes/health/health_hero_caution.webp',
+    },
+    'investment': {
+      'high': 'assets/images/fortune/heroes/investment/invest_hero_bull.webp',
+      'medium':
+          'assets/images/fortune/heroes/investment/invest_hero_neutral.webp',
+      'low': 'assets/images/fortune/heroes/investment/invest_hero_bear.webp',
+    },
+    'tarot': {
+      'high': 'assets/images/fortune/heroes/tarot/tarot_hero_mystical.webp',
+      'medium': 'assets/images/fortune/heroes/tarot/tarot_hero_mystical.webp',
+      'low': 'assets/images/fortune/heroes/tarot/tarot_hero_mystical.webp',
+    },
+    'dream': {
+      'high': 'assets/images/fortune/heroes/dream/dream_hero_auspicious.webp',
+      'medium': 'assets/images/fortune/heroes/dream/dream_hero_mysterious.webp',
+      'low': 'assets/images/fortune/heroes/dream/dream_hero_warning.webp',
+    },
+    'exam': {
+      'high': 'assets/images/fortune/heroes/exam/exam_hero_grade_a.webp',
+      'medium': 'assets/images/fortune/heroes/exam/exam_hero_grade_b.webp',
+      'low': 'assets/images/fortune/heroes/exam/exam_hero_grade_c.webp',
+    },
+    'compatibility': {
+      'high':
+          'assets/images/fortune/heroes/compatibility/compat_hero_perfect.webp',
+      'medium':
+          'assets/images/fortune/heroes/compatibility/compat_hero_good.webp',
+      'low':
+          'assets/images/fortune/heroes/compatibility/compat_hero_challenging.webp',
+    },
+    'mbti': {
+      'high': 'assets/images/fortune/heroes/mbti/mbti_hero_energy.webp',
+      'medium': 'assets/images/fortune/heroes/mbti/mbti_hero_balanced.webp',
+      'low': 'assets/images/fortune/heroes/mbti/mbti_hero_recharge.webp',
+    },
+    'past-life': {
+      'high': 'assets/images/fortune/heroes/past_life/pastlife_hero_royal.webp',
+      'medium':
+          'assets/images/fortune/heroes/past_life/pastlife_hero_scholar.webp',
+      'low': 'assets/images/fortune/heroes/past_life/pastlife_hero_common.webp',
+    },
+    'wish': {
+      'high': 'assets/images/fortune/heroes/wish/wish_hero_dragon.webp',
+      'medium': 'assets/images/fortune/heroes/wish/wish_hero_star.webp',
+      'low': 'assets/images/fortune/heroes/wish/wish_hero_fountain.webp',
+    },
+  };
+
+  /// Get hero image path based on fortune type and score
+  static String getHeroImage(String fortuneType, int score) {
+    final scoreLevel = score >= 70 ? 'high' : (score >= 40 ? 'medium' : 'low');
+    final normalizedType = fortuneType.replaceAll('_', '-');
+    return heroImages[fortuneType]?[scoreLevel] ??
+        heroImages[normalizedType]?[scoreLevel] ??
+        heroImages['daily']?[scoreLevel] ??
+        heroImages['daily']!['medium']!;
+  }
+
+  // ============================================================================
+  // MASCOT IMAGES - Mood-based characters for hero sections
+  // ============================================================================
+
+  /// Mascot images by fortune type and mood
+  static const Map<String, Map<String, String>> mascotImages = {
+    'daily': {
+      'happy': 'assets/images/fortune/mascot/daily/mascot_dog_celebrate.png',
+      'calm': 'assets/images/fortune/mascot/daily/mascot_dog_main.png',
+      'careful': 'assets/images/fortune/mascot/daily/mascot_dog_thinking.png',
+      'sad': 'assets/images/fortune/mascot/daily/mascot_dog_sad.png',
+    },
+    'career': {
+      'happy': 'assets/images/fortune/career/mascot_career.png',
+      'calm': 'assets/images/fortune/career/mascot_career.png',
+      'careful': 'assets/images/fortune/career/mascot_career.png',
+    },
+    'health': {
+      'happy': 'assets/images/fortune/health/mascot_health.png',
+      'calm': 'assets/images/fortune/health/mascot_health.png',
+      'careful': 'assets/images/fortune/health/mascot_health.png',
+    },
+    'dream': {
+      'happy': 'assets/images/fortune/dream/mascot_dream.png',
+      'calm': 'assets/images/fortune/dream/mascot_dream.png',
+      'careful': 'assets/images/fortune/dream/mascot_dream.png',
+    },
+    'wealth': {
+      'happy': 'assets/images/fortune/wealth/mascot_wealth.png',
+      'calm': 'assets/images/fortune/wealth/mascot_wealth.png',
+      'careful': 'assets/images/fortune/wealth/mascot_wealth.png',
+    },
+    'investment': {
+      'happy': 'assets/images/fortune/investment/mascot_investment.png',
+      'calm': 'assets/images/fortune/investment/mascot_investment.png',
+      'careful': 'assets/images/fortune/investment/mascot_investment.png',
+    },
+    'exam': {
+      'happy': 'assets/images/fortune/exam/mascot_exam.png',
+      'calm': 'assets/images/fortune/exam/mascot_exam.png',
+      'careful': 'assets/images/fortune/exam/mascot_exam.png',
+    },
+    'talent': {
+      'happy': 'assets/images/fortune/talent/mascot_talent.png',
+      'calm': 'assets/images/fortune/talent/mascot_talent.png',
+      'careful': 'assets/images/fortune/talent/mascot_talent.png',
+    },
+    'blind-date': {
+      'happy': 'assets/images/fortune/blind-date/mascot_blinddate.png',
+      'calm': 'assets/images/fortune/blind-date/mascot_blinddate.png',
+      'careful': 'assets/images/fortune/blind-date/mascot_blinddate.png',
+    },
+    'past-life': {
+      'happy': 'assets/images/fortune/past-life/mascot_pastlife.png',
+      'calm': 'assets/images/fortune/past-life/mascot_pastlife.png',
+      'careful': 'assets/images/fortune/past-life/mascot_pastlife.png',
+    },
+    'family': {
+      'happy': 'assets/images/fortune/family/mascot_family.png',
+      'calm': 'assets/images/fortune/family/mascot_family.png',
+      'careful': 'assets/images/fortune/family/mascot_family.png',
+    },
+    'exercise': {
+      'happy': 'assets/images/fortune/exercise/mascot_exercise.png',
+      'calm': 'assets/images/fortune/exercise/mascot_exercise.png',
+      'careful': 'assets/images/fortune/exercise/mascot_exercise.png',
+    },
+    'moving': {
+      'happy': 'assets/images/fortune/moving/mascot_moving.png',
+      'calm': 'assets/images/fortune/moving/mascot_moving.png',
+      'careful': 'assets/images/fortune/moving/mascot_moving.png',
+    },
+    'naming': {
+      'happy': 'assets/images/fortune/naming/mascot_naming.png',
+      'calm': 'assets/images/fortune/naming/mascot_naming.png',
+      'careful': 'assets/images/fortune/naming/mascot_naming.png',
+    },
+    'biorhythm': {
+      'happy': 'assets/images/fortune/biorhythm/mascot_biorhythm.png',
+      'calm': 'assets/images/fortune/biorhythm/mascot_biorhythm.png',
+      'careful': 'assets/images/fortune/biorhythm/mascot_biorhythm.png',
+    },
+    'ootd': {
+      'happy': 'assets/images/fortune/ootd/mascot_ootd.png',
+      'calm': 'assets/images/fortune/ootd/mascot_ootd.png',
+      'careful': 'assets/images/fortune/ootd/mascot_ootd.png',
+    },
+    'avoid-people': {
+      'happy': 'assets/images/fortune/avoid-people/mascot_avoid.png',
+      'calm': 'assets/images/fortune/avoid-people/mascot_avoid.png',
+      'careful': 'assets/images/fortune/avoid-people/mascot_avoid.png',
+    },
+    'ex-lover': {
+      'happy': 'assets/images/fortune/ex-lover/mascot_exlover.png',
+      'calm': 'assets/images/fortune/ex-lover/mascot_exlover.png',
+      'careful': 'assets/images/fortune/ex-lover/mascot_exlover.png',
+    },
+    'celebrity': {
+      'happy': 'assets/images/fortune/celebrity/mascot_celebrity.png',
+      'calm': 'assets/images/fortune/celebrity/mascot_celebrity.png',
+      'careful': 'assets/images/fortune/celebrity/mascot_celebrity.png',
+    },
+    'fengshui': {
+      'happy': 'assets/images/fortune/fengshui/mascot_fengshui.png',
+      'calm': 'assets/images/fortune/fengshui/mascot_fengshui.png',
+      'careful': 'assets/images/fortune/fengshui/mascot_fengshui.png',
+    },
+  };
+
+  /// Get mascot image based on fortune type and score
+  static String? getMascotImage(String fortuneType, int score) {
+    final mood = score >= 70 ? 'happy' : (score >= 40 ? 'calm' : 'careful');
+    final normalizedType = fortuneType.replaceAll('_', '-');
+    return mascotImages[fortuneType]?[mood] ??
+        mascotImages[normalizedType]?[mood] ??
+        mascotImages['daily']?[mood];
+  }
+
+  // ============================================================================
+  // LUCKY ITEM ICONS - Shared across multiple fortune types
+  // ============================================================================
+
+  /// Lucky color icons (used by daily, love, investment, lucky-items, time)
+  static const Map<String, String> luckyColorIcons = {
+    'red': 'assets/images/fortune/icons/lucky/lucky_color_red.webp',
+    'orange': 'assets/images/fortune/icons/lucky/lucky_color_orange.webp',
+    'yellow': 'assets/images/fortune/icons/lucky/lucky_color_yellow.webp',
+    'green': 'assets/images/fortune/icons/lucky/lucky_color_green.webp',
+    'blue': 'assets/images/fortune/icons/lucky/lucky_color_blue.webp',
+    'purple': 'assets/images/fortune/icons/lucky/lucky_color_purple.webp',
+    'pink': 'assets/images/fortune/icons/lucky/lucky_color_pink.webp',
+    'white': 'assets/images/fortune/icons/lucky/lucky_color_white.webp',
+    'black': 'assets/images/fortune/icons/lucky/lucky_color_black.webp',
+    'gold': 'assets/images/fortune/icons/lucky/lucky_color_gold.webp',
+    'silver': 'assets/images/fortune/icons/lucky/lucky_color_silver.webp',
+    'coral': 'assets/images/fortune/icons/lucky/lucky_color_coral.webp',
+  };
+
+  /// Lucky direction icons (used by daily, investment, time, wish)
+  static const Map<String, String> luckyDirectionIcons = {
+    'east': 'assets/images/fortune/icons/lucky/lucky_direction_east.webp',
+    'west': 'assets/images/fortune/icons/lucky/lucky_direction_west.webp',
+    'south': 'assets/images/fortune/icons/lucky/lucky_direction_south.webp',
+    'north': 'assets/images/fortune/icons/lucky/lucky_direction_north.webp',
+    'northeast':
+        'assets/images/fortune/icons/lucky/lucky_direction_northeast.webp',
+    'northwest':
+        'assets/images/fortune/icons/lucky/lucky_direction_northwest.webp',
+    'southeast':
+        'assets/images/fortune/icons/lucky/lucky_direction_southeast.webp',
+    'southwest':
+        'assets/images/fortune/icons/lucky/lucky_direction_southwest.webp',
+  };
+
+  /// Lucky time icons (used by daily, career, time)
+  static const Map<String, String> luckyTimeIcons = {
+    'morning': 'assets/images/fortune/icons/lucky/lucky_time_morning.webp',
+    'afternoon': 'assets/images/fortune/icons/lucky/lucky_time_afternoon.webp',
+    'evening': 'assets/images/fortune/icons/lucky/lucky_time_evening.webp',
+    'night': 'assets/images/fortune/icons/lucky/lucky_time_night.webp',
+    'dawn': 'assets/images/fortune/icons/lucky/lucky_time_dawn.webp',
+  };
+
+  /// Lucky number icons (0-9)
+  static String getLuckyNumberIcon(int number) {
+    final digit = number.abs() % 10;
+    return 'assets/images/fortune/icons/lucky/lucky_number_$digit.webp';
+  }
+
+  // ============================================================================
+  // ZODIAC ICONS - 12 Korean zodiac animals
+  // ============================================================================
+
+  /// Zodiac animal icons (used by compatibility, avoid-people, time)
+  static const Map<String, String> zodiacIcons = {
+    'rat': 'assets/images/fortune/icons/zodiac/zodiac_rat.webp',
+    'ox': 'assets/images/fortune/icons/zodiac/zodiac_ox.webp',
+    'tiger': 'assets/images/fortune/icons/zodiac/zodiac_tiger.webp',
+    'rabbit': 'assets/images/fortune/icons/zodiac/zodiac_rabbit.webp',
+    'dragon': 'assets/images/fortune/icons/zodiac/zodiac_dragon.webp',
+    'snake': 'assets/images/fortune/icons/zodiac/zodiac_snake.webp',
+    'horse': 'assets/images/fortune/icons/zodiac/zodiac_horse.webp',
+    'sheep': 'assets/images/fortune/icons/zodiac/zodiac_sheep.webp',
+    'monkey': 'assets/images/fortune/icons/zodiac/zodiac_monkey.webp',
+    'rooster': 'assets/images/fortune/icons/zodiac/zodiac_rooster.webp',
+    'dog': 'assets/images/fortune/icons/zodiac/zodiac_dog.webp',
+    'pig': 'assets/images/fortune/icons/zodiac/zodiac_pig.webp',
+    // Korean names mapping
+    '쥐': 'assets/images/fortune/icons/zodiac/zodiac_rat.webp',
+    '소': 'assets/images/fortune/icons/zodiac/zodiac_ox.webp',
+    '호랑이': 'assets/images/fortune/icons/zodiac/zodiac_tiger.webp',
+    '토끼': 'assets/images/fortune/icons/zodiac/zodiac_rabbit.webp',
+    '용': 'assets/images/fortune/icons/zodiac/zodiac_dragon.webp',
+    '뱀': 'assets/images/fortune/icons/zodiac/zodiac_snake.webp',
+    '말': 'assets/images/fortune/icons/zodiac/zodiac_horse.webp',
+    '양': 'assets/images/fortune/icons/zodiac/zodiac_sheep.webp',
+    '원숭이': 'assets/images/fortune/icons/zodiac/zodiac_monkey.webp',
+    '닭': 'assets/images/fortune/icons/zodiac/zodiac_rooster.webp',
+    '개': 'assets/images/fortune/icons/zodiac/zodiac_dog.webp',
+    '돼지': 'assets/images/fortune/icons/zodiac/zodiac_pig.webp',
+  };
+
+  // ============================================================================
+  // ELEMENT ICONS - Five elements (Ohaeng/오행)
+  // ============================================================================
+
+  /// Element icons (used by health, investment, lucky-items, biorhythm)
+  static const Map<String, String> elementIcons = {
+    'wood': 'assets/images/fortune/icons/element/element_wood.webp',
+    'fire': 'assets/images/fortune/icons/element/element_fire.webp',
+    'earth': 'assets/images/fortune/icons/element/element_earth.webp',
+    'metal': 'assets/images/fortune/icons/element/element_metal.webp',
+    'water': 'assets/images/fortune/icons/element/element_water.webp',
+    // Korean names
+    '목': 'assets/images/fortune/icons/element/element_wood.webp',
+    '화': 'assets/images/fortune/icons/element/element_fire.webp',
+    '토': 'assets/images/fortune/icons/element/element_earth.webp',
+    '금': 'assets/images/fortune/icons/element/element_metal.webp',
+    '수': 'assets/images/fortune/icons/element/element_water.webp',
+  };
+
+  // ============================================================================
+  // SECTION ICONS - For result page detail sections
+  // ============================================================================
+
+  /// Section header icons (brush stroke style)
+  static const Map<String, String> sectionIcons = {
+    // General sections
+    'work': 'assets/images/fortune/icons/section/section_work.webp',
+    'relationship':
+        'assets/images/fortune/icons/section/section_relationship.webp',
+    'health': 'assets/images/fortune/icons/section/section_health.webp',
+    'money': 'assets/images/fortune/icons/section/section_money.webp',
+    'study': 'assets/images/fortune/icons/section/section_study.webp',
+    'rest': 'assets/images/fortune/icons/section/section_rest.webp',
+    'warning': 'assets/images/fortune/icons/section/section_warning.webp',
+    'advice': 'assets/images/fortune/icons/section/section_advice.webp',
+    'lucky': 'assets/images/fortune/icons/section/section_lucky.webp',
+    'action': 'assets/images/fortune/icons/section/section_action.webp',
+    // Fortune-specific
+    'charm': 'assets/images/fortune/icons/section/section_charm.webp',
+    'fashion': 'assets/images/fortune/icons/section/section_fashion.webp',
+    'venue': 'assets/images/fortune/icons/section/section_venue.webp',
+    'timing': 'assets/images/fortune/icons/section/section_timing.webp',
+    'compatibility':
+        'assets/images/fortune/icons/section/section_compatibility.webp',
+    'strategy': 'assets/images/fortune/icons/section/section_strategy.webp',
+    'psychology': 'assets/images/fortune/icons/section/section_psychology.webp',
+    'spirit': 'assets/images/fortune/icons/section/section_spirit.webp',
+    'symbol': 'assets/images/fortune/icons/section/section_symbol.webp',
+    'dimension': 'assets/images/fortune/icons/section/section_dimension.webp',
+  };
+
+  // ============================================================================
+  // HELPER METHODS
+  // ============================================================================
+
+  /// Get lucky color icon path
+  static String getLuckyColorIcon(String color) {
+    final key = color.toLowerCase().replaceAll(' ', '');
+    return luckyColorIcons[key] ?? luckyColorIcons['gold']!;
+  }
+
+  /// Get lucky direction icon path
+  static String getLuckyDirectionIcon(String direction) {
+    final key = direction.toLowerCase().replaceAll(' ', '');
+    return luckyDirectionIcons[key] ?? luckyDirectionIcons['east']!;
+  }
+
+  /// Get lucky time icon path
+  static String getLuckyTimeIcon(String time) {
+    final key = time.toLowerCase().replaceAll(' ', '');
+    return luckyTimeIcons[key] ?? luckyTimeIcons['morning']!;
+  }
+
+  /// Get zodiac icon path
+  static String getZodiacIcon(String zodiac) {
+    final key = zodiac.toLowerCase().replaceAll(' ', '');
+    return zodiacIcons[key] ?? zodiacIcons['dragon']!;
+  }
+
+  /// Get element icon path
+  static String getElementIcon(String element) {
+    final key = element.toLowerCase().replaceAll(' ', '');
+    return elementIcons[key] ?? elementIcons['wood']!;
+  }
+
+  /// Get section icon path
+  static String getSectionIcon(String section) {
+    final key = section.toLowerCase().trim();
+    return sectionIcons[key] ?? sectionIcons['advice']!;
+  }
+
   /// Instagram-style text overlays
   static const Map<String, String> instagramCaptions = {
     // Love & Relationship - 감성적이고 호기심을 자극하는 문구
@@ -258,4 +635,20 @@ class FortuneCardImages {
     // Default fallback
     'default': '오늘 당신에게 필요한 메시지'
   };
+
+  /// 카테고리별 아이콘 경로 반환
+  static String? getCategoryIcon(String category) {
+    final icons = {
+      'love': 'assets/images/fortune/icons/categories/icon_category_love.png',
+      'money': 'assets/images/fortune/icons/categories/icon_category_money.png',
+      'wealth':
+          'assets/images/fortune/icons/categories/icon_category_money.png',
+      'career': 'assets/images/fortune/icons/categories/icon_category_work.png',
+      'work': 'assets/images/fortune/icons/categories/icon_category_work.png',
+      'health':
+          'assets/images/fortune/icons/categories/icon_category_health.png',
+      'study': 'assets/images/fortune/icons/categories/icon_category_study.png',
+    };
+    return icons[category];
+  }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/data/services/fortune_api_service.dart';
 import 'package:fortune/domain/entities/fortune.dart';
-import 'package:fortune/presentation/providers/auth_provider.dart';
+import 'package:fortune/presentation/providers/providers.dart';
 
 // Today Fortune State
 class TodayFortuneState {
@@ -10,22 +10,19 @@ class TodayFortuneState {
   final String? error;
   final DateTime? lastGeneratedAt;
 
-  const TodayFortuneState({
-    this.fortune,
-    this.isLoading = false,
-    this.error,
-    this.lastGeneratedAt});
+  const TodayFortuneState(
+      {this.fortune, this.isLoading = false, this.error, this.lastGeneratedAt});
 
-  TodayFortuneState copyWith({
-    Fortune? fortune,
-    bool? isLoading,
-    String? error,
-    DateTime? lastGeneratedAt}) {
+  TodayFortuneState copyWith(
+      {Fortune? fortune,
+      bool? isLoading,
+      String? error,
+      DateTime? lastGeneratedAt}) {
     return TodayFortuneState(
-      fortune: fortune ?? this.fortune,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-      lastGeneratedAt: lastGeneratedAt ?? this.lastGeneratedAt);
+        fortune: fortune ?? this.fortune,
+        isLoading: isLoading ?? this.isLoading,
+        error: error,
+        lastGeneratedAt: lastGeneratedAt ?? this.lastGeneratedAt);
   }
 }
 
@@ -34,20 +31,19 @@ class TodayFortuneNotifier extends StateNotifier<TodayFortuneState> {
   final FortuneApiService _apiService;
   final Ref ref;
 
-  TodayFortuneNotifier(this._apiService, this.ref) : super(const TodayFortuneState());
+  TodayFortuneNotifier(this._apiService, this.ref)
+      : super(const TodayFortuneState());
 
   Future<void> generateTodayFortune() async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      
+
       // Get user profile
       final userProfileAsync = await ref.read(userProfileProvider.future);
       final userProfile = userProfileAsync;
-      
+
       if (userProfile == null) {
-        state = state.copyWith(
-          isLoading: false,
-          error: '프로필 정보가 필요합니다');
+        state = state.copyWith(isLoading: false, error: '프로필 정보가 필요합니다');
         return;
       }
 
@@ -63,16 +59,11 @@ class TodayFortuneNotifier extends StateNotifier<TodayFortuneState> {
       }
 
       final fortune = await _apiService.generateDailyFortune(
-        userId: userProfile.userId,
-        date: DateTime.now());
+          userId: userProfile.userId, date: DateTime.now());
       state = state.copyWith(
-        fortune: fortune,
-        isLoading: false,
-        lastGeneratedAt: DateTime.now());
+          fortune: fortune, isLoading: false, lastGeneratedAt: DateTime.now());
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString());
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -82,7 +73,8 @@ class TodayFortuneNotifier extends StateNotifier<TodayFortuneState> {
 }
 
 // Provider
-final todayFortuneProvider = StateNotifierProvider<TodayFortuneNotifier, TodayFortuneState>((ref) {
+final todayFortuneProvider =
+    StateNotifierProvider<TodayFortuneNotifier, TodayFortuneState>((ref) {
   final apiService = ref.watch(fortuneApiServiceProvider);
   return TodayFortuneNotifier(apiService, ref);
 });

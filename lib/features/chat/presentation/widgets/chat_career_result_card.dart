@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
+import '../../../../core/widgets/infographic/headers/career_info_header.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../shared/widgets/smart_image.dart';
+import '../../../../core/constants/fortune_card_images.dart';
 
 /// 채팅용 커리어 운세 결과 카드
 ///
@@ -27,24 +28,8 @@ class ChatCareerResultCard extends ConsumerWidget {
     this.blurredSections = const [],
   });
 
-  /// 커리어 운세 전용 민화 이미지
-  static const List<String> _careerMinhwaImages = [
-    'assets/images/minhwa/minhwa_overall_dragon.webp',
-    'assets/images/minhwa/minhwa_overall_tiger.webp',
-    'assets/images/minhwa/minhwa_overall_sunrise.webp',
-  ];
-
-  String _getCareerMinhwaImage() {
-    final today = DateTime.now();
-    final index = today.day % _careerMinhwaImages.length;
-    return _careerMinhwaImages[index];
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     // additionalInfo에서 커리어 데이터 추출
     final data = fortune.additionalInfo ?? {};
 
@@ -54,142 +39,114 @@ class ChatCareerResultCard extends ConsumerWidget {
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
+      child: DSCard.hanji(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 1. 이미지 헤더
+            _buildImageHeader(context),
+
+            // 2. 점수 섹션
+            _buildScoreSection(context, data),
+
+            // 3. 전반적인 전망 (content)
+            if (fortune.content.isNotEmpty) _buildOutlookSection(context),
+
+            // 4. 예측 섹션 (블러)
+            if (data['predictions'] != null)
+              _buildPredictionsSection(context, data['predictions'] as List),
+
+            // 5. 스킬 분석 (블러)
+            if (data['skillAnalysis'] != null)
+              _buildSkillAnalysisSection(
+                  context, data['skillAnalysis'] as List),
+
+            // 6. 강점/개선점 (블러)
+            _buildStrengthsSection(context, data),
+
+            // 7. 액션 플랜 (블러)
+            if (data['actionPlan'] != null)
+              _buildActionPlanSection(
+                  context, data['actionPlan'] as Map<String, dynamic>),
+
+            // 8. 행운/주의 시기
+            _buildTimingSection(context, data),
+
+            // 9. 키워드
+            if (data['careerKeywords'] != null)
+              _buildKeywordsSection(context, data['careerKeywords'] as List),
+
+            const SizedBox(height: DSSpacing.sm),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 1. 이미지 헤더
-          _buildImageHeader(context),
-
-          // 2. 점수 섹션
-          _buildScoreSection(context, data),
-
-          // 3. 전반적인 전망 (content)
-          if (fortune.content.isNotEmpty)
-            _buildOutlookSection(context),
-
-          // 4. 예측 섹션 (블러)
-          if (data['predictions'] != null)
-            _buildPredictionsSection(context, data['predictions'] as List),
-
-          // 5. 스킬 분석 (블러)
-          if (data['skillAnalysis'] != null)
-            _buildSkillAnalysisSection(context, data['skillAnalysis'] as List),
-
-          // 6. 강점/개선점 (블러)
-          _buildStrengthsSection(context, data),
-
-          // 7. 액션 플랜 (블러)
-          if (data['actionPlan'] != null)
-            _buildActionPlanSection(context, data['actionPlan'] as Map<String, dynamic>),
-
-          // 8. 행운/주의 시기
-          _buildTimingSection(context, data),
-
-          // 9. 키워드
-          if (data['careerKeywords'] != null)
-            _buildKeywordsSection(context, data['careerKeywords'] as List),
-
-          const SizedBox(height: DSSpacing.sm),
-        ],
       ),
     );
   }
 
   Widget _buildImageHeader(BuildContext context) {
+    final data = fortune.additionalInfo ?? {};
     final colors = context.colors;
-    final typography = context.typography;
 
-    return SizedBox(
-      height: 140,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          SmartImage(
-            path: _getCareerMinhwaImage(),
-            fit: BoxFit.cover,
+    // 강점 데이터를 Map<String, dynamic>으로 변환
+    Map<String, dynamic>? strengths;
+    final skillAnalysis = data['skillAnalysis'] as List?;
+    if (skillAnalysis != null && skillAnalysis.isNotEmpty) {
+      strengths = {};
+      for (final skill in skillAnalysis.take(3)) {
+        if (skill is Map) {
+          final name = skill['skill'] as String? ?? skill['name'] as String? ?? '';
+          final score = skill['score'] as num? ?? skill['level'] as num? ?? 70;
+          if (name.isNotEmpty) {
+            strengths[name] = score;
+          }
+        }
+      }
+    }
+
+    // 행운/주의 시기 추출
+    final luckyPeriods = data['luckyPeriods'] as List?;
+    final cautionPeriods = data['cautionPeriods'] as List?;
+
+    return Stack(
+      children: [
+        // 인포그래픽 헤더
+        CareerInfoHeader(
+          score: fortune.overallScore ?? data['score'] as int? ?? 75,
+          prediction: data['overallOutlook'] as String? ?? fortune.content,
+          strengths: strengths,
+          luckyPeriod: luckyPeriods?.isNotEmpty == true
+              ? luckyPeriods!.first.toString()
+              : null,
+          cautionPeriod: cautionPeriods?.isNotEmpty == true
+              ? cautionPeriods!.first.toString()
+              : null,
+        ),
+        // 액션 버튼 오버레이
+        Positioned(
+          top: DSSpacing.sm,
+          right: DSSpacing.sm,
+          child: FortuneActionButtons(
+            contentId: fortune.id,
+            contentType: 'career',
+            shareTitle: '커리어 운세',
+            shareContent: fortune.content,
+            iconColor: colors.textSecondary,
+            iconSize: 20,
           ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.1),
-                  Colors.black.withValues(alpha: 0.5),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            left: DSSpacing.md,
-            right: DSSpacing.md,
-            bottom: DSSpacing.md,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '커리어 운세',
-                  style: typography.headingSmall.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    shadows: [
-                      Shadow(
-                        color: colors.textPrimary.withValues(alpha: 0.3),
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
-                ),
-                Text(
-                  '당신의 커리어 전망',
-                  style: typography.labelMedium.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // 좋아요 + 공유 버튼
-          Positioned(
-            top: DSSpacing.sm,
-            right: DSSpacing.sm,
-            child: FortuneActionButtons(
-              contentId: fortune.id ?? 'career_${DateTime.now().millisecondsSinceEpoch}',
-              contentType: 'career',
-              shareTitle: '커리어 운세',
-              shareContent: fortune.content.length > 100
-                  ? '${fortune.content.substring(0, 100)}...'
-                  : fortune.content,
-              iconSize: 20,
-              iconColor: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildScoreSection(BuildContext context, Map<String, dynamic> data) {
     final colors = context.colors;
     final typography = context.typography;
-    final score = fortune.overallScore ?? data['score'] as int? ?? data['careerScore'] as int? ?? 70;
+    final score = fortune.overallScore ??
+        data['score'] as int? ??
+        data['careerScore'] as int? ??
+        70;
 
     return Padding(
       padding: const EdgeInsets.all(DSSpacing.md),
@@ -241,24 +198,38 @@ class ChatCareerResultCard extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: colors.accentSecondary.withValues(alpha: 0.08),
+          color: colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: colors.accentSecondary.withValues(alpha: 0.2),
+            color: colors.border.withValues(alpha: 0.1),
           ),
         ),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('💼', style: typography.bodyLarge),
-            const SizedBox(width: DSSpacing.sm),
-            Expanded(
-              child: Text(
-                fortune.content,
-                style: typography.bodyMedium.copyWith(
-                  color: colors.textPrimary,
-                  height: 1.5,
+            Row(
+              children: [
+                Image.asset(
+                  FortuneCardImages.getSectionIcon('work'),
+                  width: 24,
+                  height: 24,
                 ),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '전반적인 전망',
+                  style: typography.labelLarge.copyWith(
+                    color: colors.textSecondary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              fortune.content,
+              style: typography.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.6,
               ),
             ),
           ],
@@ -285,8 +256,12 @@ class ChatCareerResultCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Text('📊', style: typography.bodyLarge),
-                const SizedBox(width: DSSpacing.xs),
+                Image.asset(
+                  FortuneCardImages.getSectionIcon('advice'),
+                  width: 32,
+                  height: 32,
+                ),
+                const SizedBox(width: DSSpacing.sm),
                 Text(
                   '커리어 예측',
                   style: typography.labelLarge.copyWith(
@@ -329,7 +304,8 @@ class ChatCareerResultCard extends ConsumerWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: _getProbabilityColor(probability).withValues(alpha: 0.15),
+                            color: _getProbabilityColor(probability)
+                                .withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(DSRadius.sm),
                           ),
                           child: Text(
@@ -345,28 +321,28 @@ class ChatCareerResultCard extends ConsumerWidget {
                     if (milestones.isNotEmpty) ...[
                       const SizedBox(height: 8),
                       ...milestones.take(2).map((m) => Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '•',
-                              style: typography.bodySmall.copyWith(
-                                color: colors.accentSecondary,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                m.toString(),
-                                style: typography.bodySmall.copyWith(
-                                  color: colors.textSecondary,
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '•',
+                                  style: typography.bodySmall.copyWith(
+                                    color: colors.accentSecondary,
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    m.toString(),
+                                    style: typography.bodySmall.copyWith(
+                                      color: colors.textSecondary,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )),
+                          )),
                     ],
                   ],
                 ),
@@ -396,8 +372,12 @@ class ChatCareerResultCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Text('💼', style: typography.bodyLarge),
-                const SizedBox(width: DSSpacing.xs),
+                Image.asset(
+                  FortuneCardImages.getSectionIcon('study'),
+                  width: 32,
+                  height: 32,
+                ),
+                const SizedBox(width: DSSpacing.sm),
                 Text(
                   '스킬 분석',
                   style: typography.labelLarge.copyWith(
@@ -452,7 +432,8 @@ class ChatCareerResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildStrengthsSection(BuildContext context, Map<String, dynamic> data) {
+  Widget _buildStrengthsSection(
+      BuildContext context, Map<String, dynamic> data) {
     final typography = context.typography;
     final strengths = data['strengthsAssessment'] as List? ?? [];
     final improvements = data['improvementAreas'] as List? ?? [];
@@ -476,7 +457,11 @@ class ChatCareerResultCard extends ConsumerWidget {
             if (strengths.isNotEmpty) ...[
               Row(
                 children: [
-                  Text('✅', style: typography.bodyMedium),
+                  Image.asset(
+                    FortuneCardImages.getSectionIcon('lucky'),
+                    width: 20,
+                    height: 20,
+                  ),
                   const SizedBox(width: DSSpacing.xs),
                   Text(
                     '강점',
@@ -491,26 +476,35 @@ class ChatCareerResultCard extends ConsumerWidget {
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
-                children: strengths.take(3).map((s) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(DSRadius.sm),
-                  ),
-                  child: Text(
-                    s.toString(),
-                    style: typography.labelSmall.copyWith(
-                      color: const Color(0xFF10B981),
-                    ),
-                  ),
-                )).toList(),
+                children: strengths
+                    .take(3)
+                    .map((s) => Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(DSRadius.sm),
+                          ),
+                          child: Text(
+                            s.toString(),
+                            style: typography.labelSmall.copyWith(
+                              color: const Color(0xFF10B981),
+                            ),
+                          ),
+                        ))
+                    .toList(),
               ),
               const SizedBox(height: DSSpacing.sm),
             ],
             if (improvements.isNotEmpty) ...[
               Row(
                 children: [
-                  Text('⚠️', style: typography.bodyMedium),
+                  Image.asset(
+                    FortuneCardImages.getSectionIcon('warning'),
+                    width: 20,
+                    height: 20,
+                  ),
                   const SizedBox(width: DSSpacing.xs),
                   Text(
                     '개선점',
@@ -525,19 +519,24 @@ class ChatCareerResultCard extends ConsumerWidget {
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
-                children: improvements.take(3).map((i) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(DSRadius.sm),
-                  ),
-                  child: Text(
-                    i.toString(),
-                    style: typography.labelSmall.copyWith(
-                      color: const Color(0xFFF59E0B),
-                    ),
-                  ),
-                )).toList(),
+                children: improvements
+                    .take(3)
+                    .map((i) => Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(DSRadius.sm),
+                          ),
+                          child: Text(
+                            i.toString(),
+                            style: typography.labelSmall.copyWith(
+                              color: const Color(0xFFF59E0B),
+                            ),
+                          ),
+                        ))
+                    .toList(),
               ),
             ],
           ],
@@ -546,7 +545,8 @@ class ChatCareerResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionPlanSection(BuildContext context, Map<String, dynamic> actionPlan) {
+  Widget _buildActionPlanSection(
+      BuildContext context, Map<String, dynamic> actionPlan) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -568,8 +568,12 @@ class ChatCareerResultCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Text('📋', style: typography.bodyLarge),
-                const SizedBox(width: DSSpacing.xs),
+                Image.asset(
+                  FortuneCardImages.getSectionIcon('action'),
+                  width: 32,
+                  height: 32,
+                ),
+                const SizedBox(width: DSSpacing.sm),
                 Text(
                   '액션 플랜',
                   style: typography.labelLarge.copyWith(
@@ -625,7 +629,11 @@ class ChatCareerResultCard extends ConsumerWidget {
           if (luckyPeriods.isNotEmpty) ...[
             Row(
               children: [
-                Text('🍀', style: typography.bodyMedium),
+                Image.asset(
+                  FortuneCardImages.getSectionIcon('lucky'),
+                  width: 20,
+                  height: 20,
+                ),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '행운 시기',
@@ -648,7 +656,11 @@ class ChatCareerResultCard extends ConsumerWidget {
           if (cautionPeriods.isNotEmpty) ...[
             Row(
               children: [
-                Text('⚠️', style: typography.bodyMedium),
+                Image.asset(
+                  FortuneCardImages.getSectionIcon('warning'),
+                  width: 20,
+                  height: 20,
+                ),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '주의 시기',
@@ -684,22 +696,26 @@ class ChatCareerResultCard extends ConsumerWidget {
       child: Wrap(
         spacing: 6,
         runSpacing: 6,
-        children: keywords.take(5).map((k) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(DSRadius.md),
-            border: Border.all(
-              color: colors.textPrimary.withValues(alpha: 0.1),
-            ),
-          ),
-          child: Text(
-            '#${k.toString()}',
-            style: typography.labelSmall.copyWith(
-              color: colors.textSecondary,
-            ),
-          ),
-        )).toList(),
+        children: keywords
+            .take(5)
+            .map((k) => Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colors.textPrimary.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                    border: Border.all(
+                      color: colors.textPrimary.withValues(alpha: 0.1),
+                    ),
+                  ),
+                  child: Text(
+                    '#${k.toString()}',
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
@@ -753,8 +769,8 @@ class _CareerScoreCircleState extends State<_CareerScoreCircle>
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    _animation = Tween<double>(begin: 0, end: widget.score / 100)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _animation = Tween<double>(begin: 0, end: widget.score / 100).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward();
   }
 

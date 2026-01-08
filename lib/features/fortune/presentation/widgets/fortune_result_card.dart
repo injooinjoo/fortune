@@ -4,10 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../domain/entities/fortune.dart';
+import '../../../../presentation/widgets/fortune_infographic/fortune_infographic_facade.dart';
+import '../../../../shared/widgets/smart_image.dart';
 import 'fortune_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
@@ -56,6 +59,32 @@ class FortuneResultCard extends ConsumerWidget {
                 .animate()
                 .fadeIn(duration: 600.ms, delay: 200.ms)
                 .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
+
+          if (fortune.hexagonScores != null &&
+              fortune.hexagonScores!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.lg,
+                vertical: DSSpacing.sm + 4,
+              ),
+              child: FortuneInfographicWidgets.buildRadarChart(
+                scores: fortune.hexagonScores!,
+                size: 220,
+                primaryColor: DSColors.accent,
+              ),
+            ),
+
+          if (fortune.categories != null && fortune.categories!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.lg,
+                vertical: DSSpacing.sm + 4,
+              ),
+              child: FortuneInfographicWidgets.buildCategoryCards(
+                fortune.categories!,
+                isDarkMode: isDark,
+              ),
+            ),
           
           // 메인 운세 내용
           _buildMainContent(context, isDark)
@@ -104,39 +133,166 @@ class FortuneResultCard extends ConsumerWidget {
   }
   
   Widget _buildHeader(BuildContext context, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.lg),
-      child: Column(
-        children: [
-          // 상단 액션 버튼 (좋아요 + 공유)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+    final score = fortune.overallScore ?? 70;
+    final heroImage = FortuneCardImages.getHeroImage(fortune.type, score);
+    final mascotImage = FortuneCardImages.getMascotImage(fortune.type, score);
+    final caption = FortuneCardImages.instagramCaptions[fortune.type] ??
+        FortuneCardImages.instagramCaptions[fortune.type.replaceAll('_', '-')] ??
+        FortuneCardImages.instagramCaptions['default'];
+    final summary = fortune.summary ?? fortune.greeting;
+    final dateLabel = DateTime.now().toString().split(' ')[0];
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        DSSpacing.lg,
+        DSSpacing.lg,
+        DSSpacing.lg,
+        DSSpacing.sm,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        child: SizedBox(
+          height: 220,
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              FortuneActionButtons(
-                contentId: fortune.id,
-                contentType: fortune.type,
-                shareTitle: fortuneTitle,
-                shareContent: fortune.content,
+              SmartImage(
+                path: heroImage,
+                fit: BoxFit.cover,
+                errorWidget: Container(
+                  color: isDark ? DSColors.surfaceDark : DSColors.surface,
+                ),
               ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.15),
+                      Colors.black.withValues(alpha: 0.65),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: DSSpacing.sm,
+                right: DSSpacing.sm,
+                child: FortuneActionButtons(
+                  contentId: fortune.id,
+                  contentType: fortune.type,
+                  shareTitle: fortuneTitle,
+                  shareContent: fortune.content,
+                  iconColor: Colors.white,
+                  iconSize: 20,
+                ),
+              ),
+              Positioned(
+                left: DSSpacing.md,
+                right: DSSpacing.md,
+                bottom: DSSpacing.md,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      fortuneTitle,
+                      style: DSTypography.headingMedium.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(alpha: 0.45),
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (caption != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        caption,
+                        style: DSTypography.bodySmall.copyWith(
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: DSSpacing.xs),
+                    Row(
+                      children: [
+                        _buildHeroPill(dateLabel),
+                        if (summary != null && summary.isNotEmpty) ...[
+                          const SizedBox(width: DSSpacing.xs),
+                          Expanded(
+                            child: _buildHeroSummary(summary),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (mascotImage != null)
+                Positioned(
+                  right: DSSpacing.sm,
+                  bottom: DSSpacing.sm,
+                  child: SmartImage(
+                    path: mascotImage,
+                    width: 72,
+                    height: 72,
+                    fit: BoxFit.contain,
+                  ),
+                ),
             ],
           ),
-          const SizedBox(height: DSSpacing.sm),
-          Text(
-            fortuneTitle,
-            style: DSTypography.headingMedium.copyWith(
-              color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
-              fontWeight: FontWeight.w700,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: DSSpacing.sm),
-          Text(
-            DateTime.now().toString().split(' ')[0],
-            style: DSTypography.bodySmall.copyWith(
-              color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
-            ),
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroPill(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.sm,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(DSRadius.full),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.4),
+        ),
+      ),
+      child: Text(
+        text,
+        style: DSTypography.labelSmall.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroSummary(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.sm,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(DSRadius.full),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: DSTypography.labelSmall.copyWith(
+          color: Colors.white.withValues(alpha: 0.95),
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -292,12 +448,73 @@ class FortuneResultCard extends ConsumerWidget {
   
   Widget _buildLuckyItemsSection(BuildContext context, bool isDark) {
     final luckyItems = fortune.luckyItems!;
+    final visualItems = <Map<String, String>>[];
+
+    final colorValue = luckyItems['color']?.toString();
+    if (colorValue != null && colorValue.isNotEmpty) {
+      visualItems.add({
+        'label': '색상',
+        'value': colorValue,
+        'icon': FortuneCardImages.getLuckyColorIcon(
+          _normalizeLuckyColor(colorValue),
+        ),
+      });
+    }
+
+    final numberValue = luckyItems['number'];
+    final number = numberValue is int
+        ? numberValue
+        : int.tryParse(numberValue?.toString() ?? '');
+    if (number != null) {
+      visualItems.add({
+        'label': '숫자',
+        'value': number.toString(),
+        'icon': FortuneCardImages.getLuckyNumberIcon(number),
+      });
+    }
+
+    final directionValue = luckyItems['direction']?.toString();
+    if (directionValue != null && directionValue.isNotEmpty) {
+      visualItems.add({
+        'label': '방향',
+        'value': directionValue,
+        'icon': FortuneCardImages.getLuckyDirectionIcon(
+          _normalizeLuckyDirection(directionValue),
+        ),
+      });
+    }
+
+    final timeValue = luckyItems['time']?.toString();
+    if (timeValue != null && timeValue.isNotEmpty) {
+      visualItems.add({
+        'label': '시간',
+        'value': timeValue,
+        'icon': FortuneCardImages.getLuckyTimeIcon(
+          _normalizeLuckyTime(timeValue),
+        ),
+      });
+    }
 
     return FortuneCard(
       title: '오늘의 행운 아이템',
       margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
       child: Column(
         children: [
+          if (visualItems.isNotEmpty) ...[
+            Wrap(
+              spacing: DSSpacing.sm,
+              runSpacing: DSSpacing.sm,
+              children: visualItems
+                  .map((item) => _buildLuckyVisualItem(
+                        label: item['label']!,
+                        value: item['value']!,
+                        iconPath: item['icon']!,
+                        isDark: isDark,
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: DSSpacing.md),
+          ],
           if (luckyItems['color'] != null)
             _buildLuckyItem(
               icon: Icons.palette,
@@ -384,6 +601,155 @@ class FortuneResultCard extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildLuckyVisualItem({
+    required String label,
+    required String value,
+    required String iconPath,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: isDark ? DSColors.surfaceDark : DSColors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: (isDark ? DSColors.borderDark : DSColors.border)
+              .withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SmartImage(
+            path: iconPath,
+            width: 24,
+            height: 24,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(width: DSSpacing.xs),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: DSTypography.labelSmall.copyWith(
+                  color: isDark
+                      ? DSColors.textSecondaryDark
+                      : DSColors.textSecondary,
+                ),
+              ),
+              Text(
+                value,
+                style: DSTypography.bodySmall.copyWith(
+                  color:
+                      isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _normalizeLuckyColor(String value) {
+    final lower = value.toLowerCase();
+    if (lower.contains('red') || lower.contains('빨') || lower.contains('홍')) {
+      return 'red';
+    }
+    if (lower.contains('orange') || lower.contains('주황')) {
+      return 'orange';
+    }
+    if (lower.contains('yellow') || lower.contains('노랑')) {
+      return 'yellow';
+    }
+    if (lower.contains('green') || lower.contains('초록')) {
+      return 'green';
+    }
+    if (lower.contains('blue') || lower.contains('파랑') || lower.contains('청')) {
+      return 'blue';
+    }
+    if (lower.contains('purple') || lower.contains('보라')) {
+      return 'purple';
+    }
+    if (lower.contains('pink') || lower.contains('분홍')) {
+      return 'pink';
+    }
+    if (lower.contains('white') || lower.contains('흰')) {
+      return 'white';
+    }
+    if (lower.contains('black') || lower.contains('검')) {
+      return 'black';
+    }
+    if (lower.contains('gold') || lower.contains('금')) {
+      return 'gold';
+    }
+    if (lower.contains('silver') || lower.contains('은')) {
+      return 'silver';
+    }
+    if (lower.contains('coral') || lower.contains('코랄')) {
+      return 'coral';
+    }
+    return lower;
+  }
+
+  String _normalizeLuckyDirection(String value) {
+    final lower = value.toLowerCase();
+    if ((lower.contains('북') || lower.contains('north')) &&
+        (lower.contains('동') || lower.contains('east'))) {
+      return 'northeast';
+    }
+    if ((lower.contains('북') || lower.contains('north')) &&
+        (lower.contains('서') || lower.contains('west'))) {
+      return 'northwest';
+    }
+    if ((lower.contains('남') || lower.contains('south')) &&
+        (lower.contains('동') || lower.contains('east'))) {
+      return 'southeast';
+    }
+    if ((lower.contains('남') || lower.contains('south')) &&
+        (lower.contains('서') || lower.contains('west'))) {
+      return 'southwest';
+    }
+    if (lower.contains('동') || lower.contains('east')) {
+      return 'east';
+    }
+    if (lower.contains('서') || lower.contains('west')) {
+      return 'west';
+    }
+    if (lower.contains('남') || lower.contains('south')) {
+      return 'south';
+    }
+    if (lower.contains('북') || lower.contains('north')) {
+      return 'north';
+    }
+    return lower;
+  }
+
+  String _normalizeLuckyTime(String value) {
+    final lower = value.toLowerCase();
+    if (lower.contains('오전') || lower.contains('아침') || lower.contains('morning')) {
+      return 'morning';
+    }
+    if (lower.contains('오후') || lower.contains('점심') || lower.contains('afternoon')) {
+      return 'afternoon';
+    }
+    if (lower.contains('저녁') || lower.contains('evening')) {
+      return 'evening';
+    }
+    if (lower.contains('밤') || lower.contains('night')) {
+      return 'night';
+    }
+    if (lower.contains('새벽') || lower.contains('dawn')) {
+      return 'dawn';
+    }
+    return lower;
   }
   
   Widget _buildRecommendationsSection(BuildContext context, bool isDark) {

@@ -3,6 +3,8 @@ import UIKit
 import ActivityKit
 import WidgetKit
 import Intents
+import Vision
+import CoreImage
 
 @available(iOS 16.1, *)
 public class NativePlatformPlugin: NSObject, FlutterPlugin {
@@ -46,6 +48,10 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
             startScreenshotDetection(result: result)
         case "stopScreenshotDetection":
             stopScreenshotDetection(result: result)
+        case "detectFace":
+            detectFace(call: call, result: result)
+        case "isFaceDetectionSupported":
+            result(true)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -259,6 +265,105 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
             "type": "screenshot_detected",
             "data": ["timestamp": Int(Date().timeIntervalSince1970 * 1000)]
         ])
+    }
+
+    // MARK: - Face Detection (Vision Framework)
+    private func detectFace(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let args = call.arguments as? [String: Any],
+              let imageData = args["imageData"] as? FlutterStandardTypedData else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Image data required", details: nil))
+            return
+        }
+
+        guard let cgImage = createCGImage(from: imageData.data) else {
+            result(FlutterError(code: "IMAGE_ERROR", message: "Failed to create image from data", details: nil))
+            return
+        }
+
+        let imageWidth = CGFloat(cgImage.width)
+        let imageHeight = CGFloat(cgImage.height)
+
+        // Create face detection request
+        let faceDetectionRequest = VNDetectFaceRectanglesRequest { [weak self] request, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    result(FlutterError(code: "DETECTION_ERROR", message: error.localizedDescription, details: nil))
+                }
+                return
+            }
+
+            guard let observations = request.results as? [VNFaceObservation], !observations.isEmpty else {
+                DispatchQueue.main.async {
+                    result(nil) // No face detected
+                }
+                return
+            }
+
+            // Get the first (most prominent) face
+            let face = observations[0]
+            let boundingBox = face.boundingBox
+
+            // Convert normalized coordinates to pixel coordinates
+            // Vision uses bottom-left origin, Flutter uses top-left
+            let x = boundingBox.origin.x * imageWidth
+            let y = (1 - boundingBox.origin.y - boundingBox.height) * imageHeight
+            let width = boundingBox.width * imageWidth
+            let height = boundingBox.height * imageHeight
+
+            let faceData: [String: Any] = [
+                "detected": true,
+                "confidence": Double(face.confidence),
+                "boundingBox": [
+                    "x": Double(x),
+                    "y": Double(y),
+                    "width": Double(width),
+                    "height": Double(height)
+                ],
+                "faceCount": observations.count
+            ]
+
+            DispatchQueue.main.async {
+                result(faceData)
+            }
+        }
+
+        // Enable CPU-only mode for simulator support
+        #if targetEnvironment(simulator)
+        if #available(iOS 17.0, *) {
+            let revision = VNDetectFaceRectanglesRequest.supportedRevisions.max() ?? VNDetectFaceRectanglesRequestRevision3
+            faceDetectionRequest.revision = revision
+        }
+        #endif
+
+        // Create and execute the request handler
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                try handler.perform([faceDetectionRequest])
+            } catch {
+                DispatchQueue.main.async {
+                    result(FlutterError(code: "HANDLER_ERROR", message: error.localizedDescription, details: nil))
+                }
+            }
+        }
+    }
+
+    private func createCGImage(from data: Data) -> CGImage? {
+        guard let dataProvider = CGDataProvider(data: data as CFData),
+              let cgImage = CGImage(
+                jpegDataProviderSource: dataProvider,
+                decode: nil,
+                shouldInterpolate: true,
+                intent: .defaultIntent
+              ) else {
+            // Try PNG if JPEG fails
+            if let uiImage = UIImage(data: data) {
+                return uiImage.cgImage
+            }
+            return nil
+        }
+        return cgImage
     }
 }
 

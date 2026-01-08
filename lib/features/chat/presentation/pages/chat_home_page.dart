@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -111,6 +112,47 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   /// 포춘쿠키 애니메이션 오버레이 표시 여부
   bool _showCookieAnimation = false;
 
+  static const Map<FortuneSurveyType, String> _fortuneBackgroundAssets = {
+    FortuneSurveyType.daily: 'assets/images/chat/backgrounds/bg_daily.png',
+    FortuneSurveyType.newYear: 'assets/images/chat/backgrounds/bg_daily.png',
+    FortuneSurveyType.dailyCalendar:
+        'assets/images/chat/backgrounds/bg_time.png',
+    FortuneSurveyType.love: 'assets/images/chat/backgrounds/bg_love.png',
+    FortuneSurveyType.avoidPeople:
+        'assets/images/chat/backgrounds/bg_avoid_people.png',
+    FortuneSurveyType.exam: 'assets/images/chat/backgrounds/bg_exam.png',
+    FortuneSurveyType.career: 'assets/images/chat/backgrounds/bg_career.png',
+    FortuneSurveyType.money: 'assets/images/chat/backgrounds/bg_money.png',
+    FortuneSurveyType.luckyItems:
+        'assets/images/chat/backgrounds/bg_lucky_items.png',
+    FortuneSurveyType.lotto: 'assets/images/chat/backgrounds/bg_lotto.png',
+    FortuneSurveyType.tarot: 'assets/images/chat/backgrounds/bg_tarot.png',
+    FortuneSurveyType.traditional:
+        'assets/images/chat/backgrounds/bg_traditional.png',
+    FortuneSurveyType.faceReading:
+        'assets/images/chat/backgrounds/bg_face_reading.png',
+    FortuneSurveyType.talisman:
+        'assets/images/chat/backgrounds/bg_talisman.png',
+    FortuneSurveyType.biorhythm:
+        'assets/images/chat/backgrounds/bg_biorhythm.png',
+    FortuneSurveyType.sportsGame:
+        'assets/images/chat/backgrounds/bg_sports_game.png',
+    FortuneSurveyType.dream: 'assets/images/chat/backgrounds/bg_dream.png',
+    FortuneSurveyType.wish: 'assets/images/chat/backgrounds/bg_wish.png',
+    FortuneSurveyType.fortuneCookie:
+        'assets/images/chat/backgrounds/bg_fortune_cookie.png',
+    FortuneSurveyType.compatibility:
+        'assets/images/chat/backgrounds/bg_compatibility.png',
+    FortuneSurveyType.pet: 'assets/images/chat/backgrounds/bg_pet.png',
+    FortuneSurveyType.family: 'assets/images/chat/backgrounds/bg_family.png',
+    FortuneSurveyType.health: 'assets/images/chat/backgrounds/bg_health.png',
+    FortuneSurveyType.talent: 'assets/images/chat/backgrounds/bg_talent.png',
+  };
+
+  String? _chatBackgroundAsset;
+  static const String _defaultChatBackgroundAsset =
+      'assets/images/chat/backgrounds/bg_chat_default.png';
+
   @override
   void initState() {
     super.initState();
@@ -121,7 +163,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 초기화 후 온보딩 체크
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndStartOnboarding();
+      _precacheChatBackgrounds();
     });
+  }
+
+  void _precacheChatBackgrounds() {
+    final assets = <String>{
+      _defaultChatBackgroundAsset,
+      ..._fortuneBackgroundAssets.values,
+    };
+    for (final asset in assets) {
+      precacheImage(AssetImage(asset), context);
+    }
   }
 
   /// 온보딩 필요 여부 확인 및 시작
@@ -133,7 +186,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
     // ✅ 핵심: isCheckingStatus가 true면 아직 비동기 체크 중 → 기다려야 함
     if (onboardingState.isCheckingStatus) {
-      debugPrint('🔍 [_checkAndStartOnboarding] Still checking status, will retry...');
+      debugPrint(
+          '🔍 [_checkAndStartOnboarding] Still checking status, will retry...');
       // 상태 체크 완료 후 다시 확인
       Future.delayed(const Duration(milliseconds: 100), () {
         if (mounted) _checkAndStartOnboarding();
@@ -366,7 +420,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final isOnboarding = onboardingState.needsOnboarding ||
         onboardingState.currentStep != OnboardingStep.completed;
     if (isOnboarding) {
-      debugPrint('🔇 [ChatHomePage] Skipping recommendations - onboarding active');
+      debugPrint(
+          '🔇 [ChatHomePage] Skipping recommendations - onboarding active');
       return;
     }
 
@@ -376,7 +431,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       final keywordIntents = IntentDetector.detectIntents(text);
       if (mounted) {
         setState(() {
-          _detectedIntents = keywordIntents.where((i) => i.isConfident).toList();
+          _detectedIntents =
+              keywordIntents.where((i) => i.isConfident).toList();
         });
       }
 
@@ -406,7 +462,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         },
       );
     } else {
-      if ((_detectedIntents.isNotEmpty || _isLoadingRecommendations) && mounted) {
+      if ((_detectedIntents.isNotEmpty || _isLoadingRecommendations) &&
+          mounted) {
         _recommendService.cancelDebounce();
         setState(() {
           _detectedIntents = [];
@@ -535,18 +592,45 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
   }
 
+  /// 더보기 버튼 탭 - 인사이트 카테고리 페이지로 이동
+  void _handleViewAllTap() {
+    context.push('/fortune');
+  }
+
   void _handleChipTap(RecommendationChip chip) {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
     final surveyNotifier = ref.read(chatSurveyProvider.notifier);
 
+    // 전체운세보기: 모든 운세 칩 표시
+    if (chip.fortuneType == 'viewAll') {
+      chatNotifier.addUserMessage(chip.label);
+      _scrollToBottom();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        chatNotifier.addAiMessage(
+          '다양한 인사이트를 확인해보세요! 🌟\n'
+          '아래에서 원하는 서비스를 선택해주세요.',
+        );
+        _scrollToBottom();
+        Future.delayed(const Duration(milliseconds: 200), () {
+          chatNotifier.addSystemMessage();
+          _scrollToBottom();
+        });
+      });
+      return;
+    }
+
     // 숨쉬기: 웰니스 페이지로 직접 이동
     if (chip.fortuneType == 'breathing') {
+      _setChatBackgroundAsset(
+        'assets/images/chat/backgrounds/bg_breathing.png',
+      );
       context.push('/wellness/meditation');
       return;
     }
 
     // 포춘쿠키: 인라인 애니메이션 후 결과 표시
     if (chip.fortuneType == 'fortuneCookie') {
+      _updateChatBackgroundForType(FortuneSurveyType.fortuneCookie);
       chatNotifier.addUserMessage(chip.label);
       _scrollToBottom();
       _showFortuneCookieWithAnimation();
@@ -557,6 +641,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final surveyType = _mapChipToSurveyType(chip.fortuneType);
 
     if (surveyType != null) {
+      _updateChatBackgroundForType(surveyType);
       // 사주 분석 특별 처리 (ChatSajuResultCard 사용 - 설문 건너뛰기)
       if (surveyType == FortuneSurveyType.traditional) {
         chatNotifier.addUserMessage(chip.label);
@@ -587,7 +672,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           final typeName = _getTypeDisplayName(surveyType);
           final fortuneTypeStr = _mapSurveyTypeToString(surveyType);
 
-          _callFortuneApiWithCache(type: surveyType, answers: {}).then((fortune) {
+          _callFortuneApiWithCache(type: surveyType, answers: {})
+              .then((fortune) {
             // Fortune 객체와 함께 리치 카드 표시
             chatNotifier.addFortuneResultMessage(
               text: typeName,
@@ -626,7 +712,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           chatNotifier.showTypingIndicator();
           _scrollToBottom();
 
-          cacheService.getTodayDailyCalendarFortune(userId).then((cachedFortune) {
+          cacheService
+              .getTodayDailyCalendarFortune(userId)
+              .then((cachedFortune) {
             if (cachedFortune != null) {
               chatNotifier.addAiMessage('오늘 이미 조회하셨네요! 결과를 다시 보여드릴게요. 📅');
               _scrollToBottom();
@@ -669,13 +757,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
         // 설문 시작 (연애운은 프로필 성별 자동 적용)
         Map<String, dynamic>? initialAnswers;
-        if (surveyType == FortuneSurveyType.love && userProfile?.gender != null) {
+        if (surveyType == FortuneSurveyType.love &&
+            userProfile?.gender != null) {
           initialAnswers = {'gender': userProfile!.gender};
         }
         surveyNotifier.startSurvey(surveyType, initialAnswers: initialAnswers);
 
         // dailyCalendar이고 이미 캘린더 연동되어 있으면 첫 단계 건너뛰기
-        if (surveyType == FortuneSurveyType.dailyCalendar && _isCalendarSynced) {
+        if (surveyType == FortuneSurveyType.dailyCalendar &&
+            _isCalendarSynced) {
           // 자동으로 'sync' 답변 처리 후 다음 단계로
           surveyNotifier.answerCurrentStep('sync');
           chatNotifier.addAiMessage('캘린더가 이미 연동되어 있어요! 📅');
@@ -710,6 +800,58 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         _scrollToBottom();
       });
     }
+  }
+
+  void _updateChatBackgroundForType(FortuneSurveyType? type) {
+    if (type == null) return;
+    final asset = _fortuneBackgroundAssets[type];
+    if (asset == null) return;
+    _setChatBackgroundAsset(asset);
+  }
+
+  void _setChatBackgroundAsset(String asset) {
+    if (_chatBackgroundAsset == asset) return;
+    setState(() {
+      _chatBackgroundAsset = asset;
+    });
+  }
+
+  DateTime _getCsatDate(DateTime now) {
+    int year = now.year;
+    DateTime csatDate = _thirdThursdayOfNovember(year);
+    final today = DateTime(now.year, now.month, now.day);
+    if (today.isAfter(csatDate)) {
+      year += 1;
+      csatDate = _thirdThursdayOfNovember(year);
+    }
+    return csatDate;
+  }
+
+  DateTime _thirdThursdayOfNovember(int year) {
+    int count = 0;
+    for (int day = 1; day <= 30; day += 1) {
+      final date = DateTime(year, 11, day);
+      if (date.weekday == DateTime.thursday) {
+        count += 1;
+        if (count == 3) {
+          return date;
+        }
+      }
+    }
+    return DateTime(year, 11, 1);
+  }
+
+  String _normalizeDateValue(dynamic value) {
+    if (value == null) {
+      return '';
+    }
+    if (value is DateTime) {
+      return value.toIso8601String().split('T')[0];
+    }
+    if (value is String) {
+      return value.split('T')[0];
+    }
+    return value.toString();
   }
 
   /// RecommendationChip의 fortuneType을 FortuneSurveyType으로 매핑 (30개 전체)
@@ -810,7 +952,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
     // 이름 파싱: "김인주입니다", "김인주 입니다", "제 이름은 김인주예요" 등에서 이름 추출
     final name = _parseNameFromText(text.trim());
-    debugPrint('🔍 [_handleOnboardingNameSubmit] Original: $text, Parsed: $name');
+    debugPrint(
+        '🔍 [_handleOnboardingNameSubmit] Original: $text, Parsed: $name');
 
     ref.read(onboardingChatProvider.notifier).submitName(name);
     _textController.clear();
@@ -884,12 +1027,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
     // 온보딩 중이면 온보딩 핸들러로 위임 (빌드 시점 레이스 컨디션 방지)
     final onboardingState = ref.read(onboardingChatProvider);
-    debugPrint('🔍 [_handleSendMessage] needsOnboarding: ${onboardingState.needsOnboarding}, currentStep: ${onboardingState.currentStep}');
+    debugPrint(
+        '🔍 [_handleSendMessage] needsOnboarding: ${onboardingState.needsOnboarding}, currentStep: ${onboardingState.currentStep}');
 
     // 온보딩 진행 중이면 모든 입력을 온보딩으로 처리
     // ✅ currentStep 기준으로 판단 (needsOnboarding이 stale data로 false일 수 있음)
-    final isOnboardingActive = onboardingState.currentStep != OnboardingStep.completed;
-    debugPrint('🔍 [_handleSendMessage] isOnboardingActive: $isOnboardingActive');
+    final isOnboardingActive =
+        onboardingState.currentStep != OnboardingStep.completed;
+    debugPrint(
+        '🔍 [_handleSendMessage] isOnboardingActive: $isOnboardingActive');
 
     if (isOnboardingActive) {
       if (onboardingState.currentStep == OnboardingStep.name ||
@@ -944,6 +1090,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         _showDreamBubbles = true;
       }
     });
+    _updateChatBackgroundForType(type);
 
     // 사용자 선택 메시지 추가
     final typeName = _getTypeDisplayName(type);
@@ -1095,9 +1242,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final surveyNotifier = ref.read(chatSurveyProvider.notifier);
 
     // 사용자 답변 메시지
-    final displayText = option.emoji != null
-        ? '${option.emoji} ${option.label}'
-        : option.label;
+    final displayText =
+        option.emoji != null ? '${option.emoji} ${option.label}' : option.label;
     chatNotifier.addUserMessage(displayText);
     _scrollToBottom();
 
@@ -1144,7 +1290,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final beforeState = ref.read(chatSurveyProvider);
     final isGratitude = beforeState.activeProgress?.config.fortuneType ==
         FortuneSurveyType.gratitude;
-    final gratitudeStepIndex = beforeState.activeProgress?.currentStepIndex ?? 0;
+    final gratitudeStepIndex =
+        beforeState.activeProgress?.currentStepIndex ?? 0;
 
     // 사용자 답변 메시지
     chatNotifier.addUserMessage(displayText);
@@ -1158,7 +1305,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // 아직 완료되지 않은 경우에만 리액션 표시
       Future.delayed(const Duration(milliseconds: 300), () {
         // 랜덤 리액션 선택
-        final reaction = _gratitudeReactions[gratitudeStepIndex % _gratitudeReactions.length];
+        final reaction = _gratitudeReactions[
+            gratitudeStepIndex % _gratitudeReactions.length];
         chatNotifier.addAiMessage(reaction);
         _scrollToBottom();
 
@@ -1284,7 +1432,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final selectedOptions =
         options.where((opt) => selectedIds.contains(opt.id)).toList();
     final displayText = selectedOptions
-        .map((opt) => opt.emoji != null ? '${opt.emoji} ${opt.label}' : opt.label)
+        .map((opt) =>
+            opt.emoji != null ? '${opt.emoji} ${opt.label}' : opt.label)
         .join(', ');
     chatNotifier.addUserMessage(displayText);
     _scrollToBottom();
@@ -1390,9 +1539,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     chatNotifier.showTypingIndicator();
     _scrollToBottom();
 
-    final typeName = completedType != null
-        ? _getTypeDisplayName(completedType)
-        : '인사이트';
+    final typeName =
+        completedType != null ? _getTypeDisplayName(completedType) : '인사이트';
 
     // API 호출 (점 3개 로딩 애니메이션 표시 중) - 캐시 우선 확인
     _callFortuneApiWithCache(
@@ -1431,7 +1579,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       }
 
       // Fortune 객체와 함께 리치 카드 표시 (모든 운세 유형 동일 처리)
-      final fortuneTypeStr = _mapSurveyTypeToString(completedType ?? FortuneSurveyType.daily);
+      final fortuneTypeStr =
+          _mapSurveyTypeToString(completedType ?? FortuneSurveyType.daily);
 
       // match-insight인 경우 MatchInsight 구성
       MatchInsight? matchInsight;
@@ -1441,7 +1590,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           final matchData = completedData['match'] as Map<String, dynamic>?;
           final sportStr = completedData['sport'] as String? ?? 'baseball';
 
-          Logger.info('[ChatHome] MatchInsight 구성 시작: sport=$sportStr, matchData=$matchData');
+          Logger.info(
+              '[ChatHome] MatchInsight 구성 시작: sport=$sportStr, matchData=$matchData');
           Logger.info('[ChatHome] metadata keys: ${metadata.keys.toList()}');
 
           // SportType 변환
@@ -1472,24 +1622,29 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           // 경기 정보 추출
           final homeTeam = matchData?['homeTeam'] as String? ?? '';
           final awayTeam = matchData?['awayTeam'] as String? ?? '';
-          final gameTimeStr = matchData?['gameTime'] as String? ?? matchData?['startTime'] as String?;
+          final gameTimeStr = matchData?['gameTime'] as String? ??
+              matchData?['startTime'] as String?;
           final gameDate = gameTimeStr != null
               ? DateTime.tryParse(gameTimeStr) ?? DateTime.now()
               : DateTime.now();
           final favoriteTeam = completedData['favoriteTeam'] as String?;
 
           // prediction 파싱
-          final predictionData = metadata['prediction'] as Map<String, dynamic>? ?? {};
+          final predictionData =
+              metadata['prediction'] as Map<String, dynamic>? ?? {};
           final prediction = MatchPrediction(
-            winProbability: (predictionData['winProbability'] as num?)?.toInt() ?? 50,
+            winProbability:
+                (predictionData['winProbability'] as num?)?.toInt() ?? 50,
             confidence: predictionData['confidence'] as String? ?? 'medium',
-            keyFactors: (predictionData['keyFactors'] as List?)?.cast<String>() ?? [],
+            keyFactors:
+                (predictionData['keyFactors'] as List?)?.cast<String>() ?? [],
             predictedScore: predictionData['predictedScore'] as String?,
             mvpCandidate: predictionData['mvpCandidate'] as String?,
           );
 
           // favoriteTeamAnalysis 파싱
-          final ftaData = metadata['favoriteTeamAnalysis'] as Map<String, dynamic>? ?? {};
+          final ftaData =
+              metadata['favoriteTeamAnalysis'] as Map<String, dynamic>? ?? {};
           final favoriteTeamAnalysis = TeamAnalysis(
             name: ftaData['name'] as String? ?? favoriteTeam ?? homeTeam,
             recentForm: ftaData['recentForm'] as String? ?? '',
@@ -1500,9 +1655,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           );
 
           // opponentAnalysis 파싱
-          final oaData = metadata['opponentAnalysis'] as Map<String, dynamic>? ?? {};
+          final oaData =
+              metadata['opponentAnalysis'] as Map<String, dynamic>? ?? {};
           final opponentAnalysis = TeamAnalysis(
-            name: oaData['name'] as String? ?? (favoriteTeam == homeTeam ? awayTeam : homeTeam),
+            name: oaData['name'] as String? ??
+                (favoriteTeam == homeTeam ? awayTeam : homeTeam),
             recentForm: oaData['recentForm'] as String? ?? '',
             strengths: (oaData['strengths'] as List?)?.cast<String>() ?? [],
             concerns: (oaData['concerns'] as List?)?.cast<String>() ?? [],
@@ -1511,7 +1668,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           );
 
           // fortuneElements 파싱
-          final feData = metadata['fortuneElements'] as Map<String, dynamic>? ?? {};
+          final feData =
+              metadata['fortuneElements'] as Map<String, dynamic>? ?? {};
           final fortuneElements = FortuneElements(
             luckyColor: feData['luckyColor'] as String? ?? '',
             luckyNumber: (feData['luckyNumber'] as num?)?.toInt() ?? 7,
@@ -1523,7 +1681,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
           matchInsight = MatchInsight(
             id: fortune.id,
-            score: fortune.overallScore ?? (metadata['score'] as num?)?.toInt() ?? 75,
+            score: fortune.overallScore ??
+                (metadata['score'] as num?)?.toInt() ??
+                75,
             content: fortune.content,
             summary: fortune.summary ?? metadata['summary'] as String? ?? '',
             advice: metadata['advice'] as String? ?? '',
@@ -1543,7 +1703,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             blurredSections: fortune.blurredSections,
           );
 
-          Logger.info('[ChatHome] MatchInsight 구성 성공: score=${matchInsight.score}, $homeTeam vs $awayTeam');
+          Logger.info(
+              '[ChatHome] MatchInsight 구성 성공: score=${matchInsight.score}, $homeTeam vs $awayTeam');
         } catch (e, st) {
           Logger.error('[ChatHome] MatchInsight 구성 실패', e, st);
         }
@@ -1554,7 +1715,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       if (fortuneTypeStr == 'past-life') {
         try {
           final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
-          Logger.info('[ChatHome] PastLifeResult 구성 시작: metadata keys=${metadata.keys.toList()}');
+          Logger.info(
+              '[ChatHome] PastLifeResult 구성 시작: metadata keys=${metadata.keys.toList()}');
 
           pastLifeResult = PastLifeResult.fromJson({
             'id': fortune.id,
@@ -1563,7 +1725,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'blurredSections': fortune.blurredSections,
           });
 
-          Logger.info('[ChatHome] PastLifeResult 구성 성공: status=${pastLifeResult.pastLifeStatus}, era=${pastLifeResult.pastLifeEra}');
+          Logger.info(
+              '[ChatHome] PastLifeResult 구성 성공: status=${pastLifeResult.pastLifeStatus}, era=${pastLifeResult.pastLifeEra}');
         } catch (e, st) {
           Logger.error('[ChatHome] PastLifeResult 구성 실패', e, st);
         }
@@ -1638,9 +1801,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
     // 설문 답변 또는 프로필 기본값 사용
     final mbti = data['mbti'] as String? ?? userProfile?.mbtiType ?? 'INFP';
-    final bloodType = data['bloodType'] as String? ?? userProfile?.bloodType ?? 'O';
-    final zodiac = data['zodiac'] as String? ?? userProfile?.zodiacSign ?? '물병자리';
-    final zodiacAnimal = data['zodiacAnimal'] as String? ?? userProfile?.chineseZodiac ?? '용';
+    final bloodType =
+        data['bloodType'] as String? ?? userProfile?.bloodType ?? 'O';
+    final zodiac =
+        data['zodiac'] as String? ?? userProfile?.zodiacSign ?? '물병자리';
+    final zodiacAnimal =
+        data['zodiacAnimal'] as String? ?? userProfile?.chineseZodiac ?? '용';
 
     chatNotifier.showTypingIndicator();
     _scrollToBottom();
@@ -1670,7 +1836,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         chatNotifier.addSystemMessage();
       });
     } catch (e) {
-      Logger.error('[ChatHomePage] PersonalityDNA generation failed', {'error': e});
+      Logger.error(
+          '[ChatHomePage] PersonalityDNA generation failed', {'error': e});
       chatNotifier.addAiMessage(
         '😢 성격 DNA 분석 중 문제가 발생했어요.\n잠시 후 다시 시도해주세요.',
       );
@@ -1684,7 +1851,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
     // 설문 답변에서 카테고리 추출 (survey option id가 TalismanCategory.id와 일치)
     final purposeId = data['purpose'] as String? ?? 'wealth_career';
-    final category = TalismanCategory.fromId(purposeId) ?? TalismanCategory.wealthCareer;
+    final category =
+        TalismanCategory.fromId(purposeId) ?? TalismanCategory.wealthCareer;
 
     chatNotifier.showTypingIndicator();
     _scrollToBottom();
@@ -1799,7 +1967,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   }
 
   /// 궁합 설문 시작 시 inputMethod 단계 자동 건너뛰기
-  Future<void> _handleCompatibilityAutoSkip(ChatSurveyNotifier surveyNotifier) async {
+  Future<void> _handleCompatibilityAutoSkip(
+      ChatSurveyNotifier surveyNotifier) async {
     // 프로필 로드 확인 및 새로고침
     final notifier = ref.read(secondaryProfilesProvider.notifier);
     await notifier.refresh();
@@ -1849,7 +2018,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 프로필 생성 완료 시 자동으로 궁합 진행
       if (result != null && mounted) {
-        chatNotifier.addAiMessage('${result.name}님 정보를 저장했어요! 💕\n이제 궁합을 봐드릴게요.');
+        chatNotifier
+            .addAiMessage('${result.name}님 정보를 저장했어요! 💕\n이제 궁합을 봐드릴게요.');
         _scrollToBottom();
 
         // 생성된 프로필로 궁합 진행
@@ -1889,7 +2059,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   }
 
   /// 가족 프로필 선택 처리 (가족운용)
-  void _handleFamilyProfileSelect(SecondaryProfile? profile, String familyRelation) async {
+  void _handleFamilyProfileSelect(
+      SecondaryProfile? profile, String familyRelation) async {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
 
     // 가족 관계 한글 이름
@@ -2163,20 +2334,24 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       );
 
       if (cachedHistory != null && cachedHistory.detailedResult != null) {
-        Logger.info('🎯 [ChatHomePage] Cache HIT - returning cached fortune for $fortuneType');
+        Logger.info(
+            '🎯 [ChatHomePage] Cache HIT - returning cached fortune for $fortuneType');
         return _convertHistoryToFortune(cachedHistory);
       }
     } catch (e) {
-      Logger.warning('[ChatHomePage] Cache lookup failed, proceeding to API: $e');
+      Logger.warning(
+          '[ChatHomePage] Cache lookup failed, proceeding to API: $e');
     }
 
     // 2. 꿈 해몽의 경우 하드코딩된 결과 확인 (롤링 칩 선택 시)
     if (type == FortuneSurveyType.dream) {
       final dreamContent = answers['dreamContent'] as String?;
       if (dreamContent != null) {
-        final hardcodedData = DreamInterpretations.getInterpretation(dreamContent);
+        final hardcodedData =
+            DreamInterpretations.getInterpretation(dreamContent);
         if (hardcodedData != null) {
-          Logger.info('🎯 [ChatHomePage] Using hardcoded dream interpretation: $dreamContent');
+          Logger.info(
+              '🎯 [ChatHomePage] Using hardcoded dream interpretation: $dreamContent');
           final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
 
           // 짧은 딜레이로 자연스러운 로딩 효과
@@ -2246,7 +2421,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       metadata: data['metadata'] as Map<String, dynamic>?,
       tokenCost: data['tokenCost'] as int? ?? 0, // 캐시된 결과는 토큰 소비 없음
       category: data['category'] as String?,
-      overallScore: data['overallScore'] as int? ?? history.summary['score'] as int?,
+      overallScore:
+          data['overallScore'] as int? ?? history.summary['score'] as int?,
       description: data['description'] as String?,
       scoreBreakdown: data['scoreBreakdown'] as Map<String, dynamic>?,
       luckyItems: data['luckyItems'] as Map<String, dynamic>?,
@@ -2266,13 +2442,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       overall: data['overall'] as Map<String, dynamic>?,
       categories: data['categories'] as Map<String, dynamic>?,
       sajuInsight: data['sajuInsight'] as Map<String, dynamic>?,
-      personalActions: (data['personalActions'] as List?)?.cast<Map<String, dynamic>>(),
+      personalActions:
+          (data['personalActions'] as List?)?.cast<Map<String, dynamic>>(),
       notification: data['notification'] as Map<String, dynamic>?,
       shareCard: data['shareCard'] as Map<String, dynamic>?,
       uiBlocks: (data['uiBlocks'] as List?)?.cast<String>(),
       explain: data['explain'] as Map<String, dynamic>?,
       isBlurred: data['isBlurred'] as bool? ?? false,
-      blurredSections: (data['blurredSections'] as List?)?.cast<String>() ?? const [],
+      blurredSections:
+          (data['blurredSections'] as List?)?.cast<String>() ?? const [],
       percentile: data['percentile'] as int?,
       totalTodayViewers: data['totalTodayViewers'] as int?,
       isPercentileValid: data['isPercentileValid'] as bool? ?? false,
@@ -2305,7 +2483,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
         Logger.info('💾 [ChatHomePage] Fortune saved to history: $fortuneType');
       } catch (e) {
-        Logger.warning('[ChatHomePage] Failed to save fortune to history (ignored): $e');
+        Logger.warning(
+            '[ChatHomePage] Failed to save fortune to history (ignored): $e');
       }
     });
   }
@@ -2483,13 +2662,17 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           userId: userId,
           fortuneType: 'love',
           params: {
-            'userName': userName,  // ✅ 유저 이름 (철수님 대신 실제 이름 사용)
+            'userName': userName, // ✅ 유저 이름 (철수님 대신 실제 이름 사용)
             'age': age,
             'gender': gender,
             'relationshipStatus': answers['status'] ?? 'single',
             'datingStyles': ['casual', 'serious'],
             'valueImportance': {
-              '외모': 3, '성격': 5, '경제력': 3, '가치관': 5, '유머감각': 4,
+              '외모': 3,
+              '성격': 5,
+              '경제력': 3,
+              '가치관': 5,
+              '유머감각': 4,
             },
             'concern': answers['concern'],
             'preferredAgeRange': {'min': age - 5, 'max': age + 5},
@@ -2515,7 +2698,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           },
           person2: {
             'name': partnerProfile?['name'] ?? partnerProfile?.name ?? '상대방',
-            'birth_date': partnerProfile?['birthDate'] ?? partnerProfile?.birthDate?.toIso8601String()?.split('T')[0] ?? birthDateStr,
+            'birth_date': partnerProfile?['birthDate'] ??
+                partnerProfile?.birthDate?.toIso8601String()?.split('T')[0] ??
+                birthDateStr,
           },
         );
 
@@ -2532,7 +2717,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         final hasPartnerInfo = answers['hasPartnerInfo'];
         // 이미지는 {'imagePath': '...'} 형태로 저장됨
         final partnerPhotoData = answers['partnerPhoto'];
-        final partnerPhotoPath = partnerPhotoData is Map ? partnerPhotoData['imagePath'] : null;
+        final partnerPhotoPath =
+            partnerPhotoData is Map ? partnerPhotoData['imagePath'] : null;
 
         // 사진이 있으면 base64로 변환
         String? partnerPhotoBase64;
@@ -2542,7 +2728,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             if (await file.exists()) {
               final bytes = await file.readAsBytes();
               partnerPhotoBase64 = base64Encode(bytes);
-              Logger.info('Partner photo converted to base64: ${bytes.length} bytes');
+              Logger.info(
+                  'Partner photo converted to base64: ${bytes.length} bytes');
             }
           } catch (e) {
             Logger.error('Failed to convert photo to base64', e);
@@ -2568,7 +2755,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             // 상대방 정보 (조건부 수집)
             if (partnerPhotoBase64 != null)
               'partnerPhotos': [partnerPhotoBase64],
-            if (hasPartnerInfo == 'instagram' && answers['partnerInstagram'] != null)
+            if (hasPartnerInfo == 'instagram' &&
+                answers['partnerInstagram'] != null)
               'partnerInstagram': answers['partnerInstagram'],
             'hasPartnerInfo': hasPartnerInfo ?? 'none',
             'analysisType': analysisType,
@@ -2602,13 +2790,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           fortuneType: 'ex-lover',
           params: {
             'name': userName,
-            'ex_name': _normalizeExPartnerName(answers['exPartnerName'] as String?),
+            'ex_name':
+                _normalizeExPartnerName(answers['exPartnerName'] as String?),
             'ex_mbti': answers['exPartnerMbti'] ?? 'unknown',
             'ex_birth_date': answers['exPartnerBirthYear'] ?? '',
             'primaryGoal': primaryGoal,
             'time_since_breakup': answers['breakupTime'] ?? 'recent',
             'breakup_initiator': answers['breakupInitiator'] ?? 'mutual',
-            'relationshipDepth': _mapRelationshipDepth(answers['relationshipDepth']),
+            'relationshipDepth':
+                _mapRelationshipDepth(answers['relationshipDepth']),
             'coreReason': answers['coreReason'] ?? 'unknown',
             'breakup_detail': answers['detailedStory'] ?? '',
             'currentState': answers['currentState'] is List
@@ -2784,7 +2974,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         final lottoFortuneResult = LottoNumberGenerator.generate(
           birthDate: birthDate,
           birthTime: userProfile?.birthTime,
-          gender: userProfile?.gender,
+          gender: userProfile?.gender.value,
           gameCount: gameCount,
         );
 
@@ -2839,7 +3029,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // ChatTarotFlow에서 수집된 데이터로 타로 API 호출
         // BUG FIX: 타로 데이터는 answers['tarotSelection'] 안에 중첩되어 있음!
         // survey step id가 'tarotSelection'이므로 해당 키 아래에 저장됨
-        final tarotData = answers['tarotSelection'] as Map<String, dynamic>? ?? {};
+        final tarotData =
+            answers['tarotSelection'] as Map<String, dynamic>? ?? {};
         return apiService.getFortune(
           userId: userId,
           fortuneType: 'tarot',
@@ -2895,7 +3086,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       case FortuneSurveyType.fortuneCookie:
         // 로컬 포춘쿠키 생성기 사용 (API 호출 없음, 일일 저장)
-        final cookieResult = await FortuneCookieGenerator.getTodayFortuneCookie();
+        final cookieResult =
+            await FortuneCookieGenerator.getTodayFortuneCookie();
         return Fortune(
           id: 'fortune-cookie-${DateTime.now().toIso8601String().split('T')[0]}',
           userId: userId,
@@ -2947,7 +3139,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'exerciseGoal': exerciseGoalMap[surveyGoal] ?? 'endurance',
             'sportType': 'gym', // 채팅에서는 기본 헬스 추천
             'weeklyFrequency': 3,
-            'experienceLevel': experienceLevelMap[surveyIntensity] ?? 'intermediate',
+            'experienceLevel':
+                experienceLevelMap[surveyIntensity] ?? 'intermediate',
             'fitnessLevel': fitnessLevelMap[surveyIntensity] ?? 3,
             'injuryHistory': <String>['none'],
             'preferredTime': 'evening',
@@ -2962,7 +3155,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         final favoriteTeam = answers['favoriteTeam'] as String?;
 
         // match 객체에서 필드 추출
-        final sport = match?['sport'] as String? ?? answers['sport'] as String? ?? 'baseball';
+        final sport = match?['sport'] as String? ??
+            answers['sport'] as String? ??
+            'baseball';
         final league = match?['league'] as String? ?? '';
         final homeTeam = match?['homeTeam'] as String? ?? '';
         final awayTeam = match?['awayTeam'] as String? ?? '';
@@ -2991,7 +3186,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // Edge Function 요구: celebrity_id, celebrity_name, connection_type, question_type, category, name, birthDate
         // Survey step ids: 'celebrity' (object), 'connectionType' (chips), 'interest' (chips)
         final celebrity = answers['celebrity'] as Map<String, dynamic>?;
-        final connectionType = answers['connectionType'] as String? ?? 'ideal_match';
+        final connectionType =
+            answers['connectionType'] as String? ?? 'ideal_match';
         final interest = answers['interest'] as String? ?? 'overall';
         return apiService.getFortune(
           userId: userId,
@@ -3000,7 +3196,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'name': userName,
             'birthDate': birthDateStr,
             'celebrity_id': celebrity?['id'] ?? '',
-            'celebrity_name': celebrity?['name'] ?? celebrity?['displayName'] ?? '',
+            'celebrity_name':
+                celebrity?['name'] ?? celebrity?['displayName'] ?? '',
             'celebrity_birth_date': celebrity?['birthDate'] ?? '',
             'connection_type': connectionType,
             'question_type': interest,
@@ -3051,8 +3248,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'pet_age': petAge,
             'pet_gender': petGender,
             if (petBreed != null && petBreed.isNotEmpty) 'pet_breed': petBreed,
-            if (petPersonality != null && petPersonality.isNotEmpty) 'pet_personality': petPersonality,
-            if (petHealthNotes != null && petHealthNotes.isNotEmpty) 'pet_health_notes': petHealthNotes,
+            if (petPersonality != null && petPersonality.isNotEmpty)
+              'pet_personality': petPersonality,
+            if (petHealthNotes != null && petHealthNotes.isNotEmpty)
+              'pet_health_notes': petHealthNotes,
             if (petNeutered != null) 'pet_neutered': petNeutered,
           },
         );
@@ -3064,25 +3263,28 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         final familyType = _getFamilyType(familyConcern);
 
         // 가족 구성원 프로필 데이터 (familyProfile 단계에서 수집)
-        final familyProfileData = answers['familyProfile'] as Map<String, dynamic>?;
+        final familyProfileData =
+            answers['familyProfile'] as Map<String, dynamic>?;
 
         return apiService.getFortune(
           userId: userId,
-          fortuneType: 'family-$familyType', // fortune-family-health, fortune-family-wealth 등
+          fortuneType:
+              'family-$familyType', // fortune-family-health, fortune-family-wealth 등
           params: {
             'name': userName,
             'birthDate': birthDateStr,
             'family_type': familyType,
             'relationship': answers['member'] ?? 'all',
             // 가족 구성원 정보 추가
-            if (familyProfileData != null) 'familyMember': {
-              'name': familyProfileData['name'],
-              'birthDate': familyProfileData['birthDate'],
-              'birthTime': familyProfileData['birthTime'],
-              'gender': familyProfileData['gender'],
-              'isLunar': familyProfileData['isLunar'] ?? false,
-              'relation': familyProfileData['familyRelation'],
-            },
+            if (familyProfileData != null)
+              'familyMember': {
+                'name': familyProfileData['name'],
+                'birthDate': familyProfileData['birthDate'],
+                'birthTime': familyProfileData['birthTime'],
+                'gender': familyProfileData['gender'],
+                'isLunar': familyProfileData['isLunar'] ?? false,
+                'relation': familyProfileData['familyRelation'],
+              },
           },
         );
 
@@ -3131,7 +3333,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             if (await file.exists()) {
               final bytes = await file.readAsBytes();
               imageBase64 = base64Encode(bytes);
-              Logger.info('OOTD photo converted to base64: ${bytes.length} bytes');
+              Logger.info(
+                  'OOTD photo converted to base64: ${bytes.length} bytes');
             }
           } catch (e) {
             Logger.error('Failed to convert OOTD photo to base64', e);
@@ -3171,6 +3374,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case FortuneSurveyType.exam:
         // Edge Function 요구: exam_category, exam_date, preparation_status (snake_case)
         // Survey step ids: 'examType', 'examDate', 'preparation'
+        final examType = answers['examType'] as String?;
+        final rawExamDate = _normalizeDateValue(answers['examDate']);
+        final resolvedExamDate = rawExamDate.isNotEmpty
+            ? rawExamDate
+            : (examType == 'csat'
+                ? _getCsatDate(DateTime.now())
+                    .toIso8601String()
+                    .split('T')[0]
+                : DateTime.now().toIso8601String().split('T')[0]);
         return apiService.getFortune(
           userId: userId,
           fortuneType: 'exam',
@@ -3178,9 +3390,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'name': userName,
             'birthDate': birthDateStr,
             'gender': gender,
-            'exam_category': answers['examType'] ?? 'general',
-            'exam_date': answers['examDate']?.toString() ??
-                DateTime.now().toIso8601String().split('T')[0],
+            'exam_category': examType ?? 'general',
+            'exam_date': resolvedExamDate,
             'preparation_status': answers['preparation'] ?? 'normal',
           },
         );
@@ -3193,7 +3404,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // 방향 자동 계산
         String direction = 'unknown';
         String? distanceFormatted;
-        if (currentLocation?.hasCoordinates == true && targetLocation?.hasCoordinates == true) {
+        if (currentLocation?.hasCoordinates == true &&
+            targetLocation?.hasCoordinates == true) {
           final directionInfo = DirectionCalculator.getDirectionInfo(
             fromLat: currentLocation!.latitude!,
             fromLng: currentLocation.longitude!,
@@ -3205,20 +3417,21 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         } else if (currentLocation != null && targetLocation != null) {
           // 좌표 없으면 지역명으로 추론
           direction = DirectionCalculator.inferFromRegionNames(
-            currentLocation.displayName,
-            targetLocation.displayName,
-          ) ?? 'unknown';
+                currentLocation.displayName,
+                targetLocation.displayName,
+              ) ??
+              'unknown';
         }
 
         // 이사 시기 포맷팅
         final movingPeriod = answers['movingPeriod'] as String? ?? 'undecided';
         final specificDate = answers['specificDate']?.toString();
-        final movingDate = specificDate ??
-            _formatMovingPeriod(movingPeriod);
+        final movingDate = specificDate ?? _formatMovingPeriod(movingPeriod);
 
         // 걱정사항 (다중선택)
         final concerns = answers['concerns'];
-        final concernsList = concerns is List ? concerns.cast<String>() : <String>[];
+        final concernsList =
+            concerns is List ? concerns.cast<String>() : <String>[];
 
         return apiService.getFortune(
           userId: userId,
@@ -3237,7 +3450,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'movingPeriod': movingPeriod,
             'movingDate': movingDate,
             'purpose': _mapMovingPurpose(answers['purpose'] as String?),
-            'concerns': concernsList.isNotEmpty ? concernsList.join(', ') : null,
+            'concerns':
+                concernsList.isNotEmpty ? concernsList.join(', ') : null,
           },
         );
 
@@ -3270,16 +3484,31 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final now = DateTime.now();
     switch (period) {
       case '1month':
-        return now.add(const Duration(days: 30)).toIso8601String().split('T')[0];
+        return now
+            .add(const Duration(days: 30))
+            .toIso8601String()
+            .split('T')[0];
       case '3months':
-        return now.add(const Duration(days: 90)).toIso8601String().split('T')[0];
+        return now
+            .add(const Duration(days: 90))
+            .toIso8601String()
+            .split('T')[0];
       case '6months':
-        return now.add(const Duration(days: 180)).toIso8601String().split('T')[0];
+        return now
+            .add(const Duration(days: 180))
+            .toIso8601String()
+            .split('T')[0];
       case '1year':
-        return now.add(const Duration(days: 365)).toIso8601String().split('T')[0];
+        return now
+            .add(const Duration(days: 365))
+            .toIso8601String()
+            .split('T')[0];
       case 'undecided':
       default:
-        return now.add(const Duration(days: 90)).toIso8601String().split('T')[0]; // 기본 3개월
+        return now
+            .add(const Duration(days: 90))
+            .toIso8601String()
+            .split('T')[0]; // 기본 3개월
     }
   }
 
@@ -3465,12 +3694,13 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// 꿈해몽 dreamContent 입력 단계인지 확인
   bool _isDreamContentStep(ChatSurveyState surveyState) {
-    if (!surveyState.isActive || surveyState.activeProgress == null) return false;
+    if (!surveyState.isActive || surveyState.activeProgress == null)
+      return false;
     final config = surveyState.activeProgress!.config;
     final currentStep = surveyState.activeProgress!.currentStep;
     return config.fortuneType == FortuneSurveyType.dream &&
-           currentStep.id == 'dreamContent' &&
-           _showDreamBubbles;
+        currentStep.id == 'dreamContent' &&
+        _showDreamBubbles;
   }
 
   /// 채팅용 꿈 칩 위젯 (좌우 흔들리는 칩)
@@ -3490,7 +3720,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   }
 
   /// 설문 입력 위젯 빌드 - inputType에 따라 적절한 위젯 반환
-  Widget? _buildSurveyInputWidget(ChatSurveyState surveyState, List<SurveyOption> options) {
+  Widget? _buildSurveyInputWidget(
+      ChatSurveyState surveyState, List<SurveyOption> options) {
     if (!surveyState.isActive || surveyState.activeProgress == null) {
       return null;
     }
@@ -3564,7 +3795,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case SurveyInputType.familyProfile:
         // 가족 프로필 선택 (가족운)
         // 이전 단계에서 선택한 member 값을 가져옴
-        final selectedMember = surveyState.activeProgress?.answers['member'] as String?;
+        final selectedMember =
+            surveyState.activeProgress?.answers['member'] as String?;
         if (selectedMember == null || selectedMember == 'all') {
           // 가족 전체 선택 시 이 단계 스킵
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -3574,7 +3806,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
         return ChatFamilyProfileSelector(
           familyRelation: selectedMember,
-          onSelect: (profile) => _handleFamilyProfileSelect(profile, selectedMember),
+          onSelect: (profile) =>
+              _handleFamilyProfileSelect(profile, selectedMember),
           hintText: currentStep.question,
         );
 
@@ -3701,7 +3934,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case SurveyInputType.investmentTicker:
-        final selectedCategory = surveyState.activeProgress?.answers['category'] as String?;
+        final selectedCategory =
+            surveyState.activeProgress?.answers['category'] as String?;
         return ChatInvestmentTickerSelector(
           category: selectedCategory,
           onTickerSelected: (ticker) {
@@ -3735,7 +3969,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case SurveyInputType.matchSelection:
-        final selectedSport = surveyState.activeProgress?.answers['sport'] as String? ?? 'baseball';
+        final selectedSport =
+            surveyState.activeProgress?.answers['sport'] as String? ??
+                'baseball';
         return ChatMatchSelector(
           selectedSport: selectedSport,
           onSelect: (game, league) {
@@ -3755,7 +3991,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case SurveyInputType.location:
-        final questionTitle = surveyState.activeProgress?.currentStep.question ?? '지역을 선택해주세요';
+        final questionTitle =
+            surveyState.activeProgress?.currentStep.question ?? '지역을 선택해주세요';
         return ChatLocationPicker(
           questionTitle: questionTitle,
           onLocationSelected: (location) {
@@ -3798,7 +4035,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           key: const ValueKey('onboarding-bloodtype'),
           child: OnboardingBloodTypeSelector(
             onSelect: (bloodType) {
-              ref.read(onboardingChatProvider.notifier).submitBloodType(bloodType);
+              ref
+                  .read(onboardingChatProvider.notifier)
+                  .submitBloodType(bloodType);
               _scrollToBottom();
             },
           ),
@@ -3812,6 +4051,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             onConfirm: () {
               ref.read(onboardingChatProvider.notifier).confirmOnboarding();
               _scrollToBottom();
+              // AI 메시지 추가 후 추가 스크롤 (300ms 지연으로 메시지 추가됨)
+              Future.delayed(const Duration(milliseconds: 500), _scrollToBottom);
             },
             onRestart: () {
               ref.read(onboardingChatProvider.notifier).restartOnboarding();
@@ -3848,7 +4089,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final inputType = surveyState.activeProgress!.currentStep.inputType;
     // 텍스트/음성 입력이 필요한 경우는 입력란 유지
     return inputType != SurveyInputType.text &&
-           inputType != SurveyInputType.voice;
+        inputType != SurveyInputType.voice;
   }
 
   /// 하단 떠다니는 영역의 높이 계산 (설문 + 온보딩 칩 + 입력란)
@@ -3876,10 +4117,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // 확인 화면: 정보 요약 카드 + 2개 버튼
       padding += 380;
     } else if (onboardingStep == OnboardingStep.loginPrompt) {
-      // 로그인 유도: 회원가입 버튼 + 나중에 버튼 + 혜택 아이콘
-      padding += 320;
+      // 로그인 유도: 회원가입 버튼 + 나중에 버튼 + 메시지 여백
+      padding += 200;
     } else if (onboardingStep == OnboardingStep.birthDate ||
-               onboardingStep == OnboardingStep.birthTime) {
+        onboardingStep == OnboardingStep.birthTime) {
       // 생년월일/시간 피커 (통합 피커는 높이가 큼)
       padding += 400;
     } else if (surveyState.isActive) {
@@ -3895,11 +4136,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // 질문 헤더(40) + 칩 영역 + 여백(40) - 최소 140, 최대 400
         padding += (chipAreaHeight + 80).clamp(140.0, 400.0);
       } else if (inputType == SurveyInputType.profile ||
-                 inputType == SurveyInputType.petProfile) {
+          inputType == SurveyInputType.petProfile) {
         // 프로필/펫프로필 선택 (힌트 + 프로필 칩들 + 새로 입력하기 버튼)
         padding += 180;
       } else if (inputType == SurveyInputType.text ||
-                 inputType == SurveyInputType.voice) {
+          inputType == SurveyInputType.voice) {
         // 텍스트/음성 입력
         padding += 20;
       } else if (inputType == SurveyInputType.tarot) {
@@ -3926,12 +4167,41 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     return padding;
   }
 
+  Widget _buildChatBackground() {
+    final asset = _chatBackgroundAsset ?? _defaultChatBackgroundAsset;
+    return IgnorePointer(
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 240),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        child: SizedBox.expand(
+          key: ValueKey(asset),
+          child: Opacity(
+            opacity: 0.3,
+            child: Image.asset(
+              asset,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final chatState = ref.watch(chatMessagesProvider);
     final surveyState = ref.watch(chatSurveyProvider);
     final onboardingState = ref.watch(onboardingChatProvider);
     final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // 온보딩 상태 변경 시 자동 스크롤
     ref.listen<OnboardingState>(onboardingChatProvider, (previous, next) {
@@ -3948,26 +4218,30 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 현재 설문 스텝이 텍스트/음성 입력인지 확인 (둘 다 하단 텍스트 필드 사용)
     final isTextInputStep = surveyState.isActive &&
         surveyState.activeProgress != null &&
-        (surveyState.activeProgress!.currentStep.inputType == SurveyInputType.text ||
-         surveyState.activeProgress!.currentStep.inputType == SurveyInputType.voice);
+        (surveyState.activeProgress!.currentStep.inputType ==
+                SurveyInputType.text ||
+            surveyState.activeProgress!.currentStep.inputType ==
+                SurveyInputType.voice);
 
     // 온보딩 이름 입력 중인지 확인 (welcome과 name 단계 모두 포함)
     // ✅ currentStep 기준으로 판단 (needsOnboarding이 stale data로 false일 수 있음)
     final isOnboardingNameStep =
         onboardingState.currentStep == OnboardingStep.welcome ||
-        onboardingState.currentStep == OnboardingStep.name;
+            onboardingState.currentStep == OnboardingStep.name;
 
     // 온보딩 특수 입력 단계 (텍스트 입력 숨김)
     final isOnboardingPickerStep =
         onboardingState.currentStep == OnboardingStep.birthDate ||
-        onboardingState.currentStep == OnboardingStep.birthTime;
+            onboardingState.currentStep == OnboardingStep.birthTime;
     final isOnboardingChipStep =
         onboardingState.currentStep == OnboardingStep.gender ||
-        onboardingState.currentStep == OnboardingStep.mbti ||
-        onboardingState.currentStep == OnboardingStep.bloodType ||
-        onboardingState.currentStep == OnboardingStep.confirmation ||
-        onboardingState.currentStep == OnboardingStep.loginPrompt;
-    final shouldHideInput = _shouldHideInputField(surveyState) || isOnboardingPickerStep || isOnboardingChipStep;
+            onboardingState.currentStep == OnboardingStep.mbti ||
+            onboardingState.currentStep == OnboardingStep.bloodType ||
+            onboardingState.currentStep == OnboardingStep.confirmation ||
+            onboardingState.currentStep == OnboardingStep.loginPrompt;
+    final shouldHideInput = _shouldHideInputField(surveyState) ||
+        isOnboardingPickerStep ||
+        isOnboardingChipStep;
 
     // ✅ 온보딩 상태 체크 중이면 빈 화면 표시 (깜빡임 방지)
     if (onboardingState.isCheckingStatus) {
@@ -3977,259 +4251,318 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: colors.background,
-      body: SafeArea(
-        bottom: false, // MainShell에서 navigation bar padding 처리
-        child: GestureDetector(
-          onTap: () {
-            // 배경 탭 시 키보드 dismiss
-            FocusScope.of(context).unfocus();
-          },
-          behavior: HitTestBehavior.translucent,
-          child: Stack(
-            children: [
-              // 메인 콘텐츠 (메시지 영역)
-              chatState.isEmpty
-                  ? ChatWelcomeView(
-                      onChipTap: _handleChipTap,
-                      bottomPadding: _calculateBottomPadding(
-                        surveyState,
-                        onboardingState,
-                        surveyOptions: surveyOptions,
-                      ),
-                    )
-                  : ChatMessageList(
-                      scrollController: _scrollController,
-                      messages: chatState.messages,
-                      isTyping: chatState.isTyping,
-                      onChipTap: _handleChipTap,
-                      bottomPadding: _calculateBottomPadding(
-                        surveyState,
-                        onboardingState,
-                        surveyOptions: surveyOptions,
-                      ),
+    final overlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+    );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlayStyle,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: _buildChatBackground(),
+            ),
+            SafeArea(
+              bottom: false, // MainShell에서 navigation bar padding 처리
+              child: GestureDetector(
+                onTap: () {
+                  // 배경 탭 시 키보드 dismiss
+                  FocusScope.of(context).unfocus();
+                },
+                behavior: HitTestBehavior.translucent,
+                child: Stack(
+                  children: [
+                    // 메인 콘텐츠 (메시지 영역)
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) =>
+                          FadeTransition(opacity: animation, child: child),
+                      child: chatState.isEmpty
+                          ? ChatWelcomeView(
+                              key: const ValueKey('chat-welcome'),
+                              onChipTap: _handleChipTap,
+                              bottomPadding: _calculateBottomPadding(
+                                surveyState,
+                                onboardingState,
+                                surveyOptions: surveyOptions,
+                              ),
+                            )
+                          : ChatMessageList(
+                              key: const ValueKey('chat-messages'),
+                              scrollController: _scrollController,
+                              messages: chatState.messages,
+                              isTyping: chatState.isTyping,
+                              onChipTap: _handleChipTap,
+                              onViewAllTap: _handleViewAllTap,
+                              bottomPadding: _calculateBottomPadding(
+                                surveyState,
+                                onboardingState,
+                                surveyOptions: surveyOptions,
+                              ),
+                            ),
                     ),
 
-            // 프로필 아이콘 (투명 오버레이 - 좌측) - 온보딩 중에는 숨김
-            if (onboardingState.currentStep == OnboardingStep.completed)
-              const Positioned(
-                left: DSSpacing.md,
-                top: DSSpacing.sm,
-                child: ProfileHeaderIcon(),
-              ),
+                    // 프로필 아이콘 (투명 오버레이 - 좌측) - 온보딩 중에는 숨김
+                    if (onboardingState.currentStep == OnboardingStep.completed)
+                      const Positioned(
+                        left: DSSpacing.md,
+                        top: DSSpacing.sm,
+                        child: ProfileHeaderIcon(),
+                      ),
 
-            // 상단 우측 버튼 영역 (게스트 로그인 + 초기화) - 온보딩 중에는 숨김
-            if (onboardingState.currentStep == OnboardingStep.completed)
-              Positioned(
-                right: DSSpacing.sm,
-                top: DSSpacing.xs,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // 게스트 로그인 버튼 (심플 버전)
-                    const GuestLoginBanner(),
-                    const SizedBox(width: DSSpacing.xs),
-                    // 초기화 버튼
-                    InkWell(
-                      onTap: () {
-                        ref.read(chatMessagesProvider.notifier).clearConversation();
-                        ref.read(chatSurveyProvider.notifier).cancelSurvey();
-                        _textController.clear();
-                        setState(() {
-                          _detectedIntents = [];
-                        });
-                      },
-                      borderRadius: BorderRadius.circular(DSRadius.full),
-                      child: Padding(
-                        padding: const EdgeInsets.all(DSSpacing.xs),
-                        child: Icon(
-                          Icons.refresh,
-                          size: 18,
-                          color: colors.textTertiary,
+                    // 상단 우측 버튼 영역 (게스트 로그인 + 초기화) - 온보딩 중에는 숨김
+                    if (onboardingState.currentStep == OnboardingStep.completed)
+                      Positioned(
+                        right: DSSpacing.sm,
+                        top: DSSpacing.xs,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // 게스트 로그인 버튼 (심플 버전)
+                            const GuestLoginBanner(),
+                            const SizedBox(width: DSSpacing.xs),
+                            // 초기화 버튼
+                            InkWell(
+                              onTap: () {
+                                ref
+                                    .read(chatMessagesProvider.notifier)
+                                    .clearConversation();
+                                ref
+                                    .read(chatSurveyProvider.notifier)
+                                    .cancelSurvey();
+                                _textController.clear();
+                                setState(() {
+                                  _detectedIntents = [];
+                                });
+                              },
+                              borderRadius: BorderRadius.circular(DSRadius.full),
+                              child: Padding(
+                                padding: const EdgeInsets.all(DSSpacing.xs),
+                                child: Icon(
+                                  Icons.refresh,
+                                  size: 18,
+                                  color: colors.textTertiary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    // 떠다니는 하단 영역 (설문 + 칩 + 입력란)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: SafeArea(
+                        top: false,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // 설문 입력 영역 (inputType에 따라 다른 위젯) - 슬라이드 업 애니메이션
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              switchInCurve: Curves.easeOutCubic,
+                              switchOutCurve: Curves.easeInCubic,
+                              transitionBuilder: (child, animation) {
+                                return SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, 1),
+                                    end: Offset.zero,
+                                  ).animate(animation),
+                                  child: child,
+                                );
+                              },
+                              child: surveyState.isActive
+                                  ? KeyedSubtree(
+                                      key: ValueKey(
+                                          surveyState.activeProgress?.currentStep.id ??
+                                              'survey'),
+                                      child: _buildSurveyInputWidget(
+                                            surveyState,
+                                            surveyOptions,
+                                          ) ??
+                                          const SizedBox.shrink(),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+
+                            // 온보딩 날짜+시간 피커 (birthDate 단계에서 표시)
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              switchInCurve: Curves.easeOutCubic,
+                              switchOutCurve: Curves.easeInCubic,
+                              transitionBuilder: (child, animation) {
+                                return SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, 1),
+                                    end: Offset.zero,
+                                  ).animate(animation),
+                                  child: child,
+                                );
+                              },
+                              child: isOnboardingPickerStep
+                                  ? KeyedSubtree(
+                                      key: const ValueKey('onboarding-picker'),
+                                      child: ChatBirthDatetimePicker(
+                                        hintText: '생년월일과 태어난 시간을 선택하세요',
+                                        onSelected: (result) {
+                                          if (result.isUnknown) {
+                                            // 날짜 모름 - 기본값으로 처리
+                                            ref
+                                                .read(onboardingChatProvider.notifier)
+                                                .submitBirthDateTime(
+                                                  DateTime(1990, 1, 1),
+                                                  null,
+                                                );
+                                          } else if (result.year != null &&
+                                              result.month != null &&
+                                              result.day != null) {
+                                            final date = DateTime(
+                                              result.year!,
+                                              result.month!,
+                                              result.day!,
+                                            );
+                                            final time = result.hour != null
+                                                ? TimeOfDay(
+                                                    hour: result.hour!,
+                                                    minute: result.minute ?? 0,
+                                                  )
+                                                : null;
+                                            ref
+                                                .read(onboardingChatProvider.notifier)
+                                                .submitBirthDateTime(date, time);
+                                          }
+                                          _scrollToBottom();
+                                        },
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+
+                            // 온보딩 성별/MBTI/혈액형/확인/로그인 선택
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              switchInCurve: Curves.easeOutCubic,
+                              switchOutCurve: Curves.easeInCubic,
+                              transitionBuilder: (child, animation) {
+                                return SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, 1),
+                                    end: Offset.zero,
+                                  ).animate(animation),
+                                  child: child,
+                                );
+                              },
+                              child: _buildOnboardingChipInput(onboardingState),
+                            ),
+
+                            // 추천 운세 칩 (텍스트 입력 시 - 키워드 기반 + AI 추천)
+                            if (!surveyState.isActive &&
+                                (_detectedIntents.isNotEmpty ||
+                                    _isLoadingRecommendations))
+                              FortuneTypeChips(
+                                intents: _detectedIntents,
+                                onSelect: _handleFortuneTypeSelect,
+                                isLoading: _isLoadingRecommendations,
+                              ),
+
+                            // 텍스트 입력란 (선택형 설문/온보딩 시 슬라이드 아웃)
+                            IgnorePointer(
+                              ignoring: shouldHideInput,
+                              child: ClipRect(
+                                child: AnimatedSlide(
+                                  offset: shouldHideInput
+                                      ? const Offset(0, 1)
+                                      : Offset.zero,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeOutCubic,
+                                  child: AnimatedOpacity(
+                                    opacity: shouldHideInput ? 0.0 : 1.0,
+                                    duration: const Duration(milliseconds: 200),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: DSSpacing.md,
+                                      ),
+                                      child: UnifiedVoiceTextField(
+                                        controller: _textController,
+                                        hintText: isOnboardingNameStep
+                                            ? '이름을 입력하세요'
+                                            : isTextInputStep
+                                                ? '텍스트를 입력하세요...'
+                                                : surveyState.isActive
+                                                    ? '위 선택지에서 골라주세요'
+                                                    : '무엇이든 물어보세요...',
+                                        onSubmit: isOnboardingNameStep
+                                            ? _handleOnboardingNameSubmit
+                                            : isTextInputStep
+                                                ? _handleTextSurveySubmit
+                                                : surveyState.isActive
+                                                    ? (_) {}
+                                                    : _handleSendMessage,
+                                        enabled: !shouldHideInput &&
+                                            (!surveyState.isActive ||
+                                                isTextInputStep ||
+                                                isOnboardingNameStep),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
 
-            // 떠다니는 하단 영역 (설문 + 칩 + 입력란)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: SafeArea(
-                top: false,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // 설문 입력 영역 (inputType에 따라 다른 위젯) - 슬라이드 업 애니메이션
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
-                      transitionBuilder: (child, animation) {
-                        return SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0, 1),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      child: surveyState.isActive
-                          ? KeyedSubtree(
-                              key: ValueKey(surveyState.activeProgress?.currentStep.id ?? 'survey'),
-                              child: _buildSurveyInputWidget(surveyState, surveyOptions) ?? const SizedBox.shrink(),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-
-                    // 온보딩 날짜+시간 피커 (birthDate 단계에서 표시)
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
-                      transitionBuilder: (child, animation) {
-                        return SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0, 1),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      child: isOnboardingPickerStep
-                          ? KeyedSubtree(
-                              key: const ValueKey('onboarding-picker'),
-                              child: ChatBirthDatetimePicker(
-                                hintText: '생년월일과 태어난 시간을 선택하세요',
-                                onSelected: (result) {
-                                  if (result.isUnknown) {
-                                    // 날짜 모름 - 기본값으로 처리
-                                    ref.read(onboardingChatProvider.notifier).submitBirthDateTime(
-                                      DateTime(1990, 1, 1),
-                                      null,
-                                    );
-                                  } else if (result.year != null && result.month != null && result.day != null) {
-                                    final date = DateTime(result.year!, result.month!, result.day!);
-                                    final time = result.hour != null
-                                        ? TimeOfDay(hour: result.hour!, minute: result.minute ?? 0)
-                                        : null;
-                                    ref.read(onboardingChatProvider.notifier).submitBirthDateTime(date, time);
-                                  }
-                                  _scrollToBottom();
-                                },
+                    // 포춘쿠키 애니메이션 오버레이
+                    if (_showCookieAnimation)
+                      Positioned.fill(
+                        child: GestureDetector(
+                          onTap: () {}, // 배경 탭 방지
+                          child: Container(
+                            color: colors.background.withValues(alpha: 0.95),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    '🥠',
+                                    style: TextStyle(fontSize: 32),
+                                  ),
+                                  const SizedBox(height: DSSpacing.md),
+                                  Text(
+                                    '쿠키가 열리고 있어요!',
+                                    style: context.typography.bodyLarge.copyWith(
+                                      color: colors.textPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: DSSpacing.xl),
+                                  CookieShardBreakWidget(
+                                    imagePath:
+                                        'assets/images/fortune_cards/fortune_cookie_fortune.png',
+                                    size: 220,
+                                    accentColor: const Color(0xFF9333EA),
+                                    onBreakComplete: _onCookieAnimationComplete,
+                                  ),
+                                ],
                               ),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-
-                    // 온보딩 성별/MBTI/혈액형/확인/로그인 선택
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
-                      transitionBuilder: (child, animation) {
-                        return SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0, 1),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      child: _buildOnboardingChipInput(onboardingState),
-                    ),
-
-                    // 추천 운세 칩 (텍스트 입력 시 - 키워드 기반 + AI 추천)
-                    if (!surveyState.isActive && (_detectedIntents.isNotEmpty || _isLoadingRecommendations))
-                      FortuneTypeChips(
-                        intents: _detectedIntents,
-                        onSelect: _handleFortuneTypeSelect,
-                        isLoading: _isLoadingRecommendations,
-                      ),
-
-                    // 텍스트 입력란 (선택형 설문/온보딩 시 슬라이드 아웃)
-                    IgnorePointer(
-                      ignoring: shouldHideInput,
-                      child: ClipRect(
-                        child: AnimatedSlide(
-                          offset: shouldHideInput ? const Offset(0, 1) : Offset.zero,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOutCubic,
-                          child: AnimatedOpacity(
-                            opacity: shouldHideInput ? 0.0 : 1.0,
-                            duration: const Duration(milliseconds: 200),
-                            child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
-                            child: UnifiedVoiceTextField(
-                              controller: _textController,
-                              hintText: isOnboardingNameStep
-                                  ? '이름을 입력하세요'
-                                  : isTextInputStep
-                                      ? '텍스트를 입력하세요...'
-                                      : surveyState.isActive
-                                          ? '위 선택지에서 골라주세요'
-                                          : '무엇이든 물어보세요...',
-                              onSubmit: isOnboardingNameStep
-                                  ? _handleOnboardingNameSubmit
-                                  : isTextInputStep
-                                      ? _handleTextSurveySubmit
-                                      : surveyState.isActive
-                                          ? (_) {}
-                                          : _handleSendMessage,
-                              enabled: !shouldHideInput && (!surveyState.isActive || isTextInputStep || isOnboardingNameStep),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    ),
                   ],
                 ),
               ),
             ),
-
-            // 포춘쿠키 애니메이션 오버레이
-            if (_showCookieAnimation)
-              Positioned.fill(
-                child: GestureDetector(
-                  onTap: () {}, // 배경 탭 방지
-                  child: Container(
-                    color: colors.background.withValues(alpha: 0.95),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            '🥠',
-                            style: TextStyle(fontSize: 32),
-                          ),
-                          const SizedBox(height: DSSpacing.md),
-                          Text(
-                            '쿠키가 열리고 있어요!',
-                            style: context.typography.bodyLarge.copyWith(
-                              color: colors.textPrimary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: DSSpacing.xl),
-                          CookieShardBreakWidget(
-                            imagePath: 'assets/images/fortune_cards/fortune_cookie_fortune.png',
-                            size: 220,
-                            accentColor: const Color(0xFF9333EA),
-                            onBreakComplete: _onCookieAnimationComplete,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -4249,7 +4582,8 @@ class _MultiSelectSurveyWidget extends StatefulWidget {
   });
 
   @override
-  State<_MultiSelectSurveyWidget> createState() => _MultiSelectSurveyWidgetState();
+  State<_MultiSelectSurveyWidget> createState() =>
+      _MultiSelectSurveyWidgetState();
 }
 
 class _MultiSelectSurveyWidgetState extends State<_MultiSelectSurveyWidget> {
@@ -4296,7 +4630,8 @@ class _MultiSelectSurveyWidgetState extends State<_MultiSelectSurveyWidget> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.accentSecondary,
                 foregroundColor: Colors.white,
-                disabledBackgroundColor: colors.textTertiary.withValues(alpha: 0.3),
+                disabledBackgroundColor:
+                    colors.textTertiary.withValues(alpha: 0.3),
                 padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(DSRadius.md),

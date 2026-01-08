@@ -266,18 +266,6 @@ class OnboardingLoginPromptCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // 혜택 아이콘
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _BenefitItem(icon: Icons.cloud_outlined, label: '기록 보관'),
-              const SizedBox(width: DSSpacing.lg),
-              _BenefitItem(icon: Icons.devices_outlined, label: '기기 동기화'),
-              const SizedBox(width: DSSpacing.lg),
-              _BenefitItem(icon: Icons.star_outline, label: '프리미엄 기능'),
-            ],
-          ),
-          const SizedBox(height: DSSpacing.md),
           // 회원가입 버튼
           SizedBox(
             width: double.infinity,
@@ -310,37 +298,6 @@ class OnboardingLoginPromptCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// 혜택 아이템 위젯
-class _BenefitItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _BenefitItem({
-    required this.icon,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 24, color: colors.accentSecondary),
-        const SizedBox(height: DSSpacing.xxs),
-        Text(
-          label,
-          style: typography.labelSmall.copyWith(
-            color: colors.textSecondary,
-          ),
-        ),
-      ],
     );
   }
 }

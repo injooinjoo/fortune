@@ -82,6 +82,9 @@ class UnifiedButton extends StatefulWidget {
   final Duration? animationDelay;
   final UnifiedButtonAnimation? animationType;
 
+  // ========== 전통 스타일 테마 ==========
+  final bool useBrushFrame;
+
   const UnifiedButton({
     super.key,
     required this.text,
@@ -111,6 +114,7 @@ class UnifiedButton extends StatefulWidget {
     this.enableAnimation = false,
     this.animationDelay,
     this.animationType,
+    this.useBrushFrame = true, // 기본값을 true로 설정하여 전체적인 테마 일관성 유지
   });
 
   // ========== Factory 생성자 (기존 호환성) ==========
@@ -503,8 +507,10 @@ class _UnifiedButtonState extends State<UnifiedButton> {
 
   Widget _buildProgressButton(BuildContext context) {
     final colors = context.colors;
-    final effectiveEnabled =
-        widget.isEnabled && !widget.isLoading && !_isProcessing && widget.onPressed != null;
+    final effectiveEnabled = widget.isEnabled &&
+        !widget.isLoading &&
+        !_isProcessing &&
+        widget.onPressed != null;
 
     // 색상 정의
     final backgroundColor = colors.backgroundTertiary;
@@ -581,13 +587,17 @@ class _UnifiedButtonState extends State<UnifiedButton> {
   Widget _buildBasicButton(BuildContext context) {
     final colors = context.colors;
     final isDark = context.isDark;
-    final effectiveEnabled =
-        widget.isEnabled && !widget.isLoading && !_isProcessing && widget.onPressed != null;
+    final effectiveEnabled = widget.isEnabled &&
+        !widget.isLoading &&
+        !_isProcessing &&
+        widget.onPressed != null;
 
     final Widget child = widget.isLoading
-        ? _buildLoadingIndicator(_getTextColor(colors, isDark, effectiveEnabled))
+        ? _buildLoadingIndicator(
+            _getTextColor(colors, isDark, effectiveEnabled))
         : Row(
-            mainAxisSize: widget.width != null ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisSize:
+                widget.width != null ? MainAxisSize.max : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (widget.icon != null) ...[
@@ -598,14 +608,14 @@ class _UnifiedButtonState extends State<UnifiedButton> {
                   ),
                   child: widget.icon!,
                 ),
-                if (widget.text.isNotEmpty)
-                  const SizedBox(width: DSSpacing.xs),
+                if (widget.text.isNotEmpty) const SizedBox(width: DSSpacing.xs),
               ],
               if (widget.text.isNotEmpty)
                 Flexible(
                   child: Text(
                     widget.text,
-                    style: _getTextStyle(colors, isDark, effectiveEnabled).copyWith(
+                    style: _getTextStyle(colors, isDark, effectiveEnabled)
+                        .copyWith(
                       inherit: false, // CRITICAL: Prevent TextStyle lerp error
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -620,7 +630,9 @@ class _UnifiedButtonState extends State<UnifiedButton> {
     final buttonConfig = _getButtonConfig(colors, effectiveEnabled);
 
     Widget button = Material(
-      color: buttonConfig.backgroundColor,
+      color: widget.useBrushFrame && widget.style == UnifiedButtonStyle.primary
+          ? Colors.transparent
+          : buttonConfig.backgroundColor,
       borderRadius: BorderRadius.circular(DSRadius.md),
       child: InkWell(
         onTap: effectiveEnabled ? _handleTap : null,
@@ -630,12 +642,27 @@ class _UnifiedButtonState extends State<UnifiedButton> {
         child: Container(
           height: _getHeight(),
           padding: _getPadding(),
-          decoration: buttonConfig.border != null
-              ? BoxDecoration(
-                  borderRadius: BorderRadius.circular(DSRadius.md),
-                  border: buttonConfig.border,
-                )
-              : null,
+          decoration:
+              widget.useBrushFrame && widget.style == UnifiedButtonStyle.primary
+                  ? BoxDecoration(
+                      image: DecorationImage(
+                        image: const AssetImage(
+                            'assets/images/ui/btn_brush_frame.png'),
+                        fit: BoxFit.fill,
+                        colorFilter: !effectiveEnabled
+                            ? ColorFilter.mode(
+                                Colors.white.withValues(alpha: 0.5),
+                                BlendMode.dstIn,
+                              )
+                            : null,
+                      ),
+                    )
+                  : (buttonConfig.border != null
+                      ? BoxDecoration(
+                          borderRadius: BorderRadius.circular(DSRadius.md),
+                          border: buttonConfig.border,
+                        )
+                      : null),
           alignment: Alignment.center,
           child: child,
         ),
@@ -690,9 +717,8 @@ class _UnifiedButtonState extends State<UnifiedButton> {
         );
       case UnifiedButtonStyle.danger:
         return _ButtonConfig(
-          backgroundColor: enabled
-              ? DSColors.error
-              : DSColors.error.withValues(alpha: 0.5),
+          backgroundColor:
+              enabled ? DSColors.error : DSColors.error.withValues(alpha: 0.5),
           splashColor: Colors.white.withValues(alpha: 0.1),
           highlightColor: Colors.white.withValues(alpha: 0.05),
           border: null,
@@ -736,10 +762,8 @@ class _UnifiedButtonState extends State<UnifiedButton> {
           .fadeIn(duration: 300.ms)
           .slideY(begin: 0.2, end: 0);
     } else {
-      button = button
-          .animate()
-          .fadeIn(duration: 300.ms)
-          .slideY(begin: 0.2, end: 0);
+      button =
+          button.animate().fadeIn(duration: 300.ms).slideY(begin: 0.2, end: 0);
     }
 
     return button;
@@ -873,7 +897,8 @@ class _ThreeDotsLoadingIndicatorState extends State<_ThreeDotsLoadingIndicator>
                 width: 6,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: widget.color.withValues(alpha: opacity.clamp(0.3, 1.0)),
+                  color:
+                      widget.color.withValues(alpha: opacity.clamp(0.3, 1.0)),
                   shape: BoxShape.circle,
                 ),
               ),

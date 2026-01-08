@@ -5,6 +5,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
+import '../../../../core/widgets/infographic/headers/tarot_info_header.dart';
 import '../../../../core/constants/tarot/tarot_position_meanings.dart';
 import '../../../../presentation/providers/token_provider.dart';
 
@@ -25,7 +26,8 @@ class ChatTarotResultCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ChatTarotResultCard> createState() => _ChatTarotResultCardState();
+  ConsumerState<ChatTarotResultCard> createState() =>
+      _ChatTarotResultCardState();
 }
 
 class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
@@ -59,8 +61,9 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
       _blurredSections = [];
     } else {
       _isBlurred = widget.data['isBlurred'] as bool? ?? true;
-      _blurredSections = (widget.data['blurredSections'] as List?)?.cast<String>() ??
-          ['advice', 'detailedInterpretations'];
+      _blurredSections =
+          (widget.data['blurredSections'] as List?)?.cast<String>() ??
+              ['advice', 'detailedInterpretations'];
     }
   }
 
@@ -77,7 +80,10 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
   Map<String, dynamic> get data => widget.data;
   String? get question => widget.question ?? data['question'] as String?;
   String get spreadType => data['spreadType'] as String? ?? 'single';
-  String get spreadName => data['spreadDisplayName'] as String? ?? data['spreadName'] as String? ?? '타로 리딩';
+  String get spreadName =>
+      data['spreadDisplayName'] as String? ??
+      data['spreadName'] as String? ??
+      '타로 리딩';
   List<dynamic> get cards => data['cards'] as List? ?? [];
   String get overallReading => data['overallReading'] as String? ?? '';
   String get storyTitle => data['storyTitle'] as String? ?? '';
@@ -91,7 +97,6 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: double.infinity,
@@ -99,22 +104,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.accentSecondary.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(DSRadius.lg),
+      child: DSCard.hanji(
+        padding: EdgeInsets.zero,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -132,8 +123,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
             _buildEnergyScore(colors, typography),
 
             // 키 테마 (있으면)
-            if (keyThemes.isNotEmpty)
-              _buildKeyThemes(colors, typography),
+            if (keyThemes.isNotEmpty) _buildKeyThemes(colors, typography),
 
             // 종합 해석 (스토리)
             _buildOverallSection(colors, typography),
@@ -142,8 +132,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
             _buildDetailedSection(colors, typography),
 
             // 조언 (프리미엄)
-            if (advice.isNotEmpty)
-              _buildAdviceSection(colors, typography),
+            if (advice.isNotEmpty) _buildAdviceSection(colors, typography),
 
             const SizedBox(height: DSSpacing.md),
           ],
@@ -153,91 +142,45 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
   }
 
   Widget _buildHeader(DSColorScheme colors, DSTypographyScheme typography) {
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            colors.accentSecondary.withValues(alpha: 0.15),
-            colors.accent.withValues(alpha: 0.08),
-          ],
+    // cards를 List<Map<String, dynamic>>으로 변환
+    final cardsList = cards
+        .map((c) => c is Map<String, dynamic> ? c : <String, dynamic>{})
+        .toList();
+    final themesList = keyThemes.map((t) => t.toString()).toList();
+
+    return Stack(
+      children: [
+        // 인포그래픽 헤더
+        TarotInfoHeader(
+          spreadName: spreadName,
+          question: question,
+          cards: cardsList,
+          energyLevel: energyLevel,
+          keyThemes: themesList,
         ),
-      ),
-      child: Row(
-        children: [
-          // 타로 아이콘
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [colors.accentSecondary, colors.accent],
-              ),
-              borderRadius: BorderRadius.circular(DSRadius.sm),
-            ),
-            child: const Center(
-              child: Text('🎴', style: TextStyle(fontSize: 20)),
-            ),
-          ),
-          const SizedBox(width: DSSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '타로 리딩',
-                  style: typography.bodyLarge.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  '$spreadName • ${cards.length}장',
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // 덱 표시
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.xs,
-              vertical: 2,
-            ),
-            decoration: BoxDecoration(
-              color: colors.surface.withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(DSRadius.xs),
-            ),
-            child: Text(
-              'Rider-Waite',
-              style: typography.labelSmall.copyWith(
-                color: colors.textSecondary,
-                fontSize: 10,
-              ),
-            ),
-          ),
-          const SizedBox(width: DSSpacing.xs),
-          // 좋아요 + 공유 버튼
-          FortuneActionButtons(
-            contentId: data['id']?.toString() ?? 'tarot_${DateTime.now().millisecondsSinceEpoch}',
+        // 액션 버튼 오버레이
+        Positioned(
+          top: DSSpacing.sm,
+          right: DSSpacing.sm,
+          child: FortuneActionButtons(
+            contentId: data['id']?.toString() ??
+                'tarot_${DateTime.now().millisecondsSinceEpoch}',
             contentType: 'tarot',
-            shareTitle: '타로 리딩',
-            shareContent: overallReading.length > 100
-                ? '${overallReading.substring(0, 100)}...'
-                : overallReading,
+            shareTitle: '타로 리딩 결과',
+            shareContent: overallReading,
             iconSize: 20,
-            iconColor: Colors.white.withValues(alpha: 0.9),
+            iconColor: colors.textSecondary,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildQuestionSection(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildQuestionSection(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.sm, DSSpacing.md, 0),
+      margin: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.sm, DSSpacing.md, 0),
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: colors.surfaceSecondary,
@@ -266,7 +209,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     );
   }
 
-  Widget _buildCardsSection(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildCardsSection(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
       margin: const EdgeInsets.only(top: DSSpacing.md),
       height: 150,
@@ -283,7 +227,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     );
   }
 
-  Widget _buildCardItem(DSColorScheme colors, DSTypographyScheme typography, Map<String, dynamic> card) {
+  Widget _buildCardItem(DSColorScheme colors, DSTypographyScheme typography,
+      Map<String, dynamic> card) {
     final cardNameKr = card['cardNameKr'] as String? ?? '카드';
     final imagePath = card['imagePath'] as String? ?? '';
     final isReversed = card['isReversed'] as bool? ?? false;
@@ -379,9 +324,11 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     );
   }
 
-  Widget _buildEnergyScore(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildEnergyScore(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
+      margin: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: colors.surfaceSecondary,
@@ -423,7 +370,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
 
   Widget _buildKeyThemes(DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.sm, DSSpacing.md, 0),
+      margin: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.sm, DSSpacing.md, 0),
       child: Wrap(
         spacing: DSSpacing.xs,
         runSpacing: DSSpacing.xs,
@@ -447,9 +395,11 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     );
   }
 
-  Widget _buildOverallSection(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildOverallSection(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
+      margin: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -495,9 +445,11 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     );
   }
 
-  Widget _buildDetailedSection(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildDetailedSection(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
+      margin: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
       child: UnifiedBlurWrapper(
         isBlurred: _isBlurred,
         blurredSections: _blurredSections,
@@ -559,7 +511,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     );
   }
 
-  Widget _buildDetailedInterpretations(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildDetailedInterpretations(
+      DSColorScheme colors, DSTypographyScheme typography) {
     // 스프레드 타입 파싱
     final parsedSpreadType = TarotPositionMeanings.parseSpreadType(spreadType);
 
@@ -569,18 +522,21 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
         final cardNameKr = card['cardNameKr'] as String? ?? '카드';
         final positionName = card['positionName'] as String? ?? '';
         final isReversed = card['isReversed'] as bool? ?? false;
-        final cardIndex = card['cardIndex'] as int? ?? card['index'] as int? ?? -1;
+        final cardIndex =
+            card['cardIndex'] as int? ?? card['index'] as int? ?? -1;
 
         // 하드코딩된 해석 가져오기
         String interpretation = '';
         if (parsedSpreadType != null && cardIndex >= 0) {
-          final hardcodedInterpretation = TarotPositionMeanings.getInterpretation(
+          final hardcodedInterpretation =
+              TarotPositionMeanings.getInterpretation(
             cardIndex: cardIndex,
             spreadType: parsedSpreadType,
             positionIndex: index,
             isReversed: isReversed,
           );
-          if (hardcodedInterpretation != null && hardcodedInterpretation.isNotEmpty) {
+          if (hardcodedInterpretation != null &&
+              hardcodedInterpretation.isNotEmpty) {
             interpretation = hardcodedInterpretation;
           }
         }
@@ -609,7 +565,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
                   // 위치명
                   if (positionName.isNotEmpty) ...[
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: colors.accentSecondary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(4),
@@ -634,7 +591,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
                   if (isReversed) ...[
                     const SizedBox(width: 4),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 1),
                       decoration: BoxDecoration(
                         color: colors.error.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(4),
@@ -667,9 +625,11 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     );
   }
 
-  Widget _buildAdviceSection(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildAdviceSection(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
+      margin: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
       child: UnifiedBlurWrapper(
         isBlurred: _isBlurred,
         blurredSections: _blurredSections,

@@ -194,7 +194,8 @@ class DSCard extends StatelessWidget {
     final colors = context.colors;
     final brightness = Theme.of(context).brightness;
     final effectiveRadius = borderRadius ?? DSRadius.md;
-    final effectivePadding = padding ?? const EdgeInsets.all(DSSpacing.cardPadding);
+    final effectivePadding =
+        padding ?? const EdgeInsets.all(DSSpacing.cardPadding);
 
     BoxDecoration decoration;
 
@@ -214,12 +215,16 @@ class DSCard extends StatelessWidget {
         );
         break;
       case DSCardStyle.outlined:
-        // Ink-wash border style
+        // Ink-wash border style using custom image frame
         decoration = BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.circular(effectiveRadius),
+          image: const DecorationImage(
+            image: AssetImage('assets/images/ui/card_ink_border.png'),
+            fit: BoxFit.fill,
+          ),
           border: Border.all(
-            color: colors.textPrimary.withValues(alpha: 0.12),
+            color: colors.textPrimary.withValues(alpha: 0.05),
             width: 1,
           ),
         );
@@ -288,7 +293,9 @@ class _TappableCardState extends State<_TappableCard> {
       child: AnimatedScale(
         scale: _isPressed ? DSAnimation.cardTapScale : 1.0,
         duration: _isPressed ? DSAnimation.cardTap : DSAnimation.cardRelease,
-        curve: _isPressed ? DSAnimation.cardTapCurve : DSAnimation.cardReleaseCurve,
+        curve: _isPressed
+            ? DSAnimation.cardTapCurve
+            : DSAnimation.cardReleaseCurve,
         child: widget.child,
       ),
     );
@@ -353,9 +360,8 @@ class DSGroupedCard extends StatelessWidget {
         // Ink-wash decoration for elevated and hanji styles
         decoration = DSShadows.getInkWashDecoration(
           brightness,
-          backgroundColor: style == DSCardStyle.hanji
-              ? colors.background
-              : colors.surface,
+          backgroundColor:
+              style == DSCardStyle.hanji ? colors.background : colors.surface,
           borderRadius: effectiveRadius,
         );
         break;
@@ -406,9 +412,10 @@ class DSGroupedCard extends StatelessWidget {
 
         // Card with ink-wash decoration
         Container(
-          margin: margin ?? const EdgeInsets.symmetric(
-            horizontal: DSSpacing.pageHorizontal,
-          ),
+          margin: margin ??
+              const EdgeInsets.symmetric(
+                horizontal: DSSpacing.pageHorizontal,
+              ),
           decoration: decoration,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(effectiveRadius),

@@ -6,7 +6,7 @@ import 'ads/interstitial_ad_helper.dart';
 import '../../core/theme/fortune_design_system.dart';
 import '../../core/services/personality_dna_service.dart';
 import '../../core/models/personality_dna_model.dart';
-import '../../presentation/providers/auth_provider.dart';
+import '../../presentation/providers/providers.dart';
 import '../../core/theme/typography_unified.dart';
 import '../../features/fortune/presentation/widgets/personality_dna/personality_dna_result_page.dart';
 import '../providers/subscription_provider.dart';
@@ -21,10 +21,12 @@ class PersonalityDNABottomSheet extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<PersonalityDNABottomSheet> createState() => _PersonalityDNABottomSheetState();
+  ConsumerState<PersonalityDNABottomSheet> createState() =>
+      _PersonalityDNABottomSheetState();
 }
 
-class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottomSheet> {
+class _PersonalityDNABottomSheetState
+    extends ConsumerState<PersonalityDNABottomSheet> {
   String? _selectedMbti;
   String? _selectedBloodType;
   String? _selectedZodiac;
@@ -54,15 +56,14 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
     }
   }
 
-  bool get _canGenerate => 
-    _selectedMbti != null && 
-    _selectedBloodType != null && 
-    _selectedZodiac != null && 
-    _selectedZodiacAnimal != null;
+  bool get _canGenerate =>
+      _selectedMbti != null &&
+      _selectedBloodType != null &&
+      _selectedZodiac != null &&
+      _selectedZodiacAnimal != null;
 
   @override
   Widget build(BuildContext context) {
-    
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
@@ -85,7 +86,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
+
           // Header (토스 스타일: 심플하고 깔끔)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
@@ -130,7 +131,8 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                       color: Theme.of(context).brightness == Brightness.dark
                           ? TossDesignSystem.grayDark200
                           : TossDesignSystem.gray100,
-                      borderRadius: BorderRadius.circular(TossDesignSystem.iconButtonSizeSmall / 2),
+                      borderRadius: BorderRadius.circular(
+                          TossDesignSystem.iconButtonSizeSmall / 2),
                     ),
                     child: Icon(
                       Icons.close,
@@ -144,14 +146,14 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
               ],
             ),
           ),
-          
+
           // Content - 조건부 렌더링
           Expanded(
             child: _showDetailedView
                 ? _buildDetailedSelectionView()
                 : _buildSummaryView(),
           ),
-          
+
           // Bottom Button (Floating 스타일 - 배경 없음)
           Container(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
@@ -189,9 +191,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                       ],
                     )
                   : UnifiedButton(
-                      text: _canGenerate
-                          ? '🧬 나의 성격 탐구하기'
-                          : '📝 정보 수정하기',
+                      text: _canGenerate ? '🧬 나의 성격 탐구하기' : '📝 정보 수정하기',
                       onPressed: _canGenerate && !_isLoading
                           ? _generatePersonalityDNA
                           : () {
@@ -232,7 +232,10 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
           // 정보 카드들
           _buildSummaryCard('MBTI', _selectedMbti ?? '미설정', '🧠'),
           const SizedBox(height: 12),
-          _buildSummaryCard('혈액형', _selectedBloodType != null ? '$_selectedBloodType형' : '미설정', '🩸'),
+          _buildSummaryCard(
+              '혈액형',
+              _selectedBloodType != null ? '$_selectedBloodType형' : '미설정',
+              '🩸'),
           const SizedBox(height: 12),
           _buildSummaryCard('별자리', _selectedZodiac ?? '미설정', '⭐'),
           const SizedBox(height: 12),
@@ -424,7 +427,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
             crossAxisSpacing: 8,
             children: PersonalityDNAService.mbtiTypes.map((mbti) {
               final isSelected = _selectedMbti == mbti;
-              
+
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -503,7 +506,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
           Row(
             children: PersonalityDNAService.bloodTypes.map((bloodType) {
               final isSelected = _selectedBloodType == bloodType;
-              
+
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -539,7 +542,8 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                             fontWeight: FontWeight.w600,
                             color: isSelected
                                 ? TossDesignSystem.white
-                                : (Theme.of(context).brightness == Brightness.dark
+                                : (Theme.of(context).brightness ==
+                                        Brightness.dark
                                     ? TossDesignSystem.grayDark900
                                     : TossDesignSystem.gray900),
                           ),
@@ -594,7 +598,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
             crossAxisSpacing: 8,
             children: PersonalityDNAService.zodiacSigns.map((zodiac) {
               final isSelected = _selectedZodiac == zodiac;
-              
+
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -679,7 +683,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
             crossAxisSpacing: 8,
             children: PersonalityDNAService.zodiacAnimals.map((animal) {
               final isSelected = _selectedZodiacAnimal == animal;
-              
+
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -749,7 +753,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
         setState(() {
           _isLoading = false;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('오류가 발생했습니다: $e')),
         );
@@ -768,7 +772,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
       // PersonalityDNA 생성 (API 호출)
       final personalityDNA = await PersonalityDNAService.generateDNA(
         userId: userProfile.id,
-        name: userProfile.name ?? '사용자',
+        name: userProfile.name,
         mbti: _selectedMbti!,
         bloodType: _selectedBloodType!,
         zodiac: _selectedZodiac!,
@@ -806,7 +810,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
         setState(() {
           _isLoading = false;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('성격 DNA 생성 중 오류가 발생했습니다: $e')),
         );

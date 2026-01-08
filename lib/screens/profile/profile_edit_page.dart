@@ -6,12 +6,12 @@ import '../../core/services/fortune_haptic_service.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constants/fortune_constants.dart';
 import '../../models/user_profile.dart';
-import '../../services/storage_service.dart';
 import '../../services/supabase_storage_service.dart';
 import '../../utils/date_utils.dart';
 import '../../shared/components/app_header.dart';
 import '../../shared/components/progressive_date_input.dart';
 import '../../presentation/widgets/profile_image_picker.dart';
+import '../../presentation/providers/user_profile_notifier.dart';
 import '../onboarding/widgets/birth_date_preview.dart';
 import '../../core/utils/logger.dart';
 import '../../core/design_system/design_system.dart';
@@ -24,7 +24,6 @@ class ProfileEditPage extends ConsumerStatefulWidget {
 }
 
 class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
-  final StorageService _storageService = StorageService();
   final TextEditingController _nameController = TextEditingController();
   late final SupabaseStorageService _storageService2;
 
@@ -83,6 +82,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   String? _birthTime;
   String? _mbti;
   Gender? _gender;
+  String? _bloodType;
   String? _profileImageUrl;
   XFile? _pendingImageFile;
 
@@ -99,65 +99,39 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   Future<void> _loadExistingProfile() async {
     try {
       setState(() => _isLoading = true);
-      
+
       // Get current user
       final session = Supabase.instance.client.auth.currentSession;
       _currentUser = session?.user;
-      
-      // Load profile from local storage first
-      final localProfile = await _storageService.getUserProfile();
-      
-      // If authenticated, try to load from Supabase as well
-      Map<String, dynamic>? supabaseProfile;
-      if (_currentUser != null) {
-        try {
-          final response = await Supabase.instance.client
-              .from('user_profiles')
-              .select()
-              .eq('id', _currentUser!.id)
-              .maybeSingle();
-          supabaseProfile = response;
-        } catch (e) {
-          debugPrint('Error loading profile from Supabase: $e');
-        }
-      }
-      
-      // Use Supabase profile if available, otherwise use local profile
-      final profile = supabaseProfile ?? localProfile;
-      
+
+      // Load profile from Provider (single source of truth)
+      final profileAsync = ref.read(userProfileProvider);
+      final profile =
+          ref.read(primaryUserProfileProvider) ?? profileAsync.value;
+
       if (profile != null) {
-        _originalProfile = Map<String, dynamic>.from(profile);
-        
+        _originalProfile = profile.toJson();
+
         // Populate form fields
-        _nameController.text = profile['name'] ?? '';
+        _nameController.text = profile.name;
 
-        // Parse birth date
-        if (profile['birth_date'] != null) {
-          try {
-            _birthDate = DateTime.parse(profile['birth_date']);
-          } catch (e) {
-            debugPrint('Error parsing birth date: $e');
-          }
-        }
+        // Use birth date
+        _birthDate = profile.birthDate;
 
-        _birthTime = profile['birth_time'];
-        _mbti = profile['mbti'];
-        _profileImageUrl = profile['profile_image_url'];
+        _birthTime = profile.birthTime;
+        _mbti = profile.mbti;
+        _bloodType = profile.bloodType;
+        _profileImageUrl = profile.profileImageUrl;
 
         // Parse gender
-        if (profile['gender'] != null) {
-          _gender = Gender.values.firstWhere(
-            (g) => g.value == profile['gender'],
-            orElse: () => Gender.other,
-          );
-        }
+        _gender = profile.gender;
       }
-      
+
       setState(() => _isLoading = false);
     } catch (e) {
       debugPrint('Error loading profile: $e');
       setState(() => _isLoading = false);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -174,18 +148,19 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
       _pendingImageFile = imageFile;
     });
   }
-  
+
   Future<String?> _uploadProfileImage() async {
-    if (_pendingImageFile == null || _currentUser == null) return _profileImageUrl;
-    
+    if (_pendingImageFile == null || _currentUser == null)
+      return _profileImageUrl;
+
     setState(() => _isUploadingImage = true);
-    
+
     try {
       final imageUrl = await _storageService2.uploadProfileImage(
         userId: _currentUser!.id,
         imageFile: _pendingImageFile!,
       );
-      
+
       if (imageUrl != null) {
         // Clean up old images
         await _storageService2.cleanupOldProfileImages(
@@ -193,7 +168,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
           currentImageUrl: imageUrl,
         );
       }
-      
+
       return imageUrl;
     } catch (e) {
       Logger.error('Error uploading profile image', e);
@@ -213,7 +188,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
 
   Future<void> _saveProfile() async {
     setState(() => _isSaving = true);
-    
+
     try {
       // Validate required fields
       if (_nameController.text.isEmpty || _birthDate == null) {
@@ -231,10 +206,11 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         id: _currentUser?.id ?? '',
         name: _nameController.text,
         email: _currentUser?.email ?? _originalProfile?['email'] ?? '',
-        birthDate: isoDate,
+        birthDate: _birthDate,
         birthTime: _birthTime,
         mbti: _mbti,
         gender: _gender ?? Gender.other,
+        bloodType: _bloodType,
         zodiacSign: FortuneDateUtils.getZodiacSign(isoDate),
         chineseZodiac: FortuneDateUtils.getChineseZodiac(isoDate),
         onboardingCompleted: true,
@@ -252,8 +228,13 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         updatedAt: DateTime.now(),
       );
 
-      // Save to local storage
-      await _storageService.saveUserProfile(profile.toJson());
+      // Save using UserProfileNotifier (handles both Supabase and local storage)
+      await ref
+          .read(userProfileNotifierProvider.notifier)
+          .updateProfile(profile);
+
+      debugPrint('✅ Profile updated and synced via UserProfileNotifier');
+      debugPrint('✅ Updated profile name: ${_nameController.text}');
 
       // If authenticated, sync with Supabase
       if (_currentUser != null) {
@@ -266,6 +247,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             'birth_time': _birthTime,
             'mbti': _mbti,
             'gender': _gender?.value,
+            'blood_type': _bloodType,
             'profile_image_url': uploadedImageUrl ?? _profileImageUrl,
             'onboarding_completed': true,
             'zodiac_sign': profile.zodiacSign,
@@ -279,7 +261,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
           // Continue even if Supabase sync fails
         }
       }
-      
+
       if (mounted) {
         // 저장 완료 햅틱
         ref.read(fortuneHapticServiceProvider).sectionComplete();
@@ -338,83 +320,35 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             padding: const EdgeInsets.all(DSSpacing.md),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                // Profile Image Picker
-                Container(
-                  padding: const EdgeInsets.all(DSSpacing.lg),
-                  decoration: BoxDecoration(
-                    color: _getCardColor(),
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      ProfileImagePicker(
-                        currentImageUrl: _profileImageUrl,
-                        onImageSelected: _handleImageSelected,
-                        isLoading: _isUploadingImage,
-                      ),
-                      const SizedBox(height: DSSpacing.md),
-                      Text(
-                        '프로필 사진',
-                        style: DSTypography.labelLarge.copyWith(
-                          color: _getTextColor(),
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.sm),
-                      Text(
-                        '카메라 또는 갤러리에서 사진을 선택하세요',
-                        style: DSTypography.bodySmall.copyWith(
-                          color: _getSecondaryTextColor(),
-                        ),
-                      ),
-                    ],
+                _buildSectionCard(
+                  title: '프로필 사진',
+                  description: '카메라 또는 갤러리에서 사진을 선택하세요',
+                  child: Center(
+                    child: ProfileImagePicker(
+                      currentImageUrl: _profileImageUrl,
+                      onImageSelected: _handleImageSelected,
+                      isLoading: _isUploadingImage,
+                    ),
                   ),
                 ),
                 const SizedBox(height: DSSpacing.md),
 
-
-                Container(
-                  padding: const EdgeInsets.all(DSSpacing.lg),
-                  decoration: BoxDecoration(
-                    color: _getCardColor(),
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
+                _buildSectionCard(
+                  title: '기본 정보',
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Name input
                       TextField(
                         controller: _nameController,
                         style: DSTypography.bodyMedium.copyWith(
                           color: _getTextColor(),
                         ),
-                        decoration: InputDecoration(
-                          hintText: '홍길동',
+                        decoration: _buildInputDecoration(
                           labelText: '이름',
-                          labelStyle: DSTypography.bodySmall.copyWith(
-                            color: _getSecondaryTextColor(),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(DSRadius.sm),
-                          ),
+                          hintText: '홍길동',
                         ),
                       ),
                       const SizedBox(height: DSSpacing.lg),
-
-                      // Birth date input (년/월/일 분리 입력)
                       ProgressiveDateInput(
                         initialDate: _birthDate,
                         label: '생년월일',
@@ -427,9 +361,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                         firstDate: DateTime(1900, 1, 1),
                         lastDate: DateTime.now(),
                       ),
-                      const SizedBox(height: 20),
-
-                      // Birth time input (시/분 분리 입력)
+                      const SizedBox(height: DSSpacing.md),
                       ProgressiveTimeInput(
                         initialTime: _birthTime != null
                             ? _parseTimeFromBirthTime(_birthTime!)
@@ -438,26 +370,32 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                         onTimeChanged: (time) {
                           setState(() {
                             if (time != null) {
-                              _birthTime = '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+                              _birthTime =
+                                  '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
                             } else {
                               _birthTime = null;
                             }
                           });
                         },
                       ),
-                      const SizedBox(height: 20),
-
-                      // Birth date preview
-                      if (_birthDate != null)
+                      if (_birthDate != null) ...[
+                        const SizedBox(height: DSSpacing.md),
                         BirthDatePreview(
                           birthYear: _birthDate!.year.toString(),
                           birthMonth: _birthDate!.month.toString(),
                           birthDay: _birthDate!.day.toString(),
                           birthTimePeriod: _birthTime,
                         ),
-                      const SizedBox(height: 20),
-
-                      // MBTI Selection
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.md),
+                _buildSectionCard(
+                  title: '성격 정보',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
                       Text(
                         'MBTI 성격 유형',
                         style: DSTypography.labelLarge.copyWith(
@@ -475,7 +413,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
                           crossAxisSpacing: 8,
                           mainAxisSpacing: 8,
@@ -486,42 +425,54 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           final type = mbtiTypes[index];
                           final isSelected = _mbti == type;
 
-                          return InkWell(
+                          return _buildSelectionChip(
+                            label: type,
+                            isSelected: isSelected,
                             onTap: () {
-                              ref.read(fortuneHapticServiceProvider).selection();
+                              ref
+                                  .read(fortuneHapticServiceProvider)
+                                  .selection();
                               setState(() => _mbti = type);
                             },
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? context.colors.accent
-                                    : _getCardColor(),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? context.colors.accent
-                                      : context.colors.border,
-                                ),
-                                borderRadius: BorderRadius.circular(DSRadius.sm),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  type,
-                                  style: DSTypography.bodySmall.copyWith(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : _getTextColor(),
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                  ),
-                                ),
-                              ),
-                            ),
                           );
                         },
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: DSSpacing.lg),
+                      Text(
+                        '혈액형',
+                        style: DSTypography.labelLarge.copyWith(
+                          color: _getTextColor(),
+                        ),
+                      ),
+                      const SizedBox(height: DSSpacing.md),
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                          childAspectRatio: 2.1,
+                        ),
+                        itemCount: _bloodTypes.length,
+                        itemBuilder: (context, index) {
+                          final type = _bloodTypes[index];
+                          final isSelected = _bloodType == type;
 
-                      // Gender Selection
+                          return _buildSelectionChip(
+                            label: '${type}형',
+                            isSelected: isSelected,
+                            onTap: () {
+                              ref
+                                  .read(fortuneHapticServiceProvider)
+                                  .selection();
+                              setState(() => _bloodType = type);
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: DSSpacing.lg),
                       Text(
                         '성별',
                         style: DSTypography.labelLarge.copyWith(
@@ -541,23 +492,17 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                 ),
                                 child: InkWell(
                                   onTap: () {
-                                    ref.read(fortuneHapticServiceProvider).selection();
+                                    ref
+                                        .read(fortuneHapticServiceProvider)
+                                        .selection();
                                     setState(() => _gender = gender);
                                   },
                                   borderRadius: BorderRadius.circular(8),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? context.colors.accent
-                                          : _getCardColor(),
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? context.colors.accent
-                                            : context.colors.border,
-                                      ),
-                                      borderRadius: BorderRadius.circular(DSRadius.sm),
-                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: DSSpacing.md),
+                                    decoration:
+                                        _buildSelectionDecoration(isSelected),
                                     child: Column(
                                       children: [
                                         Icon(
@@ -570,7 +515,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                         const SizedBox(height: DSSpacing.sm),
                                         Text(
                                           gender.label,
-                                          style: DSTypography.bodySmall.copyWith(
+                                          style:
+                                              DSTypography.bodySmall.copyWith(
                                             color: isSelected
                                                 ? Colors.white
                                                 : _getTextColor(),
@@ -588,57 +534,55 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           }),
                         ],
                       ),
-                      const SizedBox(height: 32),
-
-                      // Save button
-                      ElevatedButton(
-                        onPressed: (_isSaving || _isUploadingImage) ? null : _saveProfile,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: context.colors.ctaBackground,
-                          foregroundColor: context.colors.ctaForeground,
-                          disabledBackgroundColor: context.colors.ctaBackground.withValues(alpha: 0.5),
-                          minimumSize: const Size(double.infinity, 56),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(DSRadius.md),
-                          ),
-                        ),
-                        child: _isSaving
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                '저장',
-                                style: DSTypography.buttonMedium.copyWith(
-                                  color: Colors.white,
-                                ),
-                              ),
-                      ),
-                      const SizedBox(height: DSSpacing.md),
-
-                      // Cancel button
-                      TextButton(
-                        onPressed: _isSaving ? null : () => context.pop(),
-                        style: TextButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(DSRadius.md),
-                          ),
-                        ),
-                        child: Text(
-                          '취소',
-                          style: DSTypography.buttonMedium.copyWith(
-                            color: _isSaving
-                                ? context.colors.textTertiary
-                                : context.colors.accent,
-                          ),
-                        ),
-                      ),
                     ],
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.lg),
+                ElevatedButton(
+                  onPressed:
+                      (_isSaving || _isUploadingImage) ? null : _saveProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: context.colors.ctaBackground,
+                    foregroundColor: context.colors.ctaForeground,
+                    disabledBackgroundColor: context.colors.ctaBackground
+                        .withValues(alpha: 0.5),
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(DSRadius.md),
+                    ),
+                  ),
+                  child: _isSaving
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          '저장',
+                          style: DSTypography.buttonMedium.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+                const SizedBox(height: DSSpacing.md),
+                TextButton(
+                  onPressed: _isSaving ? null : () => context.pop(),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(DSRadius.md),
+                    ),
+                  ),
+                  child: Text(
+                    '취소',
+                    style: DSTypography.buttonMedium.copyWith(
+                      color: _isSaving
+                          ? context.colors.textTertiary
+                          : context.colors.accent,
+                    ),
                   ),
                 ),
               ]),
@@ -648,7 +592,121 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
       ),
     );
   }
-  
+
+  static const List<String> _bloodTypes = ['A', 'B', 'O', 'AB'];
+
+  InputDecoration _buildInputDecoration({
+    required String labelText,
+    String? hintText,
+  }) {
+    return InputDecoration(
+      labelText: labelText,
+      hintText: hintText,
+      labelStyle: DSTypography.bodySmall.copyWith(
+        color: _getSecondaryTextColor(),
+      ),
+      hintStyle: DSTypography.bodySmall.copyWith(
+        color: _getSecondaryTextColor(),
+      ),
+      filled: true,
+      fillColor: context.colors.background,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+        borderSide: BorderSide(
+          color: context.colors.border,
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+        borderSide: BorderSide(
+          color: context.colors.border,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+        borderSide: BorderSide(
+          color: context.colors.accent,
+        ),
+      ),
+    );
+  }
+
+  BoxDecoration _buildSelectionDecoration(bool isSelected) {
+    return BoxDecoration(
+      color: isSelected ? context.colors.accent : _getCardColor(),
+      border: Border.all(
+        color: isSelected ? context.colors.accent : context.colors.border,
+      ),
+      borderRadius: BorderRadius.circular(DSRadius.sm),
+    );
+  }
+
+  Widget _buildSelectionChip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(DSRadius.sm),
+      child: Container(
+        decoration: _buildSelectionDecoration(isSelected),
+        child: Center(
+          child: Text(
+            label,
+            style: DSTypography.bodySmall.copyWith(
+              color: isSelected ? Colors.white : _getTextColor(),
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required String title,
+    String? description,
+    required Widget child,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      decoration: BoxDecoration(
+        color: _getCardColor(),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            title,
+            style: DSTypography.labelLarge.copyWith(
+              color: _getTextColor(),
+            ),
+          ),
+          if (description != null) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              description,
+              style: DSTypography.bodySmall.copyWith(
+                color: _getSecondaryTextColor(),
+              ),
+            ),
+          ],
+          const SizedBox(height: DSSpacing.lg),
+          child,
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _nameController.dispose();

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/chat_message.dart';
 import '../../domain/models/recommendation_chip.dart';
+import '../providers/smart_recommendation_provider.dart';
 import 'chat_message_bubble.dart';
 import 'fortune_chip_grid.dart';
 
 /// 채팅 메시지 리스트
-class ChatMessageList extends StatelessWidget {
+class ChatMessageList extends ConsumerWidget {
   final ScrollController scrollController;
   final List<ChatMessage> messages;
   final bool isTyping;
   final void Function(RecommendationChip chip) onChipTap;
+  final VoidCallback? onViewAllTap;
   final double bottomPadding;
 
   const ChatMessageList({
@@ -19,11 +22,23 @@ class ChatMessageList extends StatelessWidget {
     required this.messages,
     required this.isTyping,
     required this.onChipTap,
+    this.onViewAllTap,
     this.bottomPadding = 0,
   });
 
+  /// 이전 메시지에서 마지막 운세 타입 찾기
+  String? _findLastFortuneType(int currentIndex) {
+    for (int i = currentIndex - 1; i >= 0; i--) {
+      final msg = messages[i];
+      if (msg.type == ChatMessageType.fortuneResult && msg.fortuneType != null) {
+        return msg.fortuneType;
+      }
+    }
+    return null;
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ListView.builder(
       controller: scrollController,
       // 부드러운 스크롤 physics
@@ -43,16 +58,23 @@ class ChatMessageList extends StatelessWidget {
 
         final message = messages[index];
 
-        // 시스템 메시지 (추천 칩) - 수평 패딩 포함
+        // 시스템 메시지 (추천 칩) - 스마트 추천 적용
         if (message.type == ChatMessageType.system) {
+          final lastFortuneType = _findLastFortuneType(index);
+          final chips = lastFortuneType != null
+              ? ref.watch(smartRecommendationProvider(lastFortuneType))
+              : defaultChips.take(4).toList();
+
           return Padding(
             padding: const EdgeInsets.symmetric(
               vertical: DSSpacing.md,
               horizontal: DSSpacing.md,
             ),
             child: FortuneChipGrid(
-              chips: defaultChips,
+              chips: chips,
               onChipTap: onChipTap,
+              showViewAll: lastFortuneType != null,
+              onViewAllTap: onViewAllTap,
             ),
           );
         }

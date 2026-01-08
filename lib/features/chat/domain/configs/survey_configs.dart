@@ -1486,7 +1486,6 @@ const moneySurveyConfig = FortuneSurveyConfig(
 
 /// 아이템 카테고리 옵션
 const _luckyItemCategoryOptions = [
-  SurveyOption(id: 'all', label: '전체', emoji: '✨'),
   SurveyOption(id: 'fashion', label: '패션/액세서리', emoji: '👔'),
   SurveyOption(id: 'food', label: '음식/음료', emoji: '🍽️'),
   SurveyOption(id: 'color', label: '컬러', emoji: '🎨'),

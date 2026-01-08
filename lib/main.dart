@@ -279,6 +279,19 @@ class MyApp extends ConsumerWidget {
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       routerConfig: router,
+      // 🎯 디바이스 시스템 폰트 크기 설정 반영 (접근성)
+      // 레이아웃 깨짐 방지를 위해 0.8 ~ 1.5 범위로 제한
+      builder: (context, child) {
+        final deviceTextScaler = MediaQuery.textScalerOf(context);
+        final clampedScaler = deviceTextScaler.clamp(
+          minScaleFactor: 0.8,
+          maxScaleFactor: 1.5,
+        );
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: clampedScaler),
+          child: child!,
+        );
+      },
     );
   }
 }

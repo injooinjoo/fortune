@@ -14,7 +14,7 @@ import '../../core/design_system/design_system.dart';
 import '../../core/theme/typography_unified.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../presentation/providers/auth_provider.dart';
+import '../../presentation/providers/providers.dart';
 import '../../data/models/user_profile.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/services/debug_premium_service.dart';
@@ -114,7 +114,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (birthDate != null && birthDate.isNotEmpty) {
       try {
         final date = DateTime.parse(birthDate);
-        parts.add('${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}');
+        parts.add(
+            '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}');
       } catch (e) {
         // 파싱 실패 시 무시
       }
@@ -263,7 +264,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     _loadUserData();
   }
-  
+
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
@@ -271,7 +272,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _internalScrollController?.dispose();
     super.dispose();
   }
-  
+
   void _onScroll() {
     // 바텀시트 모드에서는 네비게이션 바 관련 로직 스킵
     if (widget.isInBottomSheet) return;
@@ -287,12 +288,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       final isScrollingDown = scrollDelta > 0;
 
       // 방향이 바뀌었거나, 같은 방향으로 계속 스크롤 중일 때
-      if (isScrollingDown != _isScrollingDown || scrollDelta.abs() > scrollThreshold) {
+      if (isScrollingDown != _isScrollingDown ||
+          scrollDelta.abs() > scrollThreshold) {
         _isScrollingDown = isScrollingDown;
         _lastScrollOffset = currentScrollOffset;
 
         // Update navigation visibility
-        final navigationNotifier = ref.read(navigationVisibilityProvider.notifier);
+        final navigationNotifier =
+            ref.read(navigationVisibilityProvider.notifier);
         if (isScrollingDown && currentScrollOffset > 50) {
           // 최소 50픽셀은 스크롤해야 숨김
           navigationNotifier.hide();
@@ -337,8 +340,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         } catch (e) {
           // Handle missing table error gracefully
           debugPrint('Loaded local profile: ${localProfile != null}');
-          if (e.toString().contains('relation "public.user_statistics" does not exist')) {
-            debugPrint('user_statistics table not found - using default values');
+          if (e
+              .toString()
+              .contains('relation "public.user_statistics" does not exist')) {
+            debugPrint(
+                'user_statistics table not found - using default values');
           }
         }
 
@@ -365,20 +371,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         if (mounted) {
           setState(() {
             userProfile = response;
-            userStats = statsResponse ?? {
-              'total_fortunes_viewed': 0,
-              'consecutive_days': 0,
-              'last_login': DateTime.now().toIso8601String(),
-              'favorite_fortune_type': null,
-              'login_count': 0,
-              'streak_days': 0,
-              'total_tokens_earned': 0,
-              'total_tokens_spent': 0,
-              'profile_completion_percentage': 0,
-              'achievements': [],
-            };
+            userStats = statsResponse ??
+                {
+                  'total_fortunes_viewed': 0,
+                  'consecutive_days': 0,
+                  'last_login': DateTime.now().toIso8601String(),
+                  'favorite_fortune_type': null,
+                  'login_count': 0,
+                  'streak_days': 0,
+                  'total_tokens_earned': 0,
+                  'total_tokens_spent': 0,
+                  'profile_completion_percentage': 0,
+                  'achievements': [],
+                };
             // 오늘 운세 점수가 있으면 추가
-            if (todayFortuneResponse != null && todayFortuneResponse['score'] != null) {
+            if (todayFortuneResponse != null &&
+                todayFortuneResponse['score'] != null) {
               userStats!['today_score'] = todayFortuneResponse['score'];
             }
             isLoading = false;
@@ -422,7 +430,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     try {
       final fortuneApiService = ref.read(fortuneApiServiceProvider);
-      final scores = await fortuneApiService.getUserFortuneHistory(userId: userId);
+      final scores =
+          await fortuneApiService.getUserFortuneHistory(userId: userId);
 
       if (mounted) {
         setState(() {
@@ -508,7 +517,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // 프로필 요약 카드
           if (userProfile != null || localProfile != null)
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+              margin: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.pageHorizontal),
               decoration: BoxDecoration(
                 color: context.colors.surface,
                 borderRadius: BorderRadius.circular(DSRadius.md),
@@ -527,10 +537,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               child: SettingsListTile(
                 leading: CircleAvatar(
                   radius: 24,
-                  backgroundImage: (userProfile ?? localProfile)?['profile_image_url'] != null
-                      ? NetworkImage((userProfile ?? localProfile)!['profile_image_url'])
+                  backgroundImage: (userProfile ??
+                              localProfile)?['profile_image_url'] !=
+                          null
+                      ? NetworkImage(
+                          (userProfile ?? localProfile)!['profile_image_url'])
                       : null,
-                  child: (userProfile ?? localProfile)?['profile_image_url'] == null
+                  child: (userProfile ?? localProfile)?['profile_image_url'] ==
+                          null
                       ? const Icon(Icons.person, size: 24)
                       : null,
                 ),
@@ -548,13 +562,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
           // 다른 프로필 보기 텍스트 링크
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.pageHorizontal),
             child: Align(
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () => _showProfileList(context),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -574,7 +590,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // 탐구 활동 섹션
           const SectionHeader(title: '탐구 활동'),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            margin: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.pageHorizontal),
             decoration: BoxDecoration(
               color: context.colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.md),
@@ -678,7 +695,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           if (userProfile != null || localProfile != null) ...[
             const SectionHeader(title: '정보'),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+              margin: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.pageHorizontal),
               decoration: BoxDecoration(
                 color: context.colors.surface,
                 borderRadius: BorderRadius.circular(DSRadius.md),
@@ -700,7 +718,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     icon: Icons.cake_outlined,
                     title: '생년월일',
                     trailing: Text(
-                      _formatBirthDate((userProfile ?? localProfile)?['birth_date']),
+                      _formatBirthDate(
+                          (userProfile ?? localProfile)?['birth_date']),
                       style: context.bodyMedium.copyWith(
                         color: _getSecondaryTextColor(context),
                       ),
@@ -755,7 +774,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     icon: Icons.psychology_outlined,
                     title: 'MBTI',
                     trailing: Text(
-                      (userProfile ?? localProfile)?['mbti']?.toUpperCase() ?? '미입력',
+                      (userProfile ?? localProfile)?['mbti']?.toUpperCase() ??
+                          '미입력',
                       style: context.bodyMedium.copyWith(
                         color: _getSecondaryTextColor(context),
                       ),
@@ -772,7 +792,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           if (userProfile != null || localProfile != null) ...[
             const SectionHeader(title: '사주 & 분석'),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+              margin: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.pageHorizontal),
               decoration: BoxDecoration(
                 color: context.colors.surface,
                 borderRadius: BorderRadius.circular(DSRadius.md),
@@ -820,7 +841,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // 도구 섹션
           const SectionHeader(title: '도구'),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            margin: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.pageHorizontal),
             decoration: BoxDecoration(
               color: context.colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.md),
@@ -929,7 +951,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   trailing: DSToggle(
                     value: ref.watch(userSettingsProvider).hapticEnabled,
                     onChanged: (value) {
-                      ref.read(userSettingsProvider.notifier).setHapticEnabled(value);
+                      ref
+                          .read(userSettingsProvider.notifier)
+                          .setHapticEnabled(value);
                       if (value) {
                         DSHaptics.light();
                       }
@@ -989,20 +1013,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     color: _getSecondaryTextColor(context),
                   ),
                   onTap: () => context.push('/terms-of-service'),
+                ),
+                SettingsListTile(
+                  icon: Icons.logout_outlined,
+                  title: '로그아웃',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: _handleLogout,
+                ),
+                SettingsListTile(
+                  icon: Icons.person_remove_outlined,
+                  title: '회원 탈퇴',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/profile/account-deletion'),
                   isLast: true,
                 ),
               ],
-            ),
-          ),
-
-          // 로그아웃 버튼
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: DSButton.destructive(
-              text: '로그아웃',
-              onPressed: _handleLogout,
-              size: DSButtonSize.medium,
             ),
           ),
 
@@ -1011,13 +1042,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             future: ref.watch(userProfileProvider.future),
             builder: (context, snapshot) {
               final profile = snapshot.data;
-              if ((kDebugMode || _isTestAccount) && profile != null && profile.isTestAccount) {
+              if ((kDebugMode || _isTestAccount) &&
+                  profile != null &&
+                  profile.isTestAccount) {
                 return FutureBuilder<bool?>(
                   future: DebugPremiumService.getOverrideValue(),
                   builder: (context, overrideSnapshot) {
                     final tokenState = ref.watch(tokenProvider);
                     final premiumOverride = overrideSnapshot.data;
-                    final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+                    final isPremium =
+                        premiumOverride ?? tokenState.hasUnlimitedAccess;
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1025,7 +1059,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const SizedBox(height: 24),
                         const SectionHeader(title: '개발자 도구'),
                         Container(
-                          margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: DSSpacing.pageHorizontal),
                           decoration: BoxDecoration(
                             color: context.colors.surface,
                             borderRadius: BorderRadius.circular(DSRadius.md),
@@ -1047,9 +1082,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 icon: Icons.bug_report_outlined,
                                 title: '무제한 복주머니',
                                 trailing: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: context.colors.success.withValues(alpha: 0.1),
+                                    color: context.colors.success
+                                        .withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
@@ -1081,7 +1118,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   Icons.chevron_right,
                                   color: context.colors.textSecondary,
                                 ),
-                                onTap: () => _showResetConfirmationDialog(context),
+                                onTap: () =>
+                                    _showResetConfirmationDialog(context),
                               ),
                               SettingsListTile(
                                 icon: Icons.cloud_download_outlined,
@@ -1090,7 +1128,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   Icons.chevron_right,
                                   color: _getSecondaryTextColor(context),
                                 ),
-                                onTap: () => context.push('/admin/celebrity-crawling'),
+                                onTap: () =>
+                                    context.push('/admin/celebrity-crawling'),
                                 isLast: true,
                               ),
                             ],
@@ -1122,7 +1161,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
     );
-
 
     // 바텀시트 모드에서는 콘텐츠만 반환
     if (widget.isInBottomSheet) {
@@ -1197,7 +1235,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _inviteFriend() async {
     final currentUser = supabase.auth.currentUser;
     final appStoreUrl = 'https://apps.apple.com/app/fortune';
-    final playStoreUrl = 'https://play.google.com/store/apps/details?id=com.beyond.fortune';
+    final playStoreUrl =
+        'https://play.google.com/store/apps/details?id=com.beyond.fortune';
     final inviteCode = currentUser?.id.substring(0, 8) ?? 'FORTUNE2024';
 
     final shareText = '''🔮 Fortune - 오늘의 운세 앱 초대

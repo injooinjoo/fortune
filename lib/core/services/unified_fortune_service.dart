@@ -100,7 +100,8 @@ class UnifiedFortuneService {
 
       // ===== 토큰 검증 (API 호출 전) =====
       final soulAmount = SoulRates.getSoulAmount(fortuneType);
-      Logger.info('[$fortuneType] 💰 영혼 비용: $soulAmount (${soulAmount < 0 ? "프리미엄" : "무료"})');
+      Logger.info(
+          '[$fortuneType] 💰 영혼 비용: $soulAmount (${soulAmount < 0 ? "프리미엄" : "무료"})');
 
       // 게스트 사용자는 토큰 검증 건너뜀 (guest_ 접두사로 시작)
       final isGuestUser = userId.startsWith('guest_');
@@ -111,15 +112,18 @@ class UnifiedFortuneService {
           if (soulAmount < 0) {
             // 프리미엄 운세 → 토큰 부족 시 예외
             final requiredTokens = -soulAmount;
-            if (!balance.hasUnlimitedAccess && balance.remainingTokens < requiredTokens) {
-              Logger.warning('[$fortuneType] ❌ 토큰 부족: 필요 $requiredTokens, 보유 ${balance.remainingTokens}');
+            if (!balance.hasUnlimitedAccess &&
+                balance.remainingTokens < requiredTokens) {
+              Logger.warning(
+                  '[$fortuneType] ❌ 토큰 부족: 필요 $requiredTokens, 보유 ${balance.remainingTokens}');
               throw InsufficientTokensException.withDetails(
                 required: requiredTokens,
                 available: balance.remainingTokens,
                 fortuneType: fortuneType,
               );
             }
-            Logger.info('[$fortuneType] ✅ 토큰 검증 통과 (보유: ${balance.remainingTokens}, 필요: $requiredTokens)');
+            Logger.info(
+                '[$fortuneType] ✅ 토큰 검증 통과 (보유: ${balance.remainingTokens}, 필요: $requiredTokens)');
           }
         } catch (e) {
           if (e is InsufficientTokensException) {
@@ -131,7 +135,9 @@ class UnifiedFortuneService {
       }
 
       // ===== 최적화 시스템 사용 (조건 객체가 있고 활성화된 경우) =====
-      if (enableOptimization && conditions != null && dataSource == FortuneDataSource.api) {
+      if (enableOptimization &&
+          conditions != null &&
+          dataSource == FortuneDataSource.api) {
         Logger.info('[$fortuneType] 🚀 최적화 시스템 사용');
 
         try {
@@ -149,9 +155,10 @@ class UnifiedFortuneService {
 
               // buildAPIPayload()에 없는 inputConditions 데이터를 병합
               final mergedPayload = {
-                ...payload,  // conditions.buildAPIPayload() 결과
-                ...inputConditions,  // 이미지 데이터 등 추가 조건
-                'isPremium': isPremium,  // ✅ Premium 상태 전달 (Edge Function에서 블러 처리용)
+                ...payload, // conditions.buildAPIPayload() 결과
+                ...inputConditions, // 이미지 데이터 등 추가 조건
+                'isPremium':
+                    isPremium, // ✅ Premium 상태 전달 (Edge Function에서 블러 처리용)
               };
 
               final result = await _generatorFactory.generate(
@@ -161,21 +168,24 @@ class UnifiedFortuneService {
               );
 
               // ✅ DB 저장용 conditions에서 대용량 필드 제거 (image는 API 호출에만 필요)
-              final conditionsForDB = Map<String, dynamic>.from(inputConditions);
-              conditionsForDB.remove('image');  // 214KB base64 제거
+              final conditionsForDB =
+                  Map<String, dynamic>.from(inputConditions);
+              conditionsForDB.remove('image'); // 214KB base64 제거
 
               return result.data;
             },
           );
 
-          Logger.info('[$fortuneType] ✅ 최적화 시스템 완료 (소스: ${cachedResult.source})');
+          Logger.info(
+              '[$fortuneType] ✅ 최적화 시스템 완료 (소스: ${cachedResult.source})');
 
           // CachedFortuneResult → FortuneResult 변환
           var fortuneResult = _convertCachedToFortuneResult(cachedResult);
 
           // Premium이 아니면 블러 처리
           if (!isPremium) {
-            final blurredSections = GeneratorFactory.getBlurredSections(fortuneType);
+            final blurredSections =
+                GeneratorFactory.getBlurredSections(fortuneType);
             fortuneResult = fortuneResult.copyWith(
               isBlurred: true,
               blurredSections: blurredSections,
@@ -228,7 +238,8 @@ class UnifiedFortuneService {
       Logger.info('[$fortuneType] ✅ 운세 생성 완료');
       Logger.info('[$fortuneType] 🆔 ID: ${result.id}');
       Logger.info('[$fortuneType] 📝 제목: ${result.title}');
-      Logger.info('[$fortuneType] 📊 데이터 크기: ${result.data.toString().length}자');
+      Logger.info(
+          '[$fortuneType] 📊 데이터 크기: ${result.data.toString().length}자');
       Logger.info('[$fortuneType] ⭐ 점수: ${result.score}');
 
       // DB 저장 시도 (실패해도 결과는 반환)
@@ -242,14 +253,14 @@ class UnifiedFortuneService {
         Logger.info('[$fortuneType] ✅ fortune_history 저장 완료');
       } catch (saveError) {
         // DB 저장 실패해도 API 결과는 사용자에게 반환
-        Logger.error('[$fortuneType] ❌ fortune_history 저장 실패 (결과는 반환됨): $saveError');
+        Logger.error(
+            '[$fortuneType] ❌ fortune_history 저장 실패 (결과는 반환됨): $saveError');
       }
 
       // ===== API 호출 성공 후 토큰 처리 =====
       await _processSoulTransaction(userId, fortuneType, soulAmount);
 
       return result;
-
     } catch (error, stackTrace) {
       Logger.error('[$fortuneType] ❌ 운세 조회 실패', error, stackTrace);
       rethrow;
@@ -261,8 +272,10 @@ class UnifiedFortuneService {
     // Edge Function 응답 구조에 따라 필드명이 다를 수 있음
     // - score 또는 overallScore
     // - title이 없을 수 있음
-    final score = cached.resultData['score'] ?? cached.resultData['overallScore'];
-    final title = cached.resultData['title'] as String? ?? _getDefaultTitle(cached.fortuneType);
+    final score =
+        cached.resultData['score'] ?? cached.resultData['overallScore'];
+    final title = cached.resultData['title'] as String? ??
+        _getDefaultTitle(cached.fortuneType);
 
     return FortuneResult.fromJson({
       'id': cached.id,
@@ -325,22 +338,25 @@ class UnifiedFortuneService {
         return null;
       }
 
-      final today = DateTime.now().toIso8601String().split('T')[0]; // YYYY-MM-DD
+      final today =
+          DateTime.now().toIso8601String().split('T')[0]; // YYYY-MM-DD
 
       // JSONB 조건을 정규화 (키 정렬) - DB에서는 text로 캐스팅해서 비교
       final normalizedConditions = _normalizeJsonb(inputConditions);
 
-      Logger.debug('[UnifiedFortune] 중복 체크 - userId: $userId, type: $fortuneType, date: $today');
-      Logger.debug('[UnifiedFortune] Normalized conditions: ${jsonEncode(normalizedConditions)}');
+      Logger.debug(
+          '[UnifiedFortune] 중복 체크 - userId: $userId, type: $fortuneType, date: $today');
+      Logger.debug(
+          '[UnifiedFortune] Normalized conditions: ${jsonEncode(normalizedConditions)}');
 
       // 잠깐! input_conditions 비교를 빼고 일단 모든 레코드를 가져온 후 메모리에서 비교
       // 이유: DB에 잘못된 JSONB 데이터가 있으면 쿼리 자체가 실패함
       final results = await _supabase
-        .from('fortune_history')
-        .select('*, id')
-        .eq('user_id', userId)
-        .eq('fortune_type', fortuneType)
-        .eq('fortune_date', today);
+          .from('fortune_history')
+          .select('*, id')
+          .eq('user_id', userId)
+          .eq('fortune_type', fortuneType)
+          .eq('fortune_date', today);
 
       if ((results.isEmpty)) {
         Logger.debug('[UnifiedFortune] 기존 결과 없음');
@@ -364,12 +380,11 @@ class UnifiedFortuneService {
           continue;
         }
       }
-    
+
       Logger.debug('[UnifiedFortune] 조건 일치하는 기존 결과 없음');
       return null;
-
-    } catch (error) {
-      Logger.warning('[UnifiedFortune] 기존 결과 확인 실패 (무시하고 계속): $error', error);
+    } catch (error, stack) {
+      Logger.error('[UnifiedFortune] 기존 결과 확인 실패 (무시하고 계속)', error, stack);
       return null; // 실패 시 null 반환하여 새로 생성하도록
     }
   }
@@ -429,13 +444,14 @@ class UnifiedFortuneService {
         Logger.debug('[UnifiedFortune] Using simplified_for_db for storage');
       } else {
         conditionsForDB = Map<String, dynamic>.from(inputConditions);
-        conditionsForDB.remove('image');  // 214KB base64 제거 - DB 인덱스 크기 제한 (8KB)
+        conditionsForDB.remove('image'); // 214KB base64 제거 - DB 인덱스 크기 제한 (8KB)
       }
 
       // JSONB 조건을 정규화 (키 정렬)
       final normalizedConditions = _normalizeJsonb(conditionsForDB);
 
-      Logger.debug('[UnifiedFortune] Saving conditions (${normalizedConditions.length} fields, image excluded)');
+      Logger.debug(
+          '[UnifiedFortune] Saving conditions (${normalizedConditions.length} fields, image excluded)');
 
       final data = {
         'user_id': userId,
@@ -454,7 +470,6 @@ class UnifiedFortuneService {
       await _supabase.from('fortune_history').insert(data);
 
       Logger.info('[UnifiedFortune] ✅ DB 저장 완료: $fortuneType (User: $userId)');
-
     } catch (error, stackTrace) {
       // 중복 키 에러는 정상 (FortuneOptimizationService가 이미 저장함)
       if (error is PostgrestException && error.code == '23505') {
@@ -462,7 +477,8 @@ class UnifiedFortuneService {
         return; // 중복 키 에러는 무시
       }
 
-      Logger.error('[UnifiedFortune] DB 저장 실패: $fortuneType', error, stackTrace);
+      Logger.error(
+          '[UnifiedFortune] DB 저장 실패: $fortuneType', error, stackTrace);
       // 저장 실패해도 결과는 반환할 수 있도록 throw하지 않음
       // 대신 경고 로그만 남김
       Logger.warning('[UnifiedFortune] ⚠️ DB 저장 실패했지만 운세 결과는 반환됩니다');

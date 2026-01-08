@@ -62,11 +62,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
         if (mounted) {
           setState(() => _isProcessing = false);
-          context.go('/payment-result', extra: {
-            'isSuccess': true,
-            'productName': productName,
-            'tokenAmount': tokenAmount,
-          });
+          context.go('/chat');
         }
       },
       onSubscriptionActivated: (productId, isSubscription) {

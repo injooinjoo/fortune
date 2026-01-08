@@ -7,6 +7,7 @@ import '../utils/haptic_utils.dart';
 import '../utils/fortune_text_cleaner.dart';
 import '../../presentation/widgets/fortune_explanation_bottom_sheet.dart';
 import '../../core/constants/fortune_type_names.dart';
+import './infographic/lucky_items_compact.dart';
 
 /// 🎨 공통 운세 결과 위젯 라이브러리
 ///
@@ -100,9 +101,10 @@ class FortuneResultWidgets {
                       FortuneExplanationBottomSheet.show(
                         context,
                         fortuneType: fortuneType,
-                        fortuneData: fortuneData ?? {
-                          'score': score,
-                        },
+                        fortuneData: fortuneData ??
+                            {
+                              'score': score,
+                            },
                       );
                     },
                     tooltip: '${FortuneTypeNames.getName(fortuneType)} 가이드',
@@ -173,11 +175,10 @@ class FortuneResultWidgets {
                       ),
                       Text(
                         '$score점',
-                        style:
-                            Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: color,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: color,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
                   ),
@@ -199,7 +200,7 @@ class FortuneResultWidgets {
 
   // ==================== 🎁 행운 아이템 ====================
 
-  /// 행운 아이템 그리드 (Lucky Items)
+  /// 행운 아이템 리스트 (Lucky Items)
   ///
   /// **파라미터**:
   /// - `context`: BuildContext
@@ -210,48 +211,7 @@ class FortuneResultWidgets {
   }) {
     if (luckyItems.isEmpty) return const SizedBox.shrink();
 
-    return GlassCard(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '행운의 아이템',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 16),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 3,
-            childAspectRatio: 1,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            children: luckyItems.entries.map((entry) {
-              return GlassContainer(
-                padding: const EdgeInsets.all(12),
-                borderRadius: BorderRadius.circular(16),
-                blur: 10,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _getLuckyItemIcon(context, entry.key),
-                    const SizedBox(height: 8),
-                    Text(
-                      entry.value.toString(),
-                      style: Theme.of(context).textTheme.bodySmall,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+    return LuckyItemsCompact.fromMap(luckyItems);
   }
 
   // ==================== 📝 본문 ====================
@@ -387,51 +347,5 @@ class FortuneResultWidgets {
     if (score >= 50) return '조심이 필요한 시기입니다';
     if (score >= 40) return '신중히 행동하세요';
     return '어려운 시기지만 극복할 수 있습니다';
-  }
-
-  /// 행운 아이템 아이콘 반환
-  static Widget _getLuckyItemIcon(BuildContext context, String type) {
-    IconData iconData;
-    Color color;
-    final colorScheme = Theme.of(context).colorScheme;
-    final fortuneTheme = context.fortuneTheme;
-
-    switch (type.toLowerCase()) {
-      case 'color':
-      case '색깔':
-        iconData = Icons.palette_rounded;
-        color = colorScheme.primary;
-        break;
-      case 'number':
-      case '숫자':
-        iconData = Icons.looks_one_rounded;
-        color = colorScheme.secondary;
-        break;
-      case 'direction':
-      case '방향':
-        iconData = Icons.explore_rounded;
-        color = fortuneTheme.scoreExcellent;
-        break;
-      case 'time':
-      case '시간':
-        iconData = Icons.access_time_rounded;
-        color = fortuneTheme.scoreFair;
-        break;
-      case 'food':
-      case '음식':
-        iconData = Icons.restaurant_rounded;
-        color = colorScheme.error;
-        break;
-      case 'person':
-      case '사람':
-        iconData = Icons.person_rounded;
-        color = colorScheme.tertiary;
-        break;
-      default:
-        iconData = Icons.star_rounded;
-        color = colorScheme.primary;
-    }
-
-    return Icon(iconData, size: 32, color: color);
   }
 }

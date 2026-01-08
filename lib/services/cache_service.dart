@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/fortune_model.dart';
-import '../screens/home/fortune_story_viewer.dart';
 
 class CacheService {
   static const Map<String, int> _cacheDuration = {
@@ -202,115 +201,6 @@ class CacheService {
       debugPrint('Removed cached story segments from DB');
     } catch (e) {
       debugPrint('DB story cache delete error: $e');
-    }
-  }
-
-  // 스토리 세그먼트 캐싱 메서드
-  Future<void> cacheStorySegments(
-    String fortuneType,
-    Map<String, dynamic> params,
-    List<StorySegment> segments,
-  ) async {
-    try {
-      final userId = params['userId'];
-      if (userId == null) return;
-      
-      final dateKey = _getDateKeyForType(fortuneType);
-      final duration = _cacheDuration[fortuneType] ?? _cacheDuration['default']!;
-      final expiryDate = DateTime.now().add(Duration(hours: duration));
-      
-      // 스토리 데이터를 Map 리스트로 변환
-      final storyData = segments.map((segment) => {
-        'text': segment.text,
-        'subtitle': segment.subtitle,
-        'fontSize': segment.fontSize,
-        'fontWeight': segment.fontWeight?.index,
-        'alignment': segment.alignment?.index,
-        'emoji': segment.emoji,
-      }).toList();
-      
-      // DB에 스토리 세그먼트 저장 (upsert)
-      await _supabase.from('fortune_stories').upsert({
-        'user_id': userId,
-        'fortune_type': fortuneType,
-        'story_date': dateKey,
-        'story_segments': storyData,
-        'expires_at': expiryDate.toIso8601String(),
-        'created_at': DateTime.now().toIso8601String(),
-      },
-      onConflict: 'user_id,fortune_type,story_date');
-      
-      debugPrint('✅ Successfully cached ${storyData.length} story segments to DB');
-    } catch (e) {
-      debugPrint('DB story cache save error: $e');
-    }
-  }
-  
-  Future<List<StorySegment>?> getCachedStorySegments(
-    String fortuneType,
-    Map<String, dynamic> params,
-  ) async {
-    try {
-      final userId = params['userId'];
-      if (userId == null) return null;
-      
-      final dateKey = _getDateKeyForType(fortuneType);
-      debugPrint('🔍 Looking for cached story in DB for type: $fortuneType, date: $dateKey');
-      
-      // DB에서 캐시된 스토리 조회
-      final response = await _supabase
-          .from('fortune_stories')
-          .select()
-          .eq('user_id', userId)
-          .eq('fortune_type', fortuneType)
-          .eq('story_date', dateKey)
-          .maybeSingle();
-      
-      if (response == null) {
-        debugPrint('❌ No cached story found in DB');
-        return null;
-      }
-      
-      // 만료 시간 체크
-      final expiresAt = DateTime.parse(response['expires_at']);
-      if (DateTime.now().isAfter(expiresAt)) {
-        debugPrint('Cached story expired, removing from DB');
-        await _supabase
-            .from('fortune_stories')
-            .delete()
-            .eq('user_id', userId)
-            .eq('fortune_type', fortuneType)
-            .eq('story_date', dateKey);
-        return null;
-      }
-      
-      final storyData = response['story_segments'];
-      if (storyData == null || storyData is! List) {
-        debugPrint('❌ No segments data in cached story');
-        return null;
-      }
-      
-      debugPrint('✅ Found cached story with ${storyData.length} segments in DB');
-      
-      // Map 리스트를 StorySegment 리스트로 변환
-      return storyData.map((data) {
-        final map = Map<String, dynamic>.from(data);
-        return StorySegment(
-          text: map['text'] ?? '',
-          subtitle: map['subtitle'],
-          fontSize: map['fontSize']?.toDouble(),
-          fontWeight: map['fontWeight'] != null 
-            ? FontWeight.values[map['fontWeight']] 
-            : null,
-          alignment: map['alignment'] != null
-            ? TextAlign.values[map['alignment']]
-            : null,
-          emoji: map['emoji'],
-        );
-      }).toList();
-    } catch (e) {
-      debugPrint('DB story cache retrieval error: $e');
-      return null;
     }
   }
 

@@ -10,6 +10,7 @@ import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/constants/fortune_card_images.dart';
 
 /// 채팅용 성격 DNA 결과 카드
 ///
@@ -86,7 +87,6 @@ class _PersonalityDnaChatCardState
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isPremium = ref.watch(isPremiumProvider);
 
@@ -96,46 +96,39 @@ class _PersonalityDnaChatCardState
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.xl),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 헤더: DNA 코드 + 제목 + 이모지
-          _buildHeader(context).animate().fadeIn(duration: 500.ms),
+      child: DSCard.hanji(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 헤더: 프리미엄 AI 배경 + 마스코트
+            _buildHeader(context).animate().fadeIn(duration: 500.ms),
 
-          // 기본 정보 그리드
-          _buildBasicInfoGrid(context)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 100.ms),
-
-          // 블러 가능 영역
-          _buildBlurrableContent(context, isDark)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 200.ms),
-
-          // 언락 버튼 (블러 상태 + 비구독자)
-          if (_isBlurred && !isPremium)
-            _buildUnlockButton(context)
+            // 기본 정보 그리드 (AI 아이콘 적용)
+            _buildBasicInfoGrid(context)
                 .animate()
-                .fadeIn(duration: 500.ms, delay: 300.ms),
+                .fadeIn(duration: 500.ms, delay: 100.ms),
 
-          const SizedBox(height: DSSpacing.md),
-        ],
+            // 특징 및 설명
+            _buildDescriptionAndTraits(context)
+                .animate()
+                .fadeIn(duration: 500.ms, delay: 150.ms),
+
+            // 블러 가능 영역
+            _buildBlurrableContent(context, isDark)
+                .animate()
+                .fadeIn(duration: 500.ms, delay: 200.ms),
+
+            // 언락 버튼 (블러 상태 + 비구독자)
+            if (_isBlurred && !isPremium)
+              _buildUnlockButton(context)
+                  .animate()
+                  .fadeIn(duration: 500.ms, delay: 300.ms),
+
+            const SizedBox(height: DSSpacing.md),
+          ],
+        ),
       ),
     )
         .animate()
@@ -268,94 +261,145 @@ class _PersonalityDnaChatCardState
   Widget _buildHeader(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
+    final score = dna.scores['overall'] ?? 85;
+
+    final heroImage = FortuneCardImages.getHeroImage('mbti', score);
+    final mascotImage = FortuneCardImages.getMascotImage('mbti', score);
 
     return Container(
-      padding: const EdgeInsets.all(DSSpacing.lg),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: dna.gradientColors.isNotEmpty
-              ? dna.gradientColors.map((c) => c.withValues(alpha: 0.3)).toList()
-              : [
-                  colors.accent.withValues(alpha: 0.2),
-                  colors.accentSecondary.withValues(alpha: 0.2),
-                ],
-        ),
+      height: 220,
+      clipBehavior: Clip.antiAlias,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      child: Column(
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          // DNA 코드 뱃지
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.md,
-              vertical: DSSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: colors.textPrimary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(DSRadius.full),
-            ),
-            child: Text(
-              dna.dnaCode,
-              style: typography.labelSmall.copyWith(
-                color: colors.textSecondary,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
+          // 1. 프리미엄 배경 (AI 생성)
+          Image.asset(
+            heroImage,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: dna.gradientColors.isNotEmpty
+                      ? dna.gradientColors
+                      : [colors.accent, colors.accentSecondary],
+                ),
               ),
             ),
           ),
-          const SizedBox(height: DSSpacing.sm),
 
-          // 이모지
-          Text(
-            dna.emoji,
-            style: const TextStyle(fontSize: 48),
-          ),
-          const SizedBox(height: DSSpacing.sm),
-
-          // 제목
-          Text(
-            dna.title,
-            style: typography.headingMedium.copyWith(
-              color: colors.textPrimary,
-              fontWeight: FontWeight.bold,
+          // 2. 어두운 오버레이 (텍스트 가독성)
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.1),
+                  Colors.black.withValues(alpha: 0.6),
+                ],
+              ),
             ),
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: DSSpacing.xs),
 
+          // 3. 내용
+          Padding(
+            padding: const EdgeInsets.all(DSSpacing.lg),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // 마스코트
+                if (mascotImage != null)
+                  Image.asset(
+                    mascotImage,
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) =>
+                        Text(dna.emoji, style: const TextStyle(fontSize: 48)),
+                  )
+                else
+                  Text(dna.emoji, style: const TextStyle(fontSize: 48)),
+                const SizedBox(height: DSSpacing.md),
+
+                // DNA 코드 뱃지
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border:
+                        Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                  ),
+                  child: Text(
+                    dna.dnaCode,
+                    style: typography.labelSmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // 제목
+                Text(
+                  dna.title,
+                  style: typography.headingSmall.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDescriptionAndTraits(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           // 설명
           Text(
             dna.description,
-            style: typography.bodySmall.copyWith(
+            style: typography.bodyMedium.copyWith(
               color: colors.textSecondary,
+              height: 1.5,
             ),
-            textAlign: TextAlign.center,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
           ),
-
-          // 특성 태그
           if (dna.traits.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.md),
+            // 해시태그
             Wrap(
-              spacing: DSSpacing.xs,
-              runSpacing: DSSpacing.xs,
-              alignment: WrapAlignment.center,
-              children: dna.traits.take(4).map((trait) {
+              spacing: 8,
+              runSpacing: 8,
+              children: dna.traits.map((trait) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: DSSpacing.sm,
-                    vertical: DSSpacing.xxs,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: colors.accent.withValues(alpha: 0.15),
+                    color: colors.backgroundSecondary.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(DSRadius.sm),
+                    border: Border.all(
+                      color: colors.textPrimary.withValues(alpha: 0.05),
+                    ),
                   ),
                   child: Text(
-                    trait,
+                    '#$trait',
                     style: typography.labelSmall.copyWith(
-                      color: colors.accent,
+                      color: colors.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -376,21 +420,25 @@ class _PersonalityDnaChatCardState
       padding: const EdgeInsets.all(DSSpacing.md),
       child: Row(
         children: [
+          _buildInfoChip(context, colors, typography, 'MBTI', dna.mbti,
+              iconPath:
+                  'assets/images/fortune/mbti/characters/mbti_${dna.mbti.toLowerCase()}.png'),
           _buildInfoChip(
-              context, colors, typography, 'MBTI', dna.mbti, Icons.psychology),
-          _buildInfoChip(context, colors, typography, '혈액형',
-              '${dna.bloodType}형', Icons.water_drop),
-          _buildInfoChip(
-              context, colors, typography, '별자리', dna.zodiac, Icons.star),
-          _buildInfoChip(
-              context, colors, typography, '띠', dna.zodiacAnimal, Icons.pets),
+              context, colors, typography, '혈액형', '${dna.bloodType}형',
+              iconPath: 'assets/images/fortune/items/lucky/lucky_heart.png'),
+          _buildInfoChip(context, colors, typography, '별자리', dna.zodiac,
+              iconPath: 'assets/images/fortune/items/lucky/lucky_star.png'),
+          _buildInfoChip(context, colors, typography, '띠', dna.zodiacAnimal,
+              iconPath:
+                  'assets/images/fortune/zodiac/zodiac_${_getZodiacKey(dna.zodiacAnimal)}.png'),
         ],
       ),
     );
   }
 
   Widget _buildInfoChip(BuildContext context, DSColorScheme colors,
-      DSTypographyScheme typography, String label, String value, IconData icon) {
+      DSTypographyScheme typography, String label, String value,
+      {IconData? icon, String? iconPath}) {
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 2),
@@ -399,13 +447,25 @@ class _PersonalityDnaChatCardState
           horizontal: DSSpacing.xs,
         ),
         decoration: BoxDecoration(
-          color: colors.backgroundSecondary,
+          color: colors.backgroundSecondary.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(color: colors.textPrimary.withValues(alpha: 0.05)),
         ),
         child: Column(
           children: [
-            Icon(icon, size: 16, color: colors.textSecondary),
-            const SizedBox(height: 4),
+            if (iconPath != null)
+              Image.asset(
+                iconPath,
+                width: 24,
+                height: 24,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => Icon(icon ?? Icons.auto_awesome,
+                    size: 16, color: colors.textSecondary),
+              )
+            else
+              Icon(icon ?? Icons.auto_awesome,
+                  size: 16, color: colors.textSecondary),
+            const SizedBox(height: 6),
             Text(
               value,
               style: typography.labelMedium.copyWith(
@@ -440,8 +500,7 @@ class _PersonalityDnaChatCardState
       child: Column(
         children: [
           _buildStatBar(context, colors, '카리스마', stats.charisma, Colors.red),
-          _buildStatBar(
-              context, colors, '지능', stats.intelligence, Colors.blue),
+          _buildStatBar(context, colors, '지능', stats.intelligence, Colors.blue),
           _buildStatBar(
               context, colors, '창의력', stats.creativity, Colors.purple),
           _buildStatBar(
@@ -463,7 +522,8 @@ class _PersonalityDnaChatCardState
             width: 60,
             child: Text(
               label,
-              style: typography.labelSmall.copyWith(color: colors.textSecondary),
+              style:
+                  typography.labelSmall.copyWith(color: colors.textSecondary),
             ),
           ),
           Expanded(
@@ -600,8 +660,7 @@ class _PersonalityDnaChatCardState
           _buildWorkItem(context, colors, typography, '상사일 때', work.asBoss),
           _buildWorkItem(
               context, colors, typography, '회식에서', work.atCompanyDinner),
-          _buildWorkItem(
-              context, colors, typography, '업무 습관', work.workHabit),
+          _buildWorkItem(context, colors, typography, '업무 습관', work.workHabit),
         ],
       ),
     );
@@ -747,8 +806,7 @@ class _PersonalityDnaChatCardState
       child: Column(
         children: [
           _buildMatchingItem(context, colors, '추천 카페 메뉴', matching.cafeMenu),
-          _buildMatchingItem(
-              context, colors, '추천 넷플릭스', matching.netflixGenre),
+          _buildMatchingItem(context, colors, '추천 넷플릭스', matching.netflixGenre),
           _buildMatchingItem(
               context, colors, '주말 활동', matching.weekendActivity),
         ],
@@ -1062,5 +1120,23 @@ class _PersonalityDnaChatCardState
         ],
       ),
     );
+  }
+
+  String _getZodiacKey(String animal) {
+    const Map<String, String> keys = {
+      '쥐': 'rat',
+      '소': 'ox',
+      '호랑이': 'tiger',
+      '토끼': 'rabbit',
+      '용': 'dragon',
+      '뱀': 'snake',
+      '말': 'horse',
+      '양': 'sheep',
+      '원숭이': 'monkey',
+      '닭': 'rooster',
+      '개': 'dog',
+      '돼지': 'pig',
+    };
+    return keys[animal] ?? 'dog';
   }
 }

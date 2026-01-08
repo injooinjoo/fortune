@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 
@@ -123,11 +121,6 @@ class ChatGratitudeResultCard extends ConsumerWidget {
                     .fadeIn(duration: 500.ms, delay: 800.ms),
 
                   const SizedBox(height: 16),
-
-                  // 공유 버튼
-                  _buildShareButton(context, isDark)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 1000.ms),
                 ],
               ),
             ),
@@ -401,64 +394,4 @@ class ChatGratitudeResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildShareButton(BuildContext context, bool isDark) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        GestureDetector(
-          onTap: () => _shareGratitude(context),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  _pinkAccent.withValues(alpha: 0.3),
-                  _pinkAccent.withValues(alpha: 0.2),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.share_rounded,
-                  size: 14,
-                  color: isDark ? _pinkAccent : const Color(0xFF8B6914),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  '공유',
-                  style: context.labelSmall.copyWith(
-                    color: isDark ? _pinkAccent : const Color(0xFF8B6914),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _shareGratitude(BuildContext context) {
-    HapticFeedback.mediumImpact();
-
-    final formattedDate = DateFormat('M월 d일').format(date);
-    final shareText = '''
-✨ $formattedDate의 감사일기
-
-💛 $gratitude1
-💛 $gratitude2
-💛 $gratitude3
-
-오늘도 감사한 하루였네요 🌸
-작은 것에 감사하는 습관이 행복을 키워줘요.
-
-#감사일기 #오늘의감사
-''';
-
-    Share.share(shareText);
-  }
 }
