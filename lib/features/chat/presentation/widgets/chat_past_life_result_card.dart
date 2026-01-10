@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -239,8 +240,8 @@ class _ChatPastLifeResultCardState
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                const Color(0xFF8B4513).withValues(alpha: 0.3),
-                const Color(0xFF5D3A1A).withValues(alpha: 0.2),
+                ObangseokColors.hwangMuted.withValues(alpha: 0.3),
+                ObangseokColors.hwangDark.withValues(alpha: 0.2),
                 colors.surface.withValues(alpha: 0.0),
               ],
             ),
@@ -260,12 +261,12 @@ class _ChatPastLifeResultCardState
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DSRadius.md),
                 border: Border.all(
-                  color: const Color(0xFF8B4513).withValues(alpha: 0.5),
+                  color: ObangseokColors.hwangMuted.withValues(alpha: 0.5),
                   width: 3,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF5D3A1A).withValues(alpha: 0.3),
+                    color: ObangseokColors.hwangDark.withValues(alpha: 0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -357,13 +358,13 @@ class _ChatPastLifeResultCardState
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF8B4513).withValues(alpha: 0.15),
-            const Color(0xFFD4A574).withValues(alpha: 0.1),
+            ObangseokColors.hwangMuted.withValues(alpha: 0.15),
+            ObangseokColors.hwangLight.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: const Color(0xFF8B4513).withValues(alpha: 0.3),
+          color: ObangseokColors.hwangMuted.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -542,7 +543,7 @@ class _ChatPastLifeResultCardState
         color: isDark ? colors.backgroundSecondary : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: const Color(0xFF8B4513).withValues(alpha: 0.2),
+          color: ObangseokColors.hwangMuted.withValues(alpha: 0.2),
         ),
       ),
       child: UnifiedBlurWrapper(
@@ -600,7 +601,7 @@ class _ChatPastLifeResultCardState
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF8B4513), Color(0xFFD4A574)],
+                colors: [ObangseokColors.hwangMuted, ObangseokColors.hwangLight],
               ),
               borderRadius: BorderRadius.circular(DSRadius.md),
             ),
@@ -626,7 +627,7 @@ class _ChatPastLifeResultCardState
 
   Widget _buildDefaultPortrait() {
     return Container(
-      color: const Color(0xFF8B4513).withValues(alpha: 0.2),
+      color: ObangseokColors.hwangMuted.withValues(alpha: 0.2),
       child: const Center(
         child: Text(
           '🎎',
@@ -669,10 +670,11 @@ class _ChatPastLifeResultCardState
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 90) return const Color(0xFF8B4513);
-    if (score >= 80) return const Color(0xFFB8860B);
-    if (score >= 70) return const Color(0xFFCD853F);
-    if (score >= 60) return const Color(0xFFD4A574);
-    return const Color(0xFF8B7355);
+    // 동양화 스타일 - 황토색 계열 (ObangseokColors 황색)
+    if (score >= 90) return ObangseokColors.hwangDark;
+    if (score >= 80) return ObangseokColors.hwang;
+    if (score >= 70) return ObangseokColors.hwangMuted;
+    if (score >= 60) return ObangseokColors.hwangLight;
+    return ObangseokColors.hwangMuted;
   }
 }

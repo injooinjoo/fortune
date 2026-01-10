@@ -6,6 +6,7 @@ import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/widgets/smart_image.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 
 /// 채팅용 이사운 결과 카드
 ///
@@ -747,10 +748,11 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return const Color(0xFF10B981); // 초록
-    if (score >= 60) return const Color(0xFF3B82F6); // 파랑
-    if (score >= 40) return const Color(0xFFF59E0B); // 주황
-    return const Color(0xFFEF4444); // 빨강
+    // 동양화 스타일 - 톤다운 오방색
+    if (score >= 80) return ObangseokColors.cheongMuted;
+    if (score >= 60) return ObangseokColors.cheong;
+    if (score >= 40) return ObangseokColors.hwangMuted;
+    return ObangseokColors.jeokMuted;
   }
 }
 
@@ -828,10 +830,11 @@ class _MovingScoreCircle extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return const Color(0xFF10B981);
-    if (score >= 60) return const Color(0xFF3B82F6);
-    if (score >= 40) return const Color(0xFFF59E0B);
-    return const Color(0xFFEF4444);
+    // 동양화 스타일 - 톤다운 오방색
+    if (score >= 80) return ObangseokColors.cheongMuted;
+    if (score >= 60) return ObangseokColors.cheong;
+    if (score >= 40) return ObangseokColors.hwangMuted;
+    return ObangseokColors.jeokMuted;
   }
 }
 

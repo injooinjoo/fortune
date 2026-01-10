@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/models/personality_dna_model.dart';
+import '../../../../core/utils/haptic_utils.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../fortune/domain/models/match_insight.dart';
 import '../../../fortune/domain/models/past_life_result.dart';
@@ -52,6 +53,9 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     MatchInsight? matchInsight,
     PastLifeResult? pastLifeResult,
   }) {
+    // 결과 표시 시 강한 햅틱 피드백
+    HapticUtils.heavyImpact();
+
     final message = ChatMessage(
       id: _uuid.v4(),
       type: ChatMessageType.fortuneResult,
@@ -80,6 +84,9 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     bool isBlurred = false,
     List<String> blurredSections = const [],
   }) {
+    // 결과 표시 시 강한 햅틱 피드백
+    HapticUtils.heavyImpact();
+
     final message = ChatMessage(
       id: _uuid.v4(),
       type: ChatMessageType.sajuResult,
@@ -101,6 +108,9 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     required PersonalityDNA dna,
     bool isBlurred = false,
   }) {
+    // 결과 표시 시 강한 햅틱 피드백
+    HapticUtils.heavyImpact();
+
     final message = ChatMessage(
       id: _uuid.v4(),
       type: ChatMessageType.personalityDnaResult,
@@ -121,6 +131,9 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     required String shortDescription,
     bool isBlurred = false,
   }) {
+    // 결과 표시 시 강한 햅틱 피드백
+    HapticUtils.heavyImpact();
+
     final message = ChatMessage(
       id: _uuid.v4(),
       type: ChatMessageType.talismanResult,
@@ -142,6 +155,9 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     required String gratitude2,
     required String gratitude3,
   }) {
+    // 결과 표시 시 강한 햅틱 피드백
+    HapticUtils.heavyImpact();
+
     final message = ChatMessage(
       id: _uuid.v4(),
       type: ChatMessageType.gratitudeResult,
@@ -158,12 +174,13 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   }
 
   /// 시스템 메시지 추가 (추천 칩)
-  void addSystemMessage({List<String>? chipIds}) {
+  /// [showAllChips] true면 모든 기본 칩 표시 (전체운세보기 등)
+  void addSystemMessage({List<String>? chipIds, bool showAllChips = false}) {
     final message = ChatMessage(
       id: _uuid.v4(),
       type: ChatMessageType.system,
       timestamp: DateTime.now(),
-      chipIds: chipIds,
+      chipIds: showAllChips ? ['__all__'] : chipIds,
     );
     state = state.copyWith(
       messages: [...state.messages, message],

@@ -478,7 +478,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     if (_isScrolling) return;
     _isScrolling = true;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // 리스트 리빌드 완료 후 스크롤 보장 (100ms 딜레이)
+    Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients && mounted) {
         _scrollController
             .animateTo(
@@ -592,9 +593,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
   }
 
-  /// 더보기 버튼 탭 - 인사이트 카테고리 페이지로 이동
+  /// 더보기 버튼 탭 - 전체 운세 칩 표시
   void _handleViewAllTap() {
-    context.push('/fortune');
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
+    chatNotifier.addAiMessage(
+      '다양한 인사이트를 확인해보세요! 🌟\n'
+      '아래에서 원하는 서비스를 선택해주세요.',
+    );
+    _scrollToBottom();
+    Future.delayed(const Duration(milliseconds: 200), () {
+      chatNotifier.addSystemMessage(showAllChips: true);
+      _scrollToBottom();
+    });
   }
 
   void _handleChipTap(RecommendationChip chip) {
@@ -612,7 +622,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
         _scrollToBottom();
         Future.delayed(const Duration(milliseconds: 200), () {
-          chatNotifier.addSystemMessage();
+          chatNotifier.addSystemMessage(showAllChips: true);
           _scrollToBottom();
         });
       });
@@ -3049,7 +3059,40 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // Face Reading
       // ============================================================
       case FortuneSurveyType.faceReading:
-        // ChatFaceReadingFlow에서 수집된 이미지로 관상 API 호출
+        // ChatFaceReadingFlow에서 수집된 이미지를 base64로 변환
+        // 설문 답변 구조: answers['photo'] = {'imagePath': '...'} (step ID가 'photo')
+        final photoData = answers['photo'] as Map<String, dynamic>?;
+        final imagePath = photoData?['imagePath'] as String?;
+        String? imageBase64;
+
+        Logger.debug('📸 [FaceReading] 이미지 경로 확인', {
+          'photoData': photoData,
+          'imagePath': imagePath,
+        });
+
+        if (imagePath != null && imagePath.isNotEmpty) {
+          try {
+            final file = File(imagePath);
+            if (await file.exists()) {
+              final bytes = await file.readAsBytes();
+              imageBase64 = base64Encode(bytes);
+              Logger.debug('📸 [FaceReading] 이미지 base64 변환 완료', {
+                'originalPath': imagePath,
+                'base64Length': imageBase64.length,
+              });
+            } else {
+              Logger.error('❌ [FaceReading] 이미지 파일이 존재하지 않음', imagePath);
+            }
+          } catch (e) {
+            Logger.error('❌ [FaceReading] 이미지 base64 변환 실패', e);
+          }
+        } else {
+          Logger.error('❌ [FaceReading] 이미지 경로가 없음', {
+            'answers_keys': answers.keys.toList(),
+            'photoData': photoData,
+          });
+        }
+
         return apiService.getFortune(
           userId: userId,
           fortuneType: 'face-reading',
@@ -3057,7 +3100,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'name': userName,
             'birthDate': birthDateStr,
             'gender': gender,
-            'imagePath': answers['imagePath'],
+            'userGender': gender.toString().split('.').last,
+            'image': imageBase64,
           },
         );
 
@@ -3207,6 +3251,23 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       case FortuneSurveyType.pastLife:
         // ChatFaceReadingFlow에서 수집된 이미지로 전생탐험 API 호출
+        // 설문 답변 구조: answers['photo'] = {'imagePath': '...'} (step ID가 'photo')
+        final pastLifePhotoData = answers['photo'] as Map<String, dynamic>?;
+        final pastLifeImagePath = pastLifePhotoData?['imagePath'] as String?;
+        String? pastLifeImageBase64;
+
+        if (pastLifeImagePath != null && pastLifeImagePath.isNotEmpty) {
+          try {
+            final file = File(pastLifeImagePath);
+            if (await file.exists()) {
+              final bytes = await file.readAsBytes();
+              pastLifeImageBase64 = base64Encode(bytes);
+            }
+          } catch (e) {
+            Logger.error('❌ [PastLife] 이미지 base64 변환 실패', e);
+          }
+        }
+
         return apiService.getFortune(
           userId: userId,
           fortuneType: 'past-life',
@@ -3214,7 +3275,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'name': userName,
             'birthDate': birthDateStr,
             'gender': gender,
-            'imagePath': answers['imagePath'],
+            'image': pastLifeImageBase64,
           },
         );
 
@@ -3694,8 +3755,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// 꿈해몽 dreamContent 입력 단계인지 확인
   bool _isDreamContentStep(ChatSurveyState surveyState) {
-    if (!surveyState.isActive || surveyState.activeProgress == null)
+    if (!surveyState.isActive || surveyState.activeProgress == null) {
       return false;
+    }
     final config = surveyState.activeProgress!.config;
     final currentStep = surveyState.activeProgress!.currentStep;
     return config.fortuneType == FortuneSurveyType.dream &&
@@ -3993,15 +4055,131 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case SurveyInputType.location:
         final questionTitle =
             surveyState.activeProgress?.currentStep.question ?? '지역을 선택해주세요';
-        return ChatLocationPicker(
-          questionTitle: questionTitle,
-          onLocationSelected: (location) {
-            _handleSurveyAnswerValue(
-              location,
-              '📍 ${location.displayName}',
+        // 바텀시트로 위치 선택 표시 (화면 덮어버리는 문제 해결)
+        return _buildLocationPickerTrigger(questionTitle);
+    }
+  }
+
+  /// 위치 선택 버튼 위젯 (바텀시트 트리거)
+  Widget _buildLocationPickerTrigger(String questionTitle) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: InkWell(
+        onTap: () => _showLocationPickerBottomSheet(questionTitle),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.md,
+            vertical: DSSpacing.md,
+          ),
+          decoration: BoxDecoration(
+            color: colors.backgroundSecondary,
+            borderRadius: BorderRadius.circular(DSRadius.md),
+            border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.location_on, size: 20, color: colors.accent),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '📍 지역 선택하기',
+                style: typography.bodyMedium.copyWith(
+                  color: colors.accent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              Icon(Icons.arrow_forward_ios, size: 14, color: colors.accent),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 위치 선택 바텀시트 표시
+  Future<void> _showLocationPickerBottomSheet(String questionTitle) async {
+    final result = await showModalBottomSheet<LocationData>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (bottomSheetContext) {
+        final colors = bottomSheetContext.colors;
+        return DraggableScrollableSheet(
+          initialChildSize: 0.55,
+          minChildSize: 0.35,
+          maxChildSize: 0.75,
+          builder: (_, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(DSRadius.xl),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // 핸들바
+                  Container(
+                    margin: const EdgeInsets.only(top: DSSpacing.sm),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.textTertiary.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  // 헤더
+                  Padding(
+                    padding: const EdgeInsets.all(DSSpacing.md),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            questionTitle,
+                            style: bottomSheetContext.typography.headingSmall,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(bottomSheetContext),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // 위치 선택 위젯
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: ChatLocationPicker(
+                        questionTitle: questionTitle,
+                        onLocationSelected: (location) {
+                          Navigator.pop(bottomSheetContext, location);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           },
         );
+      },
+    );
+
+    // 선택 완료 시 설문 답변 처리
+    if (result != null && mounted) {
+      _handleSurveyAnswerValue(
+        result,
+        '📍 ${result.displayName}',
+      );
     }
   }
 
@@ -4156,6 +4334,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       } else if (inputType == SurveyInputType.celebritySelection) {
         // 연예인 선택: 검색(50) + 리스트(300) + 여유
         padding += 380;
+      } else if (inputType == SurveyInputType.location) {
+        // 위치 선택 버튼: 버튼(60) + 패딩(32) + 여유
+        padding += 120;
       } else {
         // 기타 입력 타입
         padding += 50;
@@ -4206,6 +4387,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 온보딩 상태 변경 시 자동 스크롤
     ref.listen<OnboardingState>(onboardingChatProvider, (previous, next) {
       if (previous?.currentStep != next.currentStep) {
+        _scrollToBottom();
+      }
+    });
+
+    // 설문 상태 변경 시 자동 스크롤 (설문 UI가 나타날 때)
+    ref.listen<ChatSurveyState>(chatSurveyProvider, (previous, next) {
+      if (previous?.isActive != next.isActive ||
+          previous?.activeProgress?.currentStep.id !=
+              next.activeProgress?.currentStep.id) {
         _scrollToBottom();
       }
     });
@@ -4266,18 +4456,19 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             Positioned.fill(
               child: _buildChatBackground(),
             ),
-            SafeArea(
-              bottom: false, // MainShell에서 navigation bar padding 처리
-              child: GestureDetector(
-                onTap: () {
-                  // 배경 탭 시 키보드 dismiss
-                  FocusScope.of(context).unfocus();
-                },
-                behavior: HitTestBehavior.translucent,
-                child: Stack(
-                  children: [
-                    // 메인 콘텐츠 (메시지 영역)
-                    AnimatedSwitcher(
+            Positioned.fill(
+              child: SafeArea(
+                bottom: false, // MainShell에서 navigation bar padding 처리
+                child: GestureDetector(
+                  onTap: () {
+                    // 배경 탭 시 키보드 dismiss
+                    FocusScope.of(context).unfocus();
+                  },
+                  behavior: HitTestBehavior.translucent,
+                  child: Stack(
+                    children: [
+                      // 메인 콘텐츠 (메시지 영역)
+                      AnimatedSwitcher(
                       duration: const Duration(milliseconds: 200),
                       switchInCurve: Curves.easeOutCubic,
                       switchOutCurve: Curves.easeInCubic,
@@ -4558,7 +4749,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                           ),
                         ),
                       ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

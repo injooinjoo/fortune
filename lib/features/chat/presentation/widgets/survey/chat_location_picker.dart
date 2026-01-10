@@ -269,12 +269,20 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
   /// 주소 포맷팅
   String _formatAddress(Placemark place) {
     final parts = <String>[];
-    if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
-      parts.add(place.administrativeArea!);
+    final adminArea = place.administrativeArea;
+
+    if (adminArea != null && adminArea.isNotEmpty) {
+      parts.add(adminArea);
     }
-    if (place.locality != null && place.locality!.isNotEmpty) {
+
+    // locality가 administrativeArea와 동일하면 스킵 (중복 방지)
+    if (place.locality != null &&
+        place.locality!.isNotEmpty &&
+        place.locality != adminArea) {
       parts.add(place.locality!);
-    } else if (place.subAdministrativeArea != null && place.subAdministrativeArea!.isNotEmpty) {
+    } else if (place.subAdministrativeArea != null &&
+               place.subAdministrativeArea!.isNotEmpty &&
+               place.subAdministrativeArea != adminArea) {
       parts.add(place.subAdministrativeArea!);
     }
     return parts.join(' ');

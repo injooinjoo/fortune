@@ -86,8 +86,8 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
           end: Alignment.bottomRight,
           colors: isDark
               ? [
-                  const Color(0xFF1E1E1E),
-                  const Color(0xFF2A2520),
+                  ObangseokColors.meok,
+                  ObangseokColors.meokLight,
                 ]
               : [
                   ObangseokColors.misaek,
@@ -225,7 +225,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
                 Text(
                   '$_cookieTypeName 쿠키',
                   style: context.heading4.copyWith(
-                    color: isDark ? Colors.white : const Color(0xFF2C1810),
+                    color: isDark ? Colors.white : ObangseokColors.hwangDark,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -339,7 +339,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
           Text(
             _message,
             style: context.bodyLarge.copyWith(
-              color: isDark ? Colors.white : const Color(0xFF2C1810),
+              color: isDark ? Colors.white : ObangseokColors.hwangDark,
               height: 1.7,
               fontWeight: FontWeight.w500,
             ),

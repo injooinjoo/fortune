@@ -193,7 +193,26 @@ class SurveyProgress {
     this.answers = const {},
   });
 
-  SurveyStep get currentStep => config.steps[currentStepIndex];
+  /// 현재 단계 (완료 시 마지막 단계 반환)
+  ///
+  /// ⚠️ 완료 상태에서 접근해도 RangeError가 발생하지 않도록
+  /// currentStepIndex를 유효 범위로 clamp합니다.
+  SurveyStep get currentStep {
+    if (config.steps.isEmpty) {
+      throw StateError('설문 단계가 없습니다.');
+    }
+    // 완료 상태에서도 안전하게 마지막 단계를 반환
+    final safeIndex = currentStepIndex.clamp(0, config.steps.length - 1);
+    return config.steps[safeIndex];
+  }
+
+  /// 현재 단계 (nullable) - 완료 시 null 반환
+  ///
+  /// 완료 여부를 확인하면서 현재 단계에 접근해야 할 때 사용
+  SurveyStep? get currentStepOrNull {
+    if (isComplete || config.steps.isEmpty) return null;
+    return config.steps[currentStepIndex];
+  }
 
   bool get isComplete => currentStepIndex >= config.steps.length;
 

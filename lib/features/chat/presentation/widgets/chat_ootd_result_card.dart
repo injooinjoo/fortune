@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/ootd_info_header.dart';
@@ -28,8 +29,8 @@ class ChatOotdResultCard extends ConsumerWidget {
     this.blurredSections = const [],
   });
 
-  // 메인 그린 컬러
-  static const Color _primaryGreen = Color(0xFF10B981);
+  // 동양화 스타일 - 포인트 색상은 쪽빛(cheongMuted) 사용
+  static Color _getAccentColor(BuildContext context) => ObangseokColors.cheongMuted;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -168,10 +169,10 @@ class ChatOotdResultCard extends ConsumerWidget {
                 margin: const EdgeInsets.only(top: DSSpacing.xs),
                 padding: const EdgeInsets.all(DSSpacing.sm),
                 decoration: BoxDecoration(
-                  color: _primaryGreen.withValues(alpha: 0.1),
+                  color: _getAccentColor(context).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
                   border: Border.all(
-                    color: _primaryGreen.withValues(alpha: 0.3),
+                    color: _getAccentColor(context).withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -242,7 +243,7 @@ class ChatOotdResultCard extends ConsumerWidget {
       spans.add(TextSpan(
         text: match.group(0),
         style: context.bodyMedium.copyWith(
-          color: _primaryGreen,
+          color: _getAccentColor(context),
           fontWeight: FontWeight.bold,
         ),
       ));
@@ -345,7 +346,7 @@ class ChatOotdResultCard extends ConsumerWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+              color: ObangseokColors.getMeok(context).withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Center(
@@ -369,7 +370,7 @@ class ChatOotdResultCard extends ConsumerWidget {
           Text(
             '$similarity% 일치',
             style: context.labelSmall.copyWith(
-              color: const Color(0xFF8B5CF6),
+              color: ObangseokColors.getMeok(context),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -452,7 +453,7 @@ class ChatOotdResultCard extends ConsumerWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: _primaryGreen.withValues(alpha: 0.1),
+              color: _getAccentColor(context).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DSRadius.sm),
             ),
             child: Center(
@@ -481,7 +482,7 @@ class ChatOotdResultCard extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
             decoration: BoxDecoration(
-              color: _primaryGreen,
+              color: _getAccentColor(context),
               borderRadius: BorderRadius.circular(DSRadius.sm),
             ),
             child: Text(

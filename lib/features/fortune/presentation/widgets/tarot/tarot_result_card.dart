@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/font_config.dart';
+import '../../../../../core/theme/obangseok_colors.dart';
 
 class TarotResultCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> result;
@@ -138,9 +139,9 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
     super.dispose();
   }
 
-  // 테마 색상 상수
-  static const Color _primaryColor = Color(0xFF7C3AED);
-  static const Color _secondaryColor = Color(0xFF3B82F6);
+  // 동양화 스타일 - 테마 색상 (ObangseokColors 사용)
+  static Color _getPrimaryColor(BuildContext context) => ObangseokColors.getMeok(context);
+  static Color _getSecondaryColor(BuildContext context) => ObangseokColors.cheongMuted;
 
   @override
   Widget build(BuildContext context) {
@@ -157,10 +158,10 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
             width: double.infinity,
             padding: const EdgeInsets.all(DSSpacing.cardPadding),
             decoration: BoxDecoration(
-              color: _primaryColor.withValues(alpha: isDark ? 0.15 : 0.1),
+              color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.15 : 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _primaryColor.withValues(alpha: isDark ? 0.3 : 0.2),
+                color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.3 : 0.2),
               ),
             ),
             child: Column(
@@ -172,7 +173,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                     '질문',
                     style: typography.bodySmall.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: _primaryColor,
+                      color: _getPrimaryColor(context),
                     ),
                   );
                 }),
@@ -211,9 +212,9 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                         ? Transform(
                             alignment: Alignment.center,
                             transform: Matrix4.identity()..rotateY(math.pi),
-                            child: _buildCardFront(),
+                            child: _buildCardFront(context),
                           )
-                        : _buildCardBack(),
+                        : _buildCardBack(context),
                   ),
                 );
               },
@@ -252,7 +253,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                       shareTitle: '타로 카드: ${widget.result['cardName']}',
                       shareContent: widget.result['interpretation'] ?? '',
                       iconSize: 20,
-                      iconColor: _primaryColor,
+                      iconColor: _getPrimaryColor(context),
                     ),
                   ],
                 );
@@ -279,10 +280,10 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: _primaryColor.withValues(alpha: isDark ? 0.15 : 0.1),
+                        color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.15 : 0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: _primaryColor.withValues(alpha: isDark ? 0.3 : 0.2),
+                          color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.3 : 0.2),
                         ),
                       ),
                       child: Builder(builder: (context) {
@@ -291,7 +292,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                           keyword,
                           style: typography.bodySmall.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: _primaryColor,
+                            color: _getPrimaryColor(context),
                           ),
                         );
                       }),
@@ -316,7 +317,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                   title: '카드의 메시지',
                   content: widget.result['interpretation'] ?? '',
                   icon: Icons.auto_awesome,
-                  color: _primaryColor,
+                  color: _getPrimaryColor(context),
                 ),
               ),
             ),
@@ -337,7 +338,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                   title: '조언',
                   content: widget.result['advice'],
                   icon: Icons.lightbulb_outline,
-                  color: _secondaryColor,
+                  color: _getSecondaryColor(context),
                 ),
               ),
             ),
@@ -386,7 +387,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
     );
   }
 
-  Widget _buildCardBack() {
+  Widget _buildCardBack(BuildContext context) {
     return Container(
       width: 200,
       height: 280,
@@ -396,13 +397,13 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF1E3A5F),
-            Color(0xFF0D1B2A),
+            ObangseokColors.cheong,
+            ObangseokColors.cheongDark,
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
+            color: _getPrimaryColor(context).withValues(alpha: 0.3),
             blurRadius: 30,
             spreadRadius: 5,
             offset: const Offset(0, 10),
@@ -418,7 +419,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
     );
   }
 
-  Widget _buildCardFront() {
+  Widget _buildCardFront(BuildContext context) {
     return Container(
       width: 200,
       height: 280,
@@ -426,7 +427,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
+            color: _getPrimaryColor(context).withValues(alpha: 0.3),
             blurRadius: 30,
             spreadRadius: 5,
             offset: const Offset(0, 10),
@@ -452,8 +453,8 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFF7C3AED),
-                        Color(0xFF3B82F6),
+                        ObangseokColors.cheong,
+                        ObangseokColors.cheongMuted,
                       ],
                     ),
                   ),

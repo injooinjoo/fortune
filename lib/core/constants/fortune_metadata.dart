@@ -18,6 +18,7 @@ enum FortuneType {
   tojeong('tojeong', '전통 해석'),
   palmistry('palmistry', '손금 분석'),
   physiognomy('physiognomy', 'Face AI'),
+  faceReading('face-reading', 'AI 관상'), // face-reading 타입 추가
   nameAnalysis('name-analysis', '이름 분석'),
   bloodType('blood-type', '혈액형 분석'),
 
@@ -44,6 +45,7 @@ enum FortuneType {
   exLover('ex-lover', '재회 분석'),
   relationshipFortuneWeekly('relationship-fortune-weekly', '주간 연애 인사이트'),
   soulmate('soulmate', '소울메이트'),
+  avoidPeople('avoid-people', '오늘의 경계운'),
 
   // Career & Wealth
   career('career', '직업 분석'),
@@ -111,11 +113,15 @@ enum FortuneType {
   const FortuneType(this.key, this.displayName);
   
   static FortuneType? fromKey(String key) {
-    try {
-      return FortuneType.values.firstWhere((type) => type.key == key);
-    } catch (_) {
-      return null;
+    // 1. .key 속성으로 검색 (하이픈 형식: 'avoid-people')
+    for (final type in FortuneType.values) {
+      if (type.key == key) return type;
     }
+    // 2. enum 필드명으로 검색 (camelCase: 'avoidPeople')
+    for (final type in FortuneType.values) {
+      if (type.name == key) return type;
+    }
+    return null;
   }
 }
 

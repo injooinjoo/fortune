@@ -14,6 +14,7 @@ import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/constants/fortune_card_images.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 
 /// 채팅용 유명인 궁합 결과 카드
 ///
@@ -182,8 +183,8 @@ class _ChatCelebrityResultCardState
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFFE91E63).withValues(alpha: 0.2),
-                    const Color(0xFF9C27B0).withValues(alpha: 0.15),
+                    ObangseokColors.jeokMuted.withValues(alpha: 0.2),
+                    ObangseokColors.cheongDark.withValues(alpha: 0.15),
                   ],
                 ),
               ),
@@ -550,13 +551,13 @@ class _ChatCelebrityResultCardState
               vertical: 2,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF9C27B0).withValues(alpha: 0.1),
+              color: ObangseokColors.cheongDark.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               connection,
               style: typography.labelSmall.copyWith(
-                color: const Color(0xFF9C27B0),
+                color: ObangseokColors.cheongDark,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -620,7 +621,7 @@ class _ChatCelebrityResultCardState
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF2196F3).withValues(alpha: 0.1),
+        color: ObangseokColors.cheong.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -636,7 +637,7 @@ class _ChatCelebrityResultCardState
           Text(
             value,
             style: typography.labelSmall.copyWith(
-              color: const Color(0xFF2196F3),
+              color: ObangseokColors.cheong,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -690,7 +691,7 @@ class _ChatCelebrityResultCardState
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                colors: [ObangseokColors.jeokMuted, ObangseokColors.cheongDark],
               ),
               borderRadius: BorderRadius.circular(DSRadius.md),
             ),
@@ -716,11 +717,11 @@ class _ChatCelebrityResultCardState
 
   Widget _buildDefaultAvatar() {
     return Container(
-      color: const Color(0xFFE91E63).withValues(alpha: 0.3),
+      color: ObangseokColors.jeokMuted.withValues(alpha: 0.3),
       child: const Icon(
         Icons.star,
         size: 28,
-        color: Color(0xFFE91E63),
+        color: ObangseokColors.jeokMuted,
       ),
     );
   }
@@ -741,11 +742,12 @@ class _ChatCelebrityResultCardState
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 90) return const Color(0xFFE91E63);
-    if (score >= 80) return const Color(0xFF9C27B0);
-    if (score >= 70) return const Color(0xFF2196F3);
-    if (score >= 60) return const Color(0xFF4CAF50);
-    return const Color(0xFF607D8B);
+    // 동양화 스타일 - 톤다운 오방색
+    if (score >= 90) return ObangseokColors.jeokMuted;
+    if (score >= 80) return ObangseokColors.cheongDark;
+    if (score >= 70) return ObangseokColors.cheong;
+    if (score >= 60) return ObangseokColors.cheongMuted;
+    return ObangseokColors.hwangMuted;
   }
 }
 

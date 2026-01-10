@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/components/traditional/seal_stamp_widget.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/widgets/fortune_infographic/fortune_infographic_facade.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import 'fortune_card.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -60,31 +60,7 @@ class FortuneResultCard extends ConsumerWidget {
                 .fadeIn(duration: 600.ms, delay: 200.ms)
                 .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
 
-          if (fortune.hexagonScores != null &&
-              fortune.hexagonScores!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: DSSpacing.lg,
-                vertical: DSSpacing.sm + 4,
-              ),
-              child: FortuneInfographicWidgets.buildRadarChart(
-                scores: fortune.hexagonScores!,
-                size: 220,
-                primaryColor: DSColors.accent,
-              ),
-            ),
-
-          if (fortune.categories != null && fortune.categories!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: DSSpacing.lg,
-                vertical: DSSpacing.sm + 4,
-              ),
-              child: FortuneInfographicWidgets.buildCategoryCards(
-                fortune.categories!,
-                isDarkMode: isDark,
-              ),
-            ),
+          // 헥사곤 차트 및 카테고리 카드 제거 - 동양화 스타일 단순화
           
           // 메인 운세 내용
           _buildMainContent(context, isDark)
@@ -297,61 +273,46 @@ class FortuneResultCard extends ConsumerWidget {
     );
   }
   
+  /// 점수 섹션 - 낙관(도장) 스타일
+  /// 동양화 디자인: 붉은 인장 안에 점수 표시
   Widget _buildScoreSection(BuildContext context, bool isDark) {
     final score = fortune.overallScore ?? 0;
-    final scoreColor = _getScoreColor(score);
+    final meokColor = ObangseokColors.getMeok(context);
 
-    return FortuneCard(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
-      padding: const EdgeInsets.all(DSSpacing.lg),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.lg,
+        vertical: DSSpacing.md,
+      ),
       child: Column(
         children: [
-          CircularPercentIndicator(
-            radius: 80.0,
-            lineWidth: 8.0,
-            animation: true,
-            percent: score / 100,
-            center: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$score',
-                  style: DSTypography.displayMedium.copyWith(
-                    color: scoreColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Text(
-                  '점',
-                  style: DSTypography.bodyMedium.copyWith(
-                    color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-            circularStrokeCap: CircularStrokeCap.round,
-            progressColor: scoreColor,
-            backgroundColor: scoreColor.withValues(alpha: isDark ? 0.15 : 0.1),
+          // 낙관 도장 스타일 점수
+          SealStampWidget(
+            text: '$score',
+            shape: SealStampShape.circle,
+            colorScheme: SealStampColorScheme.vermilion,
+            size: SealStampSize.xlarge,
+            animated: true,
+            showInkBleed: true,
+            filled: false,
+            borderWidth: 2.5,
           ),
-          const SizedBox(height: DSSpacing.lg),
+          const SizedBox(height: DSSpacing.md),
+          // 점수 메시지 - 먹색 서예체
           Text(
             _getScoreMessage(score),
             style: DSTypography.headingSmall.copyWith(
-              color: scoreColor,
-              fontWeight: FontWeight.w600,
+              color: meokColor.withValues(alpha: 0.85),
+              fontWeight: FontWeight.w500,
             ),
           ),
-          // ✅ 퍼센타일 뱃지 표시 (유효한 경우에만)
-          if (fortune.isPercentileValid && fortune.percentile != null) ...[
-            const SizedBox(height: DSSpacing.sm + 4),
-            _buildPercentileBadge(fortune.percentile!, isDark),
-          ],
-          const SizedBox(height: DSSpacing.sm),
+          const SizedBox(height: DSSpacing.xs),
+          // 점수 설명 - 옅은 먹색
           Text(
             _getScoreDescription(score),
             style: DSTypography.bodySmall.copyWith(
-              color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
-              height: 1.5,
+              color: meokColor.withValues(alpha: 0.6),
+              height: 1.6,
             ),
             textAlign: TextAlign.center,
           ),
@@ -360,295 +321,215 @@ class FortuneResultCard extends ConsumerWidget {
     );
   }
 
-  /// 퍼센타일 뱃지 위젯
-  Widget _buildPercentileBadge(int percentile, bool isDark) {
-    // 상위 %에 따른 색상 및 메시지 설정
-    final Color badgeColor;
-    final String emoji;
+  /// 메인 본문 섹션 - 동양화 스타일
+  /// 배경 박스 제거, 먹색 텍스트로 통일
+  Widget _buildMainContent(BuildContext context, bool isDark) {
+    final meokColor = ObangseokColors.getMeok(context);
 
-    if (percentile <= 10) {
-      badgeColor = DSColors.warning;  // 골드 대신 오렌지 사용
-      emoji = '🏆';
-    } else if (percentile <= 25) {
-      badgeColor = DSColors.success;
-      emoji = '⭐';
-    } else if (percentile <= 50) {
-      badgeColor = DSColors.accent;
-      emoji = '✨';
-    } else {
-      badgeColor = DSColors.warning;
-      emoji = '🍀';
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.lg,
+        vertical: DSSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더 - 먹 세로선 스타일
+          _buildSectionHeader('오늘의 인사이트', meokColor),
+          const SizedBox(height: DSSpacing.md),
+          // 본문 - 먹색, 여유로운 줄간격
+          Text(
+            FortuneTextCleaner.clean(fortune.content),
+            style: DSTypography.bodyMedium.copyWith(
+              color: meokColor.withValues(alpha: 0.85),
+              height: 1.9,
+            ),
+          ),
+          if (fortune.description != null) ...[
+            const SizedBox(height: DSSpacing.lg),
+            // 먹선 구분자
+            Container(
+              height: 1,
+              color: meokColor.withValues(alpha: 0.1),
+            ),
+            const SizedBox(height: DSSpacing.lg),
+            // description - 배경 없이 옅은 먹색 텍스트만
+            Text(
+              FortuneTextCleaner.clean(fortune.description!),
+              style: DSTypography.bodySmall.copyWith(
+                color: meokColor.withValues(alpha: 0.65),
+                height: 1.7,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 섹션 헤더 - 먹 세로선 스타일
+  Widget _buildSectionHeader(String title, Color meokColor) {
+    return Row(
+      children: [
+        Container(
+          width: 3,
+          height: 18,
+          decoration: BoxDecoration(
+            color: meokColor.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(1.5),
+          ),
+        ),
+        const SizedBox(width: DSSpacing.sm),
+        Text(
+          title,
+          style: DSTypography.headingSmall.copyWith(
+            color: meokColor.withValues(alpha: 0.85),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+  
+  /// 행운 아이템 섹션 - 동양화 스타일
+  /// 개별 색상 제거, 먹색으로 통일
+  Widget _buildLuckyItemsSection(BuildContext context, bool isDark) {
+    final luckyItems = fortune.luckyItems!;
+    final meokColor = ObangseokColors.getMeok(context);
+    final items = <_LuckyItemData>[];
+
+    // 색상
+    final colorValue = luckyItems['color']?.toString();
+    if (colorValue != null && colorValue.isNotEmpty) {
+      items.add(_LuckyItemData(
+        label: '색상',
+        value: colorValue,
+        icon: Icons.circle,
+        isColor: true,
+        colorHex: _getColorFromName(colorValue),
+      ));
     }
 
+    // 숫자
+    final numberValue = luckyItems['number'];
+    final number = numberValue is int
+        ? numberValue
+        : int.tryParse(numberValue?.toString() ?? '');
+    if (number != null) {
+      items.add(_LuckyItemData(
+        label: '숫자',
+        value: number.toString(),
+        icon: Icons.tag,
+      ));
+    }
+
+    // 방향
+    final directionValue = luckyItems['direction']?.toString();
+    if (directionValue != null && directionValue.isNotEmpty) {
+      items.add(_LuckyItemData(
+        label: '방향',
+        value: directionValue,
+        icon: Icons.explore_outlined,
+      ));
+    }
+
+    // 시간
+    final timeValue = luckyItems['time']?.toString();
+    if (timeValue != null && timeValue.isNotEmpty) {
+      items.add(_LuckyItemData(
+        label: '시간',
+        value: timeValue,
+        icon: Icons.schedule_outlined,
+      ));
+    }
+
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.lg,
+        vertical: DSSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더
+          _buildSectionHeader('행운 아이템', meokColor),
+          const SizedBox(height: DSSpacing.md),
+          // 행운 아이템 - 가로 Wrap
+          Wrap(
+            spacing: DSSpacing.sm,
+            runSpacing: DSSpacing.sm,
+            children: items.map((item) => _buildSimpleLuckyItem(
+              item: item,
+              meokColor: meokColor,
+            )).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 단순화된 행운 아이템 칩
+  Widget _buildSimpleLuckyItem({
+    required _LuckyItemData item,
+    required Color meokColor,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs + 2,
+      ),
       decoration: BoxDecoration(
-        color: badgeColor.withValues(alpha: isDark ? 0.15 : 0.1),
-        borderRadius: BorderRadius.circular(DSRadius.lg),
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
-          color: badgeColor.withValues(alpha: isDark ? 0.4 : 0.3),
+          color: meokColor.withValues(alpha: 0.15),
           width: 1,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            emoji,
-            style: const TextStyle(fontSize: 16), // 예외: 이모지
-          ),
-          const SizedBox(width: 6),
-          Text(
-            '오늘 분석 본 사람 중 상위 $percentile%',
-            style: DSTypography.labelSmall.copyWith(
-              color: badgeColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMainContent(BuildContext context, bool isDark) {
-    return FortuneCard(
-      title: '오늘의 인사이트',
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            FortuneTextCleaner.clean(fortune.content),
-            style: DSTypography.bodyMedium.copyWith(
-              color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
-              height: 1.8,
-            ),
-          ),
-          if (fortune.description != null) ...[
-            const SizedBox(height: DSSpacing.md),
+          // 색상 타입: 원형 컬러칩
+          if (item.isColor && item.colorHex != null)
             Container(
-              padding: const EdgeInsets.all(DSSpacing.md),
+              width: 12,
+              height: 12,
               decoration: BoxDecoration(
-                color: DSColors.accent.withValues(alpha: isDark ? 0.08 : 0.05),
-                borderRadius: BorderRadius.circular(DSRadius.md),
-              ),
-              child: Text(
-                FortuneTextCleaner.clean(fortune.description!),
-                style: DSTypography.bodySmall.copyWith(
-                  color: DSColors.accent,
-                  height: 1.6,
+                color: item.colorHex,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: meokColor.withValues(alpha: 0.2),
+                  width: 0.5,
                 ),
               ),
+            )
+          else
+            Icon(
+              item.icon,
+              size: 14,
+              color: meokColor.withValues(alpha: 0.5),
             ),
-          ],
-        ],
-      ),
-    );
-  }
-  
-  Widget _buildLuckyItemsSection(BuildContext context, bool isDark) {
-    final luckyItems = fortune.luckyItems!;
-    final visualItems = <Map<String, String>>[];
-
-    final colorValue = luckyItems['color']?.toString();
-    if (colorValue != null && colorValue.isNotEmpty) {
-      visualItems.add({
-        'label': '색상',
-        'value': colorValue,
-        'icon': FortuneCardImages.getLuckyColorIcon(
-          _normalizeLuckyColor(colorValue),
-        ),
-      });
-    }
-
-    final numberValue = luckyItems['number'];
-    final number = numberValue is int
-        ? numberValue
-        : int.tryParse(numberValue?.toString() ?? '');
-    if (number != null) {
-      visualItems.add({
-        'label': '숫자',
-        'value': number.toString(),
-        'icon': FortuneCardImages.getLuckyNumberIcon(number),
-      });
-    }
-
-    final directionValue = luckyItems['direction']?.toString();
-    if (directionValue != null && directionValue.isNotEmpty) {
-      visualItems.add({
-        'label': '방향',
-        'value': directionValue,
-        'icon': FortuneCardImages.getLuckyDirectionIcon(
-          _normalizeLuckyDirection(directionValue),
-        ),
-      });
-    }
-
-    final timeValue = luckyItems['time']?.toString();
-    if (timeValue != null && timeValue.isNotEmpty) {
-      visualItems.add({
-        'label': '시간',
-        'value': timeValue,
-        'icon': FortuneCardImages.getLuckyTimeIcon(
-          _normalizeLuckyTime(timeValue),
-        ),
-      });
-    }
-
-    return FortuneCard(
-      title: '오늘의 행운 아이템',
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
-      child: Column(
-        children: [
-          if (visualItems.isNotEmpty) ...[
-            Wrap(
-              spacing: DSSpacing.sm,
-              runSpacing: DSSpacing.sm,
-              children: visualItems
-                  .map((item) => _buildLuckyVisualItem(
-                        label: item['label']!,
-                        value: item['value']!,
-                        iconPath: item['icon']!,
-                        isDark: isDark,
-                      ))
-                  .toList(),
-            ),
-            const SizedBox(height: DSSpacing.md),
-          ],
-          if (luckyItems['color'] != null)
-            _buildLuckyItem(
-              icon: Icons.palette,
-              title: '행운의 색상',
-              value: luckyItems['color'],
-              color: DSColors.accentSecondary,
-              isDark: isDark,
-            ),
-          if (luckyItems['number'] != null)
-            _buildLuckyItem(
-              icon: Icons.looks_one,
-              title: '행운의 숫자',
-              value: luckyItems['number'].toString(),
-              color: DSColors.success,
-              isDark: isDark,
-            ),
-          if (luckyItems['direction'] != null)
-            _buildLuckyItem(
-              icon: Icons.explore,
-              title: '행운의 방향',
-              value: luckyItems['direction'],
-              color: DSColors.accent,
-              isDark: isDark,
-            ),
-          if (luckyItems['time'] != null)
-            _buildLuckyItem(
-              icon: Icons.schedule,
-              title: '행운의 시간',
-              value: luckyItems['time'],
-              color: DSColors.warning,
-              isDark: isDark,
-            ),
-        ],
-      ),
-    );
-  }
-  
-  Widget _buildLuckyItem({
-    required IconData icon,
-    required String title,
-    required String value,
-    required Color color,
-    required bool isDark,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: isDark ? 0.15 : 0.1),
-              borderRadius: BorderRadius.circular(DSRadius.sm + 2),
-            ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: DSSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: DSTypography.labelSmall.copyWith(
-                    color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: DSTypography.bodyMedium.copyWith(
-                    color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLuckyVisualItem({
-    required String label,
-    required String value,
-    required String iconPath,
-    required bool isDark,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.sm,
-        vertical: DSSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: isDark ? DSColors.surfaceDark : DSColors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: (isDark ? DSColors.borderDark : DSColors.border)
-              .withValues(alpha: 0.3),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SmartImage(
-            path: iconPath,
-            width: 24,
-            height: 24,
-            fit: BoxFit.contain,
-          ),
           const SizedBox(width: DSSpacing.xs),
+          // 라벨과 값 - 먹색
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                label,
+                item.label,
                 style: DSTypography.labelSmall.copyWith(
-                  color: isDark
-                      ? DSColors.textSecondaryDark
-                      : DSColors.textSecondary,
+                  fontSize: 10,
+                  color: meokColor.withValues(alpha: 0.5),
                 ),
               ),
               Text(
-                value,
+                item.value,
                 style: DSTypography.bodySmall.copyWith(
-                  color:
-                      isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
+                  color: meokColor.withValues(alpha: 0.85),
                 ),
               ),
             ],
@@ -658,100 +539,34 @@ class FortuneResultCard extends ConsumerWidget {
     );
   }
 
-  String _normalizeLuckyColor(String value) {
-    final lower = value.toLowerCase();
-    if (lower.contains('red') || lower.contains('빨') || lower.contains('홍')) {
-      return 'red';
-    }
-    if (lower.contains('orange') || lower.contains('주황')) {
-      return 'orange';
-    }
-    if (lower.contains('yellow') || lower.contains('노랑')) {
-      return 'yellow';
-    }
-    if (lower.contains('green') || lower.contains('초록')) {
-      return 'green';
-    }
-    if (lower.contains('blue') || lower.contains('파랑') || lower.contains('청')) {
-      return 'blue';
-    }
-    if (lower.contains('purple') || lower.contains('보라')) {
-      return 'purple';
-    }
-    if (lower.contains('pink') || lower.contains('분홍')) {
-      return 'pink';
-    }
-    if (lower.contains('white') || lower.contains('흰')) {
-      return 'white';
-    }
-    if (lower.contains('black') || lower.contains('검')) {
-      return 'black';
-    }
-    if (lower.contains('gold') || lower.contains('금')) {
-      return 'gold';
-    }
-    if (lower.contains('silver') || lower.contains('은')) {
-      return 'silver';
-    }
-    if (lower.contains('coral') || lower.contains('코랄')) {
-      return 'coral';
-    }
-    return lower;
+  /// 색상 이름에서 Color 추출
+  Color? _getColorFromName(String colorName) {
+    final normalized = colorName.toLowerCase().trim();
+    const colorMap = {
+      '파란색': Color(0xFF3B82F6),
+      '파랑': Color(0xFF3B82F6),
+      '빨간색': Color(0xFFEF4444),
+      '빨강': Color(0xFFEF4444),
+      '노란색': Color(0xFFF59E0B),
+      '노랑': Color(0xFFF59E0B),
+      '초록색': Color(0xFF22C55E),
+      '초록': Color(0xFF22C55E),
+      '보라색': Color(0xFF8B5CF6),
+      '보라': Color(0xFF8B5CF6),
+      '분홍색': Color(0xFFEC4899),
+      '분홍': Color(0xFFEC4899),
+      '주황색': Color(0xFFF97316),
+      '주황': Color(0xFFF97316),
+      '흰색': Color(0xFFF5F5F5),
+      '흰': Color(0xFFF5F5F5),
+      '검정색': Color(0xFF1F2937),
+      '검정': Color(0xFF1F2937),
+      '회색': Color(0xFF6B7280),
+      '갈색': Color(0xFF92400E),
+    };
+    return colorMap[normalized];
   }
 
-  String _normalizeLuckyDirection(String value) {
-    final lower = value.toLowerCase();
-    if ((lower.contains('북') || lower.contains('north')) &&
-        (lower.contains('동') || lower.contains('east'))) {
-      return 'northeast';
-    }
-    if ((lower.contains('북') || lower.contains('north')) &&
-        (lower.contains('서') || lower.contains('west'))) {
-      return 'northwest';
-    }
-    if ((lower.contains('남') || lower.contains('south')) &&
-        (lower.contains('동') || lower.contains('east'))) {
-      return 'southeast';
-    }
-    if ((lower.contains('남') || lower.contains('south')) &&
-        (lower.contains('서') || lower.contains('west'))) {
-      return 'southwest';
-    }
-    if (lower.contains('동') || lower.contains('east')) {
-      return 'east';
-    }
-    if (lower.contains('서') || lower.contains('west')) {
-      return 'west';
-    }
-    if (lower.contains('남') || lower.contains('south')) {
-      return 'south';
-    }
-    if (lower.contains('북') || lower.contains('north')) {
-      return 'north';
-    }
-    return lower;
-  }
-
-  String _normalizeLuckyTime(String value) {
-    final lower = value.toLowerCase();
-    if (lower.contains('오전') || lower.contains('아침') || lower.contains('morning')) {
-      return 'morning';
-    }
-    if (lower.contains('오후') || lower.contains('점심') || lower.contains('afternoon')) {
-      return 'afternoon';
-    }
-    if (lower.contains('저녁') || lower.contains('evening')) {
-      return 'evening';
-    }
-    if (lower.contains('밤') || lower.contains('night')) {
-      return 'night';
-    }
-    if (lower.contains('새벽') || lower.contains('dawn')) {
-      return 'dawn';
-    }
-    return lower;
-  }
-  
   Widget _buildRecommendationsSection(BuildContext context, bool isDark) {
     return FortuneCard(
       title: '추천 사항',
@@ -865,14 +680,7 @@ class FortuneResultCard extends ConsumerWidget {
       ),
     );
   }
-  
-  Color _getScoreColor(int score) {
-    if (score >= 80) return DSColors.success;
-    if (score >= 60) return DSColors.accent;
-    if (score >= 40) return DSColors.warning;
-    return DSColors.error;
-  }
-  
+
   String _getScoreMessage(int score) {
     if (score >= 90) return '최상의 하루!';
     if (score >= 80) return '아주 좋은 하루';
@@ -892,4 +700,21 @@ class FortuneResultCard extends ConsumerWidget {
     if (score >= 40) return '조심스럽게 행동하면 무난한 하루가 될 것입니다.';
     return '오늘은 중요한 결정을 미루는 것이 좋겠습니다.';
   }
+}
+
+/// 행운 아이템 데이터 클래스 (동양화 스타일용)
+class _LuckyItemData {
+  final String label;
+  final String value;
+  final IconData icon;
+  final bool isColor;
+  final Color? colorHex;
+
+  const _LuckyItemData({
+    required this.label,
+    required this.value,
+    required this.icon,
+    this.isColor = false,
+    this.colorHex,
+  });
 }

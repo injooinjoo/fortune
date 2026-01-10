@@ -19,15 +19,17 @@ class ChatWelcomeView extends StatelessWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(
-        DSSpacing.md,
-        DSSpacing.xxl + DSSpacing.lg, // 상단 여백 추가
-        DSSpacing.md,
-        DSSpacing.md + bottomPadding,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+    // 화면 전체를 채우고, 콘텐츠를 중앙에 배치
+    return SizedBox.expand(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          DSSpacing.md,
+          0,
+          DSSpacing.md,
+          bottomPadding + 80, // 입력창 높이만큼 하단 여백
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // AI 아바타
             Container(
@@ -72,6 +74,7 @@ class ChatWelcomeView extends StatelessWidget {
             ),
           ],
         ),
+      ),
     );
   }
 }

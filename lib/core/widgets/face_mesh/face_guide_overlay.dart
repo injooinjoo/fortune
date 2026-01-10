@@ -78,7 +78,7 @@ class _FaceDetectionOverlayState extends State<FaceDetectionOverlay>
   }
 }
 
-/// 바운딩 박스 페인터
+/// 바운딩 박스 페인터 + Face Mesh 오버레이
 class _FaceBoundingBoxPainter extends CustomPainter {
   final FaceDetectionResult result;
   final Size imageSize;
@@ -101,15 +101,12 @@ class _FaceBoundingBoxPainter extends CustomPainter {
     final scaleY = size.height / imageSize.height;
 
     // 좌표 변환
-    double x = result.x;
-    double y = result.y;
-    double w = result.width;
-    double h = result.height;
-
-    // 전면 카메라 미러링
-    if (cameraLensDirection == CameraLensDirection.front) {
-      x = imageSize.width - x - w;
-    }
+    final double y = result.y;
+    final double w = result.width;
+    final double h = result.height;
+    final double x = cameraLensDirection == CameraLensDirection.front
+        ? imageSize.width - result.x - w
+        : result.x;
 
     final rect = Rect.fromLTWH(
       x * scaleX,
@@ -139,11 +136,164 @@ class _FaceBoundingBoxPainter extends CustomPainter {
       boxPaint,
     );
 
+    // ✨ Face Mesh 오버레이 그리기
+    _drawFaceMesh(canvas, rect);
+
     // 코너 강조
     _drawCorners(canvas, rect, boxPaint);
 
     // 신뢰도 표시
     _drawConfidence(canvas, rect, size);
+  }
+
+  /// 얼굴 메쉬 오버레이 그리기
+  void _drawFaceMesh(Canvas canvas, Rect faceRect) {
+    final meshPaint = Paint()
+      ..color = accentColor.withValues(alpha: 0.6 * animationValue)
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    final dotPaint = Paint()
+      ..color = accentColor.withValues(alpha: 0.8 * animationValue)
+      ..style = PaintingStyle.fill;
+
+    // 얼굴 바운딩 박스 중심과 스케일 계산
+    final center = faceRect.center;
+    final scaleW = faceRect.width / 200;
+    final scaleH = faceRect.height / 260;
+
+    // 메쉬 포인트 생성 (바운딩 박스에 맞춰 스케일)
+    final points = _getFaceMeshPoints(center, scaleW, scaleH);
+
+    // 포인트 그리기
+    for (final point in points) {
+      canvas.drawCircle(point, 2.5 * scaleW, dotPaint);
+    }
+
+    // 메쉬 연결선 그리기
+    _drawMeshLines(canvas, meshPaint, points);
+  }
+
+  List<Offset> _getFaceMeshPoints(Offset center, double scaleW, double scaleH) {
+    return [
+      // 얼굴 윤곽 (외곽) - 0~11
+      center + Offset(0, -100 * scaleH),           // 0: 이마 상단
+      center + Offset(-40 * scaleW, -85 * scaleH), // 1: 이마 좌
+      center + Offset(40 * scaleW, -85 * scaleH),  // 2: 이마 우
+      center + Offset(-60 * scaleW, -50 * scaleH), // 3: 관자놀이 좌
+      center + Offset(60 * scaleW, -50 * scaleH),  // 4: 관자놀이 우
+      center + Offset(-70 * scaleW, 0),            // 5: 광대 좌
+      center + Offset(70 * scaleW, 0),             // 6: 광대 우
+      center + Offset(-55 * scaleW, 50 * scaleH),  // 7: 턱선 좌
+      center + Offset(55 * scaleW, 50 * scaleH),   // 8: 턱선 우
+      center + Offset(-30 * scaleW, 80 * scaleH),  // 9: 하관 좌
+      center + Offset(30 * scaleW, 80 * scaleH),   // 10: 하관 우
+      center + Offset(0, 100 * scaleH),            // 11: 턱 끝
+
+      // 눈 영역 - 12~19
+      center + Offset(-38 * scaleW, -30 * scaleH), // 12: 좌안 외측
+      center + Offset(-18 * scaleW, -30 * scaleH), // 13: 좌안 내측
+      center + Offset(18 * scaleW, -30 * scaleH),  // 14: 우안 내측
+      center + Offset(38 * scaleW, -30 * scaleH),  // 15: 우안 외측
+      center + Offset(-28 * scaleW, -38 * scaleH), // 16: 좌안 상단
+      center + Offset(-28 * scaleW, -22 * scaleH), // 17: 좌안 하단
+      center + Offset(28 * scaleW, -38 * scaleH),  // 18: 우안 상단
+      center + Offset(28 * scaleW, -22 * scaleH),  // 19: 우안 하단
+
+      // 코 - 20~24
+      center + Offset(0, -18 * scaleH),            // 20: 콧대 상단
+      center + Offset(0, 5 * scaleH),              // 21: 콧대 중간
+      center + Offset(-15 * scaleW, 18 * scaleH),  // 22: 콧볼 좌
+      center + Offset(15 * scaleW, 18 * scaleH),   // 23: 콧볼 우
+      center + Offset(0, 22 * scaleH),             // 24: 코끝
+
+      // 입 - 25~30
+      center + Offset(-25 * scaleW, 42 * scaleH),  // 25: 입꼬리 좌
+      center + Offset(25 * scaleW, 42 * scaleH),   // 26: 입꼬리 우
+      center + Offset(0, 36 * scaleH),             // 27: 윗입술 중앙
+      center + Offset(0, 52 * scaleH),             // 28: 아랫입술 중앙
+      center + Offset(-12 * scaleW, 40 * scaleH),  // 29: 윗입술 좌
+      center + Offset(12 * scaleW, 40 * scaleH),   // 30: 윗입술 우
+
+      // 눈썹 - 31~34
+      center + Offset(-45 * scaleW, -50 * scaleH), // 31: 좌 눈썹 외측
+      center + Offset(-12 * scaleW, -48 * scaleH), // 32: 좌 눈썹 내측
+      center + Offset(12 * scaleW, -48 * scaleH),  // 33: 우 눈썹 내측
+      center + Offset(45 * scaleW, -50 * scaleH),  // 34: 우 눈썹 외측
+    ];
+  }
+
+  void _drawMeshLines(Canvas canvas, Paint paint, List<Offset> p) {
+    // 얼굴 윤곽 연결
+    _drawLine(canvas, paint, p[0], p[1]);
+    _drawLine(canvas, paint, p[0], p[2]);
+    _drawLine(canvas, paint, p[1], p[3]);
+    _drawLine(canvas, paint, p[2], p[4]);
+    _drawLine(canvas, paint, p[3], p[5]);
+    _drawLine(canvas, paint, p[4], p[6]);
+    _drawLine(canvas, paint, p[5], p[7]);
+    _drawLine(canvas, paint, p[6], p[8]);
+    _drawLine(canvas, paint, p[7], p[9]);
+    _drawLine(canvas, paint, p[8], p[10]);
+    _drawLine(canvas, paint, p[9], p[11]);
+    _drawLine(canvas, paint, p[10], p[11]);
+
+    // 내부 가로 메쉬
+    _drawLine(canvas, paint, p[1], p[2]);
+    _drawLine(canvas, paint, p[3], p[4]);
+    _drawLine(canvas, paint, p[5], p[6]);
+    _drawLine(canvas, paint, p[7], p[8]);
+
+    // 눈썹 영역
+    _drawLine(canvas, paint, p[0], p[31]);
+    _drawLine(canvas, paint, p[0], p[34]);
+    _drawLine(canvas, paint, p[31], p[32]);
+    _drawLine(canvas, paint, p[33], p[34]);
+    _drawLine(canvas, paint, p[32], p[33]);
+
+    // 눈 영역 - 좌
+    _drawLine(canvas, paint, p[12], p[16]);
+    _drawLine(canvas, paint, p[16], p[13]);
+    _drawLine(canvas, paint, p[13], p[17]);
+    _drawLine(canvas, paint, p[17], p[12]);
+    // 눈 영역 - 우
+    _drawLine(canvas, paint, p[14], p[18]);
+    _drawLine(canvas, paint, p[18], p[15]);
+    _drawLine(canvas, paint, p[15], p[19]);
+    _drawLine(canvas, paint, p[19], p[14]);
+
+    // 코 영역
+    _drawLine(canvas, paint, p[13], p[20]);
+    _drawLine(canvas, paint, p[14], p[20]);
+    _drawLine(canvas, paint, p[20], p[21]);
+    _drawLine(canvas, paint, p[21], p[22]);
+    _drawLine(canvas, paint, p[21], p[23]);
+    _drawLine(canvas, paint, p[22], p[24]);
+    _drawLine(canvas, paint, p[23], p[24]);
+
+    // 입 영역
+    _drawLine(canvas, paint, p[25], p[29]);
+    _drawLine(canvas, paint, p[29], p[27]);
+    _drawLine(canvas, paint, p[27], p[30]);
+    _drawLine(canvas, paint, p[30], p[26]);
+    _drawLine(canvas, paint, p[25], p[28]);
+    _drawLine(canvas, paint, p[26], p[28]);
+
+    // 대각선 연결 (삼각형 메쉬)
+    _drawLine(canvas, paint, p[3], p[12]);
+    _drawLine(canvas, paint, p[4], p[15]);
+    _drawLine(canvas, paint, p[5], p[17]);
+    _drawLine(canvas, paint, p[6], p[19]);
+    _drawLine(canvas, paint, p[5], p[22]);
+    _drawLine(canvas, paint, p[6], p[23]);
+    _drawLine(canvas, paint, p[7], p[25]);
+    _drawLine(canvas, paint, p[8], p[26]);
+    _drawLine(canvas, paint, p[9], p[28]);
+    _drawLine(canvas, paint, p[10], p[28]);
+  }
+
+  void _drawLine(Canvas canvas, Paint paint, Offset p1, Offset p2) {
+    canvas.drawLine(p1, p2, paint);
   }
 
   void _drawCorners(Canvas canvas, Rect rect, Paint paint) {

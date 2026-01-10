@@ -7,6 +7,7 @@ import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/career_info_header.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/constants/fortune_card_images.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 
 /// 채팅용 커리어 운세 결과 카드
 ///
@@ -466,7 +467,7 @@ class ChatCareerResultCard extends ConsumerWidget {
                   Text(
                     '강점',
                     style: typography.labelMedium.copyWith(
-                      color: const Color(0xFF10B981),
+                      color: ObangseokColors.cheongMuted,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -483,13 +484,13 @@ class ChatCareerResultCard extends ConsumerWidget {
                               horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color:
-                                const Color(0xFF10B981).withValues(alpha: 0.1),
+                                ObangseokColors.cheongMuted.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(DSRadius.sm),
                           ),
                           child: Text(
                             s.toString(),
                             style: typography.labelSmall.copyWith(
-                              color: const Color(0xFF10B981),
+                              color: ObangseokColors.cheongMuted,
                             ),
                           ),
                         ))
@@ -509,7 +510,7 @@ class ChatCareerResultCard extends ConsumerWidget {
                   Text(
                     '개선점',
                     style: typography.labelMedium.copyWith(
-                      color: const Color(0xFFF59E0B),
+                      color: ObangseokColors.hwangMuted,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -526,13 +527,13 @@ class ChatCareerResultCard extends ConsumerWidget {
                               horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color:
-                                const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                                ObangseokColors.hwangMuted.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(DSRadius.sm),
                           ),
                           child: Text(
                             i.toString(),
                             style: typography.labelSmall.copyWith(
-                              color: const Color(0xFFF59E0B),
+                              color: ObangseokColors.hwangMuted,
                             ),
                           ),
                         ))
@@ -588,19 +589,19 @@ class ChatCareerResultCard extends ConsumerWidget {
               _ActionPlanItem(
                 label: '즉시',
                 items: immediate.take(2).cast<String>().toList(),
-                color: const Color(0xFF10B981),
+                color: ObangseokColors.cheongMuted,
               ),
             if (shortTerm.isNotEmpty)
               _ActionPlanItem(
                 label: '단기',
                 items: shortTerm.take(2).cast<String>().toList(),
-                color: const Color(0xFF3B82F6),
+                color: ObangseokColors.cheong,
               ),
             if (longTerm.isNotEmpty)
               _ActionPlanItem(
                 label: '장기',
                 items: longTerm.take(2).cast<String>().toList(),
-                color: const Color(0xFF8B5CF6),
+                color: ObangseokColors.cheongDark,
               ),
           ],
         ),
@@ -736,10 +737,11 @@ class ChatCareerResultCard extends ConsumerWidget {
   }
 
   Color _getProbabilityColor(int prob) {
-    if (prob >= 75) return const Color(0xFF10B981);
-    if (prob >= 50) return const Color(0xFF3B82F6);
-    if (prob >= 25) return const Color(0xFFF59E0B);
-    return const Color(0xFFEF4444);
+    // 동양화 스타일 - 톤다운 오방색
+    if (prob >= 75) return ObangseokColors.cheongMuted;
+    if (prob >= 50) return ObangseokColors.cheong;
+    if (prob >= 25) return ObangseokColors.hwangMuted;
+    return ObangseokColors.jeokMuted;
   }
 }
 
@@ -827,10 +829,11 @@ class _CareerScoreCircleState extends State<_CareerScoreCircle>
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return const Color(0xFF10B981);
-    if (score >= 60) return const Color(0xFF3B82F6);
-    if (score >= 40) return const Color(0xFFF59E0B);
-    return const Color(0xFFEF4444);
+    // 동양화 스타일 - 톤다운 오방색
+    if (score >= 80) return ObangseokColors.cheongMuted;
+    if (score >= 60) return ObangseokColors.cheong;
+    if (score >= 40) return ObangseokColors.hwangMuted;
+    return ObangseokColors.jeokMuted;
   }
 }
 
@@ -911,7 +914,7 @@ class _SkillProgressBar extends StatelessWidget {
               widthFactor: targetProgress,
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+                  color: ObangseokColors.cheong.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -921,7 +924,7 @@ class _SkillProgressBar extends StatelessWidget {
               widthFactor: currentProgress,
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981),
+                  color: ObangseokColors.cheongMuted,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),

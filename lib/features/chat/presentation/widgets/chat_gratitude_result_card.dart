@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 
 /// 감사일기 결과 카드 (일기장 스타일)
 ///
@@ -26,15 +27,15 @@ class ChatGratitudeResultCard extends ConsumerWidget {
     required this.date,
   });
 
-  // 크림색 배경
-  static const _creamLight = Color(0xFFFFF8E7);
-  static const _creamDark = Color(0xFFFFFAF0);
+  // 동양화 스타일 - 한지 느낌 배경 (ObangseokColors 사용)
+  static const _creamLight = ObangseokColors.misaek;
+  static const _creamDark = ObangseokColors.misaekWarm;
   // 다크모드 배경
-  static const _darkBg1 = Color(0xFF2A2520);
-  static const _darkBg2 = Color(0xFF1E1E1E);
-  // 액센트 색상
-  static const _pinkAccent = Color(0xFFE8B4B8);
-  static const _goldAccent = Color(0xFFFFD700);
+  static const _darkBg1 = ObangseokColors.meokLight;
+  static const _darkBg2 = ObangseokColors.meok;
+  // 액센트 색상 - 톤다운 오방색
+  static const _pinkAccent = ObangseokColors.jeokMuted;
+  static const _goldAccent = ObangseokColors.hwang;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -178,7 +179,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context, bool isDark) {
     final formattedDate = DateFormat('M월 d일').format(date);
-    final textColor = isDark ? Colors.white : const Color(0xFF4A3728);
+    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Row(
       children: [
@@ -226,7 +227,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
           child: Icon(
             Icons.auto_stories_rounded,
             size: 20,
-            color: isDark ? _pinkAccent : const Color(0xFF8B6914),
+            color: isDark ? _pinkAccent : ObangseokColors.hwangMuted,
           ),
         ),
         const SizedBox(width: 8),
@@ -237,7 +238,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
           shareTitle: '${DateFormat('M월 d일').format(date)}의 감사일기',
           shareContent: '$gratitude1, $gratitude2, $gratitude3',
           iconSize: 18,
-          iconColor: isDark ? _pinkAccent : const Color(0xFF8B6914),
+          iconColor: isDark ? _pinkAccent : ObangseokColors.hwangMuted,
         ),
       ],
     );
@@ -294,7 +295,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
     String text,
     bool isDark,
   ) {
-    final textColor = isDark ? Colors.white : const Color(0xFF4A3728);
+    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,7 +346,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
   }
 
   Widget _buildClosingMessage(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : const Color(0xFF4A3728);
+    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Container(
       padding: const EdgeInsets.all(14),

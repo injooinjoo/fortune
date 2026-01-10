@@ -1,13 +1,16 @@
 /**
  * Push Daily Fortune Edge Function
  *
- * @description 일일 운세 푸시 알림을 발송합니다. Cron으로 15분 간격 실행 (6-9시)
+ * @description 일일 운세 푸시 알림을 발송합니다. 매일 아침 9시 정각 실행
  *
  * @endpoint POST /push-daily-fortune
- * @cron */15 6-9 * * * (매일 6-9시, 15분 간격)
+ * @cron 0 9 * * * (매일 아침 9시 KST)
+ *
+ * @query test=true - 테스트 모드 (실제 발송 없이 대상자만 확인)
+ * @query force=true - 강제 발송 (이미 발송된 사용자도 포함)
  *
  * @flow
- * 1. 현재 시간에 알림 받을 사용자 조회
+ * 1. 알림 활성화된 모든 사용자 조회
  * 2. 오늘의 운세 점수 사전 계산 (캐시에서 또는 생성)
  * 3. 개인화된 메시지 생성
  * 4. FCM 푸시 발송
@@ -62,6 +65,12 @@ serve(async (req) => {
   }
 
   try {
+    // Query params 파싱
+    const url = new URL(req.url)
+    const isTestMode = url.searchParams.get('test') === 'true'
+    const isForceMode = url.searchParams.get('force') === 'true'
+    const targetUserId = url.searchParams.get('user_id') // 특정 사용자 테스트용
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const fcmServerKey = Deno.env.get('FCM_SERVER_KEY')
@@ -72,16 +81,49 @@ serve(async (req) => {
     const now = new Date()
     const kstHour = (now.getUTCHours() + 9) % 24
 
-    console.log(`[push-daily-fortune] Starting at KST hour: ${kstHour}`)
+    console.log(`[push-daily-fortune] Starting at KST hour: ${kstHour}, test=${isTestMode}, force=${isForceMode}`)
 
-    // 1. 알림 받을 사용자 조회
-    const eligibleUsers = await getEligibleUsers(supabase, kstHour)
+    // 1. 알림 받을 사용자 조회 (9시 고정이므로 시간 필터링 없음)
+    const eligibleUsers = await getEligibleUsers(supabase, isForceMode, targetUserId)
     console.log(`[push-daily-fortune] Eligible users: ${eligibleUsers.length}`)
 
     if (eligibleUsers.length === 0) {
       return new Response(
         JSON.stringify({ success: true, sent: 0, message: 'No eligible users' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // 테스트 모드: 실제 발송 없이 대상자만 반환
+    if (isTestMode) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          testMode: true,
+          eligibleCount: eligibleUsers.length,
+          users: eligibleUsers.map(u => ({
+            user_id: u.user_id,
+            name: u.name,
+            platform: u.platform,
+            zodiac_animal: u.zodiac_animal,
+          })),
+          message: '테스트 모드: 실제 발송되지 않았습니다',
+          timestamp: new Date().toISOString(),
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // FCM_SERVER_KEY 체크
+    if (!fcmServerKey) {
+      console.error('[push-daily-fortune] FCM_SERVER_KEY not configured')
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'FCM_SERVER_KEY not configured',
+          eligibleCount: eligibleUsers.length,
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
@@ -112,14 +154,12 @@ serve(async (req) => {
         const notificationId = logResult.data?.id
 
         // FCM 발송
-        if (fcmServerKey) {
-          await sendFCMNotification(
-            fcmServerKey,
-            user.fcm_token,
-            message,
-            notificationId
-          )
-        }
+        await sendFCMNotification(
+          fcmServerKey,
+          user.fcm_token,
+          message,
+          notificationId
+        )
 
         return { user_id: user.user_id, success: true }
       })
@@ -151,12 +191,19 @@ serve(async (req) => {
 
 /**
  * 알림 받을 사용자 조회
+ * @param supabase - Supabase 클라이언트
+ * @param forceMode - true면 오늘 이미 발송된 사용자도 포함
+ * @param targetUserId - 특정 사용자만 조회 (테스트용)
  */
-async function getEligibleUsers(supabase: any, currentHour: number): Promise<EligibleUser[]> {
-  // 오늘 이미 발송된 사용자 제외
+async function getEligibleUsers(
+  supabase: any,
+  forceMode: boolean = false,
+  targetUserId?: string | null
+): Promise<EligibleUser[]> {
   const today = new Date().toISOString().split('T')[0]
 
-  const { data, error } = await supabase
+  // 쿼리 빌더
+  let query = supabase
     .from('user_notification_preferences')
     .select(`
       user_id,
@@ -179,33 +226,39 @@ async function getEligibleUsers(supabase: any, currentHour: number): Promise<Eli
     .eq('daily_fortune', true)
     .eq('fcm_tokens.is_active', true)
 
+  // 특정 사용자만 조회 (테스트용)
+  if (targetUserId) {
+    query = query.eq('user_id', targetUserId)
+  }
+
+  const { data, error } = await query
+
   if (error) {
     console.error('[getEligibleUsers] Error:', error)
     return []
   }
 
-  // 현재 시간에 해당하는 사용자 필터링
-  const eligibleUsers = data?.filter((user: any) => {
-    const userHour = user.preferred_hour ?? user.optimal_send_hour ?? 7
-    return userHour === currentHour
-  }) || []
+  // 9시 고정이므로 시간 필터링 없음 - 모든 eligible 사용자 반환
+  let eligibleUsers = data || []
 
-  // 오늘 이미 발송된 사용자 제외
-  const { data: sentToday } = await supabase
-    .from('notification_logs')
-    .select('user_id')
-    .eq('notification_type', 'daily_fortune')
-    .gte('sent_at', today)
+  // 오늘 이미 발송된 사용자 제외 (force 모드가 아닐 때만)
+  if (!forceMode) {
+    const { data: sentToday } = await supabase
+      .from('notification_logs')
+      .select('user_id')
+      .eq('notification_type', 'daily_fortune')
+      .gte('sent_at', today)
 
-  const sentUserIds = new Set(sentToday?.map((s: any) => s.user_id) || [])
+    const sentUserIds = new Set(sentToday?.map((s: any) => s.user_id) || [])
+    eligibleUsers = eligibleUsers.filter((user: any) => !sentUserIds.has(user.user_id))
+  }
 
   return eligibleUsers
-    .filter((user: any) => !sentUserIds.has(user.user_id))
     .map((user: any) => ({
       user_id: user.user_id,
       fcm_token: user.fcm_tokens?.[0]?.token,
       platform: user.fcm_tokens?.[0]?.platform,
-      preferred_hour: user.preferred_hour ?? user.optimal_send_hour ?? 7,
+      preferred_hour: 9, // 9시 고정
       timezone: user.timezone || 'Asia/Seoul',
       name: user.user_profiles?.name,
       zodiac_animal: user.user_profiles?.chinese_zodiac,

@@ -96,6 +96,9 @@ class _SealStampWidgetState extends State<SealStampWidget>
       vsync: this,
     );
 
+    // TweenSequence는 t가 정확히 0.0~1.0 범위여야 함
+    // CurvedAnimation을 제거하고 AnimationController를 직접 사용
+    // TweenSequence 자체가 0→1.2→1.0 bounce 효과를 제공함
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween(begin: 0.0, end: 1.2),
@@ -105,10 +108,7 @@ class _SealStampWidgetState extends State<SealStampWidget>
         tween: Tween(begin: 1.2, end: 1.0),
         weight: 40,
       ),
-    ]).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
-    ));
+    ]).animate(_animationController); // CurvedAnimation 제거 - 직접 연결
 
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(

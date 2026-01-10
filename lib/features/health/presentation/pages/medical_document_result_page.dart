@@ -11,6 +11,7 @@ import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../domain/models/medical_document_models.dart';
 import '../../data/services/medical_document_service.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 
 /// 의료 문서 분석 결과 페이지
 class MedicalDocumentResultPage extends ConsumerStatefulWidget {
@@ -138,11 +139,11 @@ class _MedicalDocumentResultPageState
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFF10B981).withValues(alpha: 0.1),
+              color: ObangseokColors.cheongMuted.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(Color(0xFF10B981)),
+              valueColor: AlwaysStoppedAnimation(ObangseokColors.cheongMuted),
               strokeWidth: 3,
             ),
           ),
@@ -321,7 +322,7 @@ class _MedicalDocumentResultPageState
     return _buildSection(
       isDark: isDark,
       icon: Icons.description_outlined,
-      iconColor: const Color(0xFF3B82F6),
+      iconColor: ObangseokColors.cheong,
       title: '문서 요약',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,7 +350,7 @@ class _MedicalDocumentResultPageState
     return _buildSection(
       isDark: isDark,
       icon: Icons.analytics_outlined,
-      iconColor: const Color(0xFF10B981),
+      iconColor: ObangseokColors.cheongMuted,
       title: '검사 항목 분석',
       subtitle:
           '총 ${_result!.totalTestItems}개 항목 중 ${_result!.cautionItemCount}개 주의',
@@ -469,7 +470,7 @@ class _MedicalDocumentResultPageState
     return _buildSection(
       isDark: isDark,
       icon: Icons.auto_awesome_rounded,
-      iconColor: const Color(0xFF8B5CF6),
+      iconColor: ObangseokColors.cheongDark,
       title: '사주 기반 건강 분석',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -478,10 +479,10 @@ class _MedicalDocumentResultPageState
           Row(
             children: [
               _buildElementChip(
-                  '강함', saju.dominantElement, const Color(0xFF10B981), isDark),
+                  '강함', saju.dominantElement, ObangseokColors.cheongMuted, isDark),
               const SizedBox(width: 8),
               _buildElementChip(
-                  '약함', saju.weakElement, const Color(0xFFEF4444), isDark),
+                  '약함', saju.weakElement, ObangseokColors.jeokMuted, isDark),
             ],
           ),
           const SizedBox(height: 12),
@@ -499,23 +500,23 @@ class _MedicalDocumentResultPageState
           // 취약/강한 장기
           if (saju.vulnerableOrgans.isNotEmpty)
             _buildOrganList('주의 필요 장기', saju.vulnerableOrgans,
-                const Color(0xFFEF4444), isDark),
+                ObangseokColors.jeokMuted, isDark),
           if (saju.strengthOrgans.isNotEmpty)
             _buildOrganList(
-                '튼튼한 장기', saju.strengthOrgans, const Color(0xFF10B981), isDark),
+                '튼튼한 장기', saju.strengthOrgans, ObangseokColors.cheongMuted, isDark),
 
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.08),
+              color: ObangseokColors.cheongDark.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(Icons.tips_and_updates_rounded,
-                    color: Color(0xFF8B5CF6), size: 18),
+                    color: ObangseokColors.cheongDark, size: 18),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -617,24 +618,24 @@ class _MedicalDocumentResultPageState
     return _buildSection(
       isDark: isDark,
       icon: Icons.checklist_rounded,
-      iconColor: const Color(0xFFF59E0B),
+      iconColor: ObangseokColors.hwangMuted,
       title: '권장사항',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (rec.urgent.isNotEmpty) ...[
             _buildRecommendationGroup(
-                '긴급', rec.urgent, const Color(0xFFEF4444), isDark),
+                '긴급', rec.urgent, ObangseokColors.jeokMuted, isDark),
             const SizedBox(height: 12),
           ],
           if (rec.general.isNotEmpty) ...[
             _buildRecommendationGroup(
-                '일반', rec.general, const Color(0xFF3B82F6), isDark),
+                '일반', rec.general, ObangseokColors.cheong, isDark),
             const SizedBox(height: 12),
           ],
           if (rec.lifestyle.isNotEmpty)
             _buildRecommendationGroup(
-                '생활습관', rec.lifestyle, const Color(0xFF10B981), isDark),
+                '생활습관', rec.lifestyle, ObangseokColors.cheongMuted, isDark),
         ],
       ),
     );
@@ -695,7 +696,7 @@ class _MedicalDocumentResultPageState
     return _buildSection(
       isDark: isDark,
       icon: Icons.spa_rounded,
-      iconColor: const Color(0xFF10B981),
+      iconColor: ObangseokColors.cheongMuted,
       title: '맞춤 양생법',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -741,7 +742,7 @@ class _MedicalDocumentResultPageState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Icon(Icons.check_circle_rounded,
-                          size: 16, color: Color(0xFF10B981)),
+                          size: 16, color: ObangseokColors.cheongMuted),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -765,7 +766,7 @@ class _MedicalDocumentResultPageState
   Widget _buildDietAdvice(DietAdvice advice, bool isDark) {
     final isRecommend = advice.isRecommend;
     final color =
-        isRecommend ? const Color(0xFF10B981) : const Color(0xFFEF4444);
+        isRecommend ? ObangseokColors.cheongMuted : ObangseokColors.jeokMuted;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -850,11 +851,11 @@ class _MedicalDocumentResultPageState
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
+              color: ObangseokColors.cheong.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(Icons.directions_run_rounded,
-                color: Color(0xFF3B82F6), size: 20),
+                color: ObangseokColors.cheong, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -882,7 +883,7 @@ class _MedicalDocumentResultPageState
                   Text(
                     exercise.benefit,
                     style: TossTheme.caption.copyWith(
-                      color: const Color(0xFF10B981),
+                      color: ObangseokColors.cheongMuted,
                     ),
                   ),
               ],

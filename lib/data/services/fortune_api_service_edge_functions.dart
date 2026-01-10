@@ -29,6 +29,8 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     'love',         // 23초 소요 확인됨 (경계 수준)
     'avoid-people', // 15-18초 소요 확인됨
     'new-year',     // 22-28초 소요, 12개월 월별 운세 + 목표별 분석
+    'face-reading', // 이미지 업로드 + AI 관상 분석 (Vision API 호출)
+    'past-life',    // 이미지 업로드 + 전생 분석
   ];
   
   FortuneApiServiceWithEdgeFunctions(this._ref) : super(_ref.read(apiClientProvider));
