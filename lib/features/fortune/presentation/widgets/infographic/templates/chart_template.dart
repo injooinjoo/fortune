@@ -537,45 +537,46 @@ class _MbtiDimensionBar extends StatelessWidget {
         ),
         const SizedBox(width: DSSpacing.sm),
 
-        // 바
+        // 바 - LayoutBuilder + Align 사용 (Positioned + FractionallySizedBox 대체)
         Expanded(
-          child: Container(
-            height: 8,
-            decoration: BoxDecoration(
-              color: context.colors.border.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Stack(
-              children: [
-                // 중앙 표시
-                Center(
-                  child: Container(
-                    width: 2,
-                    height: 8,
-                    color: context.colors.textTertiary.withOpacity(0.5),
-                  ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final barWidth = constraints.maxWidth * progress * 0.5;
+              return Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: context.colors.border.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                // 진행 바
-                Positioned(
-                  left: isLeft ? null : 0,
-                  right: isLeft ? 0 : null,
-                  top: 0,
-                  bottom: 0,
-                  child: FractionallySizedBox(
-                    widthFactor: progress * 0.5,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: context.colors.accent,
-                        borderRadius: BorderRadius.horizontal(
-                          left: isLeft ? Radius.zero : const Radius.circular(4),
-                          right: isLeft ? const Radius.circular(4) : Radius.zero,
+                child: Stack(
+                  children: [
+                    // 중앙 표시
+                    Center(
+                      child: Container(
+                        width: 2,
+                        height: 8,
+                        color: context.colors.textTertiary.withOpacity(0.5),
+                      ),
+                    ),
+                    // 진행 바 - Align + 직접 너비 지정으로 semantics 에러 방지
+                    Align(
+                      alignment: isLeft ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        width: barWidth,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: context.colors.accent,
+                          borderRadius: BorderRadius.horizontal(
+                            left: isLeft ? Radius.zero : const Radius.circular(4),
+                            right: isLeft ? const Radius.circular(4) : Radius.zero,
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
         const SizedBox(width: DSSpacing.sm),

@@ -541,7 +541,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
 
         // 선택된 카드 미리보기 (가로 스크롤)
         SizedBox(
-          height: 160,
+          height: 170, // 역방향 표시 포함 높이
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: _selectedCards.length,

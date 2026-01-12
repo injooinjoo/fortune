@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/tokens/ds_spacing.dart';
 import 'package:fortune/core/design_system/tokens/ds_radius.dart';
+import 'package:fortune/core/design_system/tokens/ds_luck_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
-import 'package:fortune/core/theme/obangseok_colors.dart';
 
 /// 행운 아이템 행 위젯
 ///
@@ -60,7 +60,7 @@ class LuckyItemRow extends StatelessWidget {
 }
 
 /// 개별 행운 아이템 칩
-/// 동양화 스타일: 투명 배경 + 먹색 테두리 + 먹색 텍스트
+/// Toss 스타일: 컬러풀한 배경 + 컬러 테두리 + 컬러 텍스트
 class _LuckyItemChip extends StatelessWidget {
   const _LuckyItemChip({
     required this.item,
@@ -68,9 +68,33 @@ class _LuckyItemChip extends StatelessWidget {
 
   final LuckyItem item;
 
+  /// 타입별 색상 반환 (한국 전통 테마)
+  Color _getTypeColor(LuckyItemType type) {
+    switch (type) {
+      case LuckyItemType.color:
+        return DSLuckColors.categoryColor; // 색상 (보라)
+      case LuckyItemType.food:
+        return DSLuckColors.categoryFood; // 음식 (주황)
+      case LuckyItemType.number:
+        return DSLuckColors.categoryNumber; // 숫자 (금색)
+      case LuckyItemType.direction:
+        return DSLuckColors.categoryDirection; // 방향 (녹색)
+      case LuckyItemType.time:
+        return DSLuckColors.wealthLuck; // 시간 (금색)
+      case LuckyItemType.item:
+        return DSLuckColors.categoryFashion; // 아이템 (분홍)
+      case LuckyItemType.place:
+        return DSLuckColors.categoryTravel; // 장소 (청색)
+      case LuckyItemType.animal:
+        return DSLuckColors.loveLuck; // 동물 (분홍)
+      case LuckyItemType.custom:
+        return DSLuckColors.fortuneGold; // 커스텀 (금색)
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final meokColor = ObangseokColors.getMeok(context);
+    final typeColor = item.iconColor ?? _getTypeColor(item.type);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -78,10 +102,10 @@ class _LuckyItemChip extends StatelessWidget {
         vertical: DSSpacing.xs + 2,
       ),
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: typeColor.withValues(alpha: 0.1),
         borderRadius: DSRadius.smBorder,
         border: Border.all(
-          color: meokColor.withValues(alpha: 0.15),
+          color: typeColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -95,10 +119,10 @@ class _LuckyItemChip extends StatelessWidget {
             Icon(
               item.icon ?? _getDefaultIcon(item.type),
               size: 14,
-              color: meokColor.withValues(alpha: 0.5),
+              color: typeColor,
             ),
           const SizedBox(width: DSSpacing.xs),
-          // 라벨과 값 - 모두 먹색
+          // 라벨과 값
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -108,14 +132,14 @@ class _LuckyItemChip extends StatelessWidget {
                   item.label!,
                   style: context.typography.labelSmall.copyWith(
                     fontSize: 10,
-                    color: meokColor.withValues(alpha: 0.5),
+                    color: context.colors.textTertiary,
                   ),
                 ),
               Text(
                 item.value,
                 style: context.typography.bodySmall.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: meokColor.withValues(alpha: 0.85),
+                  fontWeight: FontWeight.w600,
+                  color: typeColor,
                 ),
               ),
             ],
@@ -150,7 +174,7 @@ class _LuckyItemChip extends StatelessWidget {
 }
 
 /// 색상 칩 위젯 (원형, 작은 크기)
-/// 동양화 스타일: 그림자 없이 단순한 원형
+/// 한국 전통 테마: 깔끔한 원형 칩
 class _ColorChip extends StatelessWidget {
   const _ColorChip({
     required this.color,
@@ -160,8 +184,6 @@ class _ColorChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final meokColor = ObangseokColors.getMeok(context);
-
     return Container(
       width: 12,
       height: 12,
@@ -169,8 +191,8 @@ class _ColorChip extends StatelessWidget {
         color: color,
         shape: BoxShape.circle,
         border: Border.all(
-          color: meokColor.withValues(alpha: 0.2),
-          width: 0.5,
+          color: DSLuckColors.categoryColor.withValues(alpha: 0.3),
+          width: 1,
         ),
       ),
     );
@@ -425,7 +447,7 @@ class LuckyItemGrid extends StatelessWidget {
 }
 
 /// 행운 아이템 카드 (그리드용)
-/// 동양화 스타일: 투명 배경 + 먹색 테두리 + 먹색 텍스트
+/// Toss 스타일: 컬러풀한 배경 + 컬러 테두리 + 컬러 텍스트
 class _LuckyItemCard extends StatelessWidget {
   const _LuckyItemCard({
     required this.item,
@@ -433,17 +455,41 @@ class _LuckyItemCard extends StatelessWidget {
 
   final LuckyItem item;
 
+  /// 타입별 색상 반환 (한국 전통 테마)
+  Color _getTypeColor(LuckyItemType type) {
+    switch (type) {
+      case LuckyItemType.color:
+        return DSLuckColors.categoryColor; // 색상 (보라)
+      case LuckyItemType.food:
+        return DSLuckColors.categoryFood; // 음식 (주황)
+      case LuckyItemType.number:
+        return DSLuckColors.categoryNumber; // 숫자 (금색)
+      case LuckyItemType.direction:
+        return DSLuckColors.categoryDirection; // 방향 (녹색)
+      case LuckyItemType.time:
+        return DSLuckColors.wealthLuck; // 시간 (금색)
+      case LuckyItemType.item:
+        return DSLuckColors.categoryFashion; // 아이템 (분홍)
+      case LuckyItemType.place:
+        return DSLuckColors.categoryTravel; // 장소 (청색)
+      case LuckyItemType.animal:
+        return DSLuckColors.loveLuck; // 동물 (분홍)
+      case LuckyItemType.custom:
+        return DSLuckColors.fortuneGold; // 커스텀 (금색)
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final meokColor = ObangseokColors.getMeok(context);
+    final typeColor = item.iconColor ?? _getTypeColor(item.type);
 
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: typeColor.withValues(alpha: 0.1),
         borderRadius: DSRadius.smBorder,
         border: Border.all(
-          color: meokColor.withValues(alpha: 0.15),
+          color: typeColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -459,8 +505,8 @@ class _LuckyItemCard extends StatelessWidget {
                 color: item.colorValue,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: meokColor.withValues(alpha: 0.2),
-                  width: 0.5,
+                  color: typeColor.withValues(alpha: 0.3),
+                  width: 1,
                 ),
               ),
             )
@@ -468,27 +514,27 @@ class _LuckyItemCard extends StatelessWidget {
             Icon(
               item.icon ?? _getDefaultIcon(item.type),
               size: 22,
-              color: meokColor.withValues(alpha: 0.5),
+              color: typeColor,
             ),
           const SizedBox(height: DSSpacing.xs),
-          // 값 - 먹색
+          // 값 - 컬러
           Text(
             item.value,
             style: context.typography.bodySmall.copyWith(
-              fontWeight: FontWeight.w500,
-              color: meokColor.withValues(alpha: 0.85),
+              fontWeight: FontWeight.w600,
+              color: typeColor,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          // 라벨 - 옅은 먹색
+          // 라벨
           if (item.label != null)
             Text(
               item.label!,
               style: context.typography.labelSmall.copyWith(
                 fontSize: 10,
-                color: meokColor.withValues(alpha: 0.5),
+                color: context.colors.textTertiary,
               ),
               textAlign: TextAlign.center,
             ),

@@ -157,7 +157,21 @@ JSON 형식으로 응답:
     throw new Error('LLM API 응답 없음');
   }
 
-  return JSON.parse(response.content);
+  // ✅ JSON 파싱 보호 - LLM이 불완전한 JSON 반환 시 기본값
+  try {
+    return JSON.parse(response.content);
+  } catch (parseError) {
+    console.error('❌ [analyzePhotosWithVision] JSON 파싱 실패:', parseError);
+    console.error('❌ [analyzePhotosWithVision] LLM 원본 응답:', response.content?.substring(0, 500));
+    // 기본값 반환 - 사진 분석 실패해도 운세는 계속 진행
+    return {
+      myAttractiveness: 75,
+      myStyle: '분석 불가',
+      myPersonality: '분석 불가',
+      firstImpression: '사진 분석에 실패했습니다. 기본 분석으로 진행합니다.',
+      recommendedDateStyle: '캐주얼한 카페 데이트'
+    };
+  }
 }
 
 // GPT-4로 대화 분석
@@ -211,7 +225,20 @@ JSON 형식으로 분석:
     throw new Error('LLM API 응답 없음');
   }
 
-  return JSON.parse(response.content);
+  // ✅ JSON 파싱 보호 - LLM이 불완전한 JSON 반환 시 기본값
+  try {
+    return JSON.parse(response.content);
+  } catch (parseError) {
+    console.error('❌ [analyzeChatConversation] JSON 파싱 실패:', parseError);
+    console.error('❌ [analyzeChatConversation] LLM 원본 응답:', response.content?.substring(0, 500));
+    // 기본값 반환 - 대화 분석 실패해도 운세는 계속 진행
+    return {
+      interestLevel: 60,
+      conversationStyle: '분석 불가',
+      improvementTips: ['자연스럽게 대화를 이어가세요'],
+      nextTopicSuggestions: ['취미', '여행', '맛집'],
+    };
+  }
 }
 
 serve(async (req) => {
@@ -423,8 +450,10 @@ ${chatAnalysisResult.redFlags && Array.isArray(chatAnalysisResult.redFlags) && c
 {
   "score": 0-100 사이의 점수,
   "content": "전체 분석",
-  "summary": "한줄 요약",
+  "summary": "한줄 요약 (점수 아래 표시, 20자 내외)",
+  "overallAdvice": "종합 조언 (하이라이트 박스에 표시, 50자 내외)",
   "advice": "핵심 조언",
+  "keyPoints": ["핵심 포인트1 (간결하게)", "핵심 포인트2 (간결하게)", "핵심 포인트3 (간결하게)"],
   "successPrediction": {
     "score": 0-100,
     "message": "예측 메시지",
@@ -500,7 +529,31 @@ ${photoAnalysisText}${chatAnalysisText}
         throw new Error('LLM API 응답 없음')
       }
 
-      const fortuneData = JSON.parse(response.content)
+      // ✅ JSON 파싱 보호 - LLM이 불완전한 JSON 반환 시 기본값
+      let fortuneData: any;
+      try {
+        fortuneData = JSON.parse(response.content);
+      } catch (parseError) {
+        console.error('❌ [main fortune] JSON 파싱 실패:', parseError);
+        console.error('❌ [main fortune] LLM 원본 응답:', response.content?.substring(0, 500));
+        // 기본값으로 진행
+        fortuneData = {
+          score: 75,
+          content: '소개팅 분석 결과입니다. 자신감을 가지고 임하세요.',
+          summary: '좋은 인연이 기대됩니다',
+          overallAdvice: '긍정적인 첫인상과 편안한 분위기를 통해 소개팅 성공을 기대할 수 있습니다.',
+          advice: '자연스럽게 대화하며 상대방의 이야기에 귀 기울여보세요.',
+          keyPoints: ['긍정적인 마음가짐이 좋은 결과로 이어집니다', '상대방의 이야기에 귀 기울여 보세요', '자연스러운 대화가 가장 매력적입니다'],
+          successPrediction: { score: 70, message: '긍정적인 만남이 예상됩니다', advice: '자신감을 가지세요' },
+          firstImpressionTips: ['미소를 잃지 마세요', '상대방 이야기에 집중하세요', '긍정적인 태도를 유지하세요'],
+          conversationTopics: { recommended: ['취미', '여행', '맛집'], avoid: ['정치', '전 애인'] },
+          outfitAdvice: { style: '깔끔하고 단정한 스타일', colors: ['네이비', '화이트'] },
+          locationAdvice: ['분위기 좋은 카페', '조용한 레스토랑'],
+          dosList: ['경청하기', '미소짓기', '질문하기'],
+          dontsList: ['자기 자랑', '휴대폰 보기'],
+          finalMessage: '좋은 인연이 되길 응원합니다!'
+        };
+      }
 
       // ✅ Blur 로직 적용
       const isBlurred = !isPremium
@@ -513,7 +566,14 @@ ${photoAnalysisText}${chatAnalysisText}
         score: fortuneData.score || fortuneData.overallScore || 75,
         content: fortuneData.content || '소개팅 분석 결과입니다.',
         summary: fortuneData.summary || '좋은 인연이 기대됩니다',
+        overallAdvice: fortuneData.overallAdvice || '긍정적인 첫인상과 편안한 분위기를 통해 소개팅 성공을 기대할 수 있습니다.',
         advice: fortuneData.advice || fortuneData.successPrediction?.advice || '자신감을 가지고 임하세요',
+        keyPoints: fortuneData.keyPoints || ['긍정적인 에너지가 좋은 만남으로 이어집니다', '상대방에게 관심을 표현해보세요', '자연스러운 모습이 가장 매력적입니다'],
+        // 인포그래픽용 필드
+        successRate: fortuneData.successPrediction?.score || 70,
+        idealType: fortuneData.outfitAdvice?.style || '깔끔하고 단정한 스타일',
+        tips: fortuneData.firstImpressionTips || ['미소를 잃지 마세요', '상대방 이야기에 집중하세요'],
+        luckyPlace: fortuneData.locationAdvice?.[0] || '분위기 좋은 카페',
         fortuneType: 'blind-date',
         successPrediction: fortuneData.successPrediction,
         firstImpressionTips: fortuneData.firstImpressionTips,

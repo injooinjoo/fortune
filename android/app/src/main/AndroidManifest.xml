@@ -255,4 +255,9 @@
     <queries>
         <package android:name="com.kakao.talk" />
     </queries>
+
+    <!-- Instagram queries -->
+    <queries>
+        <package android:name="com.instagram.android" />
+    </queries>
 </manifest>

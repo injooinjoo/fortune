@@ -191,6 +191,13 @@ class InfographicFactory {
     ),
 
     // 관계 운세
+    FortuneType.family: const InfographicConfig(
+      templateType: InfographicTemplateType.score,
+      title: '가족 인사이트',
+      themeColor: Color(0xFF8B5CF6),
+      hasCategories: true,
+      hasLuckyItems: true,
+    ),
     FortuneType.pet: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '반려동물 가이드',
@@ -269,6 +276,11 @@ class InfographicFactory {
       title: '재물 분석',
       themeColor: Color(0xFFFFA500),
     ),
+    FortuneType.money: const InfographicConfig(
+      templateType: InfographicTemplateType.chart,
+      title: '재물운',
+      themeColor: Color(0xFF16A34A),
+    ),
 
     // 스포츠 분석
     FortuneType.sports: const InfographicConfig(
@@ -346,6 +358,14 @@ class InfographicFactory {
       templateType: InfographicTemplateType.grid,
       title: '로또 번호 생성',
       themeColor: Color(0xFFFF4500),
+    ),
+
+    // 오늘의 로또 (클라이언트 생성)
+    FortuneType.lotto: const InfographicConfig(
+      templateType: InfographicTemplateType.grid,
+      title: '오늘의 로또',
+      themeColor: Color(0xFFFFD700),
+      hasLuckyItems: true,
     ),
 
     // 이름 분석
@@ -548,6 +568,9 @@ class InfographicFactory {
     int? encounterProbability,
     List<String>? tips,
     String? luckyPlace,
+    String? luckyColor,
+    String? luckyTime,
+    String? luckyItem,
     DateTime? date,
     bool isShareMode = false,
   }) {
@@ -556,6 +579,9 @@ class InfographicFactory {
       encounterProbability: encounterProbability,
       tips: tips,
       luckyPlace: luckyPlace,
+      luckyColor: luckyColor,
+      luckyTime: luckyTime,
+      luckyItem: luckyItem,
       date: date,
       isShareMode: isShareMode,
     );
@@ -589,6 +615,9 @@ class InfographicFactory {
   }
 
   /// 바이오리듬 인포그래픽 생성
+  ///
+  /// [physicalScore], [emotionalScore], [intellectualScore] 각 리듬 점수
+  /// [summaryPoints] 점수 아래 표시할 요약 포인트 (최대 3개)
   static Widget buildBiorhythmInfographic({
     required int physicalScore,
     required int emotionalScore,
@@ -596,6 +625,7 @@ class InfographicFactory {
     String? physicalPhase,
     String? emotionalPhase,
     String? intellectualPhase,
+    List<String>? summaryPoints,
     int overallRating = 3,
     String? advice,
     bool isShareMode = false,
@@ -607,6 +637,7 @@ class InfographicFactory {
       physicalPhase: physicalPhase,
       emotionalPhase: emotionalPhase,
       intellectualPhase: intellectualPhase,
+      summaryPoints: summaryPoints,
       overallRating: overallRating,
       advice: advice,
       isShareMode: isShareMode,
@@ -752,6 +783,67 @@ class InfographicFactory {
       topSector: topSector,
       bottomSector: bottomSector,
       advice: advice,
+      isShareMode: isShareMode,
+    );
+  }
+
+  /// 경계 대상 운세 인포그래픽 생성
+  ///
+  /// [score] 경계 지수 (0-100)
+  /// [categoryCounts] 카테고리별 경계 대상 개수
+  /// [luckyElements] 행운 요소 (색상, 숫자, 방향, 시간)
+  /// [timeStrategy] 시간대별 전략 (오전/오후/저녁)
+  /// [summary] 요약 메시지
+  /// [isShareMode] 공유 모드
+  static Widget buildAvoidPeopleInfographic({
+    required int score,
+    Map<String, int>? categoryCounts,
+    Map<String, String>? luckyElements,
+    Map<String, Map<String, String>>? timeStrategy,
+    String? summary,
+    bool isShareMode = false,
+  }) {
+    return AvoidPeopleScoreTemplate(
+      riskScore: score,
+      categoryCounts: categoryCounts,
+      luckyElements: luckyElements,
+      timeStrategy: timeStrategy,
+      summary: summary,
+      isShareMode: isShareMode,
+    );
+  }
+
+  /// 소개팅 운세 인포그래픽 생성
+  ///
+  /// [score] 종합 점수 (0-100)
+  /// [summary] 한줄 요약 (점수 바로 아래)
+  /// [keyPoints] 핵심 포인트 3개
+  /// [overallAdvice] 종합 조언 (하이라이트 박스)
+  /// [successRate] 성공 확률
+  /// [idealType] 오늘의 이상형
+  /// [tips] 소개팅 팁 목록
+  /// [luckyPlace] 추천 장소
+  /// [isShareMode] 공유 모드
+  static Widget buildBlindDateInfographic({
+    required int score,
+    String? summary,
+    List<String>? keyPoints,
+    String? overallAdvice,
+    int? successRate,
+    String? idealType,
+    List<String>? tips,
+    String? luckyPlace,
+    bool isShareMode = false,
+  }) {
+    return BlindDateScoreTemplate(
+      score: score,
+      summary: summary,
+      keyPoints: keyPoints,
+      overallAdvice: overallAdvice,
+      successRate: successRate,
+      idealType: idealType,
+      tips: tips,
+      luckyPlace: luckyPlace,
       isShareMode: isShareMode,
     );
   }

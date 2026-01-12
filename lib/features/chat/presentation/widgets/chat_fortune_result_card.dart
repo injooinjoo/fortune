@@ -29,6 +29,7 @@ import '../../../fortune/presentation/widgets/infographic/templates/image_templa
 import '../../../fortune/presentation/widgets/infographic/templates/chart_template.dart';
 import '../../../fortune/presentation/widgets/infographic/category_bar_chart.dart';
 import '../../../fortune/presentation/widgets/infographic/lucky_item_row.dart';
+import '../../../../core/services/wish_local_storage.dart';
 
 /// 채팅용 운세 결과 리치 카드
 ///
@@ -74,6 +75,19 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             'cautionDirections'
           ]
         : [];
+
+    // 🐉 소원빌기: 로컬에 현재 소원 저장
+    if (widget.fortuneType == 'wish') {
+      _saveWishToLocal();
+    }
+  }
+
+  /// 현재 소원을 로컬에 저장
+  Future<void> _saveWishToLocal() async {
+    final currentWish = _wishData;
+    if (currentWish != null) {
+      await WishLocalStorage.saveWish(currentWish);
+    }
   }
 
   Fortune get fortune => widget.fortune;
@@ -801,8 +815,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 fortune.recommendations!.isNotEmpty)
               _buildRecommendationsSection(context),
 
-            // 행운 아이템
-            if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+            // 행운 아이템 (인포그래픽에 이미 표시된 경우 제외)
+            if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
               _buildLuckyItemsSection(context),
 
             // lucky-items 전용: 상세 섹션 표시
@@ -976,7 +990,70 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     if (_isHealth) {
       return _buildHealthLayout(context, isDark);
     }
+    // 🐉 소원빌기 전용 레이아웃 (API 없이 심플하게)
+    if (_isWish) {
+      return _buildWishLayout(context);
+    }
     return null;
+  }
+
+  /// 🐉 소원빌기 전용 레이아웃
+  /// 사용자의 소원 텍스트를 깔끔하게 표시 (꿈해몽 스타일, API 호출 없음)
+  List<Widget> _buildWishLayout(BuildContext context) {
+    final typography = context.typography;
+    // API 호출 없이 fortune.content에서 소원 텍스트 가져오기
+    final wishText = fortune.content;
+
+    return [
+      // 소원 텍스트 표시 (사용자가 적은 글)
+      if (wishText.isNotEmpty)
+        Container(
+          margin: const EdgeInsets.all(DSSpacing.md),
+          padding: const EdgeInsets.all(DSSpacing.lg),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color(0xFF2D1B4E).withValues(alpha: 0.95),
+                const Color(0xFF1A0F2E).withValues(alpha: 0.95),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            border: Border.all(
+              color: const Color(0xFFFFD700).withValues(alpha: 0.3),
+            ),
+          ),
+          child: Column(
+            children: [
+              // 별 이모지
+              const Text('🌠', style: TextStyle(fontSize: 40)),
+              const SizedBox(height: DSSpacing.md),
+              // 소원 텍스트
+              Text(
+                '"$wishText"',
+                style: typography.headingSmall.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontStyle: FontStyle.italic,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: DSSpacing.sm),
+              // 안내 문구
+              Text(
+                '소원이 하늘로 올라갔어요',
+                style: typography.bodySmall.copyWith(
+                  color: Colors.white70,
+                ),
+              ),
+            ],
+          ),
+        ).animate()
+          .fadeIn(duration: 500.ms)
+          .scale(begin: const Offset(0.95, 0.95), end: const Offset(1.0, 1.0)),
+    ];
   }
 
   /// 연간 운세 전용 레이아웃 (히어로 이미지만 사용, 중복 제거)
@@ -993,8 +1070,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       // 본문 content
       if (fortune.content.isNotEmpty)
         _buildContentSection(context),
-      // 행운 아이템
-      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+      // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
         _buildLuckyItemsSection(context),
       // 연간 운세 전용 섹션들
       _buildGoalFortuneSection(context, isPremium),
@@ -1024,7 +1101,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       if (fortune.recommendations != null &&
           fortune.recommendations!.isNotEmpty)
         _buildRecommendationsSection(context),
-      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+      // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
         _buildLuckyItemsSection(context),
       const SizedBox(height: DSSpacing.sm),
     ];
@@ -1046,7 +1124,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       if (fortune.recommendations != null &&
           fortune.recommendations!.isNotEmpty)
         _buildRecommendationsSection(context),
-      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+      // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
         _buildLuckyItemsSection(context),
       const SizedBox(height: DSSpacing.sm),
     ];
@@ -1072,7 +1151,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       if (fortune.recommendations != null &&
           fortune.recommendations!.isNotEmpty)
         _buildRecommendationsSection(context),
-      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+      // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
         _buildLuckyItemsSection(context),
       const SizedBox(height: DSSpacing.sm),
     ];
@@ -1093,7 +1173,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       if (fortune.recommendations != null &&
           fortune.recommendations!.isNotEmpty)
         _buildRecommendationsSection(context),
-      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+      // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
+      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
         _buildLuckyItemsSection(context),
       const SizedBox(height: DSSpacing.sm),
     ];
@@ -2200,7 +2281,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           }).toList();
         }
 
-        // love 타입: 풍성한 인포그래픽 (인연 확률, 팁, 행운 장소)
+        // love 타입: 풍성한 인포그래픽 (인연 확률, 팁, 행운 장소, 럭키 아이템)
         if (type == FortuneType.love) {
           final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
           final encounterProbability = metadata['encounterProbability'] as int? ??
@@ -2220,11 +2301,42 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               metadata['lucky_place'] as String? ??
               fortune.luckyItems?['place']?.toString();
 
+          // 럭키 아이템 추출 (todaysAdvice 또는 recommendations에서)
+          final todaysAdvice = metadata['todaysAdvice'] as Map<String, dynamic>?;
+          final recommendations = metadata['recommendations'] as Map<String, dynamic>?;
+
+          // 행운 색상
+          String? luckyColor;
+          if (todaysAdvice?['luckyColor'] != null) {
+            luckyColor = todaysAdvice!['luckyColor'] as String?;
+          } else if (recommendations?['fashion']?['colors'] != null) {
+            final colors = recommendations!['fashion']['colors'] as List?;
+            if (colors != null && colors.isNotEmpty) {
+              final colorStr = colors.first.toString();
+              luckyColor = colorStr.split(' - ').first;
+            }
+          } else if (fortune.luckyItems?['color'] != null) {
+            luckyColor = fortune.luckyItems!['color'].toString();
+          }
+
+          // 행운 시간
+          final luckyTime = todaysAdvice?['luckyTime'] as String? ??
+              metadata['luckyTime'] as String? ??
+              fortune.luckyItems?['time']?.toString();
+
+          // 행운 아이템
+          final luckyItem = todaysAdvice?['luckyItem'] as String? ??
+              metadata['luckyItem'] as String? ??
+              fortune.luckyItems?['item']?.toString();
+
           infographic = InfographicFactory.buildLoveInfographic(
             score: score,
             encounterProbability: encounterProbability,
             tips: tips,
             luckyPlace: luckyPlace,
+            luckyColor: luckyColor,
+            luckyTime: luckyTime,
+            luckyItem: luckyItem,
             date: DateTime.now(),
           );
         } else {
@@ -8168,7 +8280,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                       Border.all(color: colors.accent.withValues(alpha: 0.2)),
                 ),
                 child: Text(
-                  strategy,
+                  strategy
+                      .replaceAllMapped(
+                        RegExp(r'(\d+)\.\s'),
+                        (match) => '\n${match.group(1)}. ',
+                      )
+                      .trim(),
                   style: typography.bodyMedium.copyWith(
                     color: colors.textPrimary,
                     height: 1.6,
@@ -11560,7 +11677,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             Row(
               children: [
                 Text(
-                  '$label 점수',
+                  label,
                   style: typography.labelSmall.copyWith(
                     color: colors.textTertiary,
                   ),
@@ -11576,7 +11693,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     borderRadius: DSRadius.smBorder,
                   ),
                   child: Text(
-                    '$score점',
+                    '$score',
                     style: typography.labelMedium.copyWith(
                       color: _getScoreColor(context, score),
                       fontWeight: FontWeight.bold,
@@ -11624,7 +11741,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             Row(
               children: [
                 Text(
-                  '눈 점수',
+                  '눈',
                   style: typography.labelSmall.copyWith(
                     color: colors.textTertiary,
                   ),
@@ -11640,7 +11757,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     borderRadius: DSRadius.smBorder,
                   ),
                   child: Text(
-                    '$score점',
+                    '$score',
                     style: typography.labelMedium.copyWith(
                       color: _getScoreColor(context, score),
                       fontWeight: FontWeight.bold,
@@ -11697,7 +11814,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             Row(
               children: [
                 Text(
-                  '컨디션 점수',
+                  '컨디션',
                   style: typography.labelSmall.copyWith(
                     color: colors.textTertiary,
                   ),
@@ -11713,7 +11830,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     borderRadius: DSRadius.smBorder,
                   ),
                   child: Text(
-                    '$score점',
+                    '$score',
                     style: typography.labelMedium.copyWith(
                       color: _getScoreColor(context, score),
                       fontWeight: FontWeight.bold,
@@ -12052,7 +12169,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     borderRadius: DSRadius.smBorder,
                   ),
                   child: Text(
-                    '$score점',
+                    '$score',
                     style: typography.labelSmall.copyWith(
                       color: accentColor,
                       fontWeight: FontWeight.bold,
@@ -12184,7 +12301,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                         borderRadius: DSRadius.smBorder,
                       ),
                       child: Text(
-                        '$score점',
+                        '$score',
                         style: typography.labelSmall.copyWith(
                           color: accentColor,
                           fontWeight: FontWeight.bold,
@@ -12300,7 +12417,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     borderRadius: DSRadius.smBorder,
                   ),
                   child: Text(
-                    '$score점',
+                    '$score',
                     style: typography.labelSmall.copyWith(
                       color: accentColor,
                       fontWeight: FontWeight.bold,

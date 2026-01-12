@@ -33,7 +33,7 @@ class FortuneHeroSection extends StatelessWidget {
     final isDark = brightness == Brightness.dark;
 
     return SliverAppBar(
-      expandedHeight: 440,
+      expandedHeight: 220,
       pinned: true,
       stretch: true,
       backgroundColor:
@@ -97,7 +97,7 @@ class FortuneHeroSection extends StatelessWidget {
             // 콘텐츠 레이아웃
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 60, 24, 40),
+                padding: const EdgeInsets.fromLTRB(24, 30, 24, 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -113,10 +113,10 @@ class FortuneHeroSection extends StatelessWidget {
                               tag: 'fortune_mascot_$fortuneType',
                               child: Image.asset(
                                 mascotImage,
-                                height: 200,
+                                height: 100,
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) =>
-                                    const SizedBox(height: 200),
+                                    const SizedBox(height: 100),
                               ),
                             ),
                           ),
@@ -128,8 +128,8 @@ class FortuneHeroSection extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               CircularPercentIndicator(
-                                radius: 55.0,
-                                lineWidth: 10.0,
+                                radius: 28.0,
+                                lineWidth: 5.0,
                                 animation: true,
                                 percent: score / 100,
                                 center: Column(
@@ -157,14 +157,14 @@ class FortuneHeroSection extends StatelessWidget {
                                 backgroundColor:
                                     Colors.white.withValues(alpha: 0.2),
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 6),
                               _ScoreBadge(score: score),
                             ],
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
 
                     // 운세 요약 문구
                     Text(
@@ -176,7 +176,7 @@ class FortuneHeroSection extends StatelessWidget {
                         letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 8),
 
                     // 해시태그 목록
                     if (hashtags != null && hashtags!.isNotEmpty)

@@ -33,7 +33,7 @@ class ChatTarotResultCard extends ConsumerStatefulWidget {
 class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
   bool _isBlurred = false;
   List<String> _blurredSections = [];
-  bool _isDetailExpanded = false;
+  bool _isDetailExpanded = true;  // 기본값: 열린 상태
   bool _hasInitializedBlur = false;
 
   // 타이핑 섹션 관리

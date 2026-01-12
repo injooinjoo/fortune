@@ -29,6 +29,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     'love',         // 23초 소요 확인됨 (경계 수준)
     'avoid-people', // 15-18초 소요 확인됨
     'new-year',     // 22-28초 소요, 12개월 월별 운세 + 목표별 분석
+    'yearly',       // new-year와 동일 (getYearlyFortune에서 사용)
     'face-reading', // 이미지 업로드 + AI 관상 분석 (Vision API 호출)
     'past-life',    // 이미지 업로드 + 전생 분석
   ];
@@ -624,6 +625,191 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         if (contentParts.isNotEmpty) {
           contentText = contentParts.join('');
           debugPrint('📝 [_getFortuneFromEdgeFunction] Built blind-date content (${contentText.length} chars)');
+        }
+      }
+
+      // Ex-lover fortune: build rich content from detailed fields
+      // API 응답 필드: hardTruth, theirPerspective, strategicAdvice, emotionalPrescription,
+      // reunionAssessment, closingMessage, personalizedAnalysis, newBeginning, milestones
+      if (fortuneType == 'ex-lover' || fortuneType == 'ex_lover') {
+        final contentParts = <String>[];
+
+        // 1. 개인화된 분석 (Opening)
+        final personalizedAnalysis = fortuneData['personalizedAnalysis'];
+        if (personalizedAnalysis is Map) {
+          final opening = personalizedAnalysis['opening'];
+          if (opening != null && opening.toString().isNotEmpty) {
+            contentParts.add('💜 $opening');
+          }
+          final insights = personalizedAnalysis['insights'];
+          if (insights is List && insights.isNotEmpty) {
+            contentParts.add('\n\n📌 핵심 인사이트\n• ${insights.join('\n• ')}');
+          }
+          final callout = personalizedAnalysis['callout'];
+          if (callout != null && callout.toString().isNotEmpty) {
+            contentParts.add('\n\n⚡ $callout');
+          }
+        }
+
+        // 2. 냉정한 진실 (Hard Truth) - 가장 중요한 섹션
+        final hardTruth = fortuneData['hardTruth'];
+        if (hardTruth is Map) {
+          contentParts.add('\n\n💔 냉정한 진실');
+          if (hardTruth['headline'] != null) {
+            contentParts.add('\n\n"${hardTruth['headline']}"');
+          }
+          if (hardTruth['diagnosis'] != null) {
+            contentParts.add('\n\n${hardTruth['diagnosis']}');
+          }
+          if (hardTruth['realityCheck'] != null) {
+            contentParts.add('\n\n🔍 현실 체크\n${hardTruth['realityCheck']}');
+          }
+          if (hardTruth['mostImportantAdvice'] != null) {
+            contentParts.add('\n\n💡 가장 중요한 조언\n${hardTruth['mostImportantAdvice']}');
+          }
+        } else if (hardTruth is String && hardTruth.isNotEmpty) {
+          contentParts.add('\n\n💔 냉정한 진실\n$hardTruth');
+        }
+
+        // 3. 재회 가능성 분석 (Reunion Assessment)
+        final reunionAssessment = fortuneData['reunionAssessment'];
+        if (reunionAssessment is Map) {
+          final score = reunionAssessment['score'];
+          contentParts.add('\n\n📊 재회 가능성 분석');
+          if (score != null) {
+            contentParts.add('\n\n재회 가능성: $score%');
+          }
+          final keyFactors = reunionAssessment['keyFactors'];
+          if (keyFactors is List && keyFactors.isNotEmpty) {
+            contentParts.add('\n\n핵심 요인:\n• ${keyFactors.join('\n• ')}');
+          }
+          if (reunionAssessment['timing'] != null) {
+            contentParts.add('\n\n⏰ 타이밍\n${reunionAssessment['timing']}');
+          }
+          if (reunionAssessment['approach'] != null) {
+            contentParts.add('\n\n🎯 접근 방법\n${reunionAssessment['approach']}');
+          }
+          final neverDo = reunionAssessment['neverDo'];
+          if (neverDo is List && neverDo.isNotEmpty) {
+            contentParts.add('\n\n🚫 절대 하지 말아야 할 것\n• ${neverDo.join('\n• ')}');
+          }
+        }
+
+        // 4. 상대방 관점 (Their Perspective)
+        final theirPerspective = fortuneData['theirPerspective'];
+        if (theirPerspective is Map) {
+          contentParts.add('\n\n💭 상대방의 마음');
+          if (theirPerspective['likelyThoughts'] != null) {
+            contentParts.add('\n\n그 사람의 감정:\n${theirPerspective['likelyThoughts']}');
+          }
+          if (theirPerspective['doTheyThinkOfYou'] != null) {
+            contentParts.add('\n\n나를 생각하고 있을까?\n${theirPerspective['doTheyThinkOfYou']}');
+          }
+          if (theirPerspective['unspokenWords'] != null) {
+            contentParts.add('\n\n말하지 못한 것들:\n${theirPerspective['unspokenWords']}');
+          }
+        } else if (theirPerspective is String && theirPerspective.isNotEmpty) {
+          contentParts.add('\n\n💭 상대방의 마음\n$theirPerspective');
+        }
+
+        // 5. 감정 처방전 (Emotional Prescription)
+        final emotionalPrescription = fortuneData['emotionalPrescription'];
+        if (emotionalPrescription is Map) {
+          contentParts.add('\n\n💊 감정 처방전');
+          if (emotionalPrescription['currentStateAnalysis'] != null) {
+            contentParts.add('\n\n현재 상태 분석:\n${emotionalPrescription['currentStateAnalysis']}');
+          }
+          if (emotionalPrescription['healingFocus'] != null) {
+            contentParts.add('\n\n치유 포인트:\n${emotionalPrescription['healingFocus']}');
+          }
+          final dailyPractice = emotionalPrescription['dailyPractice'];
+          if (dailyPractice is List && dailyPractice.isNotEmpty) {
+            contentParts.add('\n\n매일 실천하기:\n• ${dailyPractice.join('\n• ')}');
+          } else if (dailyPractice is String && dailyPractice.isNotEmpty) {
+            contentParts.add('\n\n매일 실천하기:\n$dailyPractice');
+          }
+        } else if (emotionalPrescription is String && emotionalPrescription.isNotEmpty) {
+          contentParts.add('\n\n💊 감정 처방전\n$emotionalPrescription');
+        }
+
+        // 6. 전략적 조언 (Strategic Advice)
+        final strategicAdvice = fortuneData['strategicAdvice'];
+        if (strategicAdvice is Map) {
+          contentParts.add('\n\n🎯 전략적 조언');
+          final shortTerm = strategicAdvice['shortTerm'];
+          if (shortTerm is List && shortTerm.isNotEmpty) {
+            contentParts.add('\n\n📅 1주일 내 할 일:\n• ${shortTerm.join('\n• ')}');
+          } else if (shortTerm is String && shortTerm.isNotEmpty) {
+            contentParts.add('\n\n📅 1주일 내 할 일:\n$shortTerm');
+          }
+          if (strategicAdvice['midTerm'] != null) {
+            contentParts.add('\n\n📆 1개월 목표:\n${strategicAdvice['midTerm']}');
+          }
+          if (strategicAdvice['critical'] != null) {
+            contentParts.add('\n\n⚠️ 가장 중요한 것:\n${strategicAdvice['critical']}');
+          }
+        } else if (strategicAdvice is String && strategicAdvice.isNotEmpty) {
+          contentParts.add('\n\n🎯 전략적 조언\n$strategicAdvice');
+        }
+
+        // 7. 새로운 시작 (New Beginning) - new_start 목표인 경우
+        final newBeginning = fortuneData['newBeginning'];
+        if (newBeginning is Map) {
+          contentParts.add('\n\n🌱 새로운 시작 준비');
+          if (newBeginning['readinessScore'] != null) {
+            contentParts.add('\n\n준비도: ${newBeginning['readinessScore']}%');
+          }
+          if (newBeginning['unresolvedEmotions'] != null) {
+            contentParts.add('\n\n미해결 감정:\n${newBeginning['unresolvedEmotions']}');
+          }
+          if (newBeginning['growthOpportunity'] != null) {
+            contentParts.add('\n\n성장 기회:\n${newBeginning['growthOpportunity']}');
+          }
+          if (newBeginning['nextRelationshipFocus'] != null) {
+            contentParts.add('\n\n다음 연애에서 중요한 것:\n${newBeginning['nextRelationshipFocus']}');
+          }
+        }
+
+        // 8. 이정표 (Milestones)
+        final milestones = fortuneData['milestones'];
+        if (milestones is Map) {
+          contentParts.add('\n\n🚩 회복 이정표');
+          if (milestones['shortTerm'] != null) {
+            contentParts.add('\n\n1주 후: ${milestones['shortTerm']}');
+          }
+          if (milestones['midTerm'] != null) {
+            contentParts.add('\n1개월 후: ${milestones['midTerm']}');
+          }
+          if (milestones['longTerm'] != null) {
+            contentParts.add('\n3개월 후: ${milestones['longTerm']}');
+          }
+        }
+
+        // 9. 마무리 메시지 (Closing Message)
+        final closingMessage = fortuneData['closingMessage'];
+        if (closingMessage is Map) {
+          contentParts.add('\n\n💝 마무리');
+          if (closingMessage['empathy'] != null) {
+            contentParts.add('\n\n${closingMessage['empathy']}');
+          }
+          if (closingMessage['todayAction'] != null) {
+            contentParts.add('\n\n오늘 할 일: ${closingMessage['todayAction']}');
+          }
+          if (closingMessage['reminder'] != null) {
+            contentParts.add('\n\n기억하세요: ${closingMessage['reminder']}');
+          }
+        } else if (closingMessage is String && closingMessage.isNotEmpty) {
+          contentParts.add('\n\n💝 $closingMessage');
+        }
+
+        // comfort_message fallback
+        if (fortuneData['comfort_message'] != null && closingMessage == null) {
+          contentParts.add('\n\n💝 ${fortuneData['comfort_message']}');
+        }
+
+        if (contentParts.isNotEmpty) {
+          contentText = contentParts.join('');
+          debugPrint('📝 [_getFortuneFromEdgeFunction] Built ex-lover content (${contentText.length} chars)');
         }
       }
 

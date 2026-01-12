@@ -1568,6 +1568,14 @@ const _wishCategoryOptions = [
   SurveyOption(id: 'other', label: '기타', emoji: '✨'),
 ];
 
+/// 복채 옵션 (소원 후 감사 토큰)
+const _wishBokchaeOptions = [
+  SurveyOption(id: '0', label: '다음에 할게요', emoji: '🙏'),
+  SurveyOption(id: '1', label: '1개', emoji: '🧧'),
+  SurveyOption(id: '3', label: '3개', emoji: '🧧🧧🧧'),
+  SurveyOption(id: '5', label: '5개', emoji: '🧧🧧🧧🧧🧧'),
+];
+
 /// Wish 설문 설정
 const wishSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.wish,
@@ -1587,6 +1595,13 @@ const wishSurveyConfig = FortuneSurveyConfig(
       question: '소원을 말하거나 적어주세요',
       inputType: SurveyInputType.voice,
       options: [],
+    ),
+    SurveyStep(
+      id: 'bokchae',
+      question: '감사의 복채를 올리시겠어요?',
+      inputType: SurveyInputType.chips,
+      options: _wishBokchaeOptions,
+      isRequired: false,
     ),
   ],
 );
@@ -2110,7 +2125,7 @@ const ootdEvaluationSurveyConfig = FortuneSurveyConfig(
     SurveyStep(
       id: 'photo',
       question: 'OOTD 사진을 올려주세요! 📸',
-      inputType: SurveyInputType.image,
+      inputType: SurveyInputType.ootdImage,
       options: [],
     ),
   ],

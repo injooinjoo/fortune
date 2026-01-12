@@ -334,7 +334,7 @@ serve(async (req) => {
   "강점": ["강점1", "강점2", "강점3"],
   "주의점": ["주의점1", "주의점2", "주의점3"],
   "조언": ["조언1", "조언2", "조언3"],
-  "궁합키워드": "한 단어",
+  "한줄평": "두 사람의 관계를 20자 내외로 감성적으로 표현. 예: '서로를 비추는 거울 같은 인연', '파도처럼 밀고 당기는 운명적 만남'",
   "연애스타일": {
     "person1": "스타일명",
     "person2": "스타일명",
@@ -440,7 +440,7 @@ serve(async (req) => {
         fortuneType: 'compatibility',
         score: compatibilityScore,
         content: overallCompatibilityText,
-        summary: parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '천생연분',
+        summary: parsedResponse.한줄평 || parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '운명처럼 만난 두 사람',
         advice: parsedResponse.조언?.[0] || parsedResponse.advice?.[0] || '서로를 존중하고 배려하세요',
         // 기존 필드 유지 (하위 호환성)
         title: `${person1_name}♥${person2_name} 궁합`,
@@ -456,7 +456,7 @@ serve(async (req) => {
         strengths: parsedResponse.강점 || parsedResponse.strengths || ['서로 이해', '존중', '배려'],
         cautions: parsedResponse.주의점 || parsedResponse.cautions || ['작은 갈등 주의', '대화 중요', '서로 존중'],
         detailed_advice: `• ${adviceString}`, // 상세 조언 (블러 대상)
-        compatibility_keyword: parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '천생연분', // ✅ 무료: 공개
+        compatibility_keyword: parsedResponse.한줄평 || parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '운명처럼 만난 두 사람', // ✅ 무료: 공개
         // score는 위에서 표준 필드로 이미 설정됨
         love_style: parsedResponse.연애스타일 || parsedResponse.love_style || null, // 연애 스타일 (LLM 생성)
         // ✅ 새로운 궁합 항목들 (무료 공개)

@@ -6,6 +6,8 @@ import 'package:fortune/features/fortune/presentation/widgets/infographic/score_
 import 'package:fortune/features/fortune/presentation/widgets/infographic/category_bar_chart.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/lucky_item_row.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/privacy_shield.dart';
+import 'package:fortune/features/fortune/presentation/widgets/infographic/tip_tag_grid.dart';
+import 'package:fortune/features/fortune/presentation/widgets/infographic/advice_tag.dart';
 
 /// 점수 중심 인포그래픽 템플릿 (템플릿 A)
 ///
@@ -104,27 +106,31 @@ class ScoreTemplate extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // 점수 원형 게이지
-        _buildScoreSection(context),
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          // 점수 원형 게이지
+          _buildScoreSection(context),
 
-        // 카테고리 막대 차트 (있는 경우)
-        if (categories != null && categories!.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.lg),
-          _buildCategoriesSection(context),
-        ],
+          // 카테고리 막대 차트 (있는 경우)
+          if (categories != null && categories!.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildCategoriesSection(context),
+          ],
 
-        // 행운 아이템 또는 커스텀 위젯
-        if (luckyItems != null && luckyItems!.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.lg),
-          _buildLuckyItemsSection(context),
-        ] else if (bottomWidget != null) ...[
-          const SizedBox(height: DSSpacing.lg),
-          bottomWidget!,
+          // 행운 아이템 또는 커스텀 위젯
+          if (luckyItems != null && luckyItems!.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildLuckyItemsSection(context),
+          ] else if (bottomWidget != null) ...[
+            const SizedBox(height: DSSpacing.md),
+            bottomWidget!,
+          ],
         ],
-      ],
+      ),
     );
   }
 
@@ -230,7 +236,7 @@ class DailyScoreTemplate extends StatelessWidget {
     return ScoreTemplate(
       title: '오늘의 인사이트',
       score: score,
-      showStars: true,
+      showStars: false,
       categories: categories,
       luckyItems: DailyLuckyItems.fromData(
         colorName: luckyColor,
@@ -251,6 +257,9 @@ class LoveScoreTemplate extends StatelessWidget {
     this.encounterProbability,
     this.tips,
     this.luckyPlace,
+    this.luckyColor,
+    this.luckyTime,
+    this.luckyItem,
     this.date,
     this.isShareMode = false,
   });
@@ -259,6 +268,9 @@ class LoveScoreTemplate extends StatelessWidget {
   final int? encounterProbability;
   final List<String>? tips;
   final String? luckyPlace;
+  final String? luckyColor;
+  final String? luckyTime;
+  final String? luckyItem;
   final DateTime? date;
   final bool isShareMode;
 
@@ -267,7 +279,7 @@ class LoveScoreTemplate extends StatelessWidget {
     return ScoreTemplate(
       title: '오늘의 연애운',
       score: score,
-      showStars: true,
+      showStars: false,
       progressColor: Colors.pinkAccent,
       bottomWidget: _buildLoveContent(context),
       isShareMode: isShareMode,
@@ -278,7 +290,7 @@ class LoveScoreTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withOpacity(0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -289,81 +301,123 @@ class LoveScoreTemplate extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const Icon(Icons.favorite_rounded, size: 16, color: Colors.pinkAccent),
+                const SizedBox(width: DSSpacing.xs),
                 Text(
                   '새로운 인연 확률',
-                  style: context.typography.bodySmall.copyWith(
+                  style: context.typography.labelMedium.copyWith(
                     color: context.colors.textSecondary,
                   ),
                 ),
                 const SizedBox(width: DSSpacing.sm),
                 Text(
                   '$encounterProbability%',
-                  style: context.typography.headingMedium.copyWith(
+                  style: context.typography.headingSmall.copyWith(
                     color: Colors.pinkAccent,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(width: DSSpacing.xs),
-                Icon(
-                  encounterProbability! >= 50
-                      ? Icons.trending_up_rounded
-                      : Icons.trending_down_rounded,
-                  size: 20,
-                  color: encounterProbability! >= 50
-                      ? context.colors.success
-                      : context.colors.error,
-                ),
               ],
             ),
-            const SizedBox(height: DSSpacing.md),
-          ],
-
-          // 팁 목록
-          if (tips != null && tips!.isNotEmpty) ...[
-            ...tips!.map((tip) => Padding(
-                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.lightbulb_outline_rounded,
-                        size: 16,
-                        color: context.colors.accent,
-                      ),
-                      const SizedBox(width: DSSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          tip,
-                          style: context.typography.bodySmall.copyWith(
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-          ],
-
-          // 행운 장소
-          if (luckyPlace != null) ...[
             const SizedBox(height: DSSpacing.sm),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.place_rounded,
-                  size: 16,
-                  color: context.colors.accent,
-                ),
-                const SizedBox(width: DSSpacing.xs),
-                Text(
-                  '행운 장소: $luckyPlace',
-                  style: context.typography.labelMedium.copyWith(
-                    color: context.colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
           ],
+
+          // 2x2 럭키 아이템 그리드
+          Row(
+            children: [
+              // 행운 색상
+              Expanded(
+                child: _buildLuckyCell(
+                  context,
+                  icon: Icons.palette_rounded,
+                  label: '행운 색상',
+                  value: luckyColor ?? '-',
+                ),
+              ),
+              const SizedBox(width: DSSpacing.sm),
+              // 행운 시간
+              Expanded(
+                child: _buildLuckyCell(
+                  context,
+                  icon: Icons.schedule_rounded,
+                  label: '행운 시간',
+                  value: luckyTime ?? '-',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Row(
+            children: [
+              // 행운 아이템
+              Expanded(
+                child: _buildLuckyCell(
+                  context,
+                  icon: Icons.auto_awesome_rounded,
+                  label: '행운 아이템',
+                  value: luckyItem ?? '-',
+                ),
+              ),
+              const SizedBox(width: DSSpacing.sm),
+              // 행운 장소
+              Expanded(
+                child: _buildLuckyCell(
+                  context,
+                  icon: Icons.place_rounded,
+                  label: '행운 장소',
+                  value: luckyPlace ?? '-',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLuckyCell(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.pinkAccent.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 12, color: Colors.pinkAccent),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: context.typography.labelSmall.copyWith(
+                  color: context.colors.textSecondary,
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: context.typography.labelMedium.copyWith(
+              color: context.colors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
@@ -441,7 +495,7 @@ class CareerScoreTemplate extends StatelessWidget {
       title: '오늘의 직업운',
       score: score,
       percentile: percentile,
-      showStars: true,
+      showStars: false,
       categories: _buildCategories(),
       bottomWidget: _buildCareerContent(context),
       isShareMode: isShareMode,
@@ -482,28 +536,14 @@ class CareerScoreTemplate extends StatelessWidget {
             ),
           ],
 
-          // 조언
+          // 조언 태그 (텍스트 잘림 방지)
           if (advice != null) ...[
             const SizedBox(height: DSSpacing.sm),
-            Row(
-              children: [
-                Icon(
-                  Icons.lightbulb_outline_rounded,
-                  size: 16,
-                  color: context.colors.textTertiary,
-                ),
-                const SizedBox(width: DSSpacing.xs),
-                Expanded(
-                  child: Text(
-                    '"$advice"',
-                    style: context.typography.bodySmall.copyWith(
-                      color: context.colors.textSecondary,
-                      fontStyle: FontStyle.italic,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
+            AdviceTag.fromText(
+              advice!,
+              size: AdviceTagSize.medium,
+              showQuotes: true,
+              animate: !isShareMode,
             ),
           ],
         ],
@@ -602,7 +642,7 @@ class WeeklyScoreTemplate extends StatelessWidget {
       title: '주간 인사이트',
       subtitle: weekRange,
       score: score,
-      showStars: true,
+      showStars: false,
       categories: categories,
       bottomWidget: _buildWeeklyContent(context),
       isShareMode: isShareMode,
@@ -641,15 +681,14 @@ class WeeklyScoreTemplate extends StatelessWidget {
               ],
             ),
           ],
+          // 조언 태그 (텍스트 잘림 방지)
           if (advice != null) ...[
             const SizedBox(height: DSSpacing.sm),
-            Text(
-              '"$advice"',
-              style: context.typography.bodySmall.copyWith(
-                color: context.colors.textSecondary,
-                fontStyle: FontStyle.italic,
-              ),
-              textAlign: TextAlign.center,
+            AdviceTag.fromText(
+              advice!,
+              size: AdviceTagSize.small,
+              showQuotes: true,
+              animate: !isShareMode,
             ),
           ],
         ],
@@ -683,7 +722,7 @@ class MonthlyScoreTemplate extends StatelessWidget {
       title: '월간 인사이트',
       subtitle: monthLabel,
       score: score,
-      showStars: true,
+      showStars: false,
       categories: categories,
       bottomWidget: _buildMonthlyContent(context),
       isShareMode: isShareMode,
@@ -722,15 +761,14 @@ class MonthlyScoreTemplate extends StatelessWidget {
               ],
             ),
           ],
+          // 조언 태그 (텍스트 잘림 방지)
           if (advice != null) ...[
             const SizedBox(height: DSSpacing.sm),
-            Text(
-              '"$advice"',
-              style: context.typography.bodySmall.copyWith(
-                color: context.colors.textSecondary,
-                fontStyle: FontStyle.italic,
-              ),
-              textAlign: TextAlign.center,
+            AdviceTag.fromText(
+              advice!,
+              size: AdviceTagSize.small,
+              showQuotes: true,
+              animate: !isShareMode,
             ),
           ],
         ],
@@ -766,7 +804,7 @@ class YearlyScoreTemplate extends StatelessWidget {
       title: '연간 인사이트',
       subtitle: yearLabel,
       score: score,
-      showStars: true,
+      showStars: false,
       categories: categories,
       bottomWidget: _buildYearlyContent(context),
       isShareMode: isShareMode,
@@ -827,15 +865,14 @@ class YearlyScoreTemplate extends StatelessWidget {
               ],
             ),
           ],
+          // 조언 태그 (텍스트 잘림 방지)
           if (advice != null) ...[
             const SizedBox(height: DSSpacing.sm),
-            Text(
-              '"$advice"',
-              style: context.typography.bodySmall.copyWith(
-                color: context.colors.textSecondary,
-                fontStyle: FontStyle.italic,
-              ),
-              textAlign: TextAlign.center,
+            AdviceTag.fromText(
+              advice!,
+              size: AdviceTagSize.small,
+              showQuotes: true,
+              animate: !isShareMode,
             ),
           ],
         ],
@@ -869,7 +906,7 @@ class ExamScoreTemplate extends StatelessWidget {
       title: '오늘의 시험운',
       score: score,
       percentile: percentile,
-      showStars: true,
+      showStars: false,
       progressColor: Colors.indigo,
       bottomWidget: _buildExamContent(context),
       isShareMode: isShareMode,
@@ -904,30 +941,14 @@ class ExamScoreTemplate extends StatelessWidget {
                 ),
             ],
           ),
-          // 팁
+          // 팁 태그 그리드 (텍스트 잘림 방지)
           if (tips != null && tips!.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.sm),
-            ...tips!.map((tip) => Padding(
-                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline_rounded,
-                        size: 14,
-                        color: Colors.indigo,
-                      ),
-                      const SizedBox(width: DSSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          tip,
-                          style: context.typography.bodySmall.copyWith(
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
+            TipTagGrid(
+              tips: TipTextMapper.mapTips(tips!),
+              maxVisibleTags: 4,
+              animate: !isShareMode,
+            ),
           ],
         ],
       ),
@@ -988,7 +1009,7 @@ class HealthScoreTemplate extends StatelessWidget {
     return ScoreTemplate(
       title: '오늘의 건강운',
       score: score,
-      showStars: true,
+      showStars: false,
       progressColor: Colors.green,
       bottomWidget: _buildHealthContent(context),
       isShareMode: isShareMode,
@@ -1018,40 +1039,12 @@ class HealthScoreTemplate extends StatelessWidget {
           ),
           const SizedBox(height: DSSpacing.sm),
         ],
-        // 권장사항
+        // 권장사항 태그 그리드 (텍스트 잘림 방지)
         if (recommendations != null && recommendations!.isNotEmpty) ...[
-          Container(
-            padding: const EdgeInsets.all(DSSpacing.md),
-            decoration: BoxDecoration(
-              color: context.colors.surfaceSecondary.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: recommendations!.map((rec) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.favorite_border_rounded,
-                        size: 14,
-                        color: Colors.green,
-                      ),
-                      const SizedBox(width: DSSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          rec,
-                          style: context.typography.bodySmall.copyWith(
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+          TipTagGrid(
+            tips: TipTextMapper.mapTips(recommendations!),
+            maxVisibleTags: 4,
+            animate: !isShareMode,
           ),
         ],
         // 경고
@@ -1168,7 +1161,7 @@ class ExerciseScoreTemplate extends StatelessWidget {
     return ScoreTemplate(
       title: '오늘의 운동운',
       score: score,
-      showStars: true,
+      showStars: false,
       progressColor: Colors.orange,
       bottomWidget: _buildExerciseContent(context),
       isShareMode: isShareMode,
@@ -1217,30 +1210,14 @@ class ExerciseScoreTemplate extends StatelessWidget {
                 _buildInfoChip(context, icon: Icons.timer_rounded, label: duration!),
             ],
           ),
-          // 팁
+          // 팁 태그 그리드 (텍스트 잘림 방지)
           if (tips != null && tips!.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.sm),
-            ...tips!.map((tip) => Padding(
-                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.tips_and_updates_rounded,
-                        size: 14,
-                        color: Colors.orange,
-                      ),
-                      const SizedBox(width: DSSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          tip,
-                          style: context.typography.bodySmall.copyWith(
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
+            TipTagGrid(
+              tips: TipTextMapper.mapTips(tips!),
+              maxVisibleTags: 4,
+              animate: !isShareMode,
+            ),
           ],
         ],
       ),
@@ -1281,6 +1258,9 @@ class BlindDateScoreTemplate extends StatelessWidget {
     this.idealType,
     this.tips,
     this.luckyPlace,
+    this.keyPoints,
+    this.summary,
+    this.overallAdvice,
     this.isShareMode = false,
   });
 
@@ -1289,6 +1269,15 @@ class BlindDateScoreTemplate extends StatelessWidget {
   final String? idealType;
   final List<String>? tips;
   final String? luckyPlace;
+
+  /// 핵심 키포인트 3개 (점수 아래 표시)
+  final List<String>? keyPoints;
+
+  /// 한줄 요약 (점수 바로 아래)
+  final String? summary;
+
+  /// 종합 조언 (하단 하이라이트 박스)
+  final String? overallAdvice;
   final bool isShareMode;
 
   @override
@@ -1296,7 +1285,7 @@ class BlindDateScoreTemplate extends StatelessWidget {
     return ScoreTemplate(
       title: '오늘의 소개팅운',
       score: score,
-      showStars: true,
+      showStars: false,
       progressColor: Colors.pinkAccent,
       bottomWidget: _buildContent(context),
       isShareMode: isShareMode,
@@ -1304,105 +1293,286 @@ class BlindDateScoreTemplate extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 한줄 요약 (점수 바로 아래)
+        if (summary != null && summary!.isNotEmpty) ...[
+          _buildSummarySection(context),
+          const SizedBox(height: DSSpacing.md),
+        ],
+
+        // 키포인트 3개
+        if (keyPoints != null && keyPoints!.isNotEmpty) ...[
+          _buildKeyPointsSection(context),
+          const SizedBox(height: DSSpacing.md),
+        ],
+
+        // 종합 조언 하이라이트 박스
+        if (overallAdvice != null && overallAdvice!.isNotEmpty) ...[
+          _buildOverallAdviceSection(context),
+          const SizedBox(height: DSSpacing.md),
+        ],
+
+        // 성공 예측 & 상세 정보
+        Container(
+          padding: const EdgeInsets.all(DSSpacing.md),
+          decoration: BoxDecoration(
+            color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 성공 확률
+              if (successRate != null) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.emoji_events_rounded, size: 18, color: Colors.pinkAccent),
+                    const SizedBox(width: DSSpacing.xs),
+                    Text(
+                      '성공 예측',
+                      style: context.typography.labelMedium.copyWith(
+                        color: context.colors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Text(
+                      '$successRate%',
+                      style: context.typography.headingMedium.copyWith(
+                        color: Colors.pinkAccent,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: DSSpacing.xs),
+                    Icon(
+                      successRate! >= 50
+                          ? Icons.trending_up_rounded
+                          : Icons.trending_flat_rounded,
+                      size: 20,
+                      color: successRate! >= 50
+                          ? context.colors.success
+                          : context.colors.textTertiary,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.sm),
+              ],
+              // 이상형
+              if (idealType != null) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.favorite_rounded, size: 14, color: Colors.pinkAccent),
+                    const SizedBox(width: DSSpacing.xs),
+                    Flexible(
+                      child: Text(
+                        '오늘의 이상형: $idealType',
+                        style: context.typography.labelMedium.copyWith(
+                          color: context.colors.textPrimary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.sm),
+              ],
+              // 팁 태그 그리드 (텍스트 잘림 방지)
+              if (tips != null && tips!.isNotEmpty) ...[
+                TipTagGrid(
+                  tips: TipTextMapper.mapTips(tips!),
+                  maxVisibleTags: 4,
+                  animate: !isShareMode,
+                ),
+              ],
+              // 행운 장소
+              if (luckyPlace != null) ...[
+                const SizedBox(height: DSSpacing.sm),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.place_rounded, size: 14, color: context.colors.accent),
+                    const SizedBox(width: DSSpacing.xs),
+                    Text(
+                      '추천 장소: $luckyPlace',
+                      style: context.typography.labelSmall.copyWith(
+                        color: context.colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 한줄 요약 섹션 (점수 바로 아래)
+  Widget _buildSummarySection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.format_quote_rounded,
+            size: 16,
+            color: Colors.pinkAccent.withValues(alpha: 0.6),
+          ),
+          const SizedBox(width: DSSpacing.xs),
+          Flexible(
+            child: Text(
+              summary!,
+              style: context.typography.bodyMedium.copyWith(
+                color: context.colors.textPrimary,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 종합 조언 하이라이트 박스
+  Widget _buildOverallAdviceSection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withOpacity(0.5),
+        gradient: LinearGradient(
+          colors: [
+            Colors.pinkAccent.withValues(alpha: 0.08),
+            Colors.amber.withValues(alpha: 0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.pinkAccent.withValues(alpha: 0.15)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.auto_awesome,
+            size: 18,
+            color: Colors.pinkAccent,
+          ),
+          const SizedBox(width: DSSpacing.sm),
+          Expanded(
+            child: Text(
+              overallAdvice!,
+              style: context.typography.bodySmall.copyWith(
+                color: context.colors.textPrimary,
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 키포인트 3개 섹션 빌드
+  Widget _buildKeyPointsSection(BuildContext context) {
+    final displayPoints = keyPoints!.take(3).toList();
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: Colors.pinkAccent.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.pinkAccent.withValues(alpha: 0.2)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // 성공 확률
-          if (successRate != null) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '성공 확률',
-                  style: context.typography.bodySmall.copyWith(
-                    color: context.colors.textSecondary,
-                  ),
+          // 섹션 헤더
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.auto_awesome_rounded,
+                size: 16,
+                color: Colors.pinkAccent,
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '오늘의 핵심 포인트',
+                style: context.typography.labelMedium.copyWith(
+                  color: Colors.pinkAccent,
+                  fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(width: DSSpacing.sm),
-                Text(
-                  '$successRate%',
-                  style: context.typography.headingMedium.copyWith(
-                    color: Colors.pinkAccent,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(width: DSSpacing.xs),
-                Icon(
-                  successRate! >= 50 ? Icons.trending_up_rounded : Icons.trending_flat_rounded,
-                  size: 20,
-                  color: successRate! >= 50 ? context.colors.success : context.colors.textTertiary,
-                ),
-              ],
-            ),
-            const SizedBox(height: DSSpacing.sm),
-          ],
-          // 이상형
-          if (idealType != null) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.favorite_rounded, size: 14, color: Colors.pinkAccent),
-                const SizedBox(width: DSSpacing.xs),
-                Text(
-                  '오늘의 이상형: $idealType',
-                  style: context.typography.labelMedium.copyWith(
-                    color: context.colors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: DSSpacing.sm),
-          ],
-          // 팁
-          if (tips != null && tips!.isNotEmpty) ...[
-            ...tips!.map((tip) => Padding(
-                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-                  child: Row(
-                    children: [
-                      Icon(Icons.lightbulb_outline_rounded, size: 14, color: Colors.pinkAccent),
-                      const SizedBox(width: DSSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          tip,
-                          style: context.typography.bodySmall.copyWith(
-                            color: context.colors.textPrimary,
-                          ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          // 키포인트 목록
+          ...displayPoints.asMap().entries.map((entry) {
+            final index = entry.key;
+            final point = entry.value;
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: index < displayPoints.length - 1 ? DSSpacing.xs : 0,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.pinkAccent.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${index + 1}',
+                        style: context.typography.labelSmall.copyWith(
+                          color: Colors.pinkAccent,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 10,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                )),
-          ],
-          // 행운 장소
-          if (luckyPlace != null) ...[
-            const SizedBox(height: DSSpacing.sm),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.place_rounded, size: 14, color: context.colors.accent),
-                const SizedBox(width: DSSpacing.xs),
-                Text(
-                  '추천 장소: $luckyPlace',
-                  style: context.typography.labelSmall.copyWith(
-                    color: context.colors.textSecondary,
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      point,
+                      style: context.typography.bodySmall.copyWith(
+                        color: context.colors.textPrimary,
+                        height: 1.4,
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );
   }
 }
 
-/// 재회 운세 프리셋
+/// 재회 운세 프리셋 (간소화 버전 - 요약만 표시)
+///
+/// 인포그래픽은 요약본이므로 핵심 정보만 표시:
+/// - 재회 가능성 점수
+/// - 현재 상태 태그 (optional)
+/// - 한 줄 위로 메시지 (optional)
+///
+/// 상세 분석 (hardTruth, theirPerspective, strategicAdvice, emotionalPrescription)은
+/// 결과 페이지 contentText에서 표시합니다.
 class ExLoverScoreTemplate extends StatelessWidget {
   const ExLoverScoreTemplate({
     super.key,
@@ -1410,6 +1580,11 @@ class ExLoverScoreTemplate extends StatelessWidget {
     this.reunionProbability,
     this.currentStatus,
     this.advice,
+    // 아래 필드들은 호환성을 위해 유지하지만 인포그래픽에서는 사용 안 함
+    this.hardTruth,
+    this.theirPerspective,
+    this.strategicAdvice,
+    this.emotionalPrescription,
     this.isShareMode = false,
   });
 
@@ -1417,14 +1592,23 @@ class ExLoverScoreTemplate extends StatelessWidget {
   final int? reunionProbability;
   final String? currentStatus;
   final String? advice;
+  // 호환성용 - 인포그래픽에서 미사용 (결과 페이지에서 사용)
+  final String? hardTruth;
+  final String? theirPerspective;
+  final String? strategicAdvice;
+  final String? emotionalPrescription;
   final bool isShareMode;
 
   @override
   Widget build(BuildContext context) {
+    // 재회 가능성을 메인 점수로 사용 (중복 방지)
+    final displayScore = reunionProbability ?? score;
+
     return ScoreTemplate(
-      title: '재회 가능성 분석',
-      score: score,
-      showStars: true,
+      title: '오늘의 재회운',
+      score: displayScore,
+      scoreLabel: '재회 가능성',
+      showStars: false,
       progressColor: Colors.purple,
       bottomWidget: _buildContent(context),
       isShareMode: isShareMode,
@@ -1432,70 +1616,47 @@ class ExLoverScoreTemplate extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 재회 확률
-          if (reunionProbability != null) ...[
-            Column(
-              children: [
-                Text(
-                  '재회 가능성',
-                  style: context.typography.labelSmall.copyWith(
-                    color: context.colors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: DSSpacing.xs),
-                Text(
-                  '$reunionProbability%',
-                  style: context.typography.displaySmall.copyWith(
-                    color: Colors.purple,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
+    // 표시할 내용이 없으면 빈 위젯
+    if ((currentStatus == null || currentStatus!.isEmpty) &&
+        (advice == null || advice!.isEmpty)) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 현재 상태 태그
+        if (currentStatus != null && currentStatus!.isNotEmpty) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.md,
+              vertical: DSSpacing.xs,
             ),
+            decoration: BoxDecoration(
+              color: Colors.purple.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              currentStatus!,
+              style: context.typography.labelMedium.copyWith(
+                color: Colors.purple,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          if (advice != null && advice!.isNotEmpty)
             const SizedBox(height: DSSpacing.sm),
-          ],
-          // 현재 상태
-          if (currentStatus != null) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: DSSpacing.md,
-                vertical: DSSpacing.xs,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Text(
-                currentStatus!,
-                style: context.typography.labelMedium.copyWith(
-                  color: Colors.purple,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: DSSpacing.sm),
-          ],
-          // 조언
-          if (advice != null)
-            Text(
-              '"$advice"',
-              style: context.typography.bodySmall.copyWith(
-                color: context.colors.textSecondary,
-                fontStyle: FontStyle.italic,
-              ),
-              textAlign: TextAlign.center,
-            ),
         ],
-      ),
+
+        // 조언 태그 (텍스트 잘림 방지)
+        if (advice != null && advice!.isNotEmpty)
+          AdviceTag.fromText(
+            advice!,
+            size: AdviceTagSize.medium,
+            showQuotes: true,
+            animate: !isShareMode,
+          ),
+      ],
     );
   }
 }
@@ -1522,7 +1683,7 @@ class MovingScoreTemplate extends StatelessWidget {
     return ScoreTemplate(
       title: '이사 길일 분석',
       score: score,
-      showStars: true,
+      showStars: false,
       progressColor: Colors.teal,
       bottomWidget: _buildContent(context),
       isShareMode: isShareMode,
@@ -1608,6 +1769,10 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
     this.targetTypes,
     this.warningSignals,
     this.protectionTips,
+    this.categoryCounts,
+    this.luckyElements,
+    this.timeStrategy,
+    this.summary,
     this.isShareMode = false,
   });
 
@@ -1615,14 +1780,18 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
   final List<String>? targetTypes;
   final List<String>? warningSignals;
   final List<String>? protectionTips;
+  final Map<String, int>? categoryCounts;
+  final Map<String, String>? luckyElements;
+  final Map<String, Map<String, String>>? timeStrategy;
+  final String? summary;
   final bool isShareMode;
 
   @override
   Widget build(BuildContext context) {
     return ScoreTemplate(
-      title: '오늘의 경계 대상',
+      title: '오늘의 경계운',
       score: riskScore,
-      scoreLabel: '위험도',
+      scoreLabel: '경계 지수',
       showStars: false,
       progressColor: context.colors.error,
       bottomWidget: _buildContent(context),
@@ -1631,152 +1800,332 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
+    final hasCategories = categoryCounts != null && categoryCounts!.isNotEmpty;
+    final hasLuckyElements = luckyElements != null && luckyElements!.isNotEmpty;
+    final hasTimeStrategy = timeStrategy != null && timeStrategy!.isNotEmpty;
+
+    // 아무 데이터도 없으면 빈 위젯 반환
+    if (!hasCategories && !hasLuckyElements && !hasTimeStrategy &&
+        (targetTypes == null || targetTypes!.isEmpty)) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 경계 대상 유형
-        if (targetTypes != null && targetTypes!.isNotEmpty) ...[
-          Container(
-            padding: const EdgeInsets.all(DSSpacing.md),
-            decoration: BoxDecoration(
-              color: context.colors.error.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.person_off_rounded, size: 16, color: context.colors.error),
-                    const SizedBox(width: DSSpacing.xs),
-                    Text(
-                      '주의 대상',
-                      style: context.typography.labelMedium.copyWith(
-                        color: context.colors.error,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: DSSpacing.sm),
-                Wrap(
-                  spacing: DSSpacing.xs,
-                  runSpacing: DSSpacing.xs,
-                  children: targetTypes!.map((type) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: DSSpacing.sm,
-                        vertical: DSSpacing.xxs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: context.colors.error.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: context.colors.error.withOpacity(0.3)),
-                      ),
-                      child: Text(
-                        type,
-                        style: context.typography.labelSmall.copyWith(
-                          color: context.colors.error,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
+        // 경계 카테고리 요약 (8개 카테고리 카운트)
+        if (hasCategories) ...[
+          _buildCategorySummary(context),
           const SizedBox(height: DSSpacing.sm),
         ],
-        // 경고 신호
-        if (warningSignals != null && warningSignals!.isNotEmpty) ...[
-          Container(
-            padding: const EdgeInsets.all(DSSpacing.md),
-            decoration: BoxDecoration(
-              color: context.colors.surfaceSecondary.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '경고 신호',
-                  style: context.typography.labelMedium.copyWith(
-                    color: context.colors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: DSSpacing.xs),
-                ...warningSignals!.map((signal) => Padding(
-                      padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
-                      child: Row(
-                        children: [
-                          Icon(Icons.warning_rounded, size: 12, color: context.colors.warning),
-                          const SizedBox(width: DSSpacing.xs),
-                          Expanded(
-                            child: Text(
-                              signal,
-                              style: context.typography.bodySmall.copyWith(
-                                color: context.colors.textPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-              ],
-            ),
-          ),
+
+        // 행운 요소 (색상, 숫자, 방향, 시간)
+        if (hasLuckyElements) ...[
+          _buildLuckyElements(context),
           const SizedBox(height: DSSpacing.sm),
         ],
-        // 보호 팁
-        if (protectionTips != null && protectionTips!.isNotEmpty) ...[
-          Container(
-            padding: const EdgeInsets.all(DSSpacing.md),
-            decoration: BoxDecoration(
-              color: context.colors.success.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.shield_rounded, size: 16, color: context.colors.success),
-                    const SizedBox(width: DSSpacing.xs),
-                    Text(
-                      '보호 방법',
-                      style: context.typography.labelMedium.copyWith(
-                        color: context.colors.success,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: DSSpacing.xs),
-                ...protectionTips!.map((tip) => Padding(
-                      padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
-                      child: Row(
-                        children: [
-                          Icon(Icons.check_rounded, size: 12, color: context.colors.success),
-                          const SizedBox(width: DSSpacing.xs),
-                          Expanded(
-                            child: Text(
-                              tip,
-                              style: context.typography.bodySmall.copyWith(
-                                color: context.colors.textPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-              ],
-            ),
-          ),
+
+        // 시간대별 전략 요약
+        if (hasTimeStrategy) ...[
+          _buildTimeStrategy(context),
+        ],
+
+        // 기존 경계 대상 유형 (fallback)
+        if (!hasCategories && targetTypes != null && targetTypes!.isNotEmpty) ...[
+          _buildTargetTypes(context),
         ],
       ],
+    );
+  }
+
+  /// 경계 카테고리 요약 (아이콘 + 개수)
+  Widget _buildCategorySummary(BuildContext context) {
+    final categoryIcons = {
+      'cautionPeople': ('👤', '인물'),
+      'cautionObjects': ('📦', '사물'),
+      'cautionColors': ('🎨', '색상'),
+      'cautionNumbers': ('🔢', '숫자'),
+      'cautionAnimals': ('🐾', '동물'),
+      'cautionPlaces': ('📍', '장소'),
+      'cautionTimes': ('⏰', '시간'),
+      'cautionDirections': ('🧭', '방향'),
+    };
+
+    final validCategories = categoryCounts!.entries
+        .where((e) => e.value > 0 && categoryIcons.containsKey(e.key))
+        .toList();
+
+    if (validCategories.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.error.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.colors.error.withOpacity(0.2)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, size: 16, color: context.colors.error),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '오늘의 경계 대상',
+                style: context.typography.labelMedium.copyWith(
+                  color: context.colors.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Wrap(
+            spacing: DSSpacing.sm,
+            runSpacing: DSSpacing.xs,
+            children: validCategories.map((entry) {
+              final iconData = categoryIcons[entry.key]!;
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: context.colors.error.withOpacity(0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(iconData.$1, style: const TextStyle(fontSize: 12)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${iconData.$2} ${entry.value}개',
+                      style: context.typography.labelSmall.copyWith(
+                        color: context.colors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 행운 요소 (색상, 숫자, 방향, 시간, 아이템, 사람)
+  Widget _buildLuckyElements(BuildContext context) {
+    final elementIcons = {
+      'color': ('🎨', '행운 색상'),
+      'number': ('🔢', '행운 숫자'),
+      'direction': ('🧭', '좋은 방향'),
+      'time': ('⏰', '최고의 시간'),
+      'item': ('✨', '행운 아이템'),
+      'person': ('👤', '만나면 좋은 사람'),
+    };
+
+    final validElements = luckyElements!.entries
+        .where((e) => e.value.isNotEmpty && elementIcons.containsKey(e.key))
+        .take(4) // 최대 4개만 표시
+        .toList();
+
+    if (validElements.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.success.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.colors.success.withOpacity(0.2)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.auto_awesome_rounded, size: 16, color: context.colors.success),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '오늘의 행운 요소',
+                style: context.typography.labelMedium.copyWith(
+                  color: context.colors.success,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Wrap(
+            spacing: DSSpacing.sm,
+            runSpacing: DSSpacing.xs,
+            children: validElements.map((entry) {
+              final iconData = elementIcons[entry.key]!;
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: context.colors.success.withOpacity(0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(iconData.$1, style: const TextStyle(fontSize: 12)),
+                    const SizedBox(width: 4),
+                    Text(
+                      entry.value,
+                      style: context.typography.labelSmall.copyWith(
+                        color: context.colors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 시간대별 전략 요약
+  Widget _buildTimeStrategy(BuildContext context) {
+    final timeLabels = {
+      'morning': ('🌅', '오전'),
+      'afternoon': ('☀️', '오후'),
+      'evening': ('🌙', '저녁'),
+    };
+
+    final validStrategies = timeStrategy!.entries
+        .where((e) => timeLabels.containsKey(e.key) &&
+               (e.value['caution']?.isNotEmpty == true || e.value['advice']?.isNotEmpty == true))
+        .toList();
+
+    if (validStrategies.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceSecondary.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.schedule_rounded, size: 16, color: context.colors.accent),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '시간대별 가이드',
+                style: context.typography.labelMedium.copyWith(
+                  color: context.colors.accent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...validStrategies.map((entry) {
+            final labelData = timeLabels[entry.key]!;
+            final advice = entry.value['advice'] ?? entry.value['caution'] ?? '';
+            if (advice.isEmpty) return const SizedBox.shrink();
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(labelData.$1, style: const TextStyle(fontSize: 14)),
+                  const SizedBox(width: DSSpacing.xs),
+                  Text(
+                    '${labelData.$2}: ',
+                    style: context.typography.labelSmall.copyWith(
+                      color: context.colors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      advice.length > 30 ? '${advice.substring(0, 30)}...' : advice,
+                      style: context.typography.bodySmall.copyWith(
+                        color: context.colors.textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// 기존 경계 대상 유형 (fallback)
+  Widget _buildTargetTypes(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.error.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.person_off_rounded, size: 16, color: context.colors.error),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '주의 대상',
+                style: context.typography.labelMedium.copyWith(
+                  color: context.colors.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Wrap(
+            spacing: DSSpacing.xs,
+            runSpacing: DSSpacing.xs,
+            children: targetTypes!.map((type) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colors.error.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: context.colors.error.withOpacity(0.3)),
+                ),
+                child: Text(
+                  type,
+                  style: context.typography.labelSmall.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1805,7 +2154,7 @@ class PetScoreTemplate extends StatelessWidget {
     return ScoreTemplate(
       title: '반려동물 궁합',
       score: score,
-      showStars: true,
+      showStars: false,
       progressColor: Colors.amber,
       bottomWidget: _buildContent(context),
       isShareMode: isShareMode,
@@ -1925,7 +2274,7 @@ class FamilyScoreTemplate extends StatelessWidget {
     return ScoreTemplate(
       title: '오늘의 가족운',
       score: score,
-      showStars: true,
+      showStars: false,
       categories: familyCategories,
       progressColor: Colors.brown,
       bottomWidget: _buildContent(context),
@@ -2102,6 +2451,7 @@ class BiorhythmScoreTemplate extends StatelessWidget {
     this.physicalPhase,
     this.emotionalPhase,
     this.intellectualPhase,
+    this.summaryPoints,
     this.overallRating = 3,
     this.advice,
     this.isShareMode = false,
@@ -2124,6 +2474,9 @@ class BiorhythmScoreTemplate extends StatelessWidget {
 
   /// 지성 상태
   final String? intellectualPhase;
+
+  /// 요약 포인트 (점수 아래 표시, 최대 3개)
+  final List<String>? summaryPoints;
 
   /// 종합 컨디션 별점 (1-5)
   final int overallRating;
@@ -2162,6 +2515,11 @@ class BiorhythmScoreTemplate extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // 요약 포인트 (있는 경우)
+        if (summaryPoints != null && summaryPoints!.isNotEmpty) ...[
+          _buildSummarySection(context),
+          const SizedBox(height: DSSpacing.md),
+        ],
         // 3개 리듬 바
         _buildRhythmBar(
           context,
@@ -2320,6 +2678,76 @@ class BiorhythmScoreTemplate extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  /// 요약 포인트 섹션 빌드
+  Widget _buildSummarySection(BuildContext context) {
+    final displayPoints = summaryPoints!.take(3).toList();
+    final themeColor = const Color(0xFF00CED1); // 바이오리듬 테마 색상
+
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: themeColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: themeColor.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 섹션 헤더
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.insights_rounded,
+                size: 16,
+                color: themeColor,
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '오늘의 컨디션',
+                style: context.typography.labelMedium.copyWith(
+                  color: themeColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          // 요약 포인트 목록
+          ...displayPoints.asMap().entries.map((entry) {
+            final index = entry.key;
+            final point = entry.value;
+            final icons = ['💪', '💖', '🧠'];
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: index < displayPoints.length - 1 ? DSSpacing.xs : 0,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    icons[index % icons.length],
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      point,
+                      style: context.typography.bodySmall.copyWith(
+                        color: context.colors.textPrimary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
     );
   }
 }

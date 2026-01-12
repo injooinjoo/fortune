@@ -158,8 +158,6 @@ class CareerInfoHeader extends StatelessWidget {
               style: context.bodySmall.copyWith(
                 color: colors.textSecondary,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

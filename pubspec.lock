@@ -1596,6 +1596,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  kakao_flutter_sdk_share:
+    dependency: "direct main"
+    description:
+      name: kakao_flutter_sdk_share
+      sha256: "0223e06abc03e4ec31db45d5512dfd74323ad2db91ad6604b4dd1efa7fbee3f2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.10.0"
+  kakao_flutter_sdk_template:
+    dependency: transitive
+    description:
+      name: kakao_flutter_sdk_template
+      sha256: "92650907f56a48432e17dc2aa5b84b5e05d5368f413bd2614dff1a39b8f2694b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.10.0"
   kakao_flutter_sdk_user:
     dependency: "direct main"
     description:
@@ -2289,6 +2305,38 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  social_share_plugin:
+    dependency: "direct main"
+    description:
+      name: social_share_plugin
+      sha256: a4887c0f4f87f364ebc79e721c0ea1baffd744f2cd2bc7e1209602d1a0ddff38
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.2+2"
+  social_share_plugin_android:
+    dependency: transitive
+    description:
+      name: social_share_plugin_android
+      sha256: e7c2670c6f074c2e2768759d2af80024395308c5fc5ca695cae9d22b927814b2
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0+1"
+  social_share_plugin_ios:
+    dependency: transitive
+    description:
+      name: social_share_plugin_ios
+      sha256: "41bf4a88c6a9f4b84a585e9faf7726973f820b162918d2e5b8764823c5fcc428"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0+1"
+  social_share_plugin_platform_interface:
+    dependency: transitive
+    description:
+      name: social_share_plugin_platform_interface
+      sha256: a7f5c053f2537c0e6df68df9b67a00137f176ca7b2430e3622af9689e55e2111
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0+1"
   source_gen:
     dependency: transitive
     description:

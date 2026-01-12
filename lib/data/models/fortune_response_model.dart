@@ -857,10 +857,101 @@ class FortuneData {
       };
     }
 
+    // Ex-lover fortune: map ex-lover specific fields to metadata
+    if (json['fortuneType'] == 'ex-lover' || json['type'] == 'ex-lover' ||
+        json['fortune_type'] == 'ex-lover' ||
+        json['fortuneType'] == 'ex_lover' || json['type'] == 'ex_lover') {
+      score ??= json['score'] as int? ?? json['overallScore'] as int?;
+      summary ??= json['summary'] as String? ?? json['content'] as String?;
+
+      // Store all ex-lover data in metadata for ChatFortuneResultCard access
+      metadata = {
+        ...?metadata,
+        // 핵심 인사이트 섹션들
+        if (json['hardTruth'] != null) 'hardTruth': json['hardTruth'],
+        if (json['theirPerspective'] != null) 'theirPerspective': json['theirPerspective'],
+        if (json['strategicAdvice'] != null) 'strategicAdvice': json['strategicAdvice'],
+        if (json['emotionalPrescription'] != null) 'emotionalPrescription': json['emotionalPrescription'],
+        // 재회 가능성 및 분석
+        if (json['reunion_possibility'] != null) 'reunion_possibility': json['reunion_possibility'],
+        if (json['reunionAssessment'] != null) 'reunionAssessment': json['reunionAssessment'],
+        if (json['reunionCap'] != null) 'reunionCap': json['reunionCap'],
+        // 관계 상태
+        if (json['contact_status'] != null) 'contact_status': json['contact_status'],
+        if (json['relationshipDepth'] != null) 'relationshipDepth': json['relationshipDepth'],
+        if (json['currentState'] != null) 'currentState': json['currentState'],
+        // 메시지 및 조언
+        if (json['comfort_message'] != null) 'comfort_message': json['comfort_message'],
+        if (json['closingMessage'] != null) 'closingMessage': json['closingMessage'],
+        if (json['openingMessage'] != null) 'openingMessage': json['openingMessage'],
+        // 분석 결과
+        if (json['breakupAnalysis'] != null) 'breakupAnalysis': json['breakupAnalysis'],
+        if (json['emotionalJourney'] != null) 'emotionalJourney': json['emotionalJourney'],
+        if (json['actionPlan'] != null) 'actionPlan': json['actionPlan'],
+        'fortuneType': 'ex-lover',
+      };
+
+      // Build comprehensive content from ex-lover sections
+      final contentParts = <String>[];
+      if (summary != null) contentParts.add(summary);
+
+      // Opening message
+      if (json['openingMessage'] != null) {
+        contentParts.add('\n\n${json['openingMessage']}');
+      }
+
+      // Hard truth section
+      if (json['hardTruth'] != null) {
+        contentParts.add('\n\n💔 솔직한 진실\n${json['hardTruth']}');
+      }
+
+      // Their perspective section
+      if (json['theirPerspective'] != null) {
+        contentParts.add('\n\n💭 그들의 시선\n${json['theirPerspective']}');
+      }
+
+      // Strategic advice section
+      if (json['strategicAdvice'] != null) {
+        contentParts.add('\n\n🎯 전략적 조언\n${json['strategicAdvice']}');
+      }
+
+      // Emotional prescription section
+      if (json['emotionalPrescription'] != null) {
+        contentParts.add('\n\n💊 감정 처방전\n${json['emotionalPrescription']}');
+      }
+
+      // Reunion assessment
+      final reunionAssessment = json['reunionAssessment'] as Map<String, dynamic>?;
+      if (reunionAssessment != null) {
+        if (reunionAssessment['probability'] != null) {
+          contentParts.add('\n\n📊 재회 가능성: ${reunionAssessment['probability']}%');
+        }
+        if (reunionAssessment['analysis'] != null) {
+          contentParts.add('\n${reunionAssessment['analysis']}');
+        }
+      }
+
+      // Closing message
+      if (json['closingMessage'] != null) {
+        contentParts.add('\n\n🌟 ${json['closingMessage']}');
+      }
+
+      if (contentParts.isNotEmpty) {
+        content = contentParts.join('');
+      }
+
+      // Set advice
+      advice ??= json['closingMessage'] as String? ?? json['comfort_message'] as String?;
+    }
+
     // Pet compatibility fortune: map pet-specific fields to metadata
+    // ✅ 'pet' 단독 타입도 동일하게 처리 (pet-compatibility와 같은 데이터 구조)
     if (json['fortuneType'] == 'pet-compatibility' ||
         json['type'] == 'pet-compatibility' ||
-        json['fortune_type'] == 'pet-compatibility') {
+        json['fortune_type'] == 'pet-compatibility' ||
+        json['fortuneType'] == 'pet' ||
+        json['type'] == 'pet' ||
+        json['fortune_type'] == 'pet') {
       score ??= json['score'] as int? ?? json['overall_score'] as int?;
       summary ??= json['summary'] as String?;
 
@@ -877,14 +968,35 @@ class FortuneData {
         if (json['weather_advice'] != null) 'weather_advice': json['weather_advice'],
         if (json['special_message'] != null) 'special_message': json['special_message'],
         if (json['pet_info'] != null) 'pet_info': json['pet_info'],
-        'fortuneType': 'pet-compatibility',
+        // ✅ 추가 pet 필드들 (API 응답에서 누락되었던 필드)
+        if (json['today_story'] != null) 'today_story': json['today_story'],
+        if (json['breed_specific'] != null) 'breed_specific': json['breed_specific'],
+        if (json['health_insight'] != null) 'health_insight': json['health_insight'],
+        if (json['emotional_care'] != null) 'emotional_care': json['emotional_care'],
+        if (json['special_tips'] != null) 'special_tips': json['special_tips'],
+        if (json['lucky_items'] != null) 'lucky_items': json['lucky_items'],
+        if (json['greeting'] != null) 'greeting': json['greeting'],
+        if (json['pet_content'] != null) 'pet_content': json['pet_content'],
+        if (json['pet_summary'] != null) 'pet_summary': json['pet_summary'],
+        'fortuneType': json['fortuneType'] ?? json['type'] ?? 'pet',
       };
 
       // Build content from pet fortune sections
       final contentParts = <String>[];
-      if (summary != null) contentParts.add(summary);
 
-      // Add daily condition preview
+      // 인사말
+      if (json['greeting'] != null) {
+        contentParts.add(json['greeting'] as String);
+      } else if (summary != null) {
+        contentParts.add(summary);
+      }
+
+      // 오늘의 이야기
+      if (json['today_story'] != null) {
+        contentParts.add('\n\n📖 오늘의 이야기\n${json['today_story']}');
+      }
+
+      // 일일 컨디션
       final dailyCondition = json['daily_condition'] as Map<String, dynamic>?;
       if (dailyCondition != null) {
         if (dailyCondition['status'] != null) {
@@ -895,16 +1007,66 @@ class FortuneData {
         }
       }
 
-      // Add owner bond preview
+      // 품종별 특성
+      if (json['breed_specific'] != null) {
+        contentParts.add('\n\n🏷️ 품종별 특성\n${json['breed_specific']}');
+      }
+
+      // 유대감
       final ownerBond = json['owner_bond'] as Map<String, dynamic>?;
       if (ownerBond != null) {
         if (ownerBond['status'] != null) {
           contentParts.add('\n\n💕 유대감: ${ownerBond['status']}');
         }
+        if (ownerBond['advice'] != null) {
+          contentParts.add('\n${ownerBond['advice']}');
+        }
+      }
+
+      // 유대감 미션
+      final bondingMission = json['bonding_mission'] as Map<String, dynamic>?;
+      if (bondingMission != null) {
+        if (bondingMission['mission'] != null) {
+          contentParts.add('\n\n🎯 오늘의 미션\n${bondingMission['mission']}');
+        }
+        if (bondingMission['expected_reaction'] != null) {
+          contentParts.add('\n예상 반응: ${bondingMission['expected_reaction']}');
+        }
+      }
+
+      // 건강 인사이트
+      if (json['health_insight'] != null) {
+        contentParts.add('\n\n💊 건강 인사이트\n${json['health_insight']}');
+      }
+
+      // 활동 추천
+      if (json['activity_recommendation'] != null) {
+        contentParts.add('\n\n🏃 활동 추천\n${json['activity_recommendation']}');
+      }
+
+      // 감정 케어
+      if (json['emotional_care'] != null) {
+        contentParts.add('\n\n🧡 감정 케어\n${json['emotional_care']}');
+      }
+
+      // 특별 팁
+      if (json['special_tips'] != null) {
+        contentParts.add('\n\n💡 특별 팁\n${json['special_tips']}');
+      }
+
+      // 펫의 속마음
+      final petsVoice = json['pets_voice'] as Map<String, dynamic>?;
+      if (petsVoice != null && petsVoice['heartfelt_letter'] != null) {
+        contentParts.add('\n\n💌 반려동물의 속마음\n"${petsVoice['heartfelt_letter']}"');
       }
 
       if (contentParts.isNotEmpty) {
         content = contentParts.join('');
+      }
+
+      // advice 설정
+      if (ownerBond?['advice'] != null) {
+        advice ??= ownerBond!['advice'] as String?;
       }
     }
 

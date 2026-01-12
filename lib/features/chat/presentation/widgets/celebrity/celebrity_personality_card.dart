@@ -573,11 +573,12 @@ class _CelebrityPersonalityCardState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: DSSpacing.xs,
+            runSpacing: DSSpacing.xs,
             children: [
               if (data['best_year'] != null)
                 _buildTimingBadge(data['best_year'], const Color(0xFFE91E63), context),
-              const SizedBox(width: DSSpacing.xs),
               if (data['best_month'] != null)
                 _buildTimingBadge(data['best_month'], const Color(0xFFFF9800), context),
             ],

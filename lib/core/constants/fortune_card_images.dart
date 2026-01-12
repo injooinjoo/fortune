@@ -68,6 +68,7 @@ class FortuneCardImages {
     'lucky_items': 'assets/images/minhwa/minhwa_saju_fourguardians.webp',
     'fortune-cookie': '${basePath}fortune_cookie_fortune.png',
     'wish': 'assets/images/minhwa/minhwa_overall_dragon.webp',
+    'ootd': 'assets/images/minhwa/minhwa_overall_phoenix.webp',
 
     // Family - 가족 (원앙)
     'family': 'assets/images/minhwa/minhwa_love_mandarin.webp',
@@ -185,6 +186,7 @@ class FortuneCardImages {
     'lucky_items': [const Color(0xFF7C3AED), const Color(0xFF3B82F6)],
     'fortune-cookie': [const Color(0xFF9333EA), const Color(0xFF7C3AED)],
     'wish': [const Color(0xFFFF4081), const Color(0xFFF50057)],
+    'ootd': [const Color(0xFF9333EA), const Color(0xFF7C3AED)],
 
     // Family
     'family': [const Color(0xFF3B82F6), const Color(0xFF2563EB)],
@@ -275,6 +277,11 @@ class FortuneCardImages {
       'high': 'assets/images/fortune/heroes/wish/wish_hero_dragon.webp',
       'medium': 'assets/images/fortune/heroes/wish/wish_hero_star.webp',
       'low': 'assets/images/fortune/heroes/wish/wish_hero_fountain.webp',
+    },
+    'ootd': {
+      'high': 'assets/images/fortune/bg/bg_ootd.png',
+      'medium': 'assets/images/fortune/bg/bg_ootd.png',
+      'low': 'assets/images/fortune/bg/bg_ootd.png',
     },
   };
 
@@ -529,7 +536,7 @@ class FortuneCardImages {
     'action': 'assets/images/fortune/icons/section/section_action.webp',
     // Fortune-specific
     'charm': 'assets/images/fortune/icons/section/section_charm.webp',
-    'fashion': 'assets/images/fortune/icons/section/section_fashion.webp',
+    'fashion': 'assets/images/fortune/icons/section/section_lucky.webp',
     'venue': 'assets/images/fortune/icons/section/section_venue.webp',
     'timing': 'assets/images/fortune/icons/section/section_timing.webp',
     'compatibility':
@@ -631,6 +638,7 @@ class FortuneCardImages {
     'color': '행운을 부르는 오늘의 컬러',
     'pet': '반려동물과의 교감도',
     'lottery': '대박의 기운이 느껴진다!',
+    'ootd': '오늘의 패션, 어떤가요?',
 
     // Default fallback
     'default': '오늘 당신에게 필요한 메시지'

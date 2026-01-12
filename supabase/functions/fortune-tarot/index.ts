@@ -112,6 +112,22 @@ const SPREAD_NAMES: Record<string, string> = {
   celticCross: '켈틱 크로스',
 }
 
+// 사용 가능한 타로 덱 목록 (메이저 아르카나 22장 완비)
+const AVAILABLE_DECKS = [
+  'rider_waite',
+  'thoth',
+  'ancient_italian',
+  'before_tarot',
+  'after_tarot',
+  'golden_dawn_cicero',
+]
+
+// 랜덤 덱 선택
+function getRandomDeck(): string {
+  const randomIndex = Math.floor(Math.random() * AVAILABLE_DECKS.length)
+  return AVAILABLE_DECKS[randomIndex]
+}
+
 // 카드 이미지 경로 생성
 function getCardImagePath(cardIndex: number, deck: string = 'rider_waite'): string {
   const card = MAJOR_ARCANA[cardIndex]
@@ -211,7 +227,8 @@ serve(async (req: Request) => {
     const userId = body.userId
     const question = body.question || tarotSelection.question || body.answers?.purpose || body.purpose || 'guidance'
     const spreadType = body.spreadType || tarotSelection.spreadType || 'single'
-    const deck = body.deck || tarotSelection.deck || 'rider_waite'
+    // 덱이 명시되지 않으면 랜덤 선택
+    const deck = body.deck || tarotSelection.deck || getRandomDeck()
     const userName = body.name
     const birthDate = body.birthDate
 

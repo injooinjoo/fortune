@@ -47,6 +47,12 @@ class ChatOotdResultCard extends ConsumerWidget {
           children: [
             // 인포그래픽 헤더 (점수, 등급, 레이더, 해시태그 통합)
             _buildInfoHeader(context),
+            // 전체 코멘트 (무료 공개)
+            _buildOverallCommentSection(context),
+            // 하이라이트 (무료 공개)
+            _buildHighlightsSection(context),
+            // TPO 피드백 (무료 공개)
+            _buildTpoFeedbackSection(context),
             UnifiedBlurWrapper(
               isBlurred: isBlurred,
               blurredSections: blurredSections,
@@ -73,23 +79,70 @@ class ChatOotdResultCard extends ConsumerWidget {
     final score = (ootdData['score'] as num?)?.toInt() ?? 75;
     final grade = details['overallGrade'] as String? ?? 'C';
 
-    // 레이더 데이터 추출
+    // 레이더 데이터 추출 - categories 필드 사용 (Edge Function 응답 구조에 맞춤)
     Map<String, dynamic>? radarScores;
-    final analysis = details['detailedAnalysis'] as Map<String, dynamic>?;
-    if (analysis != null) {
+    final categories = details['categories'] as Map<String, dynamic>?;
+    if (categories != null && categories.isNotEmpty) {
       radarScores = {};
-      for (final entry in analysis.entries) {
+      // 6개 카테고리 한글 라벨로 변환
+      const labelMap = {
+        'colorHarmony': '색상조화',
+        'silhouette': '실루엣',
+        'styleConsistency': '스타일',
+        'accessories': '액세서리',
+        'tpoFit': 'TPO',
+        'trendScore': '트렌드',
+      };
+      for (final entry in categories.entries) {
+        num? scoreVal;
+
+        // 다양한 응답 형식 처리
         if (entry.value is Map) {
-          final scoreVal = (entry.value as Map)['score'];
-          if (scoreVal != null) {
-            radarScores[entry.key] = scoreVal;
-          }
+          // 정상 형식: {score: 8.0, feedback: "..."}
+          scoreVal = (entry.value as Map)['score'] as num?;
+        } else if (entry.value is num) {
+          // 간소화 형식: LLM이 숫자만 반환한 경우
+          scoreVal = entry.value as num;
+        } else if (entry.value is String) {
+          // 문자열로 반환된 경우
+          scoreVal = num.tryParse(entry.value as String);
+        }
+
+        if (scoreVal != null) {
+          // 점수를 0-100 스케일로 변환 (원본은 0-10)
+          final normalizedScore = scoreVal.toDouble() * 10;
+          final label = labelMap[entry.key] ?? entry.key;
+          radarScores[label] = normalizedScore;
         }
       }
+
+      // 카테고리가 비어있으면 기본값으로 6개 축 생성
+      if (radarScores.isEmpty) {
+        radarScores = {
+          '색상조화': 70.0,
+          '실루엣': 70.0,
+          '스타일': 70.0,
+          '액세서리': 70.0,
+          'TPO': 70.0,
+          '트렌드': 70.0,
+        };
+      }
+    } else {
+      // categories가 null이면 score 기반으로 기본 레이더 데이터 생성
+      final baseScore = (score / 10.0) * 10; // 0-100 스케일
+      radarScores = {
+        '색상조화': baseScore,
+        '실루엣': baseScore,
+        '스타일': baseScore,
+        '액세서리': baseScore,
+        'TPO': baseScore,
+        '트렌드': baseScore,
+      };
     }
 
-    // 해시태그 추출
+    // 해시태그 추출 (styleKeywords도 fallback으로 사용)
     final hashtags = (details['hashtags'] as List?)?.cast<String>() ??
+        (details['styleKeywords'] as List?)?.cast<String>() ??
         (ootdData['keywords'] as List?)?.cast<String>() ??
         [];
 
@@ -118,6 +171,168 @@ class ChatOotdResultCard extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  /// 전체 코멘트 섹션 (무료 공개)
+  Widget _buildOverallCommentSection(BuildContext context) {
+    final colors = context.colors;
+    final details = ootdData['details'] as Map<String, dynamic>? ?? {};
+    final comment = details['overallComment'] as String? ??
+        ootdData['content'] as String? ?? '';
+
+    if (comment.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('💬', style: TextStyle(fontSize: 18)),
+          const SizedBox(width: DSSpacing.sm),
+          Expanded(
+            child: Text(
+              comment,
+              style: context.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms, delay: 100.ms);
+  }
+
+  /// 하이라이트 섹션 (잘된 포인트, 무료 공개)
+  Widget _buildHighlightsSection(BuildContext context) {
+    final colors = context.colors;
+    final details = ootdData['details'] as Map<String, dynamic>? ?? {};
+    final highlights = (details['highlights'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    if (highlights.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('✨', style: TextStyle(fontSize: 18)),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '잘된 포인트',
+                style: context.bodyLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          ...highlights.map((highlight) => Padding(
+            padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('•', style: context.bodyMedium.copyWith(color: colors.success)),
+                const SizedBox(width: DSSpacing.xs),
+                Expanded(
+                  child: Text(
+                    highlight,
+                    style: context.bodyMedium.copyWith(color: colors.textPrimary),
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms, delay: 150.ms);
+  }
+
+  /// TPO 피드백 섹션 (무료 공개)
+  Widget _buildTpoFeedbackSection(BuildContext context) {
+    final colors = context.colors;
+    final details = ootdData['details'] as Map<String, dynamic>? ?? {};
+    final tpo = details['tpo'] as String? ?? '';
+    final tpoScore = (details['tpoScore'] as num?)?.toInt();
+    final tpoFeedback = details['tpoFeedback'] as String? ?? '';
+
+    if (tpoFeedback.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: _getAccentColor(context).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+        border: Border.all(
+          color: _getAccentColor(context).withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🎯', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                'TPO 적합도',
+                style: context.labelMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colors.textPrimary,
+                ),
+              ),
+              if (tpo.isNotEmpty) ...[
+                const SizedBox(width: DSSpacing.xs),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.xs,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getAccentColor(context),
+                    borderRadius: BorderRadius.circular(DSRadius.xs),
+                  ),
+                  child: Text(
+                    tpo,
+                    style: context.labelSmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+              if (tpoScore != null) ...[
+                const Spacer(),
+                Text(
+                  '$tpoScore점',
+                  style: context.labelMedium.copyWith(
+                    color: _getAccentColor(context),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            tpoFeedback,
+            style: context.bodySmall.copyWith(
+              color: colors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms, delay: 200.ms);
   }
 
   /// 스타일 처방전 섹션
@@ -260,7 +475,7 @@ class ChatOotdResultCard extends ConsumerWidget {
     return spans;
   }
 
-  /// 하단 2열 카드 섹션 (셀럽 + 추천 아이템)
+  /// 하단 2열 카드 섹션 (셀럽 + 추천 아이템) - 반응형 레이아웃
   Widget _buildBottomCardsSection(BuildContext context) {
     final details = ootdData['details'] as Map<String, dynamic>? ?? {};
     final celebMatch = details['celebrityMatch'] as Map<String, dynamic>?;
@@ -274,23 +489,42 @@ class ChatOotdResultCard extends ConsumerWidget {
         horizontal: DSSpacing.md,
         vertical: DSSpacing.sm,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 셀럽 스타일 매칭 카드
-          if (celebMatch != null)
-            Expanded(
-              child: _buildCelebCard(context, celebMatch),
-            ),
-          if (celebMatch != null && items.isNotEmpty)
-            const SizedBox(width: DSSpacing.sm),
-          // 추천 아이템 카드
-          if (items.isNotEmpty)
-            Expanded(
-              child: _buildRecommendCard(
-                  context, items.first as Map<String, dynamic>),
-            ),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 화면 너비가 좁으면 세로 배치, 넓으면 가로 배치
+          final isNarrow = constraints.maxWidth < 320;
+
+          final celebWidget = celebMatch != null
+              ? _buildCelebCard(context, celebMatch)
+              : null;
+          final recommendWidget = items.isNotEmpty
+              ? _buildRecommendCard(context, items.first as Map<String, dynamic>)
+              : null;
+
+          if (isNarrow) {
+            // 좁은 화면: 세로 배치
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (celebWidget != null) celebWidget,
+                if (celebWidget != null && recommendWidget != null)
+                  const SizedBox(height: DSSpacing.sm),
+                if (recommendWidget != null) recommendWidget,
+              ],
+            );
+          }
+
+          // 넓은 화면: 가로 배치
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (celebWidget != null) Expanded(child: celebWidget),
+              if (celebWidget != null && recommendWidget != null)
+                const SizedBox(width: DSSpacing.sm),
+              if (recommendWidget != null) Expanded(child: recommendWidget),
+            ],
+          );
+        },
       ),
     ).animate().fadeIn(duration: 400.ms, delay: 400.ms);
   }
@@ -478,23 +712,166 @@ class ChatOotdResultCard extends ConsumerWidget {
           ),
           const SizedBox(height: DSSpacing.sm),
           // 스타일링 팁 확인 버튼
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-            decoration: BoxDecoration(
-              color: _getAccentColor(context),
-              borderRadius: BorderRadius.circular(DSRadius.sm),
-            ),
-            child: Text(
-              '스타일링 팁 확인',
-              style: context.labelSmall.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
+          GestureDetector(
+            onTap: () => _showStylingTipSheet(context, itemName, reason, emoji),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+              decoration: BoxDecoration(
+                color: _getAccentColor(context),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
-              textAlign: TextAlign.center,
+              child: Text(
+                '스타일링 팁 확인',
+                style: context.labelSmall.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// 스타일링 팁 바텀시트 표시
+  void _showStylingTipSheet(
+    BuildContext context,
+    String itemName,
+    String reason,
+    String emoji,
+  ) {
+    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        decoration: BoxDecoration(
+          color: isDark ? colors.surface : Colors.white,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(DSRadius.lg),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 핸들바
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colors.textSecondary.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.lg),
+            // 헤더
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: _getAccentColor(context).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                  ),
+                  child: Center(
+                    child: Text(emoji, style: const TextStyle(fontSize: 24)),
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '추천 아이템',
+                        style: context.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        itemName,
+                        style: context.heading4.copyWith(
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.lg),
+            // 스타일링 팁 내용
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: _getAccentColor(context).withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                  color: _getAccentColor(context).withValues(alpha: 0.2),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.tips_and_updates_outlined,
+                        size: 18,
+                        color: _getAccentColor(context),
+                      ),
+                      const SizedBox(width: DSSpacing.xs),
+                      Text(
+                        '스타일링 팁',
+                        style: context.bodyMedium.copyWith(
+                          color: _getAccentColor(context),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DSSpacing.sm),
+                  Text(
+                    reason.isNotEmpty ? reason : '이 아이템으로 스타일을 완성해보세요!',
+                    style: context.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: DSSpacing.lg),
+            // 닫기 버튼
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _getAccentColor(context),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                  ),
+                ),
+                child: const Text('확인'),
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom),
+          ],
+        ),
       ),
     );
   }

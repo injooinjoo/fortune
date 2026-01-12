@@ -226,8 +226,6 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
                   style: typography.bodyMedium.copyWith(
                     color: colors.textPrimary,
                   ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

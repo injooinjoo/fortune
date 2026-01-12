@@ -17,6 +17,7 @@ enum SurveyInputType {
   birthDateTime, // 생년월일+시간 롤링 피커 (사주용)
   tarot,       // 타로 카드 선택 플로우
   faceReading, // AI 관상 분석 플로우
+  ootdImage,   // OOTD 사진 입력 (촬영 가이드 포함)
   investmentCategory, // 투자 카테고리 선택 (코인, 주식, ETF 등)
   investmentTicker,   // 투자 종목 선택 (티커 검색)
   celebritySelection, // 유명인 선택 (검색 + 그리드)

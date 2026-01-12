@@ -1,9 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/theme/obangseok_colors.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -146,13 +144,6 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
                       .fadeIn(duration: 400.ms, delay: 500.ms)
                       .slideY(begin: 0.1, end: 0),
                   ],
-
-                  const SizedBox(height: 16),
-
-                  // 공유 버튼
-                  _buildShareButton(theme, isDark)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 600.ms),
                 ],
               ),
             ),
@@ -615,65 +606,4 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
       );
   }
 
-  Widget _buildShareButton(ThemeData theme, bool isDark) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        GestureDetector(
-          onTap: _shareFortune,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  _goldenAccent.withValues(alpha: 0.3),
-                  _goldenAccent.withValues(alpha: 0.2),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.share_rounded,
-                  size: 14,
-                  color: _goldenAccent,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  '공유',
-                  style: context.labelSmall.copyWith(
-                    color: _goldenAccent,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _shareFortune() {
-    HapticFeedback.mediumImpact();
-
-    final shareText = '''
-🥠 $_cookieTypeName 포춘쿠키
-
-「$_message」
-
-⏰ 행운의 시간: $_luckyTime
-🧭 행운의 방위: $_luckyDirection
-🎨 행운의 컬러: $_luckyColor
-🎲 행운의 숫자: $_luckyNumber
-🎁 럭키 아이템: $_luckyItemColor $_luckyItem
-📍 행운 장소: $_luckyPlace
-
-${_actionMission.isNotEmpty ? '💡 오늘의 미션\n$_actionMission\n\n' : ''}#포춘쿠키 #오늘의운세
-''';
-
-    Share.share(shareText);
-  }
 }

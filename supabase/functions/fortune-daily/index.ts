@@ -680,32 +680,51 @@ serve(async (req) => {
 조건:
 - 4자성어: ${idiom}
 - 운세 점수: ${categoryScore}점 (100점 만점)
-- 150자 이내
+- 400~500자 정도로 풍부하게 작성
 
 형식:
 ✨ ${idiom}
 (한 줄로 쉬운 해석)
 
-조언 내용 2-3문장
+[오늘의 기운]
+오늘 하루의 전반적인 흐름과 에너지를 3-4문장으로 설명
+
+[실천 포인트]
+• 구체적인 행동 조언 3가지
+• 각 조언마다 이유 한 줄씩 추가
+
+[주의할 점]
+오늘 조심해야 할 부분 1-2문장
 
 스타일:
 - 부드러운 존댓말 (~해보세요, ~거예요)
 - 친근하고 따뜻한 톤
 - 한문/고어 금지, 쉬운 현대어만
-- 적절한 이모지 1-2개 포함`;
+- 적절한 이모지 사용`;
         } else {
           prompt = `오늘의 ${categoryName} 조언을 작성하세요.
 
 조건:
 - 운세 점수: ${categoryScore}점 (100점 만점)
-- 120자 이내
-- ${categoryName}에 특화
+- 300~400자 정도로 상세하게 작성
+- ${categoryName}에 특화된 구체적인 내용
+
+형식:
+[${categoryName} 요약]
+오늘의 ${categoryName} 흐름을 2-3문장으로 설명
+
+[상세 조언]
+• 구체적인 실천 방법 2-3가지
+• 각 조언에 이유 포함
+
+[한 줄 격려]
+마무리 응원 메시지
 
 스타일:
 - 부드러운 존댓말 (~해보세요, ~거예요)
 - 친근하고 따뜻한 톤
 - 한문/고어 금지, 쉬운 현대어만
-- 적절한 이모지 1-2개 포함
+- 적절한 이모지 포함
 - 구체적이고 실용적인 조언
 
 점수에 맞는 톤으로 작성 (높으면 긍정적, 낮으면 위로/격려)`;
@@ -1112,15 +1131,36 @@ serve(async (req) => {
       }
     }
 
-    // 일별 운세 예측 데이터 생성 (동적)
+    // 시간대별 운세 예측 데이터 생성 (동적)
     const generateDailyPredictions = () => {
-      // 오늘 점수 기준으로 전후 날짜 점수 생성
-      const baseScore = score
+      // 시간대별 메시지 풀
+      const morningMessages = [
+        '아침의 상쾌한 기운이 가득합니다. 중요한 일은 오전에 처리하면 좋은 결과를 얻을 수 있어요. 아침 햇살을 받으며 가벼운 스트레칭으로 하루를 시작해보세요.',
+        '오전 시간대에 집중력이 높아집니다. 복잡한 업무나 중요한 결정은 이때 하세요. 따뜻한 차 한 잔과 함께 계획을 세우면 더 효과적이에요.',
+        '아침부터 긍정적인 에너지가 흐릅니다. 새로운 도전을 시작하기 좋은 타이밍이에요. 오늘 만나는 첫 번째 사람이 좋은 영향을 줄 수 있어요.'
+      ]
+
+      const afternoonMessages = [
+        '점심 이후 대인관계에서 좋은 기운이 있습니다. 동료나 친구와의 대화에서 새로운 아이디어를 얻을 수 있어요. 잠깐의 휴식이 오후 에너지를 충전해줄 거예요.',
+        '오후에는 협업 운이 좋습니다. 팀 프로젝트나 공동 작업에서 시너지가 날 수 있어요. 점심 식사 때 평소 대화 못했던 사람과 이야기해보세요.',
+        '오후 2시~4시 사이에 중요한 연락이 올 수 있습니다. 핸드폰을 가까이 두세요. 이 시간대에 결정한 일이 좋은 방향으로 흘러갈 거예요.'
+      ]
+
+      const eveningMessages = [
+        '저녁에는 자기 성찰의 시간을 가져보세요. 오늘 하루를 돌아보며 내일을 계획하면 좋습니다. 가벼운 산책이나 독서로 마무리하면 숙면에 도움이 돼요.',
+        '저녁 시간에 가족이나 가까운 사람과의 시간이 특별해집니다. 따뜻한 대화가 마음의 위안을 줄 거예요. 편안한 음악과 함께 하루를 마무리하세요.',
+        '밤에 갑자기 좋은 아이디어가 떠오를 수 있습니다. 메모장을 가까이 두세요. 오늘 밤 꾸는 꿈에서 힌트를 얻을 수도 있어요.'
+      ]
+
+      // 점수와 시드 기반으로 메시지 선택
+      const morningIdx = Math.floor(seededRandom(combinedSeed * 11) * morningMessages.length)
+      const afternoonIdx = Math.floor(seededRandom(combinedSeed * 12) * afternoonMessages.length)
+      const eveningIdx = Math.floor(seededRandom(combinedSeed * 13) * eveningMessages.length)
+
       return {
-        yesterday: Math.max(0, baseScore - 5 + Math.floor(Math.random() * 10)),
-        before_yesterday: Math.max(0, baseScore - 8 + Math.floor(Math.random() * 16)),
-        tomorrow: Math.max(0, baseScore - 3 + Math.floor(Math.random() * 6)),
-        after_tomorrow: Math.max(0, baseScore - 7 + Math.floor(Math.random() * 14))
+        morning: morningMessages[morningIdx],
+        afternoon: afternoonMessages[afternoonIdx],
+        evening: eveningMessages[eveningIdx]
       }
     }
 
@@ -1435,7 +1475,8 @@ serve(async (req) => {
       // ✅ 표준화된 필드명: score, content, summary, advice
       fortuneType: 'daily',
       score: score,
-      content: `${name}님, 오늘은 ${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${dayOfWeek}요일입니다. ${dynamicSummary}`,
+      // content: 날짜 + 종합 인사이트(LLM 생성)로 풍부하게 구성
+      content: `${name}님, 오늘은 ${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${dayOfWeek}요일입니다.\n\n${totalAdvice}`,
       summary: dynamicSummary,
       advice: dynamicAdvice,
       // 기존 필드 유지 (하위 호환성)
@@ -1464,6 +1505,18 @@ serve(async (req) => {
       lucky_numbers: generateLuckyNumbers(),
       age_fortune: generateAgeFortune(),
       daily_predictions: generateDailyPredictions(),
+      // ✅ 프론트엔드 호환용 timeSpecificFortunes (daily_predictions 형식 변환)
+      timeSpecificFortunes: (() => {
+        const predictions = generateDailyPredictions()
+        const morningScore = Math.max(0, score - 5 + Math.floor(seededRandom(combinedSeed * 14) * 10))
+        const afternoonScore = Math.max(0, score - 3 + Math.floor(seededRandom(combinedSeed * 15) * 8))
+        const eveningScore = Math.max(0, score - 7 + Math.floor(seededRandom(combinedSeed * 16) * 12))
+        return [
+          { time: '오전', title: predictions.morning, score: morningScore },
+          { time: '오후', title: predictions.afternoon, score: afternoonScore },
+          { time: '저녁', title: predictions.evening, score: eveningScore }
+        ]
+      })(),
       ai_insight: generateAIInsight(),
       ai_tips: generateAITips(),
       share_count: generateShareCount(),

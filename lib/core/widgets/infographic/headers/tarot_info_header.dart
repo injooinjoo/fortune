@@ -177,7 +177,7 @@ class TarotInfoHeader extends StatelessWidget {
     final colors = context.colors;
 
     return SizedBox(
-      height: 100,
+      height: 120,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: cards.asMap().entries.map((entry) {
@@ -189,6 +189,7 @@ class TarotInfoHeader extends StatelessWidget {
               cardName: card['cardNameKr'] as String? ?? '카드',
               positionName: card['positionName'] as String? ?? '',
               isReversed: card['isReversed'] as bool? ?? false,
+              imagePath: card['imagePath'] as String? ?? '',
               colors: colors,
             ),
           );
@@ -213,12 +214,14 @@ class _TarotCardMini extends StatelessWidget {
   final String cardName;
   final String positionName;
   final bool isReversed;
+  final String imagePath;
   final DSColorScheme colors;
 
   const _TarotCardMini({
     required this.cardName,
     required this.positionName,
     required this.isReversed,
+    required this.imagePath,
     required this.colors,
   });
 
@@ -239,7 +242,7 @@ class _TarotCardMini extends StatelessWidget {
             ),
           ),
         const SizedBox(height: 4),
-        // 카드
+        // 카드 이미지
         Container(
           width: 50,
           height: 70,
@@ -255,14 +258,38 @@ class _TarotCardMini extends StatelessWidget {
               ),
             ],
           ),
-          child: Center(
-            child: Text(
-              '🎴',
-              style: TextStyle(
-                fontSize: 24,
-                color: isReversed ? colors.error : null,
-              ),
-            ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: imagePath.isNotEmpty
+                ? Transform.rotate(
+                    angle: isReversed ? 3.14159 : 0,
+                    child: Image.asset(
+                      imagePath,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(
+                          child: Text(
+                            cardName.isNotEmpty ? cardName[0] : '?',
+                            style: context.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      cardName.isNotEmpty ? cardName[0] : '?',
+                      style: context.labelSmall.copyWith(
+                        color: colors.textSecondary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
           ),
         ),
         const SizedBox(height: 4),

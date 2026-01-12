@@ -12,9 +12,43 @@ import '../core/utils/logger.dart';
 import '../core/services/resilient_service.dart';
 import '../core/theme/fortune_design_system.dart';
 import '../core/design_system/tokens/ds_colors.dart';
+import 'instagram_share_service.dart';
+import 'kakao_share_service.dart';
 import 'native_platform_service.dart';
 import '../presentation/widgets/enhanced_shareable_fortune_card.dart';
 import '../presentation/widgets/social_share_bottom_sheet.dart';
+
+/// iOS에서 공유 시트 위치를 가져오는 헬퍼 함수
+Rect? _getSharePositionOrigin(BuildContext context) {
+  if (!kIsWeb && Platform.isIOS) {
+    final box = context.findRenderObject() as RenderBox?;
+    if (box != null) {
+      final position = box.localToGlobal(Offset.zero);
+      return Rect.fromLTWH(
+        position.dx,
+        position.dy,
+        box.size.width,
+        box.size.height,
+      );
+    }
+    // 폴백: 화면 중앙
+    final size = MediaQuery.of(context).size;
+    return Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2),
+      width: 100,
+      height: 100,
+    );
+  }
+  return null;
+}
+
+/// iOS iPad용 기본 공유 시트 위치 (context 없을 때)
+Rect? _getDefaultShareOrigin() {
+  if (!kIsWeb && Platform.isIOS) {
+    return const Rect.fromLTWH(100, 100, 200, 200);
+  }
+  return null;
+}
 
 /// Provider for screenshot detection service
 final screenshotDetectionServiceProvider = Provider<ScreenshotDetectionService>((ref) {
@@ -34,6 +68,8 @@ class ScreenshotDetectionService extends ResilientService {
 
   StreamSubscription<dynamic>? _screenshotSubscription;
   final ScreenshotController _screenshotController = ScreenshotController();
+  final _kakaoShareService = KakaoShareService();
+  final _instagramShareService = InstagramShareService();
   bool _isListening = false;
   void Function(BuildContext context)? onScreenshotDialogRequested;
   
@@ -174,6 +210,9 @@ class ScreenshotDetectionService extends ResilientService {
     String? userName,
     Map<String, dynamic>? additionalInfo,
     required BuildContext context}) async {
+    // iOS용 sharePositionOrigin을 미리 계산 (async 갭 전에)
+    final shareOrigin = _getSharePositionOrigin(context);
+
     try {
       // Show loading
       if (context.mounted) {
@@ -220,8 +259,8 @@ class ScreenshotDetectionService extends ResilientService {
       // Handle platform-specific sharing
       switch (platform) {
         case SharePlatform.kakaoTalk:
-          if (imagePath != null) {
-            await _shareToKakaoTalk(imagePath, fortuneTitle, fortuneContent);
+          if (imagePath != null && context.mounted) {
+            await _shareToKakaoTalk(imagePath, fortuneTitle, fortuneContent, context);
           } else {
             // On web, just copy text
             if (context.mounted) {
@@ -230,14 +269,8 @@ class ScreenshotDetectionService extends ResilientService {
           }
           break;
         case SharePlatform.instagram:
-          if (imagePath != null) {
-            await _shareToInstagram(imagePath);
-          } else {
-            // On web, just copy text
-            if (context.mounted) {
-              await _copyToClipboard(fortuneTitle, fortuneContent, context);
-            }
-          }
+          // image is already validated above (throw Exception if null)
+          await _shareToInstagram(image);
           break;
         case SharePlatform.facebook:
           if (imagePath != null) {
@@ -287,11 +320,15 @@ class ScreenshotDetectionService extends ResilientService {
           if (imagePath != null) {
             await Share.shareXFiles(
               [XFile(imagePath)],
-              text: '$fortuneTitle\n\nFortune 신점 앱에서 확인하세요!'
+              text: '$fortuneTitle\n\nFortune 신점 앱에서 확인하세요!',
+              sharePositionOrigin: shareOrigin,
             );
           } else {
             // On web, just share text
-            await Share.share('$fortuneTitle\n\nFortune 신점 앱에서 확인하세요!');
+            await Share.share(
+              '$fortuneTitle\n\nFortune 신점 앱에서 확인하세요!',
+              sharePositionOrigin: shareOrigin,
+            );
           }
       }
 
@@ -313,31 +350,72 @@ class ScreenshotDetectionService extends ResilientService {
     }
   }
 
-  /// 강화된 카카오톡 공유 (ResilientService 패턴)
-  Future<void> _shareToKakaoTalk(String imagePath, String title, String content) async {
+  /// 강화된 카카오톡 공유 (SDK 직접 연동)
+  Future<void> _shareToKakaoTalk(String imagePath, String title, String content, BuildContext context) async {
+    // iOS용 sharePositionOrigin을 미리 계산 (async 갭 전에)
+    final shareOrigin = _getSharePositionOrigin(context);
+
     await safeExecute(
       () async {
-        // KakaoTalk sharing would require Kakao SDK integration
-        // For now, use system share with pre-filled text
-        await Share.shareXFiles(
-          [XFile(imagePath)],
-          text: '🌟 $title\n\n$content\n\n#운세 #Fortune신점 #오늘의운세'
+        // 이미지 파일 읽기
+        final imageFile = File(imagePath);
+        final imageData = await imageFile.readAsBytes();
+
+        // 카카오 SDK 직접 공유 시도
+        final success = await _kakaoShareService.shareFortuneResult(
+          context: context,
+          title: title,
+          description: content.length > 200 ? '${content.substring(0, 197)}...' : content,
+          imageData: imageData,
         );
+
+        // SDK 공유 실패 시 일반 공유로 폴백
+        if (!success) {
+          Logger.warning('카카오 SDK 공유 실패, 일반 공유로 폴백');
+          await Share.shareXFiles(
+            [XFile(imagePath)],
+            text: '🌟 $title\n\n$content\n\n#인사이트 #ZPZG #오늘의운세',
+            sharePositionOrigin: shareOrigin,
+          );
+        }
       },
       '카카오톡 공유: $title',
       '카카오톡 공유 실패, 대체 방법 사용'
     );
   }
 
-  /// 강화된 인스타그램 공유 (ResilientService 패턴)
-  Future<void> _shareToInstagram(String imagePath) async {
+  /// 강화된 인스타그램 공유 (스토리 직접 공유)
+  Future<void> _shareToInstagram(Uint8List imageData) async {
     await safeExecute(
       () async {
-        // Instagram Stories sharing
-        await Share.shareXFiles(
-          [XFile(imagePath)],
-          text: '나만의 운세를 확인해보세요! 🔮'
+        // 인스타그램 스토리 직접 공유 시도
+        final success = await _instagramShareService.shareToStory(
+          imageData: imageData,
+          topBackgroundColor: '#1A1A1A',
+          bottomBackgroundColor: '#1A1A1A',
         );
+
+        // 직접 공유 실패 시 폴백
+        if (!success) {
+          Logger.warning('인스타그램 스토리 직접 공유 실패, 폴백 사용');
+          // 임시 파일로 저장 후 일반 공유
+          final tempDir = await getTemporaryDirectory();
+          final tempFile = File('${tempDir.path}/ig_share_${DateTime.now().millisecondsSinceEpoch}.png');
+          await tempFile.writeAsBytes(imageData);
+
+          await Share.shareXFiles(
+            [XFile(tempFile.path)],
+            text: '나만의 인사이트를 확인해보세요! 🔮 #ZPZG',
+            sharePositionOrigin: _getDefaultShareOrigin(),
+          );
+
+          // 임시 파일 삭제
+          Future.delayed(const Duration(seconds: 5), () async {
+            if (await tempFile.exists()) {
+              await tempFile.delete();
+            }
+          });
+        }
       },
       '인스타그램 공유',
       '인스타그램 공유 실패, 대체 방법 사용'
@@ -350,7 +428,8 @@ class ScreenshotDetectionService extends ResilientService {
       () async {
         await Share.shareXFiles(
           [XFile(imagePath)],
-          text: '🌟 $title - Fortune 신점에서 확인한 오늘의 운세'
+          text: '🌟 $title - Fortune 신점에서 확인한 오늘의 운세',
+          sharePositionOrigin: _getDefaultShareOrigin(),
         );
       },
       '페이스북 공유: $title',
@@ -364,7 +443,8 @@ class ScreenshotDetectionService extends ResilientService {
       () async {
         await Share.shareXFiles(
           [XFile(imagePath)],
-          text: '🌟 $title\n\n#운세 #Fortune신점 #오늘의운세 #신점운세'
+          text: '🌟 $title\n\n#운세 #Fortune신점 #오늘의운세 #신점운세',
+          sharePositionOrigin: _getDefaultShareOrigin(),
         );
       },
       '트위터 공유: $title',
@@ -378,7 +458,8 @@ class ScreenshotDetectionService extends ResilientService {
       () async {
         await Share.shareXFiles(
           [XFile(imagePath)],
-          text: '🌟 $title\n\nFortune 신점에서 확인한 오늘의 운세입니다!'
+          text: '🌟 $title\n\nFortune 신점에서 확인한 오늘의 운세입니다!',
+          sharePositionOrigin: _getDefaultShareOrigin(),
         );
       },
       'WhatsApp 공유: $title',

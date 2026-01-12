@@ -56,8 +56,9 @@ async function createHash(text: string): Promise<string> {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 50)
 }
 
-// 커리어 분야 매핑
+// 커리어 분야 매핑 (15개+ 직업군 지원)
 const careerFieldsMap = {
+  // === 기존 분야 (개선) ===
   'IT/개발': {
     skills: ['기술 전문성', '혁신/창의성', '데이터 분석', '전략적 사고'],
     growthPaths: ['시니어 개발자', 'CTO', '아키텍트', '테크 리드'],
@@ -82,6 +83,78 @@ const careerFieldsMap = {
     skills: ['리더십', '혁신/창의성', '전략적 사고', '네트워킹'],
     growthPaths: ['창업자', '시리얼 앙트러프레너', '투자자', '멘토'],
     keyFactors: ['비전', '실행력', '자금 조달', '팀 빌딩']
+  },
+  // === 신규 분야 추가 ===
+  '의료/보건': {
+    skills: ['전문성', '커뮤니케이션', '판단력', '책임감'],
+    growthPaths: ['전문의', '과장', '원장', '의료원 경영'],
+    keyFactors: ['임상 경험', '환자 관계', '최신 의료 지식', '팀 협업']
+  },
+  '약학': {
+    skills: ['전문성', '정확성', '고객 상담', '경영 능력'],
+    growthPaths: ['전문약사', '약국장', '제약사 연구원', '제약사 임원'],
+    keyFactors: ['약학 지식', '복약 상담', '재고 관리', '고객 신뢰']
+  },
+  '법률': {
+    skills: ['논리적 사고', '커뮤니케이션', '전문성', '협상력'],
+    growthPaths: ['선임변호사', '파트너', '로펌 대표', '법무 임원'],
+    keyFactors: ['법률 전문성', '클라이언트 관계', '승소율', '명성 구축']
+  },
+  '금융/회계': {
+    skills: ['분석력', '정확성', '리스크 관리', '커뮤니케이션'],
+    growthPaths: ['선임회계사', '팀장', '파트너', 'CFO'],
+    keyFactors: ['재무 전문성', '규정 준수', '전략적 조언', '신뢰 구축']
+  },
+  '교육': {
+    skills: ['커뮤니케이션', '인내심', '창의성', '리더십'],
+    growthPaths: ['수석교사', '교감', '교장', '교육 컨설턴트'],
+    keyFactors: ['교수법', '학생 관계', '교육과정 개발', '행정 능력']
+  },
+  '디자인/예술': {
+    skills: ['창의성', '미적 감각', '기술 활용', '커뮤니케이션'],
+    growthPaths: ['리드 디자이너', 'CD', '디자인 디렉터', '스튜디오 대표'],
+    keyFactors: ['포트폴리오', '트렌드 감각', '클라이언트 소통', '브랜딩']
+  },
+  '미디어/콘텐츠': {
+    skills: ['창의성', '커뮤니케이션', '기획력', '트렌드 감각'],
+    growthPaths: ['PD', '편집장', '콘텐츠 디렉터', '미디어 임원'],
+    keyFactors: ['콘텐츠 기획', '오디언스 이해', '플랫폼 활용', '팀 리드']
+  },
+  '공공/행정': {
+    skills: ['기획력', '커뮤니케이션', '정책 이해', '조직 관리'],
+    growthPaths: ['주무관', '팀장', '국장', '기관장'],
+    keyFactors: ['행정 역량', '정책 기획', '이해관계자 조율', '청렴성']
+  },
+  '서비스/판매': {
+    skills: ['커뮤니케이션', '고객 응대', '판매 기술', '문제 해결'],
+    growthPaths: ['점장', '지역장', '본부장', '서비스 임원'],
+    keyFactors: ['고객 만족', '매출 성과', '팀 관리', '브랜드 대표']
+  },
+  '제조/생산': {
+    skills: ['기술력', '품질 관리', '프로세스 개선', '리더십'],
+    growthPaths: ['반장', '공장장', '생산본부장', 'COO'],
+    keyFactors: ['생산 효율', '품질 관리', '안전 관리', '원가 절감']
+  },
+  '물류/유통': {
+    skills: ['시스템 이해', '효율화', '커뮤니케이션', '위기 관리'],
+    growthPaths: ['물류팀장', '센터장', '운영본부장', 'SCM 임원'],
+    keyFactors: ['물류 최적화', '파트너 관계', '비용 관리', '시스템 활용']
+  },
+  '연구/R&D': {
+    skills: ['전문성', '분석력', '창의성', '논문 작성'],
+    growthPaths: ['선임연구원', '책임연구원', '연구소장', 'CTO'],
+    keyFactors: ['연구 성과', '논문/특허', '자금 유치', '팀 빌딩']
+  },
+  'HR/인사': {
+    skills: ['커뮤니케이션', '판단력', '공정성', '전략적 사고'],
+    growthPaths: ['HR매니저', '인사팀장', 'HR디렉터', 'CHRO'],
+    keyFactors: ['인재 관리', '조직 문화', '노무 관리', '전략적 HR']
+  },
+  // === 일반 분야 (Fallback용) ===
+  '일반': {
+    skills: ['전문성', '리더십', '커뮤니케이션', '문제해결'],
+    growthPaths: ['팀 리더', '매니저', '디렉터', '임원'],
+    keyFactors: ['경력 개발', '네트워킹', '지속 학습', '성과 관리']
   }
 }
 
@@ -248,28 +321,107 @@ function getConcernPromptSection(concern: string): string {
   return concernPrompts[concern] || ''
 }
 
-// 커리어 분야 추정 함수
+// 커리어 분야 추정 함수 (15개+ 직업군 지원)
 function estimateCareerField(currentRole: string): string {
   const role = currentRole.toLowerCase()
 
-  if (role.includes('개발') || role.includes('프로그래') || role.includes('엔지니어') || role.includes('dev')) {
+  // 의료/보건 (가장 먼저 체크 - 특수 직업군)
+  if (/의사|간호|치료|임상|의료|병원|한의|치과|수의|물리치료|작업치료|방사선|의학/.test(role)) {
+    return '의료/보건'
+  }
+
+  // 약학
+  if (/약사|약국|제약|조제|약학/.test(role)) {
+    return '약학'
+  }
+
+  // 법률
+  if (/변호사|법무|법률|검사|판사|변리사|법조|로펌/.test(role)) {
+    return '법률'
+  }
+
+  // 금융/회계
+  if (/회계|세무|재무|금융|은행|증권|보험|애널리스트|펀드|자산|투자|cpa|cfa/.test(role)) {
+    return '금융/회계'
+  }
+
+  // 교육
+  if (/교사|교수|강사|선생|교육|학원|튜터|코치|트레이너/.test(role)) {
+    return '교육'
+  }
+
+  // 디자인/예술
+  if (/디자인|디자이너|아트|예술|그래픽|ui|ux|일러스트|사진|영상|작가/.test(role)) {
+    return '디자인/예술'
+  }
+
+  // 미디어/콘텐츠
+  if (/pd|기자|편집|콘텐츠|미디어|방송|유튜브|크리에이터|출판|언론/.test(role)) {
+    return '미디어/콘텐츠'
+  }
+
+  // 공공/행정
+  if (/공무원|행정|공공|정부|지자체|공단|공사|기관/.test(role)) {
+    return '공공/행정'
+  }
+
+  // 서비스/판매
+  if (/서비스|판매|매장|점장|고객|상담|cs|영업|retail|store/.test(role)) {
+    return '서비스/판매'
+  }
+
+  // 제조/생산
+  if (/제조|생산|공장|품질|qc|qa|조립|기계|엔지니어링/.test(role)) {
+    return '제조/생산'
+  }
+
+  // 물류/유통
+  if (/물류|유통|배송|창고|scm|구매|소싱|무역/.test(role)) {
+    return '물류/유통'
+  }
+
+  // 연구/R&D
+  if (/연구|연구원|r&d|박사|과학|실험|랩|lab/.test(role)) {
+    return '연구/R&D'
+  }
+
+  // HR/인사
+  if (/인사|hr|채용|교육|조직|노무|복지|급여/.test(role)) {
+    return 'HR/인사'
+  }
+
+  // IT/개발 (일반적인 용어 체크)
+  if (/개발|프로그래|엔지니어|dev|소프트웨어|it|tech|코딩|백엔드|프론트|풀스택|데이터|ai|ml/.test(role)) {
     return 'IT/개발'
-  } else if (role.includes('매니저') || role.includes('관리') || role.includes('팀장') || role.includes('부장')) {
+  }
+
+  // 경영/관리
+  if (/매니저|관리|팀장|부장|차장|과장|사장|이사|임원|ceo|coo|cfo/.test(role)) {
     return '경영/관리'
-  } else if (role.includes('마케팅') || role.includes('세일즈') || role.includes('영업') || role.includes('sales')) {
+  }
+
+  // 마케팅/세일즈
+  if (/마케팅|세일즈|영업|sales|marketing|브랜드|광고|pr|홍보/.test(role)) {
     return '마케팅/세일즈'
-  } else if (role.includes('컨설턴트') || role.includes('어드바이저')) {
+  }
+
+  // 컨설팅
+  if (/컨설턴트|컨설팅|어드바이저|전략|기획/.test(role)) {
     return '컨설팅'
-  } else if (role.includes('창업') || role.includes('대표') || role.includes('founder')) {
+  }
+
+  // 창업
+  if (/창업|대표|founder|ceo|스타트업|사업/.test(role)) {
     return '창업'
   }
 
+  // 일반 (fallback) - IT/개발이 아닌 범용 경로 제공
   return '일반'
 }
 
 // 스킬 분석 함수
 function analyzeSkills(skills: string[], careerField: string, currentRole: string): SkillAnalysis[] {
-  const fieldData = careerFieldsMap[careerField as keyof typeof careerFieldsMap] || careerFieldsMap['IT/개발']
+  const fieldData = careerFieldsMap[careerField as keyof typeof careerFieldsMap] || careerFieldsMap['일반']
   const analyses: SkillAnalysis[] = []
 
   skills.forEach(skill => {
@@ -312,7 +464,7 @@ function generateCareerPredictions(
   currentRole: string
 ): CareerPrediction[] {
   const weights = timeHorizonWeights[timeHorizon as keyof typeof timeHorizonWeights] || timeHorizonWeights['3년 후']
-  const fieldData = careerFieldsMap[careerField as keyof typeof careerFieldsMap] || careerFieldsMap['IT/개발']
+  const fieldData = careerFieldsMap[careerField as keyof typeof careerFieldsMap] || careerFieldsMap['일반']
 
   const baseSuccess = 70 + (weights.현실성 * 20) - (weights.불확실성 * 15)
   const probability = Math.max(40, Math.min(95, Math.floor(baseSuccess)))
@@ -480,7 +632,18 @@ serve(async (req) => {
       const concernLabel = concern ? getConcernLabel(concern) : ''
 
       // OpenAI API 호출을 위한 프롬프트 생성
+      const today = new Date()
+      const currentYear = today.getFullYear()
+      const currentMonth = today.getMonth() + 1
+      const dateContext = `${currentYear}년 ${currentMonth}월`
+
+      // ✅ 직업별 맞춤 가이드 생성
+      const fieldData = careerFieldsMap[careerField as keyof typeof careerFieldsMap] || careerFieldsMap['일반']
+      const fieldGrowthPaths = fieldData.growthPaths.join(', ')
+
       const prompt = `당신은 한국의 전문 커리어 컨설턴트입니다. 다음 정보를 바탕으로 구체적이고 실용적인 커리어 조언을 제공해주세요.
+
+⚠️ 중요: 오늘 날짜는 ${dateContext}입니다. 모든 시기 예측은 이 날짜 이후로 작성해주세요.
 
 현재 직무: "${currentRole}"
 커리어 목표: "${careerGoal}"
@@ -488,6 +651,21 @@ serve(async (req) => {
 희망 경로: ${careerPath}
 개발 희망 스킬: ${skills.join(', ')}
 분야 추정: ${careerField}
+이 분야의 일반적 성장 경로: ${fieldGrowthPaths}
+
+⚠️ 매우 중요 - 직업별 맞춤 응답:
+사용자의 현재 직무는 "${currentRole}"입니다.
+반드시 이 직업에 맞는 커리어 패스와 조언을 제공하세요.
+
+예시:
+- 약사 → 전문약사, 약국장, 제약사 연구원 등 약학 분야 경로
+- 간호사 → 수간호사, 전문간호사, 간호부장 등 의료 분야 경로
+- 회계사 → 선임회계사, 파트너, CFO 등 금융/회계 분야 경로
+- 교사 → 수석교사, 교감, 교장 등 교육 분야 경로
+
+🚫 금지사항:
+절대로 IT/개발 직군 용어(시니어 개발자, CTO, 아키텍트, 테크 리드 등)를
+비IT 직업(약사, 간호사, 회계사, 교사 등)에 사용하지 마세요
 ${concernLabel ? `핵심 고민: ${concernLabel}` : ''}
 ${shortGoal ? `단기 목표: ${shortGoal}` : ''}
 ${value ? `중요시하는 가치: ${value}` : ''}
@@ -512,7 +690,7 @@ ${concernSection}
   },
   "업계인사이트": "${careerField} 분야 트렌드",
   "네트워킹조언": ["방법1", "방법2", "방법3"],
-  "행운의시기": ["시기1 (예: 2024년 상반기)"],
+  "행운의시기": ["시기1 (예: ${currentYear}년 상반기)"],
   "주의시기": ["시기와 이유"],
   "핵심키워드": ["키워드1", "키워드2", "키워드3", "키워드4", "키워드5"],
   "멘토링조언": "멘토 관계 구축 조언"
@@ -593,7 +771,7 @@ ${concernSection}
         },
         industryInsights: parsedResponse.업계인사이트 || parsedResponse.industryInsights || `${careerField} 분야는 지속적인 성장이 예상되는 유망한 영역입니다.`,
         networkingAdvice: parsedResponse.네트워킹조언 || parsedResponse.networkingAdvice || ['업계 컨퍼런스 참여', 'LinkedIn 활용', '동문 네트워크 활성화'],
-        luckyPeriods: parsedResponse.행운의시기 || parsedResponse.luckyPeriods || ['2024년 상반기', '2024년 4분기'],
+        luckyPeriods: parsedResponse.행운의시기 || parsedResponse.luckyPeriods || [`${currentYear}년 상반기`, `${currentYear}년 4분기`],
         cautionPeriods: parsedResponse.주의시기 || parsedResponse.cautionPeriods || ['급변하는 시장 환경', '조직 개편 시기'],
         careerKeywords: parsedResponse.핵심키워드 || parsedResponse.careerKeywords || ['전문성', '리더십', '혁신', '네트워킹', '지속학습'],
         mentorshipAdvice: parsedResponse.멘토링조언 || parsedResponse.mentorshipAdvice || '업계 선배와의 멘토링 관계를 적극적으로 구축하세요.',

@@ -20,7 +20,7 @@ class InfographicContainer extends StatelessWidget {
     this.gradient,
     this.padding,
     this.fortuneType,
-    this.showCornerDecorations = true,
+    this.showCornerDecorations = false,
     this.showBackgroundPattern = true,
   });
 
@@ -124,23 +124,21 @@ class InfographicContainer extends StatelessWidget {
                 ),
 
               // 메인 콘텐츠
-              Padding(
-                padding: padding ?? const EdgeInsets.all(DSSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // 헤더
-                    if (title != null || subtitle != null)
-                      _InfographicHeader(
-                        title: title,
-                        subtitle: subtitle,
+              Positioned.fill(
+                child: Padding(
+                  padding: padding ?? const EdgeInsets.all(DSSpacing.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // 메인 콘텐츠 - 남은 공간을 채우고 스크롤 가능
+                      // 헤더(제목)는 결과 카드 상단에 표시되므로 인포그래픽 내부에는 표시하지 않음
+                      Expanded(
+                        child: ClipRect(
+                          child: child,
+                        ),
                       ),
-                    if (title != null || subtitle != null)
-                      const SizedBox(height: DSSpacing.md),
-
-                    // 메인 콘텐츠
-                    Expanded(child: child),
-                  ],
+                    ],
+                  ),
                 ),
               ),
 
@@ -155,44 +153,6 @@ class InfographicContainer extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// 인포그래픽 헤더
-class _InfographicHeader extends StatelessWidget {
-  const _InfographicHeader({
-    this.title,
-    this.subtitle,
-  });
-
-  final String? title;
-  final String? subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (title != null)
-          Text(
-            title!,
-            style: context.typography.headingMedium.copyWith(
-              color: context.colors.textPrimary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        if (subtitle != null) ...[
-          const SizedBox(height: DSSpacing.xxs),
-          Text(
-            subtitle!,
-            style: context.typography.labelSmall.copyWith(
-              color: context.colors.textSecondary,
-            ),
-          ),
-        ],
-      ],
     );
   }
 }
@@ -213,7 +173,7 @@ class _AppWatermark extends StatelessWidget {
         vertical: DSSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: context.colors.textPrimary.withOpacity(0.1),
+        color: context.colors.textPrimary.withValues(alpha: 0.1),
         borderRadius: DSRadius.smBorder,
       ),
       child: Row(

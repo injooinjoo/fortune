@@ -77,56 +77,37 @@ class ImageTemplate extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: 0,
-              maxHeight: constraints.maxHeight,
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 메인 이미지
+          imageWidget,
+
+          // 키워드
+          if (keywords != null && keywords!.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.sm),
+            KeywordTags(
+              keywords: keywords!,
+              style: KeywordTagStyle.hashtag,
+              alignment: WrapAlignment.center,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 메인 이미지 (유연한 크기)
-                Flexible(
-                  flex: 3,
-                  child: imageWidget,
-                ),
+          ],
 
-                // 키워드
-                if (keywords != null && keywords!.isNotEmpty) ...[
-                  const SizedBox(height: DSSpacing.sm),
-                  Flexible(
-                    flex: 0,
-                    child: KeywordTags(
-                      keywords: keywords!,
-                      style: KeywordTagStyle.hashtag,
-                      alignment: WrapAlignment.center,
-                    ),
-                  ),
-                ],
+          // 메시지
+          if (message != null) ...[
+            const SizedBox(height: DSSpacing.sm),
+            _buildMessage(context),
+          ],
 
-                // 메시지
-                if (message != null) ...[
-                  const SizedBox(height: DSSpacing.sm),
-                  Flexible(
-                    flex: 1,
-                    child: _buildMessage(context),
-                  ),
-                ],
-
-                // 푸터
-                if (footerWidget != null) ...[
-                  const SizedBox(height: DSSpacing.sm),
-                  footerWidget!,
-                ],
-              ],
-            ),
-          ),
-        );
-      },
+          // 푸터
+          if (footerWidget != null) ...[
+            const SizedBox(height: DSSpacing.sm),
+            footerWidget!,
+          ],
+        ],
+      ),
     );
   }
 
@@ -427,7 +408,7 @@ class DreamImageTemplate extends StatelessWidget {
           ),
           const SizedBox(height: DSSpacing.xs),
           Text(
-            '$score점',
+            '$score',
             style: context.typography.headingMedium.copyWith(
               color: color,
               fontWeight: FontWeight.w700,
@@ -891,7 +872,7 @@ class FaceReadingImageTemplate extends StatelessWidget {
                 ),
               ),
               Text(
-                '$score점',
+                '$score',
                 style: context.typography.headingMedium.copyWith(
                   color: context.colors.accent,
                   fontWeight: FontWeight.w700,

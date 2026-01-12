@@ -11,6 +11,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/personality_dna_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
+import '../../../../presentation/providers/token_provider.dart';
 import '../../../../shared/components/profile_header_icon.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
@@ -34,6 +35,7 @@ import '../widgets/chat_message_list.dart';
 import '../widgets/survey/fortune_type_chips.dart';
 import '../widgets/survey/chat_survey_chips.dart';
 import '../widgets/survey/chat_image_input.dart';
+import '../widgets/survey/ootd_photo_input.dart';
 import '../widgets/survey/chat_profile_selector.dart';
 import '../widgets/survey/chat_family_profile_selector.dart';
 import '../widgets/survey/chat_pet_profile_selector.dart';
@@ -92,9 +94,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// 프로필 생성 완료 후 궁합 진행해야 할지 여부
   bool _pendingCompatibilityAfterProfileCreation = false;
-
-  /// 스크롤 디바운싱을 위한 플래그
-  bool _isScrolling = false;
 
   /// 온보딩 시작 여부 플래그
   bool _onboardingStarted = false;
@@ -474,57 +473,70 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   }
 
   void _scrollToBottom() {
-    // 이미 스크롤 중이면 무시 (디바운싱)
-    if (_isScrolling) return;
-    _isScrolling = true;
-
-    // 리스트 리빌드 완료 후 스크롤 보장 (100ms 딜레이)
+    // 레이아웃 완료 후 스크롤 (딜레이 100ms)
     Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients && mounted) {
-        _scrollController
-            .animateTo(
+        _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutCubic,
-        )
-            .then((_) {
-          _isScrolling = false;
-        }).catchError((_) {
-          _isScrolling = false;
-        });
-      } else {
-        _isScrolling = false;
+        );
       }
     });
   }
 
-  /// 운세 결과 표시 후 스크롤 - 결과 상단이 보이도록 적당히만 스크롤
-  /// 추천 칩이 나와도 결과 카드가 잘 보이게 유지
-  void _scrollToShowResult() {
-    if (_isScrolling) return;
-    _isScrolling = true;
+  /// 운세 결과 카드 렌더링 완료 후, 카드 헤더가 화면 상단에 오도록 스크롤
+  /// FortuneResultScrollWrapper에서 호출됨
+  void _scrollToFortuneResultHeader(BuildContext cardContext) {
+    // 이미 disposed 상태면 무시
+    if (!mounted || !_scrollController.hasClients) return;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients && mounted) {
-        final currentPosition = _scrollController.position.pixels;
-        final maxExtent = _scrollController.position.maxScrollExtent;
-        // 현재 위치에서 300px만 더 스크롤 (결과 카드 상단이 보이도록)
-        // 하지만 maxExtent를 넘지 않도록
-        final targetPosition = (currentPosition + 300).clamp(0.0, maxExtent);
+      if (!mounted || !_scrollController.hasClients) return;
 
-        _scrollController
-            .animateTo(
-          targetPosition,
-          duration: const Duration(milliseconds: 400),
+      try {
+        // 카드의 RenderBox 가져오기
+        final cardRenderBox = cardContext.findRenderObject() as RenderBox?;
+        if (cardRenderBox == null) return;
+
+        // 스크롤 가능 영역의 RenderBox 가져오기
+        final scrollableState = Scrollable.maybeOf(cardContext);
+        if (scrollableState == null) return;
+
+        final scrollableRenderBox =
+            scrollableState.context.findRenderObject() as RenderBox?;
+        if (scrollableRenderBox == null) return;
+
+        // 카드의 상대적 위치 계산 (스크롤 영역 기준)
+        final cardPosition = cardRenderBox.localToGlobal(
+          Offset.zero,
+          ancestor: scrollableRenderBox,
+        );
+
+        // 목표 스크롤 위치 = 현재 위치 + 카드 상대 위치 - 상단 여백
+        // 상단 여백: 약간의 마진 (8px)
+        const topPadding = 8.0;
+        final targetPosition =
+            _scrollController.offset + cardPosition.dy - topPadding;
+
+        // 스크롤 범위 제한
+        final clampedPosition = targetPosition.clamp(
+          0.0,
+          _scrollController.position.maxScrollExtent,
+        );
+
+        _scrollController.animateTo(
+          clampedPosition,
+          duration: const Duration(milliseconds: 500),
           curve: Curves.easeOutCubic,
-        )
-            .then((_) {
-          _isScrolling = false;
-        }).catchError((_) {
-          _isScrolling = false;
-        });
-      } else {
-        _isScrolling = false;
+        );
+      } catch (e) {
+        // 스크롤 실패 시 기존 방식으로 fallback
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOutCubic,
+        );
       }
     });
   }
@@ -570,6 +582,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       );
 
       // 결과 메시지 추가 (포춘쿠키 전용 카드로 표시됨)
+      // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
       chatNotifier.addFortuneResultMessage(
         text: '오늘의 메시지',
         fortuneType: 'fortune-cookie',
@@ -577,7 +590,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         isBlurred: false,
         blurredSections: [],
       );
-      _scrollToShowResult();
 
       // 추천 칩 표시
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -685,6 +697,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           _callFortuneApiWithCache(type: surveyType, answers: {})
               .then((fortune) {
             // Fortune 객체와 함께 리치 카드 표시
+            // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
             chatNotifier.addFortuneResultMessage(
               text: typeName,
               fortuneType: fortuneTypeStr,
@@ -692,7 +705,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               isBlurred: fortune.isBlurred,
               blurredSections: fortune.blurredSections,
             );
-            _scrollToShowResult();
 
             // 운세 결과 후 추천 칩 표시 (스크롤 없이 - 결과 카드가 보이게 유지)
             Future.delayed(const Duration(milliseconds: 500), () {
@@ -730,6 +742,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               _scrollToBottom();
 
               Future.delayed(const Duration(milliseconds: 300), () {
+                // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
                 chatNotifier.addFortuneResultMessage(
                   text: '기간별 인사이트',
                   fortuneType: 'daily_calendar',
@@ -738,7 +751,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                   blurredSections: cachedFortune.blurredSections,
                   selectedDate: DateTime.now(), // 캐시된 결과는 오늘 날짜
                 );
-                _scrollToShowResult();
 
                 // 추천 칩 표시 (스크롤 없이 - 결과 카드가 보이게 유지)
                 Future.delayed(const Duration(milliseconds: 500), () {
@@ -1742,6 +1754,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
       }
 
+      // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
       chatNotifier.addFortuneResultMessage(
         text: typeName,
         fortuneType: fortuneTypeStr,
@@ -1753,7 +1766,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         selectedDate: selectedDate,
       );
       surveyNotifier.clearCompleted();
-      _scrollToShowResult();
       // 운세 결과 후 추천 칩 표시 (스크롤 없이 - 결과 카드가 보이게 유지)
       Future.delayed(const Duration(milliseconds: 500), () {
         chatNotifier.addSystemMessage();
@@ -2262,17 +2274,17 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       }
 
       // ChatSajuResultCard로 결과 표시
+      // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
       chatNotifier.addSajuResultMessage(
         text: '사주 분석',
         sajuData: sajuState.sajuData!,
         isBlurred: false, // TODO: 프리미엄 상태에 따라 결정
       );
-      _scrollToShowResult();
 
       // 오늘의 운세 자동 호출 (사주 분석 후 무료 제공)
       Future.delayed(const Duration(milliseconds: 500), () async {
         chatNotifier.addAiMessage('이제 오늘의 인사이트를 보여드릴게요... ✨');
-        _scrollToShowResult();
+        _scrollToBottom(); // AI 메시지는 하단으로 스크롤
 
         try {
           // 캐시 우선 확인 후 API 호출
@@ -2282,6 +2294,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           );
 
           // 사주 분석 후 무료 제공이므로 isBlurred=false 강제
+          // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
           chatNotifier.addFortuneResultMessage(
             text: '오늘의 인사이트',
             fortuneType: 'daily',
@@ -2289,7 +2302,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             isBlurred: false,
             blurredSections: const [],
           );
-          _scrollToShowResult();
         } catch (e) {
           Logger.error('오늘의 운세 호출 실패', e);
           chatNotifier.addAiMessage(
@@ -2989,6 +3001,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
         // Fortune 객체로 변환하여 반환
+        // 여러 세트 지원: sets 배열 전체 저장
+        final lottoSets = lottoFortuneResult.lottoResult.sets;
+        final allSetsData = lottoSets
+            .map((set) => {
+                  'numbers': set.numbers,
+                  'numberElements': set.numberElements,
+                })
+            .toList();
+
+        // 하위 호환성: 첫 번째 세트를 기본값으로
         final lottoNumbers = lottoFortuneResult.lottoResult.numbers;
         final fortune = Fortune(
           id: 'lotto_${DateTime.now().millisecondsSinceEpoch}',
@@ -3003,9 +3025,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'lottoNumbers': lottoNumbers,
             'numberElements': lottoFortuneResult.lottoResult.numberElements,
             'gameCount': gameCount,
+            'lottoSets': allSetsData, // 여러 세트 데이터
           },
           additionalInfo: {
             'lottoNumbers': lottoNumbers,
+            'lottoSets': allSetsData, // 여러 세트 데이터
             'luckyLocation': {
               'direction': lottoFortuneResult.luckyLocation.direction,
               'shopType': lottoFortuneResult.luckyLocation.shopType,
@@ -3099,7 +3123,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           params: {
             'name': userName,
             'birthDate': birthDateStr,
-            'gender': gender,
+            'gender': gender.toString().split('.').last,
             'userGender': gender.toString().split('.').last,
             'image': imageBase64,
           },
@@ -3122,10 +3146,26 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // Lifestyle
       // ============================================================
       case FortuneSurveyType.wish:
-        // survey step id: 'wishContent', 'category'
-        return apiService.getWishFortune(
+        // survey step id: 'wishContent', 'category', 'bokchae'
+        // 🧧 복채 토큰 차감 (설문에서 선택한 경우)
+        final bokchaeAmount = int.tryParse(answers['bokchae']?.toString() ?? '0') ?? 0;
+        if (bokchaeAmount > 0) {
+          final tokenNotifier = ref.read(tokenProvider.notifier);
+          await tokenNotifier.consumeTokens(
+            fortuneType: 'wish-bokchae',
+            amount: bokchaeAmount,
+            referenceId: 'bokchae-${DateTime.now().millisecondsSinceEpoch}',
+          );
+        }
+        // ✅ API 호출 없이 로컬에서 결과 생성 (꿈해몽처럼 심플하게)
+        final wishText = answers['wishContent'] ?? '';
+        return Fortune(
+          id: 'wish-${DateTime.now().millisecondsSinceEpoch}',
           userId: userId,
-          wish: answers['wishContent'] ?? '소원이 입력되지 않았습니다',
+          type: 'wish',
+          content: wishText,
+          createdAt: DateTime.now(),
+          additionalInfo: {'wish_text': wishText},
         );
 
       case FortuneSurveyType.fortuneCookie:
@@ -3412,7 +3452,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           params: {
             'imageBase64': imageBase64,
             'tpo': tpo,
-            'userGender': gender,
+            'userGender': gender.toString().split('.').last,
             'userName': userName,
           },
         );
@@ -3426,7 +3466,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           params: {
             'name': userName,
             'birthDate': birthDateStr,
-            'gender': gender,
+            'gender': gender.toString().split('.').last,
             'concern': answers['concern'] ?? 'protection',
             'style': answers['style'] ?? 'traditional',
           },
@@ -3965,6 +4005,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           hintText: '사진을 선택하거나 촬영하세요',
         );
 
+      case SurveyInputType.ootdImage:
+        return OotdPhotoInput(
+          onImageSelected: _handleImageSelect,
+        );
+
       case SurveyInputType.text:
         // 텍스트 입력은 하단 텍스트 필드 사용 - null 반환하여 활성화
         return null;
@@ -4319,8 +4364,17 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         padding += 180;
       } else if (inputType == SurveyInputType.text ||
           inputType == SurveyInputType.voice) {
-        // 텍스트/음성 입력
-        padding += 20;
+        // 꿈해몽 dreamContent 단계는 FloatingDreamTopicsWidget(350px) 표시
+        final isDreamContent =
+            surveyState.activeProgress?.config.fortuneType ==
+                    FortuneSurveyType.dream &&
+                surveyState.activeProgress?.currentStep.id == 'dreamContent';
+        if (isDreamContent) {
+          padding += 350; // FloatingDreamTopicsWidget 높이
+        } else {
+          // 일반 텍스트/음성 입력
+          padding += 20;
+        }
       } else if (inputType == SurveyInputType.tarot) {
         // 타로 플로우: 스프레드 선택(140) 또는 카드 선택(280)
         // 카드 선택 단계가 더 높으므로 최대값 사용
@@ -4496,6 +4550,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                 onboardingState,
                                 surveyOptions: surveyOptions,
                               ),
+                              onTypingIndicatorRendered: _scrollToBottom,
+                              onFortuneResultRendered:
+                                  _scrollToFortuneResultHeader,
                             ),
                     ),
 

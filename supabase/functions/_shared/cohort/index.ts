@@ -43,8 +43,10 @@ export async function generateCohortHash(cohortData: CohortData): Promise<string
 /**
  * 나잇대 계산
  */
-export function getAgeGroup(birthDate: string | Date): string {
+export function getAgeGroup(birthDate: string | Date | undefined | null): string {
+  if (!birthDate) return '30대'; // 기본값
   const birth = typeof birthDate === 'string' ? new Date(birthDate) : birthDate;
+  if (isNaN(birth.getTime())) return '30대'; // Invalid Date 체크
   const today = new Date();
   const age = today.getFullYear() - birth.getFullYear();
 
@@ -117,17 +119,22 @@ export function extractDailyCohort(input: {
  * Love 운세 Cohort 추출
  */
 export function extractLoveCohort(input: {
-  birthDate: string;
+  birthDate?: string;
   gender: string;
   relationshipStatus?: string;
+  age?: number;
 }): CohortData {
-  const birth = new Date(input.birthDate);
+  // birthDate가 없으면 age로 대략적인 생년 계산
+  const effectiveBirthDate = input.birthDate ||
+    (input.age ? `${new Date().getFullYear() - input.age}-01-01` : '1990-01-01');
+  const birth = new Date(effectiveBirthDate);
+  const birthYear = isNaN(birth.getTime()) ? 1990 : birth.getFullYear();
 
   return {
-    ageGroup: getAgeGroup(input.birthDate),
+    ageGroup: getAgeGroup(effectiveBirthDate),
     gender: input.gender === 'male' ? '남' : input.gender === 'female' ? '여' : '기타',
     relationshipStatus: input.relationshipStatus || '솔로',
-    zodiac: getZodiacName(birth.getFullYear()),
+    zodiac: getZodiacName(birthYear),
   };
 }
 

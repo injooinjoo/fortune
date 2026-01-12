@@ -52,6 +52,7 @@ enum FortuneType {
   employment('employment', '취업 가이드'),
   business('business', '사업 분석'),
   wealth('wealth', '재물 분석'),
+  money('money', '재물운'),
   startup('startup', '창업 인사이트'),
   luckyJob('lucky-job', '추천 직업'),
   luckySidejob('lucky-sidejob', '부업 가이드'),
@@ -83,6 +84,7 @@ enum FortuneType {
   luckyStock('lucky-stock', '주식 가이드'),
   luckyCrypto('lucky-crypto', '암호화폐 가이드'),
   luckyLottery('lucky-lottery', '로또 번호 생성'),
+  lotto('lotto', '오늘의 로또'), // 클라이언트 생성 로또
   realEstate('real-estate', '부동산 인사이트'),
 
   // Lifestyle (라이프스타일)
@@ -98,6 +100,7 @@ enum FortuneType {
   study('study', '학업 분석'),
   travel('travel', '여행 가이드'),
   parenting('parenting', '육아 가이드'),
+  family('family', '가족 인사이트'),
   pet('pet', '반려동물 가이드'),
   talisman('talisman', '행운 카드'),
   salpuli('salpuli', '기운 정화'),

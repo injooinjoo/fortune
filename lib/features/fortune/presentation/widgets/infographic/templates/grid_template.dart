@@ -574,7 +574,7 @@ class _NameCard extends StatelessWidget {
                 borderRadius: DSRadius.smBorder,
               ),
               child: Text(
-                '${name.score}점',
+                '${name.score}',
                 style: context.typography.labelSmall.copyWith(
                   color: isHighlighted
                       ? Colors.white

@@ -19,6 +19,12 @@ class ChatMessageList extends ConsumerWidget {
   final VoidCallback? onViewAllTap;
   final double bottomPadding;
 
+  /// 타이핑 인디케이터가 렌더링 완료되면 호출됨
+  final VoidCallback? onTypingIndicatorRendered;
+
+  /// 운세 결과 카드가 렌더링 완료되면 호출됨
+  final void Function(BuildContext context)? onFortuneResultRendered;
+
   const ChatMessageList({
     super.key,
     required this.scrollController,
@@ -27,6 +33,8 @@ class ChatMessageList extends ConsumerWidget {
     required this.onChipTap,
     this.onViewAllTap,
     this.bottomPadding = 0,
+    this.onTypingIndicatorRendered,
+    this.onFortuneResultRendered,
   });
 
   /// 이전 메시지에서 마지막 운세 타입 찾기
@@ -56,7 +64,10 @@ class ChatMessageList extends ConsumerWidget {
       itemBuilder: (context, index) {
         // 타이핑 인디케이터 (현재 진행 중인 운세 타입 전달)
         if (index == messages.length && isTyping) {
-          return _TypingIndicator(fortuneType: _findLastFortuneType(messages.length));
+          return _TypingIndicator(
+            fortuneType: _findLastFortuneType(messages.length),
+            onRendered: onTypingIndicatorRendered,
+          );
         }
 
         final message = messages[index];
@@ -98,6 +109,7 @@ class ChatMessageList extends ConsumerWidget {
         // 일반 메시지
         return ChatMessageBubble(
           message: message,
+          onFortuneResultRendered: onFortuneResultRendered,
         );
       },
     );
@@ -108,7 +120,10 @@ class ChatMessageList extends ConsumerWidget {
 class _TypingIndicator extends StatefulWidget {
   final String? fortuneType;
 
-  const _TypingIndicator({this.fortuneType});
+  /// 렌더링 완료 시 호출되는 콜백
+  final VoidCallback? onRendered;
+
+  const _TypingIndicator({this.fortuneType, this.onRendered});
 
   @override
   State<_TypingIndicator> createState() => _TypingIndicatorState();
@@ -139,6 +154,11 @@ class _TypingIndicatorState extends State<_TypingIndicator>
 
     _controller.forward();
     _startMessageRolling();
+
+    // 렌더링 완료 후 콜백 호출 (스크롤용)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onRendered?.call();
+    });
   }
 
   void _startMessageRolling() {

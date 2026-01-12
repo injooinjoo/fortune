@@ -13,15 +13,20 @@ import 'chat_saju_result_card.dart';
 import 'chat_talisman_result_card.dart';
 import 'chat_gratitude_result_card.dart';
 import 'fortune_cookie_result_card.dart';
+import 'fortune_result_scroll_wrapper.dart';
 import 'personality_dna_chat_card.dart';
 
 /// 채팅 메시지 버블
 class ChatMessageBubble extends StatelessWidget {
   final ChatMessage message;
 
+  /// 운세 결과 카드 렌더링 완료 시 호출되는 콜백
+  final void Function(BuildContext context)? onFortuneResultRendered;
+
   const ChatMessageBubble({
     super.key,
     required this.message,
+    this.onFortuneResultRendered,
   });
 
   @override
@@ -33,28 +38,34 @@ class ChatMessageBubble extends StatelessWidget {
     // 성격 DNA 결과 카드 표시
     if (message.type == ChatMessageType.personalityDnaResult &&
         message.personalityDna != null) {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: PersonalityDnaChatCard(
-          dna: message.personalityDna!,
-          isBlurred: message.isBlurred,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: PersonalityDnaChatCard(
+            dna: message.personalityDna!,
+            isBlurred: message.isBlurred,
+          ),
         ),
       );
     }
 
     // 사주 분석 결과 카드 표시
     if (message.type == ChatMessageType.sajuResult && message.sajuData != null) {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatSajuResultCard(
-          sajuData: message.sajuData!,
-          fortuneResult: message.sajuFortuneResult,
-          isBlurred: message.isBlurred,
-          blurredSections: message.blurredSections,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatSajuResultCard(
+            sajuData: message.sajuData!,
+            fortuneResult: message.sajuFortuneResult,
+            isBlurred: message.isBlurred,
+            blurredSections: message.blurredSections,
+          ),
         ),
       );
     }
@@ -72,14 +83,17 @@ class ChatMessageBubble extends StatelessWidget {
         'tpo': additionalInfo['tpo'] ?? '',
         'details': additionalInfo['details'] ?? {},
       };
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatOotdResultCard(
-          ootdData: ootdData,
-          isBlurred: message.isBlurred,
-          blurredSections: message.blurredSections,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatOotdResultCard(
+            ootdData: ootdData,
+            isBlurred: message.isBlurred,
+            blurredSections: message.blurredSections,
+          ),
         ),
       );
     }
@@ -90,14 +104,17 @@ class ChatMessageBubble extends StatelessWidget {
         (message.fortuneType == 'career' ||
             message.fortuneType == 'career_coaching' ||
             message.fortuneType == 'career-coaching')) {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatCareerResultCard(
-          fortune: message.fortune!,
-          isBlurred: message.isBlurred,
-          blurredSections: message.blurredSections,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatCareerResultCard(
+            fortune: message.fortune!,
+            isBlurred: message.isBlurred,
+            blurredSections: message.blurredSections,
+          ),
         ),
       );
     }
@@ -106,14 +123,17 @@ class ChatMessageBubble extends StatelessWidget {
     if (message.fortune != null &&
         message.type == ChatMessageType.fortuneResult &&
         message.fortuneType == 'moving') {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatMovingResultCard(
-          fortune: message.fortune!,
-          isBlurred: message.isBlurred,
-          blurredSections: message.blurredSections,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatMovingResultCard(
+            fortune: message.fortune!,
+            isBlurred: message.isBlurred,
+            blurredSections: message.blurredSections,
+          ),
         ),
       );
     }
@@ -125,15 +145,18 @@ class ChatMessageBubble extends StatelessWidget {
       // Fortune의 additionalInfo에서 celebrity 정보 추출
       final additionalInfo = message.fortune!.additionalInfo ?? {};
       final questionType = additionalInfo['question_type'] as String?;
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: CelebrityCardFactory.build(
-          fortune: message.fortune!,
-          questionType: questionType,
-          celebrityName: additionalInfo['celebrity_name'] as String?,
-          celebrityImageUrl: additionalInfo['celebrity_image_url'] as String?,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: CelebrityCardFactory.build(
+            fortune: message.fortune!,
+            questionType: questionType,
+            celebrityName: additionalInfo['celebrity_name'] as String?,
+            celebrityImageUrl: additionalInfo['celebrity_image_url'] as String?,
+          ),
         ),
       );
     }
@@ -142,13 +165,16 @@ class ChatMessageBubble extends StatelessWidget {
     if (message.type == ChatMessageType.fortuneResult &&
         message.fortuneType == 'match-insight' &&
         message.matchInsight != null) {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatMatchInsightCard(
-          insight: message.matchInsight!,
-          isBlurred: message.isBlurred,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatMatchInsightCard(
+            insight: message.matchInsight!,
+            isBlurred: message.isBlurred,
+          ),
         ),
       );
     }
@@ -159,23 +185,26 @@ class ChatMessageBubble extends StatelessWidget {
         message.fortuneType == 'tarot') {
       // Fortune의 additionalInfo에서 타로 데이터 추출
       final additionalInfo = message.fortune!.additionalInfo ?? {};
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatTarotResultCard(
-          data: {
-            'question': additionalInfo['question'] ?? message.fortune!.content,
-            'spreadType': additionalInfo['spreadType'] ?? 'single',
-            'spreadDisplayName': additionalInfo['spreadDisplayName'] ?? '타로 리딩',
-            'cards': additionalInfo['cards'] ?? [],
-            'overallReading': additionalInfo['overallReading'] ?? message.fortune!.content ?? '',
-            'advice': additionalInfo['advice'] ?? '',
-            'energyLevel': additionalInfo['energyLevel'] ?? message.fortune!.overallScore ?? 75,
-            'isBlurred': message.isBlurred,
-            'blurredSections': message.blurredSections,
-          },
-          question: additionalInfo['question'] as String?,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatTarotResultCard(
+            data: {
+              'question': additionalInfo['question'] ?? message.fortune!.content,
+              'spreadType': additionalInfo['spreadType'] ?? 'single',
+              'spreadDisplayName': additionalInfo['spreadDisplayName'] ?? '타로 리딩',
+              'cards': additionalInfo['cards'] ?? [],
+              'overallReading': additionalInfo['overallReading'] ?? message.fortune!.content ?? '',
+              'advice': additionalInfo['advice'] ?? '',
+              'energyLevel': additionalInfo['energyLevel'] ?? message.fortune!.overallScore ?? 75,
+              'isBlurred': message.isBlurred,
+              'blurredSections': message.blurredSections,
+            },
+            question: additionalInfo['question'] as String?,
+          ),
         ),
       );
     }
@@ -184,12 +213,15 @@ class ChatMessageBubble extends StatelessWidget {
     if (message.type == ChatMessageType.fortuneResult &&
         message.fortuneType == 'past-life' &&
         message.pastLifeResult != null) {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatPastLifeResultCard(
-          result: message.pastLifeResult!,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatPastLifeResultCard(
+            result: message.pastLifeResult!,
+          ),
         ),
       );
     }
@@ -198,12 +230,15 @@ class ChatMessageBubble extends StatelessWidget {
     if (message.fortune != null &&
         message.type == ChatMessageType.fortuneResult &&
         message.fortuneType == 'fortune-cookie') {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: FortuneCookieResultCard(
-          fortune: message.fortune!,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: FortuneCookieResultCard(
+            fortune: message.fortune!,
+          ),
         ),
       );
     }
@@ -211,30 +246,36 @@ class ChatMessageBubble extends StatelessWidget {
     // 부적 결과 카드 표시 (이미지 + 짧은 설명)
     if (message.type == ChatMessageType.talismanResult &&
         message.talismanImageUrl != null) {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatTalismanResultCard(
-          imageUrl: message.talismanImageUrl!,
-          categoryName: message.talismanCategoryName ?? '부적',
-          shortDescription: message.talismanShortDescription ?? '',
-          isBlurred: message.isBlurred,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatTalismanResultCard(
+            imageUrl: message.talismanImageUrl!,
+            categoryName: message.talismanCategoryName ?? '부적',
+            shortDescription: message.talismanShortDescription ?? '',
+            isBlurred: message.isBlurred,
+          ),
         ),
       );
     }
 
     // 감사일기 결과 카드 표시 (일기장 스타일)
     if (message.type == ChatMessageType.gratitudeResult) {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatGratitudeResultCard(
-          gratitude1: message.gratitude1 ?? '',
-          gratitude2: message.gratitude2 ?? '',
-          gratitude3: message.gratitude3 ?? '',
-          date: message.gratitudeDate ?? DateTime.now(),
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatGratitudeResultCard(
+            gratitude1: message.gratitude1 ?? '',
+            gratitude2: message.gratitude2 ?? '',
+            gratitude3: message.gratitude3 ?? '',
+            date: message.gratitudeDate ?? DateTime.now(),
+          ),
         ),
       );
     }
@@ -242,16 +283,19 @@ class ChatMessageBubble extends StatelessWidget {
     // 운세 결과 카드 표시 (Fortune 객체가 있는 경우)
     // 전체 너비 사용, 중앙 정렬 (자석효과 제거)
     if (message.fortune != null && message.type == ChatMessageType.fortuneResult) {
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-        child: ChatFortuneResultCard(
-          fortune: message.fortune!,
-          fortuneType: message.fortuneType ?? 'default',
-          typeName: message.text ?? '운세 결과',
-          isBlurred: message.isBlurred,
-          selectedDate: message.selectedDate,
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatFortuneResultCard(
+            fortune: message.fortune!,
+            fortuneType: message.fortuneType ?? 'default',
+            typeName: message.text ?? '운세 결과',
+            isBlurred: message.isBlurred,
+            selectedDate: message.selectedDate,
+          ),
         ),
       );
     }

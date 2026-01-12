@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/fortune_design_system.dart';
+import '../../../core/design_system/tokens/ds_luck_colors.dart';
 
 /// Helper methods for fortune infographic widgets
 class FortuneInfographicHelpers {
@@ -14,32 +15,38 @@ class FortuneInfographicHelpers {
     return 'D';
   }
 
-  /// Get keyword color based on weight
+  /// Get keyword color based on weight (한국 전통 테마)
   static Color getKeywordColor(double weight) {
-    if (weight >= 0.8) return const Color(0xFF00D2FF);
-    if (weight >= 0.6) return const Color(0xFF0066FF);
-    if (weight >= 0.4) return const Color(0xFF7C4DFF);
-    if (weight >= 0.2) return const Color(0xFFFF6B35);
-    return const Color(0xFFFF4757);
+    if (weight >= 0.8) return DSLuckColors.levelSupreme; // 대대길
+    if (weight >= 0.6) return DSLuckColors.levelGreat; // 대길
+    if (weight >= 0.4) return DSLuckColors.levelGood; // 길
+    if (weight >= 0.2) return DSLuckColors.levelAverage; // 평
+    return DSLuckColors.levelSmallBad; // 소흉
   }
 
-  /// Get lucky item color based on type
+  /// Get lucky item color based on type (한국 전통 테마)
   static Color getLuckyItemColor(String type) {
     switch (type.toLowerCase()) {
       case 'color':
       case '색상':
-        return const Color(0xFFFF6B35);
+        return DSLuckColors.categoryColor;
       case 'food':
       case '음식':
-        return const Color(0xFF00D2FF);
+        return DSLuckColors.categoryFood;
       case 'item':
       case '아이템':
-        return const Color(0xFF7C4DFF);
+        return DSLuckColors.categoryFashion;
       case 'number':
       case '숫자':
-        return const Color(0xFF0066FF);
+        return DSLuckColors.categoryNumber;
+      case 'direction':
+      case '방향':
+        return DSLuckColors.categoryDirection;
+      case 'place':
+      case '장소':
+        return DSLuckColors.categoryTravel;
       default:
-        return TossDesignSystem.tossBlue;
+        return DSLuckColors.fortuneGold;
     }
   }
 

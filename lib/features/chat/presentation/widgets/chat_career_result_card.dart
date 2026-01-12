@@ -1,13 +1,12 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/widgets/infographic/headers/career_info_header.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../shared/widgets/smart_image.dart';
 
 /// 채팅용 커리어 운세 결과 카드
 ///
@@ -49,10 +48,7 @@ class ChatCareerResultCard extends ConsumerWidget {
             // 1. 이미지 헤더
             _buildImageHeader(context),
 
-            // 2. 점수 섹션
-            _buildScoreSection(context, data),
-
-            // 3. 전반적인 전망 (content)
+            // 2. 전반적인 전망 (content)
             if (fortune.content.isNotEmpty) _buildOutlookSection(context),
 
             // 4. 예측 섹션 (블러)
@@ -87,96 +83,149 @@ class ChatCareerResultCard extends ConsumerWidget {
   }
 
   Widget _buildImageHeader(BuildContext context) {
-    final data = fortune.additionalInfo ?? {};
-    final colors = context.colors;
-
-    // 강점 데이터를 Map<String, dynamic>으로 변환
-    Map<String, dynamic>? strengths;
-    final skillAnalysis = data['skillAnalysis'] as List?;
-    if (skillAnalysis != null && skillAnalysis.isNotEmpty) {
-      strengths = {};
-      for (final skill in skillAnalysis.take(3)) {
-        if (skill is Map) {
-          final name = skill['skill'] as String? ?? skill['name'] as String? ?? '';
-          final score = skill['score'] as num? ?? skill['level'] as num? ?? 70;
-          if (name.isNotEmpty) {
-            strengths[name] = score;
-          }
-        }
-      }
-    }
-
-    // 행운/주의 시기 추출
-    final luckyPeriods = data['luckyPeriods'] as List?;
-    final cautionPeriods = data['cautionPeriods'] as List?;
-
-    return Stack(
-      children: [
-        // 인포그래픽 헤더
-        CareerInfoHeader(
-          score: fortune.overallScore ?? data['score'] as int? ?? 75,
-          prediction: data['overallOutlook'] as String? ?? fortune.content,
-          strengths: strengths,
-          luckyPeriod: luckyPeriods?.isNotEmpty == true
-              ? luckyPeriods!.first.toString()
-              : null,
-          cautionPeriod: cautionPeriods?.isNotEmpty == true
-              ? cautionPeriods!.first.toString()
-              : null,
-        ),
-        // 액션 버튼 오버레이
-        Positioned(
-          top: DSSpacing.sm,
-          right: DSSpacing.sm,
-          child: FortuneActionButtons(
-            contentId: fortune.id,
-            contentType: 'career',
-            shareTitle: '커리어 운세',
-            shareContent: fortune.content,
-            iconColor: colors.textSecondary,
-            iconSize: 20,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildScoreSection(BuildContext context, Map<String, dynamic> data) {
-    final colors = context.colors;
     final typography = context.typography;
-    final score = fortune.overallScore ??
-        data['score'] as int? ??
-        data['careerScore'] as int? ??
-        70;
+    final score = fortune.overallScore ?? 75;
+    final heroImage = FortuneCardImages.getHeroImage('career', score);
 
-    return Padding(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      child: Row(
+    return SizedBox(
+      height: 200,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          _CareerScoreCircle(score: score, size: 72),
-          const SizedBox(width: DSSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // 1. 배경 이미지
+          SmartImage(
+            path: heroImage,
+            fit: BoxFit.cover,
+            errorWidget: SmartImage(
+              path: FortuneCardImages.getImagePath('career'),
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // 2. 그라데이션 오버레이
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  ObangseokColors.cheongMuted.withValues(alpha: 0.15),
+                  Colors.black.withValues(alpha: 0.65),
+                ],
+              ),
+            ),
+          ),
+
+          // 3. 뱃지 (좌상단)
+          Positioned(
+            top: DSSpacing.sm,
+            left: DSSpacing.sm,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: ObangseokColors.cheongMuted.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(DSRadius.full),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.4),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('💼', style: TextStyle(fontSize: 14)),
+                  const SizedBox(width: 4),
+                  Text(
+                    'CAREER',
+                    style: typography.labelSmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // 4. 액션 버튼 (우상단)
+          Positioned(
+            top: DSSpacing.sm,
+            right: DSSpacing.sm,
+            child: FortuneActionButtons(
+              contentId: fortune.id,
+              contentType: 'career',
+              shareTitle: '커리어 운세',
+              shareContent: fortune.content,
+              iconColor: Colors.white,
+              iconSize: 20,
+            ),
+          ),
+
+          // 5. 타이틀 & 점수 (하단)
+          Positioned(
+            left: DSSpacing.md,
+            right: DSSpacing.md,
+            bottom: DSSpacing.md,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  '종합 운세',
-                  style: typography.labelMedium.copyWith(
-                    color: colors.textSecondary,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '커리어 운세',
+                        style: typography.headingSmall.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        '직업 · 이직 · 승진',
+                        style: typography.labelMedium.copyWith(
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  _getScoreDescription(score),
-                  style: typography.bodyMedium.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.w600,
+                // 점수 뱃지
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
                   ),
-                ),
-                Text(
-                  _getScoreAdvice(score),
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textTertiary,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$score',
+                        style: typography.headingSmall.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '점',
+                        style: typography.labelSmall.copyWith(
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -210,11 +259,7 @@ class ChatCareerResultCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Image.asset(
-                  FortuneCardImages.getSectionIcon('work'),
-                  width: 24,
-                  height: 24,
-                ),
+                const Text('📋', style: TextStyle(fontSize: 20)),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '전반적인 전망',
@@ -257,11 +302,7 @@ class ChatCareerResultCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Image.asset(
-                  FortuneCardImages.getSectionIcon('advice'),
-                  width: 32,
-                  height: 32,
-                ),
+                const Text('🔮', style: TextStyle(fontSize: 24)),
                 const SizedBox(width: DSSpacing.sm),
                 Text(
                   '커리어 예측',
@@ -373,11 +414,7 @@ class ChatCareerResultCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Image.asset(
-                  FortuneCardImages.getSectionIcon('study'),
-                  width: 32,
-                  height: 32,
-                ),
+                const Text('📚', style: TextStyle(fontSize: 24)),
                 const SizedBox(width: DSSpacing.sm),
                 Text(
                   '스킬 분석',
@@ -458,11 +495,7 @@ class ChatCareerResultCard extends ConsumerWidget {
             if (strengths.isNotEmpty) ...[
               Row(
                 children: [
-                  Image.asset(
-                    FortuneCardImages.getSectionIcon('lucky'),
-                    width: 20,
-                    height: 20,
-                  ),
+                  const Text('💪', style: TextStyle(fontSize: 16)),
                   const SizedBox(width: DSSpacing.xs),
                   Text(
                     '강점',
@@ -501,11 +534,7 @@ class ChatCareerResultCard extends ConsumerWidget {
             if (improvements.isNotEmpty) ...[
               Row(
                 children: [
-                  Image.asset(
-                    FortuneCardImages.getSectionIcon('warning'),
-                    width: 20,
-                    height: 20,
-                  ),
+                  const Text('🔧', style: TextStyle(fontSize: 16)),
                   const SizedBox(width: DSSpacing.xs),
                   Text(
                     '개선점',
@@ -569,11 +598,7 @@ class ChatCareerResultCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Image.asset(
-                  FortuneCardImages.getSectionIcon('action'),
-                  width: 32,
-                  height: 32,
-                ),
+                const Text('🎯', style: TextStyle(fontSize: 24)),
                 const SizedBox(width: DSSpacing.sm),
                 Text(
                   '액션 플랜',
@@ -630,11 +655,7 @@ class ChatCareerResultCard extends ConsumerWidget {
           if (luckyPeriods.isNotEmpty) ...[
             Row(
               children: [
-                Image.asset(
-                  FortuneCardImages.getSectionIcon('lucky'),
-                  width: 20,
-                  height: 20,
-                ),
+                const Text('🍀', style: TextStyle(fontSize: 16)),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '행운 시기',
@@ -657,11 +678,7 @@ class ChatCareerResultCard extends ConsumerWidget {
           if (cautionPeriods.isNotEmpty) ...[
             Row(
               children: [
-                Image.asset(
-                  FortuneCardImages.getSectionIcon('warning'),
-                  width: 20,
-                  height: 20,
-                ),
+                const Text('⚠️', style: TextStyle(fontSize: 16)),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '주의 시기',
@@ -721,165 +738,12 @@ class ChatCareerResultCard extends ConsumerWidget {
     );
   }
 
-  String _getScoreDescription(int score) {
-    if (score >= 90) return '최고의 커리어 운! 🌟';
-    if (score >= 80) return '아주 좋은 전망이에요! ✨';
-    if (score >= 70) return '좋은 기운이 함께해요';
-    if (score >= 60) return '차근차근 나아가세요';
-    if (score >= 50) return '신중하게 접근하세요';
-    return '준비 기간으로 활용하세요';
-  }
-
-  String _getScoreAdvice(int score) {
-    if (score >= 80) return '적극적으로 도전해보세요';
-    if (score >= 60) return '계획대로 진행하세요';
-    return '기회를 살피며 준비하세요';
-  }
-
   Color _getProbabilityColor(int prob) {
     // 동양화 스타일 - 톤다운 오방색
     if (prob >= 75) return ObangseokColors.cheongMuted;
     if (prob >= 50) return ObangseokColors.cheong;
     if (prob >= 25) return ObangseokColors.hwangMuted;
     return ObangseokColors.jeokMuted;
-  }
-}
-
-/// 점수 원형 위젯
-class _CareerScoreCircle extends StatefulWidget {
-  final int score;
-  final double size;
-
-  const _CareerScoreCircle({
-    required this.score,
-    this.size = 72,
-  });
-
-  @override
-  State<_CareerScoreCircle> createState() => _CareerScoreCircleState();
-}
-
-class _CareerScoreCircleState extends State<_CareerScoreCircle>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
-    _animation = Tween<double>(begin: 0, end: widget.score / 100).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        final progress = _animation.value;
-        final displayScore = (progress * 100).round();
-
-        return SizedBox(
-          width: widget.size,
-          height: widget.size,
-          child: CustomPaint(
-            painter: _ScoreCirclePainter(
-              progress: progress,
-              backgroundColor: colors.textPrimary.withValues(alpha: 0.1),
-              progressColor: _getScoreColor(widget.score),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '$displayScore',
-                    style: typography.headingMedium.copyWith(
-                      color: colors.textPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    '점',
-                    style: typography.labelSmall.copyWith(
-                      color: colors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Color _getScoreColor(int score) {
-    // 동양화 스타일 - 톤다운 오방색
-    if (score >= 80) return ObangseokColors.cheongMuted;
-    if (score >= 60) return ObangseokColors.cheong;
-    if (score >= 40) return ObangseokColors.hwangMuted;
-    return ObangseokColors.jeokMuted;
-  }
-}
-
-class _ScoreCirclePainter extends CustomPainter {
-  final double progress;
-  final Color backgroundColor;
-  final Color progressColor;
-
-  _ScoreCirclePainter({
-    required this.progress,
-    required this.backgroundColor,
-    required this.progressColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 4;
-    const strokeWidth = 6.0;
-
-    final bgPaint = Paint()
-      ..color = backgroundColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-    canvas.drawCircle(center, radius, bgPaint);
-
-    final progressPaint = Paint()
-      ..color = progressColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    final sweepAngle = 2 * math.pi * progress;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2,
-      sweepAngle,
-      false,
-      progressPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _ScoreCirclePainter oldDelegate) {
-    return oldDelegate.progress != progress;
   }
 }
 
