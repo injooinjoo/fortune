@@ -120,16 +120,22 @@ class FaceDetectionService {
 
   /// iOS Vision Framework를 사용한 얼굴 감지
   Future<FaceDetectionResult?> _detectWithVision(Uint8List imageData) async {
+    developer.log('🍎 Vision: MethodChannel 호출 시작 (${imageData.length} bytes)');
+
     final result = await _channel.invokeMethod<Map<dynamic, dynamic>>(
       'detectFace',
       {'imageData': imageData},
     );
+
+    developer.log('🍎 Vision: MethodChannel 응답 - ${result != null ? "데이터 있음" : "null"}');
 
     if (result == null) {
       return null;
     }
 
     final map = Map<String, dynamic>.from(result);
+    developer.log('🍎 Vision: detected=${map['detected']}, landmarks=${(map['landmarks'] as List?)?.length ?? 0}');
+
     if (map['detected'] != true) {
       return null;
     }

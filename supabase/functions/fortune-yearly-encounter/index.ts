@@ -374,9 +374,7 @@ Example: ["#무쌍_강아지상", "#셔츠가잘어울리는", "#너드미"]`
 // ============================================================================
 
 async function generateImageWithGemini(prompt: string): Promise<string> {
-  console.log('🎨 Generating encounter image with Gemini 2.5 Flash Image...')
   const startTime = Date.now()
-
   const imageModel = 'gemini-2.5-flash-image'
 
   const response = await fetch(
@@ -398,12 +396,20 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
 
   if (!response.ok) {
     const errorText = await response.text()
+    // 상세 에러 로깅
+    console.error('❌ Gemini API 에러 상세:', {
+      status: response.status,
+      statusText: response.statusText,
+      body: errorText.substring(0, 500),
+      prompt_length: prompt.length,
+    })
     throw new Error(`Gemini Image API error: ${response.status} - ${errorText}`)
   }
 
   const data = await response.json()
 
   if (!data.candidates || data.candidates.length === 0) {
+    console.error('❌ Gemini 응답에 candidates 없음:', JSON.stringify(data).substring(0, 500))
     throw new Error('No candidates in Gemini Image response')
   }
 
@@ -414,6 +420,7 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
   )
 
   if (!imagePart || !imagePart.inlineData) {
+    console.error('❌ Gemini 응답에 이미지 데이터 없음:', JSON.stringify(parts).substring(0, 500))
     throw new Error('No image data in Gemini response')
   }
 
@@ -421,6 +428,32 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
   console.log(`✅ Image generated successfully in ${latency}ms`)
 
   return imagePart.inlineData.data
+}
+
+// ============================================================================
+// Retry Logic with Exponential Backoff
+// ============================================================================
+
+async function generateImageWithRetry(prompt: string, maxRetries = 3): Promise<string> {
+  let lastError: Error | null = null
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🎨 이미지 생성 시도 ${attempt}/${maxRetries}...`)
+      return await generateImageWithGemini(prompt)
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error))
+      console.error(`❌ 시도 ${attempt} 실패:`, lastError.message)
+
+      if (attempt < maxRetries) {
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000) // 1초, 2초, 4초 (max 5초)
+        console.log(`⏳ ${delay}ms 후 재시도...`)
+        await new Promise(resolve => setTimeout(resolve, delay))
+      }
+    }
+  }
+
+  throw lastError || new Error('이미지 생성 실패 (모든 재시도 소진)')
 }
 
 // ============================================================================
@@ -522,8 +555,8 @@ serve(async (req) => {
 
     console.log('📝 Image prompt length:', imagePrompt.length)
 
-    // 2. Generate image with Gemini 2.5 Flash
-    const imageBase64 = await generateImageWithGemini(imagePrompt)
+    // 2. Generate image with Gemini 2.5 Flash (with retry logic)
+    const imageBase64 = await generateImageWithRetry(imagePrompt, 3)
 
     // 3. Upload to Supabase Storage
     const imageUrl = await uploadToSupabase(imageBase64, request.userId)

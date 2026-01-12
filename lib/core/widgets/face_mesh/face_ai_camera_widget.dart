@@ -121,7 +121,9 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
 
       // iOS에서만 실시간 얼굴 감지 (Vision Framework)
       // Android는 가이드 모드 사용
+      developer.log('🚀 FaceAI: 초기화 완료 - iOS=${Platform.isIOS}, showOverlay=${widget.showOverlay}, overlayEnabled=$_overlayEnabled');
       if (Platform.isIOS && widget.showOverlay && _overlayEnabled) {
+        developer.log('🚀 FaceAI: 실시간 감지 시작!');
         _startDetection();
       }
 
@@ -152,21 +154,29 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
         !_controller!.value.isInitialized ||
         _detectionService.isProcessing ||
         _isTakingPicture) {
+      developer.log('⏭️ FaceAI: 스킵 - controller=${_controller != null}, init=${_controller?.value.isInitialized}, processing=${_detectionService.isProcessing}, taking=${_isTakingPicture}');
       return;
     }
 
     try {
+      developer.log('📸 FaceAI: 프레임 캡처 시작');
       final XFile file = await _controller!.takePicture();
       final bytes = await file.readAsBytes();
+      developer.log('📸 FaceAI: 프레임 캡처 완료 (${bytes.length} bytes)');
 
       // 이미지 크기 저장
       final image = img.decodeImage(bytes);
       if (image != null) {
         _imageSize = Size(image.width.toDouble(), image.height.toDouble());
+        developer.log('📐 FaceAI: 이미지 크기 $_imageSize');
+      } else {
+        developer.log('❌ FaceAI: 이미지 디코딩 실패');
       }
 
       // 얼굴 감지
+      developer.log('🔍 FaceAI: 얼굴 감지 시작');
       final result = await _detectionService.detectFromImageData(bytes);
+      developer.log('🔍 FaceAI: 얼굴 감지 결과 - ${result != null ? '감지됨 (${result.landmarks?.length ?? 0} landmarks)' : '미감지'}');
 
       // 임시 파일 삭제
       try {
@@ -180,8 +190,9 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
           _detectionResult = result;
         });
       }
-    } catch (e) {
-      // 에러 무시 (프레임 스킵)
+    } catch (e, stackTrace) {
+      developer.log('❌ FaceAI: 감지 오류 - $e');
+      developer.log('❌ FaceAI: 스택 - $stackTrace');
     }
   }
 
