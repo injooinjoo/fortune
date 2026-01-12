@@ -219,7 +219,7 @@ class _ChatYearlyEncounterResultCardState
               contentType: 'yearly_encounter',
               shareTitle: '2026 올해의 인연',
               shareContent:
-                  '${widget.result.hashtagsString}\n\n${widget.result.encounterSpot}',
+                  '${widget.result.hashtagsString}\n\n💕 첫만남: ${widget.result.encounterSpotTitle}\n${widget.result.encounterSpotStory}\n\n✨ 인연의 시그널: ${widget.result.fateSignalTitle}\n\n💝 비주얼 궁합: ${widget.result.compatibilityScore}',
               iconSize: 18,
               iconColor: _brownTitle.withValues(alpha: 0.6),
             ),
@@ -445,12 +445,24 @@ class _ChatYearlyEncounterResultCardState
                       ),
                     ),
                     const SizedBox(height: 6),
+                    // 짧은 제목
                     Text(
-                      widget.result.encounterSpot,
+                      widget.result.encounterSpotTitle,
                       style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black87,
-                        height: 1.4,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: _brownTitle,
+                        height: 1.3,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // 상세 스토리
+                    Text(
+                      widget.result.encounterSpotStory,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.black87.withValues(alpha: 0.8),
+                        height: 1.5,
                       ),
                     ),
                   ],
@@ -495,20 +507,32 @@ class _ChatYearlyEncounterResultCardState
                     color: Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
+                // 짧은 제목
                 Text(
-                  widget.result.fateSignal,
+                  widget.result.fateSignalTitle,
                   style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: _brownTitle,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                // 상세 스토리
+                Text(
+                  widget.result.fateSignalStory,
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Colors.black87,
-                    height: 1.5,
+                    color: Colors.black87.withValues(alpha: 0.85),
+                    height: 1.6,
                   ),
                 ),
               ],
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
           // 성격/특징
           UnifiedBlurWrapper(
@@ -520,20 +544,32 @@ class _ChatYearlyEncounterResultCardState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '요성격/특징',
+                  '이 사람의 성격/특징',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
+                // 짧은 제목
                 Text(
-                  widget.result.personality,
+                  widget.result.personalityTitle,
                   style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: _brownTitle,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                // 상세 스토리
+                Text(
+                  widget.result.personalityStory,
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Colors.black87,
-                    height: 1.5,
+                    color: Colors.black87.withValues(alpha: 0.85),
+                    height: 1.6,
                   ),
                 ),
               ],
