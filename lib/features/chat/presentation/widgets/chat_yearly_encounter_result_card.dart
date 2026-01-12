@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
-import '../../../../core/theme/obangseok_colors.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -14,15 +13,14 @@ import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../../fortune/domain/models/yearly_encounter_result.dart';
 
-/// 채팅용 올해의 인연 결과 카드
+/// 채팅용 올해의 인연 결과 카드 - 전통 스타일 인포그래픽
 ///
-/// - AI 생성 미래 인연 이미지
-/// - 외모 해시태그 (3개)
-/// - 첫 만남 장소/시간
-/// - 인연의 시그널
-/// - 성격/특징
-/// - 비주얼 궁합 점수
-/// - 전통 스타일 (매화꽃 + 황금 프레임 + 베이지 배경)
+/// 디자인 요소:
+/// - 베이지 배경 + 전통 구름 문양
+/// - 황금 회문(回文) 패턴 원형 프레임
+/// - 매화꽃 장식
+/// - 2열 그리드 정보 박스
+/// - 그라데이션 궁합 점수 배지
 class ChatYearlyEncounterResultCard extends ConsumerStatefulWidget {
   final YearlyEncounterResult result;
 
@@ -40,6 +38,16 @@ class _ChatYearlyEncounterResultCardState
     extends ConsumerState<ChatYearlyEncounterResultCard> {
   bool _isBlurred = false;
   List<String> _blurredSections = [];
+
+  // 디자인 색상
+  static const _beigeLight = Color(0xFFF5F0E6);
+  static const _beigeDark = Color(0xFFEDE5D8);
+  static const _goldFrame = Color(0xFFD4AF37);
+  static const _goldLight = Color(0xFFE8D4A0);
+  static const _brownTitle = Color(0xFF8B6914);
+  static const _pinkAccent = Color(0xFFE8B4B8);
+  static const _purpleGradientStart = Color(0xFFD8BFD8);
+  static const _purpleGradientEnd = Color(0xFFDDA0DD);
 
   @override
   void initState() {
@@ -67,7 +75,6 @@ class _ChatYearlyEncounterResultCardState
           backgroundColor: Colors.transparent,
           body: Stack(
             children: [
-              // 이미지 (핀치 줌 지원)
               Center(
                 child: InteractiveViewer(
                   minScale: 0.5,
@@ -79,8 +86,6 @@ class _ChatYearlyEncounterResultCardState
                   ),
                 ),
               ),
-
-              // 닫기 버튼
               Positioned(
                 top: MediaQuery.of(context).padding.top + 16,
                 right: 16,
@@ -98,33 +103,6 @@ class _ChatYearlyEncounterResultCardState
                       size: 24,
                     ),
                   ),
-                ),
-              ),
-
-              // 하단 정보
-              Positioned(
-                bottom: MediaQuery.of(context).padding.bottom + 32,
-                left: 0,
-                right: 0,
-                child: Column(
-                  children: [
-                    Text(
-                      '2026 올해의 인연',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.result.hashtagsString,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ],
@@ -164,8 +142,6 @@ class _ChatYearlyEncounterResultCardState
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isPremium = ref.watch(isPremiumProvider);
 
     return Container(
@@ -175,180 +151,143 @@ class _ChatYearlyEncounterResultCardState
         horizontal: DSSpacing.md,
       ),
       decoration: BoxDecoration(
-        // 베이지 그라데이션 배경
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: isDark
-              ? [
-                  colors.backgroundSecondary,
-                  colors.surface,
-                ]
-              : [
-                  const Color(0xFFF5F0E6), // 베이지 상단
-                  const Color(0xFFEDE5D8), // 베이지 하단
-                ],
+          colors: [_beigeLight, _beigeDark],
         ),
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: ObangseokColors.hwangMuted.withValues(alpha: 0.3),
-          width: 2,
-        ),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.08),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          // 1. 타이틀 헤더
-          _buildTitleHeader(context).animate().fadeIn(duration: 500.ms),
+          // 배경 장식 (구름 문양)
+          _buildBackgroundDecorations(),
 
-          // 2. 이미지 섹션 (황금 원형 프레임 + 매화꽃 장식)
-          _buildImageSection(context)
-              .animate()
-              .fadeIn(duration: 600.ms, delay: 100.ms),
+          // 메인 콘텐츠
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 1. 타이틀
+              _buildTitle().animate().fadeIn(duration: 500.ms),
 
-          // 3. 2열 그리드 (외모 해시태그 + 첫만남 장소)
-          _buildInfoGrid(context)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 200.ms),
+              // 2. 이미지 섹션 (황금 프레임 + 매화꽃)
+              _buildImageSection()
+                  .animate()
+                  .fadeIn(duration: 600.ms, delay: 100.ms),
 
-          // 4. 인연의 시그널
-          _buildSignalSection(context, isDark)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 300.ms),
+              // 3. 2열 그리드 (외모 + 첫만남 장소)
+              _buildInfoGrid()
+                  .animate()
+                  .fadeIn(duration: 500.ms, delay: 200.ms),
 
-          // 5. 성격/특징
-          _buildPersonalitySection(context, isDark)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 400.ms),
+              // 4. 인연의 시그널 + 성격/특징 박스
+              _buildSignalAndPersonalityBox()
+                  .animate()
+                  .fadeIn(duration: 500.ms, delay: 300.ms),
 
-          // 6. 비주얼 궁합 점수
-          _buildCompatibilityScore(context)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 500.ms),
+              // 5. 비주얼 궁합 점수 배지
+              _buildCompatibilityBadge()
+                  .animate()
+                  .fadeIn(duration: 500.ms, delay: 400.ms),
 
-          // 7. 언락 버튼 (블러 상태 + 비구독자)
-          if (_isBlurred && !isPremium)
-            _buildUnlockButton(context)
-                .animate()
-                .fadeIn(duration: 500.ms, delay: 600.ms),
+              // 6. 언락 버튼 (블러 상태 + 비구독자)
+              if (_isBlurred && !isPremium)
+                _buildUnlockButton()
+                    .animate()
+                    .fadeIn(duration: 500.ms, delay: 500.ms),
 
-          const SizedBox(height: DSSpacing.md),
-        ],
-      ),
-    );
-  }
+              const SizedBox(height: 16),
+            ],
+          ),
 
-  Widget _buildTitleHeader(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md,
-        vertical: DSSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            ObangseokColors.hwangMuted.withValues(alpha: 0.2),
-            ObangseokColors.hwangLight.withValues(alpha: 0.1),
-          ],
-        ),
-      ),
-      child: Row(
-        children: [
-          const Text('💕', style: TextStyle(fontSize: 24)),
-          const SizedBox(width: DSSpacing.xs),
-          Expanded(
-            child: Text(
-              '2026 올해의 인연은?',
-              style: typography.headingMedium.copyWith(
-                color: colors.textPrimary,
-                fontWeight: FontWeight.bold,
-              ),
+          // 액션 버튼 (우상단)
+          Positioned(
+            top: 8,
+            right: 8,
+            child: FortuneActionButtons(
+              contentId:
+                  'yearly_encounter_${widget.result.targetGender}_${DateTime.now().millisecondsSinceEpoch}',
+              contentType: 'yearly_encounter',
+              shareTitle: '2026 올해의 인연',
+              shareContent:
+                  '${widget.result.hashtagsString}\n\n${widget.result.encounterSpot}',
+              iconSize: 18,
+              iconColor: _brownTitle.withValues(alpha: 0.6),
             ),
           ),
-          // 액션 버튼
-          FortuneActionButtons(
-            contentId:
-                'yearly_encounter_${widget.result.targetGender}_${DateTime.now().millisecondsSinceEpoch}',
-            contentType: 'yearly_encounter',
-            shareTitle: '2026 올해의 인연',
-            shareContent:
-                '${widget.result.hashtagsString}\n\n${widget.result.encounterSpot}',
-            iconSize: 18,
-            iconColor: colors.textSecondary,
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildImageSection(BuildContext context) {
+  /// 배경 장식 (구름 문양)
+  Widget _buildBackgroundDecorations() {
+    return Positioned.fill(
+      child: CustomPaint(
+        painter: _CloudPatternPainter(),
+      ),
+    );
+  }
+
+  /// 타이틀: "2026 향라의 인연은?"
+  Widget _buildTitle() {
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(16, 20, 16, 8),
+      child: Text(
+        '2026 올해의 인연은?',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: _brownTitle,
+          letterSpacing: 1.5,
+          height: 1.2,
+        ),
+      ),
+    );
+  }
+
+  /// 이미지 섹션: 황금 회문 프레임 + 매화꽃
+  Widget _buildImageSection() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // 매화꽃 장식 (좌상단)
+          // 매화꽃 장식 (왼쪽)
           Positioned(
-            top: 0,
-            left: DSSpacing.md,
-            child: Text(
-              '🌸',
-              style: TextStyle(
-                fontSize: 28,
-                color: Colors.white.withValues(alpha: 0.8),
-              ),
-            ),
+            left: 20,
+            top: 20,
+            child: _buildCherryBlossomBranch(),
           ),
-          // 매화꽃 장식 (우상단)
+
+          // 구름 문양 장식 (오른쪽)
           Positioned(
-            top: 0,
-            right: DSSpacing.md,
-            child: Text(
-              '🌸',
-              style: TextStyle(
-                fontSize: 28,
-                color: Colors.white.withValues(alpha: 0.8),
-              ),
-            ),
+            right: 30,
+            top: 40,
+            child: _buildCloudDecoration(),
           ),
-          // 매화꽃 장식 (좌하단)
+
+          // 구름 문양 장식 (왼쪽 하단)
           Positioned(
-            bottom: 0,
-            left: DSSpacing.lg,
-            child: Text(
-              '✿',
-              style: TextStyle(
-                fontSize: 20,
-                color: ObangseokColors.jeokMuted.withValues(alpha: 0.6),
-              ),
-            ),
-          ),
-          // 매화꽃 장식 (우하단)
-          Positioned(
-            bottom: 0,
-            right: DSSpacing.lg,
-            child: Text(
-              '✿',
-              style: TextStyle(
-                fontSize: 20,
-                color: ObangseokColors.jeokMuted.withValues(alpha: 0.6),
-              ),
+            left: 40,
+            bottom: 20,
+            child: Transform.scale(
+              scaleX: -1,
+              child: _buildCloudDecoration(),
             ),
           ),
 
-          // 메인 이미지 (황금 프레임)
+          // 황금 회문 프레임 + 이미지
           GestureDetector(
             onTap: widget.result.imageUrl.isNotEmpty
                 ? () => _showFullScreenImage(context)
@@ -358,33 +297,35 @@ class _ChatYearlyEncounterResultCardState
               height: 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: ObangseokColors.hwangMuted,
-                  width: 4,
-                ),
                 boxShadow: [
                   BoxShadow(
-                    color: ObangseokColors.hwangDark.withValues(alpha: 0.4),
+                    color: _goldFrame.withValues(alpha: 0.4),
                     blurRadius: 20,
-                    offset: const Offset(0, 5),
+                    spreadRadius: 2,
                   ),
                 ],
               ),
-              child: ClipOval(
-                child: UnifiedBlurWrapper(
-                  isBlurred: _isBlurred && _blurredSections.contains('image'),
-                  blurredSections: _blurredSections,
-                  sectionKey: 'image',
-                  fortuneType: 'yearly-encounter',
-                  child: widget.result.imageUrl.isNotEmpty
-                      ? SmartImage(
-                          path: widget.result.imageUrl,
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorWidget: _buildDefaultImage(),
-                        )
-                      : _buildDefaultImage(),
+              child: CustomPaint(
+                painter: _GreekKeyFramePainter(),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: ClipOval(
+                    child: UnifiedBlurWrapper(
+                      isBlurred: _isBlurred && _blurredSections.contains('image'),
+                      blurredSections: _blurredSections,
+                      sectionKey: 'image',
+                      fortuneType: 'yearly-encounter',
+                      child: widget.result.imageUrl.isNotEmpty
+                          ? SmartImage(
+                              path: widget.result.imageUrl,
+                              width: 176,
+                              height: 176,
+                              fit: BoxFit.cover,
+                              errorWidget: _buildDefaultImage(),
+                            )
+                          : _buildDefaultImage(),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -394,90 +335,208 @@ class _ChatYearlyEncounterResultCardState
     );
   }
 
-  Widget _buildInfoGrid(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  /// 매화꽃 가지 장식
+  Widget _buildCherryBlossomBranch() {
+    return SizedBox(
+      width: 80,
+      height: 120,
+      child: Stack(
         children: [
-          // 왼쪽: 외모 해시태그
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(DSSpacing.sm),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? colors.backgroundSecondary
-                    : Colors.white.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(
-                  color: colors.textPrimary.withValues(alpha: 0.1),
+          // 가지
+          Positioned(
+            left: 35,
+            top: 0,
+            child: Transform.rotate(
+              angle: 0.3,
+              child: Container(
+                width: 3,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8B4513).withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '외모',
-                    style: typography.labelSmall.copyWith(
-                      color: colors.textSecondary,
-                      fontWeight: FontWeight.w600,
+            ),
+          ),
+          // 꽃들
+          const Positioned(left: 10, top: 10, child: Text('🌸', style: TextStyle(fontSize: 24))),
+          const Positioned(left: 35, top: 25, child: Text('🌸', style: TextStyle(fontSize: 20))),
+          const Positioned(left: 15, top: 50, child: Text('🌸', style: TextStyle(fontSize: 22))),
+          const Positioned(left: 40, top: 70, child: Text('🌸', style: TextStyle(fontSize: 18))),
+          const Positioned(left: 20, top: 85, child: Text('🌸', style: TextStyle(fontSize: 16))),
+        ],
+      ),
+    );
+  }
+
+  /// 구름 문양 장식
+  Widget _buildCloudDecoration() {
+    return Opacity(
+      opacity: 0.3,
+      child: CustomPaint(
+        size: const Size(60, 40),
+        painter: _TraditionalCloudPainter(),
+      ),
+    );
+  }
+
+  /// 2열 그리드: 외모 해시태그 + 첫만남 장소
+  Widget _buildInfoGrid() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 왼쪽: 외모
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  border: Border.all(color: Colors.black.withValues(alpha: 0.2), width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '외모',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: DSSpacing.xs),
-                  ...widget.result.appearanceHashtags.map(
-                    (tag) => Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        tag,
-                        style: typography.bodySmall.copyWith(
-                          color: ObangseokColors.jeokMuted,
-                          fontWeight: FontWeight.w500,
+                    const SizedBox(height: 6),
+                    ...widget.result.appearanceHashtags.map(
+                      (tag) => Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          tag,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.black87,
+                            height: 1.4,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: DSSpacing.sm),
-          // 오른쪽: 첫만남 장소
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(DSSpacing.sm),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? colors.backgroundSecondary
-                    : Colors.white.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(
-                  color: colors.textPrimary.withValues(alpha: 0.1),
+                  ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '첫만남 장소와 시간',
-                    style: typography.labelSmall.copyWith(
-                      color: colors.textSecondary,
-                      fontWeight: FontWeight.w600,
+            ),
+            // 오른쪽: 첫만남 장소
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  border: Border.all(color: Colors.black.withValues(alpha: 0.2), width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '첫만남장소와 시간',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: DSSpacing.xs),
-                  Text(
-                    widget.result.encounterSpot,
-                    style: typography.bodySmall.copyWith(
-                      color: colors.textPrimary,
-                      height: 1.4,
+                    const SizedBox(height: 6),
+                    Text(
+                      widget.result.encounterSpot,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black87,
+                        height: 1.4,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 인연의 시그널 + 성격/특징 박스
+  Widget _buildSignalAndPersonalityBox() {
+    final isBlurredSignal = _blurredSections.contains('signal');
+    final isBlurredPersonality = _blurredSections.contains('personality');
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.5),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 인연의 시그널
+          UnifiedBlurWrapper(
+            isBlurred: _isBlurred && isBlurredSignal,
+            blurredSections: _blurredSections,
+            sectionKey: 'signal',
+            fortuneType: 'yearly-encounter',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '인연의시그널',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.result.fateSignal,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.black87,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // 성격/특징
+          UnifiedBlurWrapper(
+            isBlurred: _isBlurred && isBlurredPersonality,
+            blurredSections: _blurredSections,
+            sectionKey: 'personality',
+            fortuneType: 'yearly-encounter',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '요성격/특징',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.result.personality,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.black87,
+                    height: 1.5,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -485,194 +544,71 @@ class _ChatYearlyEncounterResultCardState
     );
   }
 
-  Widget _buildSignalSection(BuildContext context, bool isDark) {
-    final colors = context.colors;
-    final typography = context.typography;
-    final isBlurredSection = _blurredSections.contains('signal');
-
+  /// 비주얼 궁합 점수 배지
+  Widget _buildCompatibilityBadge() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(
-        DSSpacing.md,
-        DSSpacing.sm,
-        DSSpacing.md,
-        0,
-      ),
-      padding: const EdgeInsets.all(DSSpacing.sm),
+      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
-        color: isDark
-            ? colors.backgroundSecondary
-            : Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
+        gradient: const LinearGradient(
+          colors: [_purpleGradientStart, _purpleGradientEnd],
         ),
-      ),
-      child: UnifiedBlurWrapper(
-        isBlurred: _isBlurred && isBlurredSection,
-        blurredSections: _blurredSections,
-        sectionKey: 'signal',
-        fortuneType: 'yearly-encounter',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Text('✨', style: TextStyle(fontSize: 16)),
-                const SizedBox(width: DSSpacing.xs),
-                Text(
-                  '인연의 시그널',
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: DSSpacing.xs),
-            Text(
-              widget.result.fateSignal,
-              style: typography.bodySmall.copyWith(
-                color: colors.textPrimary,
-                height: 1.5,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPersonalitySection(BuildContext context, bool isDark) {
-    final colors = context.colors;
-    final typography = context.typography;
-    final isBlurredSection = _blurredSections.contains('personality');
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(
-        DSSpacing.md,
-        DSSpacing.sm,
-        DSSpacing.md,
-        0,
-      ),
-      padding: const EdgeInsets.all(DSSpacing.sm),
-      decoration: BoxDecoration(
-        color: isDark
-            ? colors.backgroundSecondary
-            : Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
-        ),
-      ),
-      child: UnifiedBlurWrapper(
-        isBlurred: _isBlurred && isBlurredSection,
-        blurredSections: _blurredSections,
-        sectionKey: 'personality',
-        fortuneType: 'yearly-encounter',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Text('💫', style: TextStyle(fontSize: 16)),
-                const SizedBox(width: DSSpacing.xs),
-                Text(
-                  '성격/특징',
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: DSSpacing.xs),
-            Text(
-              widget.result.personality,
-              style: typography.bodySmall.copyWith(
-                color: colors.textPrimary,
-                height: 1.5,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCompatibilityScore(BuildContext context) {
-    final typography = context.typography;
-
-    return Container(
-      margin: const EdgeInsets.all(DSSpacing.md),
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md,
-        vertical: DSSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            ObangseokColors.jeokMuted.withValues(alpha: 0.8),
-            ObangseokColors.hwangMuted.withValues(alpha: 0.8),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(DSRadius.full),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: ObangseokColors.jeokMuted.withValues(alpha: 0.3),
-            blurRadius: 10,
+            color: _purpleGradientEnd.withValues(alpha: 0.3),
+            blurRadius: 8,
             offset: const Offset(0, 3),
           ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('✦', style: TextStyle(fontSize: 14, color: Colors.white)),
-          const SizedBox(width: DSSpacing.xs),
+          const Text('✦', style: TextStyle(fontSize: 12, color: Colors.white)),
+          const SizedBox(width: 8),
           Text(
             '내 얼굴과의 비주얼 합계: ${widget.result.compatibilityScore}',
-            style: typography.labelMedium.copyWith(
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
               color: Colors.white,
-              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: DSSpacing.xs),
-          const Text('✦', style: TextStyle(fontSize: 14, color: Colors.white)),
+          const SizedBox(width: 8),
+          const Text('✦', style: TextStyle(fontSize: 12, color: Colors.white)),
         ],
       ),
     );
   }
 
-  Widget _buildUnlockButton(BuildContext context) {
-    final typography = context.typography;
-
+  Widget _buildUnlockButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: _showAdAndUnblur,
-          borderRadius: BorderRadius.circular(DSRadius.md),
+          borderRadius: BorderRadius.circular(12),
           child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.md,
-              vertical: DSSpacing.sm,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [ObangseokColors.jeokMuted, ObangseokColors.hwangMuted],
+                colors: [_pinkAccent, _purpleGradientEnd],
               ),
-              borderRadius: BorderRadius.circular(DSRadius.md),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('💕', style: TextStyle(fontSize: 18)),
-                const SizedBox(width: DSSpacing.xs),
+                Text('💕', style: TextStyle(fontSize: 18)),
+                SizedBox(width: 8),
                 Text(
                   '인연 정보 모두 보기',
-                  style: typography.labelMedium.copyWith(
+                  style: TextStyle(
                     color: Colors.white,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -686,13 +622,149 @@ class _ChatYearlyEncounterResultCardState
 
   Widget _buildDefaultImage() {
     return Container(
-      color: ObangseokColors.hwangMuted.withValues(alpha: 0.2),
+      color: _goldLight.withValues(alpha: 0.3),
       child: const Center(
         child: Text(
           '💕',
-          style: TextStyle(fontSize: 80),
+          style: TextStyle(fontSize: 60),
         ),
       ),
     );
   }
+}
+
+/// 황금 회문(Greek Key) 패턴 원형 프레임 페인터
+class _GreekKeyFramePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // 외곽 원 (황금색)
+    final outerPaint = Paint()
+      ..color = const Color(0xFFD4AF37)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8;
+
+    canvas.drawCircle(center, radius - 4, outerPaint);
+
+    // 내부 원 (연한 황금색)
+    final innerPaint = Paint()
+      ..color = const Color(0xFFE8D4A0)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+
+    canvas.drawCircle(center, radius - 10, innerPaint);
+
+    // 회문 패턴 (간단한 점선 패턴으로 표현)
+    final patternPaint = Paint()
+      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.6)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    const patternRadius = 92.0;
+    const segments = 24;
+    for (int i = 0; i < segments; i++) {
+      final angle = (i * 2 * 3.14159) / segments;
+      final startX = center.dx + patternRadius * 0.95 * cos(angle);
+      final startY = center.dy + patternRadius * 0.95 * sin(angle);
+      final endX = center.dx + patternRadius * 1.05 * cos(angle);
+      final endY = center.dy + patternRadius * 1.05 * sin(angle);
+
+      if (i % 2 == 0) {
+        canvas.drawLine(
+          Offset(startX, startY),
+          Offset(endX, endY),
+          patternPaint,
+        );
+      }
+    }
+  }
+
+  double cos(double radians) => _cos(radians);
+  double sin(double radians) => _sin(radians);
+
+  double _cos(double x) {
+    return 1 - (x * x) / 2 + (x * x * x * x) / 24 - (x * x * x * x * x * x) / 720;
+  }
+
+  double _sin(double x) {
+    return x - (x * x * x) / 6 + (x * x * x * x * x) / 120;
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// 전통 구름 문양 페인터
+class _TraditionalCloudPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFD4AF37)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final path = Path();
+
+    // 구름 형태
+    path.moveTo(0, size.height * 0.6);
+    path.quadraticBezierTo(
+      size.width * 0.2, size.height * 0.2,
+      size.width * 0.4, size.height * 0.4,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.5, size.height * 0.1,
+      size.width * 0.7, size.height * 0.3,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.9, size.height * 0.1,
+      size.width, size.height * 0.5,
+    );
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// 배경 구름 패턴 페인터
+class _CloudPatternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.08)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    // 우상단 구름
+    _drawCloud(canvas, Offset(size.width - 60, 80), 50, paint);
+
+    // 좌하단 구름
+    _drawCloud(canvas, Offset(50, size.height - 100), 40, paint);
+  }
+
+  void _drawCloud(Canvas canvas, Offset center, double scale, Paint paint) {
+    final path = Path();
+
+    path.moveTo(center.dx - scale * 0.5, center.dy);
+    path.quadraticBezierTo(
+      center.dx - scale * 0.3, center.dy - scale * 0.4,
+      center.dx, center.dy - scale * 0.2,
+    );
+    path.quadraticBezierTo(
+      center.dx + scale * 0.2, center.dy - scale * 0.5,
+      center.dx + scale * 0.4, center.dy - scale * 0.1,
+    );
+    path.quadraticBezierTo(
+      center.dx + scale * 0.6, center.dy - scale * 0.3,
+      center.dx + scale * 0.5, center.dy + scale * 0.1,
+    );
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

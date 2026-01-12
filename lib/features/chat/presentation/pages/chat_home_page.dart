@@ -59,6 +59,7 @@ import '../../../../core/utils/direction_calculator.dart';
 import '../../../../features/fortune/domain/models/sports_schedule.dart';
 import '../../../../features/fortune/domain/models/match_insight.dart';
 import '../../../../features/fortune/domain/models/past_life_result.dart';
+import '../../../../features/fortune/domain/models/yearly_encounter_result.dart';
 import '../widgets/guest_login_banner.dart';
 import '../../../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../../../services/fortune_history_service.dart';
@@ -1825,6 +1826,27 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
       }
 
+      // yearly-encounter인 경우 YearlyEncounterResult 구성
+      YearlyEncounterResult? yearlyEncounterResult;
+      if (fortuneTypeStr == 'yearly-encounter') {
+        try {
+          final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+          Logger.info(
+              '[ChatHome] YearlyEncounterResult 구성 시작: metadata keys=${metadata.keys.toList()}');
+
+          yearlyEncounterResult = YearlyEncounterResult.fromJson({
+            ...metadata,
+            'isBlurred': fortune.isBlurred,
+            'blurredSections': fortune.blurredSections,
+          });
+
+          Logger.info(
+              '[ChatHome] YearlyEncounterResult 구성 성공: score=${yearlyEncounterResult.compatibilityScore}');
+        } catch (e, st) {
+          Logger.error('[ChatHome] YearlyEncounterResult 구성 실패', e, st);
+        }
+      }
+
       // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
       chatNotifier.addFortuneResultMessage(
         text: typeName,
@@ -1832,6 +1854,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         fortune: fortune,
         matchInsight: matchInsight,
         pastLifeResult: pastLifeResult,
+        yearlyEncounterResult: yearlyEncounterResult,
         isBlurred: fortune.isBlurred,
         blurredSections: fortune.blurredSections,
         selectedDate: selectedDate,

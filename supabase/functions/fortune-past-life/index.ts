@@ -1274,6 +1274,137 @@ async function uploadPortraitToStorage(
   return publicUrlData.publicUrl
 }
 
+// =====================================================
+// 이미지 Pool 관련 함수
+// 각 status(직업)당 3개까지 저장 후 재사용
+// =====================================================
+
+const MAX_PORTRAITS_PER_STATUS = 3
+
+/**
+ * Pool에서 status별 이미지 개수 조회
+ */
+async function getPortraitCountForStatus(
+  status: string,
+  gender: string
+): Promise<number> {
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+  try {
+    const { data, error } = await supabase.rpc('get_portrait_count_for_status', {
+      p_status: status,
+      p_gender: gender,
+    })
+
+    if (error) {
+      console.error('⚠️ [PastLife] Error getting portrait count:', error)
+      return 0
+    }
+
+    return data || 0
+  } catch (e) {
+    console.error('⚠️ [PastLife] Exception getting portrait count:', e)
+    return 0
+  }
+}
+
+/**
+ * Pool에서 랜덤 이미지 가져오기
+ */
+async function getRandomPortraitFromPool(
+  status: string,
+  gender: string
+): Promise<string | null> {
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+  try {
+    const { data, error } = await supabase.rpc('get_random_portrait_for_status', {
+      p_status: status,
+      p_gender: gender,
+    })
+
+    if (error) {
+      console.error('⚠️ [PastLife] Error getting random portrait:', error)
+      return null
+    }
+
+    if (data && data.length > 0) {
+      console.log(`♻️ [PastLife] Reusing portrait from pool for ${status}/${gender}`)
+      return data[0].portrait_url
+    }
+
+    return null
+  } catch (e) {
+    console.error('⚠️ [PastLife] Exception getting random portrait:', e)
+    return null
+  }
+}
+
+/**
+ * 신분별 기본 초상화 URL 반환 (Fallback용)
+ */
+function getDefaultPortraitUrl(status: string): string {
+  const statusFallbacks: Record<string, string> = {
+    king: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-king.jpg',
+    queen: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-queen.jpg',
+    gisaeng: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-gisaeng.jpg',
+    scholar: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-scholar.jpg',
+    warrior: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-warrior.jpg',
+    noble: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-noble.jpg',
+    merchant: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-merchant.jpg',
+    farmer: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-farmer.jpg',
+    monk: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-monk.jpg',
+    artisan: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-artisan.jpg',
+    shaman: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-shaman.jpg',
+    servant: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-servant.jpg',
+  }
+
+  return statusFallbacks[status] ||
+    'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-portrait.jpg'
+}
+
+/**
+ * 새 이미지를 Pool에 저장
+ */
+async function savePortraitToPool(
+  status: string,
+  statusKr: string,
+  statusEn: string,
+  gender: string,
+  portraitUrl: string,
+  portraitPrompt: string
+): Promise<boolean> {
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+  try {
+    const { data, error } = await supabase.rpc('save_portrait_to_pool', {
+      p_status: status,
+      p_status_kr: statusKr,
+      p_status_en: statusEn,
+      p_gender: gender,
+      p_portrait_url: portraitUrl,
+      p_portrait_prompt: portraitPrompt,
+      p_max_per_status: MAX_PORTRAITS_PER_STATUS,
+    })
+
+    if (error) {
+      console.error('⚠️ [PastLife] Error saving to pool:', error)
+      return false
+    }
+
+    if (data) {
+      console.log(`💾 [PastLife] Portrait saved to pool: ${status}/${gender}`)
+    } else {
+      console.log(`ℹ️ [PastLife] Pool full for ${status}/${gender}, not saving`)
+    }
+
+    return data || false
+  } catch (e) {
+    console.error('⚠️ [PastLife] Exception saving to pool:', e)
+    return false
+  }
+}
+
 /**
  * 스토리 챕터 인터페이스
  */
@@ -1546,33 +1677,73 @@ serve(async (req) => {
       faceFeatures
     )
 
-    // 4. Gemini로 조선시대 자화상 스타일 초상화 생성 (없으면 fallback)
-    const imageBase64 = await generatePortraitWithGemini(portraitPrompt)
-
-    // 5. Storage에 업로드 (이미지가 없으면 기본 이미지 사용)
+    // 4. 이미지 Pool 확인 후 초상화 결정
+    //    - 얼굴 이미지가 있으면: 항상 새로 생성 (개인화)
+    //    - 없으면: Pool에서 재사용 (status+gender당 3개까지)
     let portraitUrl: string
-    if (imageBase64) {
-      portraitUrl = await uploadPortraitToStorage(imageBase64, userId)
-    } else {
-      // Fallback: 신분별 기본 초상화 이미지
-      const statusFallbacks: Record<string, string> = {
-        king: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-king.jpg',
-        queen: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-queen.jpg',
-        gisaeng: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-gisaeng.jpg',
-        scholar: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-scholar.jpg',
-        warrior: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-warrior.jpg',
-        noble: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-noble.jpg',
-        merchant: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-merchant.jpg',
-        farmer: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-farmer.jpg',
-        monk: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-monk.jpg',
-        artisan: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-artisan.jpg',
-        shaman: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-shaman.jpg',
-        servant: 'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-servant.jpg',
+    let isFromPool = false
+
+    if (faceImageBase64) {
+      // 얼굴 이미지 제공됨 → 개인화 필요, 항상 새로 생성
+      console.log('👤 [PastLife] Face image provided, generating personalized portrait...')
+      const imageBase64 = await generatePortraitWithGemini(portraitPrompt)
+
+      if (imageBase64) {
+        portraitUrl = await uploadPortraitToStorage(imageBase64, userId)
+        // 개인화된 이미지는 Pool에 저장하지 않음 (재사용 불가)
+      } else {
+        // Fallback 사용
+        portraitUrl = getDefaultPortraitUrl(scenario.status)
+        console.log(`📷 [PastLife] Using fallback portrait for ${scenario.status}`)
       }
-      portraitUrl = statusFallbacks[scenario.status] ||
-        'https://uqshnmhpdjqduwdypgxr.supabase.co/storage/v1/object/public/assets/past-life/default-portrait.jpg'
-      console.log(`📷 [PastLife] Using fallback portrait for ${scenario.status}`)
+    } else {
+      // 얼굴 이미지 없음 → Pool 확인 후 재사용/생성
+      const poolCount = await getPortraitCountForStatus(scenario.status, pastLifeGender)
+      console.log(`🔍 [PastLife] Pool check: ${scenario.status}/${pastLifeGender} = ${poolCount}/${MAX_PORTRAITS_PER_STATUS}`)
+
+      if (poolCount >= MAX_PORTRAITS_PER_STATUS) {
+        // Pool에 충분한 이미지 있음 → 재사용
+        const poolPortrait = await getRandomPortraitFromPool(scenario.status, pastLifeGender)
+
+        if (poolPortrait) {
+          portraitUrl = poolPortrait
+          isFromPool = true
+          console.log(`♻️ [PastLife] Reusing portrait from pool`)
+        } else {
+          // Pool 조회 실패 → 새로 생성
+          const imageBase64 = await generatePortraitWithGemini(portraitPrompt)
+          if (imageBase64) {
+            portraitUrl = await uploadPortraitToStorage(imageBase64, userId)
+          } else {
+            portraitUrl = getDefaultPortraitUrl(scenario.status)
+          }
+        }
+      } else {
+        // Pool이 아직 부족함 → 새로 생성 후 Pool에 저장
+        console.log(`🎨 [PastLife] Pool not full, generating new portrait...`)
+        const imageBase64 = await generatePortraitWithGemini(portraitPrompt)
+
+        if (imageBase64) {
+          portraitUrl = await uploadPortraitToStorage(imageBase64, userId)
+
+          // Pool에 저장 (비동기, 실패해도 무시)
+          savePortraitToPool(
+            scenario.status,
+            statusConfig.kr,
+            statusConfig.en,
+            pastLifeGender,
+            portraitUrl,
+            portraitPrompt
+          ).catch(err => console.error('⚠️ [PastLife] Failed to save to pool:', err))
+        } else {
+          portraitUrl = getDefaultPortraitUrl(scenario.status)
+          console.log(`📷 [PastLife] Using fallback portrait for ${scenario.status}`)
+        }
+      }
     }
+
+    console.log(`   - 초상화 URL: ${portraitUrl.substring(0, 80)}...`)
+    console.log(`   - Pool에서 재사용: ${isFromPool}`)
 
     // 6. LLM으로 챕터 기반 스토리 생성
     const { story, summary, advice, score, chapters, llmResponse } = await generatePastLifeStory(
@@ -1647,6 +1818,10 @@ serve(async (req) => {
         isPremium,
         scenarioId: scenario.id,
         scenarioCategory: scenario.category,
+        // 이미지 Pool 관련 메타데이터
+        portraitFromPool: isFromPool,
+        portraitStatus: scenario.status,
+        portraitGender: pastLifeGender,
       },
     }).catch(console.error)
 

@@ -5,6 +5,7 @@ import '../../../../core/utils/haptic_utils.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../fortune/domain/models/match_insight.dart';
 import '../../../fortune/domain/models/past_life_result.dart';
+import '../../../fortune/domain/models/yearly_encounter_result.dart';
 import '../../domain/models/chat_message.dart';
 import '../../domain/models/chat_state.dart';
 
@@ -52,6 +53,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     DateTime? selectedDate,
     MatchInsight? matchInsight,
     PastLifeResult? pastLifeResult,
+    YearlyEncounterResult? yearlyEncounterResult,
   }) {
     // 결과 표시 시 강한 햅틱 피드백
     HapticUtils.heavyImpact();
@@ -69,6 +71,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       selectedDate: selectedDate,
       matchInsight: matchInsight,
       pastLifeResult: pastLifeResult,
+      yearlyEncounterResult: yearlyEncounterResult,
     );
     state = state.copyWith(
       messages: [...state.messages, message],
