@@ -1,76 +1,54 @@
-Fortune - AI-Powered Personalized Horoscope
+ZPZG - Your Personal AI Life Coach
 
-Discover yourself anew every day with Fortune's unique blend of ancient wisdom and cutting-edge AI
-technology!
+Make better decisions every day with AI-powered personalized guidance!
 
-What Makes Fortune Special
+ZPZG analyzes your personal profile to deliver daily insights and actionable advice tailored specifically to you. Whether you're navigating relationships, career choices, or personal growth, ZPZG is your trusted companion for life's daily decisions.
 
- Truly Personalized Experience
-  • Advanced AI analysis based on your birth date, time, and location
-  • Customized fortune readings created just for you
-  • Fresh insights and guidance updated daily
+■ KEY FEATURES
 
- Complete Fortune Services
-  • Daily Horoscope - Start your day with meaningful messages
-  • Love & Relationships - Navigate your romantic journey with confidence
-  • Career & Finance - Make informed decisions for professional success
-  • Health & Wellness - Maintain balance in your mind and body
+【Personalized Daily Guidance】
+• AI-generated insights based on your unique profile
+• Fresh advice updated every day
+• Practical tips you can actually use
 
- Cutting-Edge AI Technology
-  • Perfect fusion of traditional astrology and modern AI
-  • Deep analysis of your personality traits and characteristics
-  • Practical, actionable advice for real-world situations
+【Life Areas We Cover】
+• Relationships - Navigate love and connections with confidence
+• Career - Make informed professional decisions
+• Wellness - Balance your mind and body
+• Personal Growth - Discover your potential
 
-Seamless User Experience
-  • Intuitive design that anyone can master instantly
-  • Quick social login options (Google, Apple, Kakao, Naver)
-  • Your privacy and data security are our top priority
+【Smart AI Technology】
+• Advanced analysis of your personal characteristics
+• Practical, actionable recommendations
+• Thoughtful guidance based on your situation
 
- Beautiful & Modern Design
-  • Clean, elegant interface with smooth animations
-  • Dark mode support for comfortable reading anytime
-  • Intuitive navigation that feels natural and effortless
+【Beautiful Experience】
+• Clean, modern interface
+• Dark mode for comfortable reading
+• Intuitive navigation
 
-  Why Choose Fortune?
-  Unlike generic horoscope apps, Fortune creates a detailed profile based on your specific birth
-  information. Our AI doesn't just generate random predictions—it analyzes cosmic patterns and
-  provides meaningful guidance tailored to your unique life path.
+■ WHY CHOOSE ZPZG?
 
-  Perfect For:
-  • Anyone seeking daily inspiration and self-discovery
-  • People interested in astrology and personal growth
-  • Users who value personalized, thoughtful content
-  • Those looking for guidance in love, career, and wellness
+ZPZG isn't just another generic advice app. We create a detailed understanding of who you are and provide meaningful guidance that speaks to your unique life journey.
 
- Join Our Global Community
-  Thousands of users worldwide start their day with Fortune's personalized insights. Experience the
-  difference that truly customized astrology can make in your life.
+Perfect For:
+• Anyone seeking daily inspiration
+• People focused on personal development
+• Users who value thoughtful, personalized content
+• Those looking for guidance in life decisions
 
-Features You'll Love:
-  • Instant personalized readings
-  • Beautiful, shareable fortune cards
-  • Daily notifications (optional)
-  • Offline reading capability
-  • Multiple language support
-  • Premium insights and detailed analysis
+■ PREMIUM FEATURES
 
-Customer Support
-  Our dedicated team is here to help you get the most from Fortune:
-  • Email: support@fortune.app
-  • Website: https://fortune.app
-  • Comprehensive FAQ and user guides
+• Unlimited daily insights
+• Detailed personal reports
+• Ad-free experience
+• Priority customer support
 
-Privacy & Security
-  We take your privacy seriously. All personal information is encrypted and securely stored. We never
-  share your data with third parties without your explicit consent.
+■ SUPPORT
 
-Important Disclaimer
-  Fortune is designed for entertainment and personal reflection purposes. Our AI provides thoughtful
-  analysis based on astrological traditions, but please use your own judgment for important life
-  decisions.
+• Email: support@fortune.app
+• Website: https://fortune.app
 
-  Download Fortune today and unlock the cosmic insights waiting for you! Your personalized journey of
-  self-discovery starts now. 
+■ IMPORTANT NOTE
 
-  Transform your daily routine with meaningful, AI-powered guidance that speaks directly to your soul.
-
+ZPZG is designed for personal reflection and entertainment purposes. Please use your own judgment for important life decisions.

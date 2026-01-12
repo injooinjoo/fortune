@@ -45,14 +45,14 @@ enum FortuneType {
   exLover('ex-lover', '재회 분석'),
   relationshipFortuneWeekly('relationship-fortune-weekly', '주간 연애 인사이트'),
   soulmate('soulmate', '소울메이트'),
-  avoidPeople('avoid-people', '오늘의 경계운'),
+  avoidPeople('avoid-people', '오늘의 주의사항'),
 
   // Career & Wealth
   career('career', '직업 분석'),
   employment('employment', '취업 가이드'),
   business('business', '사업 분석'),
   wealth('wealth', '재물 분석'),
-  money('money', '재물운'),
+  money('money', '재물 가이드'),
   startup('startup', '창업 인사이트'),
   luckyJob('lucky-job', '추천 직업'),
   luckySidejob('lucky-sidejob', '부업 가이드'),
@@ -161,38 +161,38 @@ class FortuneMetadata {
 /// Fortune metadata repository
 class FortuneMetadataRepository {
   static final Map<FortuneType, FortuneMetadata> _metadata = {
-    // Daily Fortunes
+    // Daily Insights
     FortuneType.daily: const FortuneMetadata(
       type: FortuneType.daily,
-      title: '오늘의 운세',
-      subtitle: '오늘 하루의 전체적인 운세를 확인하세요',
+      title: '오늘의 인사이트',
+      subtitle: '오늘 하루의 전체적인 가이드를 확인하세요',
       icon: Icons.today,
       primaryColor: Color(0xFF4A90E2),
       secondaryColor: Color(0xFF5BA0F2),
       tokenCost: 0,
-      description: '오늘 하루 동안의 전반적인 운세와 행운 지수를 확인할 수 있습니다.'
+      description: '오늘 하루 동안의 전반적인 인사이트와 행운 지수를 확인할 수 있습니다.'
     ),
     
     FortuneType.tomorrow: const FortuneMetadata(
       type: FortuneType.tomorrow,
-      title: '내일의 운세',
-      subtitle: '내일의 운세를 미리 확인하세요',
+      title: '내일의 인사이트',
+      subtitle: '내일의 가이드를 미리 확인하세요',
       icon: Icons.event,
       primaryColor: Color(0xFF7B68EE),
       secondaryColor: Color(0xFF8B78FE),
       tokenCost: 1,
-      description: '내일의 운세를 미리 확인하고 준비할 수 있습니다.'
+      description: '내일의 인사이트를 미리 확인하고 준비할 수 있습니다.'
     ),
     
     FortuneType.weekly: const FortuneMetadata(
       type: FortuneType.weekly,
-      title: '주간 운세',
-      subtitle: '이번 주 전체 운세를 확인하세요',
+      title: '주간 인사이트',
+      subtitle: '이번 주 전체 가이드를 확인하세요',
       icon: Icons.date_range,
       primaryColor: Color(0xFF50C878),
       secondaryColor: Color(0xFF60D888),
       tokenCost: 2,
-      description: '이번 주 7일간의 전체적인 운세 흐름을 파악할 수 있습니다.'
+      description: '이번 주 7일간의 전체적인 흐름을 파악할 수 있습니다.'
     ),
     
     // Traditional
@@ -212,13 +212,13 @@ class FortuneMetadataRepository {
     // Love & Relationships
     FortuneType.love: const FortuneMetadata(
       type: FortuneType.love,
-      title: '연애운',
-      subtitle: '연애 운세와 조언',
+      title: '연애 인사이트',
+      subtitle: '연애와 관계에 대한 조언',
       icon: Icons.favorite,
       primaryColor: Color(0xFFFF69B4),
       secondaryColor: Color(0xFFFF79C4),
       tokenCost: 2,
-      description: '현재의 연애운과 미래의 인연에 대해 알아봅니다.'
+      description: '현재의 연애 상황과 미래의 인연에 대해 알아봅니다.'
     ),
     
     FortuneType.compatibility: const FortuneMetadata(
@@ -236,24 +236,24 @@ class FortuneMetadataRepository {
     // Career & Wealth
     FortuneType.career: const FortuneMetadata(
       type: FortuneType.career,
-      title: '직업운',
-      subtitle: '직장과 커리어 운세',
+      title: '커리어 가이드',
+      subtitle: '직장과 커리어에 대한 조언',
       icon: Icons.work,
       primaryColor: Color(0xFF4169E1),
       secondaryColor: Color(0xFF5179F1),
       tokenCost: 2,
-      description: '직장 생활과 커리어 발전에 대한 운세를 확인합니다.'
+      description: '직장 생활과 커리어 발전에 대한 가이드를 확인합니다.'
     ),
     
     FortuneType.wealth: const FortuneMetadata(
       type: FortuneType.wealth,
-      title: '재물운',
-      subtitle: '금전운과 재물 획득 운세',
+      title: '재물 가이드',
+      subtitle: '금전과 재물 관리 가이드',
       icon: Icons.attach_money,
       primaryColor: Color(0xFFFFD700),
       secondaryColor: Color(0xFFFFE710),
       tokenCost: 2,
-      description: '금전운과 재물 획득의 기회를 알아봅니다.'
+      description: '금전 관리와 재물 획득의 기회를 알아봅니다.'
     ),
     
     // Lucky Items
@@ -279,7 +279,7 @@ class FortuneMetadataRepository {
       tokenCost: 3,
       requiresBirthInfo: false,
       inputFields: ['currentArea', 'targetArea', 'period', 'purpose'],
-      description: '이사할 지역의 방위와 시기를 분석하여 길한 이사운을 알려드립니다.',
+      description: '이사할 지역의 방위와 시기를 분석하여 좋은 이사 시기를 알려드립니다.',
     ),
 
     FortuneType.homeFengshui: const FortuneMetadata(
@@ -356,7 +356,7 @@ class FortuneMetadataRepository {
 
 /// Fortune categories for grouping
 enum FortuneCategory {
-  daily('일일운세'),
+  daily('일일 인사이트'),
   traditional('전통'),
   love('연애/관계'),
   career('직업/재물'),
