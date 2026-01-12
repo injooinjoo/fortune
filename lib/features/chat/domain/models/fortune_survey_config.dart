@@ -157,6 +157,9 @@ enum FortuneSurveyType {
 
   // 웰니스 (1개)
   gratitude,      // 감사일기
+
+  // 이미지 생성 (1개)
+  yearlyEncounter, // 올해의 인연
 }
 
 /// 설문 설정

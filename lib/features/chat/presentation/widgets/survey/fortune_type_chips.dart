@@ -191,6 +191,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return const Color(0xFF4CAF50); // 그린
       case FortuneSurveyType.gratitude:
         return const Color(0xFFFFC107); // 앰버
+      case FortuneSurveyType.yearlyEncounter:
+        return const Color(0xFFE11D48); // 로즈
     }
   }
 
@@ -270,6 +272,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '이사운';
       case FortuneSurveyType.gratitude:
         return '감사일기';
+      case FortuneSurveyType.yearlyEncounter:
+        return '올해의 인연';
     }
   }
 
@@ -349,6 +353,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '🏠';
       case FortuneSurveyType.gratitude:
         return '✨';
+      case FortuneSurveyType.yearlyEncounter:
+        return '💕';
     }
   }
 }

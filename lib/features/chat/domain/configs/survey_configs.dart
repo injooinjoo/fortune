@@ -547,6 +547,8 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   FortuneSurveyType.moving: movingSurveyConfig,
   // 웰니스 (1개)
   FortuneSurveyType.gratitude: gratitudeSurveyConfig,
+  // 이미지 생성 (1개)
+  FortuneSurveyType.yearlyEncounter: yearlyEncounterSurveyConfig,
 };
 
 /// 분야별 포지션 가져오기
@@ -2303,6 +2305,83 @@ const gratitudeSurveyConfig = FortuneSurveyConfig(
       id: 'gratitude3',
       question: '오늘 하루 중 가장 따뜻했던 장면 하나를 떠올려 보세요 🍃',
       inputType: SurveyInputType.text,
+    ),
+  ],
+);
+
+// ============================================================
+// YearlyEncounter (올해의 인연) 설문 설정
+// ============================================================
+
+/// 상대방 성별 옵션
+const _targetGenderOptions = [
+  SurveyOption(id: 'male', label: '남성', emoji: '👨'),
+  SurveyOption(id: 'female', label: '여성', emoji: '👩'),
+];
+
+/// 사용자 연령대 옵션
+const _userAgeOptions = [
+  SurveyOption(id: 'early20s', label: '20대 초반', emoji: '🌱'),
+  SurveyOption(id: 'mid20s', label: '20대 중반', emoji: '🌿'),
+  SurveyOption(id: 'late20s', label: '20대 후반', emoji: '🌳'),
+  SurveyOption(id: 'early30s', label: '30대 초반', emoji: '🌲'),
+  SurveyOption(id: 'mid30s', label: '30대 중반', emoji: '🏔️'),
+  SurveyOption(id: 'late30s', label: '30대 후반', emoji: '⛰️'),
+  SurveyOption(id: 'over40s', label: '40대 이상', emoji: '🗻'),
+];
+
+/// 희망 MBTI 옵션
+const _idealMbtiOptions = [
+  SurveyOption(id: 'any', label: '상관없음', emoji: '✨'),
+  SurveyOption(id: 'ISTJ', label: 'ISTJ', emoji: '📋'),
+  SurveyOption(id: 'ISFJ', label: 'ISFJ', emoji: '🛡️'),
+  SurveyOption(id: 'INFJ', label: 'INFJ', emoji: '🔮'),
+  SurveyOption(id: 'INTJ', label: 'INTJ', emoji: '🧠'),
+  SurveyOption(id: 'ISTP', label: 'ISTP', emoji: '🔧'),
+  SurveyOption(id: 'ISFP', label: 'ISFP', emoji: '🎨'),
+  SurveyOption(id: 'INFP', label: 'INFP', emoji: '🌙'),
+  SurveyOption(id: 'INTP', label: 'INTP', emoji: '💡'),
+  SurveyOption(id: 'ESTP', label: 'ESTP', emoji: '🎯'),
+  SurveyOption(id: 'ESFP', label: 'ESFP', emoji: '🎉'),
+  SurveyOption(id: 'ENFP', label: 'ENFP', emoji: '🌈'),
+  SurveyOption(id: 'ENTP', label: 'ENTP', emoji: '⚡'),
+  SurveyOption(id: 'ESTJ', label: 'ESTJ', emoji: '📊'),
+  SurveyOption(id: 'ESFJ', label: 'ESFJ', emoji: '💝'),
+  SurveyOption(id: 'ENFJ', label: 'ENFJ', emoji: '🌟'),
+  SurveyOption(id: 'ENTJ', label: 'ENTJ', emoji: '👑'),
+];
+
+/// YearlyEncounter 설문 설정
+const yearlyEncounterSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.yearlyEncounter,
+  title: '2026 올해의 인연',
+  description: '올해 만나게 될 운명의 상대를 미리 만나보세요',
+  emoji: '💕',
+  accentColor: FortuneColors.love,
+  steps: [
+    SurveyStep(
+      id: 'targetGender',
+      question: '어떤 성별의 인연을 찾고 있나요?',
+      inputType: SurveyInputType.chips,
+      options: _targetGenderOptions,
+    ),
+    SurveyStep(
+      id: 'userAge',
+      question: '나이대가 어떻게 되세요?',
+      inputType: SurveyInputType.chips,
+      options: _userAgeOptions,
+    ),
+    SurveyStep(
+      id: 'idealMbti',
+      question: '선호하는 MBTI가 있으신가요?',
+      inputType: SurveyInputType.chips,
+      options: _idealMbtiOptions,
+    ),
+    SurveyStep(
+      id: 'idealType',
+      question: '어떤 사람을 만나고 싶으세요?',
+      inputType: SurveyInputType.text,
+      isRequired: false,
     ),
   ],
 );

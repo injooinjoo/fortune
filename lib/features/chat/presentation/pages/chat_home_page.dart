@@ -28,6 +28,8 @@ import '../../domain/models/fortune_survey_config.dart';
 import '../../domain/configs/survey_configs.dart';
 import '../../domain/services/intent_detector.dart';
 import '../../data/services/fortune_recommend_service.dart';
+import '../../data/services/free_chat_service.dart';
+import '../../../../shared/components/token_insufficient_modal.dart';
 import '../providers/chat_messages_provider.dart';
 import '../providers/chat_survey_provider.dart';
 import '../widgets/chat_welcome_view.dart';
@@ -89,6 +91,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   /// AI 추천 서비스
   late final FortuneRecommendService _recommendService;
 
+  /// 자유 채팅 서비스
+  late final FreeChatService _freeChatService;
+
   /// AI 추천 로딩 상태
   bool _isLoadingRecommendations = false;
 
@@ -117,6 +122,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     FortuneSurveyType.dailyCalendar:
         'assets/images/chat/backgrounds/bg_time.png',
     FortuneSurveyType.love: 'assets/images/chat/backgrounds/bg_love.png',
+    FortuneSurveyType.yearlyEncounter:
+        'assets/images/chat/backgrounds/bg_love.png',
     FortuneSurveyType.avoidPeople:
         'assets/images/chat/backgrounds/bg_avoid_people.png',
     FortuneSurveyType.exam: 'assets/images/chat/backgrounds/bg_exam.png',
@@ -156,6 +163,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   void initState() {
     super.initState();
     _recommendService = FortuneRecommendService();
+    _freeChatService = FreeChatService();
     _textController.addListener(_onTextChanged);
     _initializeCalendarService();
 
@@ -916,6 +924,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return FortuneSurveyType.exLover;
       case 'blindDate':
         return FortuneSurveyType.blindDate;
+      case 'yearlyEncounter':
+        return FortuneSurveyType.yearlyEncounter;
       // 재물
       case 'money':
         return FortuneSurveyType.money;
@@ -1044,7 +1054,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     return result;
   }
 
-  void _handleSendMessage(String text) {
+  Future<void> _handleSendMessage(String text) async {
     if (text.trim().isEmpty) return;
 
     // 온보딩 중이면 온보딩 핸들러로 위임 (빌드 시점 레이스 컨디션 방지)
@@ -1072,6 +1082,47 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       return;
     }
 
+    // 의도 감지 (인사이트 추천용)
+    final intents = IntentDetector.detectIntents(text);
+    final hasConfidentIntent = intents.isNotEmpty && intents.first.isConfident;
+
+    // 의도가 감지되면 기존 플로우 (인사이트 추천)
+    if (hasConfidentIntent) {
+      final notifier = ref.read(chatMessagesProvider.notifier);
+      notifier.addUserMessage(text);
+      _textController.clear();
+      setState(() {
+        _detectedIntents = [];
+      });
+      _scrollToBottom();
+
+      final primaryIntent = intents.first;
+      Future.delayed(const Duration(milliseconds: 500), () {
+        notifier.addAiMessage(
+          IntentDetector.getSuggestionMessage(primaryIntent.type),
+        );
+        _scrollToBottom();
+      });
+      return;
+    }
+
+    // 의도가 없으면 자유 채팅 (토큰 소비 + AI 응답)
+    final tokenState = ref.read(tokenProvider);
+    final hasUnlimitedAccess = tokenState.balance?.hasUnlimitedAccess ?? false;
+    final remainingTokens = tokenState.balance?.remainingTokens ?? 0;
+    final isTokenLoaded = tokenState.balance != null;
+
+    // 토큰 체크 (무제한 이용권이 아니고 토큰이 부족한 경우)
+    // 토큰 데이터가 로드되지 않았으면 체크 스킵 (나중에 소비 시 검증됨)
+    if (isTokenLoaded && !hasUnlimitedAccess && remainingTokens < 1) {
+      await TokenInsufficientModal.show(
+        context: context,
+        requiredTokens: 1,
+        fortuneType: 'free-chat',
+      );
+      return;
+    }
+
     final notifier = ref.read(chatMessagesProvider.notifier);
     notifier.addUserMessage(text);
     _textController.clear();
@@ -1080,22 +1131,42 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     });
     _scrollToBottom();
 
-    // 의도 감지 결과가 있으면 설문 시작 제안
-    final intents = IntentDetector.detectIntents(text);
-    if (intents.isNotEmpty && intents.first.isConfident) {
-      final primaryIntent = intents.first;
-      Future.delayed(const Duration(milliseconds: 500), () {
-        notifier.addAiMessage(
-          IntentDetector.getSuggestionMessage(primaryIntent.type),
+    // 타이핑 인디케이터 표시
+    notifier.showTypingIndicator();
+
+    try {
+      // 토큰 소비 (무제한 이용권이 아닌 경우만)
+      if (!hasUnlimitedAccess) {
+        await ref.read(tokenProvider.notifier).consumeTokens(
+          fortuneType: 'free-chat',
+          amount: 1,
         );
-        _scrollToBottom();
-      });
-    } else {
-      notifier.showTypingIndicator();
-      Future.delayed(const Duration(seconds: 1), () {
-        notifier.addAiMessage('무엇이든 물어보세요! 인사이트, 타로, 적성 등 다양한 주제로 대화할 수 있어요.');
-        _scrollToBottom();
-      });
+      }
+
+      // AI 호출 (사용자 프로필 정보 포함)
+      final userProfile = ref.read(userProfileNotifierProvider).valueOrNull;
+      final response = await _freeChatService.sendMessage(
+        text,
+        context: FreeChatContext(
+          userName: userProfile?.name,
+          birthDate: userProfile?.birthDate?.toIso8601String(),
+          birthTime: userProfile?.birthTime,
+          gender: userProfile?.gender.value,
+          mbti: userProfile?.mbti,
+          zodiacSign: userProfile?.zodiacSign,
+          chineseZodiac: userProfile?.chineseZodiac,
+          bloodType: userProfile?.bloodType,
+        ),
+      );
+
+      notifier.hideTypingIndicator();
+      notifier.addAiMessage(response);
+      _scrollToBottom();
+    } catch (e) {
+      debugPrint('❌ [_handleSendMessage] 자유 채팅 에러: $e');
+      notifier.hideTypingIndicator();
+      notifier.addAiMessage('죄송해요, 잠시 문제가 생겼어요. 다시 시도해주세요.');
+      _scrollToBottom();
     }
   }
 
@@ -3565,6 +3636,22 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // gratitude는 API 호출 없이 로컬에서 처리
         // _handleGratitudeComplete에서 별도 처리됨
         throw UnsupportedError('gratitude는 운세 API를 사용하지 않습니다');
+
+      case FortuneSurveyType.yearlyEncounter:
+        // 올해의 인연: AI 이미지 생성 + 텍스트 분석
+        return apiService.getFortune(
+          userId: userId,
+          fortuneType: 'yearly-encounter',
+          params: {
+            'targetGender': answers['targetGender'],
+            'userAge': answers['userAge'],
+            'idealMbti': answers['idealMbti'],
+            'idealType': answers['idealType'] ?? '',
+            'userName': userName,
+            'birthDate': birthDateStr,
+            'gender': gender,
+          },
+        );
     }
   }
 
@@ -3710,6 +3797,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return '프로필 생성';
       case FortuneSurveyType.gratitude:
         return '감사일기';
+      case FortuneSurveyType.yearlyEncounter:
+        return '올해의 인연';
     }
   }
 
@@ -3790,6 +3879,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return 'default'; // 프로필 생성은 운세 이미지 불필요
       case FortuneSurveyType.gratitude:
         return 'gratitude'; // 감사일기
+      case FortuneSurveyType.yearlyEncounter:
+        return 'yearly-encounter'; // 올해의 인연
     }
   }
 

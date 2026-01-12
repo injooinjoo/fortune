@@ -125,6 +125,9 @@ dependencies:
   # image_gallery_saver: ^2.0.3  # AGP 8.x compatibility issue
   path_provider: ^2.1.5
 
+  # Face Detection: iOS uses Vision Framework (native), Android uses fallback pattern
+  # Note: google_mlkit_face_detection removed due to Firebase compatibility issues
+
   # Payment
   pay: ^2.0.0
 

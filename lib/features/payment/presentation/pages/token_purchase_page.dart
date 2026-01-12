@@ -10,7 +10,6 @@ import '../../../../presentation/widgets/common/app_header.dart';
 import '../../../../services/in_app_purchase_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
-import '../../../../core/widgets/unified_button.dart';
 import '../../../../presentation/widgets/common/custom_card.dart';
 import '../../../../core/constants/in_app_products.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -212,8 +211,23 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   }
 
   Widget _buildFloatingButtons() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+    final colors = context.colors;
+
+    return Container(
+      decoration: BoxDecoration(
+        // 배경과 구분되는 그라디언트 적용
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            colors.background.withValues(alpha: 0),
+            colors.background.withValues(alpha: 0.9),
+            colors.background,
+          ],
+          stops: const [0.0, 0.3, 1.0],
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 32, 16, 24),
       child: _buildPurchaseButton(),
     );
   }
@@ -570,13 +584,52 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   }
 
   Widget _buildPurchaseButton() {
+    final colors = context.colors;
     final isDisabled = _selectedPackageIndex == null || _isProcessing;
 
-    return UnifiedButton(
-      text: _isProcessing ? '처리 중...' : '구매하기',
-      onPressed: isDisabled ? null : _handlePurchase,
-      isLoading: _isProcessing,
+    // 선택 전에도 눈에 보이도록 명시적인 컨테이너로 감싸기
+    return Container(
       width: double.infinity,
+      height: 56,
+      decoration: BoxDecoration(
+        // 비활성화 상태에서도 눈에 보이는 배경
+        color: isDisabled
+            ? colors.backgroundTertiary
+            : colors.ctaBackground,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: isDisabled
+            ? Border.all(color: colors.border, width: 1)
+            : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isDisabled ? null : _handlePurchase,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          child: Center(
+            child: _isProcessing
+                ? SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(colors.accent),
+                    ),
+                  )
+                : Text(
+                    _selectedPackageIndex == null
+                        ? '패키지를 선택해주세요'
+                        : '구매하기',
+                    style: context.bodyLarge.copyWith(
+                      color: isDisabled
+                          ? colors.textSecondary
+                          : colors.ctaForeground,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+          ),
+        ),
+      ),
     );
   }
 

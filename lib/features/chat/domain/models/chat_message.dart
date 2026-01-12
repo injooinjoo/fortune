@@ -2,6 +2,7 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../core/models/personality_dna_model.dart';
 import '../../../fortune/domain/models/match_insight.dart';
 import '../../../fortune/domain/models/past_life_result.dart';
+import '../../../fortune/domain/models/yearly_encounter_result.dart';
 
 /// 채팅 메시지 유형
 enum ChatMessageType {
@@ -130,6 +131,9 @@ class ChatMessage {
   /// 감사일기 결과: 작성 날짜
   final DateTime? gratitudeDate;
 
+  /// 올해의 인연 결과 데이터
+  final YearlyEncounterResult? yearlyEncounterResult;
+
   const ChatMessage({
     required this.id,
     required this.type,
@@ -155,6 +159,7 @@ class ChatMessage {
     this.gratitude2,
     this.gratitude3,
     this.gratitudeDate,
+    this.yearlyEncounterResult,
   });
 
   ChatMessage copyWith({
@@ -182,6 +187,7 @@ class ChatMessage {
     String? gratitude2,
     String? gratitude3,
     DateTime? gratitudeDate,
+    YearlyEncounterResult? yearlyEncounterResult,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -208,6 +214,7 @@ class ChatMessage {
       gratitude2: gratitude2 ?? this.gratitude2,
       gratitude3: gratitude3 ?? this.gratitude3,
       gratitudeDate: gratitudeDate ?? this.gratitudeDate,
+      yearlyEncounterResult: yearlyEncounterResult ?? this.yearlyEncounterResult,
     );
   }
 }

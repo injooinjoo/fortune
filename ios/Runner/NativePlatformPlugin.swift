@@ -267,7 +267,7 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
         ])
     }
 
-    // MARK: - Face Detection (Vision Framework)
+    // MARK: - Face Detection with Landmarks (Vision Framework)
     private func detectFace(call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let args = call.arguments as? [String: Any],
               let imageData = args["imageData"] as? FlutterStandardTypedData else {
@@ -283,8 +283,8 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
         let imageWidth = CGFloat(cgImage.width)
         let imageHeight = CGFloat(cgImage.height)
 
-        // Create face detection request
-        let faceDetectionRequest = VNDetectFaceRectanglesRequest { [weak self] request, error in
+        // Create face landmarks detection request (includes face detection + landmarks)
+        let faceLandmarksRequest = VNDetectFaceLandmarksRequest { request, error in
             if let error = error {
                 DispatchQueue.main.async {
                     result(FlutterError(code: "DETECTION_ERROR", message: error.localizedDescription, details: nil))
@@ -310,6 +310,38 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
             let width = boundingBox.width * imageWidth
             let height = boundingBox.height * imageHeight
 
+            // Extract face landmarks
+            var landmarksData: [[String: Double]] = []
+
+            if let landmarks = face.landmarks {
+                // Helper function to extract points from a landmark region
+                func extractPoints(from region: VNFaceLandmarkRegion2D?, into array: inout [[String: Double]]) {
+                    guard let region = region else { return }
+                    for i in 0..<region.pointCount {
+                        let point = region.normalizedPoints[i]
+                        // Convert normalized coordinates (0-1, bottom-left origin) to pixel coordinates (top-left origin)
+                        // Points are relative to bounding box, need to transform to image coordinates
+                        let pixelX = (boundingBox.origin.x + point.x * boundingBox.width) * imageWidth
+                        let pixelY = (1 - (boundingBox.origin.y + point.y * boundingBox.height)) * imageHeight
+                        array.append([
+                            "x": Double(pixelX),
+                            "y": Double(pixelY)
+                        ])
+                    }
+                }
+
+                // Extract all landmark regions in order
+                extractPoints(from: landmarks.faceContour, into: &landmarksData)      // Face outline
+                extractPoints(from: landmarks.leftEyebrow, into: &landmarksData)      // Left eyebrow
+                extractPoints(from: landmarks.rightEyebrow, into: &landmarksData)     // Right eyebrow
+                extractPoints(from: landmarks.leftEye, into: &landmarksData)          // Left eye
+                extractPoints(from: landmarks.rightEye, into: &landmarksData)         // Right eye
+                extractPoints(from: landmarks.nose, into: &landmarksData)             // Nose
+                extractPoints(from: landmarks.noseCrest, into: &landmarksData)        // Nose bridge
+                extractPoints(from: landmarks.outerLips, into: &landmarksData)        // Outer lips
+                extractPoints(from: landmarks.innerLips, into: &landmarksData)        // Inner lips
+            }
+
             let faceData: [String: Any] = [
                 "detected": true,
                 "confidence": Double(face.confidence),
@@ -319,6 +351,7 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
                     "width": Double(width),
                     "height": Double(height)
                 ],
+                "landmarks": landmarksData,
                 "faceCount": observations.count
             ]
 
@@ -330,8 +363,8 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
         // Enable CPU-only mode for simulator support
         #if targetEnvironment(simulator)
         if #available(iOS 17.0, *) {
-            let revision = VNDetectFaceRectanglesRequest.supportedRevisions.max() ?? VNDetectFaceRectanglesRequestRevision3
-            faceDetectionRequest.revision = revision
+            let revision = VNDetectFaceLandmarksRequest.supportedRevisions.max() ?? VNDetectFaceLandmarksRequestRevision3
+            faceLandmarksRequest.revision = revision
         }
         #endif
 
@@ -340,7 +373,7 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
 
         DispatchQueue.global(qos: .userInitiated).async {
             do {
-                try handler.perform([faceDetectionRequest])
+                try handler.perform([faceLandmarksRequest])
             } catch {
                 DispatchQueue.main.async {
                     result(FlutterError(code: "HANDLER_ERROR", message: error.localizedDescription, details: nil))

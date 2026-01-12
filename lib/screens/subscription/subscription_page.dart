@@ -791,57 +791,59 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
       builder: (context) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(DSSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.settings_outlined,
-                    size: 20,
-                    color: colors.accent,
-                  ),
-                  const SizedBox(width: DSSpacing.sm),
-                  Text(
-                    '구독 관리 방법',
-                    style: context.bodyLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: DSSpacing.lg),
-              Text(
-                '구독 취소 및 관리는 Apple ID 설정에서 가능합니다:\n\n'
-                '1. 설정 앱 열기\n'
-                '2. 상단의 [내 이름] 탭\n'
-                '3. [구독] 선택\n'
-                '4. Fortune 앱 선택\n'
-                '5. [구독 취소] 또는 플랜 변경\n\n'
-                '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.\n'
-                '• 무료 체험 기간 중 취소하면 체험 기간 종료와 함께 구독이 해지됩니다.',
-                style: context.bodySmall.copyWith(
-                  color: colors.textSecondary,
-                  height: 1.6,
-                ),
-              ),
-              const SizedBox(height: DSSpacing.lg),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    '확인',
-                    style: context.bodyMedium.copyWith(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.settings_outlined,
+                      size: 20,
                       color: colors.accent,
-                      fontWeight: FontWeight.w600,
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Text(
+                      '구독 관리 방법',
+                      style: context.bodyLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.lg),
+                Text(
+                  '구독 취소 및 관리는 Apple ID 설정에서 가능합니다:\n\n'
+                  '1. 설정 앱 열기\n'
+                  '2. 상단의 [내 이름] 탭\n'
+                  '3. [구독] 선택\n'
+                  '4. Fortune 앱 선택\n'
+                  '5. [구독 취소] 또는 플랜 변경\n\n'
+                  '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.\n'
+                  '• 무료 체험 기간 중 취소하면 체험 기간 종료와 함께 구독이 해지됩니다.',
+                  style: context.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.6,
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.lg),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      '확인',
+                      style: context.bodyMedium.copyWith(
+                        color: colors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

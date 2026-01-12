@@ -114,7 +114,7 @@ class UnifiedButton extends StatefulWidget {
     this.enableAnimation = false,
     this.animationDelay,
     this.animationType,
-    this.useBrushFrame = true, // 기본값을 true로 설정하여 전체적인 테마 일관성 유지
+    this.useBrushFrame = false, // 에셋 미존재로 기본값 false (필요시 에셋 추가 후 true로 변경)
   });
 
   // ========== Factory 생성자 (기존 호환성) ==========

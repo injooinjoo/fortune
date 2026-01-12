@@ -12,6 +12,7 @@ import 'chat_ootd_result_card.dart';
 import 'chat_saju_result_card.dart';
 import 'chat_talisman_result_card.dart';
 import 'chat_gratitude_result_card.dart';
+import 'chat_yearly_encounter_result_card.dart';
 import 'fortune_cookie_result_card.dart';
 import 'fortune_result_scroll_wrapper.dart';
 import 'personality_dna_chat_card.dart';
@@ -221,6 +222,24 @@ class ChatMessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
           child: ChatPastLifeResultCard(
             result: message.pastLifeResult!,
+          ),
+        ),
+      );
+    }
+
+    // 올해의 인연 결과 카드 표시
+    if (message.type == ChatMessageType.fortuneResult &&
+        (message.fortuneType == 'yearly-encounter' ||
+            message.fortuneType == 'yearlyEncounter') &&
+        message.yearlyEncounterResult != null) {
+      return FortuneResultScrollWrapper(
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatYearlyEncounterResultCard(
+            result: message.yearlyEncounterResult!,
           ),
         ),
       );

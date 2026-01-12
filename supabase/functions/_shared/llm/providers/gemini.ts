@@ -202,8 +202,8 @@ export class GeminiProvider implements ILLMProvider {
       console.log('🎨 [Gemini] Generating image...')
       console.log('📝 [Gemini] Prompt length:', prompt.length)
 
-      // Gemini 이미지 생성 모델 사용 (2.5 Flash 통일)
-      const imageModel = 'gemini-2.5-flash-preview-05-20'
+      // Gemini 이미지 생성 모델 사용
+      const imageModel = 'gemini-2.5-flash-image'
 
       const requestBody = {
         contents: [

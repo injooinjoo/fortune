@@ -1637,61 +1637,164 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     final typography = context.typography;
     final scoreColor = _getScoreColor(context, slot.score);
 
-    return Container(
-      width: 180,
-      padding: const EdgeInsets.all(DSSpacing.sm),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: scoreColor.withValues(alpha: 0.2),
+    return GestureDetector(
+      onTap: () => _showTimeSlotDetailSheet(context, slot),
+      child: Container(
+        width: 180,
+        padding: const EdgeInsets.all(DSSpacing.sm),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: scoreColor.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              slot.time,
+              style: typography.labelSmall.copyWith(
+                color: colors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              slot.title,
+              style: typography.labelMedium.copyWith(
+                color: colors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Expanded(
+              child: Text(
+                slot.description,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: typography.bodySmall.copyWith(
+                  color: colors.textSecondary,
+                  height: 1.4,
+                ),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.xs),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: scoreColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+              ),
+              child: Text(
+                '${slot.score}점',
+                style: typography.labelSmall.copyWith(
+                  color: scoreColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  void _showTimeSlotDetailSheet(BuildContext context, TimeSpecificFortune slot) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final scoreColor = _getScoreColor(context, slot.score);
+
+    DSBottomSheet.show(
+      context: context,
+      showHandle: true,
+      showClose: true,
+      title: slot.time,
+      maxHeightFactor: 0.6,
+      isScrollable: true,
+      padding: const EdgeInsets.all(DSSpacing.bottomSheetPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            slot.time,
-            style: typography.labelSmall.copyWith(
-              color: colors.textSecondary,
-            ),
+          // Title with score
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  slot.title,
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: scoreColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                ),
+                child: Text(
+                  '${slot.score}점',
+                  style: typography.labelMedium.copyWith(
+                    color: scoreColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.md),
+          // Full description
           Text(
-            slot.title,
-            style: typography.labelMedium.copyWith(
+            slot.description,
+            style: typography.bodyMedium.copyWith(
               color: colors.textPrimary,
-              fontWeight: FontWeight.w700,
+              height: 1.6,
             ),
           ),
-          const SizedBox(height: 6),
-          Expanded(
-            child: Text(
-              slot.description,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: typography.bodySmall.copyWith(
-                color: colors.textSecondary,
-                height: 1.4,
+          // Recommendation if available
+          if (slot.recommendation != null && slot.recommendation!.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.lg),
+            Container(
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: colors.accent.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.lightbulb_outline_rounded,
+                        size: 18,
+                        color: colors.accent,
+                      ),
+                      const SizedBox(width: DSSpacing.xs),
+                      Text(
+                        '추천',
+                        style: typography.labelMedium.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DSSpacing.sm),
+                  Text(
+                    slot.recommendation!,
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          const SizedBox(height: DSSpacing.xs),
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: scoreColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(DSRadius.sm),
-            ),
-            child: Text(
-              '${slot.score}점',
-              style: typography.labelSmall.copyWith(
-                color: scoreColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          ],
+          const SizedBox(height: DSSpacing.md),
         ],
       ),
     );

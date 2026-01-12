@@ -104,7 +104,8 @@ class SoulRates {
     'employment': -25,
     'salpuli': -20,
     'health-document': -3,  // 건강검진표/처방전/진단서 분석
-    'fashion-image': -35};  // NanoBanana 패션 이미지 생성
+    'fashion-image': -35,  // NanoBanana 패션 이미지 생성
+    'free-chat': -1};  // 직접 질문 1토큰 소비
 
   // 특별 조건부 운세
   static const Map<String, dynamic> conditionalRates = {

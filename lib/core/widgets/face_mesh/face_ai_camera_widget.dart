@@ -11,8 +11,8 @@ import 'face_guide_overlay.dart';
 import '../../services/face_detection_service.dart';
 
 /// Face AI 카메라 위젯
-/// iOS: Vision Framework로 실시간 얼굴 감지
-/// Android: 가이드 프레임 표시
+/// iOS: Vision Framework로 실시간 얼굴 랜드마크 감지 (65+ 포인트)
+/// Android: 가이드 프레임 표시 (Firebase 호환성 문제로 ML Kit 제거됨)
 class FaceAiCameraWidget extends StatefulWidget {
   /// 사진 촬영 완료 콜백 (Base64 인코딩된 이미지)
   final ValueChanged<String> onImageCaptured;
@@ -47,7 +47,7 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
   bool _isFrontCamera = true;
   String? _errorMessage;
 
-  // Face Detection (iOS only)
+  // Face Detection (iOS only - Vision Framework)
   final FaceDetectionService _detectionService = FaceDetectionService();
   FaceDetectionResult? _detectionResult;
   Size? _imageSize;
@@ -119,7 +119,8 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
     try {
       await _controller!.initialize();
 
-      // iOS에서만 실시간 얼굴 감지
+      // iOS에서만 실시간 얼굴 감지 (Vision Framework)
+      // Android는 가이드 모드 사용
       if (Platform.isIOS && widget.showOverlay && _overlayEnabled) {
         _startDetection();
       }
@@ -136,7 +137,7 @@ class _FaceAiCameraWidgetState extends State<FaceAiCameraWidget>
     }
   }
 
-  /// 주기적 얼굴 감지 시작 (iOS)
+  /// 주기적 얼굴 감지 시작 (iOS only)
   void _startDetection() {
     _detectionTimer?.cancel();
     _detectionTimer = Timer.periodic(

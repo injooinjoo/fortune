@@ -106,6 +106,9 @@ class EdgeFunctionsEndpoints {
   // AI 추천
   static const String fortuneRecommend = '/fortune-recommend';
 
+  // 자유 채팅
+  static const String freeChat = '/free-chat';
+
   // ============================================================
   // 스포츠 운세 (10개) - 2024.12.28 추가
   // ============================================================
@@ -201,6 +204,20 @@ class EdgeFunctionsEndpoints {
       'home-fengshui': homeFengshuiFortune,
       // 소원 분석
       'wish': analyzeWish,
+      // 올해의 인연 (이미지 생성)
+      'yearly-encounter': '/fortune-yearly-encounter',
+      'yearlyEncounter': '/fortune-yearly-encounter',
+      // 작명
+      'naming': '/fortune-naming',
+      // OOTD 평가 (이미지 분석)
+      'ootd': '/fortune-ootd',
+      'ootdEvaluation': '/fortune-ootd',
+      // 재물운
+      'money': '/fortune-wealth',
+      'wealth': '/fortune-wealth',
+      // 전생
+      'past-life': '/fortune-past-life',
+      'pastLife': '/fortune-past-life',
     };
 
     return endpointMap[fortuneType] ?? '/fortune-$fortuneType';

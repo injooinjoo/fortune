@@ -84,7 +84,7 @@ class IntentDetector {
       '건강', '몸', '컨디션', '피로', '아프', '병원',
     ],
     FortuneSurveyType.exercise: [
-      '운동', '헬스', '다이어트', '살', '근력', '체력',
+      '운동', '헬스', '다이어트', '살빼', '근력', '체력', '피트니스',
     ],
     FortuneSurveyType.sportsGame: [
       // 일반
@@ -280,6 +280,8 @@ class IntentDetector {
         return '이사 길일을 알려드릴까요?';
       case FortuneSurveyType.gratitude:
         return '감사일기를 작성해볼까요?';
+      case FortuneSurveyType.yearlyEncounter:
+        return '올해 만나게 될 인연을 미리 만나볼까요?';
     }
   }
 }
@@ -298,8 +300,8 @@ class DetectedIntent {
     this.isAiGenerated = false,
   });
 
-  /// 신뢰도가 충분히 높은지 확인
-  bool get isConfident => confidence >= 0.1;
+  /// 신뢰도가 충분히 높은지 확인 (0.4 = 여러 키워드 매칭 필요)
+  bool get isConfident => confidence >= 0.4;
 
   @override
   String toString() {
