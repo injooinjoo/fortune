@@ -4,7 +4,7 @@
  * 미래 애인 얼굴을 AI로 생성하고, 만남 예측 정보를 제공하는 운세 기능
  *
  * Cost: 10 tokens
- * - Image: Gemini 2.5 Flash Image (gemini-2.5-flash-image)
+ * - Image: NanoBanana API (~$0.02/image) - 사람 얼굴 생성에 안정적
  * - Text: Gemini 2.0 Flash Lite (gemini-2.0-flash-lite)
  *
  * Self-contained: 공유 모듈 없이 독립 실행 가능
@@ -14,6 +14,8 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')!
+const NANOBANANA_API_KEY = Deno.env.get('NANOBANANA_API_KEY')
+const NANOBANANA_API_URL = 'https://api.nanobanana.ai/v1/generate'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
@@ -370,64 +372,52 @@ Example: ["#무쌍_강아지상", "#셔츠가잘어울리는", "#너드미"]`
 }
 
 // ============================================================================
-// Gemini Image Generation (gemini-2.5-flash-image - Direct API Call)
+// NanoBanana Image Generation (안정적인 사람 얼굴 생성)
 // ============================================================================
 
-async function generateImageWithGemini(prompt: string): Promise<string> {
+async function generateImageWithNanoBanana(prompt: string): Promise<string> {
   const startTime = Date.now()
-  const imageModel = 'gemini-2.5-flash-image'
+  console.log('🎨 Generating portrait with NanoBanana API...')
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({
-        contents: [{
-          role: 'user',
-          parts: [{ text: prompt }],
-        }],
-        generationConfig: {
-          responseModalities: ['TEXT', 'IMAGE'],
-        },
-      }),
-    }
-  )
+  if (!NANOBANANA_API_KEY) {
+    throw new Error('NanoBanana API key not configured')
+  }
+
+  const response = await fetch(NANOBANANA_API_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${NANOBANANA_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt,
+      aspect_ratio: '1:1', // 정사각형 초상화
+      style: 'portrait_photography',
+      quality: 'high',
+    }),
+  })
 
   if (!response.ok) {
     const errorText = await response.text()
-    // 상세 에러 로깅
-    console.error('❌ Gemini API 에러 상세:', {
+    console.error('❌ NanoBanana API 에러:', {
       status: response.status,
-      statusText: response.statusText,
       body: errorText.substring(0, 500),
-      prompt_length: prompt.length,
     })
-    throw new Error(`Gemini Image API error: ${response.status} - ${errorText}`)
+    throw new Error(`NanoBanana API failed: ${response.status} - ${errorText}`)
   }
 
-  const data = await response.json()
+  const result = await response.json()
+  const imageBase64 = result.image_base64 || result.imageBase64 || result.image
 
-  if (!data.candidates || data.candidates.length === 0) {
-    console.error('❌ Gemini 응답에 candidates 없음:', JSON.stringify(data).substring(0, 500))
-    throw new Error('No candidates in Gemini Image response')
-  }
-
-  // 이미지 데이터 추출
-  const parts = data.candidates[0].content?.parts || []
-  const imagePart = parts.find((p: { inlineData?: { mimeType?: string } }) =>
-    p.inlineData?.mimeType?.startsWith('image/')
-  )
-
-  if (!imagePart || !imagePart.inlineData) {
-    console.error('❌ Gemini 응답에 이미지 데이터 없음:', JSON.stringify(parts).substring(0, 500))
-    throw new Error('No image data in Gemini response')
+  if (!imageBase64) {
+    console.error('❌ NanoBanana 응답에 이미지 없음:', JSON.stringify(result).substring(0, 300))
+    throw new Error('No image data in NanoBanana response')
   }
 
   const latency = Date.now() - startTime
   console.log(`✅ Image generated successfully in ${latency}ms`)
 
-  return imagePart.inlineData.data
+  return imageBase64
 }
 
 // ============================================================================
@@ -440,7 +430,7 @@ async function generateImageWithRetry(prompt: string, maxRetries = 3): Promise<s
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       console.log(`🎨 이미지 생성 시도 ${attempt}/${maxRetries}...`)
-      return await generateImageWithGemini(prompt)
+      return await generateImageWithNanoBanana(prompt)
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
       console.error(`❌ 시도 ${attempt} 실패:`, lastError.message)

@@ -52,6 +52,23 @@ class AssetPackConfig {
     return tarotDecks[random.nextInt(tarotDecks.length)];
   }
 
+  /// 타로 덱 표시 이름 반환
+  static String getTarotDeckDisplayName(String deckId) {
+    final packId = 'tarot_$deckId';
+    return packs[packId]?.displayName ?? _formatDeckName(deckId);
+  }
+
+  /// 덱 ID를 사람이 읽기 쉬운 이름으로 포맷
+  static String _formatDeckName(String deckId) {
+    // snake_case를 Title Case로 변환
+    return deckId
+        .split('_')
+        .map((word) => word.isEmpty
+            ? ''
+            : '${word[0].toUpperCase()}${word.substring(1)}')
+        .join(' ');
+  }
+
   // ============================================================
   // 자산 팩 정의
   // ============================================================

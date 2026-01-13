@@ -52,7 +52,9 @@ class _MajorArcanaCard {
     required this.fileName,
   });
 
-  String get imagePath => 'assets/images/tarot/decks/rider_waite/major/$fileName';
+  /// 특정 덱의 이미지 경로 반환
+  String getImagePath(String deckId) =>
+      'assets/images/tarot/decks/$deckId/major/$fileName';
 }
 
 /// 22장 메이저 아르카나 카드 데이터
@@ -92,10 +94,18 @@ class ChatTarotFlow extends ConsumerStatefulWidget {
   final void Function(Map<String, dynamic> tarotData) onComplete;
   final String? question;
 
+  /// 사용할 타로 덱 ID (기본: rider_waite)
+  final String deckId;
+
+  /// 덱 표시 이름
+  final String? deckDisplayName;
+
   const ChatTarotFlow({
     super.key,
     required this.onComplete,
     this.question,
+    this.deckId = 'rider_waite',
+    this.deckDisplayName,
   });
 
   @override
@@ -160,7 +170,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
           index: cardIndex,
           cardName: cardInfo.name,
           cardNameKr: cardInfo.nameKr,
-          imagePath: cardInfo.imagePath,
+          imagePath: cardInfo.getImagePath(widget.deckId),
           isReversed: false,
           positionKey: _selectedSpread!.getPositionKey(positionIndex),
           positionName: _selectedSpread!.getPositionName(positionIndex),
@@ -212,8 +222,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
         // 레거시 호환을 위한 인덱스 배열
         'selectedCardIndices': _selectedCards.map((c) => c.index).toList(),
         'question': widget.question,
-        // 기본 덱 사용 (Rider-Waite)
-        'deck': 'rider_waite',
+        // 오늘의 덱 사용
+        'deck': widget.deckId,
       });
     });
   }
@@ -270,7 +280,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                 Text('🎴', style: typography.bodyMedium),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
-                  '오늘의 타로: Rider-Waite',
+                  '오늘의 타로: ${widget.deckDisplayName ?? widget.deckId}',
                   style: typography.labelMedium.copyWith(
                     color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
@@ -292,11 +302,11 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
               children: List.generate(5, (index) {
                 // 실제 카드 이미지 사용 (0-4번 카드)
                 final cardImages = [
-                  'assets/images/tarot/decks/rider_waite/major/00_fool.jpg',
-                  'assets/images/tarot/decks/rider_waite/major/01_magician.jpg',
-                  'assets/images/tarot/decks/rider_waite/major/02_high_priestess.jpg',
-                  'assets/images/tarot/decks/rider_waite/major/03_empress.jpg',
-                  'assets/images/tarot/decks/rider_waite/major/04_emperor.jpg',
+                  'assets/images/tarot/decks/${widget.deckId}/major/00_fool.jpg',
+                  'assets/images/tarot/decks/${widget.deckId}/major/01_magician.jpg',
+                  'assets/images/tarot/decks/${widget.deckId}/major/02_high_priestess.jpg',
+                  'assets/images/tarot/decks/${widget.deckId}/major/03_empress.jpg',
+                  'assets/images/tarot/decks/${widget.deckId}/major/04_emperor.jpg',
                 ];
                 final offset = (index - 2) * 12.0;
                 final rotation = (index - 2) * 0.1;
@@ -411,7 +421,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
               Text('🎴', style: typography.bodyMedium),
               const SizedBox(width: DSSpacing.xs),
               Text(
-                '오늘의 타로: Rider-Waite',
+                '오늘의 타로: ${widget.deckDisplayName ?? widget.deckId}',
                 style: typography.labelMedium.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w600,

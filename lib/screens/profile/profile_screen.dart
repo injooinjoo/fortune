@@ -24,6 +24,7 @@ import '../../core/providers/user_settings_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
 import '../../shared/components/premium_membership_card.dart';
+import '../../features/settings/presentation/widgets/storage_management_widget.dart';
 import 'widgets/profile_list_sheet.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -970,6 +971,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   onTap: () {
                     // TODO: Implement language selection
+                  },
+                ),
+                SettingsListTile(
+                  icon: Icons.storage_outlined,
+                  title: '저장소 관리',
+                  subtitle: '다운로드된 자산 관리',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const StorageManagementPage(),
+                      ),
+                    );
                   },
                   isLast: true,
                 ),

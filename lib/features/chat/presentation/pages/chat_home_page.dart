@@ -10,6 +10,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/personality_dna_service.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/services/asset_delivery_service.dart';
+import '../../../../core/constants/asset_pack_config.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../shared/components/profile_header_icon.dart';
@@ -116,6 +118,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// 포춘쿠키 애니메이션 오버레이 표시 여부
   bool _showCookieAnimation = false;
+
+  /// 오늘의 타로 덱 (다운로드 완료 시 설정)
+  String? _todaysTarotDeck;
+
+  /// 타로 덱 다운로드 중 여부
+  bool _isDownloadingTarotDeck = false;
 
   static const Map<FortuneSurveyType, String> _fortuneBackgroundAssets = {
     FortuneSurveyType.daily: 'assets/images/chat/backgrounds/bg_daily.png',
@@ -678,6 +686,14 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         chatNotifier.addUserMessage(chip.label);
         _scrollToBottom();
         _handleSajuRequest();
+        return;
+      }
+
+      // 타로 특별 처리: 오늘의 덱 다운로드 후 진행
+      if (surveyType == FortuneSurveyType.tarot) {
+        chatNotifier.addUserMessage(chip.label);
+        _scrollToBottom();
+        _prepareTarotDeckAndStart(surveyNotifier, chatNotifier);
         return;
       }
 
@@ -2327,6 +2343,110 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     _handleSurveyAnswerValue({
       'imagePath': imagePath,
     }, displayText);
+  }
+
+  /// 타로 덱 준비 후 설문 시작
+  Future<void> _prepareTarotDeckAndStart(
+    ChatSurveyNotifier surveyNotifier,
+    ChatMessagesNotifier chatNotifier,
+  ) async {
+    // 이미 덱이 준비되어 있으면 바로 시작
+    if (_todaysTarotDeck != null) {
+      _startTarotSurvey(surveyNotifier, chatNotifier);
+      return;
+    }
+
+    setState(() {
+      _isDownloadingTarotDeck = true;
+    });
+
+    // 오늘의 덱 이름 가져오기
+    final deckName = AssetPackConfig.getTodaysDeck();
+    final deckDisplayName = AssetPackConfig.getTarotDeckDisplayName(deckName);
+
+    chatNotifier.addAiMessage(
+      '오늘의 타로 덱을 준비하고 있어요... 🎴\n'
+      '덱: $deckDisplayName',
+    );
+    _scrollToBottom();
+
+    try {
+      final assetService = AssetDeliveryService();
+      await assetService.initialize();
+
+      // 덱 다운로드 (이미 설치되어 있으면 바로 반환)
+      final preparedDeck = await assetService.prepareTodaysTarotDeck();
+
+      if (!mounted) return;
+
+      if (preparedDeck != null) {
+        setState(() {
+          _todaysTarotDeck = preparedDeck;
+          _isDownloadingTarotDeck = false;
+        });
+
+        chatNotifier.addAiMessage(
+          '$deckDisplayName 덱이 준비되었어요! ✨\n'
+          '이제 카드를 선택해주세요.',
+        );
+        _scrollToBottom();
+
+        // 설문 시작
+        _startTarotSurvey(surveyNotifier, chatNotifier);
+      } else {
+        setState(() {
+          _isDownloadingTarotDeck = false;
+        });
+
+        chatNotifier.addAiMessage(
+          '덱 준비 중 문제가 발생했어요. 😢\n'
+          '기본 덱으로 진행할게요.',
+        );
+        _scrollToBottom();
+
+        // 기본 덱으로 진행
+        setState(() {
+          _todaysTarotDeck = 'rider_waite';
+        });
+        _startTarotSurvey(surveyNotifier, chatNotifier);
+      }
+    } catch (e) {
+      Logger.error('타로 덱 준비 실패', e);
+
+      if (!mounted) return;
+
+      setState(() {
+        _isDownloadingTarotDeck = false;
+        _todaysTarotDeck = 'rider_waite'; // 기본 덱으로 폴백
+      });
+
+      chatNotifier.addAiMessage(
+        '덱 준비 중 문제가 발생했어요. 😢\n'
+        '기본 덱으로 진행할게요.',
+      );
+      _scrollToBottom();
+
+      _startTarotSurvey(surveyNotifier, chatNotifier);
+    }
+  }
+
+  /// 타로 설문 시작
+  void _startTarotSurvey(
+    ChatSurveyNotifier surveyNotifier,
+    ChatMessagesNotifier chatNotifier,
+  ) {
+    surveyNotifier.startSurvey(FortuneSurveyType.tarot);
+
+    // AI 첫 질문 메시지
+    Future.delayed(const Duration(milliseconds: 500), () {
+      final surveyState = ref.read(chatSurveyProvider);
+      if (surveyState.activeProgress != null &&
+          surveyState.activeProgress!.config.steps.isNotEmpty) {
+        final question = _buildDynamicQuestion(surveyState.activeProgress!);
+        chatNotifier.addAiMessage(question);
+        _scrollToBottom();
+      }
+    });
   }
 
   /// 사주 분석 요청 처리 (ChatSajuResultCard 사용)
@@ -4137,9 +4257,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case SurveyInputType.tarot:
+        final deckId = _todaysTarotDeck ?? 'rider_waite';
         return ChatTarotFlow(
           onComplete: _handleTarotComplete,
           question: surveyState.activeProgress?.answers['purpose'] as String?,
+          deckId: deckId,
+          deckDisplayName: AssetPackConfig.getTarotDeckDisplayName(deckId),
         );
 
       case SurveyInputType.faceReading:
