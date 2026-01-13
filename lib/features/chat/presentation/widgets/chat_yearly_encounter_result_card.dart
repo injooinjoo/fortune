@@ -42,7 +42,8 @@ class _ChatYearlyEncounterResultCardState
   // 디자인 색상
   static const _beigeLight = Color(0xFFF5F0E6);
   static const _beigeDark = Color(0xFFEDE5D8);
-  static const _goldFrame = Color(0xFFD4AF37);
+  // ignore: unused_field
+  static const _goldFrame = Color(0xFFD4AF37); // 추후 사용 가능
   static const _goldLight = Color(0xFFE8D4A0);
   static const _brownTitle = Color(0xFF8B6914);
   static const _pinkAccent = Color(0xFFE8B4B8);
@@ -287,46 +288,49 @@ class _ChatYearlyEncounterResultCardState
             ),
           ),
 
-          // 황금 회문 프레임 + 이미지
+          // 황금 프레임 (PNG) + AI 생성 이미지
           GestureDetector(
             onTap: widget.result.imageUrl.isNotEmpty
                 ? () => _showFullScreenImage(context)
                 : null,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: _goldFrame.withValues(alpha: 0.4),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: CustomPaint(
-                painter: _GreekKeyFramePainter(),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: ClipOval(
+            child: SizedBox(
+              width: 520,
+              height: 250,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // 1. AI 생성 이미지 (원형, 프레임 안쪽에 맞춤)
+                  ClipOval(
                     child: UnifiedBlurWrapper(
-                      isBlurred: _isBlurred && _blurredSections.contains('image'),
+                      isBlurred:
+                          _isBlurred && _blurredSections.contains('image'),
                       blurredSections: _blurredSections,
                       sectionKey: 'image',
                       fortuneType: 'yearly-encounter',
                       child: widget.result.imageUrl.isNotEmpty
                           ? SmartImage(
                               path: widget.result.imageUrl,
-                              width: 176,
-                              height: 176,
+                              width: 190,
+                              height: 190,
                               fit: BoxFit.cover,
                               errorWidget: _buildDefaultImage(),
                             )
                           : _buildDefaultImage(),
                     ),
                   ),
-                ),
+                  // 2. PNG 프레임 (위에 올라감, 얼굴 원형에 맞춤)
+                  IgnorePointer(
+                    child: Transform.scale(
+                      scale: 1.85, // 프레임만 85% 확대
+                      child: Image.asset(
+                        'assets/images/fortune/yearly_encounter_frame.png',
+                        width: 520,
+                        height: 250,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -359,11 +363,26 @@ class _ChatYearlyEncounterResultCardState
             ),
           ),
           // 꽃들
-          const Positioned(left: 10, top: 10, child: Text('🌸', style: TextStyle(fontSize: 24))),
-          const Positioned(left: 35, top: 25, child: Text('🌸', style: TextStyle(fontSize: 20))),
-          const Positioned(left: 15, top: 50, child: Text('🌸', style: TextStyle(fontSize: 22))),
-          const Positioned(left: 40, top: 70, child: Text('🌸', style: TextStyle(fontSize: 18))),
-          const Positioned(left: 20, top: 85, child: Text('🌸', style: TextStyle(fontSize: 16))),
+          const Positioned(
+              left: 10,
+              top: 10,
+              child: Text('🌸', style: TextStyle(fontSize: 24))),
+          const Positioned(
+              left: 35,
+              top: 25,
+              child: Text('🌸', style: TextStyle(fontSize: 20))),
+          const Positioned(
+              left: 15,
+              top: 50,
+              child: Text('🌸', style: TextStyle(fontSize: 22))),
+          const Positioned(
+              left: 40,
+              top: 70,
+              child: Text('🌸', style: TextStyle(fontSize: 18))),
+          const Positioned(
+              left: 20,
+              top: 85,
+              child: Text('🌸', style: TextStyle(fontSize: 16))),
         ],
       ),
     );
@@ -394,7 +413,8 @@ class _ChatYearlyEncounterResultCardState
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.5),
-                  border: Border.all(color: Colors.black.withValues(alpha: 0.2), width: 1),
+                  border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.2), width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,7 +451,8 @@ class _ChatYearlyEncounterResultCardState
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.5),
-                  border: Border.all(color: Colors.black.withValues(alpha: 0.2), width: 1),
+                  border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.2), width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,7 +506,8 @@ class _ChatYearlyEncounterResultCardState
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.5),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.2), width: 1),
+        border:
+            Border.all(color: Colors.black.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -669,69 +691,6 @@ class _ChatYearlyEncounterResultCardState
   }
 }
 
-/// 황금 회문(Greek Key) 패턴 원형 프레임 페인터
-class _GreekKeyFramePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-
-    // 외곽 원 (황금색)
-    final outerPaint = Paint()
-      ..color = const Color(0xFFD4AF37)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 8;
-
-    canvas.drawCircle(center, radius - 4, outerPaint);
-
-    // 내부 원 (연한 황금색)
-    final innerPaint = Paint()
-      ..color = const Color(0xFFE8D4A0)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
-
-    canvas.drawCircle(center, radius - 10, innerPaint);
-
-    // 회문 패턴 (간단한 점선 패턴으로 표현)
-    final patternPaint = Paint()
-      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.6)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    const patternRadius = 92.0;
-    const segments = 24;
-    for (int i = 0; i < segments; i++) {
-      final angle = (i * 2 * 3.14159) / segments;
-      final startX = center.dx + patternRadius * 0.95 * cos(angle);
-      final startY = center.dy + patternRadius * 0.95 * sin(angle);
-      final endX = center.dx + patternRadius * 1.05 * cos(angle);
-      final endY = center.dy + patternRadius * 1.05 * sin(angle);
-
-      if (i % 2 == 0) {
-        canvas.drawLine(
-          Offset(startX, startY),
-          Offset(endX, endY),
-          patternPaint,
-        );
-      }
-    }
-  }
-
-  double cos(double radians) => _cos(radians);
-  double sin(double radians) => _sin(radians);
-
-  double _cos(double x) {
-    return 1 - (x * x) / 2 + (x * x * x * x) / 24 - (x * x * x * x * x * x) / 720;
-  }
-
-  double _sin(double x) {
-    return x - (x * x * x) / 6 + (x * x * x * x * x) / 120;
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
 /// 전통 구름 문양 페인터
 class _TraditionalCloudPainter extends CustomPainter {
   @override
@@ -746,16 +705,22 @@ class _TraditionalCloudPainter extends CustomPainter {
     // 구름 형태
     path.moveTo(0, size.height * 0.6);
     path.quadraticBezierTo(
-      size.width * 0.2, size.height * 0.2,
-      size.width * 0.4, size.height * 0.4,
+      size.width * 0.2,
+      size.height * 0.2,
+      size.width * 0.4,
+      size.height * 0.4,
     );
     path.quadraticBezierTo(
-      size.width * 0.5, size.height * 0.1,
-      size.width * 0.7, size.height * 0.3,
+      size.width * 0.5,
+      size.height * 0.1,
+      size.width * 0.7,
+      size.height * 0.3,
     );
     path.quadraticBezierTo(
-      size.width * 0.9, size.height * 0.1,
-      size.width, size.height * 0.5,
+      size.width * 0.9,
+      size.height * 0.1,
+      size.width,
+      size.height * 0.5,
     );
 
     canvas.drawPath(path, paint);
@@ -786,16 +751,22 @@ class _CloudPatternPainter extends CustomPainter {
 
     path.moveTo(center.dx - scale * 0.5, center.dy);
     path.quadraticBezierTo(
-      center.dx - scale * 0.3, center.dy - scale * 0.4,
-      center.dx, center.dy - scale * 0.2,
+      center.dx - scale * 0.3,
+      center.dy - scale * 0.4,
+      center.dx,
+      center.dy - scale * 0.2,
     );
     path.quadraticBezierTo(
-      center.dx + scale * 0.2, center.dy - scale * 0.5,
-      center.dx + scale * 0.4, center.dy - scale * 0.1,
+      center.dx + scale * 0.2,
+      center.dy - scale * 0.5,
+      center.dx + scale * 0.4,
+      center.dy - scale * 0.1,
     );
     path.quadraticBezierTo(
-      center.dx + scale * 0.6, center.dy - scale * 0.3,
-      center.dx + scale * 0.5, center.dy + scale * 0.1,
+      center.dx + scale * 0.6,
+      center.dy - scale * 0.3,
+      center.dx + scale * 0.5,
+      center.dy + scale * 0.1,
     );
 
     canvas.drawPath(path, paint);

@@ -6,6 +6,7 @@ enum SurveyInputType {
   multiSelect, // 다중 선택 칩
   slider,      // 슬라이더
   text,        // 텍스트 입력
+  textWithSkip, // 텍스트 입력 + "없음" 스킵 칩
   grid,        // 그리드 선택
   image,       // 이미지 업로드 (관상)
   profile,        // 프로필 선택 (궁합)

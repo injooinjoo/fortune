@@ -94,10 +94,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
 
     if (shouldLogout == true) {
+      // 1. Supabase 로그아웃
       await supabase.auth.signOut();
+
+      // 2. 로컬 데이터 정리
+      await _storageService.clearUserProfile();
+      await _storageService.clearGuestMode();
+      await _storageService.clearGuestId();
+
+      // 3. 캐시 정리
+      final cacheService = CacheService();
+      cacheService.clearAllCache();
+
       if (mounted) {
-        // Chat-First: 로그아웃 후 채팅으로 이동 (게스트 모드)
-        context.go('/chat');
+        // 4. 앱 재시작 효과: 랜딩 페이지로 이동
+        context.go('/');
       }
     }
   }

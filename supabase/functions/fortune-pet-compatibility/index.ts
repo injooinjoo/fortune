@@ -703,15 +703,15 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
       emotional_care: fortuneData.emotional_care,
       special_tips: fortuneData.special_tips,
 
-      // 육각형 차트용 점수 (감각적 라벨)
+      // 세부 운세 점수 (감각적 라벨)
       hexagonScores: {
-        '꼬리 프로펠러': fortuneData.daily_condition.overall_score,  // 기분 수치
-        '텔레파시 농도': fortuneData.owner_bond.bond_score,          // 서로 통하는 정도
-        '우다다 에너지': fortuneData.daily_condition.energy_level === 'high' ? 90 :
-                        fortuneData.daily_condition.energy_level === 'medium' ? 70 : 50,  // 활동성
-        '눈맞춤 온도': Math.round((fortuneData.daily_condition.overall_score + fortuneData.owner_bond.bond_score) / 2),  // 친밀감
-        '건강': fortuneData.health_insight.energy_level,
-        '행복': Math.round((fortuneData.daily_condition.overall_score + fortuneData.health_insight.energy_level) / 2)
+        '🐾 꼬리 프로펠러': fortuneData.daily_condition.overall_score,
+        '💫 텔레파시 농도': fortuneData.owner_bond.bond_score,
+        '⚡ 우다다 에너지': fortuneData.daily_condition.energy_level === 'high' ? 90 :
+                          fortuneData.daily_condition.energy_level === 'medium' ? 70 : 50,
+        '👀 눈맞춤 온도': Math.round((fortuneData.daily_condition.overall_score + fortuneData.owner_bond.bond_score) / 2),
+        '💪 건강 지수': fortuneData.health_insight.energy_level,
+        '🌈 행복 지수': Math.round((fortuneData.daily_condition.overall_score + fortuneData.health_insight.energy_level) / 2)
       },
 
       createdAt: new Date().toISOString()

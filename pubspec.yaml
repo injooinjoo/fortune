@@ -251,6 +251,7 @@ flutter:
     - assets/images/chat/backgrounds/
     - assets/images/face_reading/
     - assets/images/fortune_entry/
+    - assets/images/fortune/
     - assets/images/fortune/categories/
     - assets/images/fortune/bg/
     - assets/images/fortune/heroes/daily/

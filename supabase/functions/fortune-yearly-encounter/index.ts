@@ -4,7 +4,7 @@
  * 미래 애인 얼굴을 AI로 생성하고, 만남 예측 정보를 제공하는 운세 기능
  *
  * Cost: 10 tokens
- * - Image: NanoBanana API (~$0.02/image) - 사람 얼굴 생성에 안정적
+ * - Image: Gemini 2.5 Flash Image (gemini-2.5-flash-image) - 이미지 생성
  * - Text: Gemini 2.0 Flash Lite (gemini-2.0-flash-lite)
  *
  * Self-contained: 공유 모듈 없이 독립 실행 가능
@@ -14,8 +14,6 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')!
-const NANOBANANA_API_KEY = Deno.env.get('NANOBANANA_API_KEY')
-const NANOBANANA_API_URL = 'https://api.nanobanana.ai/v1/generate'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
@@ -34,6 +32,7 @@ interface YearlyEncounterRequest {
   targetGender: 'male' | 'female'
   userAge: string // '20대 초반', '20대 중반', etc.
   idealMbti: string // MBTI or '상관없음'
+  idealStyle?: string // 선택한 스타일 ID (dandy, sporty, casual, prep, street, innocent, career, girlcrush, pure, glamour)
   idealType: string // 자유 텍스트 이상형 설명
   isPremium?: boolean
 }
@@ -256,19 +255,111 @@ function randomPick<T>(array: T[]): T {
 }
 
 // ============================================================================
-// Image Prompt Builders (사용자 제공 프롬프트 기반)
+// Image Prompt Variations (다양한 이미지 생성을 위한 배열)
 // ============================================================================
 
-function buildMalePrompt(ageRange: string, idealType: string, mbti: string): string {
+const FACE_VARIATIONS = {
+  male: [
+    'sharp jawline with gentle features',
+    'soft masculine features with kind eyes',
+    'defined cheekbones with warm smile',
+    'boyish face with mature eyes',
+    'refined features with subtle dimples',
+  ],
+  female: [
+    'delicate oval face with bright eyes',
+    'heart-shaped face with soft features',
+    'elegant bone structure with gentle smile',
+    'youthful round face with expressive eyes',
+    'refined features with radiant complexion',
+  ],
+}
+
+const HAIR_VARIATIONS = {
+  male: [
+    'natural wavy dark brown hair, slightly tousled',
+    'neat side-parted black hair, well-groomed',
+    'textured comma hair with soft bangs',
+    'natural straight hair with light brown highlights',
+    'two-block cut with volume on top',
+  ],
+  female: [
+    'long flowing black hair with soft waves',
+    'shoulder-length layered cut, natural brown',
+    'elegant updo with face-framing strands',
+    'short bob with subtle highlights',
+    'natural wavy mid-length hair with shine',
+  ],
+}
+
+const ACCESSORY_VARIATIONS = {
+  male: [
+    'thin silver necklace visible',
+    'simple stud earring',
+    'stylish thin-rimmed glasses',
+    'classic wristwatch visible',
+    '', // 없음
+  ],
+  female: [
+    'delicate drop earrings',
+    'simple pendant necklace',
+    'elegant hair clip',
+    'minimal gold jewelry',
+    '', // 없음
+  ],
+}
+
+// 스타일별 프롬프트 매핑
+const STYLE_PROMPTS: Record<string, string> = {
+  // 남성 스타일
+  dandy: 'wearing a tailored navy blazer over crisp white dress shirt, refined grooming, sophisticated gentleman look',
+  sporty: 'athletic build visible, wearing a sleek sports jacket or performance wear, healthy tan, energetic vibe',
+  casual: 'wearing an oversized soft cardigan or cozy sweater, relaxed cafe aesthetic, comfortable elegance',
+  prep: 'wearing a classic button-down oxford shirt with a light sweater, preppy style, clean-cut scholarly look',
+  street: 'wearing trendy streetwear hoodie or designer jacket, subtle accessories, artistic urban vibe',
+  // 여성 스타일
+  innocent: 'wearing a soft pastel dress or delicate blouse, natural minimal makeup, sweet innocent smile',
+  career: 'wearing a sharp professional blazer, elegant styling, confident sophisticated aura',
+  girlcrush: 'wearing edgy stylish outfit, bold confident makeup, charismatic powerful presence',
+  pure: 'wearing comfortable casual clothes, minimal natural look, warm friendly approachable vibe',
+  glamour: 'wearing elegant statement outfit, polished glamorous styling, radiant celebrity-like presence',
+}
+
+// 남성/여성 스타일 키 배열 (없음 선택 시 랜덤용)
+const MALE_STYLE_KEYS = ['dandy', 'sporty', 'casual', 'prep', 'street']
+const FEMALE_STYLE_KEYS = ['innocent', 'career', 'girlcrush', 'pure', 'glamour']
+
+// ============================================================================
+// Image Prompt Builders (다양화된 프롬프트 생성)
+// ============================================================================
+
+function buildMalePrompt(
+  ageRange: string,
+  idealStyle: string | undefined,
+  idealType: string,
+  mbti: string
+): string {
   const mbtiHint = mbti !== '상관없음' ? `, personality vibe matching ${mbti}` : ''
+  const face = randomPick(FACE_VARIATIONS.male)
+  const hair = randomPick(HAIR_VARIATIONS.male)
+  const accessory = randomPick(ACCESSORY_VARIATIONS.male)
+  // "없음(none)" 선택 시 랜덤 스타일 적용
+  const effectiveStyle = (!idealStyle || idealStyle === 'none')
+    ? randomPick(MALE_STYLE_KEYS)
+    : idealStyle
+  const stylePrompt = STYLE_PROMPTS[effectiveStyle] || STYLE_PROMPTS.casual
+  const accessoryLine = accessory ? `Accessory: ${accessory}.` : ''
 
   return `Ultra-realistic portrait photograph of a handsome young Korean man in his ${ageRange}.
 Professional headshot with hyper-realistic skin texture, natural pores, and subtle skin imperfections for authenticity.
-Warm and inviting expression with a gentle, genuine smile that shows "boyfriend material" charm.
-${idealType ? `User's ideal type preference: ${idealType}.` : ''}
+Face: ${face}.
+Hair: ${hair}.
+${stylePrompt}.
+${accessoryLine}
+${idealType ? `Additional preference: ${idealType}.` : ''}
 ${mbtiHint}
+Warm and inviting expression with a genuine smile that shows "boyfriend material" charm.
 Clear, kind eyes with natural eye reflections and catchlights. Fresh, healthy complexion with natural skin tone.
-Wearing a stylish knit sweater or casual shirt in neutral tones (gray, beige, white).
 Pose: natural confident pose, slight head tilt or direct warm gaze at camera.
 Lighting: soft natural window light or golden hour lighting, creating gentle shadows.
 Background: clean, slightly blurred indoor setting or neutral studio backdrop.
@@ -279,16 +370,33 @@ MUST be hyper-realistic like a real photograph, NOT illustration or CGI.
 DO NOT include: text, logos, watermarks, blurry, cartoon, anime, illustrated, CGI, artificial looking.`
 }
 
-function buildFemalePrompt(ageRange: string, idealType: string, mbti: string): string {
+function buildFemalePrompt(
+  ageRange: string,
+  idealStyle: string | undefined,
+  idealType: string,
+  mbti: string
+): string {
   const mbtiHint = mbti !== '상관없음' ? `, personality vibe matching ${mbti}` : ''
+  const face = randomPick(FACE_VARIATIONS.female)
+  const hair = randomPick(HAIR_VARIATIONS.female)
+  const accessory = randomPick(ACCESSORY_VARIATIONS.female)
+  // "없음(none)" 선택 시 랜덤 스타일 적용
+  const effectiveStyle = (!idealStyle || idealStyle === 'none')
+    ? randomPick(FEMALE_STYLE_KEYS)
+    : idealStyle
+  const stylePrompt = STYLE_PROMPTS[effectiveStyle] || STYLE_PROMPTS.innocent
+  const accessoryLine = accessory ? `Accessory: ${accessory}.` : ''
 
   return `Ultra-realistic portrait photograph of a beautiful young Korean woman in her ${ageRange}.
 Professional headshot with hyper-realistic skin texture, natural pores, and subtle skin imperfections for authenticity.
-Sophisticated yet approachable elegance, embodying "girlfriend material" charm with a radiant, genuine smile.
-${idealType ? `User's ideal type preference: ${idealType}.` : ''}
+Face: ${face}.
+Hair: ${hair}.
+${stylePrompt}.
+${accessoryLine}
+${idealType ? `Additional preference: ${idealType}.` : ''}
 ${mbtiHint}
+Sophisticated yet approachable elegance, embodying "girlfriend material" charm with a radiant, genuine smile.
 Bright, expressive eyes with natural eye reflections and catchlights. Fresh, glowing complexion with natural skin tone.
-Wearing a soft pastel blouse, simple knit sweater, or elegant casual shirt.
 Pose: elegant natural pose, warm inviting expression, gentle smile.
 Lighting: soft natural window light or golden hour lighting, creating flattering soft shadows.
 Background: clean, slightly blurred indoor setting or neutral studio backdrop.
@@ -372,52 +480,63 @@ Example: ["#무쌍_강아지상", "#셔츠가잘어울리는", "#너드미"]`
 }
 
 // ============================================================================
-// NanoBanana Image Generation (안정적인 사람 얼굴 생성)
+// Gemini 2.5 Flash Image Image Generation (이미지 생성)
 // ============================================================================
 
-async function generateImageWithNanoBanana(prompt: string): Promise<string> {
+async function generateImageWithGemini(prompt: string): Promise<string> {
   const startTime = Date.now()
-  console.log('🎨 Generating portrait with NanoBanana API...')
+  console.log('🎨 Generating portrait with Gemini 2.5 Flash Image...')
 
-  if (!NANOBANANA_API_KEY) {
-    throw new Error('NanoBanana API key not configured')
+  if (!GEMINI_API_KEY) {
+    throw new Error('Gemini API key not configured')
   }
 
-  const response = await fetch(NANOBANANA_API_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${NANOBANANA_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      prompt,
-      aspect_ratio: '1:1', // 정사각형 초상화
-      style: 'portrait_photography',
-      quality: 'high',
-    }),
-  })
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          role: 'user',
+          parts: [{ text: prompt }],
+        }],
+        generationConfig: {
+          responseModalities: ['image', 'text'],
+          responseMimeType: 'text/plain',
+        },
+      }),
+    }
+  )
 
   if (!response.ok) {
     const errorText = await response.text()
-    console.error('❌ NanoBanana API 에러:', {
+    console.error('❌ Gemini API 에러:', {
       status: response.status,
       body: errorText.substring(0, 500),
     })
-    throw new Error(`NanoBanana API failed: ${response.status} - ${errorText}`)
+    throw new Error(`Gemini API failed: ${response.status} - ${errorText}`)
   }
 
   const result = await response.json()
-  const imageBase64 = result.image_base64 || result.imageBase64 || result.image
 
-  if (!imageBase64) {
-    console.error('❌ NanoBanana 응답에 이미지 없음:', JSON.stringify(result).substring(0, 300))
-    throw new Error('No image data in NanoBanana response')
+  // Gemini 응답에서 이미지 데이터 추출
+  const parts = result.candidates?.[0]?.content?.parts || []
+  const imagePart = parts.find((part: { inlineData?: { mimeType: string; data: string } }) =>
+    part.inlineData?.mimeType?.startsWith('image/')
+  )
+
+  if (!imagePart?.inlineData?.data) {
+    console.error('❌ Gemini 응답에 이미지 없음:', JSON.stringify(result).substring(0, 500))
+    throw new Error('No image data in Gemini response')
   }
 
   const latency = Date.now() - startTime
   console.log(`✅ Image generated successfully in ${latency}ms`)
 
-  return imageBase64
+  return imagePart.inlineData.data
 }
 
 // ============================================================================
@@ -430,7 +549,7 @@ async function generateImageWithRetry(prompt: string, maxRetries = 3): Promise<s
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       console.log(`🎨 이미지 생성 시도 ${attempt}/${maxRetries}...`)
-      return await generateImageWithNanoBanana(prompt)
+      return await generateImageWithGemini(prompt)
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
       console.error(`❌ 시도 ${attempt} 실패:`, lastError.message)
@@ -540,12 +659,12 @@ serve(async (req) => {
     // 1. Build image prompt based on target gender
     const ageRange = getAgeRange(request.userAge)
     const imagePrompt = request.targetGender === 'male'
-      ? buildMalePrompt(ageRange, request.idealType, request.idealMbti)
-      : buildFemalePrompt(ageRange, request.idealType, request.idealMbti)
+      ? buildMalePrompt(ageRange, request.idealStyle, request.idealType, request.idealMbti)
+      : buildFemalePrompt(ageRange, request.idealStyle, request.idealType, request.idealMbti)
 
     console.log('📝 Image prompt length:', imagePrompt.length)
 
-    // 2. Generate image with Gemini 2.5 Flash (with retry logic)
+    // 2. Generate image with Gemini 2.5 Flash Image (with retry logic)
     const imageBase64 = await generateImageWithRetry(imagePrompt, 3)
 
     // 3. Upload to Supabase Storage

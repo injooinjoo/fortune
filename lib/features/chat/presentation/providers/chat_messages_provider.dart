@@ -43,6 +43,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   }
 
   /// 운세 결과 메시지 추가
+  /// [clearFirst] true이면 기존 대화를 지우고 결과만 표시 (기본값: true)
   void addFortuneResultMessage({
     required String text,
     required String fortuneType,
@@ -54,9 +55,15 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     MatchInsight? matchInsight,
     PastLifeResult? pastLifeResult,
     YearlyEncounterResult? yearlyEncounterResult,
+    bool clearFirst = true,
   }) {
     // 결과 표시 시 강한 햅틱 피드백
     HapticUtils.heavyImpact();
+
+    // 기존 대화 지우기 (자석 기능 대체)
+    if (clearFirst) {
+      state = const ChatState();
+    }
 
     final message = ChatMessage(
       id: _uuid.v4(),
@@ -80,15 +87,22 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   }
 
   /// 사주 분석 결과 메시지 추가
+  /// [clearFirst] true이면 기존 대화를 지우고 결과만 표시 (기본값: true)
   void addSajuResultMessage({
     String? text,
     required Map<String, dynamic> sajuData,
     Map<String, dynamic>? sajuFortuneResult,
     bool isBlurred = false,
     List<String> blurredSections = const [],
+    bool clearFirst = true,
   }) {
     // 결과 표시 시 강한 햅틱 피드백
     HapticUtils.heavyImpact();
+
+    // 기존 대화 지우기 (자석 기능 대체)
+    if (clearFirst) {
+      state = const ChatState();
+    }
 
     final message = ChatMessage(
       id: _uuid.v4(),
@@ -107,12 +121,19 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   }
 
   /// 성격 DNA 결과 메시지 추가
+  /// [clearFirst] true이면 기존 대화를 지우고 결과만 표시 (기본값: true)
   void addPersonalityDnaResult({
     required PersonalityDNA dna,
     bool isBlurred = false,
+    bool clearFirst = true,
   }) {
     // 결과 표시 시 강한 햅틱 피드백
     HapticUtils.heavyImpact();
+
+    // 기존 대화 지우기 (자석 기능 대체)
+    if (clearFirst) {
+      state = const ChatState();
+    }
 
     final message = ChatMessage(
       id: _uuid.v4(),
@@ -128,14 +149,21 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   }
 
   /// 부적 결과 메시지 추가 (이미지 + 짧은 설명)
+  /// [clearFirst] true이면 기존 대화를 지우고 결과만 표시 (기본값: true)
   void addTalismanResult({
     required String imageUrl,
     required String categoryName,
     required String shortDescription,
     bool isBlurred = false,
+    bool clearFirst = true,
   }) {
     // 결과 표시 시 강한 햅틱 피드백
     HapticUtils.heavyImpact();
+
+    // 기존 대화 지우기 (자석 기능 대체)
+    if (clearFirst) {
+      state = const ChatState();
+    }
 
     final message = ChatMessage(
       id: _uuid.v4(),
@@ -153,13 +181,20 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   }
 
   /// 감사일기 결과 메시지 추가 (일기장 스타일 카드)
+  /// [clearFirst] true이면 기존 대화를 지우고 결과만 표시 (기본값: true)
   void addGratitudeResultMessage({
     required String gratitude1,
     required String gratitude2,
     required String gratitude3,
+    bool clearFirst = true,
   }) {
     // 결과 표시 시 강한 햅틱 피드백
     HapticUtils.heavyImpact();
+
+    // 기존 대화 지우기 (자석 기능 대체)
+    if (clearFirst) {
+      state = const ChatState();
+    }
 
     final message = ChatMessage(
       id: _uuid.v4(),

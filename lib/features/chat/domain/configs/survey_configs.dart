@@ -703,14 +703,14 @@ const faceReadingSurveyConfig = FortuneSurveyConfig(
   steps: [
     SurveyStep(
       id: 'focus',
-      question: '어떤 관상이 궁금해? 👀',
+      question: '어떤 관상이 궁금하세요? 👀',
       inputType: SurveyInputType.chips,
       options: _faceReadingFocusOptions,
       isRequired: false,
     ),
     SurveyStep(
       id: 'photo',
-      question: '얼굴 사진을 올려줘! 📸\n정면 사진이 가장 정확해',
+      question: '얼굴 사진을 올려주세요! 📸\n정면 사진이 가장 정확해요',
       inputType: SurveyInputType.faceReading,
     ),
   ],
@@ -1797,21 +1797,21 @@ const sportsGameSurveyConfig = FortuneSurveyConfig(
     // Step 1: 종목 선택
     SurveyStep(
       id: 'sport',
-      question: '어떤 종목이야? 🏆',
+      question: '어떤 종목인가요? 🏆',
       inputType: SurveyInputType.chips,
       options: _sportTypeOptions,
     ),
     // Step 2: 경기 선택 (종목에 따라 동적 로드)
     SurveyStep(
       id: 'match',
-      question: '어떤 경기를 볼까? 📅',
+      question: '어떤 경기를 볼까요? 📅',
       inputType: SurveyInputType.matchSelection,
       dependsOn: 'sport',
     ),
     // Step 3: 응원팀 선택 (선택한 경기의 양 팀 중)
     SurveyStep(
       id: 'favoriteTeam',
-      question: '어느 팀 응원해? 📣',
+      question: '어느 팀을 응원하시나요? 📣',
       inputType: SurveyInputType.chips,
       dependsOn: 'match',
       isRequired: false,
@@ -2351,6 +2351,26 @@ const _idealMbtiOptions = [
   SurveyOption(id: 'ENTJ', label: 'ENTJ', emoji: '👑'),
 ];
 
+/// 남성 스타일 옵션 (올해의 인연)
+const _maleStyleOptions = [
+  SurveyOption(id: 'none', label: '없음', emoji: '🎲'),
+  SurveyOption(id: 'dandy', label: '댄디한 정장남', emoji: '🎩'),
+  SurveyOption(id: 'sporty', label: '스포티한 헬창', emoji: '💪'),
+  SurveyOption(id: 'casual', label: '편안한 무드 감성남', emoji: '☕'),
+  SurveyOption(id: 'prep', label: '프레피 대학생', emoji: '📚'),
+  SurveyOption(id: 'street', label: '스트릿 패션 힙보이', emoji: '🎸'),
+];
+
+/// 여성 스타일 옵션 (올해의 인연)
+const _femaleStyleOptions = [
+  SurveyOption(id: 'none', label: '없음', emoji: '🎲'),
+  SurveyOption(id: 'innocent', label: '청순한 첫사랑', emoji: '🌸'),
+  SurveyOption(id: 'career', label: '시크한 커리어우먼', emoji: '💼'),
+  SurveyOption(id: 'girlcrush', label: '걸크러쉬 언니', emoji: '🔥'),
+  SurveyOption(id: 'pure', label: '수수한 옆집 언니', emoji: '🏠'),
+  SurveyOption(id: 'glamour', label: '화려한 연예인상', emoji: '✨'),
+];
+
 /// YearlyEncounter 설문 설정
 const yearlyEncounterSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.yearlyEncounter,
@@ -2377,10 +2397,26 @@ const yearlyEncounterSurveyConfig = FortuneSurveyConfig(
       inputType: SurveyInputType.chips,
       options: _idealMbtiOptions,
     ),
+    // 남성 스타일 선택 (targetGender가 male일 때만 표시)
+    SurveyStep(
+      id: 'idealStyle',
+      question: '어떤 스타일이 끌리세요? ✨',
+      inputType: SurveyInputType.chips,
+      options: _maleStyleOptions,
+      showWhen: {'targetGender': 'male'},
+    ),
+    // 여성 스타일 선택 (targetGender가 female일 때만 표시)
+    SurveyStep(
+      id: 'idealStyle',
+      question: '어떤 스타일이 끌리세요? ✨',
+      inputType: SurveyInputType.chips,
+      options: _femaleStyleOptions,
+      showWhen: {'targetGender': 'female'},
+    ),
     SurveyStep(
       id: 'idealType',
-      question: '어떤 사람을 만나고 싶으세요?',
-      inputType: SurveyInputType.text,
+      question: '추가로 원하는 특징이 있으면 적어주세요 💬',
+      inputType: SurveyInputType.textWithSkip,
       isRequired: false,
     ),
   ],
@@ -2397,7 +2433,7 @@ const _pastLifeEraVibeOptions = [
   SurveyOption(id: 'joseon_common', label: '조선 서민', emoji: '🏡'),
   SurveyOption(id: 'warrior', label: '전쟁터의 무사', emoji: '⚔️'),
   SurveyOption(id: 'artist', label: '예술가/기생', emoji: '🎨'),
-  SurveyOption(id: 'unknown', label: '모르겠어', emoji: '🌫️'),
+  SurveyOption(id: 'unknown', label: '모르겠어요', emoji: '🌫️'),
 ];
 
 /// 전생에서 궁금한 것 옵션
@@ -2410,11 +2446,11 @@ const _pastLifeCuriosityOptions = [
 
 /// 전생 기억 느낌 옵션
 const _pastLifeFeelingOptions = [
-  SurveyOption(id: 'deja_vu', label: '데자뷔를 자주 느껴', emoji: '👁️'),
-  SurveyOption(id: 'old_soul', label: '나이보다 성숙하다는 말을 들어', emoji: '🧓'),
-  SurveyOption(id: 'specific_era', label: '특정 시대에 끌려', emoji: '⏳'),
-  SurveyOption(id: 'recurring_dream', label: '반복되는 꿈이 있어', emoji: '💭'),
-  SurveyOption(id: 'none', label: '딱히 없어', emoji: '🤷'),
+  SurveyOption(id: 'deja_vu', label: '데자뷔를 자주 느껴요', emoji: '👁️'),
+  SurveyOption(id: 'old_soul', label: '나이보다 성숙하다는 말을 들어요', emoji: '🧓'),
+  SurveyOption(id: 'specific_era', label: '특정 시대에 끌려요', emoji: '⏳'),
+  SurveyOption(id: 'recurring_dream', label: '반복되는 꿈이 있어요', emoji: '💭'),
+  SurveyOption(id: 'none', label: '딱히 없어요', emoji: '🤷'),
 ];
 
 const pastLifeSurveyConfig = FortuneSurveyConfig(
@@ -2427,14 +2463,14 @@ const pastLifeSurveyConfig = FortuneSurveyConfig(
     // Step 1: 전생에서 가장 궁금한 것
     SurveyStep(
       id: 'curiosity',
-      question: '전생에서 가장 궁금한 게 뭐야? 🔮',
+      question: '전생에서 가장 궁금한 게 뭐예요? 🔮',
       inputType: SurveyInputType.chips,
       options: _pastLifeCuriosityOptions,
     ),
     // Step 2: 전생 시대 예감 (선택)
     SurveyStep(
       id: 'eraVibe',
-      question: '혹시 전생이 어느 시대였을 것 같아? ✨',
+      question: '혹시 전생이 어느 시대였을 것 같으세요? ✨',
       inputType: SurveyInputType.chips,
       options: _pastLifeEraVibeOptions,
       isRequired: false,
@@ -2442,7 +2478,7 @@ const pastLifeSurveyConfig = FortuneSurveyConfig(
     // Step 3: 전생 기억 느낌 (선택)
     SurveyStep(
       id: 'feeling',
-      question: '평소에 이런 느낌 받은 적 있어? 🌙',
+      question: '평소에 이런 느낌 받으신 적 있으세요? 🌙',
       inputType: SurveyInputType.chips,
       options: _pastLifeFeelingOptions,
       isRequired: false,
@@ -2450,7 +2486,7 @@ const pastLifeSurveyConfig = FortuneSurveyConfig(
     // Step 4: 사진 업로드 (핵심)
     SurveyStep(
       id: 'photo',
-      question: '이제 너의 전생을 읽어볼게 🔮\n사진을 올려주면 AI가 전생 초상화도 그려줄 수 있어',
+      question: '이제 전생을 읽어볼게요 🔮\n사진을 올려주시면 AI가 전생 초상화도 그려드릴 수 있어요',
       inputType: SurveyInputType.faceReading,
     ),
   ],

@@ -22,7 +22,9 @@ class ChatMessageBubble extends StatelessWidget {
   final ChatMessage message;
 
   /// 운세 결과 카드 렌더링 완료 시 호출되는 콜백
-  final void Function(BuildContext context)? onFortuneResultRendered;
+  /// messageId와 context를 전달하여 1회성 스크롤 처리 가능
+  final void Function(String messageId, BuildContext context)?
+      onFortuneResultRendered;
 
   const ChatMessageBubble({
     super.key,
@@ -40,6 +42,7 @@ class ChatMessageBubble extends StatelessWidget {
     if (message.type == ChatMessageType.personalityDnaResult &&
         message.personalityDna != null) {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -56,6 +59,7 @@ class ChatMessageBubble extends StatelessWidget {
     // 사주 분석 결과 카드 표시
     if (message.type == ChatMessageType.sajuResult && message.sajuData != null) {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -85,6 +89,7 @@ class ChatMessageBubble extends StatelessWidget {
         'details': additionalInfo['details'] ?? {},
       };
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -106,6 +111,7 @@ class ChatMessageBubble extends StatelessWidget {
             message.fortuneType == 'career_coaching' ||
             message.fortuneType == 'career-coaching')) {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -125,6 +131,7 @@ class ChatMessageBubble extends StatelessWidget {
         message.type == ChatMessageType.fortuneResult &&
         message.fortuneType == 'moving') {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -147,6 +154,7 @@ class ChatMessageBubble extends StatelessWidget {
       final additionalInfo = message.fortune!.additionalInfo ?? {};
       final questionType = additionalInfo['question_type'] as String?;
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -167,6 +175,7 @@ class ChatMessageBubble extends StatelessWidget {
         message.fortuneType == 'match-insight' &&
         message.matchInsight != null) {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -187,6 +196,7 @@ class ChatMessageBubble extends StatelessWidget {
       // Fortune의 additionalInfo에서 타로 데이터 추출
       final additionalInfo = message.fortune!.additionalInfo ?? {};
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -215,6 +225,7 @@ class ChatMessageBubble extends StatelessWidget {
         message.fortuneType == 'past-life' &&
         message.pastLifeResult != null) {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -233,6 +244,7 @@ class ChatMessageBubble extends StatelessWidget {
             message.fortuneType == 'yearlyEncounter') &&
         message.yearlyEncounterResult != null) {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -250,6 +262,7 @@ class ChatMessageBubble extends StatelessWidget {
         message.type == ChatMessageType.fortuneResult &&
         message.fortuneType == 'fortune-cookie') {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -266,6 +279,7 @@ class ChatMessageBubble extends StatelessWidget {
     if (message.type == ChatMessageType.talismanResult &&
         message.talismanImageUrl != null) {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -284,6 +298,7 @@ class ChatMessageBubble extends StatelessWidget {
     // 감사일기 결과 카드 표시 (일기장 스타일)
     if (message.type == ChatMessageType.gratitudeResult) {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,
@@ -303,6 +318,7 @@ class ChatMessageBubble extends StatelessWidget {
     // 전체 너비 사용, 중앙 정렬 (자석효과 제거)
     if (message.fortune != null && message.type == ChatMessageType.fortuneResult) {
       return FortuneResultScrollWrapper(
+        messageId: message.id,
         onRendered: onFortuneResultRendered,
         child: Container(
           width: double.infinity,

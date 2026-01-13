@@ -7,7 +7,6 @@ import '../services/fortune_haptic_service.dart';
 import '../utils/fortune_completion_helper.dart';
 import 'unified_button.dart';
 import 'unified_button_enums.dart';
-import '../../presentation/providers/subscription_provider.dart';
 
 /// 통일된 블러 처리 위젯
 ///
@@ -103,12 +102,6 @@ class _UnifiedBlurWrapperState extends ConsumerState<UnifiedBlurWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    // 프리미엄 사용자는 블러 처리 없이 전체 콘텐츠 표시
-    final isPremium = ref.watch(isPremiumProvider);
-    if (isPremium) {
-      return widget.child;
-    }
-
     // 블러 적용 여부 판단
     final shouldBlur = widget.isBlurred && widget.blurredSections.contains(widget.sectionKey);
 
@@ -212,12 +205,6 @@ class UnifiedAdUnlockButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 프리미엄 사용자는 광고 버튼 숨김
-    final isPremium = ref.watch(isPremiumProvider);
-    if (isPremium) {
-      return const SizedBox.shrink();
-    }
-
     return UnifiedButton.floating(
       text: customText ?? '🎁 광고 보고 전체 내용 보기',
       onPressed: onPressed,

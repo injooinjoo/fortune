@@ -7,13 +7,17 @@ import 'package:flutter/material.dart';
 class FortuneResultScrollWrapper extends StatefulWidget {
   final Widget child;
 
+  /// 메시지 고유 ID (중복 스크롤 방지용)
+  final String messageId;
+
   /// 렌더링 완료 후 호출되는 콜백
-  /// BuildContext를 전달하여 RenderBox 기반 위치 계산 가능
-  final void Function(BuildContext context)? onRendered;
+  /// messageId와 BuildContext를 전달하여 1회성 스크롤 처리 가능
+  final void Function(String messageId, BuildContext context)? onRendered;
 
   const FortuneResultScrollWrapper({
     super.key,
     required this.child,
+    required this.messageId,
     this.onRendered,
   });
 
@@ -30,7 +34,7 @@ class _FortuneResultScrollWrapperState
     // 렌더링 완료 후 콜백 호출 (타이핑 인디케이터와 동일한 패턴)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        widget.onRendered?.call(context);
+        widget.onRendered?.call(widget.messageId, context);
       }
     });
   }

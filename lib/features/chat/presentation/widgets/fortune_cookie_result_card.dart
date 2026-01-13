@@ -313,15 +313,19 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 동양풍 여는 따옴표
-          Text(
-            '「',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w300,
-              color: _goldenAccent.withValues(alpha: 0.7),
-              height: 0.8,
+          // 동양풍 여는 따옴표 (왼쪽 정렬)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '「',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w300,
+                color: _goldenAccent.withValues(alpha: 0.7),
+                height: 0.8,
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -338,14 +342,17 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
           ),
 
           const SizedBox(height: 8),
-          // 동양풍 닫는 따옴표
-          Text(
-            '」',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w300,
-              color: _goldenAccent.withValues(alpha: 0.7),
-              height: 0.8,
+          // 동양풍 닫는 따옴표 (오른쪽 정렬)
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '」',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w300,
+                color: _goldenAccent.withValues(alpha: 0.7),
+                height: 0.8,
+              ),
             ),
           ),
         ],

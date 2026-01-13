@@ -23,7 +23,9 @@ class ChatMessageList extends ConsumerWidget {
   final VoidCallback? onTypingIndicatorRendered;
 
   /// 운세 결과 카드가 렌더링 완료되면 호출됨
-  final void Function(BuildContext context)? onFortuneResultRendered;
+  /// messageId와 context를 전달하여 1회성 스크롤 처리 가능
+  final void Function(String messageId, BuildContext context)?
+      onFortuneResultRendered;
 
   const ChatMessageList({
     super.key,

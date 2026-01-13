@@ -1,11 +1,11 @@
 # 비즈니스 모델 가이드
 
-> 최종 업데이트: 2026.01.04
+> 최종 업데이트: 2026.01.13
 
 ## 개요
 
 Fortune 앱의 수익화 모델을 정의한 문서입니다.
-복주머니(🧧) 시스템, 광고, 블러 해제를 통한 3단계 수익화 전략을 사용합니다.
+**3가지 모델**: 무료, 블러(광고 해제), 복주머니(필수 소비)
 
 ---
 
@@ -13,73 +13,80 @@ Fortune 앱의 수익화 모델을 정의한 문서입니다.
 
 ### 1.1 모델 종류
 
-| 모델 | 설명 | 운세 수 |
-|------|------|--------|
-| 🆓 **무료** | 제한 없이 무료 이용 | 4개 |
-| 🧧 **복주머니** | 복주머니 소비 OR 광고 대체 | 12개 |
-| 🔒 **블러** | 일부 공개 + 광고로 전체 해제 | 15개 |
-| 🎬 **선불광고** | 결과 보기 직전 광고 시청 | 5개 |
+| 모델 | 설명 | 광고 시청 | 운세 수 |
+|------|------|----------|--------|
+| 🆓 **무료** | 제한 없이 무료 이용 | 불필요 | 5개 |
+| 🔒 **블러** | 일부 공개 + 광고로 전체 해제 | 필요 (횟수 무제한) | 22개 |
+| 🧧 **복주머니** | 반드시 복주머니 소비 | 대체 불가 | 9개 |
+
+### 1.2 핵심 원칙
+
+- **블러 운세**: 광고 시청으로 전체 해제 (횟수 제한 없음)
+- **복주머니 운세**: 광고 대체 불가 (반드시 복주머니 소비)
+- **프리미엄 구독**: 블러 해제 + 광고 제거 + 월간 복주머니 50개 (복주머니 운세는 소비 필요)
 
 ---
 
 ## 2. 운세별 모델 배정
 
-### 2.1 무료 (🆓) - 4개
+### 2.1 무료 (🆓) - 5개
 
 | 운세 | 칩 ID | 설명 |
 |------|-------|------|
-| 오늘 인사이트 | `daily` | 매일 무료 제공 |
+| 오늘의 나 | `daily` | 매일 무료 제공 |
 | 포춘쿠키 | `fortuneCookie` | 간단한 메시지 |
 | 숨쉬기 | `breathing` | 웰니스 기능 |
 | 감사일기 | `gratitude` | 웰니스 기능 |
+| 오운완 | `exercise` | 운동 추천 |
 
-### 2.2 복주머니 (🧧) - 12개
-
-| 운세 | 칩 ID | 복주머니 | 광고 대체 | 일일 제한 |
-|------|-------|---------|----------|----------|
-| 소개팅 | `blindDate` | 🧧 2개 | 🎬 1회 | 5회 |
-| 취업/이직 | `career` | 🧧 2개 | 🎬 1회 | 5회 |
-| 시험운 | `exam` | 🧧 2개 | 🎬 1회 | 5회 |
-| 궁합 | `compatibility` | 🧧 3개 | 🎬 1회 | 4회 |
-| 재물운 | `money` | 🧧 3개 | 🎬 1회 | 4회 |
-| 부적 | `talisman` | 🧧 3개 | 🎬 1회 | 4회 |
-| 이사 | `moving` | 🧧 3개 | 🎬 1회 | 4회 |
-| 가족 인사이트 | `family` | 🧧 4개 | 🎬 2회 | 2회 |
-| 새해 인사이트 | `newYear` | 🧧 5개 | 🎬 2회 | 2회 |
-| 사주 분석 | `traditional` | 🧧 5개 | 🎬 2회 | 2회 |
-| 태명 분석 | `babyNickname` | 🧧 5개 | 🎬 2회 | 2회 |
-| 작명 | `naming` | 🧧 7개 | 🎬 3회 | 1회 |
-
-### 2.3 블러 (🔒) - 15개
+### 2.2 블러 (🔒) - 22개
 
 | 운세 | 칩 ID | 공개 영역 | 블러 영역 |
 |------|-------|----------|----------|
 | 기간별 인사이트 | `dailyCalendar` | 오늘~3일 | 4일 이후 전체 |
 | 연애운 | `love` | 연애 성향, 점수 | 상세 분석, 예측, 가이드 |
 | 재회 인사이트 | `exLover` | 재회 가능성 점수 | 상세 분석, 타이밍, 조언 |
+| 궁합 | `compatibility` | 궁합 점수 | 상세 분석, 조언 |
+| 소개팅 | `blindDate` | 첫인상 예측 | 상세 가이드, 대화 팁 |
 | 경계 대상 | `avoidPeople` | 유형 1개 | 나머지 유형, 대처법 |
+| 취업/이직 | `career` | 운세 요약 | 상세 분석, 전략 |
 | 적성 찾기 | `talent` | 재능 1개 | 나머지 재능, 로드맵 |
 | 행운 아이템 | `luckyItems` | 색상, 방향 | 패션, 음식, 장소 등 |
 | 타로 | `tarot` | 카드 해석 요약 | 상세 해석, 조언, 전망 |
 | AI 관상 | `faceReading` | 종합 점수, 인상 | 부위별 분석, 성격 |
 | 전생 탐험 | `pastLife` | 전생 시대/역할 | 카르마, 미션, 초상화 |
-| MBTI 인사이트 | `mbti` | 종합 점수, 설명 | 차원별 운세, 궁합 |
 | 성격 DNA | `personalityDna` | DNA 유형 | 상세 분석, 성장 가이드 |
+| 바이오리듬 | `biorhythm` | 오늘 상태 | 주간 예측 |
+| MBTI 인사이트 | `mbti` | 종합 점수, 설명 | 차원별 운세, 궁합 |
 | 건강운 | `health` | 건강 점수, 주의 | 상세 분석, 맞춤 조언 |
 | 꿈해몽 | `dream` | 키워드 해석 | 심리 분석, 가이드 |
-| 유명인 궁합 | `celebrity` | 매칭 유명인 | 상세 궁합, 공통점 |
+| 소원 빌기 | `wish` | 소원 분석 | 달성 가이드, 조언 |
 | 반려동물 궁합 | `pet` | 궁합 점수 | 소통 팁, 케어 조언 |
-| 로또 번호 | `lotto` | 5개 번호 | 마지막 1개 번호 |
+| 가족 인사이트 | `family` | 관계 요약 | 상세 조언, 화해 방법 |
+| 이사 | `moving` | 방향 추천 | 상세 분석, 시기 |
+| 부적 | `talisman` | 부적 이미지 | 효능 상세, 사용법 |
 
-### 2.4 선불광고 (🎬) - 5개
+**블러 해제 방법:**
+- 광고 시청 (횟수 제한 없음)
+- 프리미엄 구독자는 블러 없이 즉시 전체 공개
 
-| 운세 | 칩 ID | 광고 타이밍 |
-|------|-------|------------|
-| 바이오리듬 | `biorhythm` | 결과 보기 직전 |
-| 운동 추천 | `exercise` | 결과 보기 직전 |
-| 경기 인사이트 | `sportsGame` | 결과 보기 직전 |
-| 소원 빌기 | `wish` | 결과 보기 직전 |
-| OOTD 평가 | `ootdEvaluation` | 결과 보기 직전 |
+### 2.3 복주머니 (🧧) - 9개
+
+| 운세 | 칩 ID | 복주머니 | 비고 |
+|------|-------|---------|------|
+| 새해 인사이트 | `newYear` | 🧧 5개 | 연간 운세 |
+| 사주 분석 | `traditional` | 🧧 5개 | 전통 사주팔자 |
+| 작명 | `naming` | 🧧 7개 | 이름 분석 |
+| 태명 분석 | `babyNickname` | 🧧 5개 | 아기 태명 |
+| 올해의 인연 | `yearlyEncounter` | 🧧 3개 | 이미지 생성 포함 |
+| 유명인 궁합 | `celebrity` | 🧧 5개 | 셀럽 매칭 |
+| 로또 번호 | `lotto` | 🧧 3개 | 번호 추천 |
+| 시험운 | `exam` | 🧧 3개 | 시험 분석 |
+| OOTD 평가 | `ootdEvaluation` | 🧧 3개 | 패션 이미지 생성 |
+
+**복주머니 운세 규칙:**
+- ⚠️ 광고 대체 **불가** (반드시 복주머니 소비)
+- ⚠️ 프리미엄 구독자도 복주머니 소비 **필요**
 
 ---
 
@@ -89,7 +96,7 @@ Fortune 앱의 수익화 모델을 정의한 문서입니다.
 
 | 방법 | 복주머니 | 빈도 | 비고 |
 |------|---------|------|------|
-| 출석 체크 | 🧧 2개 | 매일 | 기본 1회 운세 보장 |
+| 출석 체크 | 🧧 2개 | 매일 | 기본 지급 |
 | 연속 7일 출석 | 🧧 5개 | 주 1회 | 보너스 |
 | 리워드 광고 | 🧧 1개 | 일 5회 | 사용자 선택 |
 | 운세 공유 | 🧧 1개 | 일 3회 | 바이럴 마케팅 |
@@ -107,17 +114,6 @@ Fortune 앱의 수익화 모델을 정의한 문서입니다.
 | 인기 | Tier 4 | ₩6,000 | 🧧 180개 | ₩33 |
 | 대용량 | Tier 7 | ₩9,900 | 🧧 350개 | ₩28 |
 
-### 3.3 광고 대체 규칙
-
-복주머니 운세는 광고로 대체 가능:
-
-| 복주머니 비용 | 광고 대체 | 일일 제한 |
-|-------------|----------|----------|
-| 🧧 2개 | 🎬 1회 | 5회/일 |
-| 🧧 3개 | 🎬 1회 | 4회/일 |
-| 🧧 4~5개 | 🎬 2회 | 2회/일 |
-| 🧧 7개 | 🎬 3회 | 1회/일 |
-
 ---
 
 ## 4. 블러 시스템 상세
@@ -126,21 +122,15 @@ Fortune 앱의 수익화 모델을 정의한 문서입니다.
 
 - **UnifiedBlurWrapper** 위젯 사용
 - **blurredSections** 배열로 블러 영역 지정
-- 광고 시청 후 전체 해제
+- 광고 시청 후 전체 해제 (횟수 제한 없음)
 - 프리미엄 구독자는 블러 없음
 
-### 4.2 블러 영역 상세
+### 4.2 블러 영역 상세 (주요 운세)
 
 #### love (연애운)
 ```typescript
 blurredSections: ['detailedAnalysis', 'predictions', 'actionPlan']
 // 공개: loveProfile, overallScore
-```
-
-#### mbti (MBTI 인사이트)
-```typescript
-blurredSections: ['dimensions.fortune', 'dimensions.tip', 'loveFortune', 'careerFortune', 'moneyFortune', 'healthFortune', 'advice', 'compatibility']
-// 공개: mbtiType, overallFortune
 ```
 
 #### tarot (타로)
@@ -149,16 +139,22 @@ blurredSections: ['detailedInterpretation', 'advice', 'futureOutlook']
 // 공개: cardName, briefMeaning
 ```
 
+#### mbti (MBTI 인사이트)
+```typescript
+blurredSections: ['dimensions.fortune', 'dimensions.tip', 'loveFortune', 'careerFortune', 'moneyFortune', 'healthFortune', 'advice', 'compatibility']
+// 공개: mbtiType, overallFortune
+```
+
 #### dream (꿈해몽)
 ```typescript
 blurredSections: ['psychologicalInsight', 'symbolAnalysis', 'todayGuidance', 'actionAdvice']
 // 공개: dreamKeyword, basicMeaning
 ```
 
-#### lotto (로또 번호)
+#### faceReading (AI 관상)
 ```typescript
-blurredSections: ['numbers[5]', 'bonusNumber']
-// 공개: numbers[0~4] (5개)
+blurredSections: ['detailedFacialAnalysis', 'personalityTraits', 'styleRecommendation']
+// 공개: overallScore, firstImpression
 ```
 
 ---
@@ -167,163 +163,64 @@ blurredSections: ['numbers[5]', 'bonusNumber']
 
 ### 5.1 현재 사용 중인 LLM
 
-#### 텍스트 생성 (통일)
-
 | 용도 | Provider | 모델 | Input/1M | Output/1M |
 |------|----------|------|----------|-----------|
 | **모든 운세 (기본)** | Gemini | `gemini-2.0-flash-lite` | $0.075 | $0.30 |
 | Vision (관상/전생) | Gemini | `gemini-2.0-flash-exp` | $0.10 | $0.40 |
 
-#### 이미지 생성 (통일)
+### 5.2 이미지 생성
 
-| 기능 | Provider | 모델 | 비용/이미지 |
-|------|----------|------|------------|
-| 패션 이미지 | **NanoBanana** | - | **$0.02** |
-| 전생 초상화 | Gemini | `gemini-2.5-flash-preview-05-20` | 무료 |
-| 부적 이미지 | Gemini | `gemini-2.5-flash-preview-05-20` | 무료 |
-| 셀럽 캐릭터 | **OpenAI** | `dall-e-3` | **~$0.04** |
+| 기능 | Provider | 비용/이미지 |
+|------|----------|------------|
+| 패션 이미지 | NanoBanana | $0.02 |
+| 전생 초상화 | Gemini | 무료 |
+| 부적 이미지 | Gemini | 무료 |
+| 셀럽 캐릭터 | OpenAI DALL-E 3 | ~$0.04 |
 
-### 5.2 운세별 LLM 매핑 (40+ Edge Functions)
-
-모든 운세는 기본적으로 `gemini-2.0-flash-lite` 사용 (LLMFactory 통해 관리)
-
-| Edge Function | 텍스트 LLM | 이미지 생성 | 비고 |
-|---------------|-----------|------------|------|
-| fortune-daily | gemini-2.0-flash-lite | - | |
-| fortune-love | gemini-2.0-flash-lite | - | |
-| fortune-career | gemini-2.0-flash-lite | - | |
-| fortune-health | gemini-2.0-flash-lite | - | |
-| fortune-mbti | gemini-2.0-flash-lite | - | |
-| fortune-compatibility | gemini-2.0-flash-lite | - | |
-| fortune-dream | gemini-2.0-flash-lite | - | |
-| fortune-tarot | gemini-2.0-flash-lite | - | temp 0.85 |
-| fortune-talent | gemini-2.0-flash-lite | - | |
-| fortune-investment | gemini-2.0-flash-lite | - | |
-| fortune-exam | gemini-2.0-flash-lite | - | |
-| fortune-moving | gemini-2.0-flash-lite | - | |
-| fortune-face-reading | gemini-2.0-flash-lite | - | Vision 사용 |
-| fortune-blind-date | gemini-2.0-flash-lite | - | |
-| fortune-ex-lover | gemini-2.0-flash-lite | - | |
-| fortune-avoid-people | gemini-2.0-flash-lite | - | |
-| fortune-lucky-items | gemini-2.0-flash-lite | - | |
-| fortune-biorhythm | gemini-2.0-flash-lite | - | |
-| fortune-naming | gemini-2.0-flash-lite | - | |
-| fortune-wealth | gemini-2.0-flash-lite | - | |
-| fortune-ootd | gemini-2.0-flash-lite | - | |
-| fortune-time | gemini-2.0-flash-lite | - | |
-| fortune-recommend | gemini-2.0-flash-lite | - | |
-| fortune-past-life | gemini-2.0-flash-lite | **Gemini Image** | 전생 초상화 |
-| fortune-premium-saju | gemini-2.0-flash-lite | - | |
-| fortune-traditional-saju | gemini-2.0-flash-lite | - | |
-| fortune-new-year | gemini-2.0-flash-lite | - | |
-| fortune-home-fengshui | gemini-2.0-flash-lite | - | |
-| fortune-baby-nickname | gemini-2.0-flash-lite | - | |
-| fortune-exercise | gemini-2.0-flash-lite | - | |
-| fortune-health-document | gemini-2.0-flash-lite | - | |
-| fortune-match-insight | gemini-2.0-flash-lite | - | |
-| fortune-pet-compatibility | gemini-2.0-flash-lite | - | |
-| fortune-family-* (5개) | gemini-2.0-flash-lite | - | |
-| fortune-celebrity | gemini-2.0-flash-lite | - | |
-| calculate-saju | gemini-2.0-flash-lite | - | |
-| analyze-wish | gemini-2.0-flash-lite | - | |
-| generate-fortune-story | gemini-2.0-flash-lite | - | |
-| generate-talisman | - | **Gemini Image** | 부적 이미지 |
-| generate-fashion-image | - | **NanoBanana** | 패션 이미지 |
-| generate-celebrity-character | - | **DALL-E 3** | 셀럽 캐릭터 |
-| fortune-talisman | gemini-2.0-flash-lite | - | ✅ 통일됨 |
-
-### 5.3 비용 비교 (2026년 1월 기준)
-
-| 모델 | Provider | Input/1M | Output/1M | 비고 |
-|------|----------|----------|-----------|------|
-| **gemini-2.0-flash-lite** ✅ | Gemini | $0.075 | $0.30 | **현재 사용** |
-| GPT-5 nano | OpenAI | $0.05 | $0.40 | Input↓ Output↑ |
-| gemini-2.0-flash | Gemini | $0.10 | $0.40 | |
-| gpt-4o-mini | OpenAI | $0.15 | $0.60 | |
-| claude-3-5-haiku | Anthropic | $0.80 | $4.00 | |
-| gpt-4o | OpenAI | $2.50 | $10.00 | |
-
-**결론**: 운세 앱은 Output이 Input보다 많으므로 **Gemini가 더 저렴**
-
-### 5.4 호출당 비용 (gemini-2.0-flash-lite 기준)
+### 5.3 호출당 비용 (gemini-2.0-flash-lite 기준)
 
 | 복잡도 | 입력 | 출력 | 비용 (USD) | 비용 (KRW) |
 |--------|------|------|-----------|-----------|
 | 경량 | 1,500 | 1,000 | $0.0004 | ₩0.6 |
 | 중량 | 2,500 | 3,000 | $0.0011 | ₩1.6 |
-| 중량 | 3,000 | 5,000 | $0.0017 | ₩2.5 |
 | 대량 | 4,000 | 8,000 | $0.0027 | ₩3.9 |
-
-### 5.5 마진 분석
-
-| 운세 | 복주머니 가치 | API 비용 | 마진율 |
-|------|-------------|----------|--------|
-| 2개 운세 | ₩100 | ₩1.6 | 98% |
-| 3개 운세 | ₩150 | ₩2.5 | 98% |
-| 5개 운세 | ₩250 | ₩3.9 | 98% |
-| 7개 운세 | ₩350 | ₩3.9 | 99% |
-
-### 5.6 이미지 생성 비용
-
-| 기능 | 비용/호출 | 월간 예상 (1K DAU) | 비고 |
-|------|----------|-------------------|------|
-| 패션 이미지 | $0.02 | $60 (100회/일) | NanoBanana |
-| 셀럽 캐릭터 | $0.04 | $24 (20회/일) | DALL-E 3 |
-| 전생 초상화 | 무료 | $0 | Gemini |
-| 부적 이미지 | 무료 | $0 | Gemini |
-| **합계** | | **~$84/월** | |
-
-### 5.7 LLM 설정 관리
-
-```typescript
-// supabase/functions/_shared/llm/config.ts
-export const LLM_GLOBAL_CONFIG = {
-  provider: 'gemini',
-  defaultModel: 'gemini-2.0-flash-lite',
-  temperature: 1,
-  maxTokens: 8192
-}
-
-// DB 기반 동적 설정 (A/B 테스트 지원)
-// llm_model_config 테이블에서 운세별 모델 오버라이드 가능
-```
 
 ---
 
-## 6. 수익 시뮬레이션
+## 6. 프리미엄 구독
 
-### 6.1 DAU 1,000명 기준
+### 6.1 구독 상품 (iOS Tier 기준)
 
-| 항목 | 월간 |
+| 상품 | 티어 | 가격 | 할인율 |
+|------|------|------|--------|
+| 월간 구독 | Tier 1 | **₩1,500/월** | - |
+| 연간 구독 | Tier 12 | **₩15,000/년** | 17% (₩1,250/월) |
+
+### 6.2 프리미엄 혜택
+
+| 혜택 | 설명 |
 |------|------|
-| 복주머니 구매 (5% 전환) | ₩3,000,000 |
-| 광고 수익 (인당 3회/일) | ₩2,700,000 |
-| **총 수익** | **₩5,700,000** |
-| API 비용 | ₩37,500 |
-| **순수익** | **₩5,662,500** |
+| 🚫 **광고 완전 제거** | 모든 광고 없이 이용 |
+| 🔓 **블러 전체 해제** | 22개 블러 운세 즉시 전체 열람 |
+| 🧧 **월간 복주머니 50개** | 매월 50개 지급 |
+
+### 6.3 중요: 복주머니 운세는 구독해도 소비 필요
+
+| 사용자 | 블러 운세 (22개) | 복주머니 운세 (9개) |
+|--------|-----------------|-------------------|
+| 무료 | 광고 시청으로 해제 | 복주머니 소비 |
+| 프리미엄 | **즉시 전체 공개** | 복주머니 소비 (50개 보너스 활용) |
+
+프리미엄 장점:
+- 블러 운세 22개: 광고 없이 무제한 전체 열람
+- 복주머니 운세 9개: 월 50개 보너스로 더 많이 이용
+- 모든 광고 제거
 
 ---
 
 ## 7. UX 가이드
 
-### 7.1 복주머니 선택 UI
-
-```
-┌─────────────────────────────────────┐
-│     🔮 궁합 인사이트 보기            │
-├─────────────────────────────────────┤
-│                                     │
-│  ┌─────────────┐  ┌─────────────┐  │
-│  │ 🧧 3개 사용  │  │ 🎬 광고보기  │  │
-│  │             │  │   (1회)     │  │
-│  │  즉시 보기   │  │  30초 시청   │  │
-│  └─────────────┘  └─────────────┘  │
-│                                     │
-│  남은 광고 횟수: 4/4회 (오늘)        │
-└─────────────────────────────────────┘
-```
-
-### 7.2 블러 해제 UI
+### 7.1 블러 해제 UI
 
 ```
 ┌─────────────────────────────────────┐
@@ -332,74 +229,45 @@ export const LLM_GLOBAL_CONFIG = {
 │  ┌─────────────────────────────┐   │
 │  │ 🎬 광고 보고 전체 내용 보기   │   │
 │  └─────────────────────────────┘   │
+│                                     │
+│  또는 프리미엄 구독으로 광고 없이 보기 │
+└─────────────────────────────────────┘
+```
+
+### 7.2 복주머니 사용 UI
+
+```
+┌─────────────────────────────────────┐
+│     🔮 사주 분석 보기                │
+├─────────────────────────────────────┤
+│                                     │
+│  이 운세는 복주머니가 필요해요        │
+│                                     │
+│  ┌─────────────────────────────┐   │
+│  │ 🧧 5개 사용하기              │   │
+│  └─────────────────────────────┘   │
+│                                     │
+│  남은 복주머니: 🧧 47개             │
+│                                     │
+│  복주머니가 부족하신가요?            │
+│  [구매하기] [광고로 얻기]            │
 └─────────────────────────────────────┘
 ```
 
 ---
 
-## 8. 프리미엄 구독
+## 8. 수익 시뮬레이션
 
-### 8.1 구독 상품 (iOS Tier 기준)
+### 8.1 DAU 1,000명 기준
 
-| 상품 | 티어 | 가격 | 할인율 |
-|------|------|------|--------|
-| 월간 구독 | Tier 1 | **₩1,500/월** | - |
-| 연간 구독 | Tier 12 | **₩15,000/년** | 17% (₩1,250/월) |
-
-### 8.2 프리미엄 혜택 (복주머니 무제한 ❌)
-
-| 혜택 | 설명 | 월간 가치 |
-|------|------|----------|
-| 🚫 **광고 완전 제거** | 모든 광고 없이 이용 | ₩900 (3회/일×₩10×30일) |
-| 🔓 **블러 전체 해제** | 15개 블러 운세 즉시 전체 열람 | ₩450 (15회×₩30) |
-| 🧧 **월간 복주머니 50개** | 매월 50개 지급 (무제한 ❌) | ₩2,500 |
-| ⚡ **프리미엄 뱃지** | 프로필 뱃지 표시 | - |
-
-**총 혜택 가치**: ₩3,850/월 → **₩1,500에 제공 (61% 할인)**
-
-### 8.3 복주머니 소비는 유지
-
-프리미엄 구독자도 복주머니 운세(12개)는 **복주머니 소비 필요**:
-
-| 사용자 | 월간 복주머니 | 복주머니 운세 이용 |
-|--------|-------------|-----------------|
-| 무료 | 60개 (2개×30일) | ~20회 |
-| 프리미엄 | **110개** (60+50보너스) | ~37회 |
-| 헤비 유저 | 추가 구매 필요 | 무제한 |
-
-**프리미엄 장점**:
-- 블러 운세 15개: 광고 없이 무제한
-- 복주머니 운세 12개: 50개 보너스로 더 많이 이용
-- 광고: 완전 제거
-
-### 8.4 가치 비교
-
-| 구매 옵션 | 가격 | 복주머니 | 블러 | 광고 |
-|----------|------|---------|------|------|
-| 복주머니 30개 | ₩1,500 | 30개 | ❌ | 있음 |
-| **월간 구독** | **₩1,500** | **50개** | **✅ 해제** | **없음** |
-
-→ 같은 가격에 **복주머니 +20개, 블러 해제, 광고 제거** = 압도적 가성비
-
-### 8.5 수익 시뮬레이션 (DAU 1,000명)
-
-| 항목 | 전환율 | 월간 수익 |
-|------|--------|----------|
-| 월간 구독 | 8% (80명) | ₩120,000 |
-| 연간 구독 | 2% (20명) | ₩25,000/월 환산 |
-| 복주머니 구매 (구독자 포함) | 5% (50명) | ₩3,000,000 |
-| 광고 수익 | 90% (900명 × 3회/일) | ₩2,430,000 |
-| **총 수익** | | **₩5,575,000** |
-| API 비용 | | ₩37,500 |
-| **순수익** | | **₩5,537,500** |
-
-### 8.6 전환 유도 시점
-
-| 트리거 | 상황 | 메시지 |
-|--------|------|--------|
-| 블러 2회 | 광고로 블러 해제 2번 후 | "₩1,500에 광고 없이" |
-| 복주머니 0 | 복주머니 소진 시 | "매월 50개 보너스" |
-| 7일 연속 | 7일 연속 접속 | "프리미엄 혜택 보기" |
+| 항목 | 월간 |
+|------|------|
+| 프리미엄 구독 (8%) | ₩120,000 |
+| 복주머니 구매 (5%) | ₩3,000,000 |
+| 광고 수익 (인당 3회/일) | ₩2,700,000 |
+| **총 수익** | **₩5,820,000** |
+| API 비용 | ₩37,500 |
+| **순수익** | **₩5,782,500** |
 
 ---
 
@@ -409,30 +277,24 @@ export const LLM_GLOBAL_CONFIG = {
 
 - [ ] `BokjumeoniProvider` - 복주머니 상태 관리
 - [ ] `BokjumeoniService` - 획득/소비 API
-- [ ] `BokjumeoniPurchaseSheet` - 구매 바텀시트
-- [ ] `FortunePaywallSheet` - 복주머니 OR 광고 선택
-- [ ] `UnifiedBlurWrapper` 수정 - 광고 해제 연동
+- [ ] `FortunePaywallSheet` - 복주머니 사용 UI
+- [ ] `UnifiedBlurWrapper` - 광고 해제 연동
 
 ### 9.2 Supabase
 
 - [ ] `bokjumeoni_balance` 테이블
 - [ ] `bokjumeoni_transactions` 테이블
-- [ ] `ad_watch_limits` 테이블 (일일 제한)
-- [ ] `subscriptions` 테이블 (구독 상태)
-- [ ] `soul-consume` Edge Function 수정
-- [ ] `soul-earn` Edge Function 수정
+- [ ] `subscriptions` 테이블
 
 ### 9.3 광고
 
 - [ ] AdMob 리워드 광고 연동
 - [ ] 광고 시청 완료 콜백
-- [ ] 일일 제한 관리
 
 ### 9.4 구독 (RevenueCat)
 
 - [ ] RevenueCat 연동
 - [ ] 구독 상품 설정 (월간/연간)
-- [ ] 구독 상태 동기화
 - [ ] 구독자 복주머니 보너스 자동 지급
 
 ---
@@ -440,5 +302,5 @@ export const LLM_GLOBAL_CONFIG = {
 ## 10. 관련 문서
 
 - [05-fortune-system.md](05-fortune-system.md) - 운세 시스템
+- [03-ui-design-system.md](03-ui-design-system.md) - 블러 UI 시스템
 - [14-api-optimization-system.md](14-api-optimization-system.md) - API 최적화
-- [21-new-fortune-types.md](21-new-fortune-types.md) - 신규 운세 타입

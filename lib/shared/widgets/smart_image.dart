@@ -96,6 +96,16 @@ class _SmartImageState extends State<SmartImage> {
       return;
     }
 
+    // On-Demand 자산 팩 ID가 명시적으로 지정된 경우에만 AssetDeliveryService 사용
+    // 일반 번들 에셋 (assetPackId 없음)은 그대로 Image.asset으로 처리
+    if (widget.assetPackId == null) {
+      setState(() {
+        _resolvedPath = widget.path;
+        _isLoading = false;
+      });
+      return;
+    }
+
     // On-Demand 자산 경로 해결
     try {
       final service = AssetDeliveryService();
@@ -112,7 +122,7 @@ class _SmartImageState extends State<SmartImage> {
       }
 
       // 자동 다운로드가 활성화되어 있고 설치되지 않은 팩이면 다운로드
-      if (widget.autoDownload && widget.assetPackId != null) {
+      if (widget.autoDownload) {
         final isInstalled = await service.isPackInstalled(widget.assetPackId!);
         if (!isInstalled) {
           _startDownload();

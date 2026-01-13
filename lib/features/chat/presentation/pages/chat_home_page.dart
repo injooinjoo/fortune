@@ -77,6 +77,9 @@ import '../../../fortune/presentation/widgets/floating_dream_topics_widget.dart'
 import '../../../../data/dream_interpretations.dart';
 import '../../../interactive/presentation/widgets/cookie_shard_break_widget.dart';
 import '../../../../core/services/talisman_generation_service.dart';
+import '../../../../services/storage_service.dart';
+import '../widgets/profile_required_bottom_sheet.dart';
+import '../../services/chat_scroll_service.dart';
 
 /// Chat-First 메인 홈 페이지
 class ChatHomePage extends ConsumerStatefulWidget {
@@ -90,6 +93,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _textController = TextEditingController();
   List<DetectedIntent> _detectedIntents = [];
+
+  /// 통합 스크롤 서비스 (1회 스크롤 원칙 적용)
+  late final ChatScrollService _scrollService;
 
   /// AI 추천 서비스
   late final FortuneRecommendService _recommendService;
@@ -171,6 +177,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   @override
   void initState() {
     super.initState();
+    _scrollService = ChatScrollService(
+      scrollController: _scrollController,
+      isMounted: () => mounted,
+    );
     _recommendService = FortuneRecommendService();
     _freeChatService = FreeChatService();
     _textController.addListener(_onTextChanged);
@@ -224,6 +234,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   void dispose() {
     _textController.removeListener(_onTextChanged);
     _recommendService.dispose();
+    _scrollService.dispose();
     _scrollController.dispose();
     _textController.dispose();
     super.dispose();
@@ -489,73 +500,17 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
   }
 
+  /// 최하단으로 스크롤 (ChatScrollService 위임)
   void _scrollToBottom() {
-    // 레이아웃 완료 후 스크롤 (딜레이 100ms)
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_scrollController.hasClients && mounted) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOutCubic,
-        );
-      }
-    });
+    _scrollService.scrollToBottom();
   }
 
-  /// 운세 결과 카드 렌더링 완료 후, 카드 헤더가 화면 상단에 오도록 스크롤
-  /// FortuneResultScrollWrapper에서 호출됨
-  void _scrollToFortuneResultHeader(BuildContext cardContext) {
-    // 이미 disposed 상태면 무시
-    if (!mounted || !_scrollController.hasClients) return;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scrollController.hasClients) return;
-
-      try {
-        // 카드의 RenderBox 가져오기
-        final cardRenderBox = cardContext.findRenderObject() as RenderBox?;
-        if (cardRenderBox == null) return;
-
-        // 스크롤 가능 영역의 RenderBox 가져오기
-        final scrollableState = Scrollable.maybeOf(cardContext);
-        if (scrollableState == null) return;
-
-        final scrollableRenderBox =
-            scrollableState.context.findRenderObject() as RenderBox?;
-        if (scrollableRenderBox == null) return;
-
-        // 카드의 상대적 위치 계산 (스크롤 영역 기준)
-        final cardPosition = cardRenderBox.localToGlobal(
-          Offset.zero,
-          ancestor: scrollableRenderBox,
-        );
-
-        // 목표 스크롤 위치 = 현재 위치 + 카드 상대 위치 - 상단 여백
-        // 상단 여백: 약간의 마진 (8px)
-        const topPadding = 8.0;
-        final targetPosition =
-            _scrollController.offset + cardPosition.dy - topPadding;
-
-        // 스크롤 범위 제한
-        final clampedPosition = targetPosition.clamp(
-          0.0,
-          _scrollController.position.maxScrollExtent,
-        );
-
-        _scrollController.animateTo(
-          clampedPosition,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeOutCubic,
-        );
-      } catch (e) {
-        // 스크롤 실패 시 기존 방식으로 fallback
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeOutCubic,
-        );
-      }
-    });
+  /// 운세 결과 카드 헤더로 스크롤 (1회만, ChatScrollService 위임)
+  void _handleFortuneResultRendered(String messageId, BuildContext cardContext) {
+    _scrollService.scrollToFortuneResult(
+      messageId: messageId,
+      cardContext: cardContext,
+    );
   }
 
   /// 포춘쿠키 애니메이션 표시 후 결과 표시
@@ -576,7 +531,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 운세 데이터 가져오기
     try {
       final cookieResult = await FortuneCookieGenerator.getTodayFortuneCookie();
-      final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+      final userId = Supabase.instance.client.auth.currentUser?.id ??
+          await StorageService().getOrCreateGuestId();
 
       // 모든 쿠키 데이터 포함
       final fortune = Fortune(
@@ -636,9 +592,89 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     });
   }
 
-  void _handleChipTap(RecommendationChip chip) {
+  /// birthDate가 필요한 fortune type 목록
+  /// (사주 기반 운세는 생년월일 필수)
+  static const _birthDateRequiredTypes = {
+    'daily', // 오늘의 나
+    'newYear', // 새해 운세
+    'daily_calendar', // 기간별 인사이트
+    'dailyCalendar', // 기간별 인사이트 (다른 표기)
+    'compatibility', // 궁합
+    'blindDate', // 소개팅 운세
+    'love', // 연애운
+    'yearlyEncounter', // 올해의 인연
+    'traditional', // 사주 분석
+    'biorhythm', // 바이오리듬
+    'health', // 건강운
+    'money', // 재물운
+    'luckyItems', // 럭키 아이템
+    'family', // 가족운
+  };
+
+  /// 프로필(birthDate) 체크 후 없으면 로그인/게스트 선택 바텀시트 표시
+  /// 점신, 포스텔러 등 다른 앱처럼 로컬 저장 정보도 인정
+  ///
+  /// Returns: true면 진행 가능, false면 중단 (로그인 이동 또는 온보딩 시작)
+  Future<bool> _checkProfileOrShowLoginPrompt(RecommendationChip chip) async {
+    // 1. Supabase 프로필 확인
+    final userProfileAsync = ref.read(userProfileNotifierProvider);
+    final userProfile = userProfileAsync.valueOrNull;
+
+    if (userProfile != null && userProfile.birthDate != null) {
+      return true;
+    }
+
+    // 2. 로컬 저장소 프로필 확인 (게스트 사용자도 이용 가능하게)
+    final storageService = StorageService();
+    final localProfile = await storageService.getUserProfile();
+
+    if (localProfile != null &&
+        localProfile['birth_date'] != null &&
+        localProfile['birth_date'].toString().isNotEmpty) {
+      Logger.info('🎯 [ChatHomePage] 로컬 프로필로 진행 허용');
+      return true;
+    }
+
+    // 3. 온보딩 완료 상태 확인
+    final onboardingState = ref.read(onboardingChatProvider);
+    if (onboardingState.currentStep == OnboardingStep.completed) {
+      return true;
+    }
+
+    // 4. 프로필 없음 → 선택 모달 표시
+    final action = await ProfileRequiredBottomSheet.show(context);
+
+    if (action == ProfileRequiredAction.login) {
+      // 로그인 페이지로 이동
+      if (mounted) {
+        context.go('/');
+      }
+      return false;
+    } else if (action == ProfileRequiredAction.continueAsGuest) {
+      // 온보딩 시작 (생년월일 등 입력)
+      final chatNotifier = ref.read(chatMessagesProvider.notifier);
+      chatNotifier.addUserMessage(chip.label);
+      _scrollToBottom();
+
+      // 온보딩 시작
+      ref.read(onboardingChatProvider.notifier).startOnboarding();
+      return false;
+    }
+
+    // 사용자가 모달을 닫음
+    return false;
+  }
+
+  Future<void> _handleChipTap(RecommendationChip chip) async {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
     final surveyNotifier = ref.read(chatSurveyProvider.notifier);
+
+    // birthDate 필요한 운세 타입: 프로필 체크 필요
+    // (점신, 포스텔러 등 다른 앱처럼 로컬 저장 정보도 인정)
+    if (_birthDateRequiredTypes.contains(chip.fortuneType)) {
+      final canProceed = await _checkProfileOrShowLoginPrompt(chip);
+      if (!canProceed) return;
+    }
 
     // 전체운세보기: 모든 운세 칩 표시
     if (chip.fortuneType == 'viewAll') {
@@ -673,6 +709,30 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       chatNotifier.addUserMessage(chip.label);
       _scrollToBottom();
       _showFortuneCookieWithAnimation();
+      return;
+    }
+
+    // 꿈해몽: 채팅 초기화 후 새로 시작
+    if (chip.fortuneType == 'dream') {
+      chatNotifier.clearConversation();
+      surveyNotifier.cancelSurvey();
+      _updateChatBackgroundForType(FortuneSurveyType.dream);
+      setState(() => _showDreamBubbles = true);
+
+      // 약간의 딜레이 후 사용자 메시지 추가 (초기화 후 렌더링 위해)
+      await Future.delayed(const Duration(milliseconds: 100));
+      chatNotifier.addUserMessage(chip.label);
+      _scrollController.jumpTo(0);
+
+      // 인사 메시지 생성 및 표시
+      final userProfileAsync = ref.read(userProfileNotifierProvider);
+      final userProfile = userProfileAsync.valueOrNull;
+      final greeting = _buildGreetingMessage(userProfile, FortuneSurveyType.dream);
+
+      Future.delayed(const Duration(milliseconds: 300), () {
+        chatNotifier.addAiMessage(greeting);
+        surveyNotifier.startSurvey(FortuneSurveyType.dream);
+      });
       return;
     }
 
@@ -750,7 +810,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 기간별 인사이트: 하루 1회 제한 - 캐시 확인
       if (surveyType == FortuneSurveyType.dailyCalendar) {
-        final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+        final userId = Supabase.instance.client.auth.currentUser?.id ??
+            await StorageService().getOrCreateGuestId();
         final cacheService = CacheService();
 
         if (cacheService.hasTodayDailyCalendarFortune(userId)) {
@@ -1928,7 +1989,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
     final userProfileAsync = ref.read(userProfileNotifierProvider);
     final userProfile = userProfileAsync.valueOrNull;
-    final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+    final userId = Supabase.instance.client.auth.currentUser?.id ??
+        await StorageService().getOrCreateGuestId();
     final userName = userProfile?.name ?? '사용자';
 
     // 설문 답변 또는 프로필 기본값 사용
@@ -2572,7 +2634,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       if (cachedHistory != null && cachedHistory.detailedResult != null) {
         Logger.info(
             '🎯 [ChatHomePage] Cache HIT - returning cached fortune for $fortuneType');
-        return _convertHistoryToFortune(cachedHistory);
+        return await _convertHistoryToFortune(cachedHistory);
       }
     } catch (e) {
       Logger.warning(
@@ -2588,7 +2650,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         if (hardcodedData != null) {
           Logger.info(
               '🎯 [ChatHomePage] Using hardcoded dream interpretation: $dreamContent');
-          final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+          final userId = Supabase.instance.client.auth.currentUser?.id ??
+              await StorageService().getOrCreateGuestId();
 
           // 짧은 딜레이로 자연스러운 로딩 효과
           await Future.delayed(const Duration(milliseconds: 800));
@@ -2644,9 +2707,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   }
 
   /// FortuneHistory → Fortune 변환 헬퍼
-  Fortune _convertHistoryToFortune(FortuneHistory history) {
+  Future<Fortune> _convertHistoryToFortune(FortuneHistory history) async {
     final data = history.detailedResult ?? {};
-    final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+    final userId = Supabase.instance.client.auth.currentUser?.id ??
+        await StorageService().getOrCreateGuestId();
 
     return Fortune(
       id: data['id'] as String? ?? history.id,
@@ -2733,7 +2797,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final apiService = ref.read(fortuneApiServiceProvider);
     final userProfileAsync = ref.read(userProfileNotifierProvider);
     final userProfile = userProfileAsync.valueOrNull;
-    final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+    final userId = Supabase.instance.client.auth.currentUser?.id ??
+        await StorageService().getOrCreateGuestId();
 
     // 공통 유저 정보
     final userName = userProfile?.name ?? '사용자';
@@ -4248,6 +4313,13 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // 텍스트 입력은 하단 텍스트 필드 사용 - null 반환하여 활성화
         return null;
 
+      case SurveyInputType.textWithSkip:
+        // "없음" 칩 + 텍스트 입력 (텍스트 입력 시 칩 숨김)
+        return _TextWithSkipInput(
+          onSkip: () => _handleSurveyAnswerValue('', '없음'),
+          textController: _textController,
+        );
+
       case SurveyInputType.grid:
         // Fallback to chips for now
         if (options.isEmpty) return null;
@@ -4549,6 +4621,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final inputType = surveyState.activeProgress!.currentStep.inputType;
     // 텍스트/음성 입력이 필요한 경우는 입력란 유지
     return inputType != SurveyInputType.text &&
+        inputType != SurveyInputType.textWithSkip &&
         inputType != SurveyInputType.voice;
   }
 
@@ -4600,6 +4673,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // 프로필/펫프로필 선택 (힌트 + 프로필 칩들 + 새로 입력하기 버튼)
         padding += 180;
       } else if (inputType == SurveyInputType.text ||
+          inputType == SurveyInputType.textWithSkip ||
           inputType == SurveyInputType.voice) {
         // 꿈해몽 dreamContent 단계는 FloatingDreamTopicsWidget(350px) 표시
         final isDreamContent =
@@ -4702,6 +4776,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         (surveyState.activeProgress!.currentStep.inputType ==
                 SurveyInputType.text ||
             surveyState.activeProgress!.currentStep.inputType ==
+                SurveyInputType.textWithSkip ||
+            surveyState.activeProgress!.currentStep.inputType ==
                 SurveyInputType.voice);
 
     // 온보딩 이름 입력 중인지 확인 (welcome과 name 단계 모두 포함)
@@ -4789,7 +4865,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                               ),
                               onTypingIndicatorRendered: _scrollToBottom,
                               onFortuneResultRendered:
-                                  _scrollToFortuneResultHeader,
+                                  _handleFortuneResultRendered,
                             ),
                     ),
 
@@ -5135,6 +5211,79 @@ class _MultiSelectSurveyWidgetState extends State<_MultiSelectSurveyWidget> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// 텍스트 입력 + "없음" 스킵 칩 위젯
+class _TextWithSkipInput extends StatefulWidget {
+  final VoidCallback onSkip;
+  final TextEditingController textController;
+
+  const _TextWithSkipInput({
+    required this.onSkip,
+    required this.textController,
+  });
+
+  @override
+  State<_TextWithSkipInput> createState() => _TextWithSkipInputState();
+}
+
+class _TextWithSkipInputState extends State<_TextWithSkipInput> {
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _hasText = widget.textController.text.isNotEmpty;
+    widget.textController.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.textController.removeListener(_onTextChanged);
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    final hasText = widget.textController.text.isNotEmpty;
+    if (hasText != _hasText) {
+      setState(() => _hasText = hasText);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 텍스트가 있으면 칩 숨김
+    if (_hasText) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Wrap(
+        spacing: 8,
+        children: [
+          GestureDetector(
+            onTap: () {
+              DSHaptics.light();
+              widget.onSkip();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: context.colors.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: context.colors.textSecondary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Text(
+                '🎲 없음',
+                style: context.typography.bodyMedium,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

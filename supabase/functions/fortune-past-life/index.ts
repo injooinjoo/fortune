@@ -879,6 +879,118 @@ const MINHWA_FORBIDDEN = `
 `
 
 // =====================================================
+// 분위기/조명 옵션 (다양성 증가)
+// =====================================================
+interface Atmosphere {
+  mood: string       // 한글 분위기 설명
+  light: string      // 영문 조명 설명
+  season?: string    // 계절 (선택)
+}
+
+const ATMOSPHERES: Atmosphere[] = [
+  { mood: '고요한 아침', light: 'soft golden morning light gently streaming from the east', season: 'spring' },
+  { mood: '한낮의 햇살 아래', light: 'bright midday sunlight casting gentle shadows' },
+  { mood: '석양 무렵', light: 'warm dramatic sunset glow with orange and pink hues', season: 'autumn' },
+  { mood: '달빛 아래', light: 'soft silvery moonlight creating a mysterious, ethereal glow' },
+  { mood: '촛불 앞에서', light: 'warm candlelight creating intimate golden shadows' },
+  { mood: '봄날 꽃비 내리는', light: 'soft diffused light filtering through cherry blossom petals', season: 'spring' },
+  { mood: '여름 소나기 후', light: 'fresh post-rain light with subtle dewy atmosphere', season: 'summer' },
+  { mood: '가을 단풍 물든', light: 'golden autumn light filtering through maple leaves', season: 'autumn' },
+  { mood: '눈 내리는 겨울', light: 'cool blue-white winter light with soft snowflakes', season: 'winter' },
+  { mood: '안개 낀 새벽', light: 'misty pre-dawn light with soft atmospheric haze' },
+  { mood: '맑은 하늘 아래', light: 'clear bright daylight with crisp details' },
+  { mood: '노을 지는 저녁', light: 'deep crimson and gold sunset illumination' },
+]
+
+// =====================================================
+// 배경 옵션 (직업별 적합성 포함)
+// =====================================================
+interface Background {
+  type: string       // 배경 타입
+  desc: string       // 영문 설명
+  suitableFor: string[]  // 적합한 카테고리
+}
+
+const BACKGROUNDS: Background[] = [
+  // 실내 배경
+  { type: 'palace', desc: 'elegant palace interior with ornate wooden screens and silk curtains', suitableFor: ['palace', 'scholarly'] },
+  { type: 'study', desc: 'scholar\'s study filled with scrolls, brushes, and ink stones on wooden desk', suitableFor: ['scholarly', 'artisan'] },
+  { type: 'tea_room', desc: 'serene traditional tea room with minimal elegance and bamboo accents', suitableFor: ['palace', 'mystical'] },
+  { type: 'workshop', desc: 'artisan workshop with tools of the trade and works in progress', suitableFor: ['artisan', 'labor'] },
+  { type: 'temple', desc: 'peaceful Buddhist temple interior with soft incense haze', suitableFor: ['mystical', 'spiritual'] },
+  // 실외 배경
+  { type: 'garden', desc: 'traditional Korean garden with pavilion, lotus pond and pine trees', suitableFor: ['palace', 'scholarly', 'entertainment'] },
+  { type: 'mountain', desc: 'misty mountain backdrop with ancient pine trees and distant peaks', suitableFor: ['mystical', 'spiritual', 'military'] },
+  { type: 'market', desc: 'bustling traditional marketplace with colorful goods and activity', suitableFor: ['merchant', 'labor'] },
+  { type: 'village', desc: 'peaceful village scene with thatched roof houses and paths', suitableFor: ['labor', 'merchant'] },
+  { type: 'battlefield', desc: 'dramatic open field with banners and distant mountains', suitableFor: ['military'] },
+  // 추상/심플 배경
+  { type: 'clouds', desc: 'ethereal clouds and mist like a celestial realm', suitableFor: ['mystical', 'spiritual'] },
+  { type: 'simple', desc: 'plain aged Hanji paper with natural texture and subtle patina', suitableFor: ['all'] },
+  { type: 'mist', desc: 'atmospheric soft mist fading into infinity', suitableFor: ['all'] },
+]
+
+// =====================================================
+// 포즈 옵션 (동적 다양성)
+// =====================================================
+interface PoseOption {
+  pose: string       // 영문 포즈 설명
+  mood: string       // 분위기 (formal, active, contemplative)
+}
+
+const POSES: PoseOption[] = [
+  { pose: 'formal seated position on silk cushion, back straight with dignified composure', mood: 'formal' },
+  { pose: 'standing with hands clasped in front, in a dignified ceremonial stance', mood: 'formal' },
+  { pose: 'mid-action, skillfully performing their craft with focused concentration', mood: 'active' },
+  { pose: 'thoughtfully gazing into the distance, as if contemplating life\'s mysteries', mood: 'contemplative' },
+  { pose: 'turning gracefully to the side, captured in an elegant moment of movement', mood: 'active' },
+  { pose: 'seated with meaningful object in hand, embodying their life\'s work', mood: 'contemplative' },
+  { pose: 'walking with purpose, robes flowing naturally with movement', mood: 'active' },
+  { pose: 'kneeling in respectful posture, hands placed properly on knees', mood: 'formal' },
+  { pose: 'leaning slightly forward with warm, welcoming expression', mood: 'contemplative' },
+  { pose: 'looking over shoulder with knowing smile, as if sharing a secret', mood: 'active' },
+]
+
+// =====================================================
+// 품질 수식어 (유명 화가 스타일 참조)
+// =====================================================
+const QUALITY_MODIFIERS: string[] = [
+  'museum masterpiece quality worthy of National Museum of Korea (국립중앙박물관) permanent collection',
+  'exquisite brushwork reminiscent of the great Shin Yun-bok (신윤복), master of elegant genre paintings',
+  'delicate detail and wit rivaling Kim Hong-do (김홍도), capturing the essence of daily life',
+  'ethereal quality of traditional Joseon royal portrait tradition (어진)',
+  'poetic composition like a scene from classical Korean literature (고전문학)',
+  'masterful ink gradation technique of Jeong Seon (정선), the mountain painting genius',
+  'refined elegance of Joseon court painting academy (도화서) at its peak',
+  'timeless beauty capturing the scholarly spirit of Joseon literati painting (문인화)',
+]
+
+// =====================================================
+// 선택 함수들
+// =====================================================
+function selectAtmosphere(): Atmosphere {
+  return ATMOSPHERES[Math.floor(Math.random() * ATMOSPHERES.length)]
+}
+
+function selectBackground(category: string): Background {
+  // 카테고리에 적합한 배경 필터링
+  const suitable = BACKGROUNDS.filter(
+    bg => bg.suitableFor.includes(category) || bg.suitableFor.includes('all')
+  )
+  // 적합한 배경이 없으면 전체에서 선택
+  const pool = suitable.length > 0 ? suitable : BACKGROUNDS
+  return pool[Math.floor(Math.random() * pool.length)]
+}
+
+function selectPose(): PoseOption {
+  return POSES[Math.floor(Math.random() * POSES.length)]
+}
+
+function selectQualityModifier(): string {
+  return QUALITY_MODIFIERS[Math.floor(Math.random() * QUALITY_MODIFIERS.length)]
+}
+
+// =====================================================
 // 80개+ 전생 시나리오 (모든 직업, 긍정적 특성)
 // 모든 시나리오는 기분 좋은 결과로 포장
 // =====================================================
@@ -1084,6 +1196,9 @@ Important: Return ONLY valid JSON, no explanation. Use Korean for values.`
 /**
  * 얼굴 특징을 반영한 조선시대 민화 스타일 초상화 프롬프트 생성
  * STATUS_CONFIGS의 새로운 필드(scene, clothing, accessories) 활용
+ *
+ * 개선된 버전: 분위기/조명, 배경, 포즈, 품질 수식어 랜덤화 적용
+ * → 더욱 다양하고 고퀄리티의 이미지 생성
  */
 function buildPortraitPrompt(
   status: string,
@@ -1108,6 +1223,17 @@ function buildPortraitPrompt(
   const accessories = config?.accessories || 'traditional items'
   const scene = config?.scene || 'in a dignified pose'
 
+  // 랜덤 요소 선택 (다양성 증가)
+  const atmosphere = selectAtmosphere()
+  const background = selectBackground(scenario.category)
+  const poseOption = selectPose()
+  const qualityModifier = selectQualityModifier()
+
+  console.log(`🎨 [PastLife] Prompt variety:`)
+  console.log(`   - Atmosphere: ${atmosphere.mood}`)
+  console.log(`   - Background: ${background.type}`)
+  console.log(`   - Pose mood: ${poseOption.mood}`)
+
   // 얼굴 특징 설명 생성 (사용자 사진 분석 결과)
   let faceDescription = ''
   if (faceFeatures) {
@@ -1121,7 +1247,7 @@ The portrait subject MUST have these facial characteristics:
 - Mouth: ${faceFeatures.mouth.size}, ${faceFeatures.mouth.lips} lips
 - Overall: ${faceFeatures.overallImpression.join(', ')}
 
-Render this person as if they lived in Joseon Dynasty.
+Render this person as if they lived in Joseon Dynasty, maintaining their unique facial features.
 `
   }
 
@@ -1129,32 +1255,40 @@ Render this person as if they lived in Joseon Dynasty.
 
 SUBJECT: A ${scenario.trait} ${jobKr} (${jobEn})
 A single ${genderEn}, ${jobDesc}, ${scene}.
-Story: "${scenario.storySeed}"
+Story Moment: "${scenario.storySeed}" - ${atmosphere.mood}
 Era: ${era}
+
+=== ATMOSPHERE & LIGHTING ===
+Mood: ${atmosphere.mood}
+Lighting: ${atmosphere.light}
+${atmosphere.season ? `Season hint: ${atmosphere.season} elements may subtly appear` : ''}
 
 ${MINHWA_STYLE_BASE}
 
 === CHARACTER DETAILS ===
 Occupation: ${jobKr} (${jobEn})
-Attire: ${clothing}
+Attire: ${clothing}, appropriate for ${era}
 Props/Accessories: ${accessories}
-Scene: ${scene}
-Trait: ${scenario.trait} (${genderKo})
+Activity: ${scene}
+Personality: ${scenario.trait} (${genderKo})
 ${faceDescription}
 
 === COMPOSITION ===
-- Single figure portrait (한 명만)
-- Formal or dignified pose appropriate for the occupation
-- Simple background: plain Hanji paper or subtle atmospheric wash
-- 2:3 portrait orientation
-- Subject centered, full upper body or 3/4 view
+- Single figure portrait (한 명만, one person only)
+- Pose: ${poseOption.pose}
+- Background: ${background.desc}
+- Frame: 2:3 portrait orientation
+- Framing: Subject centered, full upper body or 3/4 view
+- Depth: Subtle atmospheric perspective separating figure from background
 
-=== TECHNICAL REQUIREMENTS ===
-- Fine ink outlines with soft watercolor fills
-- Meticulous fabric texture and clothing patterns
-- Traditional Korean color harmony
-- Aged paper texture visible throughout
-- Museum masterpiece quality
+=== ARTISTIC QUALITY ===
+${qualityModifier}
+- Fine ink outlines (섬세한 먹선) with soft watercolor fills
+- Meticulous fabric texture showing the quality of ${clothing}
+- Traditional Korean color harmony using natural pigments
+- Aged Hanji paper texture visible as subtle base
+- Expressive brushwork that conveys ${scenario.trait} personality
+- Harmonious balance between figure and ${background.type} background
 
 ${MINHWA_FORBIDDEN}`
 }

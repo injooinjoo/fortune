@@ -336,44 +336,27 @@ Future<void> _showAdAndUnblur() async {
 
 ---
 
-## 토큰/소울 소비율
+## 수익화 모델 (복주머니/블러)
 
-### 운세 유형별 토큰 소비 (39개)
+> **상세 정책은 [22-business-model.md](22-business-model.md) 참조**
 
-| 유형 | 토큰 | 운세 종류 |
-|------|------|----------|
-| **Simple** | 1 | daily, time, lucky-items, lucky-number, biorhythm |
-| **Medium** | 2 | love, career, mbti, dream, health, talent, avoid-people, new-year |
-| **Complex** | 3 | tarot, saju, traditional-saju, compatibility, blind-date, ex-lover, face-reading, naming |
-| **Premium** | 5 | celebrity, wealth, investment, pet-compatibility, ootd, home-fengshui |
-| **Family** | 3 | family-change, family-children, family-health, family-relationship, family-wealth |
-| **Special** | 4 | past-life, exam, match-insight, premium-saju, talisman, recommend |
+### 요약
 
-### 전체 운세 목록 (39개)
+| 모델 | 운세 수 | 특징 |
+|------|--------|------|
+| 🆓 **무료** | 5개 | 제한 없이 무료 |
+| 🔒 **블러** | 22개 | 광고로 해제 (무제한) |
+| 🧧 **복주머니** | 9개 | 광고 대체 불가 |
 
-| 카테고리 | 운세 함수 | 토큰 |
-|----------|----------|------|
-| **기본** | fortune-daily, fortune-time | 1 |
-| **행운** | fortune-lucky-items, fortune-biorhythm | 1-2 |
-| **연애** | fortune-love, fortune-blind-date, fortune-ex-lover, fortune-compatibility | 2-3 |
-| **직업** | fortune-career, fortune-talent | 2 |
-| **건강** | fortune-health, fortune-health-document | 2-3 |
-| **성격** | fortune-mbti, fortune-match-insight | 2-4 |
-| **타로** | fortune-tarot | 3 |
-| **사주** | fortune-saju, fortune-traditional-saju, fortune-premium-saju | 3-5 |
-| **관상** | fortune-face-reading, fortune-face-reading-watch | 3 |
-| **꿈** | fortune-dream | 2 |
-| **가족** | fortune-family-change, fortune-family-children, fortune-family-health, fortune-family-relationship, fortune-family-wealth | 3 |
-| **재물** | fortune-wealth, fortune-investment | 2-5 |
-| **특수** | fortune-naming, fortune-pet-compatibility, fortune-celebrity | 3-5 |
-| **환경** | fortune-home-fengshui, fortune-ootd | 5 |
-| **시즌** | fortune-new-year, fortune-exam | 2-4 |
-| **기타** | fortune-avoid-people, fortune-past-life, fortune-talisman, fortune-recommend | 2-4 |
+### 복주머니 운세 (9개)
+- newYear (5개), traditional (5개), naming (7개)
+- babyNickname (5개), yearlyEncounter (3개), celebrity (5개)
+- lotto (3개), exam (3개), ootdEvaluation (3개)
 
 ### 토큰 소비 코드
 
 ```dart
-// 토큰 소비
+// 복주머니 소비
 final tokenNotifier = ref.read(tokenProvider.notifier);
 await tokenNotifier.consumeTokens(
   amount: getTokenCost(fortuneType),

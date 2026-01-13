@@ -289,16 +289,16 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
   "hashtags": ["#집중력_치트키", "#정답만_보이는_눈", "#합격기원"],
 
   "luckyInfo": {
-    "luckyTime": "오전 10시-11시",
-    "unluckyTime": "오후 3시-4시",
-    "luckyColor": "파란색",
-    "luckyColorReason": "집중력과 안정감을 높여줍니다",
-    "luckyItem": "파란색 볼펜",
-    "luckyItemReason": "마음을 차분하게 해주는 아이템",
-    "luckyFood": "바나나와 견과류",
-    "luckyFoodReason": "두뇌 활성화와 집중력에 좋습니다",
-    "luckyDirection": "동쪽",
-    "luckyDirectionTip": "시험장에 동쪽 문으로 입장하면 좋은 기운"
+    "luckyTime": "10시",
+    "unluckyTime": "3시",
+    "luckyColor": "파랑",
+    "luckyColorReason": "집중력 향상",
+    "luckyItem": "볼펜",
+    "luckyItemReason": "차분함",
+    "luckyFood": "바나나",
+    "luckyFoodReason": "두뇌 활성화",
+    "luckyDirection": "동",
+    "luckyDirectionTip": "동쪽 입장"
   },
 
   "ddayAdvice": [
@@ -308,10 +308,10 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
   ],
 
   "studyTips": {
-    "todayTip": "오늘의 학습 전략",
-    "focusMethod": "집중력 향상 방법",
-    "bestStudyTime": "오전 9시-12시",
-    "memoryTip": "암기력 향상 팁"
+    "todayTip": "오답정리",
+    "focusMethod": "25분 집중",
+    "bestStudyTime": "오전9시",
+    "memoryTip": "복습3회"
   },
 
   "warnings": [
@@ -345,7 +345,9 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
 7. 구체적이고 실용적인 조언 제공
 8. ${preparationLabel} 상태를 고려하여 조언 톤 조절
 9. ${ddayLabel}에 맞는 시기적절한 조언
-10. 뻔한 "노력하면 좋은 결과" 대신 합격 기운을 불어넣는 구체적인 암시 사용`
+10. 뻔한 "노력하면 좋은 결과" 대신 합격 기운을 불어넣는 구체적인 암시 사용
+11. luckyInfo 필드는 초단축 (luckyTime: "10시", luckyColor: "파랑", luckyItem: "볼펜", luckyFood: "바나나", luckyDirection: "동")
+12. studyTips.todayTip은 5글자 이내 (예: "오답정리", "핵심암기")`
 
       const llm = await LLMFactory.createFromConfigAsync('exam')
 
@@ -385,23 +387,23 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
       // 🔥 블러 로직 완전 제거 - 모든 데이터 무조건 노출
       // Flutter UI 필드명 매핑 (snake_case)
       const luckyInfo = parsedResponse.luckyInfo || {
-        luckyTime: '오전 9시-10시',
-        unluckyTime: '오후 2시-3시',
-        luckyColor: '파란색',
-        luckyColorReason: '집중력 향상에 좋습니다',
-        luckyItem: '손목시계',
-        luckyItemReason: '시간 관리의 상징',
+        luckyTime: '9시',
+        unluckyTime: '2시',
+        luckyColor: '파랑',
+        luckyColorReason: '집중력',
+        luckyItem: '시계',
+        luckyItemReason: '시간관리',
         luckyFood: '바나나',
-        luckyFoodReason: '두뇌 활성화에 좋습니다',
-        luckyDirection: '동쪽',
-        luckyDirectionTip: '동쪽으로 입장하세요'
+        luckyFoodReason: '두뇌활성',
+        luckyDirection: '동',
+        luckyDirectionTip: '동쪽입장'
       }
 
       const studyTips = parsedResponse.studyTips || {
-        todayTip: '핵심 개념 정리에 집중하세요',
-        focusMethod: '25분 집중, 5분 휴식',
-        bestStudyTime: '오전 9시-12시',
-        memoryTip: '반복보다 이해 위주로'
+        todayTip: '핵심정리',
+        focusMethod: '25분집중',
+        bestStudyTime: '오전9시',
+        memoryTip: '이해위주'
       }
 
       const ddayAdviceArr = parsedResponse.ddayAdvice || [
@@ -506,14 +508,14 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
         csat_routine: csatRoutine,
         csat_checklist: csatChecklist,
 
-        // 행운 정보 (Flutter UI 필드명: snake_case)
-        lucky_hours: luckyInfo.luckyTime || '오전 9시-10시',
-        unlucky_hours: luckyInfo.unluckyTime || '오후 2시-3시',
-        lucky_color: luckyInfo.luckyColor || '파란색',
-        lucky_item: luckyInfo.luckyItem || '손목시계',
+        // 행운 정보 (Flutter UI 필드명: snake_case) - 초단축
+        lucky_hours: luckyInfo.luckyTime || '9시',
+        unlucky_hours: luckyInfo.unluckyTime || '2시',
+        lucky_color: luckyInfo.luckyColor || '파랑',
+        lucky_item: luckyInfo.luckyItem || '시계',
         lucky_food: luckyInfo.luckyFood || '바나나',
-        lucky_direction: luckyInfo.luckyDirection || '동쪽',
-        focus_subject: studyTips.todayTip || '핵심 개념 정리',
+        lucky_direction: luckyInfo.luckyDirection || '동',
+        focus_subject: studyTips.todayTip || '핵심정리',
         exam_keyword: parsedResponse.passGrade || 'A',
 
         // D-day 조언 (Flutter UI: dday_advice)
