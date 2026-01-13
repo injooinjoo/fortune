@@ -1756,6 +1756,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.1"
+  mediapipe_face_mesh:
+    dependency: "direct main"
+    description:
+      name: mediapipe_face_mesh
+      sha256: "600959914dc9e091181cc9386c2933e8af25ad2fa637aca7215cb21b8f55e430"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.4"
   meta:
     dependency: transitive
     description:
@@ -2954,5 +2962,5 @@ packages:
     source: hosted
     version: "2.1.0"
 sdks:
-  dart: ">=3.9.0 <4.0.0"
+  dart: ">=3.10.3 <4.0.0"
   flutter: ">=3.35.0"

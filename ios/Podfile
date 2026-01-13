@@ -94,6 +94,16 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = ""
     end
+
+    # MediaPipe Face Mesh - add framework search path for TensorFlowLiteC
+    if target.name == 'mediapipe_face_mesh'
+      target.build_configurations.each do |config|
+        # Add framework search path for TensorFlowLiteC
+        framework_path = "#{ENV['HOME']}/.pub-cache/hosted/pub.dev/mediapipe_face_mesh-1.2.4/ios/Frameworks"
+        config.build_settings['FRAMEWORK_SEARCH_PATHS'] ||= ['$(inherited)']
+        config.build_settings['FRAMEWORK_SEARCH_PATHS'] << "\"#{framework_path}\""
+      end
+    end
   end
   
   # Fix Xcode 15 compatibility issues and deployment targets
