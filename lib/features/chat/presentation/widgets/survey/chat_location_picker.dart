@@ -266,16 +266,17 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
     widget.onLocationSelected(location);
   }
 
-  /// 주소 포맷팅
+  /// 주소 포맷팅 (시/도 + 구/군 + 동)
   String _formatAddress(Placemark place) {
     final parts = <String>[];
     final adminArea = place.administrativeArea;
 
+    // 1. 시/도
     if (adminArea != null && adminArea.isNotEmpty) {
       parts.add(adminArea);
     }
 
-    // locality가 administrativeArea와 동일하면 스킵 (중복 방지)
+    // 2. 구/군 (locality가 administrativeArea와 동일하면 스킵)
     if (place.locality != null &&
         place.locality!.isNotEmpty &&
         place.locality != adminArea) {
@@ -285,6 +286,12 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
                place.subAdministrativeArea != adminArea) {
       parts.add(place.subAdministrativeArea!);
     }
+
+    // 3. 동/읍/면 (subLocality)
+    if (place.subLocality != null && place.subLocality!.isNotEmpty) {
+      parts.add(place.subLocality!);
+    }
+
     return parts.join(' ');
   }
 

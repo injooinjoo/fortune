@@ -382,12 +382,14 @@ class InfographicFactory {
   /// [score] 점수 (0-100)
   /// [categories] 카테고리 데이터 (선택)
   /// [luckyItems] 행운 아이템 (선택)
+  /// [keyPoints] 키포인트 태그 (선택, 시험운 등)
   /// [isShareMode] 공유 모드 (개인정보 숨김)
   static Widget buildScoreInfographic({
     required FortuneType fortuneType,
     required int score,
     List<CategoryData>? categories,
     List<LuckyItem>? luckyItems,
+    List<String>? keyPoints,
     bool isShareMode = false,
   }) {
     final config = getConfig(fortuneType);
@@ -397,6 +399,7 @@ class InfographicFactory {
       score: score,
       categories: categories,
       luckyItems: luckyItems,
+      keyPoints: keyPoints,
       progressColor: config.themeColor,
       isShareMode: isShareMode,
     );

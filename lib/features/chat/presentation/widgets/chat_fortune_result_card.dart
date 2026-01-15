@@ -18,7 +18,7 @@ import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../fortune/domain/models/mbti_dimension_fortune.dart';
 import '../../../fortune/domain/models/wish_fortune_result.dart';
 import 'month_highlight_detail_bottom_sheet.dart';
@@ -29,6 +29,8 @@ import '../../../fortune/presentation/widgets/infographic/templates/image_templa
 import '../../../fortune/presentation/widgets/infographic/templates/chart_template.dart';
 import '../../../fortune/presentation/widgets/infographic/category_bar_chart.dart';
 import '../../../fortune/presentation/widgets/infographic/lucky_item_row.dart';
+import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../../core/design_system/tokens/ds_luck_colors.dart';
 import '../../../../core/services/wish_local_storage.dart';
 
 /// 채팅용 운세 결과 리치 카드
@@ -771,8 +773,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             // 이미지 헤더
             _buildImageHeader(context),
 
-            // 인포그래픽 요약 섹션
-            if (_buildInfographicSection(context) != null)
+            // 인포그래픽 요약 섹션 (시험운은 ExamSignalHeader에서 점수 표시하므로 제외)
+            if (_buildInfographicSection(context) != null && !_isExam)
               _buildInfographicSection(context)!,
 
             // 점수 섹션 (인포그래픽이 있는 타입은 중복되므로 제외)
@@ -1090,9 +1092,15 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   List<Widget> _buildDailyLayout(BuildContext context) {
     return [
       _buildImageHeader(context),
-      // 인포그래픽 요약 섹션
-      if (_buildInfographicSection(context) != null)
-        _buildInfographicSection(context)!,
+      // 🆕 갓생 지수 UI (점수 + 심플 도넛 % + 날짜)
+      _buildGodlifeScoreSection(context),
+      // 🆕 한줄평 (T/F 모드 메시지)
+      _buildOnelinerSection(context),
+      // 🆕 갓생 치트키 (personalActions)
+      _buildCheatKeySection(context),
+      // 🆕 행운 부스터 (luckyItems 리디자인)
+      _buildLuckBoosterSection(context),
+      // 기존 콘텐츠 섹션 (선택적 표시)
       if (fortune.content.isNotEmpty) _buildDailyStorySection(context),
       if (fortuneType == 'daily_calendar') _buildDailyCalendarSection(context),
       if (fortune.timeSpecificFortunes != null &&
@@ -1105,9 +1113,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       if (fortune.recommendations != null &&
           fortune.recommendations!.isNotEmpty)
         _buildRecommendationsSection(context),
-      // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
-      if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
-        _buildLuckyItemsSection(context),
       const SizedBox(height: DSSpacing.sm),
     ];
   }
@@ -1531,6 +1536,501 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
+  // ============================================================
+  // 갓생 리뉴얼 섹션들 (오늘의 갓생 지수 UI)
+  // ============================================================
+
+  /// 갓생 지수 섹션 - 제목 + 카테고리 분포 도넛 + 레전드 + 날짜
+  Widget _buildGodlifeScoreSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final score = fortune.overallScore ?? 75;
+    final now = widget.selectedDate ?? DateTime.now();
+
+    // fortune.categories에서 상위 3개 추출
+    final categories = fortune.categories ?? {};
+    final sortedList = categories.entries
+        .where((e) => e.key != 'total')
+        .map((e) => MapEntry(e.key, (e.value['score'] as num?)?.toInt() ?? 0))
+        .where((e) => e.value > 0)
+        .toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    final top3 = sortedList.take(3).toList();
+
+    // 총합 (분포 퍼센트 계산용)
+    final totalScore = top3.fold<int>(0, (sum, e) => sum + e.value);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.lg,
+      ),
+      child: Column(
+        children: [
+          // 제목
+          Text(
+            '오늘의 갓생 지수',
+            style: typography.headingSmall.copyWith(
+              color: colors.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.md),
+
+          // 총점 (도넛 위에 표시, 숫자만)
+          Text(
+            '$score',
+            style: typography.displayLarge.copyWith(
+              fontSize: 56,
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+            ),
+          ),
+
+          // 카테고리 분포 도넛 차트 + 레전드 (데이터 있을 때만)
+          if (top3.isNotEmpty && totalScore > 0) ...[
+            const SizedBox(height: DSSpacing.sm),
+            SizedBox(
+              width: 160,
+              height: 160,
+              child: CustomPaint(
+                painter: _CategoryDistributionDonutPainter(
+                  categories: top3,
+                  strokeWidth: 20,
+                ),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+            Wrap(
+              spacing: 12,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: top3.map((entry) {
+                final percent = (entry.value / totalScore * 100).round();
+                return _buildCategoryLegendItem(
+                  context,
+                  entry.key,
+                  percent,
+                );
+              }).toList(),
+            ),
+          ],
+          const SizedBox(height: DSSpacing.md),
+
+          // 날짜
+          Text(
+            '${now.year}년 ${now.month}월 ${now.day}일 ${_getWeekdayText(now)}',
+            style: typography.bodyMedium.copyWith(
+              color: colors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 카테고리 레전드 아이템 위젯 (앱 톤앤매너에 맞춘 칩 스타일)
+  Widget _buildCategoryLegendItem(
+    BuildContext context,
+    String categoryKey,
+    int percent,
+  ) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // 카테고리별 색상 (파스텔톤으로 조정)
+    const categoryColors = {
+      'love': Color(0xFFFF8FA3),    // 소프트 핑크
+      'money': Color(0xFFFFD93D),   // 골드
+      'work': Color(0xFF6B9FFF),    // 소프트 블루
+      'health': Color(0xFF7ED68A),  // 소프트 그린
+      'study': Color(0xFFB57EDC),   // 소프트 퍼플
+    };
+
+    // 카테고리별 라벨
+    const categoryLabels = {
+      'love': '연애',
+      'money': '재물',
+      'work': '직장',
+      'health': '건강',
+      'study': '학업',
+    };
+
+    final color = categoryColors[categoryKey] ?? colors.textTertiary;
+    final label = categoryLabels[categoryKey] ?? categoryKey;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: isDark
+            ? color.withValues(alpha: 0.15)
+            : color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 색상 점
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 6),
+          // 라벨 + 퍼센트
+          Text(
+            '$label $percent%',
+            style: typography.labelSmall.copyWith(
+              color: isDark ? color : color.withValues(alpha: 0.9),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 한줄평 섹션 - T/F 모드 메시지 (흰색 카드)
+  Widget _buildOnelinerSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    // T/F 모드 결정 (MBTI 기반)
+    final userProfile = ref.watch(userProfileProvider).valueOrNull;
+    final mbti = userProfile?.mbti;
+    final isTMode = _isTMode(mbti);
+    final score = fortune.overallScore ?? 75;
+
+    // T/F 모드별 메시지 또는 summary 사용
+    String oneliner = _getGodlifeScoreMessage(score, isTMode);
+
+    // summary가 있으면 그것을 우선 사용 (API에서 온 맞춤 메시지)
+    if (fortune.summary != null && fortune.summary!.isNotEmpty) {
+      oneliner = fortune.summary!;
+    }
+
+    // 한줄평용 이모지 선택
+    String emoji;
+    if (score >= 80) {
+      emoji = '✨';
+    } else if (score >= 60) {
+      emoji = '🌟';
+    } else if (score >= 40) {
+      emoji = '💫';
+    } else {
+      emoji = '🌙';
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.lg,
+          vertical: DSSpacing.md + 4,
+        ),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: colors.textPrimary.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 24)),
+            const SizedBox(width: DSSpacing.sm),
+            Expanded(
+              child: Text(
+                oneliner,
+                style: typography.bodyLarge.copyWith(
+                  color: colors.textPrimary,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 갓생 치트키 섹션 - 체크박스 스타일 액션 아이템
+  Widget _buildCheatKeySection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    // personalActions 또는 ai_tips 사용
+    final actions = fortune.personalActions ?? [];
+    final aiTips = fortune.metadata?['ai_tips'] as List<dynamic>? ?? [];
+
+    // 데이터 통합 (personalActions 우선)
+    final cheatItems = <Map<String, String>>[];
+
+    if (actions.isNotEmpty) {
+      for (final action in actions.take(4)) {
+        cheatItems.add({
+          'title': action['title']?.toString() ?? '',
+          'why': action['why']?.toString() ?? '',
+        });
+      }
+    } else if (aiTips.isNotEmpty) {
+      for (final tip in aiTips.take(4)) {
+        cheatItems.add({
+          'title': tip.toString(),
+          'why': '',
+        });
+      }
+    }
+
+    if (cheatItems.isEmpty) return const SizedBox.shrink();
+
+    // MBTI에서 사용자 이름 가져오기 (옵션)
+    final userProfile = ref.watch(userProfileProvider).valueOrNull;
+    final userName = userProfile?.name ?? '';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          // 라벤더 배경 (사용자 스펙)
+          color: const Color(0xFFF0EFFF),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더
+            Row(
+              children: [
+                const Text('✨', style: TextStyle(fontSize: 18)),
+                const SizedBox(width: DSSpacing.xs),
+                Expanded(
+                  child: Text(
+                    userName.isNotEmpty
+                        ? '$userName님을 위한 갓생 치트키'
+                        : '오늘의 갓생 치트키',
+                    style: typography.labelLarge.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 체크박스 아이템들
+            ...cheatItems.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 빈 체크박스 아이콘 (☐ 스타일)
+                      Container(
+                        width: 20,
+                        height: 20,
+                        margin: const EdgeInsets.only(top: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: const Color(0xFF9B8FCB),
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: DSSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          item['title'] ?? '',
+                          style: typography.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 행운 부스터 섹션 - 아이콘 Row 스타일
+  Widget _buildLuckBoosterSection(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final luckyItems = fortune.luckyItems ?? {};
+    final sajuInsight = fortune.metadata?['sajuInsight'] as Map<String, dynamic>?;
+
+    // 행운 아이템 추출
+    final boosterItems = <Map<String, dynamic>>[];
+
+    // 아이템
+    final item = sajuInsight?['lucky_item'] ?? luckyItems['item'];
+    if (item != null && item.toString().isNotEmpty) {
+      boosterItems.add({
+        'icon': Icons.star_rounded,
+        'label': '행운 아이템',
+        'value': item.toString(),
+        'color': DSLuckColors.categoryFashion,
+      });
+    }
+
+    // 간식/음식
+    final food = luckyItems['food'] ?? sajuInsight?['lucky_food'];
+    if (food != null && food.toString().isNotEmpty) {
+      boosterItems.add({
+        'icon': Icons.restaurant_rounded,
+        'label': '행운의 간식',
+        'value': food.toString(),
+        'color': DSLuckColors.categoryFood,
+      });
+    }
+
+    // 컬러
+    final color = luckyItems['color'] ?? sajuInsight?['lucky_color'];
+    if (color != null && color.toString().isNotEmpty) {
+      boosterItems.add({
+        'icon': Icons.palette_rounded,
+        'label': '행운의 컬러',
+        'value': '${color.toString()} 💜',
+        'color': DSLuckColors.categoryColor,
+      });
+    }
+
+    // 노래/음악
+    final song = luckyItems['song'] ?? luckyItems['music'] ?? sajuInsight?['lucky_song'];
+    if (song != null && song.toString().isNotEmpty) {
+      boosterItems.add({
+        'icon': Icons.music_note_rounded,
+        'label': '행운의 노래',
+        'value': song.toString(),
+        'color': const Color(0xFF9B59B6),
+      });
+    }
+
+    // 방향 (노래가 없을 경우에만)
+    if (song == null || song.toString().isEmpty) {
+      final direction = luckyItems['direction'] ?? sajuInsight?['luck_direction'];
+      if (direction != null && direction.toString().isNotEmpty) {
+        boosterItems.add({
+          'icon': Icons.explore_rounded,
+          'label': '행운의 방향',
+          'value': direction.toString(),
+          'color': DSLuckColors.categoryDirection,
+        });
+      }
+    }
+
+    if (boosterItems.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(DSSpacing.md),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          border: Border.all(
+            color: colors.border.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더
+            Row(
+              children: [
+                const Text('🚀', style: TextStyle(fontSize: 18)),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '오늘의 행운 부스터',
+                  style: typography.labelLarge.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.md),
+
+            // 부스터 아이템들
+            ...boosterItems.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+                  child: Row(
+                    children: [
+                      // 아이콘 박스
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: (item['color'] as Color).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(DSRadius.sm),
+                        ),
+                        child: Icon(
+                          item['icon'] as IconData,
+                          size: 20,
+                          color: item['color'] as Color,
+                        ),
+                      ),
+                      const SizedBox(width: DSSpacing.sm),
+                      // 텍스트
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item['label'] as String,
+                              style: typography.labelSmall.copyWith(
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                            Text(
+                              item['value'] as String,
+                              style: typography.bodyMedium.copyWith(
+                                color: colors.textPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildDailyStorySection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
@@ -1621,7 +2121,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           ),
           const SizedBox(height: DSSpacing.sm),
           SizedBox(
-            height: 150,
+            height: 200,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: slots.length,
@@ -1677,11 +2177,11 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             Expanded(
               child: Text(
                 slot.description,
-                maxLines: 3,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: typography.bodySmall.copyWith(
                   color: colors.textSecondary,
-                  height: 1.4,
+                  height: 1.3,
                 ),
               ),
             ),
@@ -3914,6 +4414,42 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     return '중요한 결정은 미루세요';
   }
 
+  // ============================================================
+  // T/F 모드 헬퍼 (MBTI 기반 메시지 톤 분기)
+  // ============================================================
+
+  /// MBTI에서 T/F 판단
+  /// T 포함 → T모드(팩폭형), F 포함 또는 null → F모드(공감형)
+  bool _isTMode(String? mbti) {
+    if (mbti == null || mbti.isEmpty) return false;
+    return mbti.toUpperCase().contains('T');
+  }
+
+  /// T/F 모드별 갓생 지수 메시지
+  String _getGodlifeScoreMessage(int score, bool isTMode) {
+    if (isTMode) {
+      // 팩폭형 메시지
+      if (score >= 90) return '오늘 진짜 터졌다 🔥';
+      if (score >= 75) return '꽤 괜찮은 편';
+      if (score >= 60) return '그냥 평균';
+      if (score >= 40) return '조심해야 할 듯';
+      return '오늘은 집에 있어';
+    } else {
+      // 공감형 메시지
+      if (score >= 90) return '오늘 하루가 빛나요 ✨';
+      if (score >= 75) return '좋은 기운이 함께해요';
+      if (score >= 60) return '평온한 하루가 될 거예요';
+      if (score >= 40) return '조심하면 괜찮아요';
+      return '차분하게 보내세요 💙';
+    }
+  }
+
+  /// 요일 텍스트 반환
+  String _getWeekdayText(DateTime date) {
+    const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+    return '${weekdays[date.weekday - 1]}요일';
+  }
+
   String _getCategoryEmoji(String key) {
     return switch (key.toLowerCase()) {
       // 기존 운세 카테고리
@@ -6082,8 +6618,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     color: colors.textPrimary,
                     height: 1.6,
                   ),
-                  maxLines: 10,
-                  overflow: TextOverflow.ellipsis,
+                  // 전체 내용 표시 (maxLines 제거)
                 ),
               ),
             ),
@@ -6199,8 +6734,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                                     color: colors.textSecondary,
                                     height: 1.4,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                  // 전체 내용 표시 (maxLines 제거)
                                 ),
                               ],
                             ],
@@ -6375,7 +6909,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                                     style: typography.bodySmall.copyWith(
                                       color: colors.textSecondary,
                                     ),
-                                    maxLines: 1,
+                                    maxLines: 3,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                               ],
@@ -10678,15 +11212,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             ),
             const SizedBox(height: DSSpacing.sm),
 
-            // 메시지 (1줄)
+            // 메시지
             Text(
               '"$message"',
               style: typography.bodyMedium.copyWith(
                 color: colors.textPrimary,
                 fontStyle: FontStyle.italic,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: DSSpacing.sm),
@@ -13213,13 +13745,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           // 📋 오늘의 루틴 (프리미엄)
           // ============================================================
           if (todayRoutine != null) ...[
-            UnifiedBlurWrapper(
-              isBlurred: _isBlurred,
-              blurredSections: exerciseBlurredSections,
-              sectionKey: 'todayRoutine',
-              fortuneType: 'exercise',
-              sigmaX: 8.0,
-              sigmaY: 8.0,
+            SimpleBlurOverlay(
+              isBlurred: _isBlurred && exerciseBlurredSections.contains('todayRoutine'),
               child: _buildHealthSection(
                 context,
                 icon: '📋',
@@ -13235,13 +13762,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           // 📅 주간 계획 (프리미엄)
           // ============================================================
           if (weeklyPlan != null) ...[
-            UnifiedBlurWrapper(
-              isBlurred: _isBlurred,
-              blurredSections: exerciseBlurredSections,
-              sectionKey: 'weeklyPlan',
-              fortuneType: 'exercise',
-              sigmaX: 8.0,
-              sigmaY: 8.0,
+            SimpleBlurOverlay(
+              isBlurred: _isBlurred && exerciseBlurredSections.contains('weeklyPlan'),
               child: _buildHealthSection(
                 context,
                 icon: '📅',
@@ -13257,13 +13779,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           // 🛡️ 부상 예방 (프리미엄)
           // ============================================================
           if (injuryPrevention != null) ...[
-            UnifiedBlurWrapper(
-              isBlurred: _isBlurred,
-              blurredSections: exerciseBlurredSections,
-              sectionKey: 'injuryPrevention',
-              fortuneType: 'exercise',
-              sigmaX: 8.0,
-              sigmaY: 8.0,
+            SimpleBlurOverlay(
+              isBlurred: _isBlurred && exerciseBlurredSections.contains('injuryPrevention'),
               child: _buildHealthSection(
                 context,
                 icon: '🛡️',
@@ -17558,11 +18075,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     return Padding(
       padding: const EdgeInsets.symmetric(
           horizontal: DSSpacing.md, vertical: DSSpacing.sm),
-      child: UnifiedBlurWrapper(
+      child: SimpleBlurOverlay(
         isBlurred: shouldBlur,
-        blurredSections: shouldBlur ? ['pets_voice'] : [],
-        sectionKey: 'pets_voice',
-        fortuneType: 'pet-compatibility',
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -18126,5 +18640,69 @@ class _LottoBall extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// 카테고리 분포 도넛 차트 페인터 (Top 3 운세)
+class _CategoryDistributionDonutPainter extends CustomPainter {
+  final List<MapEntry<String, int>> categories;
+  final double strokeWidth;
+
+  _CategoryDistributionDonutPainter({
+    required this.categories,
+    this.strokeWidth = 20,
+  });
+
+  // 카테고리별 색상 정의
+  static const Map<String, Color> categoryColors = {
+    'love': Color(0xFFFF8FA3),    // 핑크
+    'money': Color(0xFFFFD93D),   // 노랑
+    'work': Color(0xFF4D96FF),    // 파랑
+    'health': Color(0xFF6BCB77),  // 초록
+    'study': Color(0xFF9B59B6),   // 보라
+    'total': Color(0xFFFF6B6B),   // 코랄
+  };
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (categories.isEmpty) return;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width - strokeWidth) / 2;
+    const pi = 3.141592653589793;
+
+    // 총합 계산
+    final total = categories.fold<int>(0, (sum, e) => sum + e.value);
+    if (total == 0) return;
+
+    // 시작 각도 (12시 방향에서 시작)
+    double startAngle = -pi / 2;
+
+    // 각 카테고리별로 호 그리기
+    for (final entry in categories) {
+      final sweepAngle = (entry.value / total) * 2 * pi;
+
+      final paint = Paint()
+        ..color = categoryColors[entry.key] ?? const Color(0xFF888888)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.butt;
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        paint,
+      );
+
+      startAngle += sweepAngle;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CategoryDistributionDonutPainter oldDelegate) {
+    return oldDelegate.categories != categories ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }

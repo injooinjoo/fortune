@@ -559,16 +559,18 @@ class _MbtiDimensionBar extends StatelessWidget {
                       ),
                     ),
                     // 진행 바 - Align + 직접 너비 지정으로 semantics 에러 방지
+                    // isLeft=true (value>=50): 바가 왼쪽(T 방향)에 채워짐
+                    // isLeft=false (value<50): 바가 오른쪽(F 방향)에 채워짐
                     Align(
-                      alignment: isLeft ? Alignment.centerRight : Alignment.centerLeft,
+                      alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
                       child: Container(
                         width: barWidth,
                         height: 8,
                         decoration: BoxDecoration(
                           color: context.colors.accent,
                           borderRadius: BorderRadius.horizontal(
-                            left: isLeft ? Radius.zero : const Radius.circular(4),
-                            right: isLeft ? const Radius.circular(4) : Radius.zero,
+                            left: isLeft ? const Radius.circular(4) : Radius.zero,
+                            right: isLeft ? Radius.zero : const Radius.circular(4),
                           ),
                         ),
                       ),

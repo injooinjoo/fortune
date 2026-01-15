@@ -101,9 +101,9 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       recommendations.add(RecommendedFortune(
         id: 'zodiac',
         title: '별자리 월간 운세',
-        description: '${userProfile.zodiacSign}자리의 흐름',
+        description: '${userProfile.zodiacSign}의 흐름',
         route: '/daily-calendar',
-        reason: '${userProfile.zodiacSign}자리 맞춤',
+        reason: '${userProfile.zodiacSign} 맞춤',
         relevanceScore: 0.85));
     }
   }

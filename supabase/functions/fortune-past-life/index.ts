@@ -1003,6 +1003,101 @@ interface PastLifeScenario {
   weight: number  // 높을수록 자주 등장 (기본 10)
 }
 
+// ===== 플롯 템플릿 시스템 (V2.1 Dynamic Story) =====
+type PlotType = 'TRAGEDY' | 'TRIUMPH' | 'ROMANCE' | 'MYSTERY' | 'ADVENTURE'
+
+interface PlotTemplate {
+  name: PlotType
+  nameKr: string
+  arc: string[]  // 5챕터 제목
+  emojis: string[]  // 챕터별 이모지
+  tone: string
+  ending: string
+  writingStyle: string  // 서술 스타일 가이드
+}
+
+const PLOT_TEMPLATES: Record<PlotType, PlotTemplate> = {
+  TRAGEDY: {
+    name: 'TRAGEDY',
+    nameKr: '비극',
+    arc: ['영광의 시작', '정점에 서다', '운명의 균열', '추락', '비극적 교훈'],
+    emojis: ['🌅', '👑', '⚡', '🌑', '🕯️'],
+    tone: '비극적, 숙명적, 애절한',
+    ending: '안타까운 최후, 후세에 남긴 경고와 교훈',
+    writingStyle: '운명의 아이러니 강조, 절정의 순간 직후 추락, 독자의 연민 유발'
+  },
+  TRIUMPH: {
+    name: 'TRIUMPH',
+    nameKr: '승리',
+    arc: ['비천한 시작', '희망의 불씨', '시련의 연속', '극적 반전', '영웅의 탄생'],
+    emojis: ['🌱', '✨', '🔥', '💫', '🏆'],
+    tone: '희망적, 감동적, 고무적',
+    ending: '영광스러운 결말, 전설이 되어 후세에 기억됨',
+    writingStyle: '역경 속 성장 강조, 조력자와의 만남, 결정적 승리의 순간'
+  },
+  ROMANCE: {
+    name: 'ROMANCE',
+    nameKr: '로맨스',
+    arc: ['운명적 만남', '피어나는 감정', '이별의 위기', '재회 또는 이별', '영원한 사랑'],
+    emojis: ['💕', '🌸', '💔', '🌙', '❤️‍🔥'],
+    tone: '로맨틱, 애절한, 가슴 저미는',
+    ending: '이루어진 사랑 또는 애틋한 영원한 이별',
+    writingStyle: '감정의 깊이 묘사, 장애물의 극복, 사랑의 희생과 헌신'
+  },
+  MYSTERY: {
+    name: 'MYSTERY',
+    nameKr: '미스터리',
+    arc: ['수수께끼의 등장', '숨겨진 정체', '진실에 다가서다', '충격의 반전', '비밀의 대가'],
+    emojis: ['🎭', '🔍', '🗝️', '😱', '⚖️'],
+    tone: '긴장감, 의문, 반전',
+    ending: '진실 폭로와 그 여파, 숨겨진 정체의 결말',
+    writingStyle: '복선과 암시, 점진적 진실 공개, 독자 예상 뒤엎는 반전'
+  },
+  ADVENTURE: {
+    name: 'ADVENTURE',
+    nameKr: '모험',
+    arc: ['모험의 부름', '낯선 세계', '시련과 동료', '보물 발견', '변화된 귀환'],
+    emojis: ['🚀', '🗺️', '⚔️', '💎', '🏠'],
+    tone: '역동적, 흥미진진, 성장',
+    ending: '성장과 깨달음을 얻은 귀환, 변화된 인물',
+    writingStyle: '새로운 세계 묘사, 동료와의 유대, 내면의 성장'
+  }
+}
+
+// 카테고리별 플롯 가중치 (합계 1.0)
+const CATEGORY_PLOT_WEIGHTS: Record<string, Partial<Record<PlotType, number>>> = {
+  palace: { TRAGEDY: 0.35, TRIUMPH: 0.25, ROMANCE: 0.2, MYSTERY: 0.2 },
+  military: { TRIUMPH: 0.4, TRAGEDY: 0.3, ADVENTURE: 0.2, MYSTERY: 0.1 },
+  scholarly: { TRIUMPH: 0.35, MYSTERY: 0.25, ROMANCE: 0.2, TRAGEDY: 0.2 },
+  mystical: { MYSTERY: 0.4, TRAGEDY: 0.25, ADVENTURE: 0.2, TRIUMPH: 0.15 },
+  merchant: { ADVENTURE: 0.35, TRIUMPH: 0.3, MYSTERY: 0.2, ROMANCE: 0.15 },
+  artisan: { TRIUMPH: 0.35, ROMANCE: 0.25, TRAGEDY: 0.2, ADVENTURE: 0.2 },
+  spiritual: { MYSTERY: 0.3, TRIUMPH: 0.3, TRAGEDY: 0.25, ADVENTURE: 0.15 },
+  entertainment: { ROMANCE: 0.4, TRAGEDY: 0.35, TRIUMPH: 0.15, MYSTERY: 0.1 },
+  labor: { TRIUMPH: 0.45, TRAGEDY: 0.25, ADVENTURE: 0.2, ROMANCE: 0.1 },
+  female: { ROMANCE: 0.35, TRIUMPH: 0.3, TRAGEDY: 0.2, MYSTERY: 0.15 }
+}
+
+// 가중치 기반 플롯 선택 함수
+function selectPlotTemplate(category: string): PlotTemplate {
+  const weights = CATEGORY_PLOT_WEIGHTS[category] || CATEGORY_PLOT_WEIGHTS['palace']
+  const plotTypes = Object.keys(weights) as PlotType[]
+
+  // 가중치 기반 랜덤 선택
+  const random = Math.random()
+  let cumulative = 0
+
+  for (const plotType of plotTypes) {
+    cumulative += weights[plotType] || 0
+    if (random <= cumulative) {
+      return PLOT_TEMPLATES[plotType]
+    }
+  }
+
+  // 기본값: TRIUMPH
+  return PLOT_TEMPLATES.TRIUMPH
+}
+
 const PAST_LIFE_SCENARIOS: PastLifeScenario[] = [
   // ===== 1. 궁궐/관료 (15개) =====
   { id: 'secretary_trusted', category: 'palace', status: 'court_secretary', trait: '신뢰받는', storySeed: '왕의 비밀 문서를 다루던', weight: 10 },
@@ -1549,7 +1644,7 @@ interface StoryChapter {
 }
 
 /**
- * LLM으로 전생 스토리 생성 (챕터 구조)
+ * LLM으로 전생 스토리 생성 (V2.1 Dynamic Story - 5챕터 플롯 시스템)
  */
 async function generatePastLifeStory(
   scenario: PastLifeScenario,
@@ -1566,84 +1661,134 @@ async function generatePastLifeStory(
   advice: string
   score: number
   chapters: StoryChapter[]
+  plotType: PlotType
   llmResponse: any  // LLMResponse for usage logging
 }> {
-  console.log('📝 [PastLife] Generating story with chapters...')
+  console.log('📝 [PastLife] Generating dynamic story with 5 chapters...')
 
   const llm = LLMFactory.createFromConfig('fortune-past-life')
   const genderKo = gender === 'male' ? '남성' : '여성'
+
+  // 플롯 템플릿 선택 (카테고리 기반)
+  const plot = selectPlotTemplate(scenario.category)
+  console.log(`🎭 [PastLife] Selected plot: ${plot.name} (${plot.nameKr})`)
 
   // 얼굴 특징 기반 성격 힌트
   let personalityHint = ''
   if (faceFeatures) {
     personalityHint = `
-## 외모 기반 성격 힌트 (초상화에 반영된 특징)
+## 외모 기반 성격 힌트
 - 얼굴형: ${faceFeatures.faceShape}
 - 눈: ${faceFeatures.eyes.shape}, ${faceFeatures.eyes.size}
 - 전체 인상: ${faceFeatures.overallImpression.join(', ')}
-이 외모적 특징이 전생의 성격과 운명에 어떻게 반영되었는지 자연스럽게 포함해주세요.`
+이 외모적 특징을 전생 캐릭터의 외양과 성격에 자연스럽게 녹여주세요.`
   }
 
-  const prompt = `당신은 전생 운세 전문가입니다. 사용자의 전생 이야기를 챕터별로 생성해주세요.
+  const prompt = `당신은 조선시대 전생 이야기를 들려주는 소설가입니다. 드라마틱하고 몰입감 있는 스토리를 만들어주세요.
 
-## 사용자 정보
-- 이름: ${userName}
-- 생년월일: ${userBirthDate}
+## 플롯 유형: ${plot.nameKr} (${plot.name})
+- **전개 구조**: ${plot.arc.join(' → ')}
+- **톤과 분위기**: ${plot.tone}
+- **결말 방향**: ${plot.ending}
+- **서술 스타일**: ${plot.writingStyle}
 
 ## 전생 정보
-- 신분: ${statusKr} (${scenario.status})
-- 성별: ${genderKo}
+- 신분: ${statusKr}
+- 이름: ${name}
 - 시대: ${era}
-- 전생 이름: ${name}
-- 시나리오: ${scenario.trait} 인물, ${scenario.storySeed}
-- 카테고리: ${scenario.category}
+- 성별: ${genderKo}
+- 특징: ${scenario.trait} 인물
+- 배경: ${scenario.storySeed}
 ${personalityHint}
 
-## 작성 지침
+## 스토리텔링 핵심 규칙
 
-### chapters (4개 챕터)
-각 챕터는 80-120자로 작성. 몰입감 있는 스토리텔링.
+### 필수 요소 (매우 중요!)
+1. **대화 포함**: 각 챕터에 반드시 1-2개의 생생한 대사 (따옴표로 감싸기)
+   - 예시: "미쳤군! 여자가 물길을 바꾸겠다고?"
+2. **감각 묘사**: 시각/청각/촉각 중 최소 1개
+   - 예시: "손바닥이 찢어지고", "황금빛으로 물들었다"
+3. **감정 표현**: 캐릭터의 내면 심리 드러내기
+4. **시대적 디테일**: 조선시대 특유의 문화, 관습, 배경 반영
+5. **서술체**: "~했습니다"로 끝나지 않고 "~했다", "~였다" 등 문학적 서술
 
-1. **탄생과 유년 시절** (emoji: 👶)
-   - 태어난 환경, 어린 시절 특별한 재능이나 사건
+### 피해야 할 것 (절대 금지)
+❌ "~했습니다", "~입니다"로 끝나는 설명적 서술
+❌ 감정 없이 사실만 나열하는 방식
+❌ 뻔하고 예측 가능한 전개
+❌ 추상적이고 모호한 표현
 
-2. **이름을 알리다** (emoji: ⭐)
-   - 성장 후 두각을 나타낸 사건, ${scenario.storySeed}와 연결
+### 챕터 작성법 (각 150-250자)
 
-3. **시련과 극복** (emoji: ⚔️)
-   - 인생의 가장 큰 시련과 이를 극복한 이야기
+**챕터 1: ${plot.arc[0]}** (${plot.emojis[0]})
+- 흥미로운 첫 문장으로 훅(Hook) 만들기
+- 주인공의 특별함 암시하는 복선
+- 독자를 단숨에 사로잡기
 
-4. **남긴 유산** (emoji: 🌟)
-   - 삶의 마무리, 후세에 남긴 영향
+**챕터 2: ${plot.arc[1]}** (${plot.emojis[1]})
+- 핵심 갈등 또는 기회 등장
+- 주인공의 결정적 선택
+- 긴장감 고조
+
+**챕터 3: ${plot.arc[2]}** (${plot.emojis[2]}) [클라이맥스]
+- 가장 극적인 장면
+- 감정의 정점
+- ${plot.name === 'TRAGEDY' ? '운명의 어두운 그림자' : plot.name === 'ROMANCE' ? '사랑의 시험' : '결정적 순간'}
+
+**챕터 4: ${plot.arc[3]}** (${plot.emojis[3]})
+- 트위스트 또는 전환점
+- 독자 예상을 뒤엎는 전개
+- 결과의 시작
+
+**챕터 5: ${plot.arc[4]}** (${plot.emojis[4]})
+- 여운 있는 마무리
+- 현생과의 연결 암시
+- ${plot.ending}
+
+### 예시 (좋은 서술)
+"저 아이 눈빛 좀 봐. 범상치 않아." 산파 할멈의 말에 아버지는 코웃음 쳤다. 하지만 어린 순희가 가뭄에 시든 밭에서 물줄기를 찾아낸 그날, 마을 사람들은 할멈의 말을 떠올렸다. 흙 묻은 손으로 하늘을 가리키던 다섯 살 순희의 이야기는 그렇게 시작되었다.
 
 ### summary (FREE 콘텐츠)
-1-2문장의 핵심 요약. "당신의 전생은 ${scenario.trait} ${statusKr}이었습니다..." 형식.
+1-2문장으로 독자의 흥미를 끄는 요약.
+형식: "당신의 전생은 ${era} ${scenario.trait} ${statusKr}이었습니다. [한 줄 훅]"
 
 ### advice (BLUR 콘텐츠)
-150-200자. 현생과의 연결점과 조언.
+150-200자. 전생과 현생의 연결점, 그리고 이번 생에서의 조언.
 
 ### score
-1-100 사이. 신분별 기본 점수:
-- 왕/왕비: 90-100
-- 양반/선비/장군: 75-90
-- 기생/상인/장인: 65-85
-- 농부/하인: 60-80
+1-100 점. ${statusKr} 기준 점수 범위 내에서 스토리 완성도에 따라 조정.
 
-## JSON 응답 형식
+## JSON 응답 형식 (정확히 따라주세요)
 {
+  "plotType": "${plot.name}",
   "summary": "당신의 전생은...",
   "chapters": [
-    { "title": "탄생과 유년 시절", "content": "...", "emoji": "👶" },
-    { "title": "이름을 알리다", "content": "...", "emoji": "⭐" },
-    { "title": "시련과 극복", "content": "...", "emoji": "⚔️" },
-    { "title": "남긴 유산", "content": "...", "emoji": "🌟" }
+    { "title": "${plot.arc[0]}", "content": "...", "emoji": "${plot.emojis[0]}" },
+    { "title": "${plot.arc[1]}", "content": "...", "emoji": "${plot.emojis[1]}" },
+    { "title": "${plot.arc[2]}", "content": "...", "emoji": "${plot.emojis[2]}" },
+    { "title": "${plot.arc[3]}", "content": "...", "emoji": "${plot.emojis[3]}" },
+    { "title": "${plot.arc[4]}", "content": "...", "emoji": "${plot.emojis[4]}" }
   ],
   "advice": "현생과의 연결점...",
   "score": 85
 }`
 
+  const systemPrompt = `당신은 조선시대를 배경으로 한 전생 이야기 전문 작가입니다.
+
+역할:
+- 독자의 마음을 사로잡는 드라마틱한 스토리텔러
+- 조선시대의 역사와 문화에 정통한 전문가
+- JSON 형식으로 정확하게 응답하는 AI
+
+규칙:
+1. 반드시 5개 챕터를 모두 작성
+2. 각 챕터는 150-250자 (한글 기준)
+3. 대화와 감각 묘사 필수
+4. "${plot.nameKr}" 플롯의 톤과 결말 방향 준수
+5. JSON 형식 엄수`
+
   const response = await llm.generate([
-    { role: 'system', content: '전생 운세 전문가로서 JSON 형식으로 응답합니다. 감동적이고 몰입감 있는 이야기를 만들어주세요.' },
+    { role: 'system', content: systemPrompt },
     { role: 'user', content: prompt },
   ])
 
@@ -1658,7 +1803,7 @@ ${personalityHint}
 
   // story는 chapters를 합친 전체 이야기
   const fullStory = parsed.chapters
-    .map((ch: StoryChapter) => `${ch.emoji} ${ch.title}\n${ch.content}`)
+    .map((ch: StoryChapter) => `${ch.emoji} ${ch.title}\n${ch.emoji} ${ch.content}`)
     .join('\n\n')
 
   return {
@@ -1667,7 +1812,8 @@ ${personalityHint}
     advice: parsed.advice || '',
     score: parsed.score || 75,
     chapters: parsed.chapters || [],
-    llmResponse: response,  // Include LLMResponse for usage logging
+    plotType: plot.name,
+    llmResponse: response,
   }
 }
 
@@ -1879,8 +2025,8 @@ serve(async (req) => {
     console.log(`   - 초상화 URL: ${portraitUrl.substring(0, 80)}...`)
     console.log(`   - Pool에서 재사용: ${isFromPool}`)
 
-    // 6. LLM으로 챕터 기반 스토리 생성
-    const { story, summary, advice, score, chapters, llmResponse } = await generatePastLifeStory(
+    // 6. LLM으로 5챕터 동적 스토리 생성 (V2.1)
+    const { story, summary, advice, score, chapters, plotType, llmResponse } = await generatePastLifeStory(
       scenario,
       statusConfig.kr,
       pastLifeGender,
@@ -1924,6 +2070,7 @@ serve(async (req) => {
       scenarioId: scenario.id,
       scenarioCategory: scenario.category,
       scenarioTrait: scenario.trait,
+      plotType: plotType,  // V2.1: 플롯 유형 (TRAGEDY/TRIUMPH/ROMANCE/MYSTERY/ADVENTURE)
       // 콘텐츠
       story: story,
       summary: summary,

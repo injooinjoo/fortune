@@ -104,59 +104,116 @@ class OotdInfoHeader extends StatelessWidget {
     final colors = context.colors;
     final gradeColor = _getGradeColor(colors);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        // 등급 뱃지
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: gradeColor.withValues(alpha: 0.15),
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: gradeColor,
-              width: 3,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: gradeColor.withValues(alpha: 0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+        // 타이틀
+        Text(
+          'OOTD 평가',
+          style: context.labelMedium.copyWith(
+            color: colors.textSecondary,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: DSSpacing.sm),
+        // 점수 + 원형 프로그레스
+        SizedBox(
+          width: 100,
+          height: 100,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // 배경 원
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: CircularProgressIndicator(
+                  value: 1.0,
+                  strokeWidth: 6,
+                  backgroundColor: colors.surfaceSecondary,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colors.surfaceSecondary,
+                  ),
+                ),
+              ),
+              // 진행 원
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: CircularProgressIndicator(
+                  value: score / 100,
+                  strokeWidth: 6,
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation<Color>(gradeColor),
+                  strokeCap: StrokeCap.round,
+                ),
+              ),
+              // 점수 표시
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$score',
+                    style: context.numberLarge.copyWith(
+                      color: colors.textPrimary,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      height: 1,
+                    ),
+                  ),
+                  Text(
+                    '/ 100',
+                    style: context.labelSmall.copyWith(
+                      color: colors.textTertiary,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          child: Center(
-            child: Text(
-              grade,
-              style: context.numberLarge.copyWith(
-                color: gradeColor,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+        ),
+        const SizedBox(height: DSSpacing.xs),
+        // 등급 배지 (작게)
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.sm,
+            vertical: DSSpacing.xxs,
+          ),
+          decoration: BoxDecoration(
+            color: gradeColor.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(DSRadius.full),
+            border: Border.all(
+              color: gradeColor.withValues(alpha: 0.3),
+            ),
+          ),
+          child: Text(
+            _getGradeLabel(grade),
+            style: context.labelSmall.copyWith(
+              color: gradeColor,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
-        const SizedBox(width: DSSpacing.md),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '👕 OOTD 평가',
-              style: context.heading4.copyWith(
-                color: colors.textPrimary,
-              ),
-            ),
-            Text(
-              '$score점',
-              style: context.numberMedium.copyWith(
-                color: colors.textSecondary,
-              ),
-            ),
-          ],
-        ),
       ],
     );
+  }
+
+  String _getGradeLabel(String grade) {
+    switch (grade.toUpperCase()) {
+      case 'A+':
+        return '완벽한 스타일';
+      case 'A':
+        return '훌륭한 스타일';
+      case 'B+':
+        return '좋은 스타일';
+      case 'B':
+        return '무난한 스타일';
+      case 'C+':
+      case 'C':
+        return '개선 필요';
+      default:
+        return '스타일 점검';
+    }
   }
 
   Widget _buildRadarChart(BuildContext context) {

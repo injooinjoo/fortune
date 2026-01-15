@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/fortune_result.dart';
-import 'unified_blur_wrapper.dart';
+import 'simple_blur_overlay.dart';
 
 /// 블러 처리된 운세 콘텐츠 위젯 (단순 블러만 적용)
 ///
@@ -21,16 +21,8 @@ class BlurredFortuneContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // UnifiedBlurWrapper로 통일: blurredSections가 비어있으면 전체 블러 처리 키 사용
-    final sections = (fortuneResult.blurredSections.isEmpty)
-        ? const ['__all__']
-        : fortuneResult.blurredSections;
-
-    return UnifiedBlurWrapper(
+    return SimpleBlurOverlay(
       isBlurred: fortuneResult.isBlurred,
-      blurredSections: sections,
-      sectionKey: sections.first,
-      fortuneType: fortuneResult.type,
       child: child,
     );
   }

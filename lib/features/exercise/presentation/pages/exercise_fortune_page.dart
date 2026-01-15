@@ -6,7 +6,7 @@ import '../../domain/models/exercise_fortune_model.dart';
 import '../../../../core/theme/obangseok_colors.dart';
 import '../../../../core/widgets/unified_button.dart' show UnifiedButton, BottomButtonSpacing;
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/providers.dart';
 
@@ -930,11 +930,8 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
-      child: UnifiedBlurWrapper(
+      child: SimpleBlurOverlay(
         isBlurred: result.isSectionBlurred('todayRoutine'),
-        blurredSections: result.blurredSections,
-        sectionKey: 'todayRoutine',
-        fortuneType: 'exercise',
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/theme/obangseok_colors.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/ootd_info_header.dart';
 import '../../../../core/constants/fortune_card_images.dart';
@@ -53,11 +53,8 @@ class ChatOotdResultCard extends ConsumerWidget {
             _buildHighlightsSection(context),
             // TPO 피드백 (무료 공개)
             _buildTpoFeedbackSection(context),
-            UnifiedBlurWrapper(
-              isBlurred: isBlurred,
-              blurredSections: blurredSections,
-              sectionKey: 'ootd-result',
-              fortuneType: 'ootd-evaluation',
+            SimpleBlurOverlay(
+              isBlurred: isBlurred || blurredSections.contains('ootd-result'),
               child: Column(
                 children: [
                   _buildPrescriptionSection(context),

@@ -33,6 +33,7 @@ class ScoreTemplate extends StatelessWidget {
     this.percentile,
     this.categories,
     this.luckyItems,
+    this.keyPoints,
     this.bottomWidget,
     this.scoreLabel,
     this.showWatermark = true,
@@ -68,6 +69,9 @@ class ScoreTemplate extends StatelessWidget {
 
   /// 행운 아이템 목록 (선택)
   final List<LuckyItem>? luckyItems;
+
+  /// 키포인트 태그 목록 (선택, 시험운 등에서 사용)
+  final List<String>? keyPoints;
 
   /// 하단 커스텀 위젯 (선택, luckyItems 대신 사용)
   final Widget? bottomWidget;
@@ -115,6 +119,12 @@ class ScoreTemplate extends StatelessWidget {
           // 점수 원형 게이지
           _buildScoreSection(context),
 
+          // 키포인트 태그 (있는 경우)
+          if (keyPoints != null && keyPoints!.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildKeyPointsSection(context),
+          ],
+
           // 카테고리 막대 차트 (있는 경우)
           if (categories != null && categories!.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.md),
@@ -145,6 +155,71 @@ class ScoreTemplate extends StatelessWidget {
       animate: animate,
       progressColor: progressColor,
       label: scoreLabel,
+    );
+  }
+
+  Widget _buildKeyPointsSection(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceSecondary.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 섹션 타이틀
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.lightbulb_outline_rounded,
+                size: 16,
+                color: progressColor ?? context.colors.accent,
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                '오늘의 키포인트',
+                style: context.typography.labelMedium.copyWith(
+                  color: context.colors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          // 키포인트 태그
+          Wrap(
+            spacing: DSSpacing.xs,
+            runSpacing: DSSpacing.xs,
+            alignment: WrapAlignment.center,
+            children: keyPoints!.map((point) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xs,
+                ),
+                decoration: BoxDecoration(
+                  color: (progressColor ?? context.colors.accent)
+                      .withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(DSSpacing.sm),
+                  border: Border.all(
+                    color: (progressColor ?? context.colors.accent)
+                        .withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Text(
+                  point,
+                  style: context.typography.labelSmall.copyWith(
+                    color: progressColor ?? context.colors.accent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 

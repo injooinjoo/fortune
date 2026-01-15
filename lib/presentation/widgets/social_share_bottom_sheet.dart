@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/design_system/design_system.dart';
 
 /// 공유 바텀시트 - 카카오톡/인스타그램 전용
@@ -98,10 +99,8 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                           context: context,
                           platform: SharePlatform.kakaoTalk,
                           label: '카카오톡',
-                          iconPath: 'assets/icons/kakao.png',
-                          fallbackIcon: Icons.chat_bubble_rounded,
+                          svgPath: 'assets/images/social/kakao.svg',
                           backgroundColor: const Color(0xFFFEE500),
-                          iconColor: const Color(0xFF391B1B),
                           textColor: const Color(0xFF391B1B),
                         ),
                       ),
@@ -111,8 +110,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                           context: context,
                           platform: SharePlatform.instagram,
                           label: '인스타그램',
-                          iconPath: 'assets/icons/instagram.png',
-                          fallbackIcon: Icons.camera_alt_rounded,
+                          svgPath: 'assets/images/social/instagram.svg',
                           gradient: const LinearGradient(
                             colors: [
                               Color(0xFF833AB4),
@@ -122,7 +120,6 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
-                          iconColor: Colors.white,
                           textColor: Colors.white,
                         ),
                       ),
@@ -297,11 +294,9 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
     required BuildContext context,
     required SharePlatform platform,
     required String label,
-    required String iconPath,
-    required IconData fallbackIcon,
+    required String svgPath,
     Color? backgroundColor,
     Gradient? gradient,
-    required Color iconColor,
     required Color textColor,
   }) {
     final typography = context.typography;
@@ -335,11 +330,11 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 아이콘 (이미지 또는 fallback 아이콘)
-                _buildPlatformIcon(
-                  iconPath: iconPath,
-                  fallbackIcon: fallbackIcon,
-                  iconColor: iconColor,
+                // 정식 SVG 아이콘
+                SvgPicture.asset(
+                  svgPath,
+                  width: 32,
+                  height: 32,
                 ),
                 const SizedBox(height: DSSpacing.sm),
                 Text(
@@ -354,25 +349,6 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildPlatformIcon({
-    required String iconPath,
-    required IconData fallbackIcon,
-    required Color iconColor,
-  }) {
-    return Image.asset(
-      iconPath,
-      width: 32,
-      height: 32,
-      errorBuilder: (context, error, stackTrace) {
-        return Icon(
-          fallbackIcon,
-          color: iconColor,
-          size: 32,
-        );
-      },
     );
   }
 

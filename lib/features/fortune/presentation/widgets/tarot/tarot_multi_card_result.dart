@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/widgets/gpt_style_typing_text.dart';
-import '../../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../../core/theme/obangseok_colors.dart';
 import 'tarot_card_detail_modal.dart';
 
@@ -537,10 +537,8 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
 
           // 해석 텍스트
           if (interpretation.isNotEmpty)
-            UnifiedBlurWrapper(
-              isBlurred: widget.result.isBlurred,
-              blurredSections: widget.result.blurredSections,
-              sectionKey: 'card_${index + 1}',
+            SimpleBlurOverlay(
+              isBlurred: widget.result.isBlurred && widget.result.blurredSections.contains('card_${index + 1}'),
               child: Builder(builder: (context) {
                 final colors = context.colors;
                 final typography = context.typography;
@@ -818,16 +816,14 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
       ),
     );
 
-    // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
-    return UnifiedBlurWrapper(
-      isBlurred: widget.result.isBlurred,
-      blurredSections: widget.result.blurredSections,
-      sectionKey: 'overall_interpretation',
+    // ✅ SimpleBlurOverlay로 마이그레이션 완료
+    return SimpleBlurOverlay(
+      isBlurred: widget.result.isBlurred && widget.result.blurredSections.contains('overall_interpretation'),
       child: container,
     );
   }
 
-  // ✅ _buildBlurWrapper 제거됨 - UnifiedBlurWrapper 사용
+  // ✅ _buildBlurWrapper 제거됨 - SimpleBlurOverlay 사용
 
   Widget _buildIndividualInterpretations(bool isDark) {
     if (widget.result.spreadType == TarotSpreadType.single) {
@@ -909,10 +905,8 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
           );
 
           // ✅ 2번째(card_2), 3번째(card_3) 카드는 블러 처리
-          return UnifiedBlurWrapper(
-            isBlurred: widget.result.isBlurred,
-            blurredSections: widget.result.blurredSections,
-            sectionKey: 'card_${index + 1}',  // card_1, card_2, card_3, ...
+          return SimpleBlurOverlay(
+            isBlurred: widget.result.isBlurred && widget.result.blurredSections.contains('card_${index + 1}'),
             child: container,
           );
         }),

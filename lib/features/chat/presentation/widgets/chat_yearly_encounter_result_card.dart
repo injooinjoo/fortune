@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -301,12 +301,9 @@ class _ChatYearlyEncounterResultCardState
                 children: [
                   // 1. AI 생성 이미지 (원형, 프레임 안쪽에 맞춤)
                   ClipOval(
-                    child: UnifiedBlurWrapper(
+                    child: SimpleBlurOverlay(
                       isBlurred:
                           _isBlurred && _blurredSections.contains('image'),
-                      blurredSections: _blurredSections,
-                      sectionKey: 'image',
-                      fortuneType: 'yearly-encounter',
                       child: widget.result.imageUrl.isNotEmpty
                           ? SmartImage(
                               path: widget.result.imageUrl,
@@ -513,11 +510,8 @@ class _ChatYearlyEncounterResultCardState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 인연의 시그널
-          UnifiedBlurWrapper(
+          SimpleBlurOverlay(
             isBlurred: _isBlurred && isBlurredSignal,
-            blurredSections: _blurredSections,
-            sectionKey: 'signal',
-            fortuneType: 'yearly-encounter',
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -557,11 +551,8 @@ class _ChatYearlyEncounterResultCardState
           const SizedBox(height: 16),
 
           // 성격/특징
-          UnifiedBlurWrapper(
+          SimpleBlurOverlay(
             isBlurred: _isBlurred && isBlurredPersonality,
-            blurredSections: _blurredSections,
-            sectionKey: 'personality',
-            fortuneType: 'yearly-encounter',
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -2,7 +2,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
+import '../../../../services/ad_service.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/tarot_info_header.dart';
@@ -30,7 +34,8 @@ class ChatTarotResultCard extends ConsumerStatefulWidget {
       _ChatTarotResultCardState();
 }
 
-class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
+class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
+    with TickerProviderStateMixin {
   bool _isBlurred = false;
   List<String> _blurredSections = [];
   bool _isDetailExpanded = true;  // 기본값: 열린 상태
@@ -38,6 +43,44 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
 
   // 타이핑 섹션 관리
   int _currentTypingSection = 0;
+
+  // 카드 뒤집기 상태 관리
+  final Map<int, bool> _cardFlipStates = {}; // true = 뒷면(해석) 보여줌
+  final Map<int, AnimationController> _flipControllers = {};
+
+  @override
+  void dispose() {
+    for (final controller in _flipControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  AnimationController _getFlipController(int index) {
+    if (!_flipControllers.containsKey(index)) {
+      _flipControllers[index] = AnimationController(
+        duration: const Duration(milliseconds: 600),
+        vsync: this,
+      );
+    }
+    return _flipControllers[index]!;
+  }
+
+  void _toggleCardFlip(int index) {
+    DSHaptics.light();
+    final controller = _getFlipController(index);
+    final isCurrentlyFlipped = _cardFlipStates[index] ?? false;
+
+    setState(() {
+      _cardFlipStates[index] = !isCurrentlyFlipped;
+    });
+
+    if (isCurrentlyFlipped) {
+      controller.reverse();
+    } else {
+      controller.forward();
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -112,18 +155,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
             // 헤더 - 타로 덱 정보 + 스프레드 타입
             _buildHeader(colors, typography),
 
-            // 질문 섹션
-            if (question != null && question!.isNotEmpty)
-              _buildQuestionSection(colors, typography),
-
-            // 선택된 카드들 (가로 스크롤)
+            // 선택된 카드들 (세로, 뒤집기 가능)
             _buildCardsSection(colors, typography),
-
-            // 에너지 점수 + 키 테마
-            _buildEnergyScore(colors, typography),
-
-            // 키 테마 (있으면)
-            if (keyThemes.isNotEmpty) _buildKeyThemes(colors, typography),
 
             // 종합 해석 (스토리)
             _buildOverallSection(colors, typography),
@@ -133,6 +166,9 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
 
             // 조언 (프리미엄)
             if (advice.isNotEmpty) _buildAdviceSection(colors, typography),
+
+            // 광고 버튼 (블러 상태일 때만)
+            if (_isBlurred) _buildUnlockButton(colors, typography),
 
             const SizedBox(height: DSSpacing.md),
           ],
@@ -176,147 +212,183 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     );
   }
 
-  Widget _buildQuestionSection(
-      DSColorScheme colors, DSTypographyScheme typography) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(
-          DSSpacing.md, DSSpacing.sm, DSSpacing.md, 0),
-      padding: const EdgeInsets.all(DSSpacing.sm),
-      decoration: BoxDecoration(
-        color: colors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(DSRadius.sm),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.help_outline,
-            size: 16,
-            color: colors.accentSecondary,
-          ),
-          const SizedBox(width: DSSpacing.xs),
-          Expanded(
-            child: Text(
-              question!,
-              style: typography.bodySmall.copyWith(
-                color: colors.textPrimary,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildCardsSection(
       DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
       margin: const EdgeInsets.only(top: DSSpacing.md),
-      height: 150,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
-        itemCount: cards.length,
-        separatorBuilder: (_, __) => const SizedBox(width: DSSpacing.sm),
-        itemBuilder: (context, index) {
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: Column(
+        children: List.generate(cards.length, (index) {
           final card = cards[index] as Map<String, dynamic>;
-          return _buildCardItem(colors, typography, card);
-        },
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: index < cards.length - 1 ? DSSpacing.xl : 0,
+            ),
+            child: _buildFlippableCard(colors, typography, card, index),
+          );
+        }),
       ),
     );
   }
 
-  Widget _buildCardItem(DSColorScheme colors, DSTypographyScheme typography,
-      Map<String, dynamic> card) {
+  Widget _buildFlippableCard(DSColorScheme colors, DSTypographyScheme typography,
+      Map<String, dynamic> card, int index) {
     final cardNameKr = card['cardNameKr'] as String? ?? '카드';
     final imagePath = card['imagePath'] as String? ?? '';
     final isReversed = card['isReversed'] as bool? ?? false;
     final positionName = card['positionName'] as String? ?? '';
+    final cardIndex = card['cardIndex'] as int? ?? card['index'] as int? ?? -1;
+
+    // 상세 해석 가져오기 (하드코딩 우선, 없으면 Edge Function 데이터)
+    String interpretation = '';
+    final parsedSpreadType = TarotPositionMeanings.parseSpreadType(spreadType);
+    if (parsedSpreadType != null && cardIndex >= 0) {
+      final hardcodedInterpretation = TarotPositionMeanings.getInterpretation(
+        cardIndex: cardIndex,
+        spreadType: parsedSpreadType,
+        positionIndex: index,
+        isReversed: isReversed,
+      );
+      if (hardcodedInterpretation != null && hardcodedInterpretation.isNotEmpty) {
+        interpretation = hardcodedInterpretation;
+      }
+    }
+    if (interpretation.isEmpty) {
+      interpretation = card['interpretation'] as String? ?? '';
+    }
+
+    final controller = _getFlipController(index);
+    final isFlipped = _cardFlipStates[index] ?? false;
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        // 위치명
+        // 위치명 라벨
         if (positionName.isNotEmpty)
-          Text(
-            positionName,
-            style: typography.labelSmall.copyWith(
-              color: colors.accentSecondary,
-              fontWeight: FontWeight.w600,
+          Container(
+            margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.md,
+              vertical: DSSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              color: colors.accentSecondary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              positionName,
+              style: typography.labelMedium.copyWith(
+                color: colors.accentSecondary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        const SizedBox(height: 4),
 
-        // 카드 이미지
-        Container(
-          width: 65,
-          height: 100,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(
-              color: isReversed ? colors.error : colors.accentSecondary,
-              width: 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: (isReversed ? colors.error : colors.accentSecondary)
-                    .withValues(alpha: 0.3),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
+        // 뒤집기 가능한 카드
+        GestureDetector(
+          onTap: () => _toggleCardFlip(index),
+          child: AnimatedBuilder(
+            animation: controller,
+            builder: (context, child) {
+              final angle = controller.value * math.pi;
+              final isShowingBack = controller.value >= 0.5;
+
+              return Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateY(angle),
+                child: Container(
+                  width: double.infinity,
+                  constraints: const BoxConstraints(maxWidth: 280),
+                  height: 420,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFB8860B).withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: isShowingBack
+                        ? Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.identity()..rotateY(math.pi),
+                            child: _buildCardBack(
+                              colors,
+                              typography,
+                              cardNameKr,
+                              positionName,
+                              interpretation,
+                              isReversed,
+                            ),
+                          )
+                        : _buildCardFront(
+                            colors,
+                            typography,
+                            cardNameKr,
+                            imagePath,
+                            isReversed,
+                          ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+
+        // 탭 안내 텍스트
+        Padding(
+          padding: const EdgeInsets.only(top: DSSpacing.sm),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isFlipped ? Icons.touch_app : Icons.flip,
+                size: 14,
+                color: colors.textTertiary,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                isFlipped ? '탭하여 카드 보기' : '탭하여 해석 보기',
+                style: typography.labelSmall.copyWith(
+                  color: colors.textTertiary,
+                ),
               ),
             ],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: Transform.rotate(
-              angle: isReversed ? math.pi : 0,
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: colors.accentSecondary,
-                    child: Center(
-                      child: Text(
-                        cardNameKr,
-                        style: typography.labelSmall.copyWith(
-                          color: colors.surface,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
         ),
-        const SizedBox(height: 4),
 
         // 카드 이름
-        Text(
-          cardNameKr,
-          style: typography.labelSmall.copyWith(
-            color: colors.textPrimary,
-            fontWeight: FontWeight.w500,
+        Padding(
+          padding: const EdgeInsets.only(top: DSSpacing.xs),
+          child: Text(
+            cardNameKr,
+            style: typography.bodyMedium.copyWith(
+              color: colors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
 
         // 역방향 표시
         if (isReversed)
           Container(
-            margin: const EdgeInsets.only(top: 2),
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            margin: const EdgeInsets.only(top: DSSpacing.xs),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: colors.error.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(4),
+              color: colors.warning.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               '역방향',
               style: typography.labelSmall.copyWith(
-                color: colors.error,
-                fontSize: 9,
+                color: colors.warning,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -324,74 +396,199 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     );
   }
 
-  Widget _buildEnergyScore(
-      DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildCardFront(
+    DSColorScheme colors,
+    DSTypographyScheme typography,
+    String cardNameKr,
+    String imagePath,
+    bool isReversed,
+  ) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(
-          DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
-      padding: const EdgeInsets.all(DSSpacing.sm),
-      decoration: BoxDecoration(
-        color: colors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(DSRadius.sm),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.flash_on,
-            size: 18,
-            color: _getEnergyColor(colors),
-          ),
-          const SizedBox(width: DSSpacing.xs),
-          Text(
-            '에너지 점수',
-            style: typography.labelSmall.copyWith(
-              color: colors.textSecondary,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            '$energyLevel점',
-            style: typography.bodyMedium.copyWith(
-              color: _getEnergyColor(colors),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+      color: Colors.white,
+      padding: const EdgeInsets.all(8),
+      child: Transform.rotate(
+        angle: isReversed ? math.pi : 0,
+        child: Image.asset(
+          imagePath,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    colors.accentSecondary.withValues(alpha: 0.2),
+                    colors.accent.withValues(alpha: 0.1),
+                  ],
+                ),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      size: 64,
+                      color: colors.accentSecondary,
+                    ),
+                    const SizedBox(height: DSSpacing.md),
+                    Text(
+                      cardNameKr,
+                      style: typography.headingSmall.copyWith(
+                        color: colors.accentSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
-  Color _getEnergyColor(DSColorScheme colors) {
-    if (energyLevel >= 80) return colors.success;
-    if (energyLevel >= 60) return colors.accentSecondary;
-    if (energyLevel >= 40) return colors.warning;
-    return colors.error;
-  }
+  Widget _buildCardBack(
+    DSColorScheme colors,
+    DSTypographyScheme typography,
+    String cardNameKr,
+    String positionName,
+    String interpretation,
+    bool isReversed,
+  ) {
+    const goldColor = Color(0xFFB8860B);
 
-  Widget _buildKeyThemes(DSColorScheme colors, DSTypographyScheme typography) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(
-          DSSpacing.md, DSSpacing.sm, DSSpacing.md, 0),
-      child: Wrap(
-        spacing: DSSpacing.xs,
-        runSpacing: DSSpacing.xs,
-        children: keyThemes.map((theme) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: colors.accentSecondary.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // 카드 뒷면 이미지 배경
+        Image.asset(
+          'assets/images/fortune/tarot/tarot_card_back_eye.png',
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            // 폴백: 기존 네이비 배경
+            return Container(
+              color: const Color(0xFF2D2D4A),
+            );
+          },
+        ),
+
+        // 반투명 오버레이 (텍스트 가독성)
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withValues(alpha: 0.4),
+                Colors.black.withValues(alpha: 0.7),
+                Colors.black.withValues(alpha: 0.4),
+              ],
             ),
-            child: Text(
-              '#$theme',
-              style: typography.labelSmall.copyWith(
-                color: colors.accentSecondary,
-                fontWeight: FontWeight.w500,
+          ),
+        ),
+
+        // 내용
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+          child: Column(
+            children: [
+              // 위치명
+              if (positionName.isNotEmpty) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    border: Border.all(color: goldColor, width: 1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    positionName,
+                    style: typography.labelMedium.copyWith(
+                      color: goldColor,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.md),
+              ],
+
+              // 카드 이름
+              Text(
+                cardNameKr,
+                style: typography.headingSmall.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-          );
-        }).toList(),
-      ),
+
+              if (isReversed) ...[
+                const SizedBox(height: DSSpacing.xs),
+                Text(
+                  '(역방향)',
+                  style: typography.labelSmall.copyWith(
+                    color: goldColor,
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: DSSpacing.lg),
+
+              // 구분선
+              Container(
+                height: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      goldColor.withValues(alpha: 0),
+                      goldColor,
+                      goldColor.withValues(alpha: 0),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: DSSpacing.lg),
+
+              // 해석 내용
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Text(
+                    interpretation.isNotEmpty
+                        ? interpretation
+                        : '이 카드의 해석 내용이 여기에 표시됩니다.',
+                    style: typography.bodySmall.copyWith(
+                      color: Colors.white,
+                      height: 1.7,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          blurRadius: 2,
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -450,10 +647,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     return Container(
       margin: const EdgeInsets.fromLTRB(
           DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
-      child: UnifiedBlurWrapper(
-        isBlurred: _isBlurred,
-        blurredSections: _blurredSections,
-        sectionKey: 'detailedInterpretations',
+      child: SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.contains('detailedInterpretations'),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -630,10 +825,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
     return Container(
       margin: const EdgeInsets.fromLTRB(
           DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
-      child: UnifiedBlurWrapper(
-        isBlurred: _isBlurred,
-        blurredSections: _blurredSections,
-        sectionKey: 'advice',
+      child: SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.contains('advice'),
         child: Container(
           padding: const EdgeInsets.all(DSSpacing.sm),
           decoration: BoxDecoration(
@@ -686,6 +879,57 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildUnlockButton(
+      DSColorScheme colors, DSTypographyScheme typography) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: _showAdAndUnblur,
+          icon: const Icon(Icons.play_circle_outline, size: 20),
+          label: const Text('광고 보고 전체 내용 보기'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: colors.accent,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(DSRadius.md),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showAdAndUnblur() async {
+    final adService = AdService();
+
+    await adService.showRewardedAd(
+      onUserEarnedReward: (ad, reward) async {
+        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+        if (mounted) {
+          FortuneCompletionHelper.onFortuneViewed(context, ref, 'tarot');
+        }
+
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+
+        if (mounted) {
+          final tokenState = ref.read(tokenProvider);
+          SubscriptionSnackbar.showAfterAd(
+            context,
+            hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+          );
+        }
+      },
     );
   }
 }

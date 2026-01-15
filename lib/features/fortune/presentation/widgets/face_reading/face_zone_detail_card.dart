@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../../core/widgets/simple_blur_overlay.dart';
 
 /// 얼굴 부위별 상세 분석 카드
 /// 오관(五官), 삼정(三停), 십이궁(十二宮) 등의 개별 부위 카드
@@ -57,10 +57,8 @@ class FaceZoneDetailCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: UnifiedBlurWrapper(
-        isBlurred: isBlurred,
-        blurredSections: blurredSections,
-        sectionKey: sectionKey,
+      child: SimpleBlurOverlay(
+        isBlurred: isBlurred && blurredSections.contains(sectionKey),
         child: AppCard(
           style: AppCardStyle.filled,
           padding: const EdgeInsets.all(20),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/models/personality_dna_model.dart';
 import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../../core/widgets/simple_blur_overlay.dart';
 import 'widgets/basic_info_card.dart';
 import 'widgets/stats_radar_chart.dart';
 import 'widgets/love_style_card.dart';
@@ -67,11 +67,8 @@ class PersonalityDnaResultPage extends ConsumerWidget {
 
                 // 3. 연애 스타일 카드 (블러)
                 if (dna.loveStyle != null) ...[
-                  UnifiedBlurWrapper(
-                    isBlurred: !isPremium,
-                    blurredSections: _blurredSections,
-                    sectionKey: 'love_style',
-                    fortuneType: 'personality_dna',
+                  SimpleBlurOverlay(
+                    isBlurred: !isPremium && _blurredSections.contains('love_style'),
                     child: SectionCard(
                       title: '연애 스타일',
                       sectionKey: 'relationship',
@@ -83,11 +80,8 @@ class PersonalityDnaResultPage extends ConsumerWidget {
 
                 // 4. 직장 스타일 카드 (블러)
                 if (dna.workStyle != null) ...[
-                  UnifiedBlurWrapper(
-                    isBlurred: !isPremium,
-                    blurredSections: _blurredSections,
-                    sectionKey: 'work_style',
-                    fortuneType: 'personality_dna',
+                  SimpleBlurOverlay(
+                    isBlurred: !isPremium && _blurredSections.contains('work_style'),
                     child: SectionCard(
                       title: '업무 스타일',
                       sectionKey: 'work',
@@ -99,11 +93,8 @@ class PersonalityDnaResultPage extends ConsumerWidget {
 
                 // 5. 궁합 카드 (블러)
                 if (dna.compatibility != null) ...[
-                  UnifiedBlurWrapper(
-                    isBlurred: !isPremium,
-                    blurredSections: _blurredSections,
-                    sectionKey: 'compatibility',
-                    fortuneType: 'personality_dna',
+                  SimpleBlurOverlay(
+                    isBlurred: !isPremium && _blurredSections.contains('compatibility'),
                     child: CompatibilityCard(compatibility: dna.compatibility!),
                   ),
                   const SizedBox(height: 16),
@@ -111,11 +102,8 @@ class PersonalityDnaResultPage extends ConsumerWidget {
 
                 // 6. 일상 매칭 카드 (블러)
                 if (dna.dailyMatching != null) ...[
-                  UnifiedBlurWrapper(
-                    isBlurred: !isPremium,
-                    blurredSections: _blurredSections,
-                    sectionKey: 'daily_matching',
-                    fortuneType: 'personality_dna',
+                  SimpleBlurOverlay(
+                    isBlurred: !isPremium && _blurredSections.contains('daily_matching'),
                     child: DailyMatchingCard(dailyMatching: dna.dailyMatching!),
                   ),
                   const SizedBox(height: 16),

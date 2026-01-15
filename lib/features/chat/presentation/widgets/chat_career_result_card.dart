@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/obangseok_colors.dart';
@@ -288,10 +288,8 @@ class ChatCareerResultCard extends ConsumerWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    return UnifiedBlurWrapper(
-      isBlurred: isBlurred,
-      blurredSections: blurredSections,
-      sectionKey: 'predictions',
+    return SimpleBlurOverlay(
+      isBlurred: isBlurred || blurredSections.contains('predictions'),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: DSSpacing.md,
@@ -400,10 +398,8 @@ class ChatCareerResultCard extends ConsumerWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    return UnifiedBlurWrapper(
-      isBlurred: isBlurred,
-      blurredSections: blurredSections,
-      sectionKey: 'skillAnalysis',
+    return SimpleBlurOverlay(
+      isBlurred: isBlurred || blurredSections.contains('skillAnalysis'),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: DSSpacing.md,
@@ -480,10 +476,8 @@ class ChatCareerResultCard extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return UnifiedBlurWrapper(
-      isBlurred: isBlurred,
-      blurredSections: blurredSections,
-      sectionKey: 'strengthsAssessment',
+    return SimpleBlurOverlay(
+      isBlurred: isBlurred || blurredSections.contains('strengthsAssessment'),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: DSSpacing.md,
@@ -584,10 +578,8 @@ class ChatCareerResultCard extends ConsumerWidget {
     final shortTerm = actionPlan['shortTerm'] as List? ?? [];
     final longTerm = actionPlan['longTerm'] as List? ?? [];
 
-    return UnifiedBlurWrapper(
-      isBlurred: isBlurred,
-      blurredSections: blurredSections,
-      sectionKey: 'actionPlan',
+    return SimpleBlurOverlay(
+      isBlurred: isBlurred || blurredSections.contains('actionPlan'),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: DSSpacing.md,

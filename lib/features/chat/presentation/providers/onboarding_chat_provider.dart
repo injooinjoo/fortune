@@ -114,7 +114,7 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
     _listenToAuthChanges();
   }
 
-  /// Auth 상태 변경 감지 (로그아웃 시 온보딩 리셋)
+  /// Auth 상태 변경 감지 (로그인/로그아웃 시 온보딩 상태 업데이트)
   void _listenToAuthChanges() {
     _ref.listen<AsyncValue<AuthState?>>(authStateProvider, (previous, next) {
       next.whenData((authState) {
@@ -126,8 +126,22 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
               '🔍 [OnboardingChatNotifier] User signed out - resetting onboarding');
           _resetForGuestUser();
         }
+
+        // 로그인 이벤트 감지 - DB에서 온보딩 상태 재확인
+        if (authState.event == AuthChangeEvent.signedIn) {
+          debugPrint(
+              '🔍 [OnboardingChatNotifier] User signed in - re-checking onboarding status');
+          _recheckOnboardingAfterLogin();
+        }
       });
     });
+  }
+
+  /// 로그인 후 온보딩 상태 재확인
+  Future<void> _recheckOnboardingAfterLogin() async {
+    // 체크 상태 초기화하고 재확인
+    state = state.copyWith(isCheckingStatus: true);
+    await _checkOnboardingStatus();
   }
 
   /// 로그아웃 시 게스트 사용자용 온보딩 리셋

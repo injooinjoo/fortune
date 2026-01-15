@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/theme/obangseok_colors.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
@@ -288,57 +288,19 @@ class _ChatPastLifeResultCardState
           ),
         ),
 
-        // 점수 뱃지 + 액션 버튼 (우상단)
+        // 액션 버튼 (우상단)
         Positioned(
           top: DSSpacing.md,
           right: DSSpacing.md,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: DSSpacing.sm,
-                  vertical: DSSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: _getScoreColor(widget.result.score),
-                  borderRadius: BorderRadius.circular(DSRadius.full),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _getScoreColor(widget.result.score).withValues(alpha: 0.4),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('🌙', style: TextStyle(fontSize: 14)),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${widget.result.score}',
-                      style: context.typography.labelMedium.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: DSSpacing.xs),
-              // 좋아요 + 공유 버튼
-              FortuneActionButtons(
-                contentId: 'past_life_${widget.result.pastLifeName}_${DateTime.now().millisecondsSinceEpoch}',
-                contentType: 'past_life',
-                shareTitle: '${widget.result.pastLifeStatus} - 전생탐험',
-                shareContent: widget.result.summary.isNotEmpty
-                    ? widget.result.summary
-                    : widget.result.story,
-                iconSize: 18,
-                iconColor: Colors.white.withValues(alpha: 0.9),
-              ),
-            ],
+          child: FortuneActionButtons(
+            contentId: 'past_life_${widget.result.pastLifeName}_${DateTime.now().millisecondsSinceEpoch}',
+            contentType: 'past_life',
+            shareTitle: '${widget.result.pastLifeStatus} - 전생탐험',
+            shareContent: widget.result.summary.isNotEmpty
+                ? widget.result.summary
+                : widget.result.story,
+            iconSize: 18,
+            iconColor: Colors.white.withValues(alpha: 0.9),
           ),
         ),
       ],
@@ -506,11 +468,8 @@ class _ChatPastLifeResultCardState
 
           // 내용
           if (_isStoryExpanded)
-            UnifiedBlurWrapper(
+            SimpleBlurOverlay(
               isBlurred: _isBlurred && isBlurredSection,
-              blurredSections: _blurredSections,
-              sectionKey: 'story',
-              fortuneType: 'past-life',
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
                   DSSpacing.md,
@@ -546,11 +505,8 @@ class _ChatPastLifeResultCardState
           color: ObangseokColors.hwangMuted.withValues(alpha: 0.2),
         ),
       ),
-      child: UnifiedBlurWrapper(
+      child: SimpleBlurOverlay(
         isBlurred: _isBlurred && isBlurredSection,
-        blurredSections: _blurredSections,
-        sectionKey: 'advice',
-        fortuneType: 'past-life',
         child: Padding(
           padding: const EdgeInsets.all(DSSpacing.md),
           child: Column(
@@ -669,12 +625,4 @@ class _ChatPastLifeResultCardState
     }
   }
 
-  Color _getScoreColor(int score) {
-    // 동양화 스타일 - 황토색 계열 (ObangseokColors 황색)
-    if (score >= 90) return ObangseokColors.hwangDark;
-    if (score >= 80) return ObangseokColors.hwang;
-    if (score >= 70) return ObangseokColors.hwangMuted;
-    if (score >= 60) return ObangseokColors.hwangLight;
-    return ObangseokColors.hwangMuted;
-  }
 }

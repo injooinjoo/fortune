@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 
 /// 부적 결과 카드 (이미지 중심 UI)
@@ -48,10 +48,8 @@ class ChatTalismanResultCard extends ConsumerWidget {
           ),
         ],
       ),
-      child: UnifiedBlurWrapper(
+      child: SimpleBlurOverlay(
         isBlurred: isBlurred,
-        blurredSections: isBlurred ? const ['talisman'] : const [],
-        sectionKey: 'talisman',
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 // ignore: unused_import
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
+import '../../../../services/ad_service.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/saju_info_header.dart';
 import '../../../fortune/presentation/widgets/saju/saju_widgets.dart';
@@ -41,6 +44,9 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
     with TickerProviderStateMixin {
   // 애니메이션 컨트롤러 (오행 차트용)
   late AnimationController _animationController;
+
+  // 광고 시청으로 블러 해제 상태
+  bool _isUnblurred = false;
 
   // 섹션별 확장 상태
   final Map<String, bool> _expandedSections = {
@@ -116,6 +122,8 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
           _buildInfoHeader(context),
           // 섹션들
           _buildSections(context),
+          // 블러 해제 버튼
+          _buildUnlockButton(context),
         ],
       ),
     );
@@ -368,11 +376,8 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
         // 섹션 내용
         AnimatedCrossFade(
           firstChild: const SizedBox.shrink(),
-          secondChild: UnifiedBlurWrapper(
-            isBlurred: isBlurred,
-            blurredSections: isBlurred ? [key] : const [],
-            sectionKey: key,
-            fortuneType: 'saju',
+          secondChild: SimpleBlurOverlay(
+            isBlurred: isBlurred && !_isUnblurred,
             child: Padding(
               padding: const EdgeInsets.all(DSSpacing.sm),
               child: child,
@@ -449,6 +454,50 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
           ),
         ],
       ],
+    );
+  }
+
+  /// 광고 시청 후 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    final adService = AdService();
+
+    await adService.showRewardedAd(
+      onUserEarnedReward: (ad, reward) async {
+        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
+        if (mounted) {
+          FortuneCompletionHelper.onFortuneViewed(context, ref, 'saju');
+          setState(() => _isUnblurred = true);
+        }
+      },
+    );
+  }
+
+  /// 블러 해제 버튼
+  Widget _buildUnlockButton(BuildContext context) {
+    final colors = context.colors;
+    final hasBlur = (widget.isBlurred || widget.blurredSections.isNotEmpty) && !_isUnblurred;
+
+    if (!hasBlur) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: _showAdAndUnblur,
+          icon: const Icon(Icons.play_circle_outline, size: 20),
+          label: const Text('광고 보고 전체 내용 보기'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: colors.accent,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(DSRadius.md),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -280,6 +280,32 @@ class FortuneApiDecisionService {
 
   /// Fortune 엔티티로 변환
   Fortune _convertToFortune(Map<String, dynamic> data) {
+    // additionalInfo 구성: 기존 데이터 + 운세 타입별 전용 필드
+    final baseAdditionalInfo =
+        data['additional_info'] as Map<String, dynamic>? ?? {};
+
+    // 운세 타입별 전용 필드를 additionalInfo에 병합
+    final mergedAdditionalInfo = <String, dynamic>{
+      ...baseAdditionalInfo,
+      // talent(적성) 전용 필드
+      if (data['talentInsights'] != null)
+        'talentInsights': data['talentInsights'],
+      if (data['mentalModel'] != null) 'mentalModel': data['mentalModel'],
+      if (data['weeklyPlan'] != null) 'weeklyPlan': data['weeklyPlan'],
+      if (data['collaboration'] != null)
+        'collaboration': data['collaboration'],
+      if (data['growthRoadmap'] != null)
+        'growthRoadmap': data['growthRoadmap'],
+      if (data['learningStrategy'] != null)
+        'learningStrategy': data['learningStrategy'],
+      if (data['hexagonScores'] != null)
+        'hexagonScores': data['hexagonScores'],
+      if (data['resumeAnalysis'] != null)
+        'resumeAnalysis': data['resumeAnalysis'],
+      // 공통 필드 (description이 additionalInfo에도 필요한 경우)
+      if (data['description'] != null) 'description': data['description'],
+    };
+
     return Fortune(
       id: data['id']?.toString() ?? '',
       userId: data['user_id']?.toString() ?? '',
@@ -293,7 +319,8 @@ class FortuneApiDecisionService {
       recommendations: (data['recommendations'] as List?)?.cast<String>(),
       warnings: (data['warnings'] as List?)?.cast<String>(),
       luckyItems: data['lucky_items'] as Map<String, dynamic>?,
-      additionalInfo: data['additional_info'] as Map<String, dynamic>?,
+      additionalInfo:
+          mergedAdditionalInfo.isNotEmpty ? mergedAdditionalInfo : null,
     );
   }
 

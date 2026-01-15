@@ -1329,7 +1329,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     switch (type) {
       case FortuneSurveyType.daily:
         if (zodiacSign != null) {
-          return '$name님! $zodiacSign자리의 오늘 인사이트를 확인해드릴게요. ✨';
+          return '$name님! $zodiacSign의 오늘 인사이트를 확인해드릴게요. ✨';
         }
         return '$name님의 오늘 인사이트를 확인해드릴게요! ✨';
 

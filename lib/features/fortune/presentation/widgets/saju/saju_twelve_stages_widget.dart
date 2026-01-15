@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
@@ -475,7 +477,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
         // 그리드 형태로 2x2 배치
         LayoutBuilder(
           builder: (context, constraints) {
-            final itemWidth = (constraints.maxWidth - 6) / 2;
+            final itemWidth = math.max(0.0, (constraints.maxWidth - 6) / 2);
             return Wrap(
               spacing: 6,
               runSpacing: 6,

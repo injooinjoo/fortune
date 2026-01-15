@@ -549,17 +549,26 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
         ),
         const SizedBox(height: DSSpacing.md),
 
-        // 선택된 카드 미리보기 (가로 스크롤)
+        // 선택된 카드 미리보기 (가운데 정렬)
         SizedBox(
           height: 170, // 역방향 표시 포함 높이
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _selectedCards.length,
-            separatorBuilder: (_, __) => const SizedBox(width: DSSpacing.sm),
-            itemBuilder: (context, index) {
-              final card = _selectedCards[index];
-              return _buildConfirmationCard(colors, typography, card, index);
-            },
+          child: Center(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _selectedCards.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final card = entry.value;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? 0 : DSSpacing.sm,
+                    ),
+                    child: _buildConfirmationCard(colors, typography, card, index),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
         ),
         const SizedBox(height: DSSpacing.md),
@@ -639,13 +648,12 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
-                color: card.isReversed ? colors.error : colors.accentSecondary,
+                color: colors.accentSecondary,
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: (card.isReversed ? colors.error : colors.accentSecondary)
-                      .withValues(alpha: 0.3),
+                  color: colors.accentSecondary.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -691,13 +699,13 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
               margin: const EdgeInsets.only(top: 2),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
               decoration: BoxDecoration(
-                color: colors.error.withValues(alpha: 0.15),
+                color: colors.warning.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 '역방향',
                 style: typography.labelSmall.copyWith(
-                  color: colors.error,
+                  color: colors.warning,
                   fontSize: 9,
                 ),
               ),
@@ -758,16 +766,6 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                   width: cardWidth,
                   height: cardHeight,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: isSelected
-                          ? [colors.accentSecondary, colors.accentSecondary.withValues(alpha: 0.8)]
-                          : [
-                              colors.surface,
-                              colors.surface.withValues(alpha: 0.95),
-                            ],
-                    ),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
                       color: isSelected
@@ -787,16 +785,25 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                   ),
                   child: Stack(
                     children: [
-                      // 카드 뒷면 패턴
-                      Center(
-                        child: Icon(
-                          Icons.auto_awesome,
-                          color: isSelected
-                              ? colors.surface.withValues(alpha: 0.9)
-                              : colors.textSecondary.withValues(alpha: 0.25),
-                          size: 16,
+                      // 카드 뒷면 이미지
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: Image.asset(
+                          'assets/images/fortune/tarot/tarot_card_back.png',
+                          fit: BoxFit.cover,
+                          width: cardWidth,
+                          height: cardHeight,
                         ),
                       ),
+
+                      // 선택 시 하이라이트 오버레이
+                      if (isSelected)
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(3),
+                            color: colors.accentSecondary.withValues(alpha: 0.3),
+                          ),
+                        ),
 
                       // 선택 순서 표시
                       if (isSelected && selectionOrder != null)
@@ -925,14 +932,6 @@ class _SpreadCard extends StatelessWidget {
                           width: 28,
                           height: 40,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                colors.accentSecondary,
-                                colors.accent,
-                              ],
-                            ),
                             borderRadius: BorderRadius.circular(3),
                             border: Border.all(
                               color: colors.surface,
@@ -946,11 +945,11 @@ class _SpreadCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: Center(
-                            child: Icon(
-                              Icons.auto_awesome,
-                              color: colors.surface.withValues(alpha: 0.7),
-                              size: 12,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(2),
+                            child: Image.asset(
+                              'assets/images/fortune/tarot/tarot_card_back.png',
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),

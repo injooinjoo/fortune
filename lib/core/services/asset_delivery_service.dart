@@ -429,22 +429,38 @@ class AssetDeliveryService {
       return todaysDeck;
     }
 
-    // 다운로드 요청
-    await requestAssetPack(packId);
+    // 설치될 때까지 대기 (타임아웃 60초)
+    final completer = Completer<String?>();
+    Timer? timeout;
+    StreamSubscription<DownloadProgress>? subscription;
 
-    // 설치될 때까지 대기
-    await for (final progress in downloadProgress) {
+    timeout = Timer(const Duration(seconds: 60), () {
+      if (!completer.isCompleted) {
+        debugPrint('📦 [AssetDeliveryService] ⏰ 타임아웃: $packId');
+        completer.complete(null);
+      }
+    });
+
+    // 스트림 구독을 먼저 설정 (Race condition 방지)
+    subscription = downloadProgress.listen((progress) {
       if (progress.packId == packId) {
         if (progress.status == AssetPackStatus.installed) {
-          return todaysDeck;
+          timeout?.cancel();
+          if (!completer.isCompleted) completer.complete(todaysDeck);
         }
         if (progress.status == AssetPackStatus.failed) {
-          return null;
+          timeout?.cancel();
+          if (!completer.isCompleted) completer.complete(null);
         }
       }
-    }
+    });
 
-    return null;
+    // 스트림 구독 후 다운로드 요청
+    await requestAssetPack(packId);
+
+    final result = await completer.future;
+    await subscription.cancel();
+    return result;
   }
 
   /// 특정 타로 덱 준비
@@ -455,19 +471,20 @@ class AssetDeliveryService {
       return true;
     }
 
-    await requestAssetPack(packId);
-
     // 설치될 때까지 대기 (타임아웃 30초)
     final completer = Completer<bool>();
     Timer? timeout;
+    StreamSubscription<DownloadProgress>? subscription;
 
     timeout = Timer(const Duration(seconds: 30), () {
       if (!completer.isCompleted) {
+        debugPrint('📦 [AssetDeliveryService] ⏰ 타임아웃: $packId');
         completer.complete(false);
       }
     });
 
-    final subscription = downloadProgress.listen((progress) {
+    // 스트림 구독을 먼저 설정 (Race condition 방지)
+    subscription = downloadProgress.listen((progress) {
       if (progress.packId == packId) {
         if (progress.status == AssetPackStatus.installed) {
           timeout?.cancel();
@@ -479,6 +496,9 @@ class AssetDeliveryService {
         }
       }
     });
+
+    // 스트림 구독 후 다운로드 요청
+    await requestAssetPack(packId);
 
     final result = await completer.future;
     await subscription.cancel();

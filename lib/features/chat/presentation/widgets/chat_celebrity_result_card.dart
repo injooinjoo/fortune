@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -449,11 +449,8 @@ class _ChatCelebrityResultCardState
 
                 // 내용 (펼쳤을 때)
                 if (isExpanded)
-                  UnifiedBlurWrapper(
+                  SimpleBlurOverlay(
                     isBlurred: _isBlurred && isBlurredSection,
-                    blurredSections: _blurredSections,
-                    sectionKey: section.key,
-                    fortuneType: 'celebrity',
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(
                         DSSpacing.sm,

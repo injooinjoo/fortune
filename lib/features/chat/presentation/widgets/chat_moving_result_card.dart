@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../../../core/theme/obangseok_colors.dart';
@@ -275,10 +275,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
           const SizedBox(height: DSSpacing.md),
 
           // 정착 지수 게이지
-          UnifiedBlurWrapper(
+          SimpleBlurOverlay(
             isBlurred: isSettlementBlurred,
-            blurredSections: widget.blurredSections,
-            sectionKey: 'settlement_index',
             child: _buildGaugeBar(
               context: context,
               label: '정착 지수',
@@ -292,10 +290,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
           const SizedBox(height: DSSpacing.md),
 
           // 이웃 케미 게이지
-          UnifiedBlurWrapper(
+          SimpleBlurOverlay(
             isBlurred: isChemistryBlurred,
-            blurredSections: widget.blurredSections,
-            sectionKey: 'neighborhood_chemistry',
             child: _buildGaugeBar(
               context: context,
               label: '이웃 케미',
@@ -447,10 +443,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.sm),
-          UnifiedBlurWrapper(
+          SimpleBlurOverlay(
             isBlurred: isBlurred,
-            blurredSections: widget.blurredSections,
-            sectionKey: 'direction_analysis',
             child: Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
@@ -541,10 +535,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.sm),
-          UnifiedBlurWrapper(
+          SimpleBlurOverlay(
             isBlurred: isBlurred,
-            blurredSections: widget.blurredSections,
-            sectionKey: 'lucky_checklist',
             child: Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
@@ -625,10 +617,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.sm),
-          UnifiedBlurWrapper(
+          SimpleBlurOverlay(
             isBlurred: isBlurred,
-            blurredSections: widget.blurredSections,
-            sectionKey: 'feng_shui_tips',
             child: Column(
               children: tips.map((tip) {
                 return Padding(
@@ -699,10 +689,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
             ],
           ),
           const SizedBox(height: DSSpacing.sm),
-          UnifiedBlurWrapper(
+          SimpleBlurOverlay(
             isBlurred: isBlurred,
-            blurredSections: widget.blurredSections,
-            sectionKey: 'lucky_items',
             child: Wrap(
               spacing: DSSpacing.xs,
               runSpacing: DSSpacing.xs,
