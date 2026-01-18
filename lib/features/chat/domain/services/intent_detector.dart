@@ -261,6 +261,8 @@ class IntentDetector {
         return '좋아하는 유명인과의 궁합을 볼까요?';
       case FortuneSurveyType.pastLife:
         return '전생을 탐험해볼까요?';
+      case FortuneSurveyType.gameEnhance:
+        return '오늘의 강화 기운을 확인해볼까요?';
       // 가족/반려동물
       case FortuneSurveyType.pet:
         return '반려동물과의 궁합을 봐드릴까요?';

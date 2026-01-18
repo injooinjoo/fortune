@@ -43,7 +43,7 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
     LoadingStep('금전운 파동 분석 중', '재물의 흐름을 읽고 있어요'),
     LoadingStep('연애운 기류 측정 중', '사랑의 에너지를 확인하고 있어요'),
     LoadingStep('건강운 지수 확인 중', '몸과 마음의 건강을 체크하고 있어요'),
-    LoadingStep('시간대별 운세 정리 중', '하루 시간의 흐름을 정리하고 있어요'),
+    LoadingStep('시간대별 인사이트 정리 중', '하루 시간의 흐름을 정리하고 있어요'),
     LoadingStep('오늘의 조언 준비 중', '현명한 말씀을 준비하고 있어요'),
     LoadingStep('마지막 행운 체크 중', '모든 준비가 완료되었는지 확인하고 있어요'),
   ];

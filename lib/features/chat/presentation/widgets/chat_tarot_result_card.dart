@@ -202,6 +202,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
             contentId: data['id']?.toString() ??
                 'tarot_${DateTime.now().millisecondsSinceEpoch}',
             contentType: 'tarot',
+            fortuneType: 'tarot',
             shareTitle: '타로 리딩 결과',
             shareContent: overallReading,
             iconSize: 20,

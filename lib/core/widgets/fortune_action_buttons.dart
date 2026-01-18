@@ -33,6 +33,9 @@ class FortuneActionButtons extends ConsumerStatefulWidget {
   /// 캡처용 GlobalKey (위젯 스크린샷)
   final GlobalKey? captureKey;
 
+  /// 운세 타입 (딥링크용, 예: "daily", "love", "tarot")
+  final String? fortuneType;
+
   /// 아이콘 크기
   final double iconSize;
 
@@ -52,6 +55,7 @@ class FortuneActionButtons extends ConsumerStatefulWidget {
     this.userName,
     this.shareImage,
     this.captureKey,
+    this.fortuneType,
     this.iconSize = 22,
     this.iconColor,
     this.spacing = 8,
@@ -160,6 +164,7 @@ class _FortuneActionButtonsState extends ConsumerState<FortuneActionButtons>
       userName: widget.userName,
       previewImage: imageData,
       fortuneHistoryId: widget.fortuneHistoryId,
+      fortuneType: widget.fortuneType,
     );
   }
 }

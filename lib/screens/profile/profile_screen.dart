@@ -837,7 +837,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   SettingsListTile(
                     icon: Icons.history,
-                    title: '운세 기록',
+                    title: '인사이트 기록',
                     trailing: Icon(
                       Icons.chevron_right,
                       color: _getSecondaryTextColor(context),

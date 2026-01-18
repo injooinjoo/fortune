@@ -78,6 +78,7 @@ import '../../../../data/dream_interpretations.dart';
 import '../../../interactive/presentation/widgets/cookie_shard_break_widget.dart';
 import '../../../../core/services/talisman_generation_service.dart';
 import '../../../../services/storage_service.dart';
+import '../../../../services/deep_link_service.dart';
 import '../widgets/profile_required_bottom_sheet.dart';
 import '../../services/chat_scroll_service.dart';
 
@@ -186,11 +187,38 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     _textController.addListener(_onTextChanged);
     _initializeCalendarService();
 
-    // 초기화 후 온보딩 체크
+    // 초기화 후 온보딩 체크 및 딥링크 처리
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndStartOnboarding();
       _precacheChatBackgrounds();
+      _checkPendingDeepLink();
     });
+  }
+
+  /// 딥링크로 전달된 fortuneType 확인 및 자동 칩 선택
+  Future<void> _checkPendingDeepLink() async {
+    try {
+      final pendingFortuneType = await DeepLinkService.consumePendingFortuneType();
+      if (pendingFortuneType == null) return;
+
+      debugPrint('🔗 [DeepLink] Pending fortune type: $pendingFortuneType');
+
+      // fortuneType에 매칭되는 칩 찾기
+      final matchingChip = defaultChips.firstWhere(
+        (chip) => chip.fortuneType == pendingFortuneType,
+        orElse: () => defaultChips.first,
+      );
+
+      // 약간의 딜레이 후 칩 탭 (UI 준비 대기)
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (mounted) {
+        debugPrint('🔗 [DeepLink] Auto-tapping chip: ${matchingChip.label}');
+        await _handleChipTap(matchingChip);
+      }
+    } catch (e) {
+      debugPrint('⚠️ [DeepLink] Error checking pending deep link: $e');
+    }
   }
 
   void _precacheChatBackgrounds() {
@@ -1030,6 +1058,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return FortuneSurveyType.celebrity;
       case 'pastLife':
         return FortuneSurveyType.pastLife;
+      case 'gameEnhance':
+        return FortuneSurveyType.gameEnhance;
       // 가족/반려동물
       case 'pet':
         return FortuneSurveyType.pet;
@@ -1390,6 +1420,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       case FortuneSurveyType.pastLife:
         return '$name님의 전생을 탐험해볼게요! 🔮';
+
+      case FortuneSurveyType.gameEnhance:
+        return '$name님! 오늘의 강화 기운을 확인해볼게요. 🎮✨';
 
       case FortuneSurveyType.pet:
         return '$name님! 반려동물 궁합을 봐드릴게요. 🐾';
@@ -3599,6 +3632,22 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       // ============================================================
+      // Game Enhance (게임 강화운세 - 입력 없음)
+      // ============================================================
+      case FortuneSurveyType.gameEnhance:
+        // fortune-game-enhance Edge Function 사용
+        // 입력 없이 범용 강화운세 제공
+        return apiService.getFortune(
+          userId: userId,
+          fortuneType: 'game-enhance',
+          params: {
+            'name': userName,
+            'birthDate': birthDateStr,
+            'gender': gender,
+          },
+        );
+
+      // ============================================================
       // Family / Pet
       // ============================================================
       case FortuneSurveyType.pet:
@@ -3985,6 +4034,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return '오늘의 셀럽 궁합';
       case FortuneSurveyType.pastLife:
         return '오늘의 전생탐험';
+      case FortuneSurveyType.gameEnhance:
+        return '강화운세';
       case FortuneSurveyType.pet:
         return '오늘의 반려운';
       case FortuneSurveyType.family:
@@ -4067,6 +4118,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return 'celebrity';
       case FortuneSurveyType.pastLife:
         return 'past-life';
+      case FortuneSurveyType.gameEnhance:
+        return 'game-enhance';
       case FortuneSurveyType.pet:
         return 'pet';
       case FortuneSurveyType.family:

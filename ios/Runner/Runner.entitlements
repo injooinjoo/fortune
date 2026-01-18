@@ -18,5 +18,10 @@
 	<true/>
 	<key>com.apple.developer.healthkit.access</key>
 	<array/>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:zpzg.co.kr</string>
+		<string>webcredentials:zpzg.co.kr</string>
+	</array>
 </dict>
 </plist>

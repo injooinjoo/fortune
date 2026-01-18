@@ -27,6 +27,77 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
+# Pre-install hook: mediapipe_face_mesh 시뮬레이터 빌드 문제 해결
+# TensorFlowLiteC.framework가 iOS 기기 전용이므로 시뮬레이터용 더미 추가
+pre_install do |installer|
+  mediapipe_path = "#{ENV['HOME']}/.pub-cache/hosted/pub.dev"
+  Dir.glob("#{mediapipe_path}/mediapipe_face_mesh-*/ios/Frameworks/TensorFlowLiteC.framework").each do |framework_path|
+    binary_path = "#{framework_path}/TensorFlowLiteC"
+    backup_path = "#{framework_path}/TensorFlowLiteC.device.backup"
+
+    # 이미 유니버설 바이너리인지 확인
+    archs = `lipo -archs "#{binary_path}" 2>/dev/null`.strip rescue ""
+
+    if archs.include?('x86_64') || archs.split.length > 1
+      puts "✅ TensorFlowLiteC: 시뮬레이터 아키텍처 이미 포함됨 (#{archs})"
+    else
+      puts "🔧 TensorFlowLiteC: 시뮬레이터용 더미 추가 시작..."
+
+      # 백업 생성
+      unless File.exist?(backup_path)
+        FileUtils.cp(binary_path, backup_path)
+        puts "📋 백업 생성: #{backup_path}"
+      end
+
+      # 더미 소스 파일 생성
+      temp_dir = Dir.mktmpdir
+      dummy_c = "#{temp_dir}/dummy.c"
+      File.write(dummy_c, <<~DUMMY
+        // TensorFlowLiteC dummy for iOS Simulator
+        void TfLiteInterpreterCreate(void) {}
+        void TfLiteInterpreterDelete(void) {}
+        void TfLiteInterpreterInvoke(void) {}
+        void TfLiteModelCreate(void) {}
+        void TfLiteModelDelete(void) {}
+        void TfLiteTensorData(void) {}
+        void TfLiteTensorByteSize(void) {}
+        void TfLiteVersion(void) {}
+      DUMMY
+      )
+
+      # 시뮬레이터용 더미 빌드
+      sdk_path = `xcrun --sdk iphonesimulator --show-sdk-path`.strip
+      x86_dylib = "#{temp_dir}/TensorFlowLiteC_x86_64.dylib"
+      arm64_sim_dylib = "#{temp_dir}/TensorFlowLiteC_arm64_sim.dylib"
+
+      # x86_64 시뮬레이터용
+      system("xcrun clang -arch x86_64 -isysroot #{sdk_path} -dynamiclib " \
+             "-o #{x86_dylib} #{dummy_c} " \
+             "-install_name @rpath/TensorFlowLiteC.framework/TensorFlowLiteC 2>/dev/null")
+
+      # arm64 시뮬레이터용 (Apple Silicon Mac)
+      system("xcrun clang -arch arm64 -isysroot #{sdk_path} -target arm64-apple-ios15.0-simulator " \
+             "-dynamiclib -o #{arm64_sim_dylib} #{dummy_c} " \
+             "-install_name @rpath/TensorFlowLiteC.framework/TensorFlowLiteC 2>/dev/null")
+
+      # 유니버설 바이너리 생성
+      lipo_inputs = [backup_path]
+      lipo_inputs << x86_dylib if File.exist?(x86_dylib)
+      lipo_inputs << arm64_sim_dylib if File.exist?(arm64_sim_dylib)
+
+      if lipo_inputs.length > 1
+        system("lipo -create #{lipo_inputs.join(' ')} -output #{binary_path}")
+        new_archs = `lipo -archs "#{binary_path}" 2>/dev/null`.strip
+        puts "✅ 유니버설 바이너리 생성 완료: #{new_archs}"
+      else
+        puts "⚠️ 더미 빌드 실패. 원본 유지."
+      end
+
+      FileUtils.rm_rf(temp_dir)
+    end
+  end
+end
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
@@ -95,13 +166,36 @@ post_install do |installer|
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = ""
     end
 
-    # MediaPipe Face Mesh - add framework search path for TensorFlowLiteC
+    # MediaPipe Face Mesh - 시뮬레이터에서 완전 비활성화 (TensorFlowLiteC가 iOS 기기 전용)
     if target.name == 'mediapipe_face_mesh'
       target.build_configurations.each do |config|
-        # Add framework search path for TensorFlowLiteC
+        # 실제 기기용 프레임워크 경로 추가
         framework_path = "#{ENV['HOME']}/.pub-cache/hosted/pub.dev/mediapipe_face_mesh-1.2.4/ios/Frameworks"
         config.build_settings['FRAMEWORK_SEARCH_PATHS'] ||= ['$(inherited)']
         config.build_settings['FRAMEWORK_SEARCH_PATHS'] << "\"#{framework_path}\""
+
+        # 시뮬레이터에서 완전 제외 - 모든 아키텍처 빌드 스킵
+        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64 x86_64'
+
+        # 시뮬레이터에서 TensorFlowLiteC 링크 완전 제거
+        config.build_settings['OTHER_LDFLAGS[sdk=iphonesimulator*]'] = ['$(inherited)', '-Wl,-undefined,dynamic_lookup']
+
+        # 시뮬레이터에서 프레임워크 검색 경로 제거
+        config.build_settings['FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]'] = ['$(inherited)']
+      end
+
+      # 빌드 페이즈에서 TensorFlowLiteC 참조 조건부 제거
+      target.build_phases.each do |phase|
+        if phase.respond_to?(:name) && phase.name == 'Frameworks'
+          phase.files.each do |file|
+            if file.file_ref && file.file_ref.path && file.file_ref.path.include?('TensorFlowLiteC')
+              # 시뮬레이터 빌드 시 이 파일을 건너뛰도록 설정
+              file.settings ||= {}
+              file.settings['ATTRIBUTES'] ||= []
+              file.settings['ATTRIBUTES'] << 'Weak'
+            end
+          end
+        end
       end
     end
   end

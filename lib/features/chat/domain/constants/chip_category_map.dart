@@ -42,6 +42,7 @@ const Map<String, String> chipToCategoryMap = {
   'breathing': 'health',
 
   // ============ interactive (인터랙티브/재미) ============
+  'gameEnhance': 'interactive',
   'dream': 'interactive',
   'wish': 'interactive',
   'fortuneCookie': 'interactive',

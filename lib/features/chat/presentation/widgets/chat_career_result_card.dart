@@ -154,6 +154,7 @@ class ChatCareerResultCard extends ConsumerWidget {
             child: FortuneActionButtons(
               contentId: fortune.id,
               contentType: 'career',
+              fortuneType: 'career',
               shareTitle: '커리어 운세',
               shareContent: fortune.content,
               iconColor: Colors.white,

@@ -107,7 +107,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
       Logger.error('Failed to fetch fortune data', error);
       setState(() {
         _isLoading = false;
-        _errorMessage = '운세 데이터를 불러오는데 실패했습니다.';
+        _errorMessage = '인사이트 데이터를 불러오는데 실패했습니다.';
       });
     }
   }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../core/config/environment.dart';
 import '../core/services/resilient_service.dart';
 import '../core/utils/logger.dart';
 
@@ -38,12 +39,14 @@ class KakaoShareService extends ResilientService {
   /// [description] 공유 설명 (예: "운수대통! 좋은 하루가 될 것 같아요")
   /// [imageData] 공유할 이미지 데이터 (Uint8List)
   /// [linkUrl] 앱 링크 URL (선택)
+  /// [fortuneType] 운세 타입 (딥링크용, 예: "daily", "love", "tarot")
   Future<bool> shareFortuneResult({
     required BuildContext context,
     required String title,
     required String description,
     Uint8List? imageData,
     String? linkUrl,
+    String? fortuneType,
   }) async {
     return await safeExecuteWithFallback<bool>(
       () async {
@@ -53,17 +56,24 @@ class KakaoShareService extends ResilientService {
           imageUrl = await _uploadImage(imageData);
         }
 
+        // 딥링크 파라미터 구성
+        final executionParams = <String, String>{
+          'screen': 'chat',
+          if (fortuneType != null) 'fortuneType': fortuneType,
+        };
+
         // FeedTemplate 생성
+        final baseUrl = Environment.appBaseUrl;
         final template = FeedTemplate(
           content: Content(
             title: title,
             description: description,
-            imageUrl: imageUrl ?? Uri.parse('https://zpzg.app/images/default_share.png'),
+            imageUrl: imageUrl ?? Uri.parse(Environment.defaultShareImageUrl),
             link: Link(
-              webUrl: Uri.parse(linkUrl ?? 'https://zpzg.app'),
-              mobileWebUrl: Uri.parse(linkUrl ?? 'https://zpzg.app'),
-              androidExecutionParams: {'screen': 'fortune'},
-              iosExecutionParams: {'screen': 'fortune'},
+              webUrl: Uri.parse(linkUrl ?? baseUrl),
+              mobileWebUrl: Uri.parse(linkUrl ?? baseUrl),
+              androidExecutionParams: executionParams,
+              iosExecutionParams: executionParams,
             ),
           ),
           social: Social(
@@ -73,12 +83,12 @@ class KakaoShareService extends ResilientService {
           ),
           buttons: [
             Button(
-              title: '앱에서 보기',
+              title: '나도 해보기',
               link: Link(
-                webUrl: Uri.parse(linkUrl ?? 'https://zpzg.app'),
-                mobileWebUrl: Uri.parse(linkUrl ?? 'https://zpzg.app'),
-                androidExecutionParams: {'screen': 'fortune'},
-                iosExecutionParams: {'screen': 'fortune'},
+                webUrl: Uri.parse(linkUrl ?? baseUrl),
+                mobileWebUrl: Uri.parse(linkUrl ?? baseUrl),
+                androidExecutionParams: executionParams,
+                iosExecutionParams: executionParams,
               ),
             ),
           ],

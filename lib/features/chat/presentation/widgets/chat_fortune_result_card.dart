@@ -1277,6 +1277,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             child: FortuneActionButtons(
               contentId: fortune.id,
               contentType: fortuneType,
+              fortuneType: fortuneType,
               shareTitle: typeName,
               shareContent: fortune.summary ?? fortune.content,
               iconColor: Colors.white,
@@ -1395,6 +1396,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             child: FortuneActionButtons(
               contentId: fortune.id,
               contentType: fortuneType,
+              fortuneType: fortuneType,
               shareTitle: typeName,
               shareContent: fortune.summary ?? fortune.content,
               iconColor: Colors.white,

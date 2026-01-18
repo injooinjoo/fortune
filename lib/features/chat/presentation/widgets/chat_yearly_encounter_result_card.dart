@@ -218,6 +218,7 @@ class _ChatYearlyEncounterResultCardState
               contentId:
                   'yearly_encounter_${widget.result.targetGender}_${DateTime.now().millisecondsSinceEpoch}',
               contentType: 'yearly_encounter',
+              fortuneType: 'yearlyEncounter',
               shareTitle: '2026 올해의 인연',
               shareContent:
                   '${widget.result.hashtagsString}\n\n💕 첫만남: ${widget.result.encounterSpotTitle}\n${widget.result.encounterSpotStory}\n\n✨ 인연의 시그널: ${widget.result.fateSignalTitle}\n\n💝 비주얼 궁합: ${widget.result.compatibilityScore}',

@@ -160,6 +160,7 @@ class ChatOotdResultCard extends ConsumerWidget {
             contentId: ootdData['id']?.toString() ??
                 'ootd_${DateTime.now().millisecondsSinceEpoch}',
             contentType: 'ootd',
+            fortuneType: 'ootdEvaluation',
             shareTitle: 'OOTD 평가 결과',
             shareContent: ootdData['overallAdvice'] ?? '패션 분석 결과입니다.',
             iconSize: 20,

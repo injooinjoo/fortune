@@ -235,6 +235,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
         FortuneActionButtons(
           contentId: 'gratitude_${date.millisecondsSinceEpoch}',
           contentType: 'gratitude',
+          fortuneType: 'gratitude',
           shareTitle: '${DateFormat('M월 d일').format(date)}의 감사일기',
           shareContent: '$gratitude1, $gratitude2, $gratitude3',
           iconSize: 18,

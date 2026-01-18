@@ -178,6 +178,7 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
                 contentId: widget.sajuData['id']?.toString() ??
                     'saju_${DateTime.now().millisecondsSinceEpoch}',
                 contentType: 'saju',
+                fortuneType: 'traditional',
                 shareTitle: '사주 분석 결과',
                 shareContent: '나의 사주팔자 분석 결과입니다.',
                 iconSize: 20,

@@ -167,6 +167,7 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.luckyItems:
       case FortuneSurveyType.fortuneCookie:
       case FortuneSurveyType.pet:
+      case FortuneSurveyType.gameEnhance:
         return const Color(0xFFFF9800); // 오렌지
       case FortuneSurveyType.mbti:
       case FortuneSurveyType.biorhythm:
@@ -274,6 +275,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '감사일기';
       case FortuneSurveyType.yearlyEncounter:
         return '올해의 인연';
+      case FortuneSurveyType.gameEnhance:
+        return '강화운세';
     }
   }
 
@@ -355,6 +358,8 @@ class _FortuneTypeChip extends StatelessWidget {
         return '✨';
       case FortuneSurveyType.yearlyEncounter:
         return '💕';
+      case FortuneSurveyType.gameEnhance:
+        return '🎮';
     }
   }
 }

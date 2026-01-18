@@ -288,6 +288,20 @@ final dailySurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
+// Game Enhance (게임 강화운세) 설문 설정
+// ============================================================
+
+/// Game Enhance 설문 설정 (설문 스킵 - 바로 조회)
+const gameEnhanceSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.gameEnhance,
+  title: '강화의 기운',
+  description: '오늘의 강화 성공 확률은?',
+  emoji: '🎮',
+  accentColor: FortuneColors.jeok, // 화(火) - 강화의 불꽃
+  steps: [], // 설문 없이 바로 API 호출
+);
+
+// ============================================================
 // Talent (적성/재능) 설문 설정
 // ============================================================
 
@@ -531,10 +545,11 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   FortuneSurveyType.health: healthSurveyConfig,
   FortuneSurveyType.exercise: exerciseSurveyConfig,
   FortuneSurveyType.sportsGame: sportsGameSurveyConfig,
-  // 인터랙티브 (3개)
+  // 인터랙티브 (4개)
   FortuneSurveyType.dream: dreamSurveyConfig,
   FortuneSurveyType.celebrity: celebritySurveyConfig,
   FortuneSurveyType.pastLife: pastLifeSurveyConfig,
+  FortuneSurveyType.gameEnhance: gameEnhanceSurveyConfig,
   // 가족/반려동물 (4개)
   FortuneSurveyType.pet: petSurveyConfig,
   FortuneSurveyType.family: familySurveyConfig,

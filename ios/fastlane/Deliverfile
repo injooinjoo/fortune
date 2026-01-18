@@ -27,7 +27,7 @@ app_review_information(
   email_address: "injoo1222@naver.com",
   demo_user: "injoo1222@naver.com",
   demo_password: "Dlswn@123",
-  notes: "This is an ENTERTAINMENT app. All content is AI-generated for FUN only. NOT a fortune-telling app. Test: Login with provided account, try 'Face AI' feature."
+  notes: "ENTERTAINMENT app with AI-generated lifestyle insights. Test: Login with provided account, try 'Face AI' and 'Daily Insights' features."
 )
 
 # Automatic release
@@ -48,14 +48,14 @@ secondary_category "ENTERTAINMENT"
 
 # Trade representative contact info (required for apps distributed in Korea)
 trade_representative_contact_information(
-  first_name: "John",
-  last_name: "Doe",
-  address_line1: "123 Main Street",
+  first_name: "Injoo",
+  last_name: "Kim",
+  address_line1: "Seoul, South Korea",
   city_name: "Seoul",
   state: "Seoul",
   country: "South Korea",
-  postal_code: "12345",
-  phone_number: "+82 10 1234 5678",
-  email_address: "legal@beyond.com",
+  postal_code: "06000",
+  phone_number: "+821050606843",
+  email_address: "injoo1222@naver.com",
   is_displayed_on_app_store: false
 )

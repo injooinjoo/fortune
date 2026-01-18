@@ -38,6 +38,11 @@ class Environment {
   // Supabase 설정
   static String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
   static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+
+  // App Domain 설정 (공유 링크, 딥링크용)
+  static String get appDomain => dotenv.env['APP_DOMAIN'] ?? 'zpzg.co.kr';
+  static String get appBaseUrl => 'https://$appDomain';
+  static String get defaultShareImageUrl => '$appBaseUrl/images/default_share.png';
   
   // 결제 설정
   static String get stripePublishableKey => dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';

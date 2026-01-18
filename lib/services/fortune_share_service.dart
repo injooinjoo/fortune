@@ -77,6 +77,7 @@ class FortuneShareService {
     String? userName,
     Uint8List? previewImage,
     String? fortuneHistoryId,
+    String? fortuneType,
   }) async {
     await showModalBottomSheet(
       context: context,
@@ -99,6 +100,7 @@ class FortuneShareService {
             userName: userName,
             imageData: previewImage,
             fortuneHistoryId: fortuneHistoryId,
+            fortuneType: fortuneType,
           );
         },
       ),
@@ -116,11 +118,12 @@ class FortuneShareService {
     String? userName,
     Uint8List? imageData,
     String? fortuneHistoryId,
+    String? fortuneType,
   }) async {
     try {
       switch (platform) {
         case SharePlatform.kakaoTalk:
-          await _shareToKakao(context, imageData, title, content, userName);
+          await _shareToKakao(context, imageData, title, content, userName, fortuneType);
           break;
         case SharePlatform.instagram:
           await _shareToInstagram(context, imageData, title, content);
@@ -160,6 +163,7 @@ class FortuneShareService {
     String title,
     String content,
     String? userName,
+    String? fortuneType,
   ) async {
     // iOS용 sharePositionOrigin을 미리 계산 (async 갭 전에)
     final shareOrigin = _getSharePositionOrigin(context);
@@ -170,6 +174,7 @@ class FortuneShareService {
       title: title,
       description: content.length > 200 ? '${content.substring(0, 197)}...' : content,
       imageData: imageData,
+      fortuneType: fortuneType,
     );
 
     // SDK 공유 실패 시 일반 공유로 폴백

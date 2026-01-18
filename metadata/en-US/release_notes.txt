@@ -1,1 +1,10 @@
+What's New in v1.0.0:
 
+- Face AI: Get fun personality insights from your selfie
+- Daily Insights: AI-generated personalized content updated daily
+- Personality Match: Fun compatibility tests with friends
+- Dream Journal: Voice-record your dreams and get AI analysis
+- Beautiful dark mode support
+- Performance improvements and bug fixes
+
+Thank you for using ZPZG!

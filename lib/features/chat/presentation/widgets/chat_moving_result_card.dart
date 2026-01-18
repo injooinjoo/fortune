@@ -168,6 +168,7 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
                     FortuneActionButtons(
                       contentId: widget.fortune.id.isNotEmpty ? widget.fortune.id : 'moving_${DateTime.now().millisecondsSinceEpoch}',
                       contentType: 'moving',
+                      fortuneType: 'moving',
                       shareTitle: '이사운 분석 결과',
                       shareContent: data['overall_fortune'] as String? ?? widget.fortune.content,
                       iconSize: 20,

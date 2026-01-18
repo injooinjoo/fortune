@@ -223,6 +223,14 @@ class InfographicFactory {
       themeColor: Color(0xFFFF6347),
     ),
 
+    // 게임 강화
+    FortuneType.gameEnhance: const InfographicConfig(
+      templateType: InfographicTemplateType.score,
+      title: '강화 운세',
+      themeColor: Color(0xFFFF6B00),
+      hasLuckyItems: true,
+    ),
+
     // ==========================================
     // Chart Template (차트/분석 중심) - 8개
     // ==========================================

@@ -111,16 +111,8 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                           platform: SharePlatform.instagram,
                           label: '인스타그램',
                           svgPath: 'assets/images/social/instagram.svg',
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF833AB4),
-                              Color(0xFFF56040),
-                              Color(0xFFFCAF45),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          textColor: Colors.white,
+                          backgroundColor: Colors.white,
+                          textColor: const Color(0xFF262626),
                         ),
                       ),
                     ],

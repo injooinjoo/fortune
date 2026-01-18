@@ -59,7 +59,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     return Scaffold(
       backgroundColor: colors.background,
       appBar: AppHeader(
-        title: '운세 기록',
+        title: '인사이트 기록',
         showBackButton: true,
         centerTitle: true,
         onBackPressed: () => Navigator.of(context).pop(),
@@ -94,7 +94,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                     const SizedBox(width: DSSpacing.sm),
                     _buildTabButton(2, '차트'),
                     const SizedBox(width: DSSpacing.sm),
-                    _buildTabButton(3, '일일운세'),
+                    _buildTabButton(3, '일일인사이트'),
                   ],
                 ),
               ),
@@ -220,7 +220,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
         loading: () => const Center(child: LoadingIndicator()),
         error: (error, stack) => Center(
           child: Text(
-            '운세 기록을 불러올 수 없습니다',
+            '인사이트 기록을 불러올 수 없습니다',
             style: DSTypography.labelMedium,
           ),
         ),
@@ -272,7 +272,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               ),
               const SizedBox(height: TossTheme.spacingL),
               Text(
-                '아직 운세 기록이 없어요',
+                '아직 인사이트 기록이 없어요',
                 style: context.heading2.copyWith(
                   fontWeight: FontWeight.w700,
                   color: colors.textPrimary,
@@ -281,7 +281,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               ),
               const SizedBox(height: TossTheme.spacingS),
               Text(
-                '운세를 보고 나면 여기에 기록됩니다',
+                '인사이트를 보고 나면 여기에 기록됩니다',
                 style: context.bodyMedium.copyWith(
                   color: colors.textSecondary,
                 ),
@@ -289,7 +289,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               ),
               const SizedBox(height: TossTheme.spacingL),
               UnifiedButton(
-                text: '운세 보러 가기',
+                text: '인사이트 보러 가기',
                 onPressed: () => Navigator.of(context).pop(),
                 size: UnifiedButtonSize.large,
                 width: double.infinity,

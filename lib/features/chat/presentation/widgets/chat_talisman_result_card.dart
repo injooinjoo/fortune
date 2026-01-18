@@ -89,6 +89,7 @@ class ChatTalismanResultCard extends ConsumerWidget {
           child: FortuneActionButtons(
             contentId: 'talisman_${DateTime.now().millisecondsSinceEpoch}',
             contentType: 'talisman',
+            fortuneType: 'talisman',
             shareTitle: categoryName,
             shareContent: shortDescription,
             iconSize: 20,

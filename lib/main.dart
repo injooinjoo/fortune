@@ -29,6 +29,7 @@ import 'core/services/error_reporter_service.dart';
 import 'core/providers/user_settings_provider.dart';
 import 'core/services/fortune_haptic_service.dart';
 import 'presentation/providers/auth_provider.dart';
+import 'services/deep_link_service.dart';
 
 void main() async {
   debugPrint('🚀 [STARTUP] App main() started');
@@ -244,6 +245,19 @@ void main() async {
     } catch (e) {
       debugPrint('⚠️ [STARTUP] FCM Service initialization failed: $e');
       Logger.warning('FCM Service initialization failed (optional feature): $e');
+    }
+  }
+
+  // Initialize Deep Link Service for Kakao share links
+  if (!kIsWeb) {
+    try {
+      debugPrint('🔗 [STARTUP] Initializing Deep Link Service...');
+      await DeepLinkService().initialize();
+      debugPrint('🔗 [STARTUP] Deep Link Service initialized successfully');
+      Logger.info('Deep Link Service initialized successfully');
+    } catch (e) {
+      debugPrint('⚠️ [STARTUP] Deep Link Service initialization failed: $e');
+      Logger.warning('Deep Link Service initialization failed (optional feature): $e');
     }
   }
 

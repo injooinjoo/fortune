@@ -244,6 +244,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
         FortuneActionButtons(
           contentId: widget.fortune.id ?? 'cookie_${DateTime.now().millisecondsSinceEpoch}',
           contentType: 'cookie',
+          fortuneType: 'fortuneCookie',
           shareTitle: '$_cookieTypeName 포춘쿠키',
           shareContent: _message,
           iconSize: 18,

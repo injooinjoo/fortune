@@ -311,7 +311,7 @@ class UnifiedButton extends StatefulWidget {
   factory UnifiedButton.analyze({
     required VoidCallback? onPressed,
     bool isLoading = false,
-    String text = '운세 분석하기',
+    String text = '인사이트 분석하기',
     bool enableAnimation = true,
     Duration? animationDelay,
   }) {
@@ -371,12 +371,12 @@ class UnifiedButton extends StatefulWidget {
     required VoidCallback? onPressed,
     bool isEnabled = true,
     bool isLoading = false,
-    String text = '운세 보기',
+    String text = '인사이트 보기',
     bool enableAnimation = true,
     Duration? animationDelay,
   }) {
     return UnifiedButton(
-      text: isLoading ? '운세 생성 중...' : text,
+      text: isLoading ? '인사이트 생성 중...' : text,
       onPressed: (isEnabled && !isLoading) ? onPressed : null,
       style: UnifiedButtonStyle.primary,
       isLoading: isLoading,

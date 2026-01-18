@@ -286,6 +286,7 @@ class _ChatCelebrityResultCardState
             child: FortuneActionButtons(
               contentId: widget.fortune.id,
               contentType: 'celebrity',
+              fortuneType: 'celebrity',
               shareTitle: '${widget.celebrityName ?? '유명인'}과의 궁합',
               shareContent: widget.fortune.message.isNotEmpty
                   ? widget.fortune.message

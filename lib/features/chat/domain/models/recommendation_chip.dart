@@ -210,6 +210,13 @@ const List<RecommendationChip> defaultChips = [
 
   // ============ 인터랙티브 ============
   RecommendationChip(
+    id: 'gameEnhance',
+    label: '강화의 기운',
+    fortuneType: 'gameEnhance',
+    icon: Icons.rocket_launch_outlined,
+    color: Color(0xFFFF6B00),
+  ),
+  RecommendationChip(
     id: 'dream',
     label: '꿈해몽',
     fortuneType: 'dream',

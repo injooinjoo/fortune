@@ -2,7 +2,7 @@ class FortuneEmotionalDescriptions {
   static Map<String, dynamic> getDescription(String fortuneType) {
     final descriptions = {
       'mbti': {
-        'emotionalDescription': 'MBTI로 오늘의 운세를 알아봅니다. 같이 있을 상대(애인이나, 직장동료, 같은반 친구 등)와의 오늘 그리고 내일의 예상을 해드립니다. 사랑과 미래, 재물과 건강 등 우리가 필요로 하는 미래를 엿볼 수 있는 기회입니다.',
+        'emotionalDescription': 'MBTI로 오늘의 인사이트를 알아봅니다. 같이 있을 상대(애인이나, 직장동료, 같은반 친구 등)와의 오늘 그리고 내일의 케미를 분석해드립니다. 관계와 소통, 성장과 웰빙 등 우리가 필요로 하는 인사이트를 제공합니다.',
         'inputLabel': 'MBTI',
         'inputHint': 'ENTJ',
         'inputType': 'dropdown',
@@ -13,7 +13,7 @@ class FortuneEmotionalDescriptions {
           'ISTP', 'ISFP', 'ESTP', 'ESFP'
         ]},
       'daily': {
-        'emotionalDescription': '오늘 하루, 당신에게 찾아올 특별한 순간들을 미리 만나보세요. 아침의 첫 발걸음부터 저녁의 마지막 인사까지, 당신의 하루를 더욱 빛나게 만들어줄 운세가 기다리고 있습니다.',
+        'emotionalDescription': '오늘 하루, 당신에게 찾아올 특별한 순간들을 미리 만나보세요. 아침의 첫 발걸음부터 저녁의 마지막 인사까지, 당신의 하루를 더욱 빛나게 만들어줄 인사이트가 기다리고 있습니다.',
         'requiresInput': null},
       'weekly': {
         'emotionalDescription': '이번 주, 당신의 삶에 펼쳐질 7일간의 이야기. 월요일의 시작부터 일요일의 마무리까지, 매일매일 다른 색깔로 물들어갈 당신의 일주일을 미리 들여다보세요.',
@@ -48,7 +48,7 @@ class FortuneEmotionalDescriptions {
         'emotionalDescription': '풍요로운 삶을 위한 특별한 신호. 재물운이 들려주는 기회의 시간과 투자의 적기, 그리고 당신에게 찾아올 경제적 행운의 순간들을 확인하세요.',
         'requiresInput': null},
       'health': {
-        'emotionalDescription': '건강한 삶, 행복한 일상. 몸과 마음의 균형을 찾고, 더욱 활기찬 하루를 보낼 수 있는 건강운세가 당신의 웰빙 라이프를 도와드립니다.',
+        'emotionalDescription': '건강한 삶, 행복한 일상. 몸과 마음의 균형을 찾고, 더욱 활기찬 하루를 보낼 수 있는 건강 인사이트가 당신의 웰빙 라이프를 도와드립니다.',
         'requiresInput': null},
       'compatibility': {
         'emotionalDescription': '두 사람 사이의 특별한 인연. 서로의 마음이 만나는 지점과 함께 걸어갈 미래의 모습. 궁합이 들려주는 두 사람만의 아름다운 이야기를 확인해보세요.',

@@ -79,6 +79,7 @@ enum FortuneType {
   luckyCamping('lucky-camping', '캠핑 가이드'),
   luckyYoga('lucky-yoga', '요가 가이드'),
   eSports('esports', 'e스포츠 가이드'),
+  gameEnhance('game-enhance', '강화 운세'),
 
   // Investment & Crypto
   luckyStock('lucky-stock', '주식 가이드'),

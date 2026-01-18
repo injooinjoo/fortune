@@ -185,7 +185,7 @@ dependencies:
   sign_in_with_apple: ^6.1.3
   kakao_flutter_sdk_user: ^1.9.0
   kakao_flutter_sdk_share: ^1.9.0  # 카카오톡 공유 (카카오링크)
-  social_share_plugin: ^0.4.2+2  # 인스타그램 스토리 직접 공유
+  social_share_plugin: ^0.4.2+2  # 인스타그램 직접 공유
   # flutter_naver_login: ^2.1.1  # Replaced with native iOS implementation
   crypto: ^3.0.3 # For SHA256 hashing in Apple Sign In
 
