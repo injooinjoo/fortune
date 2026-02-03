@@ -19,11 +19,11 @@ class LandingMainContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // App Logo - '相' (관상) Korean Calligraphy
+          // App Logo
           Image.asset(
             Theme.of(context).brightness == Brightness.dark
-                ? 'assets/images/sang_dark.png'
-                : 'assets/images/sang_light.png',
+                ? 'assets/images/zpzg_logo_dark.png'
+                : 'assets/images/zpzg_logo_light.png',
             width: 120,
             height: 120,
           ).animate().fadeIn(duration: 800.ms).scale(

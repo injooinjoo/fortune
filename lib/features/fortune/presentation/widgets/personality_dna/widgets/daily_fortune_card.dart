@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/design_system/tokens/ds_spacing.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/widgets/section_card.dart';
 import '../../../../../../core/constants/fortune_card_images.dart';
 
@@ -10,9 +9,9 @@ class DailyFortuneCard extends StatelessWidget {
   final DailyFortune dailyFortune;
 
   // 테마 색상 상수
-  static const Color _primaryColor = Color(0xFF9B59B6);
-  static const Color _successColor = Color(0xFF2ECC71);
-  static const Color _warningColor = Color(0xFFE74C3C);
+  static const Color _primaryColor = DSFortuneColors.mysticalPurpleMuted;
+  static const Color _successColor = Color(0xFF2ECC71); // 고유 색상 - 추천 활동 초록색
+  static const Color _warningColor = Color(0xFFE74C3C); // 고유 색상 - 주의사항 빨간색
 
   const DailyFortuneCard({super.key, required this.dailyFortune});
 
@@ -36,7 +35,7 @@ class DailyFortuneCard extends StatelessWidget {
                   isDark,
                   '럭키 컬러',
                   dailyFortune.luckyColor,
-                  const Color(0xFFE91E63),
+                  DSFortuneColors.celebrityActor,
                   iconPath: FortuneCardImages.getLuckyColorIcon(
                       dailyFortune.luckyColor),
                 ),
@@ -48,7 +47,7 @@ class DailyFortuneCard extends StatelessWidget {
                   isDark,
                   '럭키 넘버',
                   dailyFortune.luckyNumber.toString(),
-                  const Color(0xFF2196F3),
+                  DSFortuneColors.celebrityAthlete,
                   iconPath: FortuneCardImages.getLuckyNumberIcon(
                       dailyFortune.luckyNumber),
                 ),
@@ -60,7 +59,7 @@ class DailyFortuneCard extends StatelessWidget {
                   isDark,
                   '에너지',
                   '${dailyFortune.energyLevel}%',
-                  const Color(0xFFFF9800),
+                  const Color(0xFFFF9800), // 고유 색상 - 에너지 오렌지
                   emoji: '⚡',
                 ),
               ),

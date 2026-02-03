@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-/// Korean Traditional "Saaju" border radius system
+/// Modern AI Chat border radius system
 ///
-/// Organic, brush-like corners that evoke traditional aesthetics
-/// Slightly softer than modern Material design
+/// Softer, more rounded corners for modern aesthetics
+/// Inspired by Claude/ChatGPT UI patterns
 ///
 /// Usage:
 /// ```dart
@@ -13,23 +13,26 @@ import 'package:flutter/material.dart';
 class DSRadius {
   DSRadius._();
 
-  /// 2px - Subtle rounding
-  static const double xs = 2.0;
+  /// 4px - Subtle rounding
+  static const double xs = 4.0;
 
-  /// 4px - Light touch, seal buttons
-  static const double sm = 4.0;
+  /// 6px - Light touch (increased from 4px)
+  static const double sm = 6.0;
 
-  /// 8px - Standard cards, organic feel
-  static const double md = 8.0;
+  /// 8px - Small containers, tags, compact elements
+  static const double smd = 8.0;
+
+  /// 12px - Standard cards, buttons (increased from 8px)
+  static const double md = 12.0;
 
   /// 16px - Cards, grouped sections
   static const double lg = 16.0;
 
-  /// 20px - Large cards
-  static const double xl = 20.0;
+  /// 24px - Large cards (increased from 20px)
+  static const double xl = 24.0;
 
-  /// 24px - Modals, dialogs
-  static const double xxl = 24.0;
+  /// 28px - Modals, dialogs (increased from 24px)
+  static const double xxl = 28.0;
 
   /// 32px - Extra large modals
   static const double xxxl = 32.0;
@@ -46,6 +49,9 @@ class DSRadius {
 
   /// sm BorderRadius
   static BorderRadius get smBorder => BorderRadius.circular(sm);
+
+  /// smd BorderRadius (8px)
+  static BorderRadius get smdBorder => BorderRadius.circular(smd);
 
   /// md BorderRadius
   static BorderRadius get mdBorder => BorderRadius.circular(md);
@@ -69,14 +75,11 @@ class DSRadius {
   // SEMANTIC RADIUS
   // ============================================
 
-  /// Button radius (8px) - organic feel
+  /// Button radius (12px) - softer, more modern (increased from 8px)
   static const double button = md;
 
-  /// Seal/stamp button radius (4px) - slightly rounded square like traditional seals (인장)
-  static const double seal = sm;
-
-  /// Input field radius (8px)
-  static const double input = md;
+  /// Input field radius (10px) - slightly softer (increased from 8px)
+  static const double input = 10.0;
 
   /// Card radius (16px)
   static const double card = lg;
@@ -84,10 +87,10 @@ class DSRadius {
   /// Grouped card radius (16px)
   static const double groupedCard = lg;
 
-  /// Modal/dialog radius (24px)
+  /// Modal/dialog radius (28px) - more rounded (increased from 24px)
   static const double modal = xxl;
 
-  /// Bottom sheet top radius (24px)
+  /// Bottom sheet top radius (28px)
   static const double bottomSheet = xxl;
 
   /// Chip/badge radius (full pill)
@@ -99,8 +102,17 @@ class DSRadius {
   /// Toggle track radius (full pill)
   static const double toggle = full;
 
+  /// Tag/compact element radius (8px)
+  static const double tag = smd;
+
   /// Toast radius (12px)
   static const double toast = md;
+
+  /// Message bubble radius (18px) - chat bubble style
+  static const double messageBubble = 18.0;
+
+  /// Input area radius (24px) - chat input style
+  static const double inputArea = xl;
 
   // ============================================
   // BORDER RADIUS SEMANTIC PRESETS
@@ -122,4 +134,11 @@ class DSRadius {
   static BorderRadius get bottomSheetBorder => const BorderRadius.vertical(
         top: Radius.circular(bottomSheet),
       );
+
+  /// Message bubble BorderRadius
+  static BorderRadius get messageBubbleBorder =>
+      BorderRadius.circular(messageBubble);
+
+  /// Input area BorderRadius (chat style)
+  static BorderRadius get inputAreaBorder => BorderRadius.circular(inputArea);
 }

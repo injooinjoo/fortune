@@ -11,6 +11,7 @@ import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../utils/date_utils.dart';
 import '../../domain/models/chat_message.dart';
+import '../../domain/models/life_category.dart';
 import 'chat_messages_provider.dart';
 
 const _uuid = Uuid();
@@ -19,6 +20,12 @@ const _uuid = Uuid();
 enum OnboardingStep {
   /// 웰컴 메시지
   welcome,
+
+  /// 인생 컨설팅 대분류 선택 (연애, 돈, 커리어, 건강)
+  lifeCategory,
+
+  /// 세부 고민 선택
+  subConcern,
 
   /// 이름 입력
   name,
@@ -51,6 +58,8 @@ enum OnboardingStep {
 /// 온보딩 상태
 class OnboardingState {
   final OnboardingStep currentStep;
+  final LifeCategory? primaryLifeCategory; // 인생 컨설팅 대분류
+  final String? subConcern; // 세부 고민 ID
   final String? name;
   final DateTime? birthDate;
   final TimeOfDay? birthTime;
@@ -63,6 +72,8 @@ class OnboardingState {
 
   const OnboardingState({
     this.currentStep = OnboardingStep.welcome,
+    this.primaryLifeCategory,
+    this.subConcern,
     this.name,
     this.birthDate,
     this.birthTime,
@@ -76,6 +87,8 @@ class OnboardingState {
 
   OnboardingState copyWith({
     OnboardingStep? currentStep,
+    LifeCategory? primaryLifeCategory,
+    String? subConcern,
     String? name,
     DateTime? birthDate,
     TimeOfDay? birthTime,
@@ -85,12 +98,16 @@ class OnboardingState {
     bool? isProcessing,
     bool? needsOnboarding,
     bool? isCheckingStatus,
+    bool clearLifeCategory = false,
+    bool clearSubConcern = false,
     bool clearGender = false,
     bool clearMbti = false,
     bool clearBloodType = false,
   }) {
     return OnboardingState(
       currentStep: currentStep ?? this.currentStep,
+      primaryLifeCategory: clearLifeCategory ? null : (primaryLifeCategory ?? this.primaryLifeCategory),
+      subConcern: clearSubConcern ? null : (subConcern ?? this.subConcern),
       name: name ?? this.name,
       birthDate: birthDate ?? this.birthDate,
       birthTime: birthTime ?? this.birthTime,
@@ -138,10 +155,32 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
   }
 
   /// 로그인 후 온보딩 상태 재확인
+  /// 온보딩 단계에 따라 다르게 처리
   Future<void> _recheckOnboardingAfterLogin() async {
-    // 체크 상태 초기화하고 재확인
-    state = state.copyWith(isCheckingStatus: true);
-    await _checkOnboardingStatus();
+    debugPrint('🔍 [_recheckOnboardingAfterLogin] currentStep: ${state.currentStep}');
+
+    // 온보딩 단계에 따라 처리
+    switch (state.currentStep) {
+      case OnboardingStep.welcome:
+      case OnboardingStep.name:
+        // ✅ 초기 단계에서 "바로 로그인하기" 클릭 → handleEarlyLogin
+        debugPrint('🔐 [_recheckOnboardingAfterLogin] Early login detected, calling handleEarlyLogin');
+        await handleEarlyLogin();
+        break;
+
+      case OnboardingStep.loginPrompt:
+        // ✅ 온보딩 완료 후 로그인 유도 단계 → skipLoginPrompt
+        debugPrint('🔐 [_recheckOnboardingAfterLogin] Login prompt step, calling skipLoginPrompt');
+        skipLoginPrompt();
+        break;
+
+      default:
+        // ✅ 다른 단계 (birthDate, birthTime, gender 등) → 상태 체크만
+        debugPrint('🔐 [_recheckOnboardingAfterLogin] Other step, calling _checkOnboardingStatus');
+        state = state.copyWith(isCheckingStatus: true);
+        await _checkOnboardingStatus();
+        break;
+    }
   }
 
   /// 로그아웃 시 게스트 사용자용 온보딩 리셋
@@ -264,10 +303,90 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
     final chatNotifier = _ref.read(chatMessagesProvider.notifier);
 
     // 웰컴 메시지
-    chatNotifier.addAiMessage('안녕하세요! ✨\n더 정확한 맞춤 정보를 드리기 위해 몇 가지 여쭤볼게요.');
+    chatNotifier.addAiMessage('안녕하세요! ✨\n당신의 인생 컨설턴트가 되어드릴게요.');
 
-    // 짧은 딜레이 후 이름 질문
+    // 짧은 딜레이 후 관심 분야 질문
     Future.delayed(const Duration(milliseconds: 500), () {
+      _askForLifeCategory();
+    });
+  }
+
+  /// 인생 컨설팅 대분류 질문
+  void _askForLifeCategory() {
+    final chatNotifier = _ref.read(chatMessagesProvider.notifier);
+
+    chatNotifier.addAiMessage('먼저 가장 관심있는 영역을 선택해주세요.');
+
+    final message = ChatMessage(
+      id: _uuid.v4(),
+      type: ChatMessageType.onboardingInput,
+      timestamp: DateTime.now(),
+      onboardingInputType: OnboardingInputType.lifeCategory,
+    );
+    chatNotifier.state = chatNotifier.state.copyWith(
+      messages: [...chatNotifier.state.messages, message],
+    );
+
+    state = state.copyWith(currentStep: OnboardingStep.lifeCategory);
+  }
+
+  /// 인생 컨설팅 대분류 선택 처리
+  void submitLifeCategory(LifeCategory category) {
+    final chatNotifier = _ref.read(chatMessagesProvider.notifier);
+
+    // 사용자 응답 추가
+    chatNotifier.addUserMessage(category.label);
+
+    state = state.copyWith(
+      primaryLifeCategory: category,
+      currentStep: OnboardingStep.subConcern,
+    );
+
+    // 세부 고민 질문으로 이동
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _askForSubConcern();
+    });
+  }
+
+  /// 세부 고민 질문
+  void _askForSubConcern() {
+    final chatNotifier = _ref.read(chatMessagesProvider.notifier);
+
+    final categoryLabel = state.primaryLifeCategory?.label ?? '이 분야';
+    chatNotifier.addAiMessage('$categoryLabel에서 어떤 부분이\n가장 궁금하세요?');
+
+    final message = ChatMessage(
+      id: _uuid.v4(),
+      type: ChatMessageType.onboardingInput,
+      timestamp: DateTime.now(),
+      onboardingInputType: OnboardingInputType.subConcern,
+    );
+    chatNotifier.state = chatNotifier.state.copyWith(
+      messages: [...chatNotifier.state.messages, message],
+    );
+  }
+
+  /// 세부 고민 선택 처리
+  void submitSubConcern(String concernId) {
+    final chatNotifier = _ref.read(chatMessagesProvider.notifier);
+
+    // 선택한 세부 고민의 라벨 찾기
+    final category = state.primaryLifeCategory;
+    final concerns = category != null ? subConcernsByCategory[category] : null;
+    final selectedConcern = concerns?.firstWhere(
+      (c) => c.id == concernId,
+      orElse: () => SubConcern(id: concernId, label: concernId, category: category!),
+    );
+
+    chatNotifier.addUserMessage(selectedConcern?.label ?? concernId);
+
+    state = state.copyWith(
+      subConcern: concernId,
+      currentStep: OnboardingStep.name,
+    );
+
+    // 이름 질문으로 이동
+    Future.delayed(const Duration(milliseconds: 300), () {
       _askForName();
     });
   }
@@ -590,8 +709,21 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
         ? '${state.birthTime!.hour}시 ${state.birthTime!.minute}분'
         : '모름';
 
+    // 세부 고민 라벨 찾기
+    String subConcernLabel = '미입력';
+    if (state.primaryLifeCategory != null && state.subConcern != null) {
+      final concerns = subConcernsByCategory[state.primaryLifeCategory];
+      final concern = concerns?.firstWhere(
+        (c) => c.id == state.subConcern,
+        orElse: () => SubConcern(id: '', label: state.subConcern!, category: state.primaryLifeCategory!),
+      );
+      subConcernLabel = concern?.label ?? state.subConcern!;
+    }
+
     final summaryMessage = '''${state.name}님의 정보를 확인해주세요 📋
 
+• 관심 분야: ${state.primaryLifeCategory?.label ?? '미입력'}
+• 세부 고민: $subConcernLabel
 • 생년월일: $birthDateStr
 • 태어난 시간: $birthTimeStr
 • 성별: ${state.gender?.label ?? '미입력'}
@@ -631,7 +763,9 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
     chatNotifier.addUserMessage('처음부터 다시 할게요');
 
     state = state.copyWith(
-      currentStep: OnboardingStep.name,
+      currentStep: OnboardingStep.lifeCategory,
+      clearLifeCategory: true,
+      clearSubConcern: true,
       name: null,
       birthDate: null,
       birthTime: null,
@@ -641,7 +775,7 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
     );
 
     Future.delayed(const Duration(milliseconds: 300), () {
-      _askForName();
+      _askForLifeCategory();
     });
   }
 
@@ -738,6 +872,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
           'gender': (state.gender ?? Gender.other).value,
           'mbti': state.mbti,
           'blood_type': bloodTypeForDb,
+          'primary_life_category': state.primaryLifeCategory?.value,
+          'sub_concern': state.subConcern,
           'onboarding_completed': true,
           'zodiac_sign': profile.zodiacSign,
           'chinese_zodiac': profile.chineseZodiac,
@@ -748,17 +884,14 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
         _ref.read(userProfileNotifierProvider.notifier).refresh();
       }
 
-      // 완료 메시지
+      // 관심 분야에 맞는 완료 메시지
+      final categoryMessage = _getCategoryWelcomeMessage();
       chatNotifier.addAiMessage(
-          '감사합니다, ${state.name}님! 🎉\n이제 맞춤 정보를 받아보실 수 있어요.\n\n무엇이 궁금하세요?');
+          '감사합니다, ${state.name}님! 🎉\n$categoryMessage');
 
-      // 추천 칩 표시
-      chatNotifier.addSystemMessage(chipIds: [
-        'daily_fortune',
-        'love_fortune',
-        'career_fortune',
-        'tarot',
-      ]);
+      // 관심 분야에 맞는 추천 칩 표시
+      final recommendedChips = _getRecommendedChipsForCategory();
+      chatNotifier.addSystemMessage(chipIds: recommendedChips);
 
       state = state.copyWith(
         currentStep: OnboardingStep.completed,
@@ -771,6 +904,38 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
       Logger.error('Error completing onboarding', e);
       chatNotifier.addAiMessage('저장 중 오류가 발생했어요. 다시 시도해주세요.');
       state = state.copyWith(isProcessing: false);
+    }
+  }
+
+  /// 관심 분야에 따른 환영 메시지
+  String _getCategoryWelcomeMessage() {
+    switch (state.primaryLifeCategory) {
+      case LifeCategory.loveRelationship:
+        return '연애와 관계에 대한 인사이트를 준비했어요.\n어떤 것부터 확인해볼까요?';
+      case LifeCategory.moneyFinance:
+        return '재정과 돈에 대한 인사이트를 준비했어요.\n어떤 것부터 확인해볼까요?';
+      case LifeCategory.careerStudy:
+        return '커리어와 학업에 대한 인사이트를 준비했어요.\n어떤 것부터 확인해볼까요?';
+      case LifeCategory.healthWellness:
+        return '건강과 웰빙에 대한 인사이트를 준비했어요.\n어떤 것부터 확인해볼까요?';
+      default:
+        return '이제 맞춤 정보를 받아보실 수 있어요.\n무엇이 궁금하세요?';
+    }
+  }
+
+  /// 관심 분야에 따른 추천 칩 목록
+  List<String> _getRecommendedChipsForCategory() {
+    switch (state.primaryLifeCategory) {
+      case LifeCategory.loveRelationship:
+        return ['compatibility', 'tarot', 'love', 'yearlyEncounter'];
+      case LifeCategory.moneyFinance:
+        return ['money', 'luckyItems', 'tarot', 'career'];
+      case LifeCategory.careerStudy:
+        return ['career', 'talent', 'exam', 'tarot'];
+      case LifeCategory.healthWellness:
+        return ['health', 'biorhythm', 'breathing', 'coaching'];
+      default:
+        return ['daily', 'tarot', 'coaching', 'love'];
     }
   }
 
@@ -788,6 +953,75 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
       'love_fortune',
       'tarot',
     ]);
+  }
+
+  /// 온보딩 초기 단계에서 로그인 시 호출
+  /// (이름 입력 전에 "바로 로그인하기"를 통해 로그인한 경우)
+  Future<void> handleEarlyLogin() async {
+    debugPrint('🔐 [handleEarlyLogin] Checking existing profile after login...');
+
+    try {
+      final client = _ref.read(supabaseClientProvider);
+      final user = client.auth.currentUser;
+
+      if (user == null) {
+        debugPrint('⚠️ [handleEarlyLogin] No user found');
+        return;
+      }
+
+      // 기존 프로필 확인
+      final profile = await client
+          .from('user_profiles')
+          .select('onboarding_completed, name, birth_date, birth_time')
+          .eq('id', user.id)
+          .maybeSingle();
+
+      if (profile != null && profile['onboarding_completed'] == true) {
+        // 기존 프로필이 있고 온보딩 완료된 사용자 → 온보딩 건너뛰기
+        debugPrint('✅ [handleEarlyLogin] Existing profile found, skipping onboarding');
+
+        // 프로필 새로고침
+        _ref.read(userProfileNotifierProvider.notifier).refresh();
+
+        // 온보딩 완료 처리
+        state = state.copyWith(
+          needsOnboarding: false,
+          currentStep: OnboardingStep.completed,
+          isCheckingStatus: false,
+        );
+
+        final chatNotifier = _ref.read(chatMessagesProvider.notifier);
+        chatNotifier.addAiMessage(
+          '${profile['name']}님, 다시 오셨군요! 반가워요 ✨\n무엇이 궁금하세요?'
+        );
+        chatNotifier.addSystemMessage(chipIds: [
+          'daily_fortune',
+          'love_fortune',
+          'career_fortune',
+          'tarot',
+        ]);
+      } else {
+        // 기존 프로필이 없거나 온보딩 미완료 → 온보딩 계속
+        debugPrint('🔄 [handleEarlyLogin] No complete profile, continuing onboarding');
+
+        // 소셜 로그인에서 이름 가져오기
+        final socialName = user.userMetadata?['full_name'] as String? ??
+            user.userMetadata?['name'] as String? ??
+            user.email?.split('@').first;
+
+        if (socialName != null && socialName.isNotEmpty) {
+          // 이름이 있으면 이름 단계 완료하고 다음 단계로
+          state = state.copyWith(isCheckingStatus: false);
+          submitName(socialName);
+        } else {
+          // 이름이 없으면 이름 입력 단계 유지
+          state = state.copyWith(isCheckingStatus: false);
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ [handleEarlyLogin] Error: $e');
+      state = state.copyWith(isCheckingStatus: false);
+    }
   }
 }
 

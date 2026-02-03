@@ -285,8 +285,8 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
-                  ? [const Color(0xFF7C3AED), const Color(0xFF2563EB)]
-                  : [const Color(0xFF8B5CF6), const Color(0xFF3B82F6)],
+                  ? [DSFortuneColors.categoryDaily, DSFortuneColors.categoryCareer] // 사주 헤더 그라디언트
+                  : [DSFortuneColors.categoryLuckyItems, DSFortuneColors.categoryFamily], // 사주 헤더 그라디언트
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

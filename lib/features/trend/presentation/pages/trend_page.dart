@@ -442,11 +442,11 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   List<Color> _getGradientColors(TrendContentType type) {
     switch (type) {
       case TrendContentType.psychologyTest:
-        return [const Color(0xFF8134AF), const Color(0xFF515BD4)];
+        return [const Color(0xFF8134AF), const Color(0xFF515BD4)]; // 고유 색상: 심리테스트 브랜드 그라디언트
       case TrendContentType.idealWorldcup:
-        return [const Color(0xFFF58529), const Color(0xFFDD2A7B)];
+        return [const Color(0xFFF58529), const Color(0xFFDD2A7B)]; // 고유 색상: 이상형 월드컵 브랜드 그라디언트
       case TrendContentType.balanceGame:
-        return [const Color(0xFF00C9B7), const Color(0xFF00B4D8)];
+        return [const Color(0xFF00C9B7), const Color(0xFF00B4D8)]; // 고유 색상: 밸런스 게임 브랜드 그라디언트
     }
   }
 

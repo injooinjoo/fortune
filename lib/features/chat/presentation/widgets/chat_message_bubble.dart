@@ -12,10 +12,19 @@ import 'chat_ootd_result_card.dart';
 import 'chat_saju_result_card.dart';
 import 'chat_talisman_result_card.dart';
 import 'chat_gratitude_result_card.dart';
+import 'chat_coaching_result_card.dart';
+import 'chat_decision_result_card.dart';
+import 'chat_daily_review_card.dart';
+import 'chat_weekly_review_card.dart';
 import 'chat_yearly_encounter_result_card.dart';
 import 'fortune_cookie_result_card.dart';
 import 'fortune_result_scroll_wrapper.dart';
 import 'personality_dna_chat_card.dart';
+import '../../../chat_insight/presentation/widgets/insight_card_widget.dart';
+import '../../../chat_insight/presentation/widgets/timeline_card_widget.dart';
+import '../../../chat_insight/presentation/widgets/pattern_card_widget.dart';
+import '../../../chat_insight/presentation/widgets/trigger_card_widget.dart';
+import '../../../chat_insight/presentation/widgets/guidance_card_widget.dart';
 
 /// 채팅 메시지 버블
 class ChatMessageBubble extends StatelessWidget {
@@ -309,6 +318,112 @@ class ChatMessageBubble extends StatelessWidget {
             gratitude2: message.gratitude2 ?? '',
             gratitude3: message.gratitude3 ?? '',
             date: message.gratitudeDate ?? DateTime.now(),
+          ),
+        ),
+      );
+    }
+
+    // AI 코칭 결과 카드 표시
+    if (message.type == ChatMessageType.coachingResult) {
+      return FortuneResultScrollWrapper(
+        messageId: message.id,
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatCoachingResultCard(
+            situation: message.coachingSituation ?? '',
+            coachingAdvice: message.coachingAdvice ?? '',
+            actionItems: message.coachingActionItems ?? [],
+            date: message.timestamp,
+          ),
+        ),
+      );
+    }
+
+    // 결정 분석 결과 카드 표시
+    if (message.type == ChatMessageType.decisionResult) {
+      return FortuneResultScrollWrapper(
+        messageId: message.id,
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatDecisionResultCard(
+            question: message.decisionQuestion ?? '',
+            options: message.decisionOptions ?? [],
+            recommendation: message.decisionRecommendation ?? '',
+            date: message.timestamp,
+          ),
+        ),
+      );
+    }
+
+    // 하루 회고 결과 카드 표시
+    if (message.type == ChatMessageType.dailyReviewResult) {
+      return FortuneResultScrollWrapper(
+        messageId: message.id,
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatDailyReviewCard(
+            highlight: message.dailyReviewHighlight ?? '',
+            learning: message.dailyReviewLearning ?? '',
+            tomorrow: message.dailyReviewTomorrow ?? '',
+            date: message.timestamp,
+          ),
+        ),
+      );
+    }
+
+    // 주간 리포트 결과 카드 표시
+    if (message.type == ChatMessageType.weeklyReviewResult) {
+      return FortuneResultScrollWrapper(
+        messageId: message.id,
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: ChatWeeklyReviewCard(
+            summary: message.weeklyReviewSummary ?? '',
+            trends: message.weeklyReviewTrends ?? [],
+            actions: message.weeklyReviewActions ?? [],
+            date: message.timestamp,
+          ),
+        ),
+      );
+    }
+
+    // 카톡 대화 분석 인사이트 결과 (5종 카드 순차 표시)
+    if (message.type == ChatMessageType.chatInsightResult &&
+        message.chatInsight != null) {
+      final insight = message.chatInsight!;
+      return FortuneResultScrollWrapper(
+        messageId: message.id,
+        onRendered: onFortuneResultRendered,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+          child: Column(
+            children: [
+              InsightCardWidget(
+                scores: insight.scores,
+                highlights: insight.highlights,
+              ),
+              const SizedBox(height: DSSpacing.sm),
+              TimelineCardWidget(timeline: insight.timeline),
+              const SizedBox(height: DSSpacing.sm),
+              PatternCardWidget(patterns: insight.patterns),
+              const SizedBox(height: DSSpacing.sm),
+              TriggerCardWidget(triggers: insight.triggers),
+              const SizedBox(height: DSSpacing.sm),
+              GuidanceCardWidget(guidance: insight.guidance),
+            ],
           ),
         ),
       );

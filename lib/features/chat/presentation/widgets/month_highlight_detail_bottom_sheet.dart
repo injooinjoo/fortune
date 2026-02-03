@@ -39,11 +39,11 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
   Color _getEnergyColor(String energyLevel) {
     switch (energyLevel) {
       case 'High':
-        return const Color(0xFF10B981);
+        return DSFortuneColors.categoryHealth;
       case 'Medium':
-        return const Color(0xFF3B82F6);
+        return DSFortuneColors.categoryFamily;
       case 'Low':
-        return const Color(0xFFF59E0B);
+        return DSFortuneColors.categoryLotto;
       default:
         return const Color(0xFF9E9E9E);
     }
@@ -219,10 +219,10 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(DSSpacing.md),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                        color: DSFortuneColors.categoryHealth.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(DSRadius.md),
                         border: Border.all(
-                          color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                          color: DSFortuneColors.categoryHealth.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Column(
@@ -235,7 +235,7 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
                               Text(
                                 '추천 행동',
                                 style: typography.labelMedium.copyWith(
-                                  color: const Color(0xFF10B981),
+                                  color: DSFortuneColors.categoryHealth,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -261,10 +261,10 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(DSSpacing.md),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                        color: DSFortuneColors.categoryLotto.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(DSRadius.md),
                         border: Border.all(
-                          color: const Color(0xFFF59E0B).withValues(alpha: 0.3),
+                          color: DSFortuneColors.categoryLotto.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Column(
@@ -277,7 +277,7 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
                               Text(
                                 '주의할 것',
                                 style: typography.labelMedium.copyWith(
-                                  color: const Color(0xFFF59E0B),
+                                  color: DSFortuneColors.categoryLotto,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

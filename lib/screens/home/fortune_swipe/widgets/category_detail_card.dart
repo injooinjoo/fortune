@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
 /// ❤️ 카테고리 상세 카드 (연애/금전/직장/학업/건강)
@@ -82,7 +82,7 @@ class CategoryDetailCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF5F0E6),
+            color: isDark ? DSColors.surface : DSFortuneColors.hanjiCream,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -94,8 +94,8 @@ class CategoryDetailCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: isDark
-                        ? [const Color(0xFF2C2C2E), const Color(0xFF1C1C1E)]
-                        : [const Color(0xFFF5F0E6), const Color(0xFFEDE8DC)],
+                        ? [const Color(0xFF2C2C2E), DSColors.surface] // 고유 색상(dark gradient start)
+                        : [DSFortuneColors.hanjiCream, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -151,7 +151,7 @@ class CategoryDetailCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            color: isDark ? DSColors.surface : Colors.white,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(

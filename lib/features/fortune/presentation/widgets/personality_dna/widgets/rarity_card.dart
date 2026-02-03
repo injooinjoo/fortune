@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/design_system/tokens/ds_spacing.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// 희귀도 카드
 class RarityCard extends StatelessWidget {
@@ -145,7 +144,7 @@ class RarityCard extends StatelessWidget {
     if (popularityRank == null) {
       return _RarityData(
         tier: 'COMMON',
-        color: const Color(0xFF95A5A6),
+        color: const Color(0xFF95A5A6), // 고유 색상 - COMMON 회색
         percentage: 50.0,
         rankText: '일반',
         description: '평범한 조합',
@@ -155,7 +154,7 @@ class RarityCard extends StatelessWidget {
     if (popularityRank! <= 5) {
       return _RarityData(
         tier: 'LEGENDARY',
-        color: const Color(0xFFFFD700),
+        color: DSFortuneColors.fortuneGoldMuted,
         percentage: (popularityRank! / 60 * 100),
         rankText: 'TOP $popularityRank',
         description: '전설적인 조합!',
@@ -163,7 +162,7 @@ class RarityCard extends StatelessWidget {
     } else if (popularityRank! <= 15) {
       return _RarityData(
         tier: 'EPIC',
-        color: const Color(0xFF9B59B6),
+        color: DSFortuneColors.mysticalPurpleMuted,
         percentage: (popularityRank! / 60 * 100),
         rankText: '$popularityRank위',
         description: '희귀한 조합',
@@ -171,7 +170,7 @@ class RarityCard extends StatelessWidget {
     } else if (popularityRank! <= 30) {
       return _RarityData(
         tier: 'RARE',
-        color: const Color(0xFF3498DB),
+        color: const Color(0xFF3498DB), // 고유 색상 - RARE 파란색
         percentage: (popularityRank! / 60 * 100),
         rankText: '$popularityRank위',
         description: '특별한 조합',
@@ -179,7 +178,7 @@ class RarityCard extends StatelessWidget {
     } else if (popularityRank! <= 45) {
       return _RarityData(
         tier: 'UNCOMMON',
-        color: const Color(0xFF2ECC71),
+        color: const Color(0xFF2ECC71), // 고유 색상 - UNCOMMON 초록색
         percentage: (popularityRank! / 60 * 100),
         rankText: '$popularityRank위',
         description: '독특한 조합',
@@ -187,7 +186,7 @@ class RarityCard extends StatelessWidget {
     } else {
       return _RarityData(
         tier: 'COMMON',
-        color: const Color(0xFF95A5A6),
+        color: const Color(0xFF95A5A6), // 고유 색상 - COMMON 회색
         percentage: (popularityRank! / 60 * 100),
         rankText: '$popularityRank위',
         description: '일반적인 조합',

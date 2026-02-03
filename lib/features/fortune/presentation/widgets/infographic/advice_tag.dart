@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/tokens/ds_spacing.dart';
 import 'package:fortune/core/design_system/tokens/ds_radius.dart';
+import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
 
 /// 조언 태그 위젯
@@ -163,7 +164,7 @@ class AdviceTag extends StatelessWidget {
     return switch (sentiment) {
       AdviceSentiment.positive => context.colors.success,
       AdviceSentiment.neutral => context.colors.accent,
-      AdviceSentiment.caution => const Color(0xFFFF9800), // Orange
+      AdviceSentiment.caution => DSFortuneColors.resultGoodFortune, // Orange - 주의 톤
       AdviceSentiment.warning => context.colors.error,
     };
   }

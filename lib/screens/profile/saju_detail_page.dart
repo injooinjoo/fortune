@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/theme/typography_unified.dart';
 import '../../services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -193,26 +194,12 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
     }
   }
 
-  // Design System Helper Methods
-  Color _getTextColor(BuildContext context) {
-    return context.colors.textPrimary;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return context.colors.textSecondary;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return context.colors.background;
-  }
-
-  Color _getCardColor(BuildContext context) {
-    return context.colors.surface;
-  }
-
-  Color _getDividerColor(BuildContext context) {
-    return context.colors.border;
-  }
+  // Design System Helper Getters
+  Color get _textColor => context.colors.textPrimary;
+  Color get _secondaryTextColor => context.colors.textSecondary;
+  Color get _backgroundColor => context.colors.backgroundSecondary;
+  Color get _cardColor => context.colors.surface;
+  Color get _dividerColor => context.colors.border;
 
   Widget _buildSectionHeader(String title) {
     return Padding(
@@ -224,8 +211,8 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
       ),
       child: Text(
         title,
-        style: DSTypography.labelSmall.copyWith(
-          color: _getSecondaryTextColor(context),
+        style: context.heading4.copyWith(
+          color: _secondaryTextColor,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
@@ -246,7 +233,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isLast ? Colors.transparent : _getDividerColor(context),
+            color: isLast ? Colors.transparent : _dividerColor,
             width: 0.5,
           ),
         ),
@@ -256,14 +243,14 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
         children: [
           Text(
             title,
-            style: DSTypography.bodySmall.copyWith(
-              color: _getTextColor(context),
+            style: context.bodySmall.copyWith(
+              color: _textColor,
             ),
           ),
           Text(
             value,
-            style: DSTypography.bodySmall.copyWith(
-              color: _getSecondaryTextColor(context),
+            style: context.bodySmall.copyWith(
+              color: _secondaryTextColor,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -276,19 +263,19 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        backgroundColor: _getBackgroundColor(context),
+        backgroundColor: _backgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
         scrolledUnderElevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: _getTextColor(context)),
+            icon: Icon(Icons.arrow_back_ios, color: _textColor),
             onPressed: () => context.pop(),
           ),
           title: Text(
             '사주 정보',
-            style: DSTypography.labelLarge.copyWith(
-              color: _getTextColor(context),
+            style: context.labelLarge.copyWith(
+              color: _textColor,
             ),
           ),
         ),
@@ -303,19 +290,19 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
     final profile = userProfile ?? localProfile;
 
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: _backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: _getTextColor(context)),
+          icon: Icon(Icons.arrow_back_ios, color: _textColor),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '사주 정보',
-          style: DSTypography.labelLarge.copyWith(
-            color: _getTextColor(context),
+          style: context.labelLarge.copyWith(
+            color: _textColor,
           ),
         ),
       ),
@@ -331,10 +318,10 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
-                  color: _getCardColor(context),
+                  color: _cardColor,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _getDividerColor(context),
+                    color: _dividerColor,
                     width: 1,
                   ),
                   boxShadow: [
@@ -373,10 +360,10 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
-                  color: _getCardColor(context),
+                  color: _cardColor,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _getDividerColor(context),
+                    color: _dividerColor,
                     width: 1,
                   ),
                   boxShadow: [
@@ -416,10 +403,10 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                   decoration: BoxDecoration(
-                    color: _getCardColor(context),
+                    color: _cardColor,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: _getDividerColor(context),
+                      color: _dividerColor,
                       width: 1,
                     ),
                     boxShadow: [
@@ -468,10 +455,10 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
-                  color: _getCardColor(context),
+                  color: _cardColor,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _getDividerColor(context),
+                    color: _dividerColor,
                     width: 1,
                   ),
                   boxShadow: [
@@ -565,7 +552,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                       Expanded(
                         child: Text(
                           '정확한 사주 팔자 계산을 위해서는 출생시간 정보가 필요합니다.',
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: DSColors.accent,
                           ),
                         ),

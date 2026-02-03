@@ -347,7 +347,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
             children: [
               Text(
                 widget.controller.text,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: colors.textPrimary,
                   height: 1.5,
                 ),
@@ -384,7 +384,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
                             const SizedBox(width: 4),
                             Text(
                               '수정',
-                              style: DSTypography.labelSmall.copyWith(
+                              style: context.labelSmall.copyWith(
                                 color: colors.accent,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -420,7 +420,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
                             const SizedBox(width: 4),
                             Text(
                               '삭제',
-                              style: DSTypography.labelSmall.copyWith(
+                              style: context.labelSmall.copyWith(
                                 color: colors.error,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -442,7 +442,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
             padding: const EdgeInsets.only(left: DSSpacing.sm),
             child: Text(
               '${widget.controller.text.length}자',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: colors.textTertiary,
               ),
             ),
@@ -475,12 +475,12 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
                     child: TextField(
                       controller: widget.controller,
                       enabled: widget.enabled,
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: colors.textPrimary,
                       ),
                       decoration: InputDecoration(
                         hintText: widget.hintText,
-                        hintStyle: DSTypography.bodyMedium.copyWith(
+                        hintStyle: context.bodyMedium.copyWith(
                           color: colors.textTertiary,
                         ),
                         border: InputBorder.none,
@@ -551,7 +551,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
               const SizedBox(height: DSSpacing.lg),
               Text(
                 '내용 수정',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.headingSmall.copyWith(
                   color: colors.textPrimary,
                 ),
               ),

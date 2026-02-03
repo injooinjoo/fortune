@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/font_config.dart';
 
 /// 🌊 오행 밸런스 카드
@@ -20,7 +20,7 @@ class FiveElementsCard extends StatelessWidget {
     required this.isDark,
   });
 
-  /// 오행 전통색 (오방색 기반)
+  /// 오행 전통색 (오방색 기반) - 변경 금지
   /// 목(木) - 청색 (동쪽, 봄, 성장)
   /// 화(火) - 적색 (남쪽, 여름, 열정)
   /// 토(土) - 황색 (중앙, 환절기, 안정)
@@ -29,17 +29,17 @@ class FiveElementsCard extends StatelessWidget {
   Color _getElementColor(String element) {
     switch (element) {
       case '목(木)':
-        return const Color(0xFF2E8B57); // 청록색 (전통 청)
+        return const Color(0xFF2E8B57); // 오방색: 청록
       case '화(火)':
-        return const Color(0xFFDC143C); // 진홍색 (전통 적)
+        return const Color(0xFFDC143C); // 오방색: 진홍
       case '토(土)':
-        return const Color(0xFFDAA520); // 금황색 (전통 황)
+        return const Color(0xFFDAA520); // 오방색: 금황
       case '금(金)':
-        return const Color(0xFFC0A062); // 금색 (전통 백/금)
+        return const Color(0xFFC0A062); // 오방색: 금색
       case '수(水)':
-        return const Color(0xFF1E3A5F); // 남색 (전통 흑/수)
+        return const Color(0xFF1E3A5F); // 오방색: 남색
       default:
-        return const Color(0xFF6B7280);
+        return const Color(0xFF6B7280); // 고유 색상: 기본 회색
     }
   }
 
@@ -63,14 +63,14 @@ class FiveElementsCard extends StatelessWidget {
         Text(
           '오행 밸런스',
           style: context.heading3.copyWith(
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '당신의 오행 에너지 분석',
           style: context.labelSmall.copyWith(
-            color: isDark ? Colors.white60 : Colors.black54,
+            color: context.colors.textTertiary,
           ),
         ),
 
@@ -80,7 +80,7 @@ class FiveElementsCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            color: context.colors.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -107,7 +107,7 @@ class FiveElementsCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            color: context.colors.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -155,7 +155,7 @@ class FiveElementsCard extends StatelessWidget {
                             Text(
                               entry.key,
                               style: context.bodySmall.copyWith(
-                                color: isDark ? Colors.white : Colors.black87,
+                                color: context.colors.textPrimary,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -176,7 +176,7 @@ class FiveElementsCard extends StatelessWidget {
                         Container(
                           height: 4,
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+                            color: context.colors.border,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -202,22 +202,22 @@ class FiveElementsCard extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        // 균형 설명
+        // 균형 설명 - 오방색 기반 그라디언트 유지
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
-                  ? [const Color(0xFF2E8B57).withValues(alpha: 0.15), const Color(0xFF1E3A5F).withValues(alpha: 0.15)]
-                  : [const Color(0xFF2E8B57).withValues(alpha: 0.08), const Color(0xFF1E3A5F).withValues(alpha: 0.08)],
+                  ? [const Color(0xFF2E8B57).withValues(alpha: 0.15), const Color(0xFF1E3A5F).withValues(alpha: 0.15)] // 오방색: 목/수
+                  : [const Color(0xFF2E8B57).withValues(alpha: 0.08), const Color(0xFF1E3A5F).withValues(alpha: 0.08)], // 오방색: 목/수
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isDark
-                  ? const Color(0xFF2E8B57).withValues(alpha: 0.3)
-                  : const Color(0xFF2E8B57).withValues(alpha: 0.2),
+                  ? const Color(0xFF2E8B57).withValues(alpha: 0.3) // 오방색: 목
+                  : const Color(0xFF2E8B57).withValues(alpha: 0.2), // 오방색: 목
               width: 1,
             ),
           ),
@@ -230,14 +230,14 @@ class FiveElementsCard extends StatelessWidget {
                     '☯',
                     style: TextStyle(
                       fontSize: 18,
-                      color: isDark ? Colors.white70 : Colors.black54,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '오행 분석',
                     style: context.labelSmall.copyWith(
-                      color: isDark ? Colors.white : Colors.black87,
+                      color: context.colors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -247,7 +247,7 @@ class FiveElementsCard extends StatelessWidget {
               Text(
                 balance,
                 style: context.bodySmall.copyWith(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
+                  color: context.colors.textPrimary.withValues(alpha: 0.8),
                   height: 1.5,
                 ),
               ),
@@ -255,7 +255,7 @@ class FiveElementsCard extends StatelessWidget {
               Text(
                 explanation,
                 style: context.labelTiny.copyWith(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                  color: context.colors.textSecondary,
                   height: 1.5,
                 ),
               ),
@@ -285,14 +285,14 @@ class _PillarItem extends StatelessWidget {
         Text(
           label,
           style: context.labelTiny.copyWith(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+            color: context.colors.textSecondary,
           ),
         ),
         const SizedBox(height: 3),
         Text(
           value,
           style: context.bodySmall.copyWith(
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),

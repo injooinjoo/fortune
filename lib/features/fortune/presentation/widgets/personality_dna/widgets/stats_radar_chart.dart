@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../../../../core/design_system/tokens/ds_spacing.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 
 /// 능력치 레이더 차트 (5각형)
 class StatsRadarChart extends StatelessWidget {
@@ -166,11 +165,11 @@ class StatsRadarChart extends StatelessWidget {
 
   Color _getStatColor(int index) {
     const colors = [
-      Color(0xFFFF6B6B), // 카리스마
-      Color(0xFF4ECDC4), // 지능
-      Color(0xFFFFE66D), // 창의력
-      Color(0xFF95E1D3), // 리더십
-      Color(0xFFDDA0DD), // 공감력
+      Color(0xFFFF6B6B), // 고유 색상 - 카리스마
+      Color(0xFF4ECDC4), // 고유 색상 - 지능
+      Color(0xFFFFE66D), // 고유 색상 - 창의력
+      Color(0xFF95E1D3), // 고유 색상 - 리더십
+      Color(0xFFDDA0DD), // 고유 색상 - 공감력
     ];
     return colors[index % colors.length];
   }

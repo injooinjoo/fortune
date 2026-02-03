@@ -44,10 +44,10 @@ class MedicalDocumentUploadResult {
 
 /// 검사 항목 상태
 enum TestItemStatus {
-  normal('정상', Color(0xFF4CAF50), '정상 범위 내'),
-  caution('주의', Color(0xFFFF9800), '경계 수준'),
-  warning('경고', Color(0xFFFF5722), '관리 필요'),
-  critical('위험', Color(0xFFF44336), '즉시 조치 필요');
+  normal('정상', Color(0xFF4CAF50), '정상 범위 내'), // 고유 색상 - 의료 정상
+  caution('주의', Color(0xFFFF9800), '경계 수준'), // 고유 색상 - 의료 주의
+  warning('경고', Color(0xFFFF5722), '관리 필요'), // 고유 색상 - 의료 경고
+  critical('위험', Color(0xFFF44336), '즉시 조치 필요'); // 고유 색상 - 의료 위험
 
   const TestItemStatus(this.displayName, this.color, this.description);
   final String displayName;
@@ -403,9 +403,9 @@ class MedicalDocumentAnalysisResult {
 
   /// 건강 점수 색상
   Color get scoreColor {
-    if (healthScore >= 90) return const Color(0xFF4CAF50);
-    if (healthScore >= 70) return const Color(0xFF2196F3);
-    if (healthScore >= 50) return const Color(0xFFFF9800);
-    return const Color(0xFFF44336);
+    if (healthScore >= 90) return const Color(0xFF4CAF50); // 고유 색상 - 건강 매우좋음
+    if (healthScore >= 70) return const Color(0xFF2196F3); // 고유 색상 - 건강 양호
+    if (healthScore >= 50) return const Color(0xFFFF9800); // 고유 색상 - 건강 주의
+    return const Color(0xFFF44336); // 고유 색상 - 건강 관리필요
   }
 }

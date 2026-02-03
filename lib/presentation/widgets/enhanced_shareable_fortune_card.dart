@@ -3,6 +3,7 @@ import '../../core/theme/fortune_design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../core/constants/fortune_type_names.dart';
+import '../../core/design_system/design_system.dart';
 // import 'package:qr_flutter/qr_flutter.dart'; // TODO: Add qr_flutter package
 
 class EnhancedShareableFortuneCard extends StatelessWidget {
@@ -77,10 +78,10 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
     return Container(
       width: AppSpacing.spacing1 * 100.0,
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E1),
+        color: DSFortuneColors.hanjiWarm,
         borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-          color: const Color(0xFF8D6E63),
+          color: const Color(0xFF8D6E63), // 고유 색상 - 전통 한지 테두리
           width: 3)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -89,7 +90,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
           Container(
             padding: AppSpacing.paddingVertical16,
             decoration: const BoxDecoration(
-              color: Color(0xFF8D6E63),
+              color: Color(0xFF8D6E63), // 고유 색상 - 전통 한지 헤더
               borderRadius: BorderRadius.vertical(
                 top: Radius.circular(13),
               ),
@@ -119,7 +120,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
                     color: TossDesignSystem.white,
                     borderRadius: AppDimensions.borderRadiusMedium,
                     border: Border.all(
-                      color: const Color(0xFFBCAAA4),
+                      color: const Color(0xFFBCAAA4), // 고유 색상 - 전통 한지 내부 테두리
                       width: 1,
                     ),
                   ),
@@ -453,7 +454,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
             Container(
               width: 30,
               height: 1,
-              color: const Color(0xFFBCAAA4)),
+              color: const Color(0xFFBCAAA4)), // 고유 색상 - 전통 구분선
             const SizedBox(width: AppSpacing.spacing3),
             Text(
               '福',
@@ -463,7 +464,10 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
             Container(
               width: 30,
               height: 1,
-              color: const Color(0xFFBCAAA4))]),
+              color: const Color(0xFFBCAAA4), // 고유 색상 - 전통 구분선
+            ),
+          ],
+        ),
         const SizedBox(height: AppSpacing.spacing3),
         Text(
           'Fortune 신점 · 행운이 가득하길',
@@ -486,9 +490,10 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        Color(0xFF833AB4),
-        Color(0xFFF56040),
-        Color(0xFFFCAF45)]
+        Color(0xFF833AB4), // 브랜드 고유 색상 - Instagram
+        Color(0xFFF56040), // 브랜드 고유 색상 - Instagram
+        Color(0xFFFCAF45), // 브랜드 고유 색상 - Instagram
+      ]
     );
   }
 

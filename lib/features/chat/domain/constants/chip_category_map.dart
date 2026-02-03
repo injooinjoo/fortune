@@ -53,6 +53,12 @@ const Map<String, String> chipToCategoryMap = {
   'family': 'petFamily',
   'pet': 'petFamily',
   'naming': 'petFamily',
+
+  // ============ coaching (AI 코칭/저널링) ============
+  'coaching': 'coaching',
+  'decision': 'coaching',
+  'daily_review': 'coaching',
+  'weekly_review': 'coaching',
 };
 
 /// 칩의 fortuneType으로 카테고리 조회

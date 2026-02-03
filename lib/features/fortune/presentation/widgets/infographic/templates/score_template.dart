@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/tokens/ds_spacing.dart';
+import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/infographic_container.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/score_circle.dart';
@@ -2602,7 +2603,7 @@ class BiorhythmScoreTemplate extends StatelessWidget {
           label: '신체',
           score: physicalScore,
           phase: physicalPhase,
-          color: const Color(0xFFFF6B6B),
+          color: DSFortuneColors.elementFire, // 신체 리듬 - 빨강
         ),
         const SizedBox(height: DSSpacing.sm),
         _buildRhythmBar(
@@ -2611,7 +2612,7 @@ class BiorhythmScoreTemplate extends StatelessWidget {
           label: '감정',
           score: emotionalScore,
           phase: emotionalPhase,
-          color: const Color(0xFFFF69B4),
+          color: DSFortuneColors.categoryLove, // 감정 리듬 - 핑크
         ),
         const SizedBox(height: DSSpacing.sm),
         _buildRhythmBar(
@@ -2620,7 +2621,7 @@ class BiorhythmScoreTemplate extends StatelessWidget {
           label: '지성',
           score: intellectualScore,
           phase: intellectualPhase,
-          color: const Color(0xFF4A90E2),
+          color: DSFortuneColors.categoryCareer, // 지성 리듬 - 파랑
         ),
 
         // 종합 별점
@@ -2759,7 +2760,7 @@ class BiorhythmScoreTemplate extends StatelessWidget {
   /// 요약 포인트 섹션 빌드
   Widget _buildSummarySection(BuildContext context) {
     final displayPoints = summaryPoints!.take(3).toList();
-    final themeColor = const Color(0xFF00CED1); // 바이오리듬 테마 색상
+    final themeColor = DSFortuneColors.categoryBiorhythm; // 바이오리듬 테마 색상
 
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),

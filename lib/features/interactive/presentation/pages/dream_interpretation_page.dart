@@ -144,7 +144,7 @@ class _DreamInterpretationPageState
               ),
         title: Text(
           _showResult ? '꿈 해몽 결과' : '꿈 해몽',
-          style: DSTypography.headingSmall.copyWith(
+          style: context.headingSmall.copyWith(
             color: isDark
                 ? TossDesignSystem.textPrimaryDark
                 : TossDesignSystem.textPrimaryLight,
@@ -210,14 +210,14 @@ class _DreamInterpretationPageState
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
-                Color(0xFF8B5CF6),
+                Color(0xFF8B5CF6), // 고유 색상 - 꿈 해몽 테마
               ),
             ),
           ),
           const SizedBox(height: 12),
           Text(
             '꿈 해몽 준비 중...',
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,
@@ -258,7 +258,7 @@ class _DreamInterpretationPageState
                   .withValues(alpha: 0.98),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                color: const Color(0xFF8B5CF6).withValues(alpha: 0.3), // 고유 색상 - 꿈 해몽 테마
                 width: 1.5,
               ),
               boxShadow: [
@@ -270,7 +270,7 @@ class _DreamInterpretationPageState
                 ),
                 // 글로우 효과
                 BoxShadow(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.15), // 고유 색상 - 꿈 해몽 글로우
                   blurRadius: 30,
                   spreadRadius: -5,
                 ),
@@ -281,7 +281,7 @@ class _DreamInterpretationPageState
                 // 안내 문구
                 Text(
                   '🌙 어떤 꿈을 꾸셨나요?',
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.headingSmall.copyWith(
                     color: isDark
                         ? TossDesignSystem.textPrimaryDark
                         : TossDesignSystem.textPrimaryLight,
@@ -291,7 +291,7 @@ class _DreamInterpretationPageState
                 const SizedBox(height: 6),
                 Text(
                   '꿈 내용을 입력하거나 아래 버블을 선택하세요',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: isDark
                         ? TossDesignSystem.textSecondaryDark
                         : TossDesignSystem.textSecondaryLight,
@@ -305,16 +305,16 @@ class _DreamInterpretationPageState
                     borderRadius: BorderRadius.circular(16),
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF8B5CF6).withValues(alpha: 0.6),
-                        const Color(0xFF6366F1).withValues(alpha: 0.6),
-                        const Color(0xFF8B5CF6).withValues(alpha: 0.6),
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
+                        DSFortuneColors.categoryDream.withValues(alpha: 0.6),
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF8B5CF6).withValues(alpha: 0.25),
+                        color: const Color(0xFF8B5CF6).withValues(alpha: 0.25), // 고유 색상 - 꿈 해몽 글로우
                         blurRadius: 12,
                         spreadRadius: -2,
                       ),
@@ -375,7 +375,7 @@ class _DreamInterpretationPageState
             const SizedBox(height: 16),
             Text(
               '${_selectedTopic!.title} 해몽 중...',
-              style: DSTypography.headingSmall.copyWith(
+              style: context.headingSmall.copyWith(
                 color: isDark
                     ? TossDesignSystem.textPrimaryDark
                     : TossDesignSystem.textPrimaryLight,
@@ -396,7 +396,7 @@ class _DreamInterpretationPageState
           const SizedBox(height: 16),
           Text(
             '신령이 꿈을 풀이하고 있어요',
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,
@@ -461,8 +461,8 @@ class _DreamInterpretationPageState
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
-            Color(0xFF8B5CF6),
-            Color(0xFF6366F1),
+            Color(0xFF8B5CF6), // 고유 색상 - 꿈 해몽 테마
+            DSFortuneColors.categoryDream,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -473,7 +473,7 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '${result.data['dreamType'] ?? '길몽'} 📖',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.headingMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
@@ -481,14 +481,14 @@ class _DreamInterpretationPageState
           const SizedBox(height: 8),
           Text(
             '행운 점수',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             '$score점',
-            style: DSTypography.displayMedium.copyWith(
+            style: context.displayMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
@@ -517,7 +517,7 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '🔮 주요 상징',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.headingSmall.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
@@ -532,16 +532,16 @@ class _DreamInterpretationPageState
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1), // 고유 색상 - 꿈 해몽 테마
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.3), // 고유 색상 - 꿈 해몽 테마
                   ),
                 ),
                 child: Text(
                   symbol,
-                  style: DSTypography.bodySmall.copyWith(
-                    color: const Color(0xFF8B5CF6),
+                  style: context.bodySmall.copyWith(
+                    color: const Color(0xFF8B5CF6), // 고유 색상 - 꿈 해몽 테마
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -570,7 +570,7 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '📖 꿈 해석',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.headingSmall.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
@@ -580,7 +580,7 @@ class _DreamInterpretationPageState
           const SizedBox(height: 16),
           Text(
             interpretation,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,
@@ -609,7 +609,7 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '💡 조언',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.headingSmall.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
@@ -619,7 +619,7 @@ class _DreamInterpretationPageState
           const SizedBox(height: 16),
           Text(
             advice,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,

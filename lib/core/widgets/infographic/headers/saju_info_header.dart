@@ -70,14 +70,8 @@ class SajuInfoHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            colors.accent.withValues(alpha: 0.05),
-            colors.surface,
-          ],
-        ),
+        color: colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.card),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

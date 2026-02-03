@@ -100,8 +100,8 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                           platform: SharePlatform.kakaoTalk,
                           label: '카카오톡',
                           svgPath: 'assets/images/social/kakao.svg',
-                          backgroundColor: const Color(0xFFFEE500),
-                          textColor: const Color(0xFF391B1B),
+                          backgroundColor: const Color(0xFFFEE500), // 브랜드 고유 색상 - Kakao
+                          textColor: const Color(0xFF391B1B), // 브랜드 고유 색상 - Kakao
                         ),
                       ),
                       const SizedBox(width: DSSpacing.md),
@@ -112,7 +112,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                           label: '인스타그램',
                           svgPath: 'assets/images/social/instagram.svg',
                           backgroundColor: Colors.white,
-                          textColor: const Color(0xFF262626),
+                          textColor: const Color(0xFF262626), // 브랜드 고유 색상 - Instagram
                         ),
                       ),
                     ],

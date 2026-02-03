@@ -27,7 +27,7 @@ class ScoreWidgets {
           border: Border.all(
             color: Theme.of(context).brightness == Brightness.dark
                 ? TossDesignSystem.grayDark300
-                : const Color(0xFFF2F4F6),
+                : context.colors.border,
             width: 1,
           ),
         ),
@@ -219,7 +219,7 @@ class ScoreWidgets {
       children: [
         Text(
           value,
-          style: DSTypography.displaySmall.copyWith(
+          style: context.displaySmall.copyWith(
             fontWeight: FontWeight.bold,
             color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
           ),
@@ -227,7 +227,7 @@ class ScoreWidgets {
         const SizedBox(height: 4),
         Text(
           title,
-          style: DSTypography.labelMedium.copyWith(
+          style: context.labelMedium.copyWith(
             color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
           ),
         ),

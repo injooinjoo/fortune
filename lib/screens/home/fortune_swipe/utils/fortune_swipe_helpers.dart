@@ -43,19 +43,19 @@ class FortuneSwipeHelpers {
   /// 金(금): 금색 - 가치/결실
   /// 水(수): 남색 - 지혜/침착
   static Color getPulseScoreColor(int score) {
-    if (score >= 85) return const Color(0xFF2E8B57); // 木(목) - 최상, 청록
-    if (score >= 70) return const Color(0xFF1E5F3C); // 木(목) 진한 - 양호
-    if (score >= 50) return const Color(0xFFDAA520); // 土(토) - 보통, 금황
-    if (score >= 30) return const Color(0xFFC0A062); // 金(금) - 주의, 금색
-    return const Color(0xFFDC143C); // 火(화) - 경고, 진홍
+    if (score >= 85) return const Color(0xFF2E8B57); // 고유 색상 - 木(목) 최상, 청록
+    if (score >= 70) return const Color(0xFF1E5F3C); // 고유 색상 - 木(목) 진한, 양호
+    if (score >= 50) return const Color(0xFFDAA520); // 고유 색상 - 土(토) 보통, 금황
+    if (score >= 30) return const Color(0xFFC0A062); // 고유 색상 - 金(금) 주의, 금색
+    return const Color(0xFFDC143C); // 고유 색상 - 火(화) 경고, 진홍
   }
 
   /// 띠별 점수 색상 (전통 오방색)
   static Color getZodiacScoreColor(int score) {
-    if (score >= 85) return const Color(0xFF2E8B57); // 木(목) - 최상
-    if (score >= 70) return const Color(0xFF1E3A5F); // 水(수) - 양호
-    if (score >= 50) return const Color(0xFFDAA520); // 土(토) - 보통
-    return const Color(0xFFDC143C); // 火(화) - 주의
+    if (score >= 85) return const Color(0xFF2E8B57); // 고유 색상 - 木(목) 최상
+    if (score >= 70) return const Color(0xFF1E3A5F); // 고유 색상 - 水(수) 양호
+    if (score >= 50) return const Color(0xFFDAA520); // 고유 색상 - 土(토) 보통
+    return const Color(0xFFDC143C); // 고유 색상 - 火(화) 주의
   }
 
   /// 카테고리별 이모지 (전통 스타일)

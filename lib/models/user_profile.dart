@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../constants/fortune_constants.dart';
+import '../features/chat/domain/models/life_category.dart';
 
 class UserProfile extends Equatable {
   final String id;
@@ -28,6 +29,12 @@ class UserProfile extends Equatable {
   final Map<String, dynamic>? testAccountFeatures;
   final FortunePreferences? fortunePreferences;
 
+  /// 인생 컨설팅 대분류 카테고리
+  final LifeCategory? primaryLifeCategory;
+
+  /// 세부 고민 ID
+  final String? subConcern;
+
   const UserProfile({
     required this.id,
     required this.name,
@@ -54,6 +61,8 @@ class UserProfile extends Equatable {
     this.isTestAccount = false,
     this.testAccountFeatures,
     this.fortunePreferences,
+    this.primaryLifeCategory,
+    this.subConcern,
   });
 
   // Alias for backward compatibility with data model
@@ -87,6 +96,8 @@ class UserProfile extends Equatable {
         isTestAccount,
         testAccountFeatures,
         fortunePreferences,
+        primaryLifeCategory,
+        subConcern,
       ];
 
   Map<String, dynamic> toJson() {
@@ -116,6 +127,8 @@ class UserProfile extends Equatable {
       'is_test_account': isTestAccount,
       'test_account_features': testAccountFeatures,
       'fortune_preferences': fortunePreferences?.toJson(),
+      'primary_life_category': primaryLifeCategory?.value,
+      'sub_concern': subConcern,
     };
   }
 
@@ -166,6 +179,9 @@ class UserProfile extends Equatable {
       fortunePreferences: json['fortune_preferences'] != null
           ? FortunePreferences.fromJson(json['fortune_preferences'])
           : null,
+      primaryLifeCategory:
+          LifeCategory.fromValue(json['primary_life_category'] as String?),
+      subConcern: json['sub_concern'] as String?,
     );
   }
 
@@ -195,6 +211,8 @@ class UserProfile extends Equatable {
     bool? isTestAccount,
     Map<String, dynamic>? testAccountFeatures,
     FortunePreferences? fortunePreferences,
+    LifeCategory? primaryLifeCategory,
+    String? subConcern,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -222,14 +240,24 @@ class UserProfile extends Equatable {
       isTestAccount: isTestAccount ?? this.isTestAccount,
       testAccountFeatures: testAccountFeatures ?? this.testAccountFeatures,
       fortunePreferences: fortunePreferences ?? this.fortunePreferences,
+      primaryLifeCategory: primaryLifeCategory ?? this.primaryLifeCategory,
+      subConcern: subConcern ?? this.subConcern,
     );
   }
 
+  /// 프리미엄 활성 상태 확인
+  ///
+  /// 주의: 실제 구독 상태는 subscriptionProvider를 통해 확인해야 합니다.
+  /// 이 getter는 테스트 계정의 premium_enabled 상태만 확인합니다.
+  /// 일반 사용자의 구독 상태는 subscription-status API를 통해 확인됩니다.
   bool get isPremiumActive {
+    // 테스트 계정은 testAccountFeatures에서 premium_enabled 확인
     if (isTestAccount && testAccountFeatures != null) {
       return testAccountFeatures!['premium_enabled'] == true;
     }
-    return subscriptionStatus != SubscriptionStatus.free;
+    // 일반 사용자는 subscriptionProvider를 통해 확인해야 함
+    // subscriptionStatus는 DB와 동기화 문제로 신뢰할 수 없음
+    return false;
   }
 
   bool get hasUnlimitedTokens =>

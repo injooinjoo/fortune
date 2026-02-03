@@ -8,7 +8,7 @@ final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((r
 });
 
 class ThemeModeNotifier extends StateNotifier<ThemeMode> {
-  ThemeModeNotifier() : super(ThemeMode.light) {
+  ThemeModeNotifier() : super(ThemeMode.dark) {
     _loadThemePreference();
   }
 
@@ -34,8 +34,8 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
             break;
         }
       } else {
-        // If no saved preference, default to light theme
-        state = ThemeMode.light;
+        // If no saved preference, default to dark theme (Neon Dark)
+        state = ThemeMode.dark;
       }
       
       // Force a rebuild after loading to ensure correct theme is applied

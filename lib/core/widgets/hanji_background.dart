@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/fortune_design_system.dart';
+import '../design_system/theme/ds_extensions.dart';
 
 /// 한지 텍스처 배경 위젯
 ///
@@ -29,10 +29,10 @@ class HanjiBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final defaultOpacity = isDark ? 0.04 : 0.08;
     final effectiveOpacity = opacity ?? defaultOpacity;
-    final bgColor = backgroundColor ??
-        (isDark ? TossDesignSystem.black : TossDesignSystem.gray50);
+    final bgColor = backgroundColor ?? colors.background;
 
     if (!showTexture) {
       return Container(
@@ -55,6 +55,9 @@ class HanjiBackground extends StatelessWidget {
                 repeat: ImageRepeat.repeat,
                 color: isDark ? Colors.white : null,
                 colorBlendMode: isDark ? BlendMode.overlay : null,
+                errorBuilder: (context, error, stackTrace) {
+                  return const SizedBox.shrink();
+                },
               ),
             ),
           ),
@@ -108,9 +111,10 @@ class HanjiScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final defaultOpacity = isDark ? 0.04 : 0.08;
     final effectiveOpacity = textureOpacity ?? defaultOpacity;
-    final bgColor = isDark ? TossDesignSystem.black : TossDesignSystem.gray50;
+    final bgColor = colors.background;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -128,6 +132,9 @@ class HanjiScaffold extends StatelessWidget {
                       repeat: ImageRepeat.repeat,
                       color: isDark ? Colors.white : null,
                       colorBlendMode: isDark ? BlendMode.overlay : null,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox.shrink();
+                      },
                     ),
                   ),
                 ),

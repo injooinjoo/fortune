@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+		<key>BGTaskSchedulerPermittedIdentifiers</key>
+		<array>
+			<string>com.beyond.fortune.refresh</string>
+			<string>com.beyond.fortune.processing</string>
+		</array>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
 		<key>CFBundleDevelopmentRegion</key>
@@ -57,11 +62,13 @@
 		</array>
 		<key>CFBundleVersion</key>
 		<string>42</string>
-		<key>GADApplicationIdentifier</key>
-		<string>ca-app-pub-2803643717997352~5970615545</string>
 		<key>FirebaseAutomaticScreenReportingEnabled</key>
 		<false/>
 		<key>FirebaseDataCollectionDefaultEnabled</key>
+		<false/>
+		<key>GADApplicationIdentifier</key>
+		<string>ca-app-pub-2803643717997352~5970615545</string>
+		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 		<key>KAKAO_APP_KEY</key>
 		<string>79a067e199f5984dd47438d057ecb0c5</string>
@@ -85,26 +92,24 @@
 		</dict>
 		<key>NSApplicationGroupIdentifier</key>
 		<string>group.com.beyond.fortune</string>
+		<key>NSCalendarsFullAccessUsageDescription</key>
+		<string>일정을 분석하여 맞춤형 인사이트를 제공하고, 중요한 날짜를 저장하기 위해 캘린더 접근 권한이 필요합니다.</string>
+		<key>NSCalendarsUsageDescription</key>
+		<string>중요한 날짜를 캘린더에 저장하기 위해 접근 권한이 필요합니다.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>AI가 얼굴 특성을 분석하여 맞춤형 인사이트를 제공하기 위해 카메라 접근 권한이 필요합니다.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>위치 기반 맞춤 인사이트를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>음성으로 내용을 입력하기 위해 마이크 접근 권한이 필요합니다.</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
 		<string>분석 결과 이미지를 저장하려면 사진 보관함 접근 권한이 필요합니다.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>AI가 얼굴 특성을 분석하기 위해 사진 보관함 접근 권한이 필요합니다.</string>
-		<key>NSUserTrackingUsageDescription</key>
-		<string>맞춤형 광고와 더 나은 서비스 제공을 위해 앱 활동 추적 권한이 필요합니다. 추적을 허용하지 않아도 앱 사용에는 제한이 없습니다.</string>
 		<key>NSSpeechRecognitionUsageDescription</key>
 		<string>음성을 텍스트로 변환하여 입력을 편리하게 하기 위해 음성 인식 권한이 필요합니다.</string>
-		<key>NSCalendarsFullAccessUsageDescription</key>
-		<string>일정을 분석하여 맞춤형 인사이트를 제공하고, 중요한 날짜를 저장하기 위해 캘린더 접근 권한이 필요합니다.</string>
-		<key>NSCalendarsUsageDescription</key>
-		<string>중요한 날짜를 캘린더에 저장하기 위해 접근 권한이 필요합니다.</string>
-		<key>NSHealthShareUsageDescription</key>
-		<string>걸음 수, 수면, 심박수 등 건강 데이터를 분석하여 맞춤형 건강 인사이트를 제공하기 위해 건강 앱 접근 권한이 필요합니다. (프리미엄 기능)</string>
-		<key>NSHealthUpdateUsageDescription</key>
-		<string>건강 목표 달성 현황을 기록하기 위해 건강 앱 쓰기 권한이 필요합니다.</string>
 		<key>NSSupportsLiveActivities</key>
 		<true/>
 		<key>NSSupportsLiveActivitiesFrequentUpdates</key>
@@ -115,10 +120,8 @@
 			<string>com.fortune.fortune.personalityMatch</string>
 			<string>com.fortune.fortune.luckyGuide</string>
 		</array>
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
-		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>위치 기반 맞춤 인사이트를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
+		<key>NSUserTrackingUsageDescription</key>
+		<string>맞춤형 광고와 더 나은 서비스 제공을 위해 앱 활동 추적 권한이 필요합니다. 추적을 허용하지 않아도 앱 사용에는 제한이 없습니다.</string>
 		<key>NSWidgetExtensionBundleIdentifiers</key>
 		<array>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
@@ -128,10 +131,14 @@
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneTimeSlotWidget</string>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneLottoWidget</string>
 		</array>
-		<!-- SKAdNetwork: Essential networks for Google AdMob (12 identifiers) -->
+		<key>NidAppName</key>
+		<string>ZPZG</string>
+		<key>NidClientID</key>
+		<string>QMEfy6U82j8nKG3HSE8y</string>
+		<key>NidUrlScheme</key>
+		<string>naverQMEfy6U82j8nKG3HSE8y</string>
 		<key>SKAdNetworkItems</key>
 		<array>
-			<!-- Google AdMob (required) -->
 			<dict>
 				<key>SKAdNetworkIdentifier</key>
 				<string>cstr6suwn9.skadnetwork</string>
@@ -148,7 +155,6 @@
 				<key>SKAdNetworkIdentifier</key>
 				<string>2fnua5tdw4.skadnetwork</string>
 			</dict>
-			<!-- Firebase -->
 			<dict>
 				<key>SKAdNetworkIdentifier</key>
 				<string>v72qych5uu.skadnetwork</string>
@@ -161,7 +167,6 @@
 				<key>SKAdNetworkIdentifier</key>
 				<string>cp8zw746q7.skadnetwork</string>
 			</dict>
-			<!-- Major ad networks -->
 			<dict>
 				<key>SKAdNetworkIdentifier</key>
 				<string>ydx93a7ass.skadnetwork</string>
@@ -185,8 +190,25 @@
 		</array>
 		<key>StripePublishableKey</key>
 		<string>$(STRIPE_PUBLISHABLE_KEY)</string>
-		<key>UILaunchStoryboardName</key>
-		<string>LaunchScreen</string>
+		<key>UIApplicationSceneManifest</key>
+		<dict>
+			<key>UIApplicationSupportsMultipleScenes</key>
+			<false/>
+			<key>UISceneConfigurations</key>
+			<dict>
+				<key>UIWindowSceneSessionRoleApplication</key>
+				<array>
+					<dict>
+						<key>UISceneConfigurationName</key>
+						<string>Default Configuration</string>
+						<key>UISceneDelegateClassName</key>
+						<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+						<key>UISceneStoryboardFile</key>
+						<string>Main</string>
+					</dict>
+				</array>
+			</dict>
+		</dict>
 		<key>UIApplicationShortcutItems</key>
 		<array>
 			<dict>
@@ -218,32 +240,12 @@
 			<string>remote-notification</string>
 			<string>processing</string>
 		</array>
-		<key>BGTaskSchedulerPermittedIdentifiers</key>
-		<array>
-			<string>com.beyond.fortune.refresh</string>
-			<string>com.beyond.fortune.processing</string>
-		</array>
-		<key>UIApplicationSceneManifest</key>
-		<dict>
-			<key>UIApplicationSupportsMultipleScenes</key>
-			<false/>
-			<key>UISceneConfigurations</key>
-			<dict>
-				<key>UIWindowSceneSessionRoleApplication</key>
-				<array>
-					<dict>
-						<key>UISceneConfigurationName</key>
-						<string>Default Configuration</string>
-						<key>UISceneDelegateClassName</key>
-						<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
-						<key>UISceneStoryboardFile</key>
-						<string>Main</string>
-					</dict>
-				</array>
-			</dict>
-		</dict>
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>
+		<key>UIStatusBarHidden</key>
+		<false/>
 		<key>UISupportedInterfaceOrientations</key>
 		<array>
 			<string>UIInterfaceOrientationPortrait</string>
@@ -265,15 +267,5 @@
 		<string>ZPZG</string>
 		<key>naverServiceAppUrlScheme</key>
 		<string>naverQMEfy6U82j8nKG3HSE8y</string>
-		<key>NidClientID</key>
-		<string>QMEfy6U82j8nKG3HSE8y</string>
-		<key>NidAppName</key>
-		<string>ZPZG</string>
-		<key>NidUrlScheme</key>
-		<string>naverQMEfy6U82j8nKG3HSE8y</string>
-		<key>UIStatusBarHidden</key>
-		<false/>
-		<key>ITSAppUsesNonExemptEncryption</key>
-		<false/>
 	</dict>
 </plist>

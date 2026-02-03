@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/theme/typography_unified.dart';
 
 class ProfileVerificationPage extends ConsumerStatefulWidget {
   const ProfileVerificationPage({super.key});
@@ -15,26 +16,12 @@ class _ProfileVerificationPageState
     extends ConsumerState<ProfileVerificationPage> {
   String _selectedMethod = 'phone'; // 'phone' or 'identity'
 
-  // Design System Helper Methods
-  Color _getTextColor(BuildContext context) {
-    return context.colors.textPrimary;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return context.colors.textSecondary;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return context.colors.background;
-  }
-
-  Color _getCardColor(BuildContext context) {
-    return context.colors.surface;
-  }
-
-  Color _getDividerColor(BuildContext context) {
-    return context.colors.border;
-  }
+  // Design System Helper Getters
+  Color get _textColor => context.colors.textPrimary;
+  Color get _secondaryTextColor => context.colors.textSecondary;
+  Color get _backgroundColor => context.colors.backgroundSecondary;
+  Color get _cardColor => context.colors.surface;
+  Color get _dividerColor => context.colors.border;
 
   Widget _buildSectionHeader(String title) {
     return Padding(
@@ -46,8 +33,8 @@ class _ProfileVerificationPageState
       ),
       child: Text(
         title,
-        style: DSTypography.labelSmall.copyWith(
-          color: _getSecondaryTextColor(context),
+        style: context.heading4.copyWith(
+          color: _secondaryTextColor,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
@@ -80,7 +67,7 @@ class _ProfileVerificationPageState
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: isLast ? Colors.transparent : _getDividerColor(context),
+                color: isLast ? Colors.transparent : _dividerColor,
                 width: 0.5,
               ),
             ),
@@ -93,7 +80,7 @@ class _ProfileVerificationPageState
                 size: 22,
                 color: isSelected
                     ? context.colors.accent
-                    : _getSecondaryTextColor(context),
+                    : _secondaryTextColor,
               ),
               const SizedBox(width: DSSpacing.md),
 
@@ -104,16 +91,16 @@ class _ProfileVerificationPageState
                   children: [
                     Text(
                       title,
-                      style: DSTypography.bodySmall.copyWith(
-                        color: _getTextColor(context),
+                      style: context.bodySmall.copyWith(
+                        color: _textColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       description,
-                      style: DSTypography.labelSmall.copyWith(
-                        color: _getSecondaryTextColor(context),
+                      style: context.labelSmall.copyWith(
+                        color: _secondaryTextColor,
                       ),
                     ),
                   ],
@@ -154,7 +141,7 @@ class _ProfileVerificationPageState
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isLast ? Colors.transparent : _getDividerColor(context),
+            color: isLast ? Colors.transparent : _dividerColor,
             width: 0.5,
           ),
         ),
@@ -174,16 +161,16 @@ class _ProfileVerificationPageState
               children: [
                 Text(
                   title,
-                  style: DSTypography.bodySmall.copyWith(
-                    color: _getTextColor(context),
+                  style: context.bodySmall.copyWith(
+                    color: _textColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: DSTypography.labelSmall.copyWith(
-                    color: _getSecondaryTextColor(context),
+                  style: context.labelSmall.copyWith(
+                    color: _secondaryTextColor,
                   ),
                 ),
               ],
@@ -201,13 +188,13 @@ class _ProfileVerificationPageState
       builder: (dialogContext) => AlertDialog(
         title: Text(
           '준비 중',
-          style: DSTypography.headingSmall.copyWith(
+          style: dialogContext.heading3.copyWith(
             color: dialogContext.colors.textPrimary,
           ),
         ),
         content: Text(
           '본인 인증 기능은 곧 추가될 예정입니다.',
-          style: DSTypography.bodySmall.copyWith(
+          style: dialogContext.bodySmall.copyWith(
             color: dialogContext.colors.textPrimary,
           ),
         ),
@@ -216,7 +203,7 @@ class _ProfileVerificationPageState
             onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               '확인',
-              style: DSTypography.labelMedium.copyWith(
+              style: dialogContext.labelMedium.copyWith(
                 color: dialogContext.colors.accent,
               ),
             ),
@@ -229,18 +216,18 @@ class _ProfileVerificationPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: _backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
+          icon: Icon(Icons.arrow_back, color: _textColor),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '프로필 인증',
-          style: DSTypography.headingSmall.copyWith(
-            color: _getTextColor(context),
+          style: context.heading3.copyWith(
+            color: _textColor,
           ),
         ),
       ),
@@ -275,7 +262,7 @@ class _ProfileVerificationPageState
                             Expanded(
                               child: Text(
                                 '본인 인증을 완료하면 더 많은 프리미엄 기능을 이용할 수 있습니다.',
-                                style: DSTypography.labelSmall.copyWith(
+                                style: context.labelSmall.copyWith(
                                   color: context.colors.accent,
                                 ),
                               ),
@@ -291,10 +278,10 @@ class _ProfileVerificationPageState
                       margin: const EdgeInsets.symmetric(
                           horizontal: DSSpacing.pageHorizontal),
                       decoration: BoxDecoration(
-                        color: _getCardColor(context),
+                        color: _cardColor,
                         borderRadius: BorderRadius.circular(DSRadius.md),
                         border: Border.all(
-                          color: _getDividerColor(context),
+                          color: _dividerColor,
                           width: 1,
                         ),
                         boxShadow: [
@@ -330,10 +317,10 @@ class _ProfileVerificationPageState
                       margin: const EdgeInsets.symmetric(
                           horizontal: DSSpacing.pageHorizontal),
                       decoration: BoxDecoration(
-                        color: _getCardColor(context),
+                        color: _cardColor,
                         borderRadius: BorderRadius.circular(DSRadius.md),
                         border: Border.all(
-                          color: _getDividerColor(context),
+                          color: _dividerColor,
                           width: 1,
                         ),
                         boxShadow: [
@@ -381,10 +368,10 @@ class _ProfileVerificationPageState
             Container(
               padding: const EdgeInsets.all(DSSpacing.pageHorizontal),
               decoration: BoxDecoration(
-                color: _getCardColor(context),
+                color: _cardColor,
                 border: Border(
                   top: BorderSide(
-                    color: _getDividerColor(context),
+                    color: _dividerColor,
                     width: 0.5,
                   ),
                 ),
@@ -406,7 +393,7 @@ class _ProfileVerificationPageState
                     ),
                     child: Text(
                       _selectedMethod == 'phone' ? '휴대폰 인증 시작' : '신분증 인증 시작',
-                      style: DSTypography.labelMedium.copyWith(
+                      style: context.labelMedium.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),

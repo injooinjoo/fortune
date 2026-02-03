@@ -1,122 +1,144 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../design_system/tokens/ds_colors.dart';
+import '../design_system/tokens/ds_spacing.dart';
+import '../design_system/tokens/ds_radius.dart';
+import '../design_system/tokens/ds_animation.dart';
 import 'font_size_system.dart';
 import 'typography_unified.dart';
 
-/// Fortune 디자인 시스템 완전 정의
-/// Fortune Design System Complete Definition
+/// Fortune 디자인 시스템 - Neon Dark Theme
+/// Fortune Design System - Neon Dark Theme
 class FortuneDesignSystem {
   // ==========================================
-  // 1. COLOR SYSTEM (색상 시스템)
+  // 1. COLOR SYSTEM - NEON DARK THEME
   // ==========================================
 
-  /// Primary Brand Colors (Hanji & Ink Wash theme)
-  static const Color indigo = Color(0xFF2C3E50); // 쪽빛 (Wood/Primary)
-  static const Color vermilion = Color(0xFFC0392B); // 다홍색 (Fire/Accent)
-  static const Color ocher = Color(0xFFD35400); // 황토색 (Earth)
-  static const Color charcoal = Color(0xFF212F3D); // 현무색 (Water/Ink)
-  static const Color hanjiBeige = Color(0xFFF2F0E9); // 한지색 (Background)
+  /// @deprecated Use DSColors.accent instead
+  static const Color neonGreen = DSColors.accent;
+  /// @deprecated Use DSColors.accentHover instead
+  static const Color neonGreenDim = DSColors.accentHover;
+  static const Color neonGreenBright = Color(0xFF4DFF28);
 
-  static const Color tossBlue = indigo;
-  static const Color tossBlueDark = charcoal;
-  static const Color tossBlueLight = Color(0xFF34495E);
+  /// Legacy aliases for compatibility
+  static const Color indigo = DSColors.accent;
+  /// @deprecated Use DSColors.error instead
+  static const Color vermilion = DSColors.error;
+  /// @deprecated Use DSColors.warning instead
+  static const Color ocher = DSColors.warning;
+  /// @deprecated Use DSColors.surface instead
+  static const Color charcoal = DSColors.surface;
+  static const Color hanjiBeige = Color(0xFFFFFFFF);
 
-  /// Grayscale (Ink & Wash Scale)
-  static const Color gray900 = Color(0xFF1A1A1A); // 깊은 먹색 (Primary Text)
-  static const Color gray800 = Color(0xFF2C2C2C);
-  static const Color gray700 = Color(0xFF454545);
-  static const Color gray600 = Color(0xFF5F5F5F);
-  static const Color gray500 = Color(0xFF7A7A7A);
-  static const Color gray400 = Color(0xFF969696);
-  static const Color gray300 = Color(0xFFB3B3B3);
-  static const Color gray200 = Color(0xFFD1D1D1);
-  static const Color gray100 = Color(0xFFEBEBEB);
-  static const Color gray50 = Color(0xFFF7F7F7);
+  static const Color tossBlue = DSColors.accent;
+  static const Color tossBlueDark = DSColors.accent;
+  static const Color tossBlueLight = DSColors.accentHover;
+
+  /// Grayscale - Dark Theme Optimized
+  /// @deprecated Use DSColors.textPrimary or context.colors.textPrimary
+  static const Color gray900 = DSColors.textPrimary;
+  static const Color gray800 = Color(0xFFE0E0E0);
+  /// @deprecated Use DSColors.textSecondary
+  static const Color gray700 = DSColors.textSecondary;
+  static const Color gray600 = Color(0xFF909090);
+  /// @deprecated Use DSColors.textTertiary
+  static const Color gray500 = DSColors.textTertiary;
+  static const Color gray400 = Color(0xFF606060);
+  static const Color gray300 = Color(0xFF404040);
+  /// @deprecated Use DSColors.border
+  static const Color gray200 = DSColors.border;
+  /// @deprecated Use DSColors.surfaceSecondary
+  static const Color gray100 = DSColors.surfaceSecondary;
+  /// @deprecated Use DSColors.surface
+  static const Color gray50 = DSColors.surface;
   static const Color white = Color(0xFFFFFFFF);
-  static const Color black = Color(0xFF000000);
+  /// @deprecated Use DSColors.background
+  static const Color black = DSColors.background;
   static const Color transparent = Color(0x00000000);
 
-  /// Dark Mode Grayscale (다크모드 회색 스케일) - 개선된 대비
-  static const Color grayDark50 = Color(0xFF17171C); // 다크모드 배경
-  static const Color grayDark100 = Color(0xFF26262E); // 다크모드 카드
-  static const Color grayDark200 = Color(0xFF3A3A42); // 다크모드 표면
-  static const Color grayDark300 = Color(0xFF404048); // 다크모드 테두리
-  static const Color grayDark400 = Color(0xFF9CA3AF); // 다크모드 보조 텍스트 (개선된 대비)
-  static const Color grayDark500 = Color(0xFFD1D6DB); // 다크모드 힌트 (개선된 대비)
-  static const Color grayDark600 = Color(0xFFE5E8EB); // 밝은 보조 텍스트
-  static const Color grayDark700 = Color(0xFFF2F4F6); // 매우 밝은 텍스트
-  static const Color grayDark800 = Color(0xFFF9FAFB); // 거의 화이트
-  static const Color grayDark900 = Color(0xFFFFFFFF); // 다크모드 주 텍스트
+  /// Dark Mode Grayscale (Pure Black Theme)
+  /// @deprecated Use DSColors tokens instead
+  static const Color grayDark50 = DSColors.background;
+  static const Color grayDark100 = DSColors.surface;
+  static const Color grayDark200 = DSColors.surfaceSecondary;
+  static const Color grayDark300 = DSColors.border;
+  static const Color grayDark400 = DSColors.textSecondary;
+  static const Color grayDark500 = DSColors.textTertiary;
+  static const Color grayDark600 = Color(0xFFD0D0D0);
+  static const Color grayDark700 = Color(0xFFE0E0E0);
+  static const Color grayDark800 = Color(0xFFF0F0F0);
+  static const Color grayDark900 = DSColors.textPrimary;
 
   /// Semantic Background Colors
-  static const Color backgroundDark = grayDark50;
-  static const Color backgroundLight =
-      hanjiBeige; // Light mode uses Hanji background
-  static const Color cardBackgroundDark = grayDark100;
-  static const Color cardBackgroundLight = white;
-  static const Color surfaceBackgroundDark = grayDark200;
-  static const Color surfaceBackgroundLight =
-      Color(0xFFEBE7DF); // Slightly darker Hanji for surfaces
+  /// @deprecated Use DSColors/context.colors instead
+  static const Color backgroundDark = DSColors.background;
+  static const Color backgroundLight = DSColors.backgroundDark;
+  static const Color cardBackgroundDark = DSColors.surface;
+  static const Color cardBackgroundLight = DSColors.surfaceDark;
+  static const Color surfaceBackgroundDark = DSColors.surfaceSecondary;
+  static const Color surfaceBackgroundLight = DSColors.backgroundTertiaryDark;
 
-  /// Semantic Text Colors (명확한 텍스트색 정의)
-  /// 텍스트 색상 사용 시 항상 이 상수들을 사용하세요!
-  static const Color textPrimaryDark = grayDark900; // 다크모드 주 텍스트 (흰색)
-  static const Color textPrimaryLight = gray900; // 라이트모드 주 텍스트 (검은색)
-  static const Color textSecondaryDark = grayDark400; // 다크모드 보조 텍스트
-  static const Color textSecondaryLight = gray500; // 라이트모드 보조 텍스트
-  static const Color textTertiaryDark =
-      grayDark500; // 다크모드 3차 텍스트 (힌트, placeholder)
-  static const Color textTertiaryLight = gray400; // 라이트모드 3차 텍스트
+  /// Semantic Text Colors
+  /// @deprecated Use DSColors/context.colors instead
+  static const Color textPrimaryDark = DSColors.textPrimary;
+  static const Color textPrimaryLight = DSColors.textPrimaryDark;
+  static const Color textSecondaryDark = DSColors.textSecondary;
+  static const Color textSecondaryLight = DSColors.textSecondaryDark;
+  static const Color textTertiaryDark = DSColors.textTertiary;
+  static const Color textTertiaryLight = DSColors.textTertiaryDark;
 
-  /// Semantic Divider & Border Colors (구분선 및 테두리 색상)
-  static const Color dividerDark = grayDark300; // 다크모드 구분선
-  static const Color dividerLight = gray200; // 라이트모드 구분선
-  static const Color borderDark = grayDark300; // 다크모드 테두리
-  static const Color borderLight = gray300; // 라이트모드 테두리
+  /// Semantic Divider & Border Colors
+  /// @deprecated Use DSColors/context.colors instead
+  static const Color dividerDark = DSColors.divider;
+  static const Color dividerLight = DSColors.dividerDark;
+  static const Color borderDark = DSColors.border;
+  static const Color borderLight = DSColors.borderDark;
 
-  /// Semantic Colors (의미론적 색상)
-  /// Semantic Colors (Balanced for traditional theme)
-  static const Color successGreen = Color(0xFF2D5A27); // Muted forest green
-  static const Color warningOrange = ocher;
-  static const Color warningYellow = Color(0xFFBC8F00);
-  static const Color primaryYellow = warningYellow;
-  static const Color primaryGreen = successGreen;
-  static const Color primaryRed = vermilion;
-  static const Color errorRed = vermilion;
-  static const Color infoBlue = indigo;
-  static const Color purple = Color(0xFF4A235A);
-  static const Color purple50 = Color(0xFFF4ECF7);
-  static const Color teal = Color(0xFF0E6251);
-  static const Color orange = ocher;
-  static const Color pink = Color(0xFF943126);
-  static const Color bluePrimary = indigo;
+  /// Semantic Colors - Neon Variants
+  /// @deprecated Use DSColors instead
+  static const Color successGreen = DSColors.success;
+  static const Color warningOrange = DSColors.warning;
+  static const Color warningYellow = DSColors.warning;
+  static const Color primaryYellow = DSColors.warning;
+  static const Color primaryGreen = DSColors.accent;
+  static const Color primaryRed = DSColors.error;
+  static const Color errorRed = DSColors.error;
+  static const Color infoBlue = DSColors.info;
+  static const Color purple = DSColors.accentTertiary;
+  static const Color purple50 = Color(0xFF1A001A);
+  static const Color teal = DSColors.accentSecondary;
+  static const Color orange = DSColors.warning;
+  static const Color pink = DSColors.accentTertiary;
+  static const Color bluePrimary = DSColors.accent;
 
-  // Common aliases for Colors.* mapping
-  static const Color success = successGreen;
-  static const Color error = errorRed;
-  static const Color warning = warningOrange;
-  static const Color primaryBlue = indigo;
+  // Common aliases
+  static const Color success = DSColors.success;
+  static const Color error = DSColors.error;
+  static const Color warning = DSColors.warning;
+  static const Color primaryBlue = DSColors.accent;
 
-  // Additional semantic colors for fortune app
-  static const Color pinkPrimary = Color(0xFFEC4899);
+  // Additional semantic colors
+  static const Color pinkPrimary = DSColors.accentTertiary;
   static const Color brownPrimary = Color(0xFF8B5A3C);
 
-  /// Dark Mode Semantic Colors (다크모드 의미론적 색상)
-  static const Color successGreenDark = Color(0xFF34D399);
-  static const Color warningOrangeDark = Color(0xFFFBBF24);
-  static const Color errorRedDark = Color(0xFFF87171);
-  static const Color infoBlueDark = Color(0xFF60A5FA);
+  /// Dark Mode Semantic Colors
+  static const Color successGreenDark = DSColors.success;
+  static const Color warningOrangeDark = DSColors.warning;
+  static const Color errorRedDark = DSColors.error;
+  static const Color infoBlueDark = DSColors.info;
 
-  /// Background Colors (배경 색상)
-  static const Color backgroundPrimary = hanjiBeige;
-  static const Color backgroundSecondary = Color(0xFFEBE7DF);
-  static const Color backgroundTertiary = gray100;
-  static const Color backgroundElevated = white;
+  /// Background Colors (Light mode)
+  /// @deprecated Use DSColors/context.colors instead
+  static const Color backgroundPrimary = DSColors.backgroundDark;
+  static const Color backgroundSecondary = DSColors.backgroundSecondaryDark;
+  static const Color backgroundTertiary = DSColors.backgroundTertiaryDark;
+  static const Color backgroundElevated = DSColors.backgroundDark;
 
-  /// Surface Colors (표면 색상)
-  static const Color surfacePrimary = white;
-  static const Color surfaceSecondary = gray50;
-  static const Color surfaceOverlay = Color(0x99000000); // 60% black
+  /// Surface Colors (Light mode)
+  /// @deprecated Use DSColors/context.colors instead
+  static const Color surfacePrimary = DSColors.surfaceDark;
+  static const Color surfaceSecondary = DSColors.surfaceSecondaryDark;
+  static const Color surfaceOverlay = DSColors.overlay;
 
   // ==========================================
   // 2. TYPOGRAPHY SYSTEM (타이포그래피)
@@ -152,10 +174,10 @@ class FortuneDesignSystem {
   ///
   /// 하위 호환성을 위해 유지되는 고정 크기 상수입니다.
 
-  /// Font Families
-  static const String fontFamilyKorean = 'NanumMyeongjo';
-  static const String fontFamilyEnglish = 'NanumMyeongjo';
-  static const String fontFamilyNumber = 'NanumMyeongjo';
+  /// Font Families - GmarketSans
+  static const String fontFamilyKorean = 'GmarketSans';
+  static const String fontFamilyEnglish = 'GmarketSans';
+  static const String fontFamilyNumber = 'GmarketSans';
 
   /// Display Styles (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle display1 = TextStyle(
@@ -289,34 +311,36 @@ class FortuneDesignSystem {
   // 3. SPACING SYSTEM (간격 시스템)
   // ==========================================
 
-  /// Base unit: 4px
-  static const double spacingBase = 4.0;
+  /// @deprecated Use DSSpacing tokens instead
+  static const double spacingBase = DSSpacing.base;
 
-  static const double spacingXXS = 2.0; // 2px
-  static const double spacingXS = 4.0; // 4px
-  static const double spacingS = 8.0; // 8px
-  static const double spacingM = 16.0; // 16px
-  static const double spacingL = 24.0; // 24px
-  static const double spacingXL = 32.0; // 32px
-  static const double spacingXXL = 40.0; // 40px
-  static const double spacing3XL = 48.0; // 48px
-  static const double spacing4XL = 64.0; // 64px
+  static const double spacingXXS = DSSpacing.xxs;
+  static const double spacingXS = DSSpacing.xs;
+  static const double spacingS = DSSpacing.sm;
+  static const double spacingM = DSSpacing.md;
+  static const double spacingL = DSSpacing.lg;
+  static const double spacingXL = DSSpacing.xl;
+  static const double spacingXXL = DSSpacing.xxl;
+  static const double spacing3XL = DSSpacing.xxxl;
+  static const double spacing4XL = DSSpacing.xxxxl;
 
   /// Page Margins
-  static const double marginHorizontal = 20.0;
-  static const double marginVertical = 16.0;
+  /// @deprecated Use DSSpacing.pageHorizontal / DSSpacing.pageVertical
+  static const double marginHorizontal = DSSpacing.pageHorizontal;
+  static const double marginVertical = DSSpacing.pageVertical;
 
   // ==========================================
   // 4. RADIUS SYSTEM (모서리 반경)
   // ==========================================
 
-  static const double radiusXS = 4.0;
-  static const double radiusS = 8.0;
-  static const double radiusM = 12.0;
-  static const double radiusL = 16.0;
-  static const double radiusXL = 20.0;
-  static const double radiusXXL = 24.0;
-  static const double radiusFull = 9999.0;
+  /// @deprecated Use DSRadius tokens instead
+  static const double radiusXS = DSRadius.xs;
+  static const double radiusS = DSRadius.smd;
+  static const double radiusM = DSRadius.md;
+  static const double radiusL = DSRadius.lg;
+  static const double radiusXL = 20.0; // Between DSRadius.lg(16) and DSRadius.xl(24)
+  static const double radiusXXL = DSRadius.xl;
+  static const double radiusFull = DSRadius.full;
 
   // ==========================================
   // 5. ELEVATION & SHADOWS (그림자)
@@ -371,18 +395,18 @@ class FortuneDesignSystem {
   // 6. ANIMATION (애니메이션)
   // ==========================================
 
-  /// Duration
-  static const Duration durationMicro = Duration(milliseconds: 100);
-  static const Duration durationShort = Duration(milliseconds: 200);
-  static const Duration durationMedium = Duration(milliseconds: 300);
-  static const Duration durationLong = Duration(milliseconds: 500);
-  static const Duration durationXLong = Duration(milliseconds: 800);
+  /// @deprecated Use DSAnimation tokens instead
+  static const Duration durationMicro = DSAnimation.micro;
+  static const Duration durationShort = DSAnimation.quick;
+  static const Duration durationMedium = DSAnimation.normal;
+  static const Duration durationLong = DSAnimation.slow;
+  static const Duration durationXLong = DSAnimation.long;
 
-  /// Curves
-  static const Curve curveDefault = Curves.easeInOut;
-  static const Curve curveEmphasized = Curves.easeOutCubic;
-  static const Curve curveDecelerate = Curves.decelerate;
-  static const Curve curveAccelerate = Curves.easeIn;
+  /// @deprecated Use DSAnimation curves instead
+  static const Curve curveDefault = DSAnimation.standard;
+  static const Curve curveEmphasized = DSAnimation.emphasized;
+  static const Curve curveDecelerate = DSAnimation.decelerate;
+  static const Curve curveAccelerate = DSAnimation.accelerate;
 
   // ==========================================
   // 7. COMPONENT STYLES (컴포넌트 스타일)
@@ -589,7 +613,7 @@ class FortuneDesignSystem {
     return baseTheme.apply(fontSizeFactor: scaleFactor);
   }
 
-  /// Light Theme
+  /// Light Theme - Neon Light (White + Neon Green)
   /// [fontScale] 사용자 폰트 크기 배율 (기본값: 1.0)
   static ThemeData lightTheme({double fontScale = 1.0}) {
     final textTheme = _buildTextTheme(
@@ -600,58 +624,80 @@ class FortuneDesignSystem {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      primaryColor: tossBlue,
-      scaffoldBackgroundColor: backgroundPrimary,
+      primaryColor: neonGreen,
+      scaffoldBackgroundColor: white,
       fontFamily: fontFamilyKorean,
 
       textTheme: textTheme,
 
-      // Color Scheme
+      // Color Scheme - Neon Light
       colorScheme: const ColorScheme.light(
-        primary: tossBlue,
-        secondary: tossBlue,
+        primary: neonGreen,
+        secondary: neonGreen,
         surface: surfacePrimary,
         error: errorRed,
-        onPrimary: white,
-        onSecondary: white,
-        onSurface: gray900,
+        onPrimary: black, // Black text on neon green buttons
+        onSecondary: black,
+        onSurface: black,
         onError: white,
       ),
 
       // App Bar Theme
       appBarTheme: AppBarTheme(
-        backgroundColor: backgroundPrimary,
-        foregroundColor: gray900,
+        backgroundColor: white,
+        foregroundColor: black,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: TypographyUnified.heading4.copyWith(color: gray900),
-        iconTheme: const IconThemeData(color: gray900),
+        titleTextStyle: TypographyUnified.heading4.copyWith(color: black),
+        iconTheme: const IconThemeData(color: black),
       ),
 
-      // Elevated Button Theme
-      // REMOVED: elevatedButtonTheme to allow per-button customization
-      // Each button should define its own style using ElevatedButton.styleFrom()
+      // Elevated Button Theme - Neon Green with Black Text
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: neonGreen,
+          foregroundColor: black,
+          disabledBackgroundColor: borderLight,
+          disabledForegroundColor: textSecondaryLight,
+          elevation: 0,
+          shadowColor: transparent,
+          fixedSize: const Size.fromHeight(buttonHeightLarge),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusM),
+          ),
+          textStyle: TypographyUnified.buttonMedium.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
 
       // Text Button Theme
       textButtonTheme: TextButtonThemeData(
-        style: ghostButtonStyle(),
+        style: TextButton.styleFrom(
+          foregroundColor: neonGreen,
+          backgroundColor: transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusM),
+          ),
+          textStyle: TypographyUnified.buttonMedium,
+        ),
       ),
 
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: gray50,
+        fillColor: surfacePrimary,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: spacingM,
           vertical: spacingM,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusS),
-          borderSide: const BorderSide(color: gray200, width: 1),
+          borderSide: const BorderSide(color: borderLight, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusS),
-          borderSide: const BorderSide(color: tossBlue, width: 2),
+          borderSide: const BorderSide(color: neonGreen, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusS),
@@ -661,20 +707,20 @@ class FortuneDesignSystem {
           borderRadius: BorderRadius.circular(radiusS),
           borderSide: const BorderSide(color: errorRed, width: 2),
         ),
-        hintStyle: TypographyUnified.bodyMedium.copyWith(color: gray400),
+        hintStyle: TypographyUnified.bodyMedium.copyWith(color: textSecondaryLight),
         errorStyle: TypographyUnified.labelSmall.copyWith(color: errorRed),
       ),
 
       // Card Theme
       cardTheme: const CardThemeData(
-        color: white,
+        color: surfacePrimary,
         elevation: 0,
         margin: EdgeInsets.all(0),
       ),
 
       // Divider Theme
       dividerTheme: const DividerThemeData(
-        color: gray200,
+        color: dividerLight,
         thickness: 1,
         space: 0,
       ),
@@ -682,8 +728,8 @@ class FortuneDesignSystem {
       // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: white,
-        selectedItemColor: tossBlue,
-        unselectedItemColor: gray400,
+        selectedItemColor: neonGreen,
+        unselectedItemColor: textSecondaryLight,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
@@ -695,8 +741,8 @@ class FortuneDesignSystem {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusL),
         ),
-        titleTextStyle: TypographyUnified.heading4.copyWith(color: gray900),
-        contentTextStyle: TypographyUnified.bodyMedium.copyWith(color: gray700),
+        titleTextStyle: TypographyUnified.heading4.copyWith(color: black),
+        contentTextStyle: TypographyUnified.bodyMedium.copyWith(color: textSecondaryLight),
       ),
 
       // Bottom Sheet Theme
@@ -711,7 +757,7 @@ class FortuneDesignSystem {
     );
   }
 
-  /// Dark Theme
+  /// Dark Theme - Neon Dark (Pure Black + Neon Green)
   /// [fontScale] 사용자 폰트 크기 배율 (기본값: 1.0)
   static ThemeData darkTheme({double fontScale = 1.0}) {
     final textTheme = _buildTextTheme(
@@ -722,58 +768,60 @@ class FortuneDesignSystem {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      primaryColor: tossBlueDark,
-      scaffoldBackgroundColor: grayDark50,
+      primaryColor: neonGreen,
+      scaffoldBackgroundColor: black, // Pure black background
       fontFamily: fontFamilyKorean,
 
       textTheme: textTheme,
 
-      // Color Scheme (개선된 대비)
+      // Color Scheme - Neon Dark
       colorScheme: const ColorScheme.dark(
-        primary: tossBlueDark,
-        secondary: tossBlueDark,
-        surface: grayDark100,
+        primary: neonGreen,
+        secondary: neonGreen,
+        surface: grayDark100, // #1C1C1C
         error: errorRedDark,
-        onPrimary: white,
-        onSecondary: white,
-        onSurface: grayDark900,
+        onPrimary: black, // Black text on neon green buttons
+        onSecondary: black,
+        onSurface: white, // White text on dark surface
         onError: white,
-        outline: grayDark400, // 개선된 테두리 색상
-        shadow: grayDark300, // 그림자 색상
+        outline: grayDark300, // Border color
+        shadow: grayDark200, // Shadow color
       ),
 
       // App Bar Theme
       appBarTheme: AppBarTheme(
-        backgroundColor: grayDark50,
-        foregroundColor: grayDark900,
+        backgroundColor: black,
+        foregroundColor: white,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: TypographyUnified.heading4.copyWith(color: grayDark900),
-        iconTheme: const IconThemeData(color: grayDark900),
+        titleTextStyle: TypographyUnified.heading4.copyWith(color: white),
+        iconTheme: const IconThemeData(color: white),
       ),
 
-      // Elevated Button Theme
+      // Elevated Button Theme - Neon Green with Black Text
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: tossBlueDark,
-          foregroundColor: white,
+          backgroundColor: neonGreen,
+          foregroundColor: black,
           disabledBackgroundColor: grayDark300,
-          disabledForegroundColor: grayDark400,
+          disabledForegroundColor: grayDark500,
           elevation: 0,
-          shadowColor: white.withValues(alpha: 0.0),
+          shadowColor: transparent,
           fixedSize: const Size.fromHeight(buttonHeightLarge),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusM),
           ),
-          textStyle: TypographyUnified.buttonMedium,
+          textStyle: TypographyUnified.buttonMedium.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
 
       // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: tossBlueDark,
-          backgroundColor: white.withValues(alpha: 0.0),
+          foregroundColor: neonGreen,
+          backgroundColor: transparent,
           disabledForegroundColor: grayDark500,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusM),
@@ -796,7 +844,7 @@ class FortuneDesignSystem {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusS),
-          borderSide: const BorderSide(color: tossBlueDark, width: 2),
+          borderSide: const BorderSide(color: neonGreen, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusS),
@@ -812,7 +860,7 @@ class FortuneDesignSystem {
 
       // Card Theme
       cardTheme: const CardThemeData(
-        color: grayDark100,
+        color: grayDark100, // #1C1C1C
         elevation: 0,
         margin: EdgeInsets.all(0),
       ),
@@ -826,8 +874,8 @@ class FortuneDesignSystem {
 
       // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: grayDark100,
-        selectedItemColor: tossBlueDark,
+        backgroundColor: black,
+        selectedItemColor: neonGreen,
         unselectedItemColor: grayDark400,
         showSelectedLabels: true,
         showUnselectedLabels: true,
@@ -840,8 +888,8 @@ class FortuneDesignSystem {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusL),
         ),
-        titleTextStyle: TypographyUnified.heading4.copyWith(color: grayDark900),
-        contentTextStyle: TypographyUnified.bodyMedium.copyWith(color: grayDark700),
+        titleTextStyle: TypographyUnified.heading4.copyWith(color: white),
+        contentTextStyle: TypographyUnified.bodyMedium.copyWith(color: grayDark400),
       ),
 
       // Bottom Sheet Theme

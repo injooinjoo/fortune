@@ -71,7 +71,7 @@ class MiscWidgets {
                   const SizedBox(width: 8),
                   Text(
                     '날씨 운세',
-                    style: DSTypography.headingSmall.copyWith(
+                    style: context.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -81,7 +81,7 @@ class MiscWidgets {
               const SizedBox(height: 16),
               Text(
                 weatherSummary?['description'] ?? '오늘의 날씨와 함께하는 운세를 확인해보세요.',
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
                   height: 1.5,
                 ),
@@ -96,7 +96,7 @@ class MiscWidgets {
                   ),
                   child: Text(
                     '온도: ${weatherSummary!['temperature']}°C',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       color: TossDesignSystem.tossBlue,
                       fontWeight: FontWeight.w600,
                     ),
@@ -172,7 +172,7 @@ class MiscWidgets {
                     height: 32,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFf59e0b), Color(0xFFef4444)],
+                        colors: [DSFortuneColors.categoryLotto, DSFortuneColors.categoryTraditional],
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -277,7 +277,7 @@ class MiscWidgets {
                   const SizedBox(width: 8),
                   Text(
                     '$userAge세 운세',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -292,7 +292,7 @@ class MiscWidgets {
                       ),
                       child: Text(
                         '$ageScore점',
-                        style: DSTypography.labelMedium.copyWith(
+                        style: context.labelMedium.copyWith(
                           fontWeight: FontWeight.w600,
                           color: TossDesignSystem.tossBlue,
                         ),
@@ -304,7 +304,7 @@ class MiscWidgets {
               const SizedBox(height: 12),
               Text(
                 ageDescription ?? '나이별 운세 정보를 준비 중입니다.',
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
                   height: 1.4,
                 ),
@@ -346,7 +346,7 @@ class MiscWidgets {
                   const SizedBox(width: 8),
                   Text(
                     '운세 공유하기',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -358,6 +358,7 @@ class MiscWidgets {
                 children: [
                   Expanded(
                     child: _buildShareButton(
+                      context: context,
                       icon: Icons.share,
                       label: '공유',
                       onTap: onShare,
@@ -367,6 +368,7 @@ class MiscWidgets {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildShareButton(
+                      context: context,
                       icon: Icons.save_alt,
                       label: '이미지 저장',
                       onTap: onSaveImage,
@@ -383,6 +385,7 @@ class MiscWidgets {
   }
 
   static Widget _buildShareButton({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required VoidCallback? onTap,
@@ -408,7 +411,7 @@ class MiscWidgets {
             const SizedBox(width: 8),
             Text(
               label,
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: TossDesignSystem.tossBlue,
                 fontWeight: FontWeight.w600,
               ),

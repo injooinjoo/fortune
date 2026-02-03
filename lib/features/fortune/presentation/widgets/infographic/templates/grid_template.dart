@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/tokens/ds_spacing.dart';
 import 'package:fortune/core/design_system/tokens/ds_radius.dart';
+import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/infographic_container.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/lucky_item_row.dart';
@@ -215,11 +216,11 @@ class LotteryGridTemplate extends StatelessWidget {
   final bool isShareMode;
 
   Color _getBallColor(int number) {
-    if (number <= 10) return const Color(0xFFFFB300); // 노랑
-    if (number <= 20) return const Color(0xFF2196F3); // 파랑
-    if (number <= 30) return const Color(0xFFE53935); // 빨강
-    if (number <= 40) return const Color(0xFF9E9E9E); // 회색
-    return const Color(0xFF4CAF50); // 초록
+    if (number <= 10) return DSFortuneColors.categoryLotto; // 노랑
+    if (number <= 20) return DSFortuneColors.categoryCareer; // 파랑
+    if (number <= 30) return DSFortuneColors.elementFire; // 빨강
+    if (number <= 40) return DSFortuneColors.inkWashLight; // 회색
+    return DSFortuneColors.categoryHealth; // 초록
   }
 
   @override

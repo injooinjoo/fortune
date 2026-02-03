@@ -177,29 +177,55 @@ class _FortuneChipGridState extends State<FortuneChipGrid>
   }) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return ActionChip(
+    return GestureDetector(
       key: key,
-      avatar: Icon(
-        chip.icon,
-        size: 18,
-        color: chip.color,
-      ),
-      label: Text(
-        chip.label,
-        style: typography.labelMedium.copyWith(
-          color: colors.textPrimary,
+      onTap: isInteractive ? onPressed : null,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md,
+          vertical: DSSpacing.sm + 4,
+        ),
+        decoration: BoxDecoration(
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              chip.icon,
+              size: 18,
+              color: chip.color,
+            ),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    chip.label,
+                    style: typography.labelMedium.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (chip.subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      chip.subtitle!,
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-      backgroundColor: isDark ? colors.backgroundSecondary : colors.surface,
-      side: BorderSide(
-        color: chip.color.withValues(alpha: 0.3),
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-      ),
-      onPressed: isInteractive ? onPressed : () {},
     );
   }
 
@@ -233,29 +259,28 @@ class _FortuneChipGridState extends State<FortuneChipGrid>
         }),
         // 더보기 버튼
         if (widget.showViewAll && widget.onViewAllTap != null)
-          ActionChip(
-            avatar: Icon(
-              Icons.apps_rounded,
-              size: 18,
-              color: colors.textSecondary,
-            ),
-            label: Text(
-              '더보기',
-              style: typography.labelMedium.copyWith(
-                color: colors.textSecondary,
-              ),
-            ),
-            backgroundColor: colors.backgroundSecondary,
-            side: BorderSide(
-              color: colors.border.withValues(alpha: 0.3),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(DSRadius.lg),
-            ),
-            onPressed: () {
+          GestureDetector(
+            onTap: () {
               DSHaptics.light();
               widget.onViewAllTap?.call();
             },
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.md,
+                vertical: DSSpacing.sm + 4,
+              ),
+              decoration: BoxDecoration(
+                color: colors.surfaceSecondary,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Text(
+                '더보기',
+                style: typography.labelMedium.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
           ),
       ],
     );

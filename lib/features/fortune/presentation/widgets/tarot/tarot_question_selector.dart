@@ -36,27 +36,27 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
     {
       'question': '언제 돈이 들어올까요?',
       'icon': Icons.attach_money,
-      'color': Color(0xFF10B981),
+      'color': DSFortuneColors.categoryMoney,
     },
     {
       'question': '연애운은 어떨까요?',
       'icon': Icons.favorite,
-      'color': Color(0xFFEC4899),
+      'color': DSFortuneColors.categoryLove,
     },
     {
       'question': '취업이 언제 될까요?',
       'icon': Icons.work,
-      'color': Color(0xFF3B82F6),
+      'color': DSFortuneColors.categoryExam,
     },
     {
       'question': '건강은 어떨까요?',
       'icon': Icons.favorite_border,
-      'color': Color(0xFFF59E0B),
+      'color': DSFortuneColors.categoryLotto,
     },
     {
       'question': '새로운 기회가 올까요?',
       'icon': Icons.auto_awesome,
-      'color': Color(0xFF8B5CF6),
+      'color': DSFortuneColors.categoryLuckyItems,
     },
   ];
 

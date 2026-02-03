@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/tokens/ds_spacing.dart';
 import 'package:fortune/core/design_system/tokens/ds_radius.dart';
+import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
 
 /// 팁 태그 그리드 위젯
@@ -235,47 +236,47 @@ extension TipCategoryStyle on TipCategory {
       case TipCategory.love:
         return const _CategoryStyle(
           icon: Icons.favorite_rounded,
-          color: Color(0xFFE91E63), // Pink
+          color: DSFortuneColors.categoryLove,
         );
       case TipCategory.career:
         return const _CategoryStyle(
           icon: Icons.work_rounded,
-          color: Color(0xFF2196F3), // Blue
+          color: DSFortuneColors.categoryCareer,
         );
       case TipCategory.health:
         return const _CategoryStyle(
           icon: Icons.fitness_center_rounded,
-          color: Color(0xFF4CAF50), // Green
+          color: DSFortuneColors.categoryHealth,
         );
       case TipCategory.money:
         return const _CategoryStyle(
           icon: Icons.monetization_on_rounded,
-          color: Color(0xFFFF9800), // Orange/Gold
+          color: DSFortuneColors.categoryMoney,
         );
       case TipCategory.timing:
         return const _CategoryStyle(
           icon: Icons.schedule_rounded,
-          color: Color(0xFF9C27B0), // Purple
+          color: DSFortuneColors.mysticalPurple,
         );
       case TipCategory.warning:
         return const _CategoryStyle(
           icon: Icons.warning_rounded,
-          color: Color(0xFFFF5722), // Deep Orange
+          color: DSFortuneColors.sealVermilion,
         );
       case TipCategory.positive:
         return const _CategoryStyle(
           icon: Icons.star_rounded,
-          color: Color(0xFFFFC107), // Amber
+          color: DSFortuneColors.categoryGratitude,
         );
       case TipCategory.action:
         return const _CategoryStyle(
           icon: Icons.arrow_forward_rounded,
-          color: Color(0xFF00BCD4), // Cyan
+          color: DSFortuneColors.categoryFaceReading,
         );
       case TipCategory.general:
         return const _CategoryStyle(
           icon: Icons.lightbulb_rounded,
-          color: Color(0xFF607D8B), // Blue Grey
+          color: DSFortuneColors.celebrityPolitician,
         );
     }
   }

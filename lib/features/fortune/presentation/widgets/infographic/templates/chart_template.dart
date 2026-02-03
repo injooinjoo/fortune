@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/tokens/ds_spacing.dart';
 import 'package:fortune/core/design_system/tokens/ds_radius.dart';
+import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/infographic_container.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/category_bar_chart.dart';
@@ -158,11 +159,11 @@ class SajuChartTemplate extends StatelessWidget {
 
   Widget _buildElementsChart(BuildContext context) {
     final elementColors = {
-      '목': const Color(0xFF4CAF50),
-      '화': const Color(0xFFE53935),
-      '토': const Color(0xFFFFB300),
-      '금': const Color(0xFF9E9E9E),
-      '수': const Color(0xFF2196F3),
+      '목': DSFortuneColors.elementWood,
+      '화': DSFortuneColors.elementFire,
+      '토': DSFortuneColors.elementEarth,
+      '금': DSFortuneColors.elementMetal,
+      '수': DSFortuneColors.elementWater,
     };
 
     final categories = elements.entries.map((e) {
@@ -284,15 +285,15 @@ class _SajuPillarWidget extends StatelessWidget {
   Color _getElementColor(String? element) {
     switch (element) {
       case '목':
-        return const Color(0xFF4CAF50);
+        return DSFortuneColors.elementWood;
       case '화':
-        return const Color(0xFFE53935);
+        return DSFortuneColors.elementFire;
       case '토':
-        return const Color(0xFFFFB300);
+        return DSFortuneColors.elementEarth;
       case '금':
-        return const Color(0xFF9E9E9E);
+        return DSFortuneColors.elementMetal;
       case '수':
-        return const Color(0xFF2196F3);
+        return DSFortuneColors.elementWater;
       default:
         return Colors.grey;
     }
@@ -673,21 +674,21 @@ class BiorhythmChartTemplate extends StatelessWidget {
             label: '신체',
             icon: Icons.fitness_center_rounded,
             data: physical,
-            color: const Color(0xFFE53935),
+            color: DSFortuneColors.elementFire, // 신체 리듬 - 화(火) 빨강
           ),
           const SizedBox(height: DSSpacing.md),
           _BiorhythmBar(
             label: '감정',
             icon: Icons.favorite_rounded,
             data: emotional,
-            color: const Color(0xFFE91E63),
+            color: DSFortuneColors.categoryLove, // 감정 리듬 - 연애/감정 핑크
           ),
           const SizedBox(height: DSSpacing.md),
           _BiorhythmBar(
             label: '지성',
             icon: Icons.psychology_rounded,
             data: intellectual,
-            color: const Color(0xFF2196F3),
+            color: DSFortuneColors.categoryCareer, // 지성 리듬 - 직업/지성 파랑
           ),
         ],
       ),

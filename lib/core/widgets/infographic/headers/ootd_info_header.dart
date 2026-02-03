@@ -68,16 +68,11 @@ class OotdInfoHeader extends StatelessWidget {
     final colors = context.colors;
 
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            colors.accentTertiary.withValues(alpha: 0.05),
-            colors.surface,
-          ],
-        ),
+        color: colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.card),
       ),
       child: Column(
         children: [

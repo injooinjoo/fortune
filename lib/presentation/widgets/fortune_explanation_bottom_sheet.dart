@@ -489,7 +489,7 @@ class _FortuneExplanationBottomSheetState
           const SizedBox(width: 12),
           Text(
             '$score - $meaning',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -539,7 +539,7 @@ class _FortuneExplanationBottomSheetState
                   const SizedBox(width: 8),
                   Text(
                     '신령이 점지하는 개인 맞춤 운세',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? TossDesignSystem.purple.withValues(alpha: 0.7)
@@ -554,7 +554,7 @@ class _FortuneExplanationBottomSheetState
                 '• 매일 업데이트되는 실시간 운세\n'
                 '• 상세한 운세 해석과 조언 제공\n'
                 '• 다양한 운세 카테고리별 상세 분석',
-                style: DSTypography.bodySmall.copyWith(height: 1.5),
+                style: context.bodySmall.copyWith(height: 1.5),
               ),
             ],
           ),
@@ -633,7 +633,7 @@ class _FortuneExplanationBottomSheetState
                 const SizedBox(width: 8),
                 Text(
                   '${_getFortuneTypeName(widget.fortuneType)} 보기',
-                  style: DSTypography.labelMedium.copyWith(
+                  style: context.labelMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),

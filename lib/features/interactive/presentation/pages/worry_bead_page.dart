@@ -316,7 +316,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   )
                 : Text(
                     _hasWorry ? '염주 돌리기' : '먼저 걱정을 적어주세요',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),

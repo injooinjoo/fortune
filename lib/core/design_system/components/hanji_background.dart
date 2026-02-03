@@ -193,6 +193,77 @@ class _HanjiPatternPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+/// Clean background wrapper for modern AI Chat aesthetic
+///
+/// Simple, neutral background with no decorations or textures.
+class CleanBackground extends StatelessWidget {
+  /// Child widget to wrap
+  final Widget child;
+
+  /// Background color override (default: theme-aware background color)
+  final Color? backgroundColor;
+
+  const CleanBackground({
+    super.key,
+    required this.child,
+    this.backgroundColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final effectiveBackground = backgroundColor ?? colors.background;
+
+    return Container(
+      color: effectiveBackground,
+      child: child,
+    );
+  }
+}
+
+/// Clean container for modern card-like elements
+class CleanContainer extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final double borderRadius;
+  final Color? backgroundColor;
+  final BoxBorder? border;
+  final List<BoxShadow>? boxShadow;
+
+  const CleanContainer({
+    super.key,
+    required this.child,
+    this.padding,
+    this.margin,
+    this.borderRadius = 16.0,
+    this.backgroundColor,
+    this.border,
+    this.boxShadow,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Container(
+      margin: margin,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: backgroundColor ?? colors.surface,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: border ??
+            Border.all(
+              color: colors.border,
+              width: 1,
+            ),
+        boxShadow: boxShadow,
+      ),
+      child: child,
+    );
+  }
+}
+
 /// Hanji-textured container for smaller elements
 class HanjiContainer extends StatelessWidget {
   final Widget child;

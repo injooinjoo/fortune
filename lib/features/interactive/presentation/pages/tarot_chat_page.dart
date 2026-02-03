@@ -391,7 +391,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
           // Welcome text
           Text(
             '타로 리딩에 오신 것을 환영합니다',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.headingMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.gray900)),
 
@@ -399,7 +399,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
 
           Text(
             '궁금한 것을 물어보시면 타로 카드로 답변해 드릴게요',
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               color: TossDesignSystem.gray600),
             textAlign: TextAlign.center),
 
@@ -408,7 +408,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
           // Example questions
           Text(
             '이런 질문을 해보세요',
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: TossDesignSystem.gray900)),
           
@@ -456,7 +456,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                   offset: const Offset(0, 2))]),
             child: Text(
               question,
-              style: DSTypography.bodySmall.copyWith(
+              style: context.bodySmall.copyWith(
                 color: TossDesignSystem.gray900,
                 fontWeight: FontWeight.w500,
                 height: 1.4),
@@ -535,7 +535,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                         const SizedBox(width: 8),
                         Text(
                           message.text,
-                          style: DSTypography.bodySmall.copyWith(
+                          style: context.bodySmall.copyWith(
                             color: isUser ? TossDesignSystem.white : TossDesignSystem.gray900,
                           ),
                         ),
@@ -544,7 +544,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                   else
                     Text(
                       message.text,
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         color: isUser ? TossDesignSystem.white : TossDesignSystem.gray900,
                         height: 1.4,
                       ),
@@ -621,7 +621,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                 children: [
                   Text(
                     card.name,
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: TossDesignSystem.gray900,
                     ),
@@ -633,7 +633,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                     const SizedBox(height: 2),
                     Text(
                       '(역방향)',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: TossDesignSystem.gray600,
                       ),
                     ),

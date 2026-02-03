@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// ✨ 행운 아이템 카드 - ChatGPT Pulse 스타일
 class LuckyItemsCard extends StatelessWidget {
@@ -185,7 +185,7 @@ class LuckyItemsCard extends StatelessWidget {
                   width: itemWidth,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+                    color: isDark ? DSColors.surface : Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),

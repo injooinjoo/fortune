@@ -3,26 +3,26 @@
     <!-- Google Sign-In Configuration -->
     <!-- Replace with your actual Web Client ID from Google Cloud Console -->
     <string name="default_web_client_id" translatable="false">676247567847-aim7omjjgnk8615sdsifppv41pm3o0m2.apps.googleusercontent.com</string>
-    
+
     <!-- Kakao Configuration -->
     <string name="kakao_app_key" translatable="false">79a067e199f5984dd47438d057ecb0c5</string>
     <string name="kakao_scheme" translatable="false">kakao79a067e199f5984dd47438d057ecb0c5</string>
-    
+
     <!-- App Name -->
     <string name="app_name" translatable="false">ZPZG</string>
-    
+
     <!-- Widget Descriptions -->
-    <string name="widget_daily_description">오늘의 운세를 홈 화면에서 바로 확인하세요</string>
-    <string name="widget_love_description">연애운과 궁합을 홈 화면에서 확인하세요</string>
-    <string name="widget_favorites_description">즐겨찾기한 운세를 1분마다 롤링하여 보여줍니다</string>
-    <string name="widget_overall_description">오늘의 총운 점수와 등급을 확인하세요</string>
-    <string name="widget_category_description">카테고리별 운세를 확인하세요 (연애/금전/직장/학업/건강)</string>
-    <string name="widget_timeslot_description">시간대별 운세를 확인하세요 (아침/오후/저녁)</string>
+    <string name="widget_daily_description">오늘의 인사이트를 홈 화면에서 바로 확인하세요</string>
+    <string name="widget_love_description">연애 인사이트와 궁합을 홈 화면에서 확인하세요</string>
+    <string name="widget_favorites_description">즐겨찾기한 인사이트를 1분마다 롤링하여 보여줍니다</string>
+    <string name="widget_overall_description">오늘의 총합 점수와 등급을 확인하세요</string>
+    <string name="widget_category_description">카테고리별 인사이트를 확인하세요 (연애/금전/커리어/학업/웰니스)</string>
+    <string name="widget_timeslot_description">시간대별 인사이트를 확인하세요 (아침/오후/저녁)</string>
     <string name="widget_lotto_description">오늘의 행운의 숫자 5개를 확인하세요</string>
-    
+
     <!-- App Shortcuts -->
-    <string name="shortcut_daily_fortune_short">오늘의 운세</string>
-    <string name="shortcut_daily_fortune_long">오늘의 운세 확인하기</string>
+    <string name="shortcut_daily_fortune_short">오늘의 인사이트</string>
+    <string name="shortcut_daily_fortune_long">오늘의 인사이트 확인하기</string>
     <string name="shortcut_compatibility_short">궁합 보기</string>
     <string name="shortcut_compatibility_long">상대방과의 궁합 확인하기</string>
     <string name="shortcut_lucky_numbers_short">행운의 숫자</string>

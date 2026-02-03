@@ -20,11 +20,11 @@ class ElementBalanceChart extends StatelessWidget {
 
   // 오행별 색상과 아이콘
   static const elementData = {
-    '목': {'color': Color(0xFF52D681), 'icon': '🌳', 'name': '목(木)'},
-    '화': {'color': Color(0xFFFF6B6B), 'icon': '🔥', 'name': '화(火)'},
-    '토': {'color': Color(0xFFF7DC6F), 'icon': '⛰️', 'name': '토(土)'},
-    '금': {'color': Color(0xFFE8E8E8), 'icon': '⚡', 'name': '금(金)'},
-    '수': {'color': Color(0xFF4ECDC4), 'icon': '💧', 'name': '수(水)'},
+    '목': {'color': DSFortuneColors.elementWood, 'icon': '🌳', 'name': '목(木)'},
+    '화': {'color': DSFortuneColors.elementFire, 'icon': '🔥', 'name': '화(火)'},
+    '토': {'color': DSFortuneColors.elementEarth, 'icon': '⛰️', 'name': '토(土)'},
+    '금': {'color': DSFortuneColors.elementMetal, 'icon': '⚡', 'name': '금(金)'},
+    '수': {'color': DSFortuneColors.elementWater, 'icon': '💧', 'name': '수(水)'},
   };
 
   @override
@@ -39,6 +39,7 @@ class ElementBalanceChart extends StatelessWidget {
             painter: ElementCirclePainter(
               elements: elements,
               showPercentage: showPercentage,
+              iconStyle: context.headingSmall,
             ),
           ),
         ),
@@ -99,10 +100,12 @@ class ElementBalanceChart extends StatelessWidget {
 class ElementCirclePainter extends CustomPainter {
   final Map<String, double> elements;
   final bool showPercentage;
+  final TextStyle iconStyle;
 
   ElementCirclePainter({
     required this.elements,
     required this.showPercentage,
+    required this.iconStyle,
   });
 
   @override
@@ -166,7 +169,7 @@ class ElementCirclePainter extends CustomPainter {
         final iconPainter = TextPainter(
           text: TextSpan(
             text: data['icon'] as String,
-            style: DSTypography.headingSmall,
+            style: iconStyle,
           ),
           textDirection: TextDirection.ltr,
         );

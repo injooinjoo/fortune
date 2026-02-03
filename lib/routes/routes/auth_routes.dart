@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import '../../screens/landing_page.dart';
 import '../../screens/splash_screen.dart';
 import '../../screens/auth/signup_screen.dart';
 import '../../screens/auth/callback_page.dart';
@@ -7,10 +6,12 @@ import '../../screens/onboarding/onboarding_page.dart';
 import '../../core/utils/page_transitions.dart';
 
 final authRoutes = [
+  // 루트 경로는 /chat으로 리다이렉트 (Chat-First)
   GoRoute(
     path: '/',
-    name: 'landing',
-    builder: (context, state) => const LandingPage()),
+    name: 'root',
+    redirect: (context, state) => '/chat',
+  ),
   GoRoute(
     path: '/splash',
     name: 'splash',

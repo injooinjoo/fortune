@@ -34,6 +34,7 @@ import '../../data/services/free_chat_service.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../providers/chat_messages_provider.dart';
 import '../providers/chat_survey_provider.dart';
+import '../../domain/models/chat_message.dart';
 import '../widgets/chat_welcome_view.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/survey/fortune_type_chips.dart';
@@ -78,6 +79,8 @@ import '../../../../data/dream_interpretations.dart';
 import '../../../interactive/presentation/widgets/cookie_shard_break_widget.dart';
 import '../../../../core/services/talisman_generation_service.dart';
 import '../../../../services/storage_service.dart';
+import '../../../../services/ad_service.dart';
+import '../../constants/chat_placeholders.dart';
 import '../../../../services/deep_link_service.dart';
 import '../widgets/profile_required_bottom_sheet.dart';
 import '../../services/chat_scroll_service.dart';
@@ -119,6 +122,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// 꿈해몽 버블 표시 여부
   bool _showDreamBubbles = true;
+
+  /// 랜덤 플레이스홀더 문구 (앱 시작 시 한 번만 설정)
+  late String _randomPlaceholder;
 
   /// 펫 등록 폼 표시 여부
   bool _showPetRegistrationForm = false;
@@ -185,7 +191,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     _recommendService = FortuneRecommendService();
     _freeChatService = FreeChatService();
     _textController.addListener(_onTextChanged);
-    _initializeCalendarService();
+    _randomPlaceholder = ChatPlaceholders.getRandomPlaceholder();
 
     // 초기화 후 온보딩 체크 및 딥링크 처리
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -268,31 +274,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     super.dispose();
   }
 
-  /// 캘린더 서비스 초기화 (기간별 운세용)
-  Future<void> _initializeCalendarService() async {
-    try {
-      await _calendarService.initialize();
-
-      if (_calendarService.isGoogleConnected) {
-        if (mounted) {
-          setState(() => _isCalendarSynced = true);
-        }
-        return;
-      }
-
-      final hasDevicePermission =
-          await _calendarService.requestDevicePermission();
-      if (hasDevicePermission && mounted) {
-        setState(() => _isCalendarSynced = true);
-      }
-    } catch (e) {
-      debugPrint('[Calendar] 초기화 실패: $e');
-    }
-  }
-
-  /// 캘린더 연동 시작 (설문 답변 'sync' 선택 시)
+  /// 캘린더 연동 시작 (설문 답변 'sync' 선택 시에만 호출)
   Future<void> _handleCalendarSync() async {
     try {
+      await _calendarService.initialize();
       final hasPermission = await _calendarService.requestDevicePermission();
       if (hasPermission && mounted) {
         setState(() => _isCalendarSynced = true);
@@ -425,14 +410,17 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       return;
     }
 
+    // ✅ OAuth는 리다이렉트 방식이라 비동기로 처리됨
+    // 로그인 완료 후 auth state listener가 _recheckOnboardingAfterLogin() 호출
+    // 그래서 여기서는 OAuth만 시작하고 후처리는 provider에서 처리
+
     SocialLoginBottomSheet.show(
       context,
       onGoogleLogin: () async {
         Navigator.pop(context);
         try {
           await socialAuthService!.signInWithGoogle();
-          // 로그인 성공 시 온보딩 완료 처리
-          ref.read(onboardingChatProvider.notifier).skipLoginPrompt();
+          // OAuth 리다이렉트 후 auth state listener가 처리
         } catch (e) {
           debugPrint('❌ Google login failed: $e');
         }
@@ -441,7 +429,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         Navigator.pop(context);
         try {
           await socialAuthService!.signInWithApple();
-          ref.read(onboardingChatProvider.notifier).skipLoginPrompt();
+          // OAuth 리다이렉트 후 auth state listener가 처리
         } catch (e) {
           debugPrint('❌ Apple login failed: $e');
         }
@@ -450,7 +438,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         Navigator.pop(context);
         try {
           await socialAuthService!.signInWithKakao();
-          ref.read(onboardingChatProvider.notifier).skipLoginPrompt();
+          // OAuth 리다이렉트 후 auth state listener가 처리
         } catch (e) {
           debugPrint('❌ Kakao login failed: $e');
         }
@@ -459,7 +447,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         Navigator.pop(context);
         try {
           await socialAuthService!.signInWithNaver();
-          ref.read(onboardingChatProvider.notifier).skipLoginPrompt();
+          // OAuth 리다이렉트 후 auth state listener가 처리
         } catch (e) {
           debugPrint('❌ Naver login failed: $e');
         }
@@ -584,12 +572,13 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 결과 메시지 추가 (포춘쿠키 전용 카드로 표시됨)
       // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
+      // 포춘쿠키는 무료 운세 (earnRates)이므로 블러 미적용
       chatNotifier.addFortuneResultMessage(
         text: '오늘의 메시지',
         fortuneType: 'fortune-cookie',
         fortune: fortune,
         isBlurred: false,
-        blurredSections: [],
+        blurredSections: const [],
       );
 
       // 추천 칩 표시
@@ -702,6 +691,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     if (_birthDateRequiredTypes.contains(chip.fortuneType)) {
       final canProceed = await _checkProfileOrShowLoginPrompt(chip);
       if (!canProceed) return;
+    }
+
+    // 카톡 대화 분석: Chat Insight 화면으로 직접 이동
+    if (chip.fortuneType == 'chatInsight') {
+      context.push('/chat-insight');
+      return;
     }
 
     // 전체운세보기: 모든 운세 칩 표시
@@ -1957,6 +1952,14 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
       }
 
+      // 블러 상태 로깅
+      Logger.info(
+        '🔒 [ChatHome] addFortuneResult - '
+        'type=$fortuneTypeStr, '
+        'isBlurred=${fortune.isBlurred}, '
+        'sections=${fortune.blurredSections}',
+      );
+
       // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
       chatNotifier.addFortuneResultMessage(
         text: typeName,
@@ -2584,10 +2587,14 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // ChatSajuResultCard로 결과 표시
       // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
+      final isPremiumForSaju = ref.read(isPremiumProvider);
       chatNotifier.addSajuResultMessage(
         text: '사주 분석',
         sajuData: sajuState.sajuData!,
-        isBlurred: false, // TODO: 프리미엄 상태에 따라 결정
+        isBlurred: !isPremiumForSaju,
+        blurredSections: !isPremiumForSaju
+            ? const ['sajuInterpretation', 'yearlyFortune', 'compatibility']
+            : const [],
       );
 
       // 오늘의 운세 자동 호출 (사주 분석 후 무료 제공)
@@ -2602,14 +2609,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             answers: {}, // 기본 파라미터로 호출 (mood, schedule, category 없이)
           );
 
-          // 사주 분석 후 무료 제공이므로 isBlurred=false 강제
+          // 프리미엄 구독 상태에 따라 블러 적용
           // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
+          // API에서 반환한 blurredSections 사용
+          final isPremium = ref.read(isPremiumProvider);
           chatNotifier.addFortuneResultMessage(
             text: '오늘의 인사이트',
             fortuneType: 'daily',
-            fortune: fortune.copyWith(isBlurred: false),
-            isBlurred: false,
-            blurredSections: const [],
+            fortune: isPremium ? fortune.copyWith(isBlurred: false) : fortune,
+            isBlurred: fortune.isBlurred,
+            blurredSections: fortune.blurredSections,
           );
         } catch (e) {
           Logger.error('오늘의 운세 호출 실패', e);
@@ -2689,6 +2698,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           // 짧은 딜레이로 자연스러운 로딩 효과
           await Future.delayed(const Duration(milliseconds: 800));
 
+          // 프리미엄 상태에 따라 블러 적용 (Edge Function과 동일한 로직)
+          final isPremium = ref.read(isPremiumProvider);
           final fortune = Fortune(
             id: 'hardcoded_dream_${DateTime.now().millisecondsSinceEpoch}',
             userId: userId,
@@ -2709,8 +2720,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               'psychologicalAnalysis': hardcodedData['psychologicalAnalysis'],
               'categories': hardcodedData['categories'],
             },
-            isBlurred: false, // 하드코딩 결과는 블러 없음
-            blurredSections: const [],
+            isBlurred: !isPremium,
+            // Edge Function과 동일한 blurredSections
+            blurredSections: isPremium
+                ? const []
+                : const [
+                    'psychologicalInsight',
+                    'todayGuidance',
+                    'symbolAnalysis',
+                    'actionAdvice',
+                  ],
           );
 
           // DB 저장
@@ -4590,9 +4609,32 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
   }
 
-  /// 온보딩 칩 입력 위젯 빌드 (성별/MBTI/혈액형/확인/로그인유도)
+  /// 온보딩 칩 입력 위젯 빌드 (대분류/세부고민/성별/MBTI/혈액형/확인/로그인유도)
   Widget _buildOnboardingChipInput(OnboardingState onboardingState) {
     switch (onboardingState.currentStep) {
+      case OnboardingStep.lifeCategory:
+        return KeyedSubtree(
+          key: const ValueKey('onboarding-life-category'),
+          child: OnboardingLifeCategorySelector(
+            onSelect: (category) {
+              ref.read(onboardingChatProvider.notifier).submitLifeCategory(category);
+              _scrollToBottom();
+            },
+          ),
+        );
+
+      case OnboardingStep.subConcern:
+        return KeyedSubtree(
+          key: const ValueKey('onboarding-sub-concern'),
+          child: OnboardingSubConcernSelector(
+            category: onboardingState.primaryLifeCategory!,
+            onSelect: (concernId) {
+              ref.read(onboardingChatProvider.notifier).submitSubConcern(concernId);
+              _scrollToBottom();
+            },
+          ),
+        );
+
       case OnboardingStep.gender:
         return KeyedSubtree(
           key: const ValueKey('onboarding-gender'),
@@ -4688,9 +4730,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 기본 입력란 높이
     double padding = 80;
 
-    // 온보딩 칩 입력 중인 경우 (성별/MBTI/혈액형/확인/로그인유도)
+    // 온보딩 칩 입력 중인 경우 (대분류/세부고민/성별/MBTI/혈액형/확인/로그인유도)
     final onboardingStep = onboardingState.currentStep;
-    if (onboardingStep == OnboardingStep.gender) {
+    if (onboardingStep == OnboardingStep.lifeCategory) {
+      // 대분류 선택: 2x2 그리드
+      padding += 200;
+    } else if (onboardingStep == OnboardingStep.subConcern) {
+      // 세부 고민 선택: 5개 칩
+      padding += 180;
+    } else if (onboardingStep == OnboardingStep.gender) {
       // 성별 선택: 3개 칩 + 건너뛰기 버튼
       padding += 220;
     } else if (onboardingStep == OnboardingStep.mbti) {
@@ -4766,7 +4814,110 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     return padding;
   }
 
+  /// 블러된 메시지가 있는지 확인
+  /// isBlurred가 true이면서 blurredSections가 비어있지 않아야 실제 블러가 적용됨
+  bool _hasAnyBlurredMessage() {
+    final chatState = ref.read(chatMessagesProvider);
+    return chatState.messages.any((msg) =>
+      (msg.type == ChatMessageType.fortuneResult ||
+       msg.type == ChatMessageType.sajuResult ||
+       msg.type == ChatMessageType.personalityDnaResult ||
+       msg.type == ChatMessageType.talismanResult) &&
+      msg.isBlurred &&
+      msg.blurredSections.isNotEmpty
+    );
+  }
+
+  /// 광고 FloatingButton 빌더
+  Widget _buildAdFloatingButton() {
+    final colors = context.colors;
+
+    return Center(
+      child: Material(
+        color: colors.accent,
+        borderRadius: BorderRadius.circular(DSRadius.full),
+        elevation: 4,
+        child: InkWell(
+          onTap: _showAdAndUnblurAll,
+          borderRadius: BorderRadius.circular(DSRadius.full),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.lg,
+              vertical: DSSpacing.md,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.play_circle_outline, color: Colors.white, size: 20),
+                const SizedBox(width: DSSpacing.sm),
+                Text(
+                  '광고보고 전체 보기',
+                  style: context.labelLarge.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 광고 시청 후 전체 블러 해제
+  Future<void> _showAdAndUnblurAll() async {
+    try {
+      final adService = AdService();
+
+      // 광고가 준비되지 않았으면 로딩 표시
+      if (!adService.isRewardedAdReady) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중...'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+
+      // showRewardedAdWithCallback은 광고 미준비 시 자동 로드 후 표시
+      await adService.showRewardedAdWithCallback(
+        onUserEarnedReward: () {
+          Logger.info('[ChatHomePage] 광고 시청 완료, 전체 블러 해제 시작');
+          // 전체 블러 해제
+          ref.read(chatMessagesProvider.notifier).unblurAllMessages();
+          Logger.info('[ChatHomePage] unblurAllMessages() 호출 완료');
+          if (mounted) {
+            setState(() {}); // FloatingButton 숨기기 위해 리빌드
+          }
+        },
+        onAdFailedToShow: () {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러오지 못했습니다. 다시 시도해주세요.'),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      Logger.error('광고 표시 실패: $e');
+    }
+  }
+
   Widget _buildChatBackground() {
+    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Neon Dark Theme: 순수 검정 배경 (이미지 없음)
+    if (isDark) {
+      return Container(color: colors.background);
+    }
+
+    // Light mode: 기존 배경 이미지 사용
     final asset = _chatBackgroundAsset ?? _defaultChatBackgroundAsset;
     return IgnorePointer(
       child: AnimatedSwitcher(
@@ -4844,7 +4995,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         onboardingState.currentStep == OnboardingStep.birthDate ||
             onboardingState.currentStep == OnboardingStep.birthTime;
     final isOnboardingChipStep =
-        onboardingState.currentStep == OnboardingStep.gender ||
+        onboardingState.currentStep == OnboardingStep.lifeCategory ||
+            onboardingState.currentStep == OnboardingStep.subConcern ||
+            onboardingState.currentStep == OnboardingStep.gender ||
             onboardingState.currentStep == OnboardingStep.mbti ||
             onboardingState.currentStep == OnboardingStep.bloodType ||
             onboardingState.currentStep == OnboardingStep.confirmation ||
@@ -5087,6 +5240,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                 isLoading: _isLoadingRecommendations,
                               ),
 
+                            // "광고보고 전체 보기" FloatingButton (블러된 콘텐츠가 있을 때만)
+                            if (_hasAnyBlurredMessage())
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: DSSpacing.md,
+                                  vertical: DSSpacing.sm,
+                                ),
+                                child: _buildAdFloatingButton(),
+                              ),
+
                             // 텍스트 입력란 (선택형 설문/온보딩 시 슬라이드 아웃)
                             IgnorePointer(
                               ignoring: shouldHideInput,
@@ -5112,7 +5275,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                                 ? '텍스트를 입력하세요...'
                                                 : surveyState.isActive
                                                     ? '위 선택지에서 골라주세요'
-                                                    : '무엇이든 물어보세요...',
+                                                    : _randomPlaceholder,
                                         onSubmit: isOnboardingNameStep
                                             ? _handleOnboardingNameSubmit
                                             : isTextInputStep
@@ -5130,6 +5293,38 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                 ),
                               ),
                             ),
+
+                            // 바로 로그인하기 버튼 (온보딩 이름 입력 단계에서만 표시)
+                            if (isOnboardingNameStep)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: DSSpacing.md,
+                                  bottom: DSSpacing.sm,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () => _showSocialLoginBottomSheet(context),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: '이미 계정이 있으신가요? ',
+                                          style: context.typography.bodySmall.copyWith(
+                                            color: colors.textSecondary,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '바로 로그인하기',
+                                          style: context.typography.bodySmall.copyWith(
+                                            color: colors.accent,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -5163,7 +5358,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                     imagePath:
                                         'assets/images/fortune_cards/fortune_cookie_fortune.png',
                                     size: 220,
-                                    accentColor: const Color(0xFF9333EA),
+                                    accentColor: DSFortuneColors.categoryTarot,
                                     onBreakComplete: _onCookieAnimationComplete,
                                   ),
                                 ],

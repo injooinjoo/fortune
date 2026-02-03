@@ -66,14 +66,65 @@ class ChatScrollService {
     });
   }
 
-  /// 결과 카드 헤더로 스크롤 - 비활성화됨
+  /// 결과 카드 헤더로 스크롤
   ///
-  /// 자석 기능이 제거되어 아무 동작도 하지 않습니다.
-  /// 대신 결과 표시 전 clearConversation()이 호출됩니다.
+  /// 운세 결과가 표시될 때 카드 상단이 보이도록 스크롤합니다.
   void scrollToFortuneResult({
     required String messageId,
     required BuildContext cardContext,
   }) {
-    // 자석 기능 비활성화 - 아무것도 하지 않음
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(ChatScrollConstants.debounceDelay, () {
+      _performScrollToCardTop(cardContext);
+    });
+  }
+
+  /// 결과 카드 상단으로 스크롤
+  void _performScrollToCardTop(BuildContext cardContext) {
+    if (!isMounted() || !scrollController.hasClients) return;
+
+    Future.delayed(ChatScrollConstants.layoutDelay, () {
+      if (!isMounted() || !scrollController.hasClients) return;
+
+      try {
+        // 카드 위젯의 RenderObject 찾기
+        final renderObject = cardContext.findRenderObject();
+        if (renderObject is! RenderBox) return;
+
+        // 스크롤 가능한 부모 찾기
+        final scrollableState = Scrollable.maybeOf(cardContext);
+        if (scrollableState == null) return;
+
+        final scrollableRenderObject =
+            scrollableState.context.findRenderObject();
+        if (scrollableRenderObject is! RenderBox) return;
+
+        // 카드의 위치 계산 (스크롤 뷰 기준)
+        final cardPosition = renderObject.localToGlobal(
+          Offset.zero,
+          ancestor: scrollableRenderObject,
+        );
+
+        // 현재 스크롤 위치 + 카드 상단 위치 = 목표 스크롤 위치
+        // 약간의 상단 여백(16px) 추가
+        final targetOffset = scrollController.offset + cardPosition.dy - 16;
+
+        // 유효한 범위 내로 제한
+        final clampedOffset = targetOffset.clamp(
+          scrollController.position.minScrollExtent,
+          scrollController.position.maxScrollExtent,
+        );
+
+        scrollController.animateTo(
+          clampedOffset,
+          duration: ChatScrollConstants.scrollDuration,
+          curve: ChatScrollConstants.scrollCurve,
+        );
+      } catch (e) {
+        // 실패 시 기본 하단 스크롤
+        debugPrint('⚠️ [ChatScrollService] scrollToCardTop failed: $e');
+        _performScrollToBottom();
+      }
+    });
   }
 }

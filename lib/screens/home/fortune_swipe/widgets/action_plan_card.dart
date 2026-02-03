@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 🎯 오늘의 액션 플랜 카드
 class ActionPlanCard extends StatelessWidget {
@@ -64,13 +64,13 @@ class _ActionItem extends StatelessWidget {
   Color get _priorityColor {
     switch (priority) {
       case 'high':
-        return const Color(0xFFDC143C); // 화(火) - 긴급함
+        return const Color(0xFFDC143C); // 고유 색상 - 화(火) 긴급함
       case 'medium':
-        return const Color(0xFFDAA520); // 토(土) - 균형
+        return const Color(0xFFDAA520); // 고유 색상 - 토(土) 균형
       case 'low':
-        return const Color(0xFF2E8B57); // 목(木) - 여유
+        return const Color(0xFF2E8B57); // 고유 색상 - 목(木) 여유
       default:
-        return const Color(0xFF6B7280);
+        return const Color(0xFF6B7280); // 고유 색상 - 기본 회색
     }
   }
 
@@ -79,7 +79,7 @@ class _ActionItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _priorityColor.withValues(alpha: 0.3),

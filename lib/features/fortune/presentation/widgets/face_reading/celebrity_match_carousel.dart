@@ -104,7 +104,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                     children: [
                       Text(
                         '닮은꼴 유명인',
-                        style: DSTypography.headingSmall.copyWith(
+                        style: context.headingSmall.copyWith(
                           color: isDark
                               ? DSColors.textPrimary
                               : DSColors.textPrimary,
@@ -114,7 +114,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                       const SizedBox(height: 2),
                       Text(
                         '스와이프하여 더 보기',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: isDark
                               ? DSColors.textSecondary
                               : DSColors.textSecondary,
@@ -132,7 +132,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                   ),
                   child: Text(
                     '${_currentPage + 1}/${widget.celebrities.length}',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: DSColors.warning,
                       fontWeight: FontWeight.w700,
                     ),
@@ -244,7 +244,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                         // 이름
                         Text(
                           name,
-                          style: DSTypography.headingSmall.copyWith(
+                          style: context.headingSmall.copyWith(
                             color: isDark
                                 ? DSColors.textPrimary
                                 : DSColors.textPrimary,
@@ -265,7 +265,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                           ),
                           child: Text(
                             _getTypeLabel(type),
-                            style: DSTypography.labelSmall.copyWith(
+                            style: context.labelSmall.copyWith(
                               color: accentColor,
                               fontWeight: FontWeight.w600,
                             ),
@@ -285,7 +285,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                               const SizedBox(width: 4),
                               Text(
                                 '유사도 $similarityScore%',
-                                style: DSTypography.bodyMedium.copyWith(
+                                style: context.bodyMedium.copyWith(
                                   color: DSColors.warning,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -314,7 +314,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                                 ),
                                 child: Text(
                                   feature.trim(),
-                                  style: DSTypography.labelSmall.copyWith(
+                                  style: context.labelSmall.copyWith(
                                     color: isDark
                                         ? DSColors.textSecondary
                                         : DSColors.textSecondary,
@@ -330,7 +330,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                           const SizedBox(height: 8),
                           Text(
                             reason,
-                            style: DSTypography.bodySmall.copyWith(
+                            style: context.bodySmall.copyWith(
                               color: isDark
                                   ? DSColors.textSecondary
                                   : DSColors.textSecondary,
@@ -357,7 +357,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: index == 0
-                        ? [const Color(0xFFFFD700), const Color(0xFFFFA500)]
+                        ? [DSFortuneColors.fortuneGoldMuted, const Color(0xFFFFA500)]
                         : index == 1
                             ? [const Color(0xFFC0C0C0), const Color(0xFF808080)]
                             : [const Color(0xFFCD7F32), const Color(0xFF8B4513)],
@@ -374,7 +374,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                 child: Center(
                   child: Text(
                     '${index + 1}',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w800,
                     ),
@@ -462,7 +462,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
       child: Center(
         child: Text(
           name.isNotEmpty ? name[0] : '?',
-          style: DSTypography.displaySmall.copyWith(
+          style: context.displaySmall.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w700,
           ),

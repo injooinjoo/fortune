@@ -119,13 +119,13 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF9C27B0),
-                  Color(0xFF7B1FA2),
+                  Color(0xFF9C27B0), // 고유 색상 - Face AI 테마
+                  Color(0xFF7B1FA2), // 고유 색상 - Face AI 테마
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF9C27B0).withValues(alpha: 0.3),
+                  color: const Color(0xFF9C27B0).withValues(alpha: 0.3), // 고유 색상 - Face AI 테마
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -144,15 +144,15 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
             children: [
               Text(
                 'Face AI',
-                style: DSTypography.headingMedium.copyWith(
+                style: context.headingMedium.copyWith(
                   color: isDark ? Colors.white : DSColors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               Text(
                 'AI 얼굴 특징 분석',
-                style: DSTypography.labelSmall.copyWith(
-                  color: const Color(0xFF9C27B0),
+                style: context.labelSmall.copyWith(
+                  color: const Color(0xFF9C27B0), // 고유 색상 - Face AI 테마
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -189,8 +189,8 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
               color: isActive
-                  ? const Color(0xFF9C27B0)
-                  : const Color(0xFF9C27B0).withValues(alpha: 0.2),
+                  ? const Color(0xFF9C27B0) // 고유 색상 - Face AI 테마
+                  : const Color(0xFF9C27B0).withValues(alpha: 0.2), // 고유 색상 - Face AI 테마
             ),
           );
         }),
@@ -234,15 +234,15 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF9C27B0).withValues(alpha: 0.1),
-                        const Color(0xFF7B1FA2).withValues(alpha: 0.1),
+                        const Color(0xFF9C27B0).withValues(alpha: 0.1), // 고유 색상 - Face AI 테마
+                        const Color(0xFF7B1FA2).withValues(alpha: 0.1), // 고유 색상 - Face AI 테마
                       ],
                     ),
                   ),
                   child: Icon(
                     Icons.camera_alt_rounded,
                     size: 56,
-                    color: const Color(0xFF9C27B0).withValues(alpha: 0.8),
+                    color: const Color(0xFF9C27B0).withValues(alpha: 0.8), // 고유 색상 - Face AI 테마
                   ),
                 ).animate()
                     .scale(begin: const Offset(0.8, 0.8), duration: 600.ms, curve: Curves.elasticOut)
@@ -252,7 +252,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
 
                 Text(
                   '오늘의 얼굴 분석하기',
-                  style: DSTypography.headingMedium.copyWith(
+                  style: context.headingMedium.copyWith(
                     color: isDark ? Colors.white : DSColors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
@@ -263,7 +263,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                 Text(
                   'AI가 당신의 얼굴 특징을 분석하여\n성격과 인상을 알려드려요',
                   textAlign: TextAlign.center,
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: DSColors.textSecondary,
                     height: 1.5,
                   ),
@@ -285,14 +285,14 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Color(0xFF9C27B0),
-                                Color(0xFF7B1FA2),
+                                Color(0xFF9C27B0), // 고유 색상 - Face AI 테마
+                                Color(0xFF7B1FA2), // 고유 색상 - Face AI 테마
                               ],
                             ),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF9C27B0).withValues(alpha: 0.3),
+                                color: const Color(0xFF9C27B0).withValues(alpha: 0.3), // 고유 색상 - Face AI 테마
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
@@ -308,7 +308,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                               const SizedBox(height: 8),
                               Text(
                                 '카메라로 촬영',
-                                style: DSTypography.labelMedium.copyWith(
+                                style: context.labelMedium.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -316,7 +316,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                               const SizedBox(height: 4),
                               Text(
                                 'Face Mesh 효과',
-                                style: DSTypography.labelSmall.copyWith(
+                                style: context.labelSmall.copyWith(
                                   color: Colors.white.withValues(alpha: 0.8),
                                 ),
                               ),
@@ -338,20 +338,20 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                                 : DSColors.backgroundSecondary,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: const Color(0xFF9C27B0).withValues(alpha: 0.3),
+                              color: const Color(0xFF9C27B0).withValues(alpha: 0.3), // 고유 색상 - Face AI 테마
                             ),
                           ),
                           child: Column(
                             children: [
                               const Icon(
                                 Icons.photo_library_rounded,
-                                color: Color(0xFF9C27B0),
+                                color: Color(0xFF9C27B0), // 고유 색상 - Face AI 테마
                                 size: 32,
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 '갤러리에서 선택',
-                                style: DSTypography.labelMedium.copyWith(
+                                style: context.labelMedium.copyWith(
                                   color: isDark ? Colors.white : DSColors.textPrimary,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -359,7 +359,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                               const SizedBox(height: 4),
                               Text(
                                 '사진 업로드',
-                                style: DSTypography.labelSmall.copyWith(
+                                style: context.labelSmall.copyWith(
                                   color: DSColors.textSecondary,
                                 ),
                               ),
@@ -408,7 +408,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
           color: isDark ? DSColors.backgroundSecondary : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFF9C27B0).withValues(alpha: 0.3),
+            color: const Color(0xFF9C27B0).withValues(alpha: 0.3), // 고유 색상 - Face AI 테마
             width: 1.5,
           ),
         ),
@@ -444,7 +444,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                 children: [
                   Text(
                     '내 프로필 사진으로 분석',
-                    style: DSTypography.bodyMedium.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: isDark ? Colors.white : DSColors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -452,7 +452,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                   const SizedBox(height: 4),
                   Text(
                     '탭하여 빠르게 시작',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: DSColors.textTertiary,
                     ),
                   ),
@@ -462,7 +462,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
             const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Color(0xFF9C27B0),
+              color: Color(0xFF9C27B0), // 고유 색상 - Face AI 테마
             ),
           ],
         ),
@@ -495,12 +495,12 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
         Icon(
           icon,
           size: 24,
-          color: const Color(0xFF9C27B0).withValues(alpha: 0.7),
+          color: const Color(0xFF9C27B0).withValues(alpha: 0.7), // 고유 색상 - Face AI 테마
         ),
         const SizedBox(height: 6),
         Text(
           label,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelSmall.copyWith(
             color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
           ),
         ),
@@ -532,19 +532,19 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF9C27B0).withValues(alpha: 0.1),
+                    color: const Color(0xFF9C27B0).withValues(alpha: 0.1), // 고유 색상 - Face AI 테마
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.auto_awesome,
-                    color: Color(0xFF9C27B0),
+                    color: Color(0xFF9C27B0), // 고유 색상 - Face AI 테마
                     size: 24,
                   ),
                 ),
                 const SizedBox(width: 16),
                 Text(
                   'Face AI란?',
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.headingSmall.copyWith(
                     color: isDark ? Colors.white : DSColors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
@@ -601,7 +601,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                   Expanded(
                     child: Text(
                       '재미로 보는 엔터테인먼트 콘텐츠입니다',
-                      style: DSTypography.bodySmall.copyWith(
+                      style: context.bodySmall.copyWith(
                         color: DSColors.accent,
                       ),
                     ),
@@ -626,13 +626,13 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
           height: 28,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: const Color(0xFF9C27B0).withValues(alpha: 0.1),
+            color: const Color(0xFF9C27B0).withValues(alpha: 0.1), // 고유 색상 - Face AI 테마
           ),
           child: Center(
             child: Text(
               number,
-              style: DSTypography.labelMedium.copyWith(
-                color: const Color(0xFF9C27B0),
+              style: context.labelMedium.copyWith(
+                color: const Color(0xFF9C27B0), // 고유 색상 - Face AI 테마
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -645,7 +645,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
             children: [
               Text(
                 title,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: isDark ? Colors.white : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -653,7 +653,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
               const SizedBox(height: 4),
               Text(
                 description,
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   color: DSColors.textSecondary,
                   height: 1.4,
                 ),
@@ -701,7 +701,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                 const SizedBox(width: 16),
                 Text(
                   '분석 팁',
-                  style: DSTypography.headingSmall.copyWith(
+                  style: context.headingSmall.copyWith(
                     color: isDark ? Colors.white : DSColors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
@@ -775,7 +775,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
             children: [
               Text(
                 title,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: isDark ? Colors.white : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -783,7 +783,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
               const SizedBox(height: 4),
               Text(
                 description,
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   color: DSColors.textSecondary,
                   height: 1.4,
                 ),

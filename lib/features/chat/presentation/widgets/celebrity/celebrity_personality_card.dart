@@ -225,8 +225,8 @@ class _CelebrityPersonalityCardState
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF6366F1).withValues(alpha: 0.15),
-            const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+            DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.15),
+            DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -238,9 +238,9 @@ class _CelebrityPersonalityCardState
             height: 56,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+              color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.2),
               border: Border.all(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.4),
+                color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.4),
                 width: 2,
               ),
             ),
@@ -325,10 +325,10 @@ class _CelebrityPersonalityCardState
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: const Color(0xFF6366F1).withValues(alpha: 0.05),
+          color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+            color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.1),
           ),
         ),
         child: Text(
@@ -406,13 +406,13 @@ class _CelebrityPersonalityCardState
                 vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                color: DSFortuneColors.categoryLotto.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Text(
                 data['relationship'],
                 style: typography.labelSmall.copyWith(
-                  color: const Color(0xFFF59E0B),
+                  color: DSFortuneColors.categoryLotto,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -453,7 +453,7 @@ class _CelebrityPersonalityCardState
                 ),
                 decoration: BoxDecoration(
                   color: hasHap
-                      ? const Color(0xFF22C55E).withValues(alpha: 0.1)
+                      ? colors.success.withValues(alpha: 0.1)
                       : colors.textPrimary.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
                 ),
@@ -461,7 +461,7 @@ class _CelebrityPersonalityCardState
                   hasHap ? '${data['hap_type'] ?? '합'} 발견!' : '합 없음',
                   style: typography.labelSmall.copyWith(
                     color: hasHap
-                        ? const Color(0xFF22C55E)
+                        ? colors.success
                         : colors.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
@@ -503,13 +503,13 @@ class _CelebrityPersonalityCardState
                 vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Text(
                 data['connection_type'],
                 style: typography.labelSmall.copyWith(
-                  color: const Color(0xFF8B5CF6),
+                  color: DSFortuneColors.categoryLuckyItems,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -527,7 +527,7 @@ class _CelebrityPersonalityCardState
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.05),
+                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Column(
@@ -536,7 +536,7 @@ class _CelebrityPersonalityCardState
                   Text(
                     '✨ 사주에서 발견된 증거',
                     style: typography.labelSmall.copyWith(
-                      color: const Color(0xFF8B5CF6),
+                      color: DSFortuneColors.categoryLuckyItems,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -578,9 +578,9 @@ class _CelebrityPersonalityCardState
             runSpacing: DSSpacing.xs,
             children: [
               if (data['best_year'] != null)
-                _buildTimingBadge(data['best_year'], const Color(0xFFE91E63), context),
+                _buildTimingBadge(data['best_year'], DSFortuneColors.categoryLove, context),
               if (data['best_month'] != null)
-                _buildTimingBadge(data['best_month'], const Color(0xFFFF9800), context),
+                _buildTimingBadge(data['best_month'], DSFortuneColors.categoryExercise, context),
             ],
           ),
           const SizedBox(height: DSSpacing.sm),
@@ -647,7 +647,7 @@ class _CelebrityPersonalityCardState
                   i < passionScore ? Icons.favorite : Icons.favorite_border,
                   size: 14,
                   color: i < passionScore
-                      ? const Color(0xFFE91E63)
+                      ? DSFortuneColors.categoryLove
                       : colors.textSecondary.withValues(alpha: 0.3),
                 ),
               )),
@@ -661,13 +661,13 @@ class _CelebrityPersonalityCardState
                 vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: const Color(0xFFE91E63).withValues(alpha: 0.1),
+                color: DSFortuneColors.categoryLove.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Text(
                 data['chemistry_type'],
                 style: typography.labelSmall.copyWith(
-                  color: const Color(0xFFE91E63),
+                  color: DSFortuneColors.categoryLove,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -698,7 +698,7 @@ class _CelebrityPersonalityCardState
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: const Color(0xFFFBBF24).withValues(alpha: 0.1),
+                color: DSFortuneColors.categoryGratitude.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -739,7 +739,7 @@ class _CelebrityPersonalityCardState
               context,
               '성격 궁합',
               data['personality_match'],
-              const Color(0xFF3B82F6),
+              DSFortuneColors.categoryFamily,
             ),
           if (data['energy_compatibility'] != null) ...[
             const SizedBox(height: DSSpacing.sm),
@@ -747,7 +747,7 @@ class _CelebrityPersonalityCardState
               context,
               '에너지 궁합',
               data['energy_compatibility'],
-              const Color(0xFF22C55E),
+              DSFortuneColors.categoryMoney,
             ),
           ],
           if (data['life_path_connection'] != null) ...[
@@ -756,7 +756,7 @@ class _CelebrityPersonalityCardState
               context,
               '인생 경로 연결',
               data['life_path_connection'],
-              const Color(0xFF8B5CF6),
+              DSFortuneColors.categoryLuckyItems,
             ),
           ],
         ],
@@ -938,7 +938,7 @@ class _CelebrityPersonalityCardState
             vertical: DSSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: const Color(0xFF22C55E).withValues(alpha: 0.1),
+            color: DSFortuneColors.categoryMoney.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DSRadius.sm),
           ),
           child: Column(
@@ -948,7 +948,7 @@ class _CelebrityPersonalityCardState
               Text(
                 item.key,
                 style: typography.labelSmall.copyWith(
-                  color: const Color(0xFF22C55E),
+                  color: DSFortuneColors.categoryMoney,
                   fontWeight: FontWeight.w600,
                   fontSize: 10,
                 ),
@@ -983,13 +983,13 @@ class _CelebrityPersonalityCardState
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF6366F1).withValues(alpha: 0.1),
-              const Color(0xFFE91E63).withValues(alpha: 0.1),
+              DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.1),
+              DSFortuneColors.categoryLove.withValues(alpha: 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+            color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.2),
           ),
         ),
         child: Column(
@@ -1002,7 +1002,7 @@ class _CelebrityPersonalityCardState
                 Text(
                   '특별 메시지',
                   style: typography.labelLarge.copyWith(
-                    color: const Color(0xFF6366F1),
+                    color: DSFortuneColors.categoryPersonalityDna,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1080,7 +1080,7 @@ class _CelebrityPersonalityCardState
 
   Widget _buildDefaultAvatar() {
     return Container(
-      color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+      color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.3),
       child: const Center(
         child: Icon(
           Icons.person,
@@ -1092,39 +1092,39 @@ class _CelebrityPersonalityCardState
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 90) return const Color(0xFFE91E63);
-    if (score >= 80) return const Color(0xFFFF5722);
-    if (score >= 70) return const Color(0xFFFF9800);
-    return const Color(0xFF9E9E9E);
+    if (score >= 90) return DSFortuneColors.categoryLove;
+    if (score >= 80) return DSFortuneColors.categoryExercise;
+    if (score >= 70) return DSFortuneColors.categoryLotto;
+    return DSFortuneColors.categoryExLover;
   }
 
   Color _getInteractionColor(String? interaction) {
     switch (interaction) {
       case '상생':
-        return const Color(0xFF22C55E);
+        return DSFortuneColors.categoryMoney;
       case '상극':
-        return const Color(0xFFEF4444);
+        return DSFortuneColors.categoryNewYear;
       default:
-        return const Color(0xFF6B7280);
+        return DSFortuneColors.categoryExLover;
     }
   }
 
   LinearGradient _getElementGradient(String element) {
     if (element.contains('木') || element.contains('목')) {
-      return const LinearGradient(colors: [Color(0xFF22C55E), Color(0xFF16A34A)]);
+      return LinearGradient(colors: [DSFortuneColors.elementWood, DSFortuneColors.elementWood.withValues(alpha: 0.8)]);
     }
     if (element.contains('火') || element.contains('화')) {
-      return const LinearGradient(colors: [Color(0xFFEF4444), Color(0xFFDC2626)]);
+      return LinearGradient(colors: [DSFortuneColors.elementFire, DSFortuneColors.elementFire.withValues(alpha: 0.8)]);
     }
     if (element.contains('土') || element.contains('토')) {
-      return const LinearGradient(colors: [Color(0xFFF59E0B), Color(0xFFD97706)]);
+      return LinearGradient(colors: [DSFortuneColors.elementEarth, DSFortuneColors.elementEarth.withValues(alpha: 0.8)]);
     }
     if (element.contains('金') || element.contains('금')) {
-      return const LinearGradient(colors: [Color(0xFF94A3B8), Color(0xFF64748B)]);
+      return LinearGradient(colors: [DSFortuneColors.elementMetal, DSFortuneColors.elementMetal.withValues(alpha: 0.8)]);
     }
     if (element.contains('水') || element.contains('수')) {
-      return const LinearGradient(colors: [Color(0xFF3B82F6), Color(0xFF2563EB)]);
+      return LinearGradient(colors: [DSFortuneColors.elementWater, DSFortuneColors.elementWater.withValues(alpha: 0.8)]);
     }
-    return const LinearGradient(colors: [Color(0xFF6B7280), Color(0xFF4B5563)]);
+    return LinearGradient(colors: [DSFortuneColors.categoryExLover, DSFortuneColors.categoryExLover.withValues(alpha: 0.8)]);
   }
 }

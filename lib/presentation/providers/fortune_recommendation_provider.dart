@@ -5,6 +5,7 @@ import '../../data/models/fortune_card_score.dart';
 import '../../core/constants/edge_functions_endpoints.dart';
 import '../../core/utils/logger.dart';
 import '../../services/analytics_service.dart';
+import '../../core/design_system/design_system.dart';
 import 'user_profile_notifier.dart' as profile_notifier;
 import '../../features/fortune/domain/entities/fortune_category.dart';
 import 'providers.dart';
@@ -230,15 +231,15 @@ final topFortuneRecommendationsProvider = Provider.family<List<FortuneCardScore>
 /// Provider to convert FortuneCardScore to FortuneCategory
 final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, FortuneCardScore>(
   (ref, score) {
-    // Map category to gradient colors
+    // Map category to gradient colors (using DSFortuneColors tokens)
     final categoryGradients = {
-      'love': [const Color(0xFFEC4899), const Color(0xFFDB2777)],
-      'career': [const Color(0xFF3B82F6), const Color(0xFF2563EB)],
-      'money': [const Color(0xFFF59E0B), const Color(0xFFD97706)],
-      'health': [const Color(0xFF10B981), const Color(0xFF059669)],
-      'traditional': [const Color(0xFFEF4444), const Color(0xFFDC2626)],
-      'lifestyle': [const Color(0xFF06B6D4), const Color(0xFF0891B2)],
-      'interactive': [const Color(0xFF9333EA), const Color(0xFF7C3AED)],
+      'love': [DSFortuneColors.categoryLove, DSFortuneColors.categoryBlindDate],
+      'career': [DSFortuneColors.categoryFamily, DSFortuneColors.categoryCareer],
+      'money': [DSFortuneColors.categoryLotto, const Color(0xFFD97706)], // 고유 색상: gradient end
+      'health': [DSFortuneColors.categoryHealth, const Color(0xFF059669)], // 고유 색상: gradient end
+      'traditional': [DSFortuneColors.categoryTraditional, DSFortuneColors.categorySportsGame],
+      'lifestyle': [DSFortuneColors.categoryFaceReading, DSFortuneColors.categoryBiorhythm],
+      'interactive': [DSFortuneColors.categoryTarot, DSFortuneColors.categoryDaily],
       'petFamily': null};
 
     // Map category to icons
@@ -252,8 +253,8 @@ final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, Fortu
       'interactive': Icons.touch_app_rounded,
       'petFamily': null};
 
-    final gradients = categoryGradients[score.category] ?? 
-        [const Color(0xFF7C3AED), const Color(0xFF3B82F6)];
+    final gradients = categoryGradients[score.category] ??
+        [DSFortuneColors.categoryDaily, DSFortuneColors.categoryExam];
     
     final icon = categoryIcons[score.category] ?? Icons.star_rounded;
 

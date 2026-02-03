@@ -6,23 +6,26 @@ const Map<String, List<String>> categoryAffinity = {
   'love': ['love', 'traditional', 'interactive', 'lifestyle'],
 
   // 직업/재물 클러스터
-  'career': ['career', 'money', 'lifestyle', 'traditional'],
+  'career': ['career', 'money', 'coaching', 'lifestyle'],
   'money': ['money', 'career', 'lifestyle', 'traditional'],
 
   // 전통/신비 클러스터
   'traditional': ['traditional', 'lifestyle', 'love', 'interactive'],
 
   // 건강/웰니스 클러스터
-  'health': ['health', 'lifestyle', 'interactive', 'traditional'],
+  'health': ['health', 'lifestyle', 'coaching', 'interactive'],
 
   // 라이프스타일/일상 클러스터
-  'lifestyle': ['lifestyle', 'traditional', 'interactive', 'love'],
+  'lifestyle': ['lifestyle', 'coaching', 'interactive', 'love'],
 
   // 인터랙티브/재미 클러스터
-  'interactive': ['interactive', 'lifestyle', 'love', 'traditional'],
+  'interactive': ['interactive', 'coaching', 'lifestyle', 'love'],
 
   // 가족/반려동물 클러스터
   'petFamily': ['petFamily', 'love', 'lifestyle', 'interactive'],
+
+  // AI 코칭/저널링 클러스터 (새로 추가)
+  'coaching': ['coaching', 'lifestyle', 'health', 'career'],
 };
 
 /// 현재 카테고리 기준 대상 카테고리의 연관성 점수 반환

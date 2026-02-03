@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/fortune_theme.dart';
 import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 압축된 합충형해 배지
 ///
@@ -92,7 +92,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '합',
           'hanja': '合',
           'description': hap.toString(),
-          'color': const Color(0xFF10B981), // 초록 - 조화
+          'color': DSFortuneColors.categoryHealth, // 초록 - 조화
         });
       }
     }
@@ -105,7 +105,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '충',
           'hanja': '沖',
           'description': chung.toString(),
-          'color': const Color(0xFFEF4444), // 빨강 - 충돌
+          'color': DSFortuneColors.categoryTraditional, // 빨강 - 충돌
         });
       }
     }
@@ -118,7 +118,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '형',
           'hanja': '刑',
           'description': hyung.toString(),
-          'color': const Color(0xFFF59E0B), // 주황 - 형벌
+          'color': DSFortuneColors.categoryLotto, // 주황 - 형벌
         });
       }
     }
@@ -131,7 +131,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '파',
           'hanja': '破',
           'description': pa.toString(),
-          'color': const Color(0xFF8B5CF6), // 보라 - 파괴
+          'color': DSFortuneColors.categoryLuckyItems, // 보라 - 파괴
         });
       }
     }
@@ -144,7 +144,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '해',
           'hanja': '害',
           'description': hae.toString(),
-          'color': const Color(0xFF6366F1), // 인디고 - 해침
+          'color': DSFortuneColors.categoryDailyCalendar, // 인디고 - 해침
         });
       }
     }

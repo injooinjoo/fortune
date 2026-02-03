@@ -349,17 +349,17 @@ class SajuTwelveStagesWidget extends StatelessWidget {
 
     switch (strengthLevel) {
       case '신강':
-        levelColor = const Color(0xFF10B981); // 에메랄드 그린
+        levelColor = DSFortuneColors.categoryHealth; // 에메랄드 그린
         levelDescription = '일간의 기운이 강합니다. 능동적이고 독립적인 성향을 가집니다.';
         levelIcon = Icons.trending_up;
         break;
       case '신약':
-        levelColor = const Color(0xFFF43F5E); // 로즈 핑크
+        levelColor = DSFortuneColors.categoryCompatibility; // 로즈 핑크
         levelDescription = '일간의 기운이 약합니다. 협력과 지원을 통해 성장합니다.';
         levelIcon = Icons.trending_down;
         break;
       default:
-        levelColor = const Color(0xFFF59E0B); // 앰버
+        levelColor = DSFortuneColors.categoryLotto; // 앰버
         levelDescription = '일간의 기운이 균형을 이룹니다. 상황에 따라 유연하게 대처합니다.';
         levelIcon = Icons.trending_flat;
     }

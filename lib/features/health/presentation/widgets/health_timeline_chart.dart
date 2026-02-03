@@ -146,7 +146,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
             reservedSize: 30,
             interval: 1,
             getTitlesWidget: (double value, TitleMeta meta) {
-              final style = DSTypography.labelMedium.copyWith(
+              final style = context.labelMedium.copyWith(
                 fontWeight: FontWeight.w500,
               );
               Widget text;
@@ -181,7 +181,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                 axisSide: meta.axisSide,
                 child: Text(
                   '${value.toInt()}',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: TossTheme.textGray600,
                   ),
                 ),
@@ -264,7 +264,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               
               return LineTooltipItem(
                 '$timeLabel\n${touchedSpot.y.toInt()}점\n$description',
-                DSTypography.labelMedium.copyWith(
+                context.labelMedium.copyWith(
                   color: TossDesignSystem.white,
                   fontWeight: FontWeight.w500,
                   height: 1.3,
@@ -439,9 +439,9 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return const Color(0xFF4CAF50); // 초록
-    if (score >= 60) return const Color(0xFF2196F3); // 파랑
-    if (score >= 40) return const Color(0xFFFF9800); // 주황
-    return const Color(0xFFFF5722); // 빨강
+    if (score >= 80) return const Color(0xFF4CAF50); // 고유 색상 - 건강 우수
+    if (score >= 60) return const Color(0xFF2196F3); // 고유 색상 - 건강 양호
+    if (score >= 40) return const Color(0xFFFF9800); // 고유 색상 - 건강 주의
+    return const Color(0xFFFF5722); // 고유 색상 - 건강 경고
   }
 }

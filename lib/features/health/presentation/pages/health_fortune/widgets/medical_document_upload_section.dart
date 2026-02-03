@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/theme/font_config.dart';
 import '../../../../../../core/theme/fortune_theme.dart';
 import '../../../../../../core/theme/fortune_design_system.dart';
@@ -29,13 +30,13 @@ class MedicalDocumentUploadSection extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF10B981).withValues(alpha: 0.08),
-              const Color(0xFF3B82F6).withValues(alpha: 0.08),
+              DSFortuneColors.categoryHealth.withValues(alpha: 0.08),
+              const Color(0xFF3B82F6).withValues(alpha: 0.08), // 고유 색상 - 장식용 그라데이션 블루
             ],
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFF10B981).withValues(alpha: 0.3),
+            color: DSFortuneColors.categoryHealth.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -45,7 +46,7 @@ class MedicalDocumentUploadSection extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                color: DSFortuneColors.categoryHealth.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -74,7 +75,7 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF10B981),
+                          color: DSFortuneColors.categoryHealth,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(

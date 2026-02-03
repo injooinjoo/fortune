@@ -4,6 +4,7 @@ import 'package:fortune/core/design_system/design_system.dart';
 import 'unified_button_enums.dart';
 import 'dart:async';
 
+/// @deprecated Use [DSButton] instead for consistent design system usage.
 /// 모든 버튼 기능을 통합한 UnifiedButton
 ///
 /// 기능:
@@ -560,7 +561,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
                       ? _buildLoadingIndicator(textColor)
                       : AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 200),
-                          style: DSTypography.buttonLarge.copyWith(
+                          style: context.labelLarge.copyWith(
                             color: textColor,
                           ),
                           child: Row(
@@ -813,8 +814,8 @@ class _UnifiedButtonState extends State<UnifiedButton> {
 
   TextStyle _getTextStyle(DSColorScheme colors, bool isDark, bool enabled) {
     final baseStyle = widget.size == UnifiedButtonSize.small
-        ? DSTypography.buttonSmall
-        : DSTypography.buttonLarge;
+        ? context.labelSmall
+        : context.labelLarge;
 
     return baseStyle.copyWith(
       color: _getTextColor(colors, isDark, enabled),

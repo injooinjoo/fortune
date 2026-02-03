@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../data/models/celebrity_saju.dart';
 import '../../../../presentation/providers/celebrity_saju_provider.dart';
 
@@ -30,7 +30,7 @@ class CelebrityCard extends ConsumerWidget {
         Text(
           '오늘 운세가 비슷한 유명인',
           style: context.heading3.copyWith(
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.colors.textPrimary,
             letterSpacing: -0.5,
           ),
         ),
@@ -38,7 +38,7 @@ class CelebrityCard extends ConsumerWidget {
         Text(
           '오늘 나와 비슷한 하루를 보내는 유명인',
           style: context.bodySmall.copyWith(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+            color: context.colors.textSecondary,
           ),
         ),
 
@@ -47,7 +47,7 @@ class CelebrityCard extends ConsumerWidget {
         celebritiesAsync.when(
           data: (celebDataList) {
             if (celebDataList.isEmpty) {
-              return _buildEmptyState();
+              return _buildEmptyState(context);
             }
             // 이미 1~3명으로 필터링되어 있음
             return Column(
@@ -80,25 +80,25 @@ class CelebrityCard extends ConsumerWidget {
               child: CircularProgressIndicator(),
             ),
           ),
-          error: (_, __) => _buildEmptyState(),
+          error: (_, __) => _buildEmptyState(context),
         ),
       ],
     );
   }
 
   /// 데이터 없을 때 표시할 위젯
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
         child: Text(
           '유명인 데이터를 불러오는 중...',
           style: TypographyUnified.bodySmall.copyWith(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+            color: context.colors.textSecondary,
           ),
         ),
       ),
@@ -121,28 +121,28 @@ class _CelebrityCardItem extends StatelessWidget {
     required this.isDark,
   });
 
-  /// 전통 오방색 기반 궁합 색상
+  /// 전통 오방색 기반 궁합 색상 - 변경 금지
   Color get _compatibilityColor {
-    if (compatibility >= 80) return const Color(0xFF2E8B57); // 목(木) - 최상
-    if (compatibility >= 60) return const Color(0xFFDAA520); // 토(土) - 양호
-    if (compatibility >= 40) return const Color(0xFF1E3A5F); // 수(水) - 보통
-    return const Color(0xFFDC143C); // 화(火) - 주의
+    if (compatibility >= 80) return const Color(0xFF2E8B57); // 오방색: 목(木) - 최상
+    if (compatibility >= 60) return const Color(0xFFDAA520); // 오방색: 토(土) - 양호
+    if (compatibility >= 40) return const Color(0xFF1E3A5F); // 오방색: 수(水) - 보통
+    return const Color(0xFFDC143C); // 오방색: 화(火) - 주의
   }
 
-  /// 이름 첫 글자로 아바타 배경색 결정 (전통 오방색)
+  /// 이름 첫 글자로 아바타 배경색 결정 (전통 오방색) - 변경 금지
   Color get _avatarColor {
     final colors = [
-      const Color(0xFF2E8B57), // 목(木) - 청록
-      const Color(0xFFDC143C), // 화(火) - 진홍
-      const Color(0xFFDAA520), // 토(土) - 금황
-      const Color(0xFFC0A062), // 금(金) - 금색
-      const Color(0xFF1E3A5F), // 수(水) - 남색
+      const Color(0xFF2E8B57), // 오방색: 목(木) - 청록
+      const Color(0xFFDC143C), // 오방색: 화(火) - 진홍
+      const Color(0xFFDAA520), // 오방색: 토(土) - 금황
+      const Color(0xFFC0A062), // 오방색: 금(金) - 금색
+      const Color(0xFF1E3A5F), // 오방색: 수(水) - 남색
     ];
     return colors[name.hashCode.abs() % colors.length];
   }
 
   /// 프로필 아바타 위젯 (이미지 또는 이니셜)
-  Widget _buildProfileAvatar() {
+  Widget _buildProfileAvatar(BuildContext context) {
     final initial = name.isNotEmpty ? name.substring(0, 1) : '?';
 
     return Container(
@@ -150,7 +150,7 @@ class _CelebrityCardItem extends StatelessWidget {
       height: 44,
       decoration: BoxDecoration(
         color: imageUrl != null
-            ? (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1)
+            ? context.colors.surface
             : _avatarColor.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(10),
       ),
@@ -185,7 +185,7 @@ class _CelebrityCardItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -198,7 +198,7 @@ class _CelebrityCardItem extends StatelessWidget {
       child: Row(
         children: [
           // 프로필 이미지 (이니셜 아바타 fallback)
-          _buildProfileAvatar(),
+          _buildProfileAvatar(context),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -207,7 +207,7 @@ class _CelebrityCardItem extends StatelessWidget {
                 Text(
                   name,
                   style: context.bodySmall.copyWith(
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -215,7 +215,7 @@ class _CelebrityCardItem extends StatelessWidget {
                 Text(
                   description,
                   style: context.labelMedium.copyWith(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                    color: context.colors.textSecondary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

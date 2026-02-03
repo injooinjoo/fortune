@@ -53,6 +53,18 @@ class _ChatPastLifeResultCardState
     });
   }
 
+  @override
+  void didUpdateWidget(covariant ChatPastLifeResultCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
+    if (oldWidget.result.isBlurred != widget.result.isBlurred && !widget.result.isBlurred) {
+      setState(() {
+        _isBlurred = false;
+        _blurredSections = [];
+      });
+    }
+  }
+
   /// 초상화 풀스크린 확대 보기
   void _showFullScreenPortrait(BuildContext context) {
     DSHaptics.light();
@@ -88,7 +100,7 @@ class _ChatPastLifeResultCardState
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: DSColors.background.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -130,33 +142,6 @@ class _ChatPastLifeResultCardState
           ),
         ),
       ),
-    );
-  }
-
-  Future<void> _showAdAndUnblur() async {
-    final adService = AdService();
-
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) async {
-        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-        if (mounted) {
-          FortuneCompletionHelper.onFortuneViewed(context, ref, 'past-life');
-        }
-
-        setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
-        });
-
-        if (mounted) {
-          final tokenState = ref.read(tokenProvider);
-          SubscriptionSnackbar.showAfterAd(
-            context,
-            hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-          );
-        }
-      },
     );
   }
 
@@ -214,12 +199,6 @@ class _ChatPastLifeResultCardState
             _buildAdviceSection(context, isDark)
                 .animate()
                 .fadeIn(duration: 500.ms, delay: 400.ms),
-
-          // 6. 언락 버튼 (블러 상태 + 비구독자)
-          if (_isBlurred && !isPremium)
-            _buildUnlockButton(context)
-                .animate()
-                .fadeIn(duration: 500.ms, delay: 500.ms),
 
           const SizedBox(height: DSSpacing.sm),
         ],
@@ -535,47 +514,6 @@ class _ChatPastLifeResultCardState
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUnlockButton(BuildContext context) {
-    final typography = context.typography;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _showAdAndUnblur,
-          borderRadius: BorderRadius.circular(DSRadius.md),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.md,
-              vertical: DSSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [ObangseokColors.hwangMuted, ObangseokColors.hwangLight],
-              ),
-              borderRadius: BorderRadius.circular(DSRadius.md),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('🌙', style: TextStyle(fontSize: 18)),
-                const SizedBox(width: DSSpacing.xs),
-                Text(
-                  '전생 이야기 모두 보기',
-                  style: typography.labelMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),

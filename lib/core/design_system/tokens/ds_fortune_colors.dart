@@ -167,6 +167,143 @@ class DSFortuneColors {
   static const Color elementEarth = Color(0xFFC9A227);
 
   // ============================================
+  // FORTUNE CATEGORY COLORS (운세 카테고리별 브랜드 색상)
+  // Each fortune type has a unique identity color
+  // ============================================
+
+  // -- 시간 기반 --
+  static const Color categoryDaily = Color(0xFF7C3AED);
+  static const Color categoryDailyCalendar = Color(0xFF6366F1);
+  static const Color categoryNewYear = Color(0xFFEF4444);
+
+  // -- 연애/관계 --
+  static const Color categoryLove = Color(0xFFEC4899);
+  static const Color categoryCompatibility = Color(0xFFF43F5E);
+  static const Color categoryExLover = Color(0xFF6B7280);
+  static const Color categoryYearlyEncounter = Color(0xFFE11D48);
+  static const Color categoryBlindDate = Color(0xFFBE185D);
+  static const Color categoryAvoidPeople = Color(0xFFDC2626);
+
+  // -- 직업/재능 --
+  static const Color categoryCareer = Color(0xFF2563EB);
+  static const Color categoryTalent = Color(0xFFFFB300);
+
+  // -- 재물 --
+  static const Color categoryMoney = Color(0xFF16A34A);
+  static const Color categoryLuckyItems = Color(0xFF8B5CF6);
+  static const Color categoryLotto = Color(0xFFF59E0B);
+
+  // -- 전통/신비 --
+  static const Color categoryTarot = Color(0xFF9333EA);
+  static const Color categoryTraditional = Color(0xFFEF4444);
+  static const Color categoryFaceReading = Color(0xFF06B6D4);
+  static const Color categoryTalisman = Color(0xFF7C3AED);
+  static const Color categoryPastLife = Color(0xFF8B4513);
+
+  // -- 성격/개성 --
+  static const Color categoryPersonalityDna = Color(0xFF6366F1);
+  static const Color categoryBiorhythm = Color(0xFF0891B2);
+  static const Color categoryMbti = Color(0xFF8B5CF6);
+
+  // -- 건강/스포츠 --
+  static const Color categoryHealth = Color(0xFF10B981);
+  static const Color categoryExercise = Color(0xFFEA580C);
+  static const Color categorySportsGame = Color(0xFFDC2626);
+
+  // -- 인터랙티브 --
+  static const Color categoryGameEnhance = Color(0xFFFF6B00);
+  static const Color categoryDream = Color(0xFF6366F1);
+  static const Color categoryWish = Color(0xFFFF4081);
+  static const Color categoryFortuneCookie = Color(0xFF9333EA);
+  static const Color categoryCelebrity = Color(0xFFFF1744);
+
+  // -- 가족/반려동물 --
+  static const Color categoryFamily = Color(0xFF3B82F6);
+  static const Color categoryPet = Color(0xFFE11D48);
+  static const Color categoryNaming = Color(0xFF8B5CF6);
+
+  // -- 스타일/패션 --
+  static const Color categoryOotd = Color(0xFF10B981);
+
+  // -- 실용/결정 --
+  static const Color categoryExam = Color(0xFF3B82F6);
+  static const Color categoryMoving = Color(0xFF059669);
+
+  // -- 웰니스 --
+  static const Color categoryBreathing = Color(0xFF26A69A);
+  static const Color categoryGratitude = Color(0xFFFFC107);
+
+  // -- AI 코칭/저널링 --
+  static const Color categoryCoaching = Color(0xFFFF6B9D);
+  static const Color categoryDecision = Color(0xFF6C5CE7);
+  static const Color categoryDailyReview = Color(0xFF00B894);
+  static const Color categoryWeeklyReview = Color(0xFFFDAA5D);
+  static const Color categoryChatInsight = Color(0xFF00BCD4);
+
+  // -- 유명인 타입 --
+  static const Color celebrityActor = Color(0xFFE91E63);
+  static const Color celebritySoloSinger = Color(0xFF9C27B0);
+  static const Color celebrityIdolMember = Color(0xFF673AB7);
+  static const Color celebrityAthlete = Color(0xFF2196F3);
+  static const Color celebrityStreamer = Color(0xFF00BCD4);
+  static const Color celebrityProGamer = Color(0xFF009688);
+  static const Color celebrityPolitician = Color(0xFF607D8B);
+  static const Color celebrityBusiness = Color(0xFF795548);
+
+  // -- 기타 --
+  static const Color categoryViewAll = Color(0xFF6366F1);
+
+  /// Get category color by fortune type string
+  static Color getCategoryColor(String fortuneType) {
+    switch (fortuneType) {
+      case 'daily': return categoryDaily;
+      case 'daily_calendar': return categoryDailyCalendar;
+      case 'newYear': return categoryNewYear;
+      case 'love': return categoryLove;
+      case 'compatibility': return categoryCompatibility;
+      case 'exLover': return categoryExLover;
+      case 'yearlyEncounter': return categoryYearlyEncounter;
+      case 'blindDate': return categoryBlindDate;
+      case 'avoidPeople': return categoryAvoidPeople;
+      case 'career': return categoryCareer;
+      case 'talent': return categoryTalent;
+      case 'money': return categoryMoney;
+      case 'luckyItems': return categoryLuckyItems;
+      case 'lotto': return categoryLotto;
+      case 'tarot': return categoryTarot;
+      case 'traditional': return categoryTraditional;
+      case 'faceReading': return categoryFaceReading;
+      case 'talisman': return categoryTalisman;
+      case 'pastLife': return categoryPastLife;
+      case 'personalityDna': return categoryPersonalityDna;
+      case 'biorhythm': return categoryBiorhythm;
+      case 'mbti': return categoryMbti;
+      case 'health': return categoryHealth;
+      case 'exercise': return categoryExercise;
+      case 'sportsGame': return categorySportsGame;
+      case 'gameEnhance': return categoryGameEnhance;
+      case 'dream': return categoryDream;
+      case 'wish': return categoryWish;
+      case 'fortuneCookie': return categoryFortuneCookie;
+      case 'celebrity': return categoryCelebrity;
+      case 'family': return categoryFamily;
+      case 'pet': return categoryPet;
+      case 'naming': return categoryNaming;
+      case 'ootdEvaluation': return categoryOotd;
+      case 'exam': return categoryExam;
+      case 'moving': return categoryMoving;
+      case 'breathing': return categoryBreathing;
+      case 'gratitude': return categoryGratitude;
+      case 'coaching': return categoryCoaching;
+      case 'decision': return categoryDecision;
+      case 'daily_review': return categoryDailyReview;
+      case 'weekly_review': return categoryWeeklyReview;
+      case 'viewAll': return categoryViewAll;
+      default: return categoryDaily;
+    }
+  }
+
+  // ============================================
   // THEME-AWARE GETTERS
   // ============================================
 

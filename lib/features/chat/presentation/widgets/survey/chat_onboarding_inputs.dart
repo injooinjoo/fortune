@@ -1,7 +1,201 @@
 import 'package:flutter/material.dart';
 import '../../../../../constants/fortune_constants.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../domain/models/life_category.dart';
 import '../../providers/onboarding_chat_provider.dart';
+
+/// 인생 컨설팅 대분류 선택 위젯
+class OnboardingLifeCategorySelector extends StatelessWidget {
+  final void Function(LifeCategory category) onSelect;
+
+  const OnboardingLifeCategorySelector({
+    super.key,
+    required this.onSelect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.md),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 2x2 그리드
+          GridView.count(
+            crossAxisCount: 2,
+            mainAxisSpacing: DSSpacing.sm,
+            crossAxisSpacing: DSSpacing.sm,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            childAspectRatio: 2.2,
+            children: LifeCategory.values.map((category) {
+              return _LifeCategoryChip(
+                category: category,
+                onTap: () {
+                  DSHaptics.medium();
+                  onSelect(category);
+                },
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 인생 컨설팅 대분류 칩
+class _LifeCategoryChip extends StatelessWidget {
+  final LifeCategory category;
+  final VoidCallback onTap;
+
+  const _LifeCategoryChip({
+    required this.category,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.md,
+            vertical: DSSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: isDark
+                ? category.color.withValues(alpha: 0.15)
+                : category.color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            border: Border.all(
+              color: category.color.withValues(alpha: 0.4),
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                category.icon,
+                size: 20,
+                color: category.color,
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                category.label,
+                style: typography.labelLarge.copyWith(
+                  color: isDark ? colors.textPrimary : category.color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 세부 고민 선택 위젯
+class OnboardingSubConcernSelector extends StatelessWidget {
+  final LifeCategory category;
+  final void Function(String concernId) onSelect;
+
+  const OnboardingSubConcernSelector({
+    super.key,
+    required this.category,
+    required this.onSelect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final concerns = subConcernsByCategory[category] ?? [];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.md),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Wrap(
+            spacing: DSSpacing.xs,
+            runSpacing: DSSpacing.xs,
+            alignment: WrapAlignment.center,
+            children: concerns.map((concern) {
+              return _SubConcernChip(
+                label: concern.label,
+                color: category.color,
+                onTap: () {
+                  DSHaptics.light();
+                  onSelect(concern.id);
+                },
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 세부 고민 칩
+class _SubConcernChip extends StatelessWidget {
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _SubConcernChip({
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.sm,
+            vertical: DSSpacing.xs,
+          ),
+          decoration: BoxDecoration(
+            color: isDark
+                ? color.withValues(alpha: 0.1)
+                : color.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            border: Border.all(
+              color: color.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          child: Text(
+            label,
+            style: typography.labelMedium.copyWith(
+              color: isDark ? colors.textPrimary : color,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /// 성별 선택 위젯 (PASS 가능)
 class OnboardingGenderSelector extends StatelessWidget {

@@ -274,7 +274,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               )
             : Text(
                 '태몽 해석하기',
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),

@@ -22,7 +22,7 @@ class SimpleBlurOverlay extends StatelessWidget {
   /// 블러 처리할 자식 위젯
   final Widget child;
 
-  /// 블러 강도 (기본값: 6.0 - 연한 블러)
+  /// 블러 강도 (기본값: 4.0 - 더 연한 블러, 뒤가 잘 보임)
   final double blurSigma;
 
   /// 자물쇠 아이콘 크기 (기본값: 32)
@@ -35,7 +35,7 @@ class SimpleBlurOverlay extends StatelessWidget {
     super.key,
     required this.isBlurred,
     required this.child,
-    this.blurSigma = 6.0,
+    this.blurSigma = 4.0,
     this.lockIconSize = 32,
     this.lockIconOpacity = 0.3,
   });

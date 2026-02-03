@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/utils/hanja_utils.dart';
 import '../../../../core/theme/saju_colors.dart';
@@ -62,7 +62,7 @@ class SajuInsightCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF5F0E6),
+            color: isDark ? DSColors.surface : DSFortuneColors.hanjiCream,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -74,8 +74,8 @@ class SajuInsightCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: isDark
-                        ? [const Color(0xFF2C2C2E), const Color(0xFF1C1C1E)]
-                        : [const Color(0xFFF5F0E6), const Color(0xFFEDE8DC)],
+                        ? [const Color(0xFF2C2C2E), DSColors.surface] // 고유 색상(dark gradient start)
+                        : [DSFortuneColors.hanjiCream, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),

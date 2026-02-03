@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../presentation/widgets/fortune_infographic_widgets.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
@@ -41,7 +41,7 @@ class RadarCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            color: isDark ? DSColors.surface : Colors.white,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -59,7 +59,7 @@ class RadarCard extends StatelessWidget {
                 child: FortuneInfographicWidgets.buildRadarChart(
                   scores: radarData.map((k, v) => MapEntry(k, v.round())),
                   size: 180,
-                  primaryColor: const Color(0xFF2E8B57), // 木(목) - 전통 청록
+                  primaryColor: const Color(0xFF2E8B57), // 고유 색상 - 木(목) 전통 청록
                 ),
               ).animate()
                 .fadeIn(duration: 600.ms)

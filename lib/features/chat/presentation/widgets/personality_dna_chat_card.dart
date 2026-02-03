@@ -56,34 +56,18 @@ class _PersonalityDnaChatCardState
     });
   }
 
-  PersonalityDNA get dna => widget.dna;
-
-  Future<void> _showAdAndUnblur() async {
-    final adService = AdService();
-
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) async {
-        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-        if (mounted) {
-          FortuneCompletionHelper.onFortuneViewed(
-              context, ref, 'personality-dna');
-        }
-
-        setState(() {
-          _isBlurred = false;
-        });
-
-        if (mounted) {
-          final tokenState = ref.read(tokenProvider);
-          SubscriptionSnackbar.showAfterAd(
-            context,
-            hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-          );
-        }
-      },
-    );
+  @override
+  void didUpdateWidget(covariant PersonalityDnaChatCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
+    if (oldWidget.isBlurred != widget.isBlurred && !widget.isBlurred) {
+      setState(() {
+        _isBlurred = false;
+      });
+    }
   }
+
+  PersonalityDNA get dna => widget.dna;
 
   @override
   Widget build(BuildContext context) {
@@ -119,12 +103,6 @@ class _PersonalityDnaChatCardState
             _buildBlurrableContent(context, isDark)
                 .animate()
                 .fadeIn(duration: 500.ms, delay: 200.ms),
-
-            // 언락 버튼 (블러 상태 + 비구독자)
-            if (_isBlurred && !isPremium)
-              _buildUnlockButton(context)
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 300.ms),
 
             const SizedBox(height: DSSpacing.md),
           ],
@@ -206,58 +184,6 @@ class _PersonalityDnaChatCardState
     );
   }
 
-  Widget _buildUnlockButton(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _showAdAndUnblur,
-          borderRadius: BorderRadius.circular(DSRadius.md),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: DSSpacing.md,
-              horizontal: DSSpacing.lg,
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: dna.gradientColors.isNotEmpty
-                    ? dna.gradientColors
-                    : [colors.accent, colors.accentSecondary],
-              ),
-              borderRadius: BorderRadius.circular(DSRadius.md),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.accent.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.play_circle_outline,
-                    color: Colors.white, size: 20),
-                const SizedBox(width: DSSpacing.sm),
-                Text(
-                  '광고 보고 전체 결과 확인',
-                  style: typography.labelLarge.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildHeader(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
@@ -297,8 +223,8 @@ class _PersonalityDnaChatCardState
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withValues(alpha: 0.1),
-                  Colors.black.withValues(alpha: 0.6),
+                  DSColors.background.withValues(alpha: 0.1),
+                  DSColors.background.withValues(alpha: 0.6),
                 ],
               ),
             ),

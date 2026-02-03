@@ -71,6 +71,7 @@ class SocialLoginBottomSheet {
                         children: [
                           // Google Login
                           _buildSocialButton(
+                              context: context,
                               onPressed: isProcessing ? null : onGoogleLogin,
                               type: 'google',
                               colors: colors),
@@ -78,6 +79,7 @@ class SocialLoginBottomSheet {
 
                           // Apple Login
                           _buildSocialButton(
+                              context: context,
                               onPressed: isProcessing ? null : onAppleLogin,
                               type: 'apple',
                               colors: colors),
@@ -99,7 +101,7 @@ class SocialLoginBottomSheet {
 
   /// 소셜 로그인 버튼 빌더
   static Widget _buildSocialButton(
-      {required VoidCallback? onPressed, required String type, required DSColorScheme colors}) {
+      {required BuildContext context, required VoidCallback? onPressed, required String type, required DSColorScheme colors}) {
     Widget icon;
     String text;
 
@@ -113,6 +115,10 @@ class SocialLoginBottomSheet {
           'assets/images/social/apple.svg',
           width: 24,
           height: 24,
+          colorFilter: ColorFilter.mode(
+            colors.textPrimary,
+            BlendMode.srcIn,
+          ),
         );
         text = 'Apple로 계속하기';
         break;
@@ -162,7 +168,7 @@ class SocialLoginBottomSheet {
             const SizedBox(width: 12),
             Text(
               text,
-              style: DSTypography.labelLarge.copyWith(
+              style: context.labelLarge.copyWith(
                 fontWeight: FontWeight.w600,
                 color: colors.textPrimary,
               ),

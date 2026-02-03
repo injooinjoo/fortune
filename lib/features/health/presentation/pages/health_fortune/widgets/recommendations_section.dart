@@ -54,7 +54,7 @@ class RecommendationsSection extends StatelessWidget {
                 children: [
                   Text(
                     rec.type.emoji,
-                    style: DSTypography.headingSmall,
+                    style: context.headingSmall,
                   ),
                   const SizedBox(width: 12),
                   Expanded(

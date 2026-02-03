@@ -167,7 +167,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
               if (!isSelected)
                 Text(
                   part.displayName,
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     fontWeight: FontWeight.w500,
                   ),
@@ -219,13 +219,13 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
       // 건강 상태가 있는 경우 (결과 화면에서)
       switch (healthLevel) {
         case HealthLevel.excellent:
-          return const Color(0xFF4CAF50).withValues(alpha: isSelected ? 0.8 : 0.3);
+          return const Color(0xFF4CAF50).withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 우수
         case HealthLevel.good:
-          return const Color(0xFF2196F3).withValues(alpha: isSelected ? 0.8 : 0.3);
+          return const Color(0xFF2196F3).withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 양호
         case HealthLevel.caution:
-          return const Color(0xFFFF9800).withValues(alpha: isSelected ? 0.8 : 0.3);
+          return const Color(0xFFFF9800).withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 주의
         case HealthLevel.warning:
-          return const Color(0xFFFF5722).withValues(alpha: isSelected ? 0.8 : 0.3);
+          return const Color(0xFFFF5722).withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 경고
       }
     }
     

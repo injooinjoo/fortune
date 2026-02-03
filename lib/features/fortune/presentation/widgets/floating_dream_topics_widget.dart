@@ -160,7 +160,7 @@ class _RollingChipRowState extends State<_RollingChipRow>
               ),
               child: Text(
                 topic,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: DSColors.textPrimary,
                   fontWeight: FontWeight.w500,
                 ),

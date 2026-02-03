@@ -85,7 +85,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                       width: 1)),
                   child: Text(
                     widget.text,
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: TossDesignSystem.white,
                       fontWeight: FontWeight.w500),
                   ),

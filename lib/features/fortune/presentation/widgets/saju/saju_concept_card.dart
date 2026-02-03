@@ -154,10 +154,10 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                     width: double.infinity,
                     padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3B82F6).withValues(alpha: 0.08),
+                      color: DSFortuneColors.categoryFamily.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                       border: Border.all(
-                        color: const Color(0xFF3B82F6).withValues(alpha: 0.2),
+                        color: DSFortuneColors.categoryFamily.withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),
@@ -168,14 +168,14 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                           children: [
                             const Icon(
                               Icons.lightbulb_outline,
-                              color: Color(0xFF3B82F6),
+                              color: DSFortuneColors.categoryFamily,
                               size: 16,
                             ),
                             const SizedBox(width: 6),
                             Text(
                               '실생활에서는?',
                               style: context.labelMedium.copyWith(
-                                color: const Color(0xFF3B82F6),
+                                color: DSFortuneColors.categoryFamily,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -200,10 +200,10 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                     width: double.infinity,
                     padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.08),
+                      color: DSFortuneColors.categoryHealth.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                       border: Border.all(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                        color: DSFortuneColors.categoryHealth.withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),
@@ -214,14 +214,14 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                           children: [
                             const Icon(
                               Icons.tips_and_updates_outlined,
-                              color: Color(0xFF10B981),
+                              color: DSFortuneColors.categoryHealth,
                               size: 16,
                             ),
                             const SizedBox(width: 6),
                             Text(
                               '이렇게 활용하세요!',
                               style: context.labelMedium.copyWith(
-                                color: const Color(0xFF10B981),
+                                color: DSFortuneColors.categoryHealth,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -298,24 +298,7 @@ void showCharacterExplanationSheet({
   final colors = context.colors;
 
   // 오행별 색상
-  Color getElementColor(String element) {
-    switch (element) {
-      case '木':
-        return const Color(0xFF4CAF50);
-      case '火':
-        return const Color(0xFFE53935);
-      case '土':
-        return const Color(0xFFFF9800);
-      case '金':
-        return const Color(0xFFFFD700);
-      case '水':
-        return const Color(0xFF2196F3);
-      default:
-        return colors.accent;
-    }
-  }
-
-  final elementColor = getElementColor(element);
+  final elementColor = DSFortuneColors.getElementColor(element);
 
   showModalBottomSheet(
     context: context,
@@ -540,7 +523,7 @@ void showCharacterExplanationSheet({
                     title: '현대인의 모습으로 보면',
                     content: realLife,
                     icon: Icons.lightbulb_outline,
-                    color: const Color(0xFF3B82F6),
+                    color: DSFortuneColors.categoryFamily,
                   ),
                 ],
 
@@ -552,7 +535,7 @@ void showCharacterExplanationSheet({
                     title: '연애 & 인간관계',
                     content: love,
                     icon: Icons.favorite_outline,
-                    color: const Color(0xFFEC4899),
+                    color: DSFortuneColors.categoryLove,
                   ),
                 ],
 
@@ -564,7 +547,7 @@ void showCharacterExplanationSheet({
                     title: '직업 & 재물운',
                     content: career,
                     icon: Icons.work_outline,
-                    color: const Color(0xFFF59E0B),
+                    color: DSFortuneColors.categoryLotto,
                   ),
                 ],
 
@@ -576,7 +559,7 @@ void showCharacterExplanationSheet({
                     title: '건강 포인트',
                     content: health,
                     icon: Icons.health_and_safety_outlined,
-                    color: const Color(0xFF10B981),
+                    color: DSFortuneColors.categoryHealth,
                   ),
                 ],
 
@@ -588,7 +571,7 @@ void showCharacterExplanationSheet({
                     title: '이렇게 활용하세요!',
                     content: tips,
                     icon: Icons.tips_and_updates_outlined,
-                    color: const Color(0xFF8B5CF6),
+                    color: DSFortuneColors.categoryLuckyItems,
                   ),
                 ],
 
@@ -600,7 +583,7 @@ void showCharacterExplanationSheet({
                     title: '궁합 & 상성',
                     content: compatibility,
                     icon: Icons.people_outline,
-                    color: const Color(0xFF06B6D4),
+                    color: DSFortuneColors.categoryFaceReading,
                   ),
                 ],
 
@@ -635,24 +618,7 @@ void showOhangExplanationSheet({
 }) {
   final colors = context.colors;
 
-  Color getElementColor(String element) {
-    switch (element) {
-      case '목':
-        return const Color(0xFF4CAF50);
-      case '화':
-        return const Color(0xFFE53935);
-      case '토':
-        return const Color(0xFFFF9800);
-      case '금':
-        return const Color(0xFFFFD700);
-      case '수':
-        return const Color(0xFF2196F3);
-      default:
-        return colors.accent;
-    }
-  }
-
-  final elementColor = getElementColor(element);
+  final elementColor = DSFortuneColors.getElementColor(element);
 
   showModalBottomSheet(
     context: context,
@@ -838,7 +804,7 @@ void showOhangExplanationSheet({
                     title: '현대인 유형으로 보면',
                     content: realLife,
                     icon: Icons.lightbulb_outline,
-                    color: const Color(0xFF3B82F6),
+                    color: DSFortuneColors.categoryFamily,
                   ),
                 ],
 
@@ -850,7 +816,7 @@ void showOhangExplanationSheet({
                     title: '연애 스타일',
                     content: loveStyle,
                     icon: Icons.favorite_outline,
-                    color: const Color(0xFFEC4899),
+                    color: DSFortuneColors.categoryLove,
                   ),
                 ],
 
@@ -862,7 +828,7 @@ void showOhangExplanationSheet({
                     title: '일하는 스타일',
                     content: workStyle,
                     icon: Icons.work_outline,
-                    color: const Color(0xFFF59E0B),
+                    color: DSFortuneColors.categoryLotto,
                   ),
                 ],
 
@@ -874,7 +840,7 @@ void showOhangExplanationSheet({
                     title: '스트레스 받으면?',
                     content: stressSign,
                     icon: Icons.warning_amber_outlined,
-                    color: const Color(0xFFEF4444),
+                    color: DSFortuneColors.categoryNewYear,
                   ),
                 ],
 
@@ -886,7 +852,7 @@ void showOhangExplanationSheet({
                     title: '에너지 충전법',
                     content: rechargeWay,
                     icon: Icons.battery_charging_full_outlined,
-                    color: const Color(0xFF10B981),
+                    color: DSFortuneColors.categoryHealth,
                   ),
                 ],
 
@@ -1180,7 +1146,7 @@ void showTwelveStageExplanationSheet({
                     title: '현대인의 에너지로 보면',
                     content: realLife,
                     icon: Icons.lightbulb_outline,
-                    color: const Color(0xFF3B82F6),
+                    color: DSFortuneColors.categoryFamily,
                   ),
                 ],
 
@@ -1192,7 +1158,7 @@ void showTwelveStageExplanationSheet({
                     title: '이 시기가 오면',
                     content: when,
                     icon: Icons.schedule_outlined,
-                    color: const Color(0xFF8B5CF6),
+                    color: DSFortuneColors.categoryLuckyItems,
                   ),
                 ],
 
@@ -1204,7 +1170,7 @@ void showTwelveStageExplanationSheet({
                     title: '직장 & 사업운',
                     content: career,
                     icon: Icons.work_outline,
-                    color: const Color(0xFFF59E0B),
+                    color: DSFortuneColors.categoryLotto,
                   ),
                 ],
 
@@ -1216,7 +1182,7 @@ void showTwelveStageExplanationSheet({
                     title: '연애 & 결혼운',
                     content: love,
                     icon: Icons.favorite_outline,
-                    color: const Color(0xFFEC4899),
+                    color: DSFortuneColors.categoryLove,
                   ),
                 ],
 
@@ -1228,7 +1194,7 @@ void showTwelveStageExplanationSheet({
                     title: '이 시기를 잘 보내려면',
                     content: tips,
                     icon: Icons.tips_and_updates_outlined,
-                    color: const Color(0xFF10B981),
+                    color: DSFortuneColors.categoryHealth,
                   ),
                 ],
 
@@ -1240,7 +1206,7 @@ void showTwelveStageExplanationSheet({
                     title: '주의할 점',
                     content: warning,
                     icon: Icons.warning_amber_outlined,
-                    color: const Color(0xFFEF4444),
+                    color: DSFortuneColors.categoryNewYear,
                   ),
                 ],
 
@@ -1468,7 +1434,7 @@ void showSinsalExplanationSheet({
                     title: '현대 사회에서 나타나는 모습',
                     content: realLife,
                     icon: Icons.lightbulb_outline,
-                    color: const Color(0xFF3B82F6),
+                    color: DSFortuneColors.categoryFamily,
                   ),
                 ],
 
@@ -1480,7 +1446,7 @@ void showSinsalExplanationSheet({
                     title: '좋은 점 & 활용법',
                     content: goodSide,
                     icon: Icons.thumb_up_outlined,
-                    color: const Color(0xFF10B981),
+                    color: DSFortuneColors.categoryHealth,
                   ),
                 ],
 
@@ -1492,7 +1458,7 @@ void showSinsalExplanationSheet({
                     title: '주의할 점',
                     content: badSide,
                     icon: Icons.warning_amber_outlined,
-                    color: const Color(0xFFEF4444),
+                    color: DSFortuneColors.categoryNewYear,
                   ),
                 ],
 
@@ -1504,7 +1470,7 @@ void showSinsalExplanationSheet({
                     title: '직업 & 재물운',
                     content: career,
                     icon: Icons.work_outline,
-                    color: const Color(0xFFF59E0B),
+                    color: DSFortuneColors.categoryLotto,
                   ),
                 ],
 
@@ -1516,7 +1482,7 @@ void showSinsalExplanationSheet({
                     title: '연애 & 인간관계',
                     content: love,
                     icon: Icons.favorite_outline,
-                    color: const Color(0xFFEC4899),
+                    color: DSFortuneColors.categoryLove,
                   ),
                 ],
 
@@ -1528,7 +1494,7 @@ void showSinsalExplanationSheet({
                     title: '이렇게 활용하세요!',
                     content: tips,
                     icon: Icons.tips_and_updates_outlined,
-                    color: const Color(0xFF8B5CF6),
+                    color: DSFortuneColors.categoryLuckyItems,
                   ),
                 ],
 
@@ -1778,10 +1744,10 @@ void showHapchungExplanationSheet({
                     width: double.infinity,
                     padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.08),
+                      color: DSFortuneColors.categoryFamily.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                       border: Border.all(
-                        color: Colors.blue.withValues(alpha: 0.2),
+                        color: DSFortuneColors.categoryFamily.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Column(
@@ -1792,13 +1758,13 @@ void showHapchungExplanationSheet({
                             const Icon(
                               Icons.lightbulb_outline,
                               size: 18,
-                              color: Colors.blue,
+                              color: DSFortuneColors.categoryFamily,
                             ),
                             const SizedBox(width: DSSpacing.xs),
                             Text(
                               '실생활에서는?',
                               style: context.labelMedium.copyWith(
-                                color: Colors.blue,
+                                color: DSFortuneColors.categoryFamily,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -1824,10 +1790,10 @@ void showHapchungExplanationSheet({
                     width: double.infinity,
                     padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.08),
+                      color: DSFortuneColors.categoryHealth.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                       border: Border.all(
-                        color: Colors.green.withValues(alpha: 0.2),
+                        color: DSFortuneColors.categoryHealth.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Column(
@@ -1838,13 +1804,13 @@ void showHapchungExplanationSheet({
                             const Icon(
                               Icons.tips_and_updates_outlined,
                               size: 18,
-                              color: Colors.green,
+                              color: DSFortuneColors.categoryHealth,
                             ),
                             const SizedBox(width: DSSpacing.xs),
                             Text(
                               '이럴 때 이렇게!',
                               style: context.labelMedium.copyWith(
-                                color: Colors.green,
+                                color: DSFortuneColors.categoryHealth,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),

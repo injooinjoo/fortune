@@ -110,6 +110,20 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     }
   }
 
+  @override
+  void didUpdateWidget(covariant ChatTarotResultCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
+    final oldBlurred = oldWidget.data['isBlurred'] as bool? ?? true;
+    final newBlurred = widget.data['isBlurred'] as bool? ?? true;
+    if (oldBlurred != newBlurred && !newBlurred) {
+      setState(() {
+        _isBlurred = false;
+        _blurredSections = [];
+      });
+    }
+  }
+
   /// 안전하게 setState 호출 (빌드 중 호출 방지)
   void _safeSetState(VoidCallback fn) {
     if (!mounted) return;
@@ -166,9 +180,6 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
 
             // 조언 (프리미엄)
             if (advice.isNotEmpty) _buildAdviceSection(colors, typography),
-
-            // 광고 버튼 (블러 상태일 때만)
-            if (_isBlurred) _buildUnlockButton(colors, typography),
 
             const SizedBox(height: DSSpacing.md),
           ],
@@ -306,7 +317,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFB8860B).withValues(alpha: 0.3),
+                        color: DSFortuneColors.fortuneGold.withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 2,
                         offset: const Offset(0, 8),
@@ -459,7 +470,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     String interpretation,
     bool isReversed,
   ) {
-    const goldColor = Color(0xFFB8860B);
+    final goldColor = DSFortuneColors.getGold(Theme.of(context).brightness == Brightness.dark);
 
     return Stack(
       fit: StackFit.expand,
@@ -471,7 +482,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
           errorBuilder: (context, error, stackTrace) {
             // 폴백: 기존 네이비 배경
             return Container(
-              color: const Color(0xFF2D2D4A),
+              color: colors.backgroundSecondary,
             );
           },
         ),
@@ -483,9 +494,9 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withValues(alpha: 0.4),
-                Colors.black.withValues(alpha: 0.7),
-                Colors.black.withValues(alpha: 0.4),
+                DSColors.background.withValues(alpha: 0.4),
+                DSColors.background.withValues(alpha: 0.7),
+                DSColors.background.withValues(alpha: 0.4),
               ],
             ),
           ),
@@ -504,7 +515,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: DSColors.background.withValues(alpha: 0.3),
                     border: Border.all(color: goldColor, width: 1),
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -528,7 +539,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
                   fontWeight: FontWeight.w700,
                   shadows: [
                     Shadow(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: DSColors.background.withValues(alpha: 0.5),
                       blurRadius: 4,
                     ),
                   ],
@@ -577,7 +588,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
                       height: 1.7,
                       shadows: [
                         Shadow(
-                          color: Colors.black.withValues(alpha: 0.5),
+                          color: DSColors.background.withValues(alpha: 0.5),
                           blurRadius: 2,
                         ),
                       ],
@@ -880,57 +891,6 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildUnlockButton(
-      DSColorScheme colors, DSTypographyScheme typography) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(
-          DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton.icon(
-          onPressed: _showAdAndUnblur,
-          icon: const Icon(Icons.play_circle_outline, size: 20),
-          label: const Text('광고 보고 전체 내용 보기'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colors.accent,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(DSRadius.md),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _showAdAndUnblur() async {
-    final adService = AdService();
-
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) async {
-        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-        if (mounted) {
-          FortuneCompletionHelper.onFortuneViewed(context, ref, 'tarot');
-        }
-
-        setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
-        });
-
-        if (mounted) {
-          final tokenState = ref.read(tokenProvider);
-          SubscriptionSnackbar.showAfterAd(
-            context,
-            hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-          );
-        }
-      },
     );
   }
 }

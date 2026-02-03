@@ -48,13 +48,13 @@ class _ChatDatePickerState extends State<ChatDatePicker> {
           data: Theme.of(context).copyWith(
             colorScheme: isDark
                 ? const ColorScheme.dark(
-                    primary: Color(0xFF7C3AED),
+                    primary: DSFortuneColors.categoryDaily,
                     onPrimary: Colors.white,
-                    surface: Color(0xFF1E1E1E),
+                    surface: DSColors.surface,
                     onSurface: Colors.white,
                   )
                 : const ColorScheme.light(
-                    primary: Color(0xFF7C3AED),
+                    primary: DSFortuneColors.categoryDaily,
                     onPrimary: Colors.white,
                     surface: Colors.white,
                     onSurface: Colors.black,

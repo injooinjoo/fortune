@@ -42,7 +42,7 @@ class PolicyPage extends ConsumerWidget {
                         color: TossDesignSystem.purple,
                         onTap: () => context.push('/terms-of-service')).animate().fadeIn(delay: 200.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
                       const SizedBox(height: 32),
-                      _buildInfoSection(),
+                      _buildInfoSection(context),
                     ],
                   ),
                 ),
@@ -94,13 +94,13 @@ class PolicyPage extends ConsumerWidget {
                 children: [
                   Text(
                     title,
-                    style: DSTypography.headingSmall.copyWith(
+                    style: context.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: TossDesignSystem.white)),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: TossDesignSystem.white.withValues(alpha: 0.8),
                     ),
                   ),
@@ -118,7 +118,7 @@ class PolicyPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildInfoSection() {
+  Widget _buildInfoSection(BuildContext context) {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
@@ -136,14 +136,14 @@ class PolicyPage extends ConsumerWidget {
           Text(
             'Fortune은 이용자의 개인정보를 소중히 여기며,\n'
             '관련 법령에 따라 안전하게 관리하고 있습니다.',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.8),
               height: 1.5),
             textAlign: TextAlign.center),
           const SizedBox(height: 16),
           Text(
             '문의사항이 있으시면 고객지원 페이지를 이용해주세요.',
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.6)),
             textAlign: TextAlign.center,
           ),

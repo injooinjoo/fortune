@@ -66,9 +66,9 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
       case TarotDifficulty.beginner:
         return const Color(0xFF22C55E); // 초록 - 쉬움
       case TarotDifficulty.intermediate:
-        return const Color(0xFFF59E0B); // 주황 - 중간
+        return DSFortuneColors.categoryLotto; // 주황 - 중간
       case TarotDifficulty.advanced:
-        return const Color(0xFFEF4444); // 빨강 - 어려움
+        return DSFortuneColors.categoryNewYear; // 빨강 - 어려움
     }
   }
 
@@ -78,25 +78,25 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
       case TarotSpreadType.single:
         return {
           'icon': Icons.style,
-          'color': const Color(0xFF3B82F6),
+          'color': DSFortuneColors.categoryExam,
           'recommended': '빠른 답변이 필요할 때',
         };
       case TarotSpreadType.threeCard:
         return {
           'icon': Icons.timeline,
-          'color': const Color(0xFF7C3AED),
+          'color': DSFortuneColors.categoryDaily,
           'recommended': '시간의 흐름을 보고 싶을 때',
         };
       case TarotSpreadType.relationship:
         return {
           'icon': Icons.favorite,
-          'color': const Color(0xFFEC4899),
+          'color': DSFortuneColors.categoryLove,
           'recommended': '연애/관계 질문',
         };
       case TarotSpreadType.celticCross:
         return {
           'icon': Icons.apps,
-          'color': const Color(0xFF10B981),
+          'color': DSFortuneColors.categoryHealth,
           'recommended': '심층 분석이 필요할 때',
         };
     }

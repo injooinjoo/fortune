@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+41
+version: 1.0.0+48
 
 environment:
   sdk: ">=3.5.3 <4.0.0"
@@ -405,6 +405,14 @@ flutter:
     - family: NotoSansKR
       fonts:
         - asset: assets/fonts/NotoSansKR/NotoSansKR-VariableFont_wght.ttf
+    - family: GmarketSans
+      fonts:
+        - asset: assets/fonts/GmarketSans/GmarketSansTTFLight.ttf
+          weight: 300
+        - asset: assets/fonts/GmarketSans/GmarketSansTTFMedium.ttf
+          weight: 500
+        - asset: assets/fonts/GmarketSans/GmarketSansTTFBold.ttf
+          weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
@@ -431,8 +439,7 @@ flutter_launcher_icons:
 flutter_native_splash:
   color: "#F7F3E9" # 미색 (Misaek) 한지 배경
   color_dark: "#1C1C1C" # 흑색 (Heuk) 다크 모드 배경
-  image: "assets/images/zpzg_logo_light.png" # 知 로고 (라이트)
-  image_dark: "assets/images/zpzg_logo_dark.png" # 知 로고 (다크)
+  # 이미지 없음 - LaunchScreen.storyboard에서 '知' 텍스트 레이블 사용
 
   # Android 12+ specific
   android_12:

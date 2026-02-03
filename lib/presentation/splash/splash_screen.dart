@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/design_system/design_system.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -29,15 +30,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF1A1A1A)  // 다크 모드 배경
-          : const Color(0xFFF5F0E6), // 크림색 한지 배경
+          ? DSFortuneColors.hanjiDark  // 다크 모드 한지 배경
+          : DSFortuneColors.hanjiCream, // 크림색 한지 배경
       body: Center(
-        child: Image.asset(
-          isDark
-            ? 'assets/images/zpzg_logo_dark.png'
-            : 'assets/images/zpzg_logo_light.png',
-          width: 180,
-          height: 180,
+        child: Text(
+          '知',
+          style: TextStyle(
+            fontFamily: 'ZenSerif',
+            fontSize: 120,
+            fontWeight: FontWeight.w400,
+            color: isDark
+                ? DSFortuneColors.hanjiCream
+                : DSFortuneColors.inkBlack,
+          ),
         )
             .animate()
             .fadeIn(duration: 800.ms)

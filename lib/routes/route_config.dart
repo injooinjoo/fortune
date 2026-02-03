@@ -1,4 +1,4 @@
-// route_config.dart - Chat-First 아키텍처: 채팅 중심 라우터 설정
+// route_config.dart - 4탭 스마트 구조: 홈(Chat Insight) / 운세 / 기록 / 더보기
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,6 +42,13 @@ import '../screens/subscription/subscription_page.dart';
 
 // Import admin pages
 import '../features/admin/pages/celebrity_crawling_page.dart';
+
+// Import new tab pages
+import '../features/more/presentation/pages/fortune_tab_page.dart';
+import '../features/more/presentation/pages/more_page.dart';
+
+// Import chat insight
+import '../features/chat_insight/presentation/pages/chat_insight_screen.dart';
 
 // Import route groups
 import 'routes/auth_routes.dart';
@@ -95,183 +102,232 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const FaceAiHomeScreen(),
       ),
 
-      // Shell route that provides consistent background
-      ShellRoute(
-        builder: (context, state, child) => MainShell(
-          state: state,
-          child: child,
+      // Chat Insight (카톡 대화 분석 - outside shell)
+      GoRoute(
+        path: '/chat-insight',
+        name: 'chat-insight',
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const ChatInsightScreen(),
         ),
-        routes: [
-          // Chat route (Chat-First 홈 - 메인 진입점)
-          GoRoute(
-            path: '/chat',
-            name: 'chat',
-            pageBuilder: (context, state) => PageTransitions.tabTransition(
-              context,
-              state,
-              const ChatHomePage(),
-            ),
-          ),
+      ),
 
-          // Home route (인사이트 - 프로필 바텀시트에서 접근)
-          GoRoute(
-            path: '/home',
-            name: 'home',
-            pageBuilder: (context, state) => PageTransitions.tabTransition(
-              context,
-              state,
-              const HomeScreen(),
-            ),
-          ),
-
-          // Profile routes
-          GoRoute(
-            path: '/profile',
-            name: 'profile',
-            pageBuilder: (context, state) => PageTransitions.tabTransition(
-              context,
-              state,
-              const ProfileScreen(),
-            ),
+      // 4-Tab StatefulShellRoute: 홈 / 운세 / 기록 / 더보기
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => MainShell(
+          navigationShell: navigationShell,
+        ),
+        branches: [
+          // Branch 0: 홈 (Chat Insight - 메인 진입점)
+          StatefulShellBranch(
             routes: [
               GoRoute(
-                path: 'edit',
-                name: 'profile-edit',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
+                path: '/chat',
+                name: 'chat',
+                pageBuilder: (context, state) => PageTransitions.tabTransition(
                   context,
                   state,
-                  const ProfileEditPage(),
+                  const ChatHomePage(),
                 ),
               ),
+              // Home route (레거시 호환 - ChatHomePage로 리다이렉트)
               GoRoute(
-                path: 'saju',
-                name: 'profile-saju',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
+                path: '/home',
+                name: 'home',
+                pageBuilder: (context, state) => PageTransitions.tabTransition(
                   context,
                   state,
-                  const SajuDetailPage(),
-                ),
-              ),
-              GoRoute(
-                path: 'saju-summary',
-                name: 'profile-saju-summary',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
-                  context,
-                  state,
-                  const SajuSummaryPage(),
-                ),
-              ),
-              GoRoute(
-                path: 'elements',
-                name: 'profile-elements',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
-                  context,
-                  state,
-                  const ElementsDetailPage(),
-                ),
-              ),
-              GoRoute(
-                path: 'verification',
-                name: 'profile-verification',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
-                  context,
-                  state,
-                  const ProfileVerificationPage(),
-                ),
-              ),
-              GoRoute(
-                path: 'history',
-                name: 'profile-history',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
-                  context,
-                  state,
-                  const FortuneHistoryPage(),
-                ),
-              ),
-              GoRoute(
-                path: 'social-accounts',
-                name: 'profile-social-accounts',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
-                  context,
-                  state,
-                  const SocialAccountsScreen(),
-                ),
-              ),
-              GoRoute(
-                path: 'phone-management',
-                name: 'profile-phone-management',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
-                  context,
-                  state,
-                  const PhoneManagementScreen(),
-                ),
-              ),
-              GoRoute(
-                path: 'notifications',
-                name: 'profile-notifications',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
-                  context,
-                  state,
-                  const NotificationSettingsPage(),
-                ),
-              ),
-              GoRoute(
-                path: 'font',
-                name: 'profile-font',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
-                  context,
-                  state,
-                  const FontSettingsPage(),
-                ),
-              ),
-              GoRoute(
-                path: 'account-deletion',
-                name: 'profile-account-deletion',
-                pageBuilder: (context, state) =>
-                    PageTransitions.slideTransition(
-                  context,
-                  state,
-                  const AccountDeletionPage(),
+                  const HomeScreen(),
                 ),
               ),
             ],
           ),
 
-          // Premium & Payment routes
-          GoRoute(
-            path: '/premium',
-            name: 'premium',
-            pageBuilder: (context, state) => PageTransitions.tabTransition(
-              context,
-              state,
-              const PremiumScreen(),
-            ),
+          // Branch 1: 운세 (43+ 칩 카테고리 그리드 + 인터랙티브)
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/fortune',
+                name: 'fortune',
+                pageBuilder: (context, state) => PageTransitions.tabTransition(
+                  context,
+                  state,
+                  const FortuneTabPage(),
+                ),
+                routes: [
+                  // Interactive routes nested under fortune
+                  ...interactiveRoutes,
+                ],
+              ),
+            ],
           ),
 
-          // Trend page (프로필 바텀시트에서 접근)
-          GoRoute(
-            path: '/trend',
-            name: 'trend',
-            pageBuilder: (context, state) => PageTransitions.tabTransition(
-              context,
-              state,
-              const TrendPage(),
-            ),
+          // Branch 2: 기록 (히스토리 타임라인/캘린더/통계)
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/history',
+                name: 'history',
+                pageBuilder: (context, state) => PageTransitions.tabTransition(
+                  context,
+                  state,
+                  const FortuneHistoryPage(),
+                ),
+              ),
+            ],
           ),
 
-          // Interactive routes (inside shell)
-          ...interactiveRoutes,
+          // Branch 3: 더보기
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/more',
+                name: 'more',
+                pageBuilder: (context, state) => PageTransitions.tabTransition(
+                  context,
+                  state,
+                  const MorePage(),
+                ),
+              ),
+            ],
+          ),
         ],
+      ),
+
+      // Profile routes (outside shell - nav bar hidden, preserves existing paths)
+      GoRoute(
+        path: '/profile',
+        name: 'profile',
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const ProfileScreen(),
+        ),
+        routes: [
+          GoRoute(
+            path: 'edit',
+            name: 'profile-edit',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const ProfileEditPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'saju',
+            name: 'profile-saju',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const SajuDetailPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'saju-summary',
+            name: 'profile-saju-summary',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const SajuSummaryPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'elements',
+            name: 'profile-elements',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const ElementsDetailPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'verification',
+            name: 'profile-verification',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const ProfileVerificationPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'social-accounts',
+            name: 'profile-social-accounts',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const SocialAccountsScreen(),
+            ),
+          ),
+          GoRoute(
+            path: 'phone-management',
+            name: 'profile-phone-management',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const PhoneManagementScreen(),
+            ),
+          ),
+          GoRoute(
+            path: 'notifications',
+            name: 'profile-notifications',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const NotificationSettingsPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'font',
+            name: 'profile-font',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const FontSettingsPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'account-deletion',
+            name: 'profile-account-deletion',
+            pageBuilder: (context, state) =>
+                PageTransitions.slideTransition(
+              context,
+              state,
+              const AccountDeletionPage(),
+            ),
+          ),
+        ],
+      ),
+
+      // Premium route (outside shell)
+      GoRoute(
+        path: '/premium',
+        name: 'premium',
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const PremiumScreen(),
+        ),
+      ),
+
+      // Trend main route (outside shell)
+      GoRoute(
+        path: '/trend',
+        name: 'trend',
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const TrendPage(),
+        ),
       ),
 
       // Wellness routes (outside shell - for focused wellness experience)

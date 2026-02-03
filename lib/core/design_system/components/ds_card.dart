@@ -1,49 +1,54 @@
 import 'package:flutter/material.dart';
 import '../tokens/ds_radius.dart';
 import '../tokens/ds_spacing.dart';
-import '../tokens/ds_shadows.dart';
 import '../tokens/ds_animation.dart';
 import '../theme/ds_extensions.dart';
 
 /// Card style variants
 enum DSCardStyle {
-  /// Ink-wash shadow effect (default, traditional Korean)
+  /// Elevated card with subtle drop shadow (default, modern)
   elevated,
 
   /// Flat card with no shadow
   flat,
 
-  /// Card with ink-wash border
+  /// Card with clean border
   outlined,
 
-  /// Hanji paper texture card (Korean traditional)
+  /// @deprecated Use [flat] instead - legacy hanji style
   hanji,
 
-  /// Premium card with gold accent
+  /// Premium card with accent border
   premium,
+
+  /// Gradient background card
+  gradient,
+
+  /// Glassmorphism card with semi-transparent background
+  glassmorphism,
 }
 
-/// Korean Traditional "Saaju" card component
+/// Modern AI Chat style card component
 ///
-/// Features ink-wash (번짐) effects instead of drop shadows
-/// for an authentic Korean traditional aesthetic
+/// Clean, minimalist design with subtle elevation
+/// and neutral color palette
 ///
 /// Usage:
 /// ```dart
-/// // Default ink-wash card
+/// // Default elevated card
 /// DSCard(
 ///   child: Text('Content'),
 ///   style: DSCardStyle.elevated,
 /// )
 ///
-/// // Hanji paper texture card
-/// DSCard.hanji(
-///   child: Text('Traditional content'),
+/// // Flat card (no shadow)
+/// DSCard.flat(
+///   child: Text('Flat content'),
 /// )
 ///
-/// // Premium gold accent card
-/// DSCard.premium(
-///   child: Text('Premium content'),
+/// // Outlined card with border
+/// DSCard.outlined(
+///   child: Text('Outlined content'),
 /// )
 /// ```
 class DSCard extends StatelessWidget {
@@ -68,6 +73,15 @@ class DSCard extends StatelessWidget {
   /// Tap callback
   final VoidCallback? onTap;
 
+  /// Custom gradient (for gradient style)
+  final Gradient? cardGradient;
+
+  /// Custom background color
+  final Color? backgroundColor;
+
+  /// Custom border
+  final BoxBorder? border;
+
   const DSCard({
     super.key,
     required this.child,
@@ -77,6 +91,9 @@ class DSCard extends StatelessWidget {
     this.fullWidth = true,
     this.margin,
     this.onTap,
+    this.cardGradient,
+    this.backgroundColor,
+    this.border,
   });
 
   /// Elevated card with shadow
@@ -145,7 +162,8 @@ class DSCard extends StatelessWidget {
     );
   }
 
-  /// Hanji paper texture card (Korean traditional)
+  /// @deprecated Use [flat] instead - legacy hanji style
+  @Deprecated('Use DSCard.flat instead')
   factory DSCard.hanji({
     Key? key,
     required Widget child,
@@ -157,7 +175,7 @@ class DSCard extends StatelessWidget {
   }) {
     return DSCard(
       key: key,
-      style: DSCardStyle.hanji,
+      style: DSCardStyle.flat, // Maps to flat in modern design
       padding: padding,
       borderRadius: borderRadius,
       fullWidth: fullWidth,
@@ -167,7 +185,7 @@ class DSCard extends StatelessWidget {
     );
   }
 
-  /// Premium card with gold accent
+  /// Premium card with accent border
   factory DSCard.premium({
     Key? key,
     required Widget child,
@@ -189,11 +207,58 @@ class DSCard extends StatelessWidget {
     );
   }
 
+  /// Gradient card with custom gradient background
+  factory DSCard.gradient({
+    Key? key,
+    required Widget child,
+    required Gradient gradient,
+    EdgeInsetsGeometry? padding,
+    double? borderRadius,
+    bool fullWidth = true,
+    EdgeInsetsGeometry? margin,
+    VoidCallback? onTap,
+    BoxBorder? border,
+  }) {
+    return DSCard(
+      key: key,
+      style: DSCardStyle.gradient,
+      padding: padding,
+      borderRadius: borderRadius,
+      fullWidth: fullWidth,
+      margin: margin,
+      onTap: onTap,
+      cardGradient: gradient,
+      border: border,
+      child: child,
+    );
+  }
+
+  /// Glassmorphism card with semi-transparent background
+  factory DSCard.glassmorphism({
+    Key? key,
+    required Widget child,
+    EdgeInsetsGeometry? padding,
+    double? borderRadius,
+    bool fullWidth = true,
+    EdgeInsetsGeometry? margin,
+    VoidCallback? onTap,
+  }) {
+    return DSCard(
+      key: key,
+      style: DSCardStyle.glassmorphism,
+      padding: padding,
+      borderRadius: borderRadius ?? DSRadius.xl,
+      fullWidth: fullWidth,
+      margin: margin,
+      onTap: onTap,
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final brightness = Theme.of(context).brightness;
-    final effectiveRadius = borderRadius ?? DSRadius.md;
+    final effectiveRadius = borderRadius ?? DSRadius.card;
     final effectivePadding =
         padding ?? const EdgeInsets.all(DSSpacing.cardPadding);
 
@@ -201,47 +266,65 @@ class DSCard extends StatelessWidget {
 
     switch (style) {
       case DSCardStyle.elevated:
-        // Ink-wash effect (번짐) - traditional Korean aesthetic
-        decoration = DSShadows.getInkWashDecoration(
-          brightness,
-          backgroundColor: colors.surface,
-          borderRadius: effectiveRadius,
-        );
-        break;
-      case DSCardStyle.flat:
+        // Modern flat card without shadow (minimal style)
         decoration = BoxDecoration(
           color: colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(effectiveRadius),
         );
         break;
+
+      case DSCardStyle.flat:
+      case DSCardStyle.hanji: // Legacy hanji maps to flat
+        // Flat card with secondary background
+        decoration = BoxDecoration(
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(effectiveRadius),
+        );
+        break;
+
       case DSCardStyle.outlined:
-        // Ink-wash border style using custom image frame
+        // Clean bordered card
         decoration = BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.circular(effectiveRadius),
-          image: const DecorationImage(
-            image: AssetImage('assets/images/ui/card_ink_border.png'),
-            fit: BoxFit.fill,
-          ),
           border: Border.all(
-            color: colors.textPrimary.withValues(alpha: 0.05),
+            color: colors.border,
             width: 1,
           ),
         );
         break;
-      case DSCardStyle.hanji:
-        // Traditional hanji paper card with ink-wash effect
-        decoration = DSShadows.getInkWashDecoration(
-          brightness,
-          backgroundColor: colors.background,
-          borderRadius: effectiveRadius,
+
+      case DSCardStyle.premium:
+        // Premium card with subtle accent border (no shadow)
+        decoration = BoxDecoration(
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(effectiveRadius),
+          border: Border.all(
+            color: colors.accent.withValues(alpha: 0.3),
+            width: 1,
+          ),
         );
         break;
-      case DSCardStyle.premium:
-        // Premium gold accent decoration
-        decoration = DSShadows.goldAccentDecoration(
-          borderRadius: effectiveRadius,
-        ).copyWith(color: colors.surface);
+
+      case DSCardStyle.gradient:
+        // Gradient background card
+        decoration = BoxDecoration(
+          gradient: cardGradient,
+          borderRadius: BorderRadius.circular(effectiveRadius),
+          border: border,
+        );
+        break;
+
+      case DSCardStyle.glassmorphism:
+        // Glassmorphism with semi-transparent surface
+        decoration = BoxDecoration(
+          color: (backgroundColor ?? colors.surface).withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(effectiveRadius),
+          border: Border.all(
+            color: colors.border.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        );
         break;
     }
 
@@ -264,7 +347,7 @@ class DSCard extends StatelessWidget {
   }
 }
 
-/// Tappable card with ink-press animation
+/// Tappable card with subtle press animation
 class _TappableCard extends StatefulWidget {
   final Widget child;
   final VoidCallback onTap;
@@ -291,28 +374,26 @@ class _TappableCardState extends State<_TappableCard> {
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(
-        scale: _isPressed ? DSAnimation.cardTapScale : 1.0,
+        scale: _isPressed ? DSAnimation.tapScale : 1.0, // Claude standard: 0.98
         duration: _isPressed ? DSAnimation.cardTap : DSAnimation.cardRelease,
-        curve: _isPressed
-            ? DSAnimation.cardTapCurve
-            : DSAnimation.cardReleaseCurve,
+        curve: _isPressed ? DSAnimation.cardTapCurve : DSAnimation.cardReleaseCurve,
         child: widget.child,
       ),
     );
   }
 }
 
-/// Grouped card for settings-style layouts (Korean Traditional style)
+/// Grouped card for settings-style layouts
 ///
-/// Features ink-wash borders and traditional hanji paper aesthetic
+/// Clean, modern design with subtle styling
 ///
 /// Usage:
 /// ```dart
 /// DSGroupedCard(
-///   header: '계정',
+///   header: 'Account',
 ///   children: [
-///     DSListTile(title: '프로필'),
-///     DSListTile(title: '이메일'),
+///     DSListTile(title: 'Profile'),
+///     DSListTile(title: 'Email'),
 ///   ],
 /// )
 /// ```
@@ -349,49 +430,75 @@ class DSGroupedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final brightness = Theme.of(context).brightness;
-    final effectiveRadius = borderRadius ?? DSRadius.md;
+    final effectiveRadius = borderRadius ?? DSRadius.card;
 
     // Determine decoration based on style
     BoxDecoration decoration;
     switch (style) {
       case DSCardStyle.elevated:
-      case DSCardStyle.hanji:
-        // Ink-wash decoration for elevated and hanji styles
-        decoration = DSShadows.getInkWashDecoration(
-          brightness,
-          backgroundColor:
-              style == DSCardStyle.hanji ? colors.background : colors.surface,
-          borderRadius: effectiveRadius,
-        );
-        break;
-      case DSCardStyle.flat:
+        // Modern flat card without shadow (minimal style)
         decoration = BoxDecoration(
           color: colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(effectiveRadius),
         );
         break;
+
+      case DSCardStyle.flat:
+      case DSCardStyle.hanji: // Legacy hanji maps to flat
+        decoration = BoxDecoration(
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(effectiveRadius),
+        );
+        break;
+
       case DSCardStyle.outlined:
         decoration = BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.circular(effectiveRadius),
           border: Border.all(
-            color: colors.textPrimary.withValues(alpha: 0.12),
+            color: colors.border,
             width: 1,
           ),
         );
         break;
+
       case DSCardStyle.premium:
-        decoration = DSShadows.goldAccentDecoration(
-          borderRadius: effectiveRadius,
-        ).copyWith(color: colors.surface);
+        // Premium card with subtle accent border (no shadow)
+        decoration = BoxDecoration(
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(effectiveRadius),
+          border: Border.all(
+            color: colors.accent.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        );
+        break;
+
+      case DSCardStyle.gradient:
+        // Gradient not typical for grouped cards, fallback to flat
+        decoration = BoxDecoration(
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(effectiveRadius),
+        );
+        break;
+
+      case DSCardStyle.glassmorphism:
+        // Glassmorphism grouped card
+        decoration = BoxDecoration(
+          color: colors.surface.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(effectiveRadius),
+          border: Border.all(
+            color: colors.border.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        );
         break;
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header with traditional styling
+        // Section header
         if (header != null) ...[
           Padding(
             padding: EdgeInsets.only(
@@ -410,7 +517,7 @@ class DSGroupedCard extends StatelessWidget {
           ),
         ],
 
-        // Card with ink-wash decoration
+        // Card container
         Container(
           margin: margin ??
               const EdgeInsets.symmetric(

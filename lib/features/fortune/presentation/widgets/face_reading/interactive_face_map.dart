@@ -141,7 +141,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   children: [
                     Text(
                       '오관(五官) 인터랙티브 맵',
-                      style: DSTypography.headingSmall.copyWith(
+                      style: context.headingSmall.copyWith(
                         color: isDark
                             ? DSColors.textPrimary
                             : DSColors.textPrimary,
@@ -151,7 +151,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                     const SizedBox(height: 2),
                     Text(
                       '터치하여 상세 분석 보기',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: isDark
                             ? DSColors.textSecondary
                             : DSColors.textSecondary,
@@ -287,14 +287,14 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                                   const SizedBox(height: 12),
                                   Text(
                                     '프리미엄 잠금',
-                                    style: DSTypography.headingSmall.copyWith(
+                                    style: context.headingSmall.copyWith(
                                       color: DSColors.accentSecondary,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     '터치하여 잠금 해제',
-                                    style: DSTypography.labelSmall.copyWith(
+                                    style: context.labelSmall.copyWith(
                                       color: isDark
                                           ? DSColors.textSecondary
                                           : DSColors.textSecondary,
@@ -382,7 +382,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   children: [
                     Text(
                       zone.name,
-                      style: DSTypography.headingSmall.copyWith(
+                      style: context.headingSmall.copyWith(
                         color: isDark
                             ? DSColors.textPrimary
                             : DSColors.textPrimary,
@@ -391,7 +391,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                     ),
                     Text(
                       zone.subtitle,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: zone.color,
                         fontWeight: FontWeight.w600,
                       ),
@@ -409,7 +409,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   ),
                   child: Text(
                     '$score점',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: zone.color,
                       fontWeight: FontWeight.w700,
                     ),
@@ -447,7 +447,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 12),
               Text(
                 '관찰',
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: zone.color,
                   fontWeight: FontWeight.w600,
                 ),
@@ -455,7 +455,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 4),
               Text(
                 observation,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: isDark
                       ? DSColors.textPrimary
                       : DSColors.textPrimary,
@@ -469,7 +469,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 10),
               Text(
                 '해석',
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: zone.color,
                   fontWeight: FontWeight.w600,
                 ),
@@ -477,7 +477,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 4),
               Text(
                 interpretation,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: isDark
                       ? DSColors.textPrimary
                       : DSColors.textPrimary,
@@ -507,7 +507,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                     Expanded(
                       child: Text(
                         advice,
-                        style: DSTypography.bodyMedium.copyWith(
+                        style: context.bodyMedium.copyWith(
                           color: isDark
                               ? DSColors.textPrimary
                               : DSColors.textPrimary,
@@ -523,7 +523,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
             const SizedBox(height: 12),
             Text(
               '분석 데이터가 없습니다.',
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: isDark
                     ? DSColors.textSecondary
                     : DSColors.textSecondary,
@@ -576,7 +576,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                 const SizedBox(width: 6),
                 Text(
                   zone.name.split('(')[0],
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: isSelected
                         ? zone.color
                         : (isDark

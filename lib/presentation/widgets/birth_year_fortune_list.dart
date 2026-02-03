@@ -102,7 +102,7 @@ class BirthYearFortuneCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  _buildZodiacIcon(fortune.zodiacAnimal),
+                  _buildZodiacIcon(context, fortune.zodiacAnimal),
                   const SizedBox(width: AppSpacing.spacing3),
                   Expanded(
                     child: Column(
@@ -173,7 +173,7 @@ class BirthYearFortuneCard extends StatelessWidget {
     );
   }
 
-  Widget _buildZodiacIcon(String zodiac) {
+  Widget _buildZodiacIcon(BuildContext context, String zodiac) {
     final zodiacEmojis = {
       '쥐': '🐭',
       '소': '🐮',
@@ -199,7 +199,7 @@ class BirthYearFortuneCard extends StatelessWidget {
       child: Center(
         child: Text(
           zodiacEmojis[zodiac] ?? '🔮',
-          style: DSTypography.displaySmall,
+          style: context.displaySmall,
         ),
       ),
     );
@@ -229,7 +229,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                _buildZodiacIcon(fortune.zodiacAnimal),
+                _buildZodiacIcon(context, fortune.zodiacAnimal),
                 const SizedBox(width: AppSpacing.spacing4),
                 Expanded(
                   child: Column(
@@ -306,7 +306,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
     );
   }
 
-  Widget _buildZodiacIcon(String zodiac) {
+  Widget _buildZodiacIcon(BuildContext context, String zodiac) {
     final zodiacEmojis = {
       '쥐': '🐭',
       '소': '🐮',
@@ -332,7 +332,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
       child: Center(
         child: Text(
           zodiacEmojis[zodiac] ?? '🔮',
-          style: DSTypography.displaySmall,
+          style: context.displaySmall,
         ),
       ),
     );

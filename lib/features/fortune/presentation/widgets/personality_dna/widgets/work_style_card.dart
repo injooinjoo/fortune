@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/design_system/tokens/ds_spacing.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 
 /// 직장 스타일 카드
 class WorkStyleCard extends StatelessWidget {
   final WorkStyle workStyle;
 
   // 테마 색상 상수
-  static const Color _workColor = Color(0xFF4A90E2);
+  static const Color _workColor = DSFortuneColors.categoryCareer;
 
   const WorkStyleCard({super.key, required this.workStyle});
 
@@ -44,7 +43,7 @@ class WorkStyleCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF4A90E2), Color(0xFF67B8F5)],
+                colors: [DSFortuneColors.categoryCareer, Color(0xFF67B8F5)], // 고유 그라데이션 끝 색상
               ),
               borderRadius: BorderRadius.circular(20),
             ),

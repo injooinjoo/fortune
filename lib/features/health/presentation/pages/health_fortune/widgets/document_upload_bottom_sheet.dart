@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../../../core/design_system/tokens/ds_colors.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/theme/fortune_theme.dart';
 import '../../../../../../core/theme/fortune_design_system.dart';
 import '../../../../../../core/widgets/unified_button.dart';
@@ -106,7 +106,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: const Color(0xFF10B981).withValues(alpha: 0.1),
+            color: DSFortuneColors.categoryHealth.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(
@@ -175,12 +175,12 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF10B981).withValues(alpha: 0.1)
+                        ? DSFortuneColors.categoryHealth.withValues(alpha: 0.1)
                         : (isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFF10B981)
+                          ? DSFortuneColors.categoryHealth
                           : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                       width: isSelected ? 1.5 : 1,
                     ),
@@ -191,7 +191,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
                     style: TossTheme.caption.copyWith(
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                       color: isSelected
-                          ? const Color(0xFF10B981)
+                          ? DSFortuneColors.categoryHealth
                           : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                     ),
                   ),
@@ -303,17 +303,17 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF10B981).withValues(alpha: 0.08),
+        color: DSFortuneColors.categoryHealth.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF10B981).withValues(alpha: 0.3),
+          color: DSFortuneColors.categoryHealth.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
           Icon(
             _mimeType.contains('pdf') ? Icons.picture_as_pdf_rounded : Icons.image_rounded,
-            color: const Color(0xFF10B981),
+            color: DSFortuneColors.categoryHealth,
             size: 32,
           ),
           const SizedBox(width: 12),

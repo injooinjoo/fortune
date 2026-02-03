@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/tokens/ds_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../screens/profile/widgets/add_profile_sheet.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
@@ -66,11 +65,11 @@ class ZodiacFortuneCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              color: isDark ? DSColors.surface : Colors.white,
               borderRadius: BorderRadius.circular(12),
               // 전통 금색 테두리 (내 띠 강조)
               border: fortune['isUser'] == true
-                  ? Border.all(color: const Color(0xFFDAA520).withValues(alpha: 0.5), width: 2)
+                  ? Border.all(color: const Color(0xFFDAA520).withValues(alpha: 0.5), width: 2) // 고유 색상 - 전통 금색
                   : null,
               boxShadow: [
                 BoxShadow(
@@ -115,7 +114,7 @@ class ZodiacFortuneCard extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    // 전통 금색 (귀한 것을 상징)
+                                    // 고유 색상 - 전통 금색 (귀한 것을 상징)
                                     color: const Color(0xFFDAA520),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
@@ -226,10 +225,10 @@ class ZodiacFortuneCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF5F0E6),
+          color: isDark ? const Color(0xFF2C2C2E) : DSFortuneColors.hanjiCream, // 고유 색상(dark) + hanjiCream(light)
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: const Color(0xFFDAA520).withValues(alpha: 0.3),
+            color: const Color(0xFFDAA520).withValues(alpha: 0.3), // 고유 색상 - 전통 금색
             width: 1,
           ),
         ),
@@ -239,12 +238,12 @@ class ZodiacFortuneCard extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: const Color(0xFFDAA520).withValues(alpha: 0.15),
+                color: const Color(0xFFDAA520).withValues(alpha: 0.15), // 고유 색상 - 전통 금색
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.person_add_outlined,
-                color: Color(0xFFDAA520),
+                color: Color(0xFFDAA520), // 고유 색상 - 전통 금색
                 size: 20,
               ),
             ),

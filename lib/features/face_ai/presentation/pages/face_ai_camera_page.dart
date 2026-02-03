@@ -31,7 +31,7 @@ class _FaceAiCameraPageState extends ConsumerState<FaceAiCameraPage> {
             onImageCaptured: _onImageCaptured,
             onCancel: () => context.pop(),
             showOverlay: true,
-            accentColor: const Color(0xFF00FFFF), // Cyan 색상
+            accentColor: const Color(0xFF00FFFF), // 고유 색상 - Face Mesh 오버레이 Cyan
           ),
 
           // 처리 중 오버레이
@@ -43,12 +43,12 @@ class _FaceAiCameraPageState extends ConsumerState<FaceAiCameraPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const CircularProgressIndicator(
-                      color: Color(0xFF9C27B0),
+                      color: Color(0xFF9C27B0), // 고유 색상 - Face AI 테마
                     ),
                     const SizedBox(height: 16),
                     Text(
                       '이미지 처리 중...',
-                      style: DSTypography.bodyMedium.copyWith(
+                      style: context.bodyMedium.copyWith(
                         color: Colors.white,
                       ),
                     ),

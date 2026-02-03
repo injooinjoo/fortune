@@ -1,6 +1,8 @@
 import '../models/recommendation_chip.dart';
+import '../models/life_category.dart';
 import '../constants/category_affinity.dart';
 import '../constants/chip_category_map.dart';
+import '../constants/life_category_fortune_map.dart';
 
 /// 스마트 추천 칩 서비스
 /// 현재 운세 컨텍스트 기반으로 연관성 있는 칩 추천
@@ -54,6 +56,104 @@ class SmartChipRecommender {
       final chipCategory = getCategoryForChip(chip.fortuneType);
       return chipCategory == category;
     }).toList();
+  }
+
+  /// 인생 컨설팅 카테고리 기반 추천 칩 반환
+  ///
+  /// [lifeCategory] - 사용자가 선택한 인생 컨설팅 대분류
+  /// [subConcern] - 사용자가 선택한 세부 고민 ID (선택적)
+  /// [todayViewed] - 오늘 이미 본 운세 타입 Set
+  /// [maxCount] - 최대 추천 개수 (기본: 4)
+  List<RecommendationChip> getLifeCategoryRecommendations({
+    required LifeCategory? lifeCategory,
+    String? subConcern,
+    Set<String> todayViewed = const {},
+    int maxCount = 4,
+  }) {
+    if (lifeCategory == null) {
+      // 카테고리가 없으면 기본 추천
+      return defaultChips.take(maxCount).toList();
+    }
+
+    // 1. 세부 고민 또는 대분류 기반 추천 칩 ID 가져오기
+    final recommendedIds = getRecommendedChipsForSubConcern(
+      subConcern,
+      lifeCategory,
+    );
+
+    // 2. 대분류에 속하는 모든 칩 ID 가져오기
+    final allCategoryChipIds = getAllChipsForCategory(lifeCategory);
+
+    // 3. 우선순위: 세부고민 추천 > 대분류 추천 > 기타
+    final result = <RecommendationChip>[];
+
+    // 세부고민/대분류 추천 칩 추가 (오늘 본 것 제외)
+    for (final chipId in recommendedIds) {
+      if (todayViewed.contains(chipId)) continue;
+      final chip = defaultChips.where((c) => c.id == chipId).firstOrNull;
+      if (chip != null && result.length < maxCount) {
+        result.add(chip);
+      }
+    }
+
+    // 대분류 내 다른 칩들로 채우기
+    for (final chipId in allCategoryChipIds) {
+      if (todayViewed.contains(chipId)) continue;
+      if (result.any((c) => c.id == chipId)) continue; // 이미 추가됨
+      final chip = defaultChips.where((c) => c.id == chipId).firstOrNull;
+      if (chip != null && result.length < maxCount) {
+        result.add(chip);
+      }
+    }
+
+    // 그래도 부족하면 다른 칩들로 채우기
+    if (result.length < maxCount) {
+      for (final chip in defaultChips) {
+        if (todayViewed.contains(chip.id)) continue;
+        if (result.any((c) => c.id == chip.id)) continue;
+        if (result.length < maxCount) {
+          result.add(chip);
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /// 인생 컨설팅 카테고리 기반 초기 추천 칩 (온보딩 완료 직후)
+  ///
+  /// [lifeCategory] - 사용자가 선택한 인생 컨설팅 대분류
+  /// [subConcern] - 사용자가 선택한 세부 고민 ID (선택적)
+  List<RecommendationChip> getInitialChipsForLifeCategory({
+    required LifeCategory? lifeCategory,
+    String? subConcern,
+  }) {
+    if (lifeCategory == null) {
+      return initialChips;
+    }
+
+    // 세부 고민 또는 대분류 기반 추천 칩 ID 가져오기
+    final recommendedIds = getRecommendedChipsForSubConcern(
+      subConcern,
+      lifeCategory,
+    );
+
+    // 최대 3개 + 전체보기 버튼
+    final result = <RecommendationChip>[];
+    for (final chipId in recommendedIds) {
+      final chip = defaultChips.where((c) => c.id == chipId).firstOrNull;
+      if (chip != null && result.length < 3) {
+        result.add(chip);
+      }
+    }
+
+    // 전체보기 버튼 추가
+    final viewAllChip = initialChips.where((c) => c.id == 'viewAll').firstOrNull;
+    if (viewAllChip != null) {
+      result.add(viewAllChip);
+    }
+
+    return result;
   }
 }
 

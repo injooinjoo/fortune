@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/fortune_theme.dart';
 import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 압축된 신살 요약
 ///
@@ -72,7 +72,7 @@ class CompactSinsalSummary extends StatelessWidget {
               title: '길신',
               hanja: '吉神',
               sinsals: sinsalData['gilsin']!,
-              color: const Color(0xFF10B981),
+              color: DSFortuneColors.categoryHealth,
               isDark: isDark,
             ),
             const SizedBox(height: 6),
@@ -85,7 +85,7 @@ class CompactSinsalSummary extends StatelessWidget {
               title: '흉신',
               hanja: '凶神',
               sinsals: sinsalData['hyungsin']!,
-              color: const Color(0xFFEF4444),
+              color: DSFortuneColors.categoryTraditional,
               isDark: isDark,
             ),
         ],

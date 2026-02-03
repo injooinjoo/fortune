@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/constants/fortune_metadata.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/category_bar_chart.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/lucky_item_row.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/templates/score_template.dart';
@@ -106,7 +107,7 @@ class InfographicFactory {
     FortuneType.daily: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '오늘의 인사이트',
-      themeColor: Color(0xFF4A90E2),
+      themeColor: DSFortuneColors.categoryDaily,
       hasCategories: true,
       hasLuckyItems: true,
     ),
@@ -127,7 +128,7 @@ class InfographicFactory {
     FortuneType.yearly: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '연간 인사이트',
-      themeColor: Color(0xFFFFD700),
+      themeColor: DSFortuneColors.fortuneGoldMuted,
       hasCategories: true,
       hasLuckyItems: true,
     ),
@@ -136,37 +137,37 @@ class InfographicFactory {
     FortuneType.love: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '연애 운세',
-      themeColor: Color(0xFFFF69B4),
+      themeColor: DSFortuneColors.categoryLove,
       hasLuckyItems: true,
     ),
     FortuneType.blindDate: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '소개팅 가이드',
-      themeColor: Color(0xFFFF8C9E),
+      themeColor: DSFortuneColors.categoryBlindDate,
       hasLuckyItems: true,
     ),
     FortuneType.exLover: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '재회 분석',
-      themeColor: Color(0xFFDDA0DD),
+      themeColor: DSFortuneColors.categoryExLover,
     ),
     FortuneType.avoidPeople: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '오늘의 경계운',
-      themeColor: Color(0xFFE74C3C),
+      themeColor: DSFortuneColors.categoryAvoidPeople,
     ),
 
     // 직업/학업 운세
     FortuneType.career: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '직업 운세',
-      themeColor: Color(0xFF4169E1),
+      themeColor: DSFortuneColors.categoryCareer,
       hasCategories: true,
     ),
     FortuneType.exam: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '시험 가이드',
-      themeColor: Color(0xFF20B2AA),
+      themeColor: DSFortuneColors.categoryExam,
       hasLuckyItems: true,
     ),
 
@@ -174,19 +175,19 @@ class InfographicFactory {
     FortuneType.health: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '건강 체크',
-      themeColor: Color(0xFF32CD32),
+      themeColor: DSFortuneColors.categoryHealth,
     ),
     FortuneType.biorhythm: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '바이오리듬',
-      themeColor: Color(0xFF00CED1),
+      themeColor: DSFortuneColors.categoryBiorhythm,
     ),
 
     // 풍수/이사 운세
     FortuneType.moving: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '이사 가이드',
-      themeColor: Color(0xFF8B7355),
+      themeColor: DSFortuneColors.categoryMoving,
       hasLuckyItems: true,
     ),
 
@@ -194,28 +195,28 @@ class InfographicFactory {
     FortuneType.family: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '가족 인사이트',
-      themeColor: Color(0xFF8B5CF6),
+      themeColor: DSFortuneColors.categoryFamily,
       hasCategories: true,
       hasLuckyItems: true,
     ),
     FortuneType.pet: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '반려동물 가이드',
-      themeColor: Color(0xFFFF7F50),
+      themeColor: DSFortuneColors.categoryPet,
     ),
 
     // 유명인 매칭
     FortuneType.sameBirthdayCelebrity: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '같은 생일 유명인',
-      themeColor: Color(0xFFDA70D6),
+      themeColor: DSFortuneColors.categoryCelebrity,
     ),
 
     // 메시지 기반
     FortuneType.today: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '오늘의 메시지',
-      themeColor: Color(0xFF6A5ACD),
+      themeColor: DSFortuneColors.categoryDailyCalendar,
     ),
     FortuneType.dailyInspiration: const InfographicConfig(
       templateType: InfographicTemplateType.score,
@@ -227,7 +228,7 @@ class InfographicFactory {
     FortuneType.gameEnhance: const InfographicConfig(
       templateType: InfographicTemplateType.score,
       title: '강화 운세',
-      themeColor: Color(0xFFFF6B00),
+      themeColor: DSFortuneColors.categoryGameEnhance,
       hasLuckyItems: true,
     ),
 
@@ -239,62 +240,62 @@ class InfographicFactory {
     FortuneType.saju: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: '사주 분석',
-      themeColor: Color(0xFFDC143C),
+      themeColor: DSFortuneColors.categoryTraditional,
     ),
     FortuneType.traditionalSaju: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: '전통 사주',
-      themeColor: Color(0xFFB22222),
+      themeColor: DSFortuneColors.sealVermilion,
     ),
 
     // MBTI 분석
     FortuneType.mbti: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: 'MBTI 분석',
-      themeColor: Color(0xFF9370DB),
+      themeColor: DSFortuneColors.categoryMbti,
     ),
 
     // 성격/재능 분석
     FortuneType.personality: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: '성격 DNA',
-      themeColor: Color(0xFF8A2BE2),
+      themeColor: DSFortuneColors.categoryPersonalityDna,
     ),
     FortuneType.talent: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: '재능 분석',
-      themeColor: Color(0xFFFF8C00),
+      themeColor: DSFortuneColors.categoryTalent,
     ),
 
     // 궁합 분석
     FortuneType.compatibility: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: '궁합 분석',
-      themeColor: Color(0xFFFF6B6B),
+      themeColor: DSFortuneColors.categoryCompatibility,
     ),
 
     // 재물 분석
     FortuneType.investment: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: '투자 인사이트',
-      themeColor: Color(0xFFFFD700),
+      themeColor: DSFortuneColors.fortuneGoldMuted,
     ),
     FortuneType.wealth: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: '재물 분석',
-      themeColor: Color(0xFFFFA500),
+      themeColor: DSFortuneColors.categoryLotto,
     ),
     FortuneType.money: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: '재물운',
-      themeColor: Color(0xFF16A34A),
+      themeColor: DSFortuneColors.categoryMoney,
     ),
 
     // 스포츠 분석
     FortuneType.sports: const InfographicConfig(
       templateType: InfographicTemplateType.chart,
       title: '경기 분석',
-      themeColor: Color(0xFF228B22),
+      themeColor: DSFortuneColors.categorySportsGame,
     ),
 
     // ==========================================
@@ -305,42 +306,42 @@ class InfographicFactory {
     FortuneType.tarot: const InfographicConfig(
       templateType: InfographicTemplateType.image,
       title: 'Insight Cards',
-      themeColor: Color(0xFF4B0082),
+      themeColor: DSFortuneColors.categoryTarot,
     ),
 
     // 부적/행운 카드
     FortuneType.talisman: const InfographicConfig(
       templateType: InfographicTemplateType.image,
       title: '행운 카드',
-      themeColor: Color(0xFFFFD700),
+      themeColor: DSFortuneColors.categoryTalisman,
     ),
 
     // 전생
     FortuneType.pastLife: const InfographicConfig(
       templateType: InfographicTemplateType.image,
       title: '전생 이야기',
-      themeColor: Color(0xFF8B4513),
+      themeColor: DSFortuneColors.categoryPastLife,
     ),
 
     // 관상
     FortuneType.physiognomy: const InfographicConfig(
       templateType: InfographicTemplateType.image,
       title: 'Face AI',
-      themeColor: Color(0xFF87CEEB),
+      themeColor: DSFortuneColors.categoryFaceReading,
     ),
 
     // 관상 (face-reading 타입)
     FortuneType.faceReading: const InfographicConfig(
       templateType: InfographicTemplateType.image,
       title: 'AI 관상',
-      themeColor: Color(0xFF87CEEB),
+      themeColor: DSFortuneColors.categoryFaceReading,
     ),
 
     // 꿈 해석
     FortuneType.dream: const InfographicConfig(
       templateType: InfographicTemplateType.image,
       title: '꿈 분석',
-      themeColor: Color(0xFF483D8B),
+      themeColor: DSFortuneColors.categoryDream,
     ),
 
     // 손금
@@ -358,21 +359,21 @@ class InfographicFactory {
     FortuneType.luckyItems: const InfographicConfig(
       templateType: InfographicTemplateType.grid,
       title: '오늘의 행운 아이템',
-      themeColor: Color(0xFF9C27B0),
+      themeColor: DSFortuneColors.categoryLuckyItems,
     ),
 
     // 로또 번호
     FortuneType.luckyLottery: const InfographicConfig(
       templateType: InfographicTemplateType.grid,
       title: '로또 번호 생성',
-      themeColor: Color(0xFFFF4500),
+      themeColor: DSFortuneColors.categoryLotto,
     ),
 
     // 오늘의 로또 (클라이언트 생성)
     FortuneType.lotto: const InfographicConfig(
       templateType: InfographicTemplateType.grid,
       title: '오늘의 로또',
-      themeColor: Color(0xFFFFD700),
+      themeColor: DSFortuneColors.fortuneGoldMuted,
       hasLuckyItems: true,
     ),
 
@@ -380,7 +381,7 @@ class InfographicFactory {
     FortuneType.nameAnalysis: const InfographicConfig(
       templateType: InfographicTemplateType.grid,
       title: 'AI 작명',
-      themeColor: Color(0xFF4682B4),
+      themeColor: DSFortuneColors.categoryNaming,
     ),
   };
 

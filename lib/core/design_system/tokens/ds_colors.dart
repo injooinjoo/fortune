@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
-/// Korean Traditional "Saaju" color system - Obangsaek (오방색) inspired
+/// Neon Dark Theme - Modern cyberpunk color system
 ///
-/// Design Philosophy: "Beauty of Emptiness" (여백의 미) meets "Ink on Hanji" (한지 위의 먹)
+/// Design Philosophy: High contrast, futuristic, bold
+/// "Pure black meets electric neon"
+///
+/// Key Principles:
+/// - Pure Black Background: Maximum contrast, no warm tones
+/// - Neon Green Accent: Electric, vibrant, attention-grabbing
+/// - Consistent Accent: Same neon green in light/dark modes
 ///
 /// Usage:
 /// ```dart
@@ -16,216 +22,222 @@ class DSColors {
   DSColors._();
 
   // ============================================
-  // LIGHT MODE COLORS - Traditional Korean (한국 전통)
+  // NEON DARK MODE COLORS (Primary/Default)
   // ============================================
 
-  /// Primary accent color - 쪽빛 (Deep Indigo)
-  static const Color accent = Color(0xFF2C3E50);
+  /// Primary accent color - Neon Green (#39FF14)
+  static const Color accent = Color(0xFF39FF14);
 
-  /// Accent hover/pressed state
-  static const Color accentHover = Color(0xFF1E2B38);
+  /// Accent hover/pressed state - Slightly dimmer
+  static const Color accentHover = Color(0xFF32E012);
 
-  /// Lighter accent for backgrounds
-  static const Color accentLight = Color(0xFFE2E8F0);
+  /// Lighter accent for backgrounds - Very dark green tint
+  static const Color accentLight = Color(0xFF0D2A0A);
 
-  /// Secondary accent - 다홍색 (Vermilion Red) for seals/stamps
-  static const Color accentSecondary = Color(0xFFC0392B);
+  /// Secondary accent - Neon Cyan for links/info
+  static const Color accentSecondary = Color(0xFF00D4FF);
 
   /// Secondary accent hover
-  static const Color accentSecondaryHover = Color(0xFF9B2D22);
+  static const Color accentSecondaryHover = Color(0xFF00B8E0);
 
-  /// Tertiary accent - 황토색 (Ocher) for highlights/badges
-  static const Color accentTertiary = Color(0xFFD35400);
+  /// Tertiary accent - Neon Pink
+  static const Color accentTertiary = Color(0xFFFF00FF);
 
-  /// Page background - 한지색 (Hanji paper)
-  static const Color background = Color(0xFFF2F0E9);
+  /// Page background - Pure Black (#000000)
+  static const Color background = Color(0xFF000000);
 
-  /// Secondary background - 담황색 (Light tan/Slightly darker Hanji)
-  static const Color backgroundSecondary = Color(0xFFEBE7DF);
+  /// Secondary background - Very dark gray
+  static const Color backgroundSecondary = Color(0xFF0A0A0A);
 
-  /// Tertiary background - Subtle hanji
-  static const Color backgroundTertiary = Color(0xFFE2DED5);
+  /// Tertiary background - Slightly lighter
+  static const Color backgroundTertiary = Color(0xFF121212);
 
-  /// Card/modal surface - 소색 (Off-white paper)
-  static const Color surface = Color(0xFFFDFEFE);
+  /// Card/modal surface - Dark Grey (#1C1C1C)
+  static const Color surface = Color(0xFF1C1C1C);
 
-  /// Nested surface
-  static const Color surfaceSecondary = Color(0xFFF2F0E9);
+  /// Nested surface - Slightly lighter gray
+  static const Color surfaceSecondary = Color(0xFF252525);
 
-  /// Primary text - 깊은 먹색 (Ink black)
-  static const Color textPrimary = Color(0xFF1A1A1A);
+  /// Primary text - Pure White (#FFFFFF)
+  static const Color textPrimary = Color(0xFFFFFFFF);
 
-  /// Secondary text - 회먹색 (Gray ink)
-  static const Color textSecondary = Color(0xFF7A7A7A);
+  /// Secondary text - Light gray
+  static const Color textSecondary = Color(0xFFB0B0B0);
 
-  /// Tertiary text - 담먹색 (Light ink)
-  static const Color textTertiary = Color(0xFF969696);
+  /// Tertiary text - Medium gray
+  static const Color textTertiary = Color(0xFF808080);
 
-  /// Disabled text
-  static const Color textDisabled = Color(0xFFB8B0A0);
+  /// Disabled text - Dark gray
+  static const Color textDisabled = Color(0xFF505050);
 
-  /// Subtle border - Ink wash (번짐 효과)
-  static const Color border = Color(0xFFD4C9B8);
+  /// User message bubble - Dark gray
+  static const Color userBubble = Color(0xFF2A2A2A);
 
-  /// Focus border (accent color)
+  /// Subtle border - Dark border
+  static const Color border = Color(0xFF333333);
+
+  /// Focus border (neon accent)
   static const Color borderFocus = accent;
 
   /// Divider line
-  static const Color divider = Color(0xFFE8E0D0);
+  static const Color divider = Color(0xFF222222);
 
-  /// Toggle active state - Jade green (청록)
-  static const Color toggleActive = Color(0xFF38A169);
+  /// Toggle active state - Neon green
+  static const Color toggleActive = accent;
 
   /// Toggle inactive state
-  static const Color toggleInactive = Color(0xFFD4C9B8);
+  static const Color toggleInactive = Color(0xFF404040);
 
   /// Toggle thumb
-  static const Color toggleThumb = Color(0xFFFAF7F0);
+  static const Color toggleThumb = Color(0xFFFFFFFF);
 
-  /// CTA button background - Vermilion seal (다홍색 인장)
-  static const Color ctaBackground = Color(0xFFC0392B);
+  /// CTA button background - Neon Green
+  static const Color ctaBackground = accent;
 
-  /// CTA button text
-  static const Color ctaForeground = Color(0xFFF2F0E9);
+  /// CTA button text - Black (#000000)
+  static const Color ctaForeground = Color(0xFF000000);
 
   /// Secondary button background
-  static const Color secondaryBackground = Color(0xFFEDE7D9);
+  static const Color secondaryBackground = Color(0xFF2A2A2A);
 
   /// Secondary button text
-  static const Color secondaryForeground = Color(0xFF2C2C2C);
+  static const Color secondaryForeground = Color(0xFFFFFFFF);
 
-  /// Success color - Jade (청록)
-  static const Color success = Color(0xFF38A169);
+  /// Success color - Neon Green
+  static const Color success = Color(0xFF39FF14);
 
   /// Success background
-  static const Color successBackground = Color(0xFFD4EDDA);
+  static const Color successBackground = Color(0xFF0D2A0A);
 
-  /// Error color - Vermilion (적색)
-  static const Color error = Color(0xFFC53030);
+  /// Error color - Neon Red
+  static const Color error = Color(0xFFFF3B3B);
 
   /// Error background
-  static const Color errorBackground = Color(0xFFFAE5E5);
+  static const Color errorBackground = Color(0xFF2A0D0D);
 
-  /// Warning color - Aged Gold (황색)
-  static const Color warning = Color(0xFFD69E2E);
+  /// Warning color - Neon Yellow
+  static const Color warning = Color(0xFFFFE500);
 
   /// Warning background
-  static const Color warningBackground = Color(0xFFFFF3CD);
+  static const Color warningBackground = Color(0xFF2A2A0D);
 
-  /// Info color - Deep indigo
-  static const Color info = Color(0xFF4A5568);
+  /// Info color - Neon Cyan
+  static const Color info = Color(0xFF00D4FF);
 
   /// Info background
-  static const Color infoBackground = Color(0xFFE8EBF0);
+  static const Color infoBackground = Color(0xFF0D2A2A);
 
-  /// Overlay for modals (semi-transparent ink)
-  static const Color overlay = Color(0x802C2C2C);
+  /// Overlay for modals (85% black)
+  static const Color overlay = Color(0xD9000000);
 
   // ============================================
-  // DARK MODE COLORS - Night Study (야경)
+  // NEON LIGHT MODE COLORS
   // ============================================
 
-  /// Primary accent - Lighter indigo for contrast
-  static const Color accentDark = Color(0xFF7B8FA8);
+  /// Primary accent - Same Neon Green (consistent)
+  static const Color accentDark = Color(0xFF39FF14);
 
-  /// Accent hover dark
-  static const Color accentHoverDark = Color(0xFF8FA3BC);
+  /// Accent hover light - Slightly dimmer
+  static const Color accentHoverDark = Color(0xFF32E012);
 
-  /// Accent light background dark
-  static const Color accentLightDark = Color(0xFF2D3748);
+  /// Accent light background (for light mode - subtle green tint)
+  static const Color accentLightDark = Color(0xFFE8FFE5);
 
-  /// Secondary accent dark - Brighter vermilion
-  static const Color accentSecondaryDark = Color(0xFFE05858);
+  /// Secondary accent light - Cyan
+  static const Color accentSecondaryDark = Color(0xFF00B8E0);
 
-  /// Secondary accent hover dark
-  static const Color accentSecondaryHoverDark = Color(0xFFD34545);
+  /// Secondary accent hover light
+  static const Color accentSecondaryHoverDark = Color(0xFF00A0C8);
 
-  /// Tertiary accent dark - Bright gold
-  static const Color accentTertiaryDark = Color(0xFFD4AF37);
+  /// Tertiary accent light - Pink
+  static const Color accentTertiaryDark = Color(0xFFE000E0);
 
-  /// Page background dark - Ink stone (벼루)
-  static const Color backgroundDark = Color(0xFF1A1A1A);
+  /// Page background light - Pure White (#FFFFFF)
+  static const Color backgroundDark = Color(0xFFFFFFFF);
 
-  /// Secondary background dark
-  static const Color backgroundSecondaryDark = Color(0xFF2D2D2D);
+  /// Secondary background light - Light gray
+  static const Color backgroundSecondaryDark = Color(0xFFF5F5F5);
 
-  /// Tertiary background dark
-  static const Color backgroundTertiaryDark = Color(0xFF3D3D3D);
+  /// Tertiary background light
+  static const Color backgroundTertiaryDark = Color(0xFFEEEEEE);
 
-  /// Surface dark
-  static const Color surfaceDark = Color(0xFF252525);
+  /// Surface light - Very light gray
+  static const Color surfaceDark = Color(0xFFF5F5F5);
 
-  /// Surface secondary dark
-  static const Color surfaceSecondaryDark = Color(0xFF2D2D2D);
+  /// Surface secondary light
+  static const Color surfaceSecondaryDark = Color(0xFFFFFFFF);
 
-  /// Primary text dark - Hanji white (한지색)
-  static const Color textPrimaryDark = Color(0xFFFFFFFF);
+  /// Primary text light - Black
+  static const Color textPrimaryDark = Color(0xFF000000);
 
-  /// Secondary text dark
-  static const Color textSecondaryDark = Color(0xFF9CA3AF);
+  /// Secondary text light - Dark gray
+  static const Color textSecondaryDark = Color(0xFF606060);
 
-  /// Tertiary text dark
-  static const Color textTertiaryDark = Color(0xFFD1D6DB);
+  /// Tertiary text light
+  static const Color textTertiaryDark = Color(0xFF909090);
 
-  /// Disabled text dark
-  static const Color textDisabledDark = Color(0xFF5C5C5C);
+  /// Disabled text light
+  static const Color textDisabledDark = Color(0xFFB0B0B0);
 
-  /// Border dark - Subtle ink wash
-  static const Color borderDark = Color(0xFF3D3D3D);
+  /// User message bubble light
+  static const Color userBubbleDark = Color(0xFFE0E0E0);
 
-  /// Focus border dark
+  /// Border light
+  static const Color borderDark = Color(0xFFDDDDDD);
+
+  /// Focus border light
   static const Color borderFocusDark = accentDark;
 
-  /// Divider dark
-  static const Color dividerDark = Color(0xFF3D3D3D);
+  /// Divider light
+  static const Color dividerDark = Color(0xFFEEEEEE);
 
-  /// Toggle active dark
-  static const Color toggleActiveDark = Color(0xFF48BB78);
+  /// Toggle active light
+  static const Color toggleActiveDark = accentDark;
 
-  /// Toggle inactive dark
-  static const Color toggleInactiveDark = Color(0xFF4A4A4A);
+  /// Toggle inactive light
+  static const Color toggleInactiveDark = Color(0xFFD0D0D0);
 
-  /// Toggle thumb dark
-  static const Color toggleThumbDark = Color(0xFFF5F0E6);
+  /// Toggle thumb light
+  static const Color toggleThumbDark = Color(0xFFFFFFFF);
 
-  /// CTA background dark - Brighter vermilion
-  static const Color ctaBackgroundDark = Color(0xFFE05858);
+  /// CTA background light - Same neon green
+  static const Color ctaBackgroundDark = accentDark;
 
-  /// CTA foreground dark
-  static const Color ctaForegroundDark = Color(0xFFF5F0E6);
+  /// CTA foreground light - Black text on neon
+  static const Color ctaForegroundDark = Color(0xFF000000);
 
-  /// Secondary button background dark
-  static const Color secondaryBackgroundDark = Color(0xFF3D3D3D);
+  /// Secondary button background light
+  static const Color secondaryBackgroundDark = Color(0xFFE8E8E8);
 
-  /// Secondary button foreground dark
-  static const Color secondaryForegroundDark = Color(0xFFF5F0E6);
+  /// Secondary button foreground light
+  static const Color secondaryForegroundDark = Color(0xFF1A1A1A);
 
-  /// Success dark
-  static const Color successDark = Color(0xFF48BB78);
+  /// Success light
+  static const Color successDark = Color(0xFF28CC10);
 
-  /// Success background dark
-  static const Color successBackgroundDark = Color(0xFF1C3D2E);
+  /// Success background light
+  static const Color successBackgroundDark = Color(0xFFE5FFE0);
 
-  /// Error dark
-  static const Color errorDark = Color(0xFFFC8181);
+  /// Error light
+  static const Color errorDark = Color(0xFFE53535);
 
-  /// Error background dark
-  static const Color errorBackgroundDark = Color(0xFF3D1C1C);
+  /// Error background light
+  static const Color errorBackgroundDark = Color(0xFFFFE5E5);
 
-  /// Warning dark
-  static const Color warningDark = Color(0xFFECC94B);
+  /// Warning light
+  static const Color warningDark = Color(0xFFE5C800);
 
-  /// Warning background dark
-  static const Color warningBackgroundDark = Color(0xFF3D3518);
+  /// Warning background light
+  static const Color warningBackgroundDark = Color(0xFFFFFDE5);
 
-  /// Info dark
-  static const Color infoDark = Color(0xFF7B8FA8);
+  /// Info light
+  static const Color infoDark = Color(0xFF00B8E0);
 
-  /// Info background dark
-  static const Color infoBackgroundDark = Color(0xFF2D3748);
+  /// Info background light
+  static const Color infoBackgroundDark = Color(0xFFE5FAFF);
 
-  /// Overlay dark
-  static const Color overlayDark = Color(0xB31A1A1A);
+  /// Overlay light
+  static const Color overlayDark = Color(0x80000000);
 
   // ============================================
   // THEME-AWARE GETTERS (for use with context)
@@ -233,47 +245,51 @@ class DSColors {
 
   /// Get accent color based on brightness
   static Color getAccent(Brightness brightness) =>
-      brightness == Brightness.dark ? accentDark : accent;
+      brightness == Brightness.light ? accentDark : accent;
 
   /// Get secondary accent based on brightness
   static Color getAccentSecondary(Brightness brightness) =>
-      brightness == Brightness.dark ? accentSecondaryDark : accentSecondary;
+      brightness == Brightness.light ? accentSecondaryDark : accentSecondary;
 
   /// Get tertiary accent based on brightness
   static Color getAccentTertiary(Brightness brightness) =>
-      brightness == Brightness.dark ? accentTertiaryDark : accentTertiary;
+      brightness == Brightness.light ? accentTertiaryDark : accentTertiary;
 
   /// Get background color based on brightness
   static Color getBackground(Brightness brightness) =>
-      brightness == Brightness.dark ? backgroundDark : background;
+      brightness == Brightness.light ? backgroundDark : background;
 
   /// Get surface color based on brightness
   static Color getSurface(Brightness brightness) =>
-      brightness == Brightness.dark ? surfaceDark : surface;
+      brightness == Brightness.light ? surfaceDark : surface;
 
   /// Get primary text color based on brightness
   static Color getTextPrimary(Brightness brightness) =>
-      brightness == Brightness.dark ? textPrimaryDark : textPrimary;
+      brightness == Brightness.light ? textPrimaryDark : textPrimary;
 
   /// Get secondary text color based on brightness
   static Color getTextSecondary(Brightness brightness) =>
-      brightness == Brightness.dark ? textSecondaryDark : textSecondary;
+      brightness == Brightness.light ? textSecondaryDark : textSecondary;
 
   /// Get border color based on brightness
   static Color getBorder(Brightness brightness) =>
-      brightness == Brightness.dark ? borderDark : border;
+      brightness == Brightness.light ? borderDark : border;
 
   /// Get divider color based on brightness
   static Color getDivider(Brightness brightness) =>
-      brightness == Brightness.dark ? dividerDark : divider;
+      brightness == Brightness.light ? dividerDark : divider;
 
   /// Get CTA background based on brightness
   static Color getCtaBackground(Brightness brightness) =>
-      brightness == Brightness.dark ? ctaBackgroundDark : ctaBackground;
+      brightness == Brightness.light ? ctaBackgroundDark : ctaBackground;
 
   /// Get CTA foreground based on brightness
   static Color getCtaForeground(Brightness brightness) =>
-      brightness == Brightness.dark ? ctaForegroundDark : ctaForeground;
+      brightness == Brightness.light ? ctaForegroundDark : ctaForeground;
+
+  /// Get user bubble color based on brightness
+  static Color getUserBubble(Brightness brightness) =>
+      brightness == Brightness.light ? userBubbleDark : userBubble;
 }
 
 /// Theme-aware color accessor
@@ -289,72 +305,75 @@ class DSColorScheme {
 
   bool get isDark => brightness == Brightness.dark;
 
-  Color get accent => isDark ? DSColors.accentDark : DSColors.accent;
+  Color get accent => isDark ? DSColors.accent : DSColors.accentDark;
   Color get accentHover =>
-      isDark ? DSColors.accentHoverDark : DSColors.accentHover;
+      isDark ? DSColors.accentHover : DSColors.accentHoverDark;
   Color get accentLight =>
-      isDark ? DSColors.accentLightDark : DSColors.accentLight;
+      isDark ? DSColors.accentLight : DSColors.accentLightDark;
   Color get accentSecondary =>
-      isDark ? DSColors.accentSecondaryDark : DSColors.accentSecondary;
+      isDark ? DSColors.accentSecondary : DSColors.accentSecondaryDark;
   Color get accentSecondaryHover => isDark
-      ? DSColors.accentSecondaryHoverDark
-      : DSColors.accentSecondaryHover;
+      ? DSColors.accentSecondaryHover
+      : DSColors.accentSecondaryHoverDark;
   Color get accentTertiary =>
-      isDark ? DSColors.accentTertiaryDark : DSColors.accentTertiary;
+      isDark ? DSColors.accentTertiary : DSColors.accentTertiaryDark;
 
   Color get background =>
-      isDark ? DSColors.backgroundDark : DSColors.background;
+      isDark ? DSColors.background : DSColors.backgroundDark;
   Color get backgroundSecondary =>
-      isDark ? DSColors.backgroundSecondaryDark : DSColors.backgroundSecondary;
+      isDark ? DSColors.backgroundSecondary : DSColors.backgroundSecondaryDark;
   Color get backgroundTertiary =>
-      isDark ? DSColors.backgroundTertiaryDark : DSColors.backgroundTertiary;
+      isDark ? DSColors.backgroundTertiary : DSColors.backgroundTertiaryDark;
 
-  Color get surface => isDark ? DSColors.surfaceDark : DSColors.surface;
+  Color get surface => isDark ? DSColors.surface : DSColors.surfaceDark;
   Color get surfaceSecondary =>
-      isDark ? DSColors.surfaceSecondaryDark : DSColors.surfaceSecondary;
+      isDark ? DSColors.surfaceSecondary : DSColors.surfaceSecondaryDark;
 
   Color get textPrimary =>
-      isDark ? DSColors.textPrimaryDark : DSColors.textPrimary;
+      isDark ? DSColors.textPrimary : DSColors.textPrimaryDark;
   Color get textSecondary =>
-      isDark ? DSColors.textSecondaryDark : DSColors.textSecondary;
+      isDark ? DSColors.textSecondary : DSColors.textSecondaryDark;
   Color get textTertiary =>
-      isDark ? DSColors.textTertiaryDark : DSColors.textTertiary;
+      isDark ? DSColors.textTertiary : DSColors.textTertiaryDark;
   Color get textDisabled =>
-      isDark ? DSColors.textDisabledDark : DSColors.textDisabled;
+      isDark ? DSColors.textDisabled : DSColors.textDisabledDark;
 
-  Color get border => isDark ? DSColors.borderDark : DSColors.border;
+  Color get userBubble =>
+      isDark ? DSColors.userBubble : DSColors.userBubbleDark;
+
+  Color get border => isDark ? DSColors.border : DSColors.borderDark;
   Color get borderFocus =>
-      isDark ? DSColors.borderFocusDark : DSColors.borderFocus;
-  Color get divider => isDark ? DSColors.dividerDark : DSColors.divider;
+      isDark ? DSColors.borderFocus : DSColors.borderFocusDark;
+  Color get divider => isDark ? DSColors.divider : DSColors.dividerDark;
 
   Color get toggleActive =>
-      isDark ? DSColors.toggleActiveDark : DSColors.toggleActive;
+      isDark ? DSColors.toggleActive : DSColors.toggleActiveDark;
   Color get toggleInactive =>
-      isDark ? DSColors.toggleInactiveDark : DSColors.toggleInactive;
+      isDark ? DSColors.toggleInactive : DSColors.toggleInactiveDark;
   Color get toggleThumb =>
-      isDark ? DSColors.toggleThumbDark : DSColors.toggleThumb;
+      isDark ? DSColors.toggleThumb : DSColors.toggleThumbDark;
 
   Color get ctaBackground =>
-      isDark ? DSColors.ctaBackgroundDark : DSColors.ctaBackground;
+      isDark ? DSColors.ctaBackground : DSColors.ctaBackgroundDark;
   Color get ctaForeground =>
-      isDark ? DSColors.ctaForegroundDark : DSColors.ctaForeground;
+      isDark ? DSColors.ctaForeground : DSColors.ctaForegroundDark;
   Color get secondaryBackground =>
-      isDark ? DSColors.secondaryBackgroundDark : DSColors.secondaryBackground;
+      isDark ? DSColors.secondaryBackground : DSColors.secondaryBackgroundDark;
   Color get secondaryForeground =>
-      isDark ? DSColors.secondaryForegroundDark : DSColors.secondaryForeground;
+      isDark ? DSColors.secondaryForeground : DSColors.secondaryForegroundDark;
 
-  Color get success => isDark ? DSColors.successDark : DSColors.success;
+  Color get success => isDark ? DSColors.success : DSColors.successDark;
   Color get successBackground =>
-      isDark ? DSColors.successBackgroundDark : DSColors.successBackground;
-  Color get error => isDark ? DSColors.errorDark : DSColors.error;
+      isDark ? DSColors.successBackground : DSColors.successBackgroundDark;
+  Color get error => isDark ? DSColors.error : DSColors.errorDark;
   Color get errorBackground =>
-      isDark ? DSColors.errorBackgroundDark : DSColors.errorBackground;
-  Color get warning => isDark ? DSColors.warningDark : DSColors.warning;
+      isDark ? DSColors.errorBackground : DSColors.errorBackgroundDark;
+  Color get warning => isDark ? DSColors.warning : DSColors.warningDark;
   Color get warningBackground =>
-      isDark ? DSColors.warningBackgroundDark : DSColors.warningBackground;
-  Color get info => isDark ? DSColors.infoDark : DSColors.info;
+      isDark ? DSColors.warningBackground : DSColors.warningBackgroundDark;
+  Color get info => isDark ? DSColors.info : DSColors.infoDark;
   Color get infoBackground =>
-      isDark ? DSColors.infoBackgroundDark : DSColors.infoBackground;
+      isDark ? DSColors.infoBackground : DSColors.infoBackgroundDark;
 
-  Color get overlay => isDark ? DSColors.overlayDark : DSColors.overlay;
+  Color get overlay => isDark ? DSColors.overlay : DSColors.overlayDark;
 }

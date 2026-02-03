@@ -63,10 +63,10 @@ class _HealthScoreCardState extends State<HealthScoreCard>
   }
 
   Color get _scoreColor {
-    if (widget.score >= 90) return const Color(0xFF4CAF50); // 매우 좋음 - 초록
-    if (widget.score >= 70) return const Color(0xFF2196F3); // 좋음 - 파랑
-    if (widget.score >= 50) return const Color(0xFFFF9800); // 주의 - 주황
-    return const Color(0xFFFF5722); // 경고 - 빨강
+    if (widget.score >= 90) return const Color(0xFF4CAF50); // 고유 색상 - 건강 매우좋음
+    if (widget.score >= 70) return const Color(0xFF2196F3); // 고유 색상 - 건강 양호
+    if (widget.score >= 50) return const Color(0xFFFF9800); // 고유 색상 - 건강 주의
+    return const Color(0xFFFF5722); // 고유 색상 - 건강 경고
   }
 
   String get _scoreLabel {
@@ -165,12 +165,12 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                         children: [
                           Text(
                             _scoreEmoji,
-                            style: DSTypography.displaySmall,
+                            style: context.displaySmall,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             '${(widget.score * _progressAnimation.value).round()}',
-                            style: DSTypography.displaySmall.copyWith(
+                            style: context.displaySmall.copyWith(
                               fontWeight: FontWeight.w800,
                               color: _scoreColor,
                             ),

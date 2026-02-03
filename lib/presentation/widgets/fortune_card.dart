@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/fortune_design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
+import '../../core/design_system/design_system.dart';
 
 class FortuneCard extends StatelessWidget {
   final IconData icon;
@@ -33,14 +34,15 @@ class FortuneCard extends StatelessWidget {
     
     // Light mode용 밝은 그라데이션 색상
     final lightModeGradients = {
-      // 사주팔자 - 밝은 노란색
-      0xFF000000: [const Color(0xFFFFF8E1), const Color(0xFFFFF3CD)],
+      // 사주팔자 - 한지 크림 그라데이션
+      0xFF000000: [DSFortuneColors.hanjiWarm, DSFortuneColors.hanjiCream],
       // AI 관상 - 밝은 회색
-      0xFF1A1A1A: [const Color(0xFFF5F5F5), const Color(0xFFEEEEEE)],
+      0xFF1A1A1A: [const Color(0xFFF5F5F5), const Color(0xFFEEEEEE)], // 고유 색상 - 라이트모드 그라데이션
       // 프리미엄 - 밝은 보라색
-      0xFF2C2C2C: [const Color(0xFFF3E5F5), const Color(0xFFE1BEE7)],
+      0xFF2C2C2C: [DSFortuneColors.mysticalPurpleLight, const Color(0xFFE1BEE7)], // 고유 색상 - 보라 그라데이션 끝
       // 전체 운세 - 밝은 파란색
-      0xFF4A4A4A: [const Color(0xFFE3F2FD), const Color(0xFFBBDEFB)]};
+      0xFF4A4A4A: [const Color(0xFFE3F2FD), const Color(0xFFBBDEFB)], // 고유 색상 - 라이트모드 그라데이션
+    };
     
     List<Color>? adjustedGradient;
     if (gradient != null && !isDarkMode) {

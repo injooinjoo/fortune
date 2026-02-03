@@ -39,12 +39,10 @@ class _ChatYearlyEncounterResultCardState
   bool _isBlurred = false;
   List<String> _blurredSections = [];
 
-  // 디자인 색상
-  static const _beigeLight = Color(0xFFF5F0E6);
+  // 디자인 색상 → DSFortuneColors 기반
+  static const _beigeLight = DSFortuneColors.hanjiCream;
   static const _beigeDark = Color(0xFFEDE5D8);
-  // ignore: unused_field
-  static const _goldFrame = Color(0xFFD4AF37); // 추후 사용 가능
-  static const _goldLight = Color(0xFFE8D4A0);
+  static const _goldLight = DSFortuneColors.fortuneGoldLight;
   static const _brownTitle = Color(0xFF8B6914);
   static const _pinkAccent = Color(0xFFE8B4B8);
   static const _purpleGradientStart = Color(0xFFD8BFD8);
@@ -61,6 +59,18 @@ class _ChatYearlyEncounterResultCardState
         ref.read(fortuneHapticServiceProvider).mysticalReveal();
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatYearlyEncounterResultCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
+    if (oldWidget.result.isBlurred != widget.result.isBlurred && !widget.result.isBlurred) {
+      setState(() {
+        _isBlurred = false;
+        _blurredSections = [];
+      });
+    }
   }
 
   /// 이미지 풀스크린 확대 보기
@@ -95,7 +105,7 @@ class _ChatYearlyEncounterResultCardState
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: DSColors.background.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -110,34 +120,6 @@ class _ChatYearlyEncounterResultCardState
           ),
         ),
       ),
-    );
-  }
-
-  Future<void> _showAdAndUnblur() async {
-    final adService = AdService();
-
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) async {
-        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-        if (mounted) {
-          FortuneCompletionHelper.onFortuneViewed(
-              context, ref, 'yearly-encounter');
-        }
-
-        setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
-        });
-
-        if (mounted) {
-          final tokenState = ref.read(tokenProvider);
-          SubscriptionSnackbar.showAfterAd(
-            context,
-            hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-          );
-        }
-      },
     );
   }
 
@@ -160,7 +142,7 @@ class _ChatYearlyEncounterResultCardState
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: DSColors.background.withValues(alpha: 0.1),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -199,12 +181,6 @@ class _ChatYearlyEncounterResultCardState
               _buildCompatibilityBadge()
                   .animate()
                   .fadeIn(duration: 500.ms, delay: 400.ms),
-
-              // 6. 언락 버튼 (블러 상태 + 비구독자)
-              if (_isBlurred && !isPremium)
-                _buildUnlockButton()
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 500.ms),
 
               const SizedBox(height: 16),
             ],
@@ -354,7 +330,7 @@ class _ChatYearlyEncounterResultCardState
                 width: 3,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B4513).withValues(alpha: 0.6),
+                  color: DSFortuneColors.categoryPastLife.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -410,9 +386,9 @@ class _ChatYearlyEncounterResultCardState
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: DSFortuneColors.hanjiWarm.withValues(alpha: 0.5),
                   border: Border.all(
-                      color: Colors.black.withValues(alpha: 0.2), width: 1),
+                      color: DSFortuneColors.inkBlack.withValues(alpha: 0.2), width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,7 +398,7 @@ class _ChatYearlyEncounterResultCardState
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: DSFortuneColors.inkBlack,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -433,7 +409,7 @@ class _ChatYearlyEncounterResultCardState
                           tag,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: Colors.black87,
+                            color: DSFortuneColors.inkBlack,
                             height: 1.4,
                           ),
                         ),
@@ -448,9 +424,9 @@ class _ChatYearlyEncounterResultCardState
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: DSFortuneColors.hanjiWarm.withValues(alpha: 0.5),
                   border: Border.all(
-                      color: Colors.black.withValues(alpha: 0.2), width: 1),
+                      color: DSFortuneColors.inkBlack.withValues(alpha: 0.2), width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -460,7 +436,7 @@ class _ChatYearlyEncounterResultCardState
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: DSFortuneColors.inkBlack,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -480,7 +456,7 @@ class _ChatYearlyEncounterResultCardState
                       widget.result.encounterSpotStory,
                       style: TextStyle(
                         fontSize: 11,
-                        color: Colors.black87.withValues(alpha: 0.8),
+                        color: DSFortuneColors.inkBlack.withValues(alpha: 0.8),
                         height: 1.5,
                       ),
                     ),
@@ -503,9 +479,9 @@ class _ChatYearlyEncounterResultCardState
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.5),
+        color: DSFortuneColors.hanjiWarm.withValues(alpha: 0.5),
         border:
-            Border.all(color: Colors.black.withValues(alpha: 0.2), width: 1),
+            Border.all(color: DSFortuneColors.inkBlack.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -541,7 +517,7 @@ class _ChatYearlyEncounterResultCardState
                   widget.result.fateSignalStory,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.black87.withValues(alpha: 0.85),
+                    color: DSFortuneColors.inkBlack.withValues(alpha: 0.85),
                     height: 1.6,
                   ),
                 ),
@@ -582,7 +558,7 @@ class _ChatYearlyEncounterResultCardState
                   widget.result.personalityStory,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.black87.withValues(alpha: 0.85),
+                    color: DSFortuneColors.inkBlack.withValues(alpha: 0.85),
                     height: 1.6,
                   ),
                 ),
@@ -633,43 +609,6 @@ class _ChatYearlyEncounterResultCardState
     );
   }
 
-  Widget _buildUnlockButton() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _showAdAndUnblur,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [_pinkAccent, _purpleGradientEnd],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('💕', style: TextStyle(fontSize: 18)),
-                SizedBox(width: 8),
-                Text(
-                  '인연 정보 모두 보기',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildDefaultImage() {
     return Container(
       color: _goldLight.withValues(alpha: 0.3),
@@ -688,7 +627,7 @@ class _TraditionalCloudPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFD4AF37)
+      ..color = DSFortuneColors.fortuneGoldMuted
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
@@ -727,7 +666,7 @@ class _CloudPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.08)
+      ..color = DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.08)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 

@@ -34,7 +34,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       name: 'Google',
       iconType: SocialIconType.asset,
       iconData: 'assets/images/social/google.svg',
-      color: Color(0xFF4285F4),
+      color: Color(0xFF4285F4), // 브랜드 고유 색상 - Google
     ),
     'apple': const SocialProviderInfo(
       name: 'Apple',
@@ -46,13 +46,13 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       name: 'Kakao',
       iconType: SocialIconType.asset,
       iconData: 'assets/images/social/kakao.svg',
-      color: Color(0xFFFEE500),
+      color: Color(0xFFFEE500), // 브랜드 고유 색상 - Kakao
     ),
     'naver': const SocialProviderInfo(
       name: 'Naver',
       iconType: SocialIconType.asset,
       iconData: 'assets/images/social/naver.svg',
-      color: Color(0xFF03C75A),
+      color: Color(0xFF03C75A), // 브랜드 고유 색상 - Naver
     ),
   };
   

@@ -7,8 +7,8 @@ import '../../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../../services/health_data_service.dart';
 
 /// Health 액센트 색상 (건강 도메인)
-const Color _healthAccent = Color(0xFF38A169);
-const Color _healthAccentLight = Color(0xFF68D391);
+const Color _healthAccent = Color(0xFF38A169); // 고유 색상 - Health 앱 연동 액센트
+const Color _healthAccentLight = Color(0xFF68D391); // 고유 색상 - Health 앱 연동 액센트 라이트
 
 class HealthAppConnectionSection extends StatelessWidget {
   final bool isDark;

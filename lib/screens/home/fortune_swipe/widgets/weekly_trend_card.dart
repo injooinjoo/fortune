@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 💫 주간 트렌드 카드
 class WeeklyTrendCard extends StatelessWidget {
@@ -49,11 +49,11 @@ class WeeklyTrendCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            // 전통 목(木) 색상 그라데이션 (성장과 상승을 상징)
+            // 고유 색상 - 전통 목(木) 색상 그라데이션 (성장과 상승을 상징)
             gradient: LinearGradient(
               colors: [
-                isDark ? const Color(0xFF2E8B57) : const Color(0xFF3D9970),
-                isDark ? const Color(0xFF1E5F3C) : const Color(0xFF2E8B57),
+                isDark ? const Color(0xFF2E8B57) : const Color(0xFF3D9970), // 고유 색상 - 木 청록
+                isDark ? const Color(0xFF1E5F3C) : const Color(0xFF2E8B57), // 고유 색상 - 木 진한
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -112,13 +112,13 @@ class WeeklyTrendCard extends StatelessWidget {
                   width: itemWidth,
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    // 전통 목(木) 색상 (좋은 날 강조)
+                    // 고유 색상 - 전통 목(木) 색상 (좋은 날 강조)
                     color: score >= 80
-                        ? const Color(0xFF2E8B57).withValues(alpha: 0.2)
+                        ? const Color(0xFF2E8B57).withValues(alpha: 0.2) // 고유 색상 - 木 청록
                         : (isDark ? Colors.white10 : Colors.black12),
                     borderRadius: BorderRadius.circular(6),
                     border: score >= 80
-                        ? Border.all(color: const Color(0xFF2E8B57), width: 1)
+                        ? Border.all(color: const Color(0xFF2E8B57), width: 1) // 고유 색상 - 木 청록
                         : null,
                   ),
                   child: Column(
@@ -135,7 +135,7 @@ class WeeklyTrendCard extends StatelessWidget {
                         '$score',
                         style: context.labelTiny.copyWith(
                           color: score >= 80
-                              ? const Color(0xFF2E8B57)
+                              ? const Color(0xFF2E8B57) // 고유 색상 - 木 청록
                               : (isDark ? Colors.white60 : Colors.black54),
                         ),
                       ),

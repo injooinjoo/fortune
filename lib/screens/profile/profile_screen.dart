@@ -107,8 +107,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       cacheService.clearAllCache();
 
       if (mounted) {
-        // 4. 앱 재시작 효과: 랜딩 페이지로 이동
-        context.go('/');
+        // 4. 온보딩 채팅으로 이동 (Chat-First)
+        context.go('/chat');
       }
     }
   }

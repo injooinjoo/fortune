@@ -15,6 +15,7 @@ import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../../../services/ad_service.dart'; // ✅ 광고 서비스
 import '../../../fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart'; // ✅ 닮은꼴 캐러셀
@@ -331,7 +332,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           if (_similarCelebrities != null && _similarCelebrities!.isNotEmpty) ...[
             CelebrityMatchCarousel(
               celebrities: _similarCelebrities!,
-              isBlurred: false,
+              isBlurred: !ref.read(isPremiumProvider),
             ),
             const SizedBox(height: 24),
           ],

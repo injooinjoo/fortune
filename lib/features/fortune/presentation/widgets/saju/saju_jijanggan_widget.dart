@@ -40,7 +40,7 @@ class SajuJijangganWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
-            _buildTitle(isDark),
+            _buildTitle(context, isDark),
             const SizedBox(height: DSSpacing.sm),
           ],
           _buildJijangganTable(context, isDark),
@@ -49,7 +49,7 @@ class SajuJijangganWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(bool isDark) {
+  Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
         const Icon(
@@ -62,14 +62,14 @@ class SajuJijangganWidget extends StatelessWidget {
           children: [
             Text(
               '지장간',
-              style: DSTypography.headingMedium.copyWith(
+              style: context.headingMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '支藏干',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: isDark
                     ? DSColors.textTertiary
                     : DSColors.textSecondary,
@@ -142,7 +142,7 @@ class SajuJijangganWidget extends StatelessWidget {
                       children: [
                         Text(
                           pillar['hanja']!,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: isDark
                                 ? DSColors.textTertiary
                                 : DSColors.textSecondary,
@@ -150,7 +150,7 @@ class SajuJijangganWidget extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        _buildBranchCell(branchData, isDay, isDark),
+                        _buildBranchCell(context, branchData, isDay, isDark),
                       ],
                     ),
                   ),
@@ -208,6 +208,7 @@ class SajuJijangganWidget extends StatelessWidget {
   }
 
   Widget _buildBranchCell(
+    BuildContext context,
     Map<String, dynamic>? branchData,
     bool isDay,
     bool isDark,
@@ -238,7 +239,7 @@ class SajuJijangganWidget extends StatelessWidget {
         // 한글 작게
         Text(
           name,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelSmall.copyWith(
             color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
             fontWeight: FontWeight.w500,
             fontSize: 10, // 예외: 초소형 사주 한글명

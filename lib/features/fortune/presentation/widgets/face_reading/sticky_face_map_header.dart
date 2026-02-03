@@ -184,7 +184,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                   children: [
                     Text(
                       '관상 부위별 분석',
-                      style: DSTypography.labelLarge.copyWith(
+                      style: context.labelLarge.copyWith(
                         color: isDark
                             ? DSColors.textPrimary
                             : DSColors.textPrimary,
@@ -194,7 +194,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                     const SizedBox(height: 2),
                     Text(
                       '부위를 터치하여 상세 분석 보기',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: isDark
                             ? DSColors.textSecondary
                             : DSColors.textSecondary,
@@ -254,7 +254,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                                 children: [
                                   Text(
                                     area.name.split('(')[0],
-                                    style: DSTypography.labelSmall.copyWith(
+                                    style: context.labelSmall.copyWith(
                                       color: area.color,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 9,
@@ -314,7 +314,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
             Expanded(
               child: Text(
                 '관상 분석 결과',
-                style: DSTypography.labelLarge.copyWith(
+                style: context.labelLarge.copyWith(
                   color: isDark
                       ? DSColors.textPrimary
                       : DSColors.textPrimary,
@@ -339,7 +339,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                   const SizedBox(width: 4),
                   Text(
                     '맵 보기',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: DSColors.accentSecondary,
                       fontWeight: FontWeight.w600,
                     ),

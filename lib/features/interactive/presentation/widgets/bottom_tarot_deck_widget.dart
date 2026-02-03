@@ -241,9 +241,9 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF1E3A5F),
-                    Color(0xFF0D1B2A),
-                    Color(0xFF415A77),
+                    Color(0xFF1E3A5F), // 고유 색상 - 타로 카드 뒷면 그라데이션
+                    Color(0xFF0D1B2A), // 고유 색상 - 타로 카드 뒷면 그라데이션
+                    Color(0xFF415A77), // 고유 색상 - 타로 카드 뒷면 그라데이션
                   ],
                 ),
               ),

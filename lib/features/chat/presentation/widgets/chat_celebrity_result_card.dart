@@ -46,6 +46,7 @@ class _ChatCelebrityResultCardState
   bool _isBlurred = false;
   List<String> _blurredSections = [];
   final Set<String> _expandedSections = {};
+  bool _hasInitializedBlur = false;
 
   // 데이터 추출
   Map<String, dynamic>? get _sajuAnalysis =>
@@ -65,10 +66,6 @@ class _ChatCelebrityResultCardState
   @override
   void initState() {
     super.initState();
-    // 블러 제거 - 모든 콘텐츠 바로 표시
-    _isBlurred = false;
-    _blurredSections = [];
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ref.read(fortuneHapticServiceProvider).mysticalReveal();
@@ -76,31 +73,47 @@ class _ChatCelebrityResultCardState
     });
   }
 
-  Future<void> _showAdAndUnblur() async {
-    final adService = AdService();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // ref는 didChangeDependencies에서 안전하게 접근 가능
+    if (!_hasInitializedBlur) {
+      _hasInitializedBlur = true;
+      _initBlurState();
+    }
+  }
 
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) async {
-        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+  void _initBlurState() {
+    final tokenState = ref.read(tokenProvider);
+    // 프리미엄 사용자(무제한 또는 토큰 보유)는 절대 블러 안 함
+    final isPremium = tokenState.hasUnlimitedAccess ||
+        (tokenState.balance?.remainingTokens ?? 0) > 0;
 
-        if (mounted) {
-          FortuneCompletionHelper.onFortuneViewed(context, ref, 'celebrity');
-        }
+    // 프리미엄이면 무조건 블러 해제
+    if (isPremium) {
+      _isBlurred = false;
+      _blurredSections = [];
+    } else {
+      // 비프리미엄: additionalInfo에서 블러 상태 읽거나 기본 true
+      _isBlurred = widget.fortune.additionalInfo?['isBlurred'] as bool? ?? true;
+      _blurredSections =
+          (widget.fortune.additionalInfo?['blurredSections'] as List?)?.cast<String>() ??
+              ['saju_analysis', 'intimate_compatibility', 'past_life', 'destined_timing'];
+    }
+  }
 
-        setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
-        });
-
-        if (mounted) {
-          final tokenState = ref.read(tokenProvider);
-          SubscriptionSnackbar.showAfterAd(
-            context,
-            hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-          );
-        }
-      },
-    );
+  @override
+  void didUpdateWidget(covariant ChatCelebrityResultCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
+    final oldBlurred = oldWidget.fortune.additionalInfo?['isBlurred'] as bool? ?? true;
+    final newBlurred = widget.fortune.additionalInfo?['isBlurred'] as bool? ?? true;
+    if (oldBlurred != newBlurred && !newBlurred) {
+      setState(() {
+        _isBlurred = false;
+        _blurredSections = [];
+      });
+    }
   }
 
   void _toggleSection(String section) {
@@ -149,12 +162,6 @@ class _ChatCelebrityResultCardState
             _buildBlurredSections(context, isDark)
                 .animate()
                 .fadeIn(duration: 500.ms, delay: 300.ms),
-
-            // 5. 언락 버튼 (블러 상태 + 비구독자)
-            if (_isBlurred && !isPremium)
-              _buildUnlockButton(context)
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 400.ms),
 
             const SizedBox(height: DSSpacing.sm),
           ],
@@ -669,47 +676,6 @@ class _ChatCelebrityResultCardState
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildUnlockButton(BuildContext context) {
-    final typography = context.typography;
-
-    return Padding(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _showAdAndUnblur,
-          borderRadius: BorderRadius.circular(DSRadius.md),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.md,
-              vertical: DSSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [ObangseokColors.jeokMuted, ObangseokColors.cheongDark],
-              ),
-              borderRadius: BorderRadius.circular(DSRadius.md),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('🔮', style: TextStyle(fontSize: 18)),
-                const SizedBox(width: DSSpacing.xs),
-                Text(
-                  '궁합 분석 모두 보기',
-                  style: typography.labelMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 

@@ -46,7 +46,7 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
       ),
       title: Text(
         title,
-        style: DSTypography.headingMedium.copyWith(
+        style: context.headingMedium.copyWith(
           color: colors.textPrimary,
         ),
       ),

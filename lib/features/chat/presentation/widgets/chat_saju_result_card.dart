@@ -75,6 +75,17 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant ChatSajuResultCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
+    if (oldWidget.isBlurred != widget.isBlurred && !widget.isBlurred) {
+      setState(() {
+        _isUnblurred = true;
+      });
+    }
+  }
+
   /// 오행 균형 데이터 추출
   Map<String, dynamic> get _elementBalance {
     final elements = widget.sajuData['elements'] as Map<String, dynamic>?;
@@ -122,8 +133,6 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
           _buildInfoHeader(context),
           // 섹션들
           _buildSections(context),
-          // 블러 해제 버튼
-          _buildUnlockButton(context),
         ],
       ),
     );
@@ -458,47 +467,4 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
     );
   }
 
-  /// 광고 시청 후 블러 해제
-  Future<void> _showAdAndUnblur() async {
-    final adService = AdService();
-
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) async {
-        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-        if (mounted) {
-          FortuneCompletionHelper.onFortuneViewed(context, ref, 'saju');
-          setState(() => _isUnblurred = true);
-        }
-      },
-    );
-  }
-
-  /// 블러 해제 버튼
-  Widget _buildUnlockButton(BuildContext context) {
-    final colors = context.colors;
-    final hasBlur = (widget.isBlurred || widget.blurredSections.isNotEmpty) && !_isUnblurred;
-
-    if (!hasBlur) return const SizedBox.shrink();
-
-    return Padding(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton.icon(
-          onPressed: _showAdAndUnblur,
-          icon: const Icon(Icons.play_circle_outline, size: 20),
-          label: const Text('광고 보고 전체 내용 보기'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colors.accent,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(DSRadius.md),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }

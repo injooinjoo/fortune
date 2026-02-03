@@ -88,7 +88,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: DSTypography.labelLarge.copyWith(
+                          style: context.labelLarge.copyWith(
                             color: isDark
                                 ? DSColors.textPrimary
                                 : DSColors.textPrimary,
@@ -98,7 +98,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           subtitle,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: isDark
                                 ? DSColors.textSecondary
                                 : DSColors.textSecondary,
@@ -118,7 +118,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                       ),
                       child: Text(
                         '$score점',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: color,
                           fontWeight: FontWeight.w700,
                         ),
@@ -147,6 +147,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                 if (observation.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   _buildDetailSection(
+                    context: context,
                     title: '관찰',
                     content: observation,
                     color: color,
@@ -158,6 +159,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                 if (interpretation.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   _buildDetailSection(
+                    context: context,
                     title: '해석',
                     content: interpretation,
                     color: color,
@@ -178,7 +180,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                     ),
                     child: Text(
                       period,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: color,
                         fontWeight: FontWeight.w600,
                       ),
@@ -188,7 +190,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                 ],
                 Text(
                   description,
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: isDark
                         ? DSColors.textPrimary
                         : DSColors.textPrimary,
@@ -207,7 +209,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         '전성기: $peakAge',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: color,
                           fontWeight: FontWeight.w600,
                         ),
@@ -241,7 +243,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           advice,
-                          style: DSTypography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: isDark
                                 ? DSColors.textPrimary
                                 : DSColors.textPrimary,
@@ -261,6 +263,7 @@ class FaceZoneDetailCard extends StatelessWidget {
   }
 
   Widget _buildDetailSection({
+    required BuildContext context,
     required String title,
     required String content,
     required Color color,
@@ -271,7 +274,7 @@ class FaceZoneDetailCard extends StatelessWidget {
       children: [
         Text(
           title,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelSmall.copyWith(
             color: color,
             fontWeight: FontWeight.w600,
           ),
@@ -279,7 +282,7 @@ class FaceZoneDetailCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           content,
-          style: DSTypography.bodyMedium.copyWith(
+          style: context.bodyMedium.copyWith(
             color: isDark
                 ? DSColors.textPrimary
                 : DSColors.textPrimary,

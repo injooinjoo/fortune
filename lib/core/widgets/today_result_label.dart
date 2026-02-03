@@ -48,7 +48,7 @@ class TodayResultLabel extends StatelessWidget {
     if (compact) {
       return Text(
         '오늘 $dateText',
-        style: DSTypography.labelSmall.copyWith(
+        style: context.labelSmall.copyWith(
           color: labelColor,
           fontWeight: FontWeight.w500,
         ),
@@ -78,7 +78,7 @@ class TodayResultLabel extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 '오늘의 인사이트',
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   color: labelColor,
                   fontWeight: FontWeight.w700,
                 ),
@@ -95,7 +95,7 @@ class TodayResultLabel extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 dateText,
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: labelColor.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w500,
                 ),
@@ -107,7 +107,7 @@ class TodayResultLabel extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             '내일이 되면 새로운 인사이트가 준비돼요',
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: hintColor,
               fontWeight: FontWeight.w400,
             ),

@@ -11,11 +11,11 @@ import 'dart:math' as math;
 
 /// 오행 타입
 enum WuxingType {
-  wood('목', '木', Color(0xFF4CAF50), '성장', '봄', '동쪽'),
-  fire('화', '火', Color(0xFFF44336), '열정', '여름', '남쪽'),
-  earth('토', '土', Color(0xFFFF9800), '안정', '환절기', '중앙'),
-  metal('금', '金', Color(0xFFC0C0C0), '결단', '가을', '서쪽'),
-  water('수', '水', Color(0xFF2196F3), '지혜', '겨울', '북쪽');
+  wood('목', '木', DSFortuneColors.elementWood, '성장', '봄', '동쪽'),
+  fire('화', '火', DSFortuneColors.elementFire, '열정', '여름', '남쪽'),
+  earth('토', '土', DSFortuneColors.elementEarth, '안정', '환절기', '중앙'),
+  metal('금', '金', DSFortuneColors.elementMetal, '결단', '가을', '서쪽'),
+  water('수', '水', DSFortuneColors.elementWater, '지혜', '겨울', '북쪽');
 
   final String korean;
   final String chinese;
@@ -422,7 +422,7 @@ class WuxingDetailCard extends StatelessWidget {
           // 제목
           Text(
             '오행 분포 분석',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.headingSmall.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : Colors.black87,
             ),
@@ -443,7 +443,7 @@ class WuxingDetailCard extends StatelessWidget {
             children: [
               Text(
                 '균형 점수',
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
@@ -451,7 +451,7 @@ class WuxingDetailCard extends StatelessWidget {
               const Spacer(),
               Text(
                 '${distribution.balanceScore.toStringAsFixed(0)}점',
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   fontWeight: FontWeight.w700,
                   color: distribution.balanceScore >= 60
                       ? Colors.green
@@ -467,7 +467,7 @@ class WuxingDetailCard extends StatelessWidget {
           // 설명
           Text(
             distribution.description,
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               height: 1.5,
               color: isDark ? Colors.white70 : Colors.black87,
             ),
@@ -478,7 +478,7 @@ class WuxingDetailCard extends StatelessWidget {
           if (distribution.recommendations.isNotEmpty) ...[
             Text(
               '추천 사항',
-              style: DSTypography.bodySmall.copyWith(
+              style: context.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white70 : Colors.black54,
               ),
@@ -491,14 +491,14 @@ class WuxingDetailCard extends StatelessWidget {
                     children: [
                       Text(
                         '• ',
-                        style: DSTypography.bodySmall.copyWith(
+                        style: context.bodySmall.copyWith(
                           color: isDark ? Colors.white70 : Colors.black87,
                         ),
                       ),
                       Expanded(
                         child: Text(
                           rec,
-                          style: DSTypography.bodySmall.copyWith(
+                          style: context.bodySmall.copyWith(
                             height: 1.4,
                             color: isDark ? Colors.white70 : Colors.black87,
                           ),

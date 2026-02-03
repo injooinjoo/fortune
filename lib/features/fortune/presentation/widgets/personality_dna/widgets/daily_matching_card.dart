@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/design_system/tokens/ds_spacing.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 
 /// 일상 매칭 카드
 class DailyMatchingCard extends StatelessWidget {
   final DailyMatching dailyMatching;
 
   // 테마 색상 상수
-  static const Color _matchingColor = Color(0xFFE67E22);
+  static const Color _matchingColor = Color(0xFFE67E22); // 고유 색상 - 매칭 오렌지
 
   const DailyMatchingCard({super.key, required this.dailyMatching});
 
@@ -45,7 +44,7 @@ class DailyMatchingCard extends StatelessWidget {
             '☕',
             '카페 메뉴',
             dailyMatching.cafeMenu,
-            const Color(0xFF8D6E63),
+            const Color(0xFF8D6E63), // 고유 색상 - 카페 브라운
           ),
           const SizedBox(height: DSSpacing.sm),
           _buildMatchingItem(
@@ -54,7 +53,7 @@ class DailyMatchingCard extends StatelessWidget {
             '🎬',
             '넷플릭스 장르',
             dailyMatching.netflixGenre,
-            const Color(0xFFE50914),
+            const Color(0xFFE50914), // 고유 색상 - 넷플릭스 레드
           ),
           const SizedBox(height: DSSpacing.sm),
           _buildMatchingItem(
@@ -63,7 +62,7 @@ class DailyMatchingCard extends StatelessWidget {
             '🌴',
             '주말 활동',
             dailyMatching.weekendActivity,
-            const Color(0xFF27AE60),
+            const Color(0xFF27AE60), // 고유 색상 - 주말 활동 초록색
           ),
         ],
       ),

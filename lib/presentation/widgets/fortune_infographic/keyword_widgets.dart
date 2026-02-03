@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/fortune_design_system.dart';
+import '../../../core/design_system/design_system.dart';
 import 'helpers.dart';
 
 /// Keyword display widgets for fortune infographic
@@ -79,12 +80,12 @@ class KeywordWidgets {
           end: Alignment.bottomRight,
           colors: isDark
             ? [
-                const Color(0xFF1E293B),
-                const Color(0xFF0F172A),
+                context.colors.surface,
+                context.colors.background,
               ]
             : [
                 TossDesignSystem.white,
-                const Color(0xFFF8FAFC),
+                context.colors.surfaceSecondary,
               ],
         ),
         borderRadius: BorderRadius.circular(20),

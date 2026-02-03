@@ -368,42 +368,100 @@ class AdService {
   }
 
   /// Show a rewarded ad with callbacks for success and failure
+  /// 광고가 준비되지 않았으면 자동으로 로드 후 표시
   Future<void> showRewardedAdWithCallback({
     required void Function() onUserEarnedReward,
     void Function()? onAdNotReady,
     void Function()? onAdFailedToShow,
   }) async {
     if (_isRewardedAdReady && _rewardedAd != null) {
-      // Set up callback for when ad fails to show
-      _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (ad) {
-          ad.dispose();
-          _isRewardedAdReady = false;
-          Logger.info('📱 [AdMob] Rewarded ad dismissed');
-          // Load next rewarded ad
-          loadRewardedAd();
-        },
-        onAdFailedToShowFullScreenContent: (ad, error) {
-          ad.dispose();
-          _isRewardedAdReady = false;
-          Logger.warning('⚠️ [AdMob] Rewarded ad failed to show: ${error.message}');
-          onAdFailedToShow?.call();
-        },
-        onAdShowedFullScreenContent: (ad) {
-          Logger.info('📱 [AdMob] Rewarded ad showed');
-        },
-      );
-
-      await _rewardedAd!.show(
-        onUserEarnedReward: (ad, reward) {
-          Logger.info('🎁 [AdMob] User earned reward: ${reward.amount} ${reward.type}');
-          onUserEarnedReward();
-        },
+      await _showRewardedAdInternal(
+        onUserEarnedReward: onUserEarnedReward,
+        onAdFailedToShow: onAdFailedToShow,
       );
     } else {
-      Logger.warning('⚠️ [AdMob] Rewarded ad not ready - calling onAdNotReady callback');
-      onAdNotReady?.call();
+      // 광고가 준비되지 않았으면 로드 후 자동 표시
+      Logger.warning('⚠️ [AdMob] Rewarded ad not ready - loading and will show when ready');
+      await _loadAndShowRewardedAd(
+        onUserEarnedReward: onUserEarnedReward,
+        onAdFailedToShow: onAdFailedToShow ?? onAdNotReady,
+      );
     }
+  }
+
+  /// 광고 로드 후 자동 표시 (내부 메서드)
+  Future<void> _loadAndShowRewardedAd({
+    required void Function() onUserEarnedReward,
+    void Function()? onAdFailedToShow,
+  }) async {
+    if (!_isInitialized) {
+      Logger.warning('⚠️ [AdMob] SDK not initialized - cannot load ad');
+      onAdFailedToShow?.call();
+      return;
+    }
+
+    Logger.info('🎯 [AdMob] Loading rewarded ad to show immediately...');
+
+    await RewardedAd.load(
+      adUnitId: _getAdUnitId('rewarded'),
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) async {
+          _rewardedAd = ad;
+          _isRewardedAdReady = true;
+          Logger.info('✅ [AdMob] Rewarded ad loaded - showing now');
+
+          // 로드 완료 후 즉시 표시
+          await _showRewardedAdInternal(
+            onUserEarnedReward: onUserEarnedReward,
+            onAdFailedToShow: onAdFailedToShow,
+          );
+        },
+        onAdFailedToLoad: (error) {
+          _isRewardedAdReady = false;
+          Logger.error('❌ [AdMob] Failed to load rewarded ad: ${error.message}');
+          onAdFailedToShow?.call();
+        },
+      ),
+    );
+  }
+
+  /// 리워드 광고 표시 (내부 메서드)
+  Future<void> _showRewardedAdInternal({
+    required void Function() onUserEarnedReward,
+    void Function()? onAdFailedToShow,
+  }) async {
+    if (_rewardedAd == null) {
+      Logger.warning('⚠️ [AdMob] Rewarded ad is null');
+      onAdFailedToShow?.call();
+      return;
+    }
+
+    _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        _isRewardedAdReady = false;
+        Logger.info('📱 [AdMob] Rewarded ad dismissed');
+        // Load next rewarded ad for future use
+        loadRewardedAd();
+      },
+      onAdFailedToShowFullScreenContent: (ad, error) {
+        ad.dispose();
+        _isRewardedAdReady = false;
+        Logger.warning('⚠️ [AdMob] Rewarded ad failed to show: ${error.message}');
+        onAdFailedToShow?.call();
+      },
+      onAdShowedFullScreenContent: (ad) {
+        Logger.info('📱 [AdMob] Rewarded ad showed');
+      },
+    );
+
+    await _rewardedAd!.show(
+      onUserEarnedReward: (ad, reward) {
+        Logger.info('🎁 [AdMob] User earned reward: ${reward.amount} ${reward.type}');
+        onUserEarnedReward();
+      },
+    );
   }
 
   /// Create a native ad

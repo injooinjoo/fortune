@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/fortune_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -107,15 +108,15 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
   Color _getElementColor(String element) {
     switch (element) {
       case '木 (木)':
-        return const Color(0xFF4CAF50); // 녹색 (나무)
+        return DSFortuneColors.elementWood;
       case '火 (火)':
-        return const Color(0xFFF44336); // 빨강 (불)
+        return DSFortuneColors.elementFire;
       case '土 (土)':
-        return const Color(0xFFFF9800); // 주황 (흙)
+        return DSFortuneColors.elementEarth;
       case '金 (金)':
-        return const Color(0xFF9E9E9E); // 회색 (금속)
+        return DSFortuneColors.elementMetal;
       case '水 (水)':
-        return const Color(0xFF2196F3); // 파랑 (물)
+        return DSFortuneColors.elementWater;
       default:
         return TossDesignSystem.gray400;
     }

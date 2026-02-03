@@ -116,7 +116,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
         children: [
           Text(
             '날짜 길흉 안내',
-            style: DSTypography.headingSmall,
+            style: context.headingSmall,
           ),
           const SizedBox(height: AppSpacing.spacing3),
           Wrap(
@@ -172,7 +172,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
         const SizedBox(width: AppSpacing.spacing1 * 1.5),
         Text(
           label,
-          style: DSTypography.bodySmall,
+          style: context.bodySmall,
         ),
       ],
     );
@@ -211,7 +211,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
         children: [
           Text(
             DatePickerUtils.formatKorean(day, showWeekday: true),
-            style: DSTypography.bodyLarge.copyWith(
+            style: context.bodyLarge.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -227,7 +227,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                 const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   '손없는날 - 이사하기 매우 좋은 날',
-                  style: DSTypography.bodySmall.copyWith(fontWeight: FontWeight.w500),
+                  style: context.bodySmall.copyWith(fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -244,7 +244,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                 const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   '길흉점수: ${(luckyScore * 100).toInt()}점',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: _getDayColor(day),
                     fontWeight: FontWeight.w500,
                   ),
@@ -264,7 +264,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                 const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   holiday,
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: TossDesignSystem.errorRed,
                   ),
                 ),
@@ -387,7 +387,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                     child: Center(
                       child: Text(
                         '${day.day}',
-                        style: DSTypography.bodyMedium.copyWith(
+                        style: context.bodyMedium.copyWith(
                           color: isWeekend
                               ? TossDesignSystem.errorRed
                               : (isDark
@@ -408,11 +408,11 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                   color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                   borderRadius: AppDimensions.borderRadiusSmall,
                 ),
-                formatButtonTextStyle: DSTypography.bodySmall.copyWith(
+                formatButtonTextStyle: context.bodySmall.copyWith(
                   color: TossDesignSystem.tossBlue,
                   fontWeight: FontWeight.w500,
                 ),
-                titleTextStyle: DSTypography.headingSmall,
+                titleTextStyle: context.headingSmall,
               ),
             ),
           ),

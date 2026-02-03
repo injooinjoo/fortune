@@ -90,7 +90,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               const SizedBox(width: 8),
               Text(
                 '크롤링 현황',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -147,13 +147,13 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
       children: [
         Text(
           label,
-          style: DSTypography.bodySmall.copyWith(
+          style: context.bodySmall.copyWith(
             color: TossDesignSystem.gray600,
           ),
         ),
         Text(
           value,
-          style: DSTypography.labelMedium.copyWith(
+          style: context.labelMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: color,
           ),
@@ -177,7 +177,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               const SizedBox(width: 8),
               Text(
                 '단일 크롤링',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -245,7 +245,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               const SizedBox(width: 8),
               Text(
                 '일괄 크롤링',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -336,7 +336,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               const SizedBox(width: 8),
               Text(
                 _getStatusTitle(state.status),
-                style: DSTypography.headingSmall.copyWith(
+                style: context.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: statusColor,
                 ),
@@ -348,7 +348,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           if (state.message != null)
             Text(
               state.message!,
-              style: DSTypography.bodySmall.copyWith(
+              style: context.bodySmall.copyWith(
                 color: TossDesignSystem.gray700,
               ),
             ),
@@ -360,13 +360,13 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               children: [
                 Text(
                   '진행률',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: TossDesignSystem.gray600,
                   ),
                 ),
                 Text(
                   '${state.current}/${state.total}',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -425,7 +425,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
       children: [
         Text(
           value,
-          style: DSTypography.headingSmall.copyWith(
+          style: context.headingSmall.copyWith(
             fontWeight: FontWeight.w600,
             color: color,
           ),
@@ -433,7 +433,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
         const SizedBox(height: 4),
         Text(
           label,
-          style: DSTypography.labelMedium.copyWith(
+          style: context.labelMedium.copyWith(
             color: TossDesignSystem.gray600,
           ),
         ),

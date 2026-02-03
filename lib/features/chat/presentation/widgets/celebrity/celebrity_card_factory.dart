@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../domain/entities/fortune.dart';
 import 'celebrity_personality_card.dart';
 import 'celebrity_love_card.dart';
@@ -100,15 +101,15 @@ class CelebrityCardFactory {
   static Color getThemeColor(String? questionType) {
     switch (questionType) {
       case 'personality':
-        return const Color(0xFF6366F1); // 보라색
+        return DSFortuneColors.categoryPersonalityDna; // 보라색
       case 'love':
-        return const Color(0xFFE91E63); // 핑크
+        return DSFortuneColors.categoryLove; // 핑크
       case 'pastLife':
-        return const Color(0xFF312E81); // 남보라
+        return DSFortuneColors.mysticalPurpleDark; // 남보라
       case 'timing':
-        return const Color(0xFFF59E0B); // 골드
+        return DSFortuneColors.categoryLotto; // 골드
       default:
-        return const Color(0xFF6366F1);
+        return DSFortuneColors.categoryPersonalityDna;
     }
   }
 }

@@ -328,7 +328,7 @@ class _PresetButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: DSTypography.bodySmall.copyWith(
+          style: context.bodySmall.copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             color: isSelected
                 ? TossDesignSystem.white

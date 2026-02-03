@@ -4,12 +4,14 @@ import 'package:fortune/core/theme/typography_unified.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'ds_colors.dart';
 
-/// Korean Traditional "Saaju" typography system
+/// Modern AI Chat typography system
 ///
-/// Design Philosophy: Calligraphy meets modern readability
+/// Design Philosophy: Clean, readable, content-focused
 ///
 /// Font Strategy:
-/// - All text: NanumMyeongjo (나눔명조) - Traditional calligraphy feel
+/// - Primary: Inter (modern sans-serif)
+/// - Korean fallback: Pretendard
+/// - Legacy calligraphy: NanumMyeongjo (for specific traditional content)
 ///
 /// Usage:
 /// ```dart
@@ -20,56 +22,55 @@ import 'ds_colors.dart';
 class DSTypography {
   DSTypography._();
 
-  /// Headline font family - Calligraphy style (나눔명조)
-  static String get headlineFamily => GoogleFonts.nanumMyeongjo().fontFamily!;
+  /// Primary font family - Inter
+  static String get headlineFamily => GoogleFonts.inter().fontFamily!;
 
-  /// Body font family - NanumMyeongjo for fortune content
-  static String get bodyFamily => GoogleFonts.nanumMyeongjo().fontFamily!;
+  /// Body font family - Inter
+  static String get bodyFamily => GoogleFonts.inter().fontFamily!;
 
-  /// UI font family - FontConfig.primary 참조
+  /// UI font family - FontConfig.primary reference
   static const String uiFamily = FontConfig.primary;
 
-  /// Number font family - FontConfig.number 참조
+  /// Number font family - FontConfig.number reference
   static const String numberFamily = FontConfig.number;
 
-  /// Default font family for theme - FontConfig.primary 참조
+  /// Default font family for theme - FontConfig.primary reference
   static const String fontFamily = FontConfig.primary;
 
   // ============================================
-  // DISPLAY STYLES (Fortune titles, hero text)
-  // Using NanumMyeongjo for traditional feel
+  // DISPLAY STYLES (Hero text, splash screens)
+  // Using Inter for modern, clean look
   // ============================================
 
-  /// Display Large - 32px, SemiBold - Fortune titles
-  /// (w700→w600 조정으로 한지 위 붓글씨 느낌)
+  /// Display Large - 36px, SemiBold - Page hero titles
   static TextStyle get displayLarge => TypographyUnified.displayLarge;
 
-  /// Display Medium - 28px, SemiBold - Section headers
+  /// Display Medium - 32px, SemiBold - Section headers
   static TextStyle get displayMedium => TypographyUnified.displayMedium;
 
-  /// Display Small - 24px, SemiBold
+  /// Display Small - 28px, SemiBold
   static TextStyle get displaySmall => TypographyUnified.displaySmall;
 
   // ============================================
   // HEADING STYLES (Page titles, card headers)
-  // Using NanumMyeongjo for traditional aesthetic
+  // Using Inter for modern aesthetic
   // ============================================
 
-  /// Heading Large - 24px, SemiBold - Page titles
+  /// Heading Large - 28px, SemiBold - Page titles
   static TextStyle get headingLarge => TypographyUnified.heading1;
 
-  /// Heading Medium - 20px, Medium - Card headers
+  /// Heading Medium - 24px, SemiBold - Card headers
   static TextStyle get headingMedium => TypographyUnified.heading2;
 
-  /// Heading Small - 18px, Medium
+  /// Heading Small - 20px, Medium
   static TextStyle get headingSmall => TypographyUnified.heading3;
 
   // ============================================
-  // BODY STYLES (Fortune content, descriptions)
-  // Using NanumMyeongjo for readability
+  // BODY STYLES (Content, descriptions)
+  // Using Inter for readability
   // ============================================
 
-  /// Body Large - 16px, Regular - Main fortune content
+  /// Body Large - 16px, Regular - Main content
   static TextStyle get bodyLarge => TypographyUnified.bodyLarge;
 
   /// Body Medium - 14px, Regular - Secondary content
@@ -80,13 +81,13 @@ class DSTypography {
 
   // ============================================
   // LABEL STYLES (UI labels, navigation)
-  // Using NanumMyeongjo for consistent typography
+  // Using Inter for UI consistency
   // ============================================
 
-  /// Label Large - 16px, Medium
+  /// Label Large - 14px, Medium
   static TextStyle get labelLarge => TypographyUnified.labelLarge;
 
-  /// Label Medium - 14px, Medium
+  /// Label Medium - 13px, Medium
   static TextStyle get labelMedium => TypographyUnified.labelMedium;
 
   /// Label Small - 12px, Medium
@@ -96,7 +97,7 @@ class DSTypography {
   static TextStyle get labelTiny => TypographyUnified.labelTiny;
 
   // ============================================
-  // SECTION HEADER (Traditional style)
+  // SECTION HEADER
   // ============================================
 
   /// Section Header - 12px, SemiBold
@@ -106,13 +107,13 @@ class DSTypography {
       );
 
   // ============================================
-  // BUTTON STYLES (Seal/stamp buttons)
+  // BUTTON STYLES
   // ============================================
 
-  /// Button Large - 17px, SemiBold
+  /// Button Large - 16px, SemiBold
   static TextStyle get buttonLarge => TypographyUnified.buttonLarge;
 
-  /// Button Medium - 16px, SemiBold
+  /// Button Medium - 15px, SemiBold
   static TextStyle get buttonMedium => TypographyUnified.buttonMedium;
 
   /// Button Small - 14px, SemiBold
@@ -122,11 +123,10 @@ class DSTypography {
   // NUMBER STYLES (for amounts, statistics)
   // ============================================
 
-  /// Number Large - 32px, SemiBold
-  /// (w700→w600 조정으로 부드러운 무게감)
+  /// Number Large - 28px, SemiBold
   static TextStyle get numberLarge => TypographyUnified.numberLarge;
 
-  /// Number Medium - 24px, SemiBold
+  /// Number Medium - 22px, SemiBold
   static TextStyle get numberMedium => TypographyUnified.numberMedium;
 
   /// Number Small - 18px, SemiBold
@@ -136,7 +136,7 @@ class DSTypography {
   // INPUT STYLES
   // ============================================
 
-  /// Input text style - Using serif for traditional feel
+  /// Input text style
   static TextStyle get input => TypographyUnified.bodyMedium;
 
   /// Input placeholder style
@@ -150,20 +150,20 @@ class DSTypography {
   );
 
   // ============================================
-  // FORTUNE-SPECIFIC STYLES
+  // FORTUNE-SPECIFIC STYLES (Legacy calligraphy)
+  // Using NanumMyeongjo for traditional content
   // ============================================
 
-  /// Fortune title - Large calligraphy style
-  /// (w700→w600 조정으로 부드러운 붓글씨 느낌)
+  /// Fortune title - Calligraphy style for traditional content
   static TextStyle get fortuneTitle => TypographyUnified.calligraphyTitle;
 
-  /// Fortune subtitle - Medium calligraphy
+  /// Fortune subtitle - Calligraphy style
   static TextStyle get fortuneSubtitle => TypographyUnified.calligraphySubtitle;
 
-  /// Fortune content - Serif body for readability
+  /// Fortune content - Calligraphy style for readability
   static TextStyle get fortuneContent => TypographyUnified.calligraphyBody;
 
-  /// Fortune quote - Elegant serif for special text
+  /// Fortune quote - Calligraphy style for special text
   static TextStyle get fortuneQuote => TypographyUnified.calligraphyQuote;
 }
 
@@ -202,7 +202,7 @@ class DSTypographyScheme {
   TextStyle get inputPlaceholder => DSTypography.inputPlaceholder;
   TextStyle get inputError => DSTypography.inputError;
 
-  // Fortune-specific
+  // Fortune-specific (legacy calligraphy)
   TextStyle get fortuneTitle => DSTypography.fortuneTitle;
   TextStyle get fortuneSubtitle => DSTypography.fortuneSubtitle;
   TextStyle get fortuneContent => DSTypography.fortuneContent;

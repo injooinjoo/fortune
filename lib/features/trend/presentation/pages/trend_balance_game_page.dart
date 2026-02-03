@@ -96,7 +96,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
             children: [
               Text(
                 '질문 ${_currentQuestionIndex + 1}/${game.questions.length}',
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   color: isDark
                       ? TossDesignSystem.textSecondaryDark
                       : TossDesignSystem.textSecondaryLight,
@@ -104,7 +104,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
               ),
               Text(
                 '${(progress * 100).toInt()}%',
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   color: TossDesignSystem.tossBlue,
                   fontWeight: FontWeight.w600,
                 ),
@@ -135,7 +135,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
       return Center(
         child: Text(
           '질문이 없습니다',
-          style: DSTypography.bodyMedium.copyWith(
+          style: context.bodyMedium.copyWith(
             color: isDark
                 ? TossDesignSystem.textSecondaryDark
                 : TossDesignSystem.textSecondaryLight,
@@ -188,7 +188,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                   ),
                   child: Text(
                     'VS',
-                    style: DSTypography.labelLarge.copyWith(
+                    style: context.labelLarge.copyWith(
                       color: isDark
                           ? TossDesignSystem.textPrimaryDark
                           : TossDesignSystem.textPrimaryLight,
@@ -302,7 +302,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                     if (choice.emoji != null) const SizedBox(height: 12),
                     Text(
                       choice.text,
-                      style: DSTypography.headingSmall.copyWith(
+                      style: context.headingSmall.copyWith(
                         color: isSelected
                             ? Colors.white
                             : isDark
@@ -448,7 +448,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                         ),
                         child: Text(
                           '다시 하기',
-                          style: DSTypography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -505,7 +505,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                 : majorityPercentage >= 50
                     ? '평범한 취향'
                     : '소수파!',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.headingMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
@@ -513,7 +513,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
           const SizedBox(height: 8),
           Text(
             '${summary.totalQuestions}개 중 ${summary.majorityMatchCount}개가 다수파와 일치',
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
@@ -551,7 +551,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
           const SizedBox(width: 8),
           Text(
             '$label $count개',
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w600,
             ),
@@ -596,7 +596,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                 ),
                 child: Text(
                   'Q$questionNumber',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: isDark
                         ? TossDesignSystem.textSecondaryDark
                         : TossDesignSystem.textSecondaryLight,
@@ -615,7 +615,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                 ),
                 child: Text(
                   summary.isMajority ? '다수파' : '소수파',
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: summary.isMajority
                         ? TossDesignSystem.successGreen
                         : TossDesignSystem.orange,
@@ -670,7 +670,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
             Expanded(
               child: Text(
                 text,
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   color: isSelected
                       ? color
                       : isDark
@@ -682,7 +682,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
             ),
             Text(
               '${percentage.toStringAsFixed(1)}%',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: color,
                 fontWeight: FontWeight.w600,
               ),
@@ -741,7 +741,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
           const SizedBox(height: 16),
           Text(
             error,
-            style: DSTypography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,

@@ -434,6 +434,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
       child: TextField(
         controller: _textController,
         enabled: widget.enabled,
+        textAlignVertical: TextAlignVertical.center,
         style: typography.bodyMedium.copyWith(
           color: colors.textPrimary,
         ),
@@ -447,8 +448,9 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
           focusedBorder: InputBorder.none,
           disabledBorder: InputBorder.none,
           filled: false,
-          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          contentPadding: EdgeInsets.zero,
           isDense: true,
+          isCollapsed: true,
         ),
         maxLines: 1,
         textInputAction: TextInputAction.send,

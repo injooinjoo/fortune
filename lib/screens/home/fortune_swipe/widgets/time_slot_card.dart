@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/tokens/ds_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// ⏰ 시간대별 조언 카드 - ChatGPT Pulse 스타일
 class TimeSlotCard extends StatelessWidget {
@@ -55,7 +54,7 @@ class TimeSlotCard extends StatelessWidget {
             advice: timeSlots['morning']!,
             isActive: currentTimeSlot == 'morning',
             isDark: isDark,
-            accentColor: const Color(0xFFDAA520), // 황금색 (아침 햇살)
+            accentColor: const Color(0xFFDAA520), // 고유 색상 - 황금색 (아침 햇살)
           ),
 
         if (timeSlots['morning']?.isNotEmpty == true &&
@@ -70,7 +69,7 @@ class TimeSlotCard extends StatelessWidget {
             advice: timeSlots['afternoon']!,
             isActive: currentTimeSlot == 'afternoon',
             isDark: isDark,
-            accentColor: const Color(0xFFDC143C), // 진홍색 (화기)
+            accentColor: const Color(0xFFDC143C), // 고유 색상 - 진홍색 (화기)
           ),
 
         if (timeSlots['afternoon']?.isNotEmpty == true &&
@@ -85,7 +84,7 @@ class TimeSlotCard extends StatelessWidget {
             advice: timeSlots['evening']!,
             isActive: currentTimeSlot == 'evening',
             isDark: isDark,
-            accentColor: const Color(0xFF1E3A5F), // 남색 (수기)
+            accentColor: const Color(0xFF1E3A5F), // 고유 색상 - 남색 (수기)
           ),
       ],
     );
@@ -131,7 +130,7 @@ class _TimeSlotItem extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               // 다크모드에서 더 밝은 배경으로 가독성 개선
-              color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+              color: isDark ? const Color(0xFF2C2C2E) : Colors.white, // 고유 색상 - 다크 모달 배경
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -209,7 +208,7 @@ class _TimeSlotItem extends StatelessWidget {
       child: Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: isActive
             ? Border.all(color: accentColor.withValues(alpha: 0.4), width: 1.5)

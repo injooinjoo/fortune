@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/design_system/tokens/ds_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
 /// 📊 오늘의 인사이트 카드 - ChatGPT Pulse 스타일
@@ -69,7 +68,7 @@ class _OverallCardState extends State<OverallCard> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               // 다크모드에서 더 밝은 배경으로 가독성 개선
-              color: widget.isDark ? const Color(0xFF2C2C2E) : Colors.white,
+              color: widget.isDark ? const Color(0xFF2C2C2E) : Colors.white, // 고유 색상 - 다크 모달 배경
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -147,7 +146,7 @@ class _OverallCardState extends State<OverallCard> {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: widget.isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF5F0E6),
+            color: widget.isDark ? DSColors.surface : DSFortuneColors.hanjiCream,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -159,8 +158,8 @@ class _OverallCardState extends State<OverallCard> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: widget.isDark
-                        ? [const Color(0xFF2C2C2E), const Color(0xFF1C1C1E)]
-                        : [const Color(0xFFF5F0E6), const Color(0xFFEDE8DC)],
+                        ? [const Color(0xFF2C2C2E), DSColors.surface] // 고유 색상(dark gradient start)
+                        : [DSFortuneColors.hanjiCream, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -215,7 +214,7 @@ class _OverallCardState extends State<OverallCard> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           decoration: BoxDecoration(
-            color: widget.isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            color: widget.isDark ? DSColors.surface : Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -328,7 +327,7 @@ class _OverallCardState extends State<OverallCard> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: widget.isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              color: widget.isDark ? DSColors.surface : Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(

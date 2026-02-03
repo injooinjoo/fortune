@@ -1,251 +1,336 @@
 import 'package:flutter/material.dart';
 import 'ds_colors.dart';
 
-/// Korean Traditional "Saaju" shadow/ink-wash system
+/// Claude-inspired Modern shadow system
 ///
-/// Design Philosophy: Replace drop shadows with ink-wash (번짐) effects
-/// that simulate ink bleeding on hanji paper
+/// Design Philosophy: Soft, Diffuse, Multi-layered Depth
+///
+/// Key Principles:
+/// - Low Opacity: 2%-8% black (very subtle)
+/// - Large Blur Radius: 8px-32px (soft edges)
+/// - No Hard Edges: Natural shadow diffusion
+/// - Dark Mode: Use borders instead of shadows
+///
+/// Claude shadow formula:
+/// ```css
+/// box-shadow: 0 0.25rem 1.25rem rgba(0,0,0,0.035);
+/// /* = 0 4px 20px 3.5% black */
+/// ```
 ///
 /// Usage:
 /// ```dart
 /// Container(
-///   decoration: DSShadows.inkWashDecoration(),
-/// )
-/// // or for box shadows only
-/// Container(
 ///   decoration: BoxDecoration(
-///     boxShadow: DSShadows.inkWash,
+///     boxShadow: DSShadows.card,
 ///   ),
+/// )
+/// // or use decoration builder
+/// Container(
+///   decoration: DSShadows.cardDecoration(),
 /// )
 /// ```
 class DSShadows {
   DSShadows._();
 
   // ============================================
-  // INK-WASH EFFECTS (Light Mode)
-  // Simulates ink bleeding on paper
+  // CLAUDE-STYLE SOFT SHADOWS (Light Mode)
+  // Low opacity + Large blur radius
   // ============================================
 
-  /// Extra subtle ink wash - minimal presence
-  static List<BoxShadow> get inkWashXs => [
+  /// Extra small shadow - 2% black, 8px blur
+  /// Use for: Subtle elevation, hover states
+  static List<BoxShadow> get xs => [
         BoxShadow(
-          color: DSColors.textPrimary.withValues(alpha: 0.06),
-          offset: Offset.zero,
-          blurRadius: 1,
+          color: Colors.black.withValues(alpha: 0.02),
+          offset: const Offset(0, 2),
+          blurRadius: 8,
           spreadRadius: 0,
         ),
       ];
 
-  /// Subtle ink wash - light ink bleed
-  static List<BoxShadow> get inkWashSm => [
+  /// Small shadow - 3% black, 12px blur
+  /// Use for: Buttons, small cards
+  static List<BoxShadow> get sm => [
         BoxShadow(
-          color: DSColors.textPrimary.withValues(alpha: 0.08),
-          offset: Offset.zero,
-          blurRadius: 2,
+          color: Colors.black.withValues(alpha: 0.03),
+          offset: const Offset(0, 3),
+          blurRadius: 12,
           spreadRadius: 0,
         ),
       ];
 
-  /// Standard ink wash - default cards
-  static List<BoxShadow> get inkWash => [
+  /// Medium shadow - 3.5% black, 20px blur (Claude card shadow)
+  /// Use for: Standard cards, elevated content
+  /// This is the signature Claude shadow
+  static List<BoxShadow> get md => [
         BoxShadow(
-          color: DSColors.textPrimary.withValues(alpha: 0.10),
-          offset: Offset.zero,
-          blurRadius: 3,
+          color: Colors.black.withValues(alpha: 0.035),
+          offset: const Offset(0, 4),
+          blurRadius: 20,
           spreadRadius: 0,
         ),
       ];
 
-  /// Medium ink wash - elevated elements
-  static List<BoxShadow> get inkWashMd => [
+  /// Card shadow alias - same as md (Claude's main card shadow)
+  static List<BoxShadow> get card => md;
+
+  /// Large shadow - 5% black, 24px blur
+  /// Use for: Hover states, elevated cards
+  static List<BoxShadow> get lg => [
         BoxShadow(
-          color: DSColors.textPrimary.withValues(alpha: 0.12),
-          offset: Offset.zero,
-          blurRadius: 4,
+          color: Colors.black.withValues(alpha: 0.05),
+          offset: const Offset(0, 6),
+          blurRadius: 24,
           spreadRadius: 0,
         ),
       ];
 
-  /// Large ink wash - prominent elements
-  static List<BoxShadow> get inkWashLg => [
+  /// Extra large shadow - 8% black, 32px blur
+  /// Use for: Modals, popovers
+  static List<BoxShadow> get xl => [
         BoxShadow(
-          color: DSColors.textPrimary.withValues(alpha: 0.15),
-          offset: Offset.zero,
-          blurRadius: 6,
+          color: Colors.black.withValues(alpha: 0.08),
+          offset: const Offset(0, 8),
+          blurRadius: 32,
+          spreadRadius: 0,
+        ),
+      ];
+
+  /// 2XL shadow - 10% black, 40px blur
+  /// Use for: Large modals, full-page overlays
+  static List<BoxShadow> get xxl => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.10),
+          offset: const Offset(0, 12),
+          blurRadius: 40,
           spreadRadius: 0,
         ),
       ];
 
   // ============================================
-  // INK-WASH EFFECTS (Dark Mode)
-  // Lighter effect on dark background
+  // DARK MODE SHADOWS
+  // In dark mode, Claude uses borders instead of shadows
+  // But we provide softer dark shadows for compatibility
   // ============================================
 
-  /// Extra subtle ink wash dark
-  static List<BoxShadow> get inkWashXsDark => [
+  /// Extra small shadow dark
+  static List<BoxShadow> get xsDark => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.15),
+          offset: const Offset(0, 2),
+          blurRadius: 8,
+          spreadRadius: 0,
+        ),
+      ];
+
+  /// Small shadow dark
+  static List<BoxShadow> get smDark => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.20),
+          offset: const Offset(0, 3),
+          blurRadius: 12,
+          spreadRadius: 0,
+        ),
+      ];
+
+  /// Medium shadow dark
+  static List<BoxShadow> get mdDark => [
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.25),
-          offset: Offset.zero,
-          blurRadius: 1,
+          offset: const Offset(0, 4),
+          blurRadius: 20,
           spreadRadius: 0,
         ),
       ];
 
-  /// Subtle ink wash dark
-  static List<BoxShadow> get inkWashSmDark => [
+  /// Card shadow dark alias
+  static List<BoxShadow> get cardDark => mdDark;
+
+  /// Large shadow dark
+  static List<BoxShadow> get lgDark => [
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.30),
-          offset: Offset.zero,
-          blurRadius: 2,
+          offset: const Offset(0, 6),
+          blurRadius: 24,
           spreadRadius: 0,
         ),
       ];
 
-  /// Standard ink wash dark
-  static List<BoxShadow> get inkWashDark => [
+  /// Extra large shadow dark
+  static List<BoxShadow> get xlDark => [
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.35),
-          offset: Offset.zero,
-          blurRadius: 3,
+          offset: const Offset(0, 8),
+          blurRadius: 32,
           spreadRadius: 0,
         ),
       ];
 
-  /// Medium ink wash dark
-  static List<BoxShadow> get inkWashMdDark => [
+  /// 2XL shadow dark
+  static List<BoxShadow> get xxlDark => [
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.40),
-          offset: Offset.zero,
-          blurRadius: 4,
-          spreadRadius: 0,
-        ),
-      ];
-
-  /// Large ink wash dark
-  static List<BoxShadow> get inkWashLgDark => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.45),
-          offset: Offset.zero,
-          blurRadius: 6,
+          offset: const Offset(0, 12),
+          blurRadius: 40,
           spreadRadius: 0,
         ),
       ];
 
   // ============================================
-  // LEGACY SHADOWS (for compatibility)
-  // Keeping old shadows for gradual migration
+  // LEGACY COMPATIBILITY
+  // Old ink-wash names map to new clean shadows
   // ============================================
 
-  static List<BoxShadow> get xs => inkWashXs;
-  static List<BoxShadow> get sm => inkWashSm;
-  static List<BoxShadow> get md => inkWashMd;
-  static List<BoxShadow> get lg => inkWashLg;
-  static List<BoxShadow> get xl => inkWashLg;
-  static List<BoxShadow> get xxl => inkWashLg;
+  /// @deprecated Use [xs] instead
+  static List<BoxShadow> get inkWashXs => xs;
 
-  static List<BoxShadow> get xsDark => inkWashXsDark;
-  static List<BoxShadow> get smDark => inkWashSmDark;
-  static List<BoxShadow> get mdDark => inkWashMdDark;
-  static List<BoxShadow> get lgDark => inkWashLgDark;
-  static List<BoxShadow> get xlDark => inkWashLgDark;
-  static List<BoxShadow> get xxlDark => inkWashLgDark;
+  /// @deprecated Use [sm] instead
+  static List<BoxShadow> get inkWashSm => sm;
+
+  /// @deprecated Use [md] instead
+  static List<BoxShadow> get inkWash => md;
+
+  /// @deprecated Use [md] instead
+  static List<BoxShadow> get inkWashMd => md;
+
+  /// @deprecated Use [lg] instead
+  static List<BoxShadow> get inkWashLg => lg;
+
+  /// @deprecated Use [xsDark] instead
+  static List<BoxShadow> get inkWashXsDark => xsDark;
+
+  /// @deprecated Use [smDark] instead
+  static List<BoxShadow> get inkWashSmDark => smDark;
+
+  /// @deprecated Use [mdDark] instead
+  static List<BoxShadow> get inkWashDark => mdDark;
+
+  /// @deprecated Use [mdDark] instead
+  static List<BoxShadow> get inkWashMdDark => mdDark;
+
+  /// @deprecated Use [lgDark] instead
+  static List<BoxShadow> get inkWashLgDark => lgDark;
 
   /// No shadow
   static List<BoxShadow> get none => [];
 
   // ============================================
   // DECORATION BUILDERS
-  // Complete BoxDecoration with ink-wash effect
+  // Claude-style clean card decorations
   // ============================================
 
-  /// Standard ink-wash card decoration
-  static BoxDecoration inkWashDecoration({
+  /// Standard card decoration (light mode)
+  /// Uses Claude's signature soft shadow
+  static BoxDecoration cardDecoration({
     Color? backgroundColor,
-    double borderRadius = 8,
-    double intensity = 0.10,
-    double spread = 3,
+    double borderRadius = 16,
+    List<BoxShadow>? shadow,
   }) =>
       BoxDecoration(
         color: backgroundColor ?? DSColors.surface,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(
-          color: DSColors.textPrimary.withValues(alpha: intensity),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: DSColors.textPrimary.withValues(alpha: intensity * 0.5),
-            blurRadius: spread,
-            spreadRadius: 0,
-          ),
-        ],
+        boxShadow: shadow ?? md,
       );
 
-  /// Ink-wash card decoration for dark mode
-  static BoxDecoration inkWashDecorationDark({
+  /// Card decoration for dark mode
+  /// Uses border instead of shadow (Claude pattern)
+  static BoxDecoration cardDecorationDark({
     Color? backgroundColor,
-    double borderRadius = 8,
-    double intensity = 0.25,
-    double spread = 3,
+    double borderRadius = 16,
+    List<BoxShadow>? shadow,
+    bool useBorder = true,
   }) =>
       BoxDecoration(
         color: backgroundColor ?? DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(
-          color: DSColors.borderDark,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: intensity * 0.5),
-            blurRadius: spread,
-            spreadRadius: 0,
-          ),
-        ],
+        border: useBorder
+            ? Border.all(
+                color: DSColors.borderDark.withValues(alpha: 0.5),
+                width: 1,
+              )
+            : null,
+        boxShadow: shadow ?? smDark,
       );
 
-  /// Seal/stamp button decoration (vermilion)
+  /// Elevated card decoration
+  static BoxDecoration elevatedDecoration({
+    Color? backgroundColor,
+    double borderRadius = 16,
+  }) =>
+      BoxDecoration(
+        color: backgroundColor ?? DSColors.surface,
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: lg,
+      );
+
+  /// Modal decoration
+  static BoxDecoration modalDecoration({
+    Color? backgroundColor,
+    double borderRadius = 28,
+  }) =>
+      BoxDecoration(
+        color: backgroundColor ?? DSColors.surface,
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: xl,
+      );
+
+  /// Subtle decoration (minimal shadow for nested content)
+  static BoxDecoration subtleDecoration({
+    Color? backgroundColor,
+    double borderRadius = 12,
+  }) =>
+      BoxDecoration(
+        color: backgroundColor ?? DSColors.surface,
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: xs,
+      );
+
+  /// @deprecated Use [cardDecoration] instead
+  static BoxDecoration inkWashDecoration({
+    Color? backgroundColor,
+    double borderRadius = 16,
+    double intensity = 0.06,
+    double spread = 4,
+  }) =>
+      cardDecoration(
+        backgroundColor: backgroundColor,
+        borderRadius: borderRadius,
+      );
+
+  /// @deprecated Use [cardDecorationDark] instead
+  static BoxDecoration inkWashDecorationDark({
+    Color? backgroundColor,
+    double borderRadius = 16,
+    double intensity = 0.25,
+    double spread = 4,
+  }) =>
+      cardDecorationDark(
+        backgroundColor: backgroundColor,
+        borderRadius: borderRadius,
+      );
+
+  /// @deprecated Seal decoration - no longer used in modern design
   static BoxDecoration sealDecoration({
-    double borderRadius = 4,
+    double borderRadius = 12,
     bool isPressed = false,
   }) =>
       BoxDecoration(
-        color: isPressed
-            ? DSColors.accentSecondaryHover
-            : DSColors.accentSecondary,
+        color: isPressed ? DSColors.accentHover : DSColors.accent,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(
-          color: DSColors.accentSecondary.withValues(alpha: 0.8),
-          width: 1.5,
-        ),
-        boxShadow: isPressed
-            ? []
-            : [
-                BoxShadow(
-                  color: DSColors.accentSecondary.withValues(alpha: 0.3),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        boxShadow: isPressed ? [] : sm,
       );
 
-  /// Gold accent decoration (for premium elements)
+  /// @deprecated Gold decoration - no longer used in modern design
   static BoxDecoration goldAccentDecoration({
-    double borderRadius = 8,
+    double borderRadius = 16,
   }) =>
       BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
-          color: DSColors.accentTertiary.withValues(alpha: 0.6),
-          width: 1.5,
+          color: DSColors.warning.withValues(alpha: 0.6),
+          width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: DSColors.accentTertiary.withValues(alpha: 0.2),
-            blurRadius: 4,
-            spreadRadius: 0,
-          ),
-        ],
+        boxShadow: sm,
       );
 
   // ============================================
@@ -253,37 +338,58 @@ class DSShadows {
   // ============================================
 
   static List<BoxShadow> getXs(Brightness brightness) =>
-      brightness == Brightness.dark ? inkWashXsDark : inkWashXs;
+      brightness == Brightness.dark ? xsDark : xs;
 
   static List<BoxShadow> getSm(Brightness brightness) =>
-      brightness == Brightness.dark ? inkWashSmDark : inkWashSm;
+      brightness == Brightness.dark ? smDark : sm;
 
   static List<BoxShadow> getMd(Brightness brightness) =>
-      brightness == Brightness.dark ? inkWashMdDark : inkWashMd;
+      brightness == Brightness.dark ? mdDark : md;
+
+  static List<BoxShadow> getCard(Brightness brightness) =>
+      brightness == Brightness.dark ? cardDark : card;
 
   static List<BoxShadow> getLg(Brightness brightness) =>
-      brightness == Brightness.dark ? inkWashLgDark : inkWashLg;
+      brightness == Brightness.dark ? lgDark : lg;
 
   static List<BoxShadow> getXl(Brightness brightness) =>
-      brightness == Brightness.dark ? inkWashLgDark : inkWashLg;
+      brightness == Brightness.dark ? xlDark : xl;
 
   static List<BoxShadow> getXxl(Brightness brightness) =>
-      brightness == Brightness.dark ? inkWashLgDark : inkWashLg;
+      brightness == Brightness.dark ? xxlDark : xxl;
 
+  /// @deprecated Use [getMd] instead
   static List<BoxShadow> getInkWash(Brightness brightness) =>
-      brightness == Brightness.dark ? inkWashDark : inkWash;
+      getMd(brightness);
 
+  /// @deprecated Use theme-aware card decoration
   static BoxDecoration getInkWashDecoration(
     Brightness brightness, {
     Color? backgroundColor,
-    double borderRadius = 8,
+    double borderRadius = 16,
   }) =>
       brightness == Brightness.dark
-          ? inkWashDecorationDark(
+          ? cardDecorationDark(
               backgroundColor: backgroundColor,
               borderRadius: borderRadius,
             )
-          : inkWashDecoration(
+          : cardDecoration(
+              backgroundColor: backgroundColor,
+              borderRadius: borderRadius,
+            );
+
+  /// Get card decoration based on brightness
+  static BoxDecoration getCardDecoration(
+    Brightness brightness, {
+    Color? backgroundColor,
+    double borderRadius = 16,
+  }) =>
+      brightness == Brightness.dark
+          ? cardDecorationDark(
+              backgroundColor: backgroundColor,
+              borderRadius: borderRadius,
+            )
+          : cardDecoration(
               backgroundColor: backgroundColor,
               borderRadius: borderRadius,
             );
@@ -297,41 +403,45 @@ class DSShadowScheme {
 
   bool get isDark => brightness == Brightness.dark;
 
-  // Ink-wash shadows
-  List<BoxShadow> get inkWashXs =>
-      isDark ? DSShadows.inkWashXsDark : DSShadows.inkWashXs;
-  List<BoxShadow> get inkWashSm =>
-      isDark ? DSShadows.inkWashSmDark : DSShadows.inkWashSm;
-  List<BoxShadow> get inkWash =>
-      isDark ? DSShadows.inkWashDark : DSShadows.inkWash;
-  List<BoxShadow> get inkWashMd =>
-      isDark ? DSShadows.inkWashMdDark : DSShadows.inkWashMd;
-  List<BoxShadow> get inkWashLg =>
-      isDark ? DSShadows.inkWashLgDark : DSShadows.inkWashLg;
-
-  // Legacy compatibility
+  // Clean shadows
   List<BoxShadow> get xs => isDark ? DSShadows.xsDark : DSShadows.xs;
   List<BoxShadow> get sm => isDark ? DSShadows.smDark : DSShadows.sm;
   List<BoxShadow> get md => isDark ? DSShadows.mdDark : DSShadows.md;
+  List<BoxShadow> get card => isDark ? DSShadows.cardDark : DSShadows.card;
   List<BoxShadow> get lg => isDark ? DSShadows.lgDark : DSShadows.lg;
   List<BoxShadow> get xl => isDark ? DSShadows.xlDark : DSShadows.xl;
   List<BoxShadow> get xxl => isDark ? DSShadows.xxlDark : DSShadows.xxl;
   List<BoxShadow> get none => DSShadows.none;
 
-  // Semantic shadow accessors
-  BoxShadow get card => inkWash.first;
-  BoxShadow get modal => inkWashLg.first;
-  BoxShadow get toast => inkWashMd.first;
-  BoxShadow get dropdown => inkWashMd.first;
+  // Legacy compatibility (ink-wash)
+  List<BoxShadow> get inkWashXs => xs;
+  List<BoxShadow> get inkWashSm => sm;
+  List<BoxShadow> get inkWash => md;
+  List<BoxShadow> get inkWashMd => md;
+  List<BoxShadow> get inkWashLg => lg;
+
+  // Semantic shadow accessors (first shadow for single-shadow use)
+  BoxShadow get cardShadow => card.first;
+  BoxShadow get modalShadow => xl.first;
+  BoxShadow get toastShadow => md.first;
+  BoxShadow get dropdownShadow => lg.first;
+
+  // List accessors for semantic shadows
+  List<BoxShadow> get modal => xl;
+  List<BoxShadow> get toast => md;
+  List<BoxShadow> get dropdown => lg;
 
   // Decoration builders
-  BoxDecoration cardDecoration({Color? backgroundColor, double borderRadius = 8}) =>
+  BoxDecoration cardDecoration({
+    Color? backgroundColor,
+    double borderRadius = 16,
+  }) =>
       isDark
-          ? DSShadows.inkWashDecorationDark(
+          ? DSShadows.cardDecorationDark(
               backgroundColor: backgroundColor,
               borderRadius: borderRadius,
             )
-          : DSShadows.inkWashDecoration(
+          : DSShadows.cardDecoration(
               backgroundColor: backgroundColor,
               borderRadius: borderRadius,
             );

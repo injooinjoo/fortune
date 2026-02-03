@@ -19,7 +19,7 @@ class PremiumScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Text(
           '프리미엄 인사이트',
-          style: DSTypography.headingSmall.copyWith(
+          style: context.headingSmall.copyWith(
             color: colors.textPrimary,
           ),
         ),
@@ -54,7 +54,7 @@ class PremiumScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             '프리미엄 사주',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.headingMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: colors.textPrimary,
             ),
@@ -62,7 +62,7 @@ class PremiumScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '만화로 보는 재미있는 사주 풀이',
-            style: DSTypography.bodyLarge.copyWith(
+            style: context.bodyLarge.copyWith(
               color: colors.textSecondary,
             ),
             textAlign: TextAlign.center,
@@ -107,7 +107,7 @@ class PremiumScreen extends StatelessWidget {
               ),
               child: Text(
                 '프리미엄 사주 시작하기',
-                style: DSTypography.buttonMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   fontWeight: FontWeight.bold,
                   color: colors.ctaForeground,
                 ),
@@ -148,7 +148,7 @@ class PremiumScreen extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: DSTypography.bodyLarge.copyWith(
+                style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                   color: colors.textPrimary,
                 ),
@@ -156,7 +156,7 @@ class PremiumScreen extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 description,
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: colors.textSecondary,
                 ),
               ),

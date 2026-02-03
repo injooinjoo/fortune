@@ -141,7 +141,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
             padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
             child: Text(
               widget.label!,
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: isDark
                     ? TossDesignSystem.textSecondaryDark
                     : TossDesignSystem.textSecondaryLight,
@@ -177,14 +177,14 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                         DatePickerUtils.formatKorean(
                           DateTime(selectedYear, selectedMonth, selectedDay),
                         ),
-                        style: DSTypography.bodyLarge.copyWith(
+                        style: context.bodyLarge.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       if (age != null && age >= 0)
                         Text(
                           '만 $age세',
-                          style: DSTypography.bodySmall.copyWith(
+                          style: context.bodySmall.copyWith(
                             color: isDark
                                 ? TossDesignSystem.textSecondaryDark
                                 : TossDesignSystem.textSecondaryLight,
@@ -292,7 +292,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                             const SizedBox(width: AppSpacing.spacing2),
                             Text(
                               '나이: $age세',
-                              style: DSTypography.bodyMedium.copyWith(
+                              style: context.bodyMedium.copyWith(
                                 color: TossDesignSystem.tossBlue,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -329,7 +329,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
       children: [
         Text(
           label,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelSmall.copyWith(
             color: isDark
                 ? TossDesignSystem.textSecondaryDark
                 : TossDesignSystem.textSecondaryLight,
@@ -362,7 +362,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                 value: item,
                 child: Text(
                   '$item$suffix',
-                  style: DSTypography.bodyMedium,
+                  style: context.bodyMedium,
                 ),
               );
             }).toList(),

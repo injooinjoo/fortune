@@ -211,7 +211,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
           opacity: _fadeAnimation,
           child: Text(
             _messages[_currentIndex],
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               color: isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,

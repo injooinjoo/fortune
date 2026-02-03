@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/design_system/tokens/ds_spacing.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 
 /// 연애 스타일 카드
 class LoveStyleCard extends StatelessWidget {
   final LoveStyle loveStyle;
 
   // 테마 색상 상수
-  static const Color _loveColor = Color(0xFFFF6B9D);
+  static const Color _loveColor = DSFortuneColors.categoryCoaching;
 
   const LoveStyleCard({super.key, required this.loveStyle});
 
@@ -44,7 +43,7 @@ class LoveStyleCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFFF6B9D), Color(0xFFFF8E9E)],
+                colors: [DSFortuneColors.categoryCoaching, Color(0xFFFF8E9E)], // 고유 그라데이션 끝 색상
               ),
               borderRadius: BorderRadius.circular(20),
             ),

@@ -249,6 +249,8 @@ serve(async (req: Request) => {
     const deck = body.deck || tarotSelection.deck || getRandomDeck()
     const userName = body.name
     const birthDate = body.birthDate
+    // 프리미엄 사용자 여부 (블러 처리용)
+    const isPremium = body.isPremium ?? false
 
     // 카드 인덱스 추출 (여러 형식 및 위치 지원)
     let cardIndices: number[] = []
@@ -324,14 +326,16 @@ serve(async (req: Request) => {
           calculatePercentile(personalized.energyLevel || 70)
         )
 
+        // 블러 처리 적용
+        const blurredResult = applyBlurring(resultWithPercentile, isPremium)
+        console.log(`🔐 [Tarot] Cohort 블러 처리 - isPremium: ${isPremium}, isBlurred: ${blurredResult.isBlurred}`)
+
         return new Response(
           JSON.stringify({
             success: true,
             data: {
-              ...resultWithPercentile,
+              ...blurredResult,
               timestamp: new Date().toISOString(),
-              isBlurred: false,
-              blurredSections: [],
             },
             cohortHit: true,
           }),
@@ -430,31 +434,33 @@ serve(async (req: Request) => {
       }
     })
 
-    // 프리미엄 체크는 클라이언트에서 - 서버는 항상 전체 데이터 반환
-    // (블러 처리는 클라이언트가 결정)
+    // 기본 응답 데이터 구성
+    const baseData = {
+      question,
+      spreadType,
+      spreadDisplayName: SPREAD_NAMES[spreadType] || spreadType,
+      spreadName: SPREAD_NAMES[spreadType] || spreadType,
+      deckName: 'Rider-Waite',
+      cards: cardResults,
+      overallReading: parsedResponse.overallReading || '',
+      storyTitle: parsedResponse.storyTitle || '',
+      guidance: parsedResponse.guidance || '',
+      advice: parsedResponse.advice || '',
+      energyLevel: parsedResponse.energyLevel || 70,
+      keyThemes: parsedResponse.keyThemes || [],
+      luckyElement: parsedResponse.luckyElement || '',
+      focusAreas: parsedResponse.focusAreas || [],
+      timeFrame: parsedResponse.timeFrame || '',
+      timestamp: new Date().toISOString(),
+    }
+
+    // 블러 처리 적용 (프리미엄 사용자는 전체 열람 가능)
+    const blurredData = applyBlurring(baseData, isPremium)
+    console.log(`🔐 [Tarot] LLM 블러 처리 - isPremium: ${isPremium}, isBlurred: ${blurredData.isBlurred}`)
+
     const response = {
       success: true,
-      data: {
-        question,
-        spreadType,
-        spreadDisplayName: SPREAD_NAMES[spreadType] || spreadType,
-        spreadName: SPREAD_NAMES[spreadType] || spreadType,
-        deckName: 'Rider-Waite',
-        cards: cardResults,
-        overallReading: parsedResponse.overallReading || '',
-        storyTitle: parsedResponse.storyTitle || '',
-        guidance: parsedResponse.guidance || '',
-        advice: parsedResponse.advice || '',
-        energyLevel: parsedResponse.energyLevel || 70,
-        keyThemes: parsedResponse.keyThemes || [],
-        luckyElement: parsedResponse.luckyElement || '',
-        focusAreas: parsedResponse.focusAreas || [],
-        timeFrame: parsedResponse.timeFrame || '',
-        timestamp: new Date().toISOString(),
-        // 블러 항상 false - 프리미엄 사용자는 다 볼 수 있어야 함
-        isBlurred: false,
-        blurredSections: [],
-      },
+      data: blurredData,
     }
 
     // 사용량 로깅 - llmResult는 LLMResponse 타입
@@ -467,8 +473,9 @@ serve(async (req: Request) => {
     }).catch(console.error)
 
     // ===== Cohort Pool 저장 (fire-and-forget) =====
+    // 블러 없는 원본 데이터 저장 (조회 시 사용자별 블러 처리)
     if (Object.keys(cohortData).length > 0) {
-      saveToCohortPool(supabaseClient, 'tarot', cohortHash, cohortData, response.data)
+      saveToCohortPool(supabaseClient, 'tarot', cohortHash, cohortData, baseData)
         .catch(e => console.error('[Tarot] Cohort 저장 오류:', e))
     }
 
@@ -490,3 +497,20 @@ serve(async (req: Request) => {
     )
   }
 })
+
+/**
+ * 블러 처리 적용
+ * FREE: cardName, briefMeaning
+ * BLUR: detailedInterpretation, advice, futureOutlook
+ */
+function applyBlurring(fortune: any, isPremium: boolean): any {
+  if (isPremium) {
+    return { ...fortune, isBlurred: false, blurredSections: [] }
+  }
+
+  return {
+    ...fortune,
+    isBlurred: true,
+    blurredSections: ['detailedInterpretation', 'advice', 'futureOutlook'],
+  }
+}

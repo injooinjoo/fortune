@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/fortune_design_system.dart';
+import '../../core/design_system/theme/ds_extensions.dart';
 
 /// 앱 전체에 '한지(Hanji)' 질감의 배경을 일관되게 적용하는 Scaffold 위젯입니다.
 class HanjiScaffold extends StatelessWidget {
@@ -26,6 +26,9 @@ class HanjiScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final bgColor = backgroundColor ?? colors.background;
+
     return Scaffold(
       extendBodyBehindAppBar: extendBodyBehindAppBar,
       extendBody: extendBody,
@@ -38,18 +41,18 @@ class HanjiScaffold extends StatelessWidget {
         children: [
           // 1. 기본 색상 배경
           Container(
-            color: backgroundColor ?? FortuneDesignSystem.hanjiBeige,
+            color: bgColor,
           ),
 
-          // 2. 한지 텍스처 이미지 (Asset 준비 전까지는 오류 방지를 위해 투명하게 처리하거나 로딩 스킵)
+          // 2. 한지 텍스처 이미지
           Positioned.fill(
             child: Opacity(
               opacity: 0.6, // 질감을 은은하게 조절
               child: Image.asset(
-                'assets/textures/bg_hanji_base.png',
+                'assets/textures/hanji_light.png',
                 repeat: ImageRepeat.repeat, // 타일링 적용
                 errorBuilder: (context, error, stackTrace) {
-                  // 이미지가 아직 없는 경우 빈 컨테이너 반환
+                  // 이미지가 없는 경우 빈 컨테이너 반환
                   return const SizedBox.shrink();
                 },
               ),

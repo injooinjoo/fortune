@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/design_system/components/traditional/seal_stamp_widget.dart';
 import '../../../../core/theme/fortune_design_system.dart';
@@ -17,7 +16,6 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../services/ad_service.dart';
-import '../../../../shared/widgets/smart_image.dart';
 import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../fortune/domain/models/mbti_dimension_fortune.dart';
 import '../../../fortune/domain/models/wish_fortune_result.dart';
@@ -65,22 +63,39 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   void initState() {
     super.initState();
     _isBlurred = widget.isBlurred;
-    _blurredSections = widget.isBlurred && widget.fortuneType == 'avoid-people'
-        ? [
-            'cautionPeople',
-            'cautionObjects',
-            'cautionColors',
-            'cautionNumbers',
-            'cautionAnimals',
-            'cautionPlaces',
-            'cautionTimes',
-            'cautionDirections'
-          ]
-        : [];
+    // API에서 전달받은 blurredSections 사용 (avoid-people은 하드코딩 폴백)
+    _blurredSections = widget.fortune.blurredSections.isNotEmpty
+        ? widget.fortune.blurredSections
+        : (widget.isBlurred && widget.fortuneType == 'avoid-people'
+            ? [
+                'cautionPeople',
+                'cautionObjects',
+                'cautionColors',
+                'cautionNumbers',
+                'cautionAnimals',
+                'cautionPlaces',
+                'cautionTimes',
+                'cautionDirections'
+              ]
+            : []);
 
     // 🐉 소원빌기: 로컬에 현재 소원 저장
     if (widget.fortuneType == 'wish') {
       _saveWishToLocal();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatFortuneResultCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
+    if (oldWidget.isBlurred != widget.isBlurred) {
+      setState(() {
+        _isBlurred = widget.isBlurred;
+        if (!widget.isBlurred) {
+          _blurredSections = [];
+        }
+      });
     }
   }
 
@@ -717,41 +732,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     return metadata?['pet_info'] as Map<String, dynamic>?;
   }
 
-  /// 인사이트 민화 이미지 목록 (날짜별 랜덤 선택)
-  static const List<String> _minhwaImages = [
-    'assets/images/minhwa/minhwa_overall_tiger.webp',
-    'assets/images/minhwa/minhwa_overall_dragon.webp',
-    'assets/images/minhwa/minhwa_overall_moon.webp',
-    'assets/images/minhwa/minhwa_overall_phoenix.webp',
-    'assets/images/minhwa/minhwa_overall_sunrise.webp',
-    'assets/images/minhwa/minhwa_overall_turtle.webp',
-  ];
-
-  /// 연간 운세 전용 민화 이미지 (새해/풍요 테마)
-  static const List<String> _yearlyMinhwaImages = [
-    'assets/images/minhwa/minhwa_overall_dragon.webp',
-    'assets/images/minhwa/minhwa_overall_phoenix.webp',
-    'assets/images/minhwa/minhwa_overall_sunrise.webp',
-    'assets/images/minhwa/minhwa_saju_tiger_dragon.webp',
-    'assets/images/minhwa/minhwa_saju_fourguardians.webp',
-    'assets/images/minhwa/minhwa_money_treasure.webp',
-  ];
-
-  /// 오늘 날짜 기반 민화 이미지 선택 (하루 동안 일관성 유지)
-  String _getTodayMinhwaImage() {
-    final today = DateTime.now();
-    final dayOfYear = today.difference(DateTime(today.year, 1, 1)).inDays;
-    final index = dayOfYear % _minhwaImages.length;
-    return _minhwaImages[index];
-  }
-
-  /// 연간 운세용 민화 이미지 선택 (월별로 다른 이미지)
-  String _getYearlyMinhwaImage() {
-    final today = DateTime.now();
-    final index = today.month % _yearlyMinhwaImages.length;
-    return _yearlyMinhwaImages[index];
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -781,9 +761,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             if (fortune.overallScore != null && !_isFaceReading && !_hasInfographic)
               _buildScoreSection(context),
 
-            // 인사말/총평
+            // 인사말/총평 (🔒 프리미엄 블러)
             if (fortune.greeting != null || fortune.summary != null)
-              _buildSummarySection(context),
+              SimpleBlurOverlay(
+                isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+                child: _buildSummarySection(context),
+              ),
 
             // 경계 대상 미리보기 (avoid-people) - 블러 상태일 때만 표시
             if (fortuneType == 'avoid-people' && _hasCautionData && _isBlurred)
@@ -793,11 +776,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             if (fortuneType == 'avoid-people' && _hasCautionData)
               _buildCautionBlurredSections(context, isDark, isPremium),
 
-            // 본문 content 표시 (daily, compatibility, love, career 등)
+            // 본문 content 표시 (daily, compatibility, love, career 등) (🔒 프리미엄 블러)
             if (_shouldShowContent &&
                 fortune.content.isNotEmpty &&
                 fortuneType != 'avoid-people')
-              _buildContentSection(context),
+              SimpleBlurOverlay(
+                isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+                child: _buildContentSection(context),
+              ),
 
             // 기간별 인사이트 상세 데이터 (daily_calendar)
             if (fortuneType == 'daily_calendar')
@@ -816,10 +802,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   _buildHexagonScoresSection(context),
             ],
 
-            // 추천 사항
+            // 추천 사항 (🔒 프리미엄 블러)
             if (fortune.recommendations != null &&
                 fortune.recommendations!.isNotEmpty)
-              _buildRecommendationsSection(context),
+              SimpleBlurOverlay(
+                isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+                child: _buildRecommendationsSection(context),
+              ),
 
             // 행운 아이템 (인포그래픽에 이미 표시된 경우 제외)
             if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
@@ -965,10 +954,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               _buildFaceReadingDetailSection(context, isDark),
             ],
 
-            // 광고 버튼 (avoid-people 블러 상태일 때만)
-            if (fortuneType == 'avoid-people' && _isBlurred && !isPremium)
-              _buildAdUnlockButton(context),
-
             const SizedBox(height: DSSpacing.sm),
           ],
         ),
@@ -1021,13 +1006,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFF2D1B4E).withValues(alpha: 0.95),
-                const Color(0xFF1A0F2E).withValues(alpha: 0.95),
+                DSFortuneColors.mysticalPurple.withValues(alpha: 0.95),
+                DSFortuneColors.mysticalPurpleDark.withValues(alpha: 0.95),
               ],
             ),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
-              color: const Color(0xFFFFD700).withValues(alpha: 0.3),
+              color: DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -1065,21 +1050,27 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   /// 연간 운세 전용 레이아웃 (히어로 이미지만 사용, 중복 제거)
   List<Widget> _buildYearlyLayout(BuildContext context, bool isPremium) {
     return [
-      // 히어로 이미지만 (점수 섹션 중복 제거)
+      // 히어로 이미지만 (점수 섹션 중복 제거) - 무료
       _buildImageHeader(context),
-      // 인포그래픽 요약 섹션
+      // 인포그래픽 요약 섹션 - 무료 (점수 미리보기)
       if (_buildInfographicSection(context) != null)
         _buildInfographicSection(context)!,
-      // 인사말/총평
+      // 🔒 인사말/총평 (프리미엄 블러)
       if (fortune.greeting != null || fortune.summary != null)
-        _buildSummarySection(context),
-      // 본문 content
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildSummarySection(context),
+        ),
+      // 🔒 본문 content (프리미엄 블러)
       if (fortune.content.isNotEmpty)
-        _buildContentSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildContentSection(context),
+        ),
       // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
       if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
         _buildLuckyItemsSection(context),
-      // 연간 운세 전용 섹션들
+      // 연간 운세 전용 섹션들 (이미 isPremium 파라미터로 내부 블러 처리)
       _buildGoalFortuneSection(context, isPremium),
       _buildSajuAnalysisSection(context, isPremium),
       _buildMonthlyHighlightsSection(context, isPremium),
@@ -1090,49 +1081,98 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   List<Widget> _buildDailyLayout(BuildContext context) {
+    final isPremium = ref.watch(isPremiumProvider);
+
     return [
+      // 히어로 이미지 - 무료
       _buildImageHeader(context),
-      // 🆕 갓생 지수 UI (점수 + 심플 도넛 % + 날짜)
+      // 🆕 갓생 지수 UI (점수 + 심플 도넛 % + 날짜) - 무료 (점수 미리보기)
       _buildGodlifeScoreSection(context),
-      // 🆕 한줄평 (T/F 모드 메시지)
-      _buildOnelinerSection(context),
-      // 🆕 갓생 치트키 (personalActions)
-      _buildCheatKeySection(context),
-      // 🆕 행운 부스터 (luckyItems 리디자인)
+      // 🔒 한줄평 (T/F 모드 메시지) - 프리미엄 블러
+      SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+        child: _buildOnelinerSection(context),
+      ),
+      // 🔒 갓생 치트키 (personalActions) - 프리미엄 블러
+      SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+        child: _buildCheatKeySection(context),
+      ),
+      // 행운 부스터 (luckyItems 리디자인) - 무료
       _buildLuckBoosterSection(context),
-      // 기존 콘텐츠 섹션 (선택적 표시)
-      if (fortune.content.isNotEmpty) _buildDailyStorySection(context),
-      if (fortuneType == 'daily_calendar') _buildDailyCalendarSection(context),
+      // 🔒 기존 콘텐츠 섹션 (선택적 표시) - 프리미엄 블러
+      if (fortune.content.isNotEmpty)
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildDailyStorySection(context),
+        ),
+      if (fortuneType == 'daily_calendar')
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildDailyCalendarSection(context),
+        ),
       if (fortune.timeSpecificFortunes != null &&
           fortune.timeSpecificFortunes!.isNotEmpty)
-        _buildDailyTimelineSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildDailyTimelineSection(context),
+        ),
       if (fortune.categories != null && fortune.categories!.isNotEmpty)
-        _buildCategoriesSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildCategoriesSection(context),
+        ),
       if (fortune.hexagonScores != null && fortune.hexagonScores!.isNotEmpty)
-        _buildHexagonScoresSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildHexagonScoresSection(context),
+        ),
       if (fortune.recommendations != null &&
           fortune.recommendations!.isNotEmpty)
-        _buildRecommendationsSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildRecommendationsSection(context),
+        ),
       const SizedBox(height: DSSpacing.sm),
     ];
   }
 
   List<Widget> _buildLoveLayout(BuildContext context) {
+    final isPremium = ref.watch(isPremiumProvider);
+
     return [
       _buildLoveHeader(context),
-      // 인포그래픽 요약 섹션 (점수 원형 포함)
+      // 인포그래픽 요약 섹션 (점수 원형 포함) - 무료
       if (_buildInfographicSection(context) != null)
         _buildInfographicSection(context)!,
       // NOTE: _buildLoveTemperatureSection 제거 - 인포그래픽에 이미 점수 원형 있음
+      // 🔒 프리미엄 섹션들 - blurredSections 기반 블러 적용
       if (fortune.greeting != null || fortune.summary != null)
-        _buildLoveMoodSection(context),
-      if (fortune.content.isNotEmpty) _buildLoveMessageSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.contains('loveProfile') && !isPremium,
+          child: _buildLoveMoodSection(context),
+        ),
+      if (fortune.content.isNotEmpty)
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.contains('detailedAnalysis') && !isPremium,
+          child: _buildLoveMessageSection(context),
+        ),
       if (fortune.hexagonScores != null && fortune.hexagonScores!.isNotEmpty)
-        _buildLoveChemistrySection(context),
-      if (_hasLoveRecommendations) _buildLoveRecommendationsSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.contains('predictions') && !isPremium,
+          child: _buildLoveChemistrySection(context),
+        ),
+      if (_hasLoveRecommendations)
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.contains('actionPlan') && !isPremium,
+          child: _buildLoveRecommendationsSection(context),
+        ),
       if (fortune.recommendations != null &&
           fortune.recommendations!.isNotEmpty)
-        _buildRecommendationsSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.contains('actionPlan') && !isPremium,
+          child: _buildRecommendationsSection(context),
+        ),
       // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
       if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
         _buildLuckyItemsSection(context),
@@ -1145,11 +1185,17 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     bool isPremium,
   ) {
     return [
+      // 헤더 - 무료
       _buildWealthHeader(context),
-      // 인포그래픽 요약 섹션
+      // 인포그래픽 요약 섹션 - 무료 (점수 미리보기)
       if (_buildInfographicSection(context) != null)
         _buildInfographicSection(context)!,
-      _buildWealthSnapshotSection(context),
+      // 🔒 스냅샷 섹션 - 프리미엄 블러
+      SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+        child: _buildWealthSnapshotSection(context),
+      ),
+      // 재물운 상세 섹션들 (이미 isPremium 파라미터로 내부 블러 처리)
       if (_hasWealthData) ...[
         _buildWealthInterestsSection(context),
         _buildWealthFocusRow(context, isPremium),
@@ -1157,9 +1203,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         _buildWealthMonthlyFlowSection(context, isPremium),
         _buildWealthActionItemsSection(context, isPremium),
       ],
+      // 🔒 추천 사항 - 프리미엄 블러
       if (fortune.recommendations != null &&
           fortune.recommendations!.isNotEmpty)
-        _buildRecommendationsSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildRecommendationsSection(context),
+        ),
       // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
       if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
         _buildLuckyItemsSection(context),
@@ -1171,20 +1221,42 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     BuildContext context,
     bool isDark,
   ) {
+    final isPremium = ref.watch(isPremiumProvider);
+
     return [
+      // 헤더 - 무료
       _buildHealthHeader(context),
-      // 인포그래픽 요약 섹션
+      // 인포그래픽 요약 섹션 - 무료 (점수 미리보기)
       if (_buildInfographicSection(context) != null)
         _buildInfographicSection(context)!,
-      // 신규 인포그래픽 섹션들 (표, 키워드, 그래프 위주)
-      _buildHealthKeywordChips(context),
-      _buildElementBalanceSection(context),
-      _buildFoodTable(context),
-      _buildTimeActivityGrid(context),
-      _buildCompactCautions(context),
+      // 🔒 신규 인포그래픽 섹션들 - 프리미엄 블러
+      SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+        child: _buildHealthKeywordChips(context),
+      ),
+      SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+        child: _buildElementBalanceSection(context),
+      ),
+      SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+        child: _buildFoodTable(context),
+      ),
+      SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+        child: _buildTimeActivityGrid(context),
+      ),
+      SimpleBlurOverlay(
+        isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+        child: _buildCompactCautions(context),
+      ),
+      // 🔒 추천 사항 - 프리미엄 블러
       if (fortune.recommendations != null &&
           fortune.recommendations!.isNotEmpty)
-        _buildRecommendationsSection(context),
+        SimpleBlurOverlay(
+          isBlurred: _isBlurred && _blurredSections.isNotEmpty && !isPremium,
+          child: _buildRecommendationsSection(context),
+        ),
       // 행운 아이템 - 인포그래픽에 이미 표시된 경우 제외
       if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty && !_hasInfographic)
         _buildLuckyItemsSection(context),
@@ -1193,96 +1265,61 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   Widget _buildImageHeader(BuildContext context) {
+    final colors = context.colors;
     final typography = context.typography;
-    // daily/yearly fortune은 민화 이미지 사용, 그 외는 기존 이미지
-    final score = fortune.overallScore ?? 75;
-    final heroImage = FortuneCardImages.getHeroImage(fortuneType, score);
 
-    final imagePath = _isDailyFortune
-        ? _getTodayMinhwaImage()
+    final title = _isDailyFortune
+        ? _dailyCalendarTitle
         : _isYearlyFortune
-            ? _getYearlyMinhwaImage()
-            : heroImage;
+            ? _yearlyTitle
+            : typeName;
 
-    return SizedBox(
-      height: 180,
-      child: Stack(
-        fit: StackFit.expand,
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.surfaceSecondary,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(DSRadius.card),
+          topRight: Radius.circular(DSRadius.card),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. 배경 이미지
-          SmartImage(
-            path: imagePath,
-            fit: BoxFit.cover,
-            errorWidget: SmartImage(
-              path: FortuneCardImages.getImagePath(fortuneType),
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          // 2. 프리미엄 오버레이
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: 0.6),
-                ],
-              ),
-            ),
-          ),
-
-          // 3. 타이틀
-          Positioned(
-            left: DSSpacing.md,
-            right: DSSpacing.md,
-            bottom: DSSpacing.md,
+          // 타이틀 영역
+          Expanded(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _isDailyFortune
-                      ? _dailyCalendarTitle
-                      : _isYearlyFortune
-                          ? _yearlyTitle
-                          : typeName,
+                  title,
                   style: typography.headingSmall.copyWith(
-                    color: Colors.white,
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.bold,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        blurRadius: 8,
-                      ),
-                    ],
                   ),
                 ),
-                if (fortune.period != null)
+                if (fortune.period != null) ...[
+                  const SizedBox(height: 4),
                   Text(
                     _getPeriodLabel(fortune.period!),
                     style: typography.labelMedium.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: colors.textSecondary,
                     ),
                   ),
+                ],
               ],
             ),
           ),
 
-          // 4. 액션 버튼
-          Positioned(
-            top: DSSpacing.sm,
-            right: DSSpacing.sm,
-            child: FortuneActionButtons(
-              contentId: fortune.id,
-              contentType: fortuneType,
-              fortuneType: fortuneType,
-              shareTitle: typeName,
-              shareContent: fortune.summary ?? fortune.content,
-              iconColor: Colors.white,
-              iconSize: 20,
-            ),
+          // 액션 버튼
+          FortuneActionButtons(
+            contentId: fortune.id,
+            contentType: fortuneType,
+            fortuneType: fortuneType,
+            shareTitle: typeName,
+            shareContent: fortune.summary ?? fortune.content,
+            iconColor: colors.textSecondary,
+            iconSize: 20,
           ),
         ],
       ),
@@ -1290,43 +1327,28 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   Widget _buildLoveHeader(BuildContext context) {
-    final score = fortune.overallScore ?? 75;
-    final heroImage = FortuneCardImages.getHeroImage('love', score);
-
     return _buildThemedHeader(
       context,
       title: typeName,
       subtitle: '오늘의 설렘 지수',
-      imagePath: heroImage,
-      accentColor: ObangseokColors.jeokMuted, // 연애 - 적색 계열
       badge: 'LOVE',
     );
   }
 
   Widget _buildWealthHeader(BuildContext context) {
-    final score = fortune.overallScore ?? 75;
-    final heroImage = FortuneCardImages.getHeroImage('money', score);
-
     return _buildThemedHeader(
       context,
       title: typeName,
       subtitle: '오늘의 자산 흐름',
-      imagePath: heroImage,
-      accentColor: ObangseokColors.hwangMuted, // 재물 - 황색 계열
       badge: 'WEALTH',
     );
   }
 
   Widget _buildHealthHeader(BuildContext context) {
-    final score = fortune.overallScore ?? 75;
-    final heroImage = FortuneCardImages.getHeroImage('health', score);
-
     return _buildThemedHeader(
       context,
       title: typeName,
       subtitle: '컨디션 체크 리포트',
-      imagePath: heroImage,
-      accentColor: ObangseokColors.cheongMuted, // 건강 - 청색 계열
       badge: 'HEALTH',
     );
   }
@@ -1335,99 +1357,61 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     BuildContext context, {
     required String title,
     required String subtitle,
-    required String imagePath,
-    required Color accentColor,
     String? badge,
   }) {
+    final colors = context.colors;
     final typography = context.typography;
 
-    return SizedBox(
-      height: 200,
-      child: Stack(
-        fit: StackFit.expand,
+    return Container(
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.surfaceSecondary,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(DSRadius.card),
+          topRight: Radius.circular(DSRadius.card),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SmartImage(
-            path: imagePath,
-            fit: BoxFit.cover,
-            errorWidget: SmartImage(
-              path: FortuneCardImages.getImagePath(fortuneType),
-              fit: BoxFit.cover,
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  accentColor.withValues(alpha: 0.15),
-                  Colors.black.withValues(alpha: 0.65),
-                ],
-              ),
-            ),
-          ),
-          if (badge != null)
-            Positioned(
-              top: DSSpacing.sm,
-              left: DSSpacing.sm,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(DSRadius.full),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.4),
-                  ),
-                ),
-                child: Text(
-                  badge,
-                  style: typography.labelSmall.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-              ),
-            ),
-          Positioned(
-            top: DSSpacing.sm,
-            right: DSSpacing.sm,
-            child: FortuneActionButtons(
-              contentId: fortune.id,
-              contentType: fortuneType,
-              fortuneType: fortuneType,
-              shareTitle: typeName,
-              shareContent: fortune.summary ?? fortune.content,
-              iconColor: Colors.white,
-              iconSize: 20,
-            ),
-          ),
-          Positioned(
-            left: DSSpacing.md,
-            right: DSSpacing.md,
-            bottom: DSSpacing.md,
+          // 타이틀 영역
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (badge != null) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.backgroundTertiary,
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
+                    ),
+                    child: Text(
+                      badge,
+                      style: typography.labelSmall.copyWith(
+                        color: colors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
                 Text(
                   title,
                   style: typography.headingSmall.copyWith(
-                    color: Colors.white,
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.bold,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        blurRadius: 8,
-                      ),
-                    ],
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   subtitle,
                   style: typography.labelMedium.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: colors.textSecondary,
                   ),
                 ),
                 if (fortune.period != null) ...[
@@ -1435,12 +1419,23 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   Text(
                     _getPeriodLabel(fortune.period!),
                     style: typography.labelSmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: colors.textTertiary,
                     ),
                   ),
                 ],
               ],
             ),
+          ),
+
+          // 액션 버튼
+          FortuneActionButtons(
+            contentId: fortune.id,
+            contentType: fortuneType,
+            fortuneType: fortuneType,
+            shareTitle: typeName,
+            shareContent: fortune.summary ?? fortune.content,
+            iconColor: colors.textSecondary,
+            iconSize: 20,
           ),
         ],
       ),
@@ -1815,7 +1810,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
           // 라벤더 배경 (사용자 스펙)
-          color: const Color(0xFFF0EFFF),
+          color: DSFortuneColors.mysticalPurpleLight,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Column(
@@ -1856,7 +1851,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                           color: Colors.transparent,
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(
-                            color: const Color(0xFF9B8FCB),
+                            color: DSFortuneColors.mysticalPurpleMuted,
                             width: 1.5,
                           ),
                         ),
@@ -1930,7 +1925,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         'icon': Icons.music_note_rounded,
         'label': '행운의 노래',
         'value': song.toString(),
-        'color': const Color(0xFF9B59B6),
+        'color': DSFortuneColors.mysticalPurpleMuted,
       });
     }
 
@@ -2123,7 +2118,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           ),
           const SizedBox(height: DSSpacing.sm),
           SizedBox(
-            height: 200,
+            height: 220, // 200 → 220: 오버플로우 방지
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: slots.length,
@@ -2179,7 +2174,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             Expanded(
               child: Text(
                 slot.description,
-                maxLines: 2,
+                maxLines: 5, // 긴 텍스트 지원
                 overflow: TextOverflow.ellipsis,
                 style: typography.bodySmall.copyWith(
                   color: colors.textSecondary,
@@ -2950,6 +2945,69 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
             luckyTime: luckyTime,
             luckyItem: luckyItem,
             date: DateTime.now(),
+          );
+        } else if (type == FortuneType.avoidPeople) {
+          // avoid-people 타입: 8개 카테고리 + 행운요소 + 시간대별 전략
+          final metadata = fortune.metadata ?? fortune.additionalInfo ?? {};
+
+          // 카테고리별 항목 개수 계산
+          final Map<String, int> categoryCounts = {};
+          final categoryKeys = [
+            'cautionPeople',
+            'cautionObjects',
+            'cautionColors',
+            'cautionNumbers',
+            'cautionAnimals',
+            'cautionPlaces',
+            'cautionTimes',
+            'cautionDirections',
+          ];
+          for (final key in categoryKeys) {
+            final items = metadata[key] as List?;
+            if (items != null && items.isNotEmpty) {
+              categoryCounts[key] = items.length;
+            }
+          }
+
+          // 행운 요소 추출
+          final luckyElementsRaw = metadata['luckyElements'] as Map<String, dynamic>?;
+          Map<String, String>? luckyElements;
+          if (luckyElementsRaw != null) {
+            luckyElements = {
+              if (luckyElementsRaw['color'] != null) 'color': luckyElementsRaw['color'].toString(),
+              if (luckyElementsRaw['number'] != null) 'number': luckyElementsRaw['number'].toString(),
+              if (luckyElementsRaw['direction'] != null) 'direction': luckyElementsRaw['direction'].toString(),
+              if (luckyElementsRaw['time'] != null) 'time': luckyElementsRaw['time'].toString(),
+              if (luckyElementsRaw['item'] != null) 'item': luckyElementsRaw['item'].toString(),
+              if (luckyElementsRaw['person'] != null) 'person': luckyElementsRaw['person'].toString(),
+            };
+          }
+
+          // 시간대별 전략 추출
+          final timeStrategyRaw = metadata['timeStrategy'] as Map<String, dynamic>?;
+          Map<String, Map<String, String>>? timeStrategy;
+          if (timeStrategyRaw != null) {
+            timeStrategy = {};
+            for (final period in ['morning', 'afternoon', 'evening']) {
+              final periodData = timeStrategyRaw[period] as Map<String, dynamic>?;
+              if (periodData != null) {
+                timeStrategy[period] = {
+                  if (periodData['caution'] != null) 'caution': periodData['caution'].toString(),
+                  if (periodData['advice'] != null) 'advice': periodData['advice'].toString(),
+                };
+              }
+            }
+          }
+
+          // 요약 메시지
+          final summary = metadata['dailyAdvice'] as String? ?? fortune.summary;
+
+          infographic = InfographicFactory.buildAvoidPeopleInfographic(
+            score: score,
+            categoryCounts: categoryCounts.isNotEmpty ? categoryCounts : null,
+            luckyElements: luckyElements,
+            timeStrategy: timeStrategy,
+            summary: summary,
           );
         } else {
           infographic = InfographicFactory.buildScoreInfographic(
@@ -4282,10 +4340,10 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   /// 반려운세 점수에 따른 색상
   Color _getPetScoreColor(int score) {
-    if (score >= 80) return const Color(0xFF4CAF50); // 초록
-    if (score >= 60) return const Color(0xFF2196F3); // 파랑
-    if (score >= 40) return const Color(0xFFFF9800); // 주황
-    return const Color(0xFFE91E63); // 분홍
+    if (score >= 80) return DSColors.success; // 초록
+    if (score >= 60) return DSColors.info; // 파랑
+    if (score >= 40) return DSColors.warning; // 주황
+    return DSColors.error; // 분홍
   }
 
   Widget _buildRecommendationsSection(BuildContext context) {
@@ -4691,11 +4749,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     ),
                   ),
                   const SizedBox(width: DSSpacing.xs),
-                  Text(
-                    title,
-                    style: typography.bodyMedium.copyWith(
-                      color: colors.textPrimary,
-                      fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -5030,131 +5091,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     }
 
     return content;
-  }
-
-  /// 광고 보고 전체 내용 보기 버튼
-  Widget _buildAdUnlockButton(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md,
-        vertical: DSSpacing.sm,
-      ),
-      child: Material(
-        color: colors.accentSecondary,
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        child: InkWell(
-          onTap: _showAdAndUnblur,
-          borderRadius: BorderRadius.circular(DSRadius.md),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.lg,
-              vertical: DSSpacing.md,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.play_circle_outline,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(width: DSSpacing.sm),
-                Text(
-                  '🎁 광고 보고 전체 내용 보기',
-                  style: typography.labelLarge.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// 광고 시청 후 블러 해제
-  Future<void> _showAdAndUnblur() async {
-    try {
-      Logger.info('[ChatFortuneResultCard] 광고 시청 시작');
-
-      final adService = AdService();
-
-      // 광고가 준비되지 않았으면 로드
-      if (!adService.isRewardedAdReady) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('광고를 준비하는 중...'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-
-        await adService.loadRewardedAd();
-
-        // 광고 로딩 대기 (최대 5초)
-        int waitCount = 0;
-        while (!adService.isRewardedAdReady && waitCount < 10) {
-          await Future.delayed(const Duration(milliseconds: 500));
-          waitCount++;
-        }
-
-        if (!adService.isRewardedAdReady) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고를 불러오지 못했습니다. 다시 시도해주세요.'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-          return;
-        }
-      }
-
-      // 광고 표시
-      await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) async {
-          Logger.info('[ChatFortuneResultCard] 광고 시청 완료, 블러 해제');
-
-          // 햅틱 피드백
-          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-          // 게이지 증가
-          if (mounted) {
-            FortuneCompletionHelper.onFortuneViewed(
-                context, ref, 'avoid-people');
-          }
-
-          // 블러 해제
-          if (mounted) {
-            setState(() {
-              _isBlurred = false;
-              _blurredSections = [];
-            });
-
-            // 구독 유도 스낵바
-            final tokenState = ref.read(tokenProvider);
-            SubscriptionSnackbar.showAfterAd(
-              context,
-              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-            );
-          }
-        },
-      );
-    } catch (e) {
-      Logger.error('[ChatFortuneResultCard] 광고 표시 실패: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.')),
-        );
-      }
-    }
   }
 
   /// 작명 추천 이름 섹션 빌드 (naming 전용)
@@ -6667,7 +6603,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                             gradient: LinearGradient(
                               colors: index == 0
                                   ? [
-                                      const Color(0xFFFFD700),
+                                      DSFortuneColors.fortuneGoldMuted,
                                       const Color(0xFFFFA500)
                                     ]
                                   : index == 1
@@ -6677,7 +6613,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                                         ]
                                       : [
                                           const Color(0xFFCD7F32),
-                                          const Color(0xFFB8860B)
+                                          DSFortuneColors.fortuneGold
                                         ],
                             ),
                             shape: BoxShape.circle,
@@ -7893,20 +7829,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   /// 오행별 색상 반환
   Color _getLuckyElementColor(String element) {
-    switch (element) {
-      case '목':
-        return const Color(0xFF4CAF50);
-      case '화':
-        return const Color(0xFFE53935);
-      case '토':
-        return const Color(0xFFFF9800);
-      case '금':
-        return const Color(0xFFFFD700);
-      case '수':
-        return const Color(0xFF2196F3);
-      default:
-        return const Color(0xFF9E9E9E);
-    }
+    return DSFortuneColors.getElementColor(element);
   }
 
   /// 오행별 이모지 반환
@@ -9141,42 +9064,20 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     );
   }
 
-  /// 블러 플레이스홀더 빌더
+  /// 블러 플레이스홀더 빌더 (심플화 - 자물쇠 아이콘만)
   Widget _buildBlurredPlaceholder(BuildContext context, String message) {
-    final colors = context.colors;
-    final typography = context.typography;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDark ? DSColors.textPrimary : DSColors.textPrimaryDark;
 
     return Container(
-      padding: const EdgeInsets.all(DSSpacing.lg),
-      decoration: BoxDecoration(
-        color: colors.textPrimary.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(DSRadius.md),
-      ),
-      child: Column(
-        children: [
-          Icon(Icons.lock_outline, color: colors.textTertiary, size: 32),
-          const SizedBox(height: DSSpacing.sm),
-          Text(
-            message,
-            style: typography.bodySmall.copyWith(color: colors.textSecondary),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: DSSpacing.sm),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: colors.accent.withValues(alpha: 0.1),
-              borderRadius: DSRadius.xlBorder,
-            ),
-            child: Text(
-              '프리미엄 구독하기',
-              style: typography.labelSmall.copyWith(
-                color: colors.accent,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: DSSpacing.xl),
+      child: Center(
+        child: Icon(
+          Icons.lock_outline_rounded,
+          size: 32,
+          color: iconColor.withValues(alpha: 0.4),
+        ),
       ),
     );
   }
@@ -14898,12 +14799,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         elementAdvice['vulnerable_organs'] as List<dynamic>?;
 
     // 오행 색상
-    const elementColors = {
-      '목': Color(0xFF38A169),
-      '화': Color(0xFFE53E3E),
-      '토': Color(0xFFD69E2E),
-      '금': Color(0xFFA0AEC0),
-      '수': Color(0xFF3182CE),
+    final elementColors = {
+      '목': DSFortuneColors.elementWood,
+      '화': DSFortuneColors.elementFire,
+      '토': DSFortuneColors.elementEarth,
+      '금': DSFortuneColors.elementMetal,
+      '수': DSFortuneColors.elementWater,
     };
 
     const elementNames = ['목', '화', '토', '금', '수'];
@@ -15441,12 +15342,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         elementAdvice['recommended_foods'] as List<dynamic>?;
 
     // 오행 색상 매핑
-    const elementColors = {
-      '목': Color(0xFF38A169), // 녹색
-      '화': Color(0xFFE53E3E), // 빨강
-      '토': Color(0xFFD69E2E), // 황토
-      '금': Color(0xFFA0AEC0), // 은색
-      '수': Color(0xFF3182CE), // 파랑
+    final elementColors = {
+      '목': DSFortuneColors.elementWood, // 녹색
+      '화': DSFortuneColors.elementFire, // 빨강
+      '토': DSFortuneColors.elementEarth, // 황토
+      '금': DSFortuneColors.elementMetal, // 은색
+      '수': DSFortuneColors.elementWater, // 파랑
     };
 
     final elementColor = elementColors[lackingElement] ?? healthAccent;
@@ -15903,7 +15804,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                 const Icon(
                   Icons.lightbulb_outline_rounded,
                   size: 14,
-                  color: Color(0xFFFFA726),
+                  color: DSColors.warning,
                 ),
                 const SizedBox(width: 4),
                 Expanded(
@@ -16413,8 +16314,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF1A237E).withValues(alpha: 0.9),
-            const Color(0xFF0D47A1).withValues(alpha: 0.8),
+            DSFortuneColors.mysticalPurpleDark.withValues(alpha: 0.9),
+            DSFortuneColors.mysticalPurpleDark.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -16422,7 +16323,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         borderRadius: BorderRadius.circular(DSRadius.md),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1A237E).withValues(alpha: 0.3),
+            color: DSFortuneColors.mysticalPurpleDark.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -16723,14 +16624,14 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       '분홍색': Colors.pink,
       '주황색': Colors.orange,
       '노란색': Colors.yellow,
-      '금색': const Color(0xFFFFD700),
+      '금색': DSFortuneColors.fortuneGoldMuted,
       '초록색': Colors.green,
       '파란색': Colors.blue,
       '남색': Colors.indigo,
       '보라색': Colors.purple,
       '하얀색': Colors.white,
-      '검은색': Colors.black,
-      '회색': Colors.grey,
+      '검은색': DSColors.background,
+      '회색': DSColors.textTertiary,
     };
     return colorMap[colorName] ?? Colors.blue;
   }
@@ -16752,8 +16653,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isDark
-              ? [const Color(0xFF37474F), const Color(0xFF263238)]
-              : [const Color(0xFFF5F5F5), const Color(0xFFEEEEEE)],
+              ? [DSColors.surfaceSecondary, DSColors.surface]
+              : [DSColors.surfaceDark, DSColors.backgroundTertiaryDark],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -17253,12 +17154,12 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   /// 가족운 타입별 액센트 색상
   Color get _familyAccentColor {
-    if (_isFamilyHealth) return const Color(0xFF38A169); // 청록 (건강)
-    if (_isFamilyWealth) return const Color(0xFFD69E2E); // 금색 (재물)
-    if (_isFamilyRelationship) return const Color(0xFFE91E63); // 핑크 (관계)
-    if (_isFamilyChildren) return const Color(0xFF2196F3); // 파랑 (자녀)
-    if (_isFamilyChange) return const Color(0xFF9C27B0); // 보라 (변화)
-    return const Color(0xFF9B59B6);
+    if (_isFamilyHealth) return DSFortuneColors.categoryHealth; // 청록 (건강)
+    if (_isFamilyWealth) return DSFortuneColors.fortuneGoldMuted; // 금색 (재물)
+    if (_isFamilyRelationship) return DSFortuneColors.categoryLove; // 핑크 (관계)
+    if (_isFamilyChildren) return DSFortuneColors.categoryFamily; // 파랑 (자녀)
+    if (_isFamilyChange) return DSFortuneColors.categoryTarot; // 보라 (변화)
+    return DSFortuneColors.mysticalPurpleMuted;
   }
 
   /// 가족운 타입별 제목 접두어
@@ -17896,10 +17797,10 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     // 미션 타입별 이모지와 색상
     final missionType = mission['mission_type'] as String? ?? 'play';
     final (emoji, accentColor) = switch (missionType) {
-      'skinship' => ('🤗', const Color(0xFFFF6B9D)),
-      'play' => ('🎾', const Color(0xFF4CAF50)),
-      'environment' => ('🏠', const Color(0xFF2196F3)),
-      'communication' => ('💬', const Color(0xFFFF9800)),
+      'skinship' => ('🤗', DSFortuneColors.categoryCoaching),
+      'play' => ('🎾', DSFortuneColors.categoryHealth),
+      'environment' => ('🏠', DSFortuneColors.categoryFamily),
+      'communication' => ('💬', DSFortuneColors.categoryTalent),
       _ => ('🐾', colors.accent),
     };
 
@@ -18054,10 +17955,10 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
     // 편지 타입별 이모지와 색상
     final letterType = petsVoice['letter_type'] as String? ?? 'comfort';
     final (emoji, accentColor, bgEmoji) = switch (letterType) {
-      'comfort' => ('🥺', const Color(0xFF9C27B0), '💜'),
-      'excitement' => ('🤩', const Color(0xFFFF9800), '⭐'),
-      'gratitude' => ('🥰', const Color(0xFFE91E63), '💕'),
-      'longing' => ('😢', const Color(0xFF2196F3), '💙'),
+      'comfort' => ('🥺', DSFortuneColors.categoryTarot, '💜'),
+      'excitement' => ('🤩', DSFortuneColors.categoryTalent, '⭐'),
+      'gratitude' => ('🥰', DSFortuneColors.categoryLove, '💕'),
+      'longing' => ('😢', DSFortuneColors.categoryFamily, '💙'),
       _ => ('🐾', colors.accent, '💖'),
     };
 
@@ -18593,11 +18494,11 @@ class _LottoBall extends StatelessWidget {
   const _LottoBall({required this.number});
 
   Color get _ballColor {
-    if (number <= 10) return const Color(0xFFFFC107); // 노랑
-    if (number <= 20) return const Color(0xFF2196F3); // 파랑
-    if (number <= 30) return const Color(0xFFE91E63); // 빨강
-    if (number <= 40) return const Color(0xFF9E9E9E); // 회색
-    return const Color(0xFF4CAF50); // 초록
+    if (number <= 10) return DSFortuneColors.categoryGratitude; // 노랑
+    if (number <= 20) return DSFortuneColors.categoryFamily; // 파랑
+    if (number <= 30) return DSFortuneColors.categoryLove; // 빨강
+    if (number <= 40) return DSColors.textTertiary; // 회색
+    return DSFortuneColors.categoryHealth; // 초록
   }
 
   @override
@@ -18685,7 +18586,7 @@ class _CategoryDistributionDonutPainter extends CustomPainter {
       final sweepAngle = (entry.value / total) * 2 * pi;
 
       final paint = Paint()
-        ..color = categoryColors[entry.key] ?? const Color(0xFF888888)
+        ..color = categoryColors[entry.key] ?? DSColors.textTertiary
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth
         ..strokeCap = StrokeCap.butt;

@@ -15,6 +15,7 @@ import '../../presentation/providers/user_profile_notifier.dart';
 import '../onboarding/widgets/birth_date_preview.dart';
 import '../../core/utils/logger.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/theme/typography_unified.dart';
 
 class ProfileEditPage extends ConsumerStatefulWidget {
   const ProfileEditPage({super.key});
@@ -32,22 +33,11 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   bool _isUploadingImage = false;
   User? _currentUser;
 
-  // Design System Helper Methods
-  Color _getTextColor() {
-    return context.colors.textPrimary;
-  }
-
-  Color _getSecondaryTextColor() {
-    return context.colors.textSecondary;
-  }
-
-  Color _getBackgroundColor() {
-    return context.colors.background;
-  }
-
-  Color _getCardColor() {
-    return context.colors.surface;
-  }
+  // Design System Color Helpers
+  Color get _textColor => context.colors.textPrimary;
+  Color get _secondaryTextColor => context.colors.textSecondary;
+  Color get _backgroundColor => context.colors.backgroundSecondary;
+  Color get _cardColor => context.colors.surface;
 
   // Parse time from birth time string like "축시 (01:00 - 03:00)"
   TimeOfDay? _parseTimeFromBirthTime(String birthTime) {
@@ -297,7 +287,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: _getBackgroundColor(),
+        backgroundColor: _backgroundColor,
         body: Center(
           child: CircularProgressIndicator(
             color: context.colors.accent,
@@ -307,13 +297,13 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     }
 
     return Scaffold(
-      backgroundColor: _getBackgroundColor(),
+      backgroundColor: _backgroundColor,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: AppHeader(
               title: '프로필 편집',
-              backgroundColor: _getBackgroundColor(),
+              backgroundColor: _backgroundColor,
             ),
           ),
           SliverPadding(
@@ -340,8 +330,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                     children: [
                       TextField(
                         controller: _nameController,
-                        style: DSTypography.bodyMedium.copyWith(
-                          color: _getTextColor(),
+                        style: context.bodyMedium.copyWith(
+                          color: _textColor,
                         ),
                         decoration: _buildInputDecoration(
                           labelText: '이름',
@@ -398,15 +388,15 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                     children: [
                       Text(
                         'MBTI 성격 유형',
-                        style: DSTypography.labelLarge.copyWith(
-                          color: _getTextColor(),
+                        style: context.labelLarge.copyWith(
+                          color: _textColor,
                         ),
                       ),
                       const SizedBox(height: DSSpacing.sm),
                       Text(
                         'MBTI를 모르시나요? 온라인 테스트를 통해 확인해보세요.',
-                        style: DSTypography.bodySmall.copyWith(
-                          color: _getSecondaryTextColor(),
+                        style: context.bodySmall.copyWith(
+                          color: _secondaryTextColor,
                         ),
                       ),
                       const SizedBox(height: DSSpacing.md),
@@ -440,8 +430,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       const SizedBox(height: DSSpacing.lg),
                       Text(
                         '혈액형',
-                        style: DSTypography.labelLarge.copyWith(
-                          color: _getTextColor(),
+                        style: context.labelLarge.copyWith(
+                          color: _textColor,
                         ),
                       ),
                       const SizedBox(height: DSSpacing.md),
@@ -475,8 +465,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       const SizedBox(height: DSSpacing.lg),
                       Text(
                         '성별',
-                        style: DSTypography.labelLarge.copyWith(
-                          color: _getTextColor(),
+                        style: context.labelLarge.copyWith(
+                          color: _textColor,
                         ),
                       ),
                       const SizedBox(height: DSSpacing.md),
@@ -510,16 +500,16 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                           size: 32,
                                           color: isSelected
                                               ? Colors.white
-                                              : _getTextColor(),
+                                              : _textColor,
                                         ),
                                         const SizedBox(height: DSSpacing.sm),
                                         Text(
                                           gender.label,
                                           style:
-                                              DSTypography.bodySmall.copyWith(
+                                              context.bodySmall.copyWith(
                                             color: isSelected
                                                 ? Colors.white
-                                                : _getTextColor(),
+                                                : _textColor,
                                             fontWeight: isSelected
                                                 ? FontWeight.bold
                                                 : FontWeight.normal,
@@ -562,7 +552,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                         )
                       : Text(
                           '저장',
-                          style: DSTypography.buttonMedium.copyWith(
+                          style: context.buttonMedium.copyWith(
                             color: Colors.white,
                           ),
                         ),
@@ -578,7 +568,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                   ),
                   child: Text(
                     '취소',
-                    style: DSTypography.buttonMedium.copyWith(
+                    style: context.buttonMedium.copyWith(
                       color: _isSaving
                           ? context.colors.textTertiary
                           : context.colors.accent,
@@ -602,11 +592,11 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     return InputDecoration(
       labelText: labelText,
       hintText: hintText,
-      labelStyle: DSTypography.bodySmall.copyWith(
-        color: _getSecondaryTextColor(),
+      labelStyle: context.bodySmall.copyWith(
+        color: _secondaryTextColor,
       ),
-      hintStyle: DSTypography.bodySmall.copyWith(
-        color: _getSecondaryTextColor(),
+      hintStyle: context.bodySmall.copyWith(
+        color: _secondaryTextColor,
       ),
       filled: true,
       fillColor: context.colors.background,
@@ -633,7 +623,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
 
   BoxDecoration _buildSelectionDecoration(bool isSelected) {
     return BoxDecoration(
-      color: isSelected ? context.colors.accent : _getCardColor(),
+      color: isSelected ? context.colors.accent : _cardColor,
       border: Border.all(
         color: isSelected ? context.colors.accent : context.colors.border,
       ),
@@ -654,8 +644,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         child: Center(
           child: Text(
             label,
-            style: DSTypography.bodySmall.copyWith(
-              color: isSelected ? Colors.white : _getTextColor(),
+            style: context.bodySmall.copyWith(
+              color: isSelected ? Colors.white : _textColor,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -672,12 +662,16 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: _getCardColor(),
+        color: _cardColor,
         borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: context.colors.border,
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
+            blurRadius: 10,
             offset: const Offset(0, 2),
           ),
         ],
@@ -687,16 +681,16 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         children: [
           Text(
             title,
-            style: DSTypography.labelLarge.copyWith(
-              color: _getTextColor(),
+            style: context.heading4.copyWith(
+              color: _textColor,
             ),
           ),
           if (description != null) ...[
-            const SizedBox(height: DSSpacing.sm),
+            const SizedBox(height: DSSpacing.xs),
             Text(
               description,
-              style: DSTypography.bodySmall.copyWith(
-                color: _getSecondaryTextColor(),
+              style: context.bodySmall.copyWith(
+                color: _secondaryTextColor,
               ),
             ),
           ],

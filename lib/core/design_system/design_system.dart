@@ -1,29 +1,30 @@
-/// Korean Traditional "Saaju" Design System for Fortune App
+/// Modern AI Chat Design System for Fortune App
 ///
-/// Design Philosophy: "Beauty of Emptiness" (여백의 미) meets "Ink on Hanji" (한지 위의 먹)
+/// Design Philosophy: Minimalist, neutral, content-focused
+/// Inspired by Claude and ChatGPT interfaces.
 ///
-/// A comprehensive design system providing authentic Korean traditional
-/// styling across the entire application.
+/// A comprehensive design system providing clean, modern styling
+/// across the entire application.
 ///
 /// ## Quick Start
 ///
 /// ```dart
 /// import 'package:fortune/core/design_system/design_system.dart';
 ///
-/// // Hanji paper background
-/// HanjiBackground(child: Scaffold(...))
+/// // Clean background (no texture)
+/// Scaffold(backgroundColor: context.colors.background)
 ///
-/// // Access colors via context (Obangsaek palette)
-/// Container(color: context.colors.background)  // Hanji paper color
+/// // Access colors via context (neutral palette)
+/// Container(color: context.colors.surface)
 ///
-/// // Access typography (Korean fonts)
-/// Text('운세', style: context.typography.fortuneTitle)  // Gowun Batang
+/// // Access typography (Inter font)
+/// Text('Title', style: context.typography.headingLarge)
 ///
-/// // Vermilion seal button (인장 스타일)
-/// DSButton.primary(text: '운세 보기', onPressed: () {})
+/// // Modern button
+/// DSButton.primary(text: 'Continue', onPressed: () {})
 ///
-/// // Hanji paper card with ink-wash effect
-/// DSCard.hanji(child: content)
+/// // Clean elevated card
+/// DSCard.elevated(child: content)
 /// ```
 ///
 /// ## File Structure
@@ -61,6 +62,12 @@ export 'tokens/ds_radius.dart';
 export 'tokens/ds_shadows.dart';
 export 'tokens/ds_typography.dart';
 export 'tokens/ds_animation.dart';
+export 'tokens/ds_fortune_colors.dart';
+
+// Typography extensions for context.labelMedium, context.bodySmall, etc.
+// Note: Using typography_unified.dart instead of app_typography.dart to avoid
+// ambiguous extension member conflicts with DSContextExtensions.typography
+export '../theme/typography_unified.dart';
 
 // ============================================
 // THEME

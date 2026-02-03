@@ -187,7 +187,7 @@ class _ChatGameEnhanceResultCardState
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.4),
+                color: DSColors.background.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(DSRadius.full),
                 border: Border.all(
                   color: _getGradeColor(luckyGrade).withValues(alpha: 0.6),
@@ -201,7 +201,7 @@ class _ChatGameEnhanceResultCardState
                   Text(
                     'ENHANCE',
                     style: typography.labelSmall.copyWith(
-                      color: Colors.white,
+                      color: DSColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                     ),
@@ -221,7 +221,7 @@ class _ChatGameEnhanceResultCardState
               fortuneType: 'gameEnhance',
               shareTitle: '강화의 기운',
               shareContent: statusMessage,
-              iconColor: Colors.white,
+              iconColor: DSColors.textPrimary,
               iconSize: 20,
             ),
           ),
@@ -256,10 +256,10 @@ class _ChatGameEnhanceResultCardState
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.5),
+                          color: DSColors.background.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(DSRadius.md),
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.3),
+                            color: DSColors.textPrimary.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -268,7 +268,7 @@ class _ChatGameEnhanceResultCardState
                             Text(
                               '$score',
                               style: typography.headingMedium.copyWith(
-                                color: Colors.white,
+                                color: DSColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -276,7 +276,7 @@ class _ChatGameEnhanceResultCardState
                             Text(
                               'PT',
                               style: typography.labelSmall.copyWith(
-                                color: Colors.white70,
+                                color: DSColors.textSecondary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -302,11 +302,11 @@ class _ChatGameEnhanceResultCardState
                 Text(
                   '🔥 강화의 기운',
                   style: typography.headingSmall.copyWith(
-                    color: Colors.white,
+                    color: DSColors.textPrimary,
                     fontWeight: FontWeight.bold,
                     shadows: [
                       Shadow(
-                        color: Colors.black.withValues(alpha: 0.6),
+                        color: DSColors.background.withValues(alpha: 0.6),
                         blurRadius: 10,
                       ),
                     ],
@@ -317,7 +317,7 @@ class _ChatGameEnhanceResultCardState
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.4),
+                    color: DSColors.background.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(DSRadius.md),
                     border: Border.all(
                       color: _getGradeColor(luckyGrade).withValues(alpha: 0.5),
@@ -326,7 +326,7 @@ class _ChatGameEnhanceResultCardState
                   child: Text(
                     statusMessage,
                     style: typography.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: DSColors.textPrimary,
                       fontWeight: FontWeight.w500,
                     ),
                     maxLines: 2,
@@ -381,7 +381,7 @@ class _ChatGameEnhanceResultCardState
         ),
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.5),
+          color: DSColors.textPrimary.withValues(alpha: 0.5),
           width: 2,
         ),
         boxShadow: [
@@ -395,12 +395,12 @@ class _ChatGameEnhanceResultCardState
       child: Text(
         grade,
         style: typography.headingSmall.copyWith(
-          color: Colors.white,
+          color: DSColors.textPrimary,
           fontWeight: FontWeight.w900,
           letterSpacing: 2,
           shadows: [
             Shadow(
-              color: Colors.black.withValues(alpha: 0.5),
+              color: DSColors.background.withValues(alpha: 0.5),
               blurRadius: 4,
             ),
           ],
@@ -436,7 +436,7 @@ class _ChatGameEnhanceResultCardState
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF6B00).withValues(alpha: 0.15),
+                  color: DSFortuneColors.categoryGameEnhance.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
                 ),
                 child: const Text('📊', style: TextStyle(fontSize: 18)),
@@ -459,7 +459,7 @@ class _ChatGameEnhanceResultCardState
             icon: '✨',
             label: '성공 기운',
             value: successAura,
-            color: const Color(0xFFFF6B00),
+            color: DSFortuneColors.categoryGameEnhance,
             desc: successAuraDesc,
           ),
           const SizedBox(height: DSSpacing.sm),
@@ -470,7 +470,7 @@ class _ChatGameEnhanceResultCardState
             icon: '🛡️',
             label: '파괴 방어',
             value: protectionField,
-            color: const Color(0xFF3B82F6),
+            color: DSFortuneColors.categoryFamily,
             desc: protectionFieldDesc,
           ),
           const SizedBox(height: DSSpacing.sm),
@@ -583,8 +583,8 @@ class _ChatGameEnhanceResultCardState
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.white.withValues(alpha: 0.4),
-                      Colors.white.withValues(alpha: 0.0),
+                      DSColors.textPrimary.withValues(alpha: 0.4),
+                      DSColors.textPrimary.withValues(alpha: 0.0),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(2),
@@ -648,13 +648,13 @@ class _ChatGameEnhanceResultCardState
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFFFFD700).withValues(alpha: 0.2),
-            const Color(0xFFFF6B00).withValues(alpha: 0.1),
+            DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.2),
+            DSFortuneColors.categoryGameEnhance.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: const Color(0xFFFFD700).withValues(alpha: 0.5),
+          color: DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.5),
           width: 1.5,
         ),
       ),
@@ -663,7 +663,7 @@ class _ChatGameEnhanceResultCardState
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFD700).withValues(alpha: 0.3),
+              color: DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.3),
               shape: BoxShape.circle,
             ),
             child: const Text('⚡', style: TextStyle(fontSize: 20)),
@@ -676,14 +676,14 @@ class _ChatGameEnhanceResultCardState
                 Text(
                   '🔥 찬스타임 활성화!',
                   style: typography.labelMedium.copyWith(
-                    color: const Color(0xFFFF6B00),
+                    color: DSFortuneColors.categoryGameEnhance,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   desc,
                   style: typography.bodySmall.copyWith(
-                    color: const Color(0xFFB45309),
+                    color: DSFortuneColors.fortuneGoldDark,
                   ),
                 ),
               ],
@@ -718,13 +718,13 @@ class _ChatGameEnhanceResultCardState
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF1E3A5F).withValues(alpha: 0.1),
-              const Color(0xFF0F172A).withValues(alpha: 0.05),
+              DSFortuneColors.categoryFamily.withValues(alpha: 0.1),
+              DSColors.background.withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+            color: DSFortuneColors.categoryFamily.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -735,7 +735,7 @@ class _ChatGameEnhanceResultCardState
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withValues(alpha: 0.15),
+                    color: DSFortuneColors.categoryFamily.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(DSRadius.sm),
                   ),
                   child: const Text('⏰', style: TextStyle(fontSize: 18)),
@@ -760,12 +760,12 @@ class _ChatGameEnhanceResultCardState
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
+                      colors: [DSFortuneColors.fortuneGoldMuted, DSFortuneColors.categoryGameEnhance],
                     ),
                     borderRadius: BorderRadius.circular(DSRadius.md),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFFD700).withValues(alpha: 0.4),
+                        color: DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.4),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -779,7 +779,7 @@ class _ChatGameEnhanceResultCardState
                       Text(
                         goldenHour.isNotEmpty ? goldenHour : goldenHourRange,
                         style: typography.labelLarge.copyWith(
-                          color: Colors.white,
+                          color: DSColors.textPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -889,13 +889,13 @@ class _ChatGameEnhanceResultCardState
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFFA855F7).withValues(alpha: 0.1),
-              const Color(0xFF7C3AED).withValues(alpha: 0.05),
+              DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.1),
+              DSFortuneColors.categoryDaily.withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: const Color(0xFFA855F7).withValues(alpha: 0.3),
+            color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -906,7 +906,7 @@ class _ChatGameEnhanceResultCardState
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFA855F7).withValues(alpha: 0.15),
+                    color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(DSRadius.sm),
                   ),
                   child: const Text('🧙', style: TextStyle(fontSize: 18)),
@@ -924,13 +924,13 @@ class _ChatGameEnhanceResultCardState
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFA855F7).withValues(alpha: 0.2),
+                    color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(DSRadius.full),
                   ),
                   child: Text(
                     'RITUAL',
                     style: typography.labelSmall.copyWith(
-                      color: const Color(0xFFA855F7),
+                      color: DSFortuneColors.categoryLuckyItems,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
@@ -983,8 +983,8 @@ class _ChatGameEnhanceResultCardState
               color: isWarning
                   ? ObangseokColors.jeokMuted.withValues(alpha: 0.2)
                   : isHighlight
-                      ? const Color(0xFFFFD700).withValues(alpha: 0.3)
-                      : const Color(0xFFA855F7).withValues(alpha: 0.2),
+                      ? DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.3)
+                      : DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -994,8 +994,8 @@ class _ChatGameEnhanceResultCardState
                   color: isWarning
                       ? ObangseokColors.jeokMuted
                       : isHighlight
-                          ? const Color(0xFFB45309)
-                          : const Color(0xFFA855F7),
+                          ? DSFortuneColors.fortuneGoldDark
+                          : DSFortuneColors.categoryLuckyItems,
                   fontWeight: FontWeight.bold,
                   fontSize: 11,
                 ),
@@ -1018,7 +1018,7 @@ class _ChatGameEnhanceResultCardState
                 color: isWarning
                     ? ObangseokColors.jeokMuted
                     : isHighlight
-                        ? const Color(0xFFB45309)
+                        ? DSFortuneColors.fortuneGoldDark
                         : colors.textPrimary,
                 fontWeight: isHighlight || isWarning ? FontWeight.w600 : null,
               ),
@@ -1049,7 +1049,7 @@ class _ChatGameEnhanceResultCardState
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                  color: DSFortuneColors.categoryHealth.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
                 ),
                 child: const Text('🗺️', style: TextStyle(fontSize: 18)),
@@ -1131,7 +1131,7 @@ class _ChatGameEnhanceResultCardState
                 child: Text(
                   '$index',
                   style: typography.labelMedium.copyWith(
-                    color: Colors.white,
+                    color: DSColors.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1417,13 +1417,13 @@ class _ChatGameEnhanceResultCardState
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color(0xFFFF6B00).withValues(alpha: 0.15),
-              const Color(0xFFFFD700).withValues(alpha: 0.1),
+              DSFortuneColors.categoryGameEnhance.withValues(alpha: 0.15),
+              DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: const Color(0xFFFF6B00).withValues(alpha: 0.3),
+            color: DSFortuneColors.categoryGameEnhance.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -1431,7 +1431,7 @@ class _ChatGameEnhanceResultCardState
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF6B00).withValues(alpha: 0.2),
+                color: DSFortuneColors.categoryGameEnhance.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: const Text('💪', style: TextStyle(fontSize: 24)),
@@ -1469,7 +1469,7 @@ class _ChatGameEnhanceResultCardState
           return Text(
             tag.toString(),
             style: typography.labelSmall.copyWith(
-              color: const Color(0xFFFF6B00),
+              color: DSFortuneColors.categoryGameEnhance,
             ),
           );
         }).toList(),
@@ -1493,13 +1493,13 @@ class _ChatGameEnhanceResultCardState
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFFDC2626).withValues(alpha: 0.1),
-              const Color(0xFFEA580C).withValues(alpha: 0.1),
+              DSFortuneColors.categoryAvoidPeople.withValues(alpha: 0.1),
+              DSFortuneColors.categoryExercise.withValues(alpha: 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: const Color(0xFFDC2626).withValues(alpha: 0.3),
+            color: DSFortuneColors.categoryAvoidPeople.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -1512,7 +1512,7 @@ class _ChatGameEnhanceResultCardState
                 Text(
                   '강화 기운 더 받기',
                   style: typography.labelLarge.copyWith(
-                    color: const Color(0xFFDC2626),
+                    color: DSFortuneColors.categoryAvoidPeople,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1522,10 +1522,10 @@ class _ChatGameEnhanceResultCardState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildDonationButton(context, '1천원', '+5%', Colors.green),
-                _buildDonationButton(context, '3천원', '+15%', Colors.blue),
+                _buildDonationButton(context, '1천원', '+5%', DSFortuneColors.categoryHealth),
+                _buildDonationButton(context, '3천원', '+15%', DSFortuneColors.categoryFamily),
                 _buildDonationButton(
-                    context, '5천원', '+30%', const Color(0xFFA855F7)),
+                    context, '5천원', '+30%', DSFortuneColors.categoryLuckyItems),
               ],
             ),
             const SizedBox(height: DSSpacing.sm),
@@ -1547,6 +1547,7 @@ class _ChatGameEnhanceResultCardState
     String bonus,
     Color accentColor,
   ) {
+    final colors = context.colors;
     final typography = context.typography;
 
     return GestureDetector(
@@ -1564,7 +1565,7 @@ class _ChatGameEnhanceResultCardState
           vertical: DSSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
             color: accentColor.withValues(alpha: 0.3),
@@ -1582,7 +1583,7 @@ class _ChatGameEnhanceResultCardState
             Text(
               amount,
               style: typography.labelMedium.copyWith(
-                color: Colors.black87,
+                color: colors.textPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -1604,51 +1605,51 @@ class _ChatGameEnhanceResultCardState
   Color _getGradeColor(String grade) {
     switch (grade) {
       case 'SSS':
-        return const Color(0xFFFFD700); // 골드
+        return DSFortuneColors.fortuneGoldMuted; // 골드
       case 'SS':
-        return const Color(0xFFA855F7); // 보라 (에픽)
+        return DSFortuneColors.categoryLuckyItems; // 보라 (에픽)
       case 'S':
-        return const Color(0xFFFF6B00); // 오렌지
+        return DSFortuneColors.categoryGameEnhance; // 오렌지
       case 'A':
-        return const Color(0xFF3B82F6); // 파랑
+        return DSFortuneColors.categoryFamily; // 파랑
       case 'B':
-        return const Color(0xFF10B981); // 초록
+        return DSFortuneColors.categoryHealth; // 초록
       default:
-        return const Color(0xFF6B7280); // 회색
+        return DSFortuneColors.categoryExLover; // 회색
     }
   }
 
   Color _getGradeGradientStart(String grade) {
     switch (grade) {
       case 'SSS':
-        return const Color(0xFFB8860B);
+        return DSFortuneColors.fortuneGold; // 진한 골드
       case 'SS':
-        return const Color(0xFF7C3AED);
+        return DSFortuneColors.categoryDaily; // 보라
       case 'S':
-        return const Color(0xFFEA580C);
+        return DSFortuneColors.categoryExercise; // 오렌지
       case 'A':
-        return const Color(0xFF1D4ED8);
+        return DSFortuneColors.categoryCareer; // 파랑
       case 'B':
-        return const Color(0xFF059669);
+        return DSFortuneColors.categoryMoving; // 초록
       default:
-        return const Color(0xFF4B5563);
+        return const Color(0xFF4B5563); // 다크 그레이 (DS 토큰 없음)
     }
   }
 
   Color _getGradeGradientEnd(String grade) {
     switch (grade) {
       case 'SSS':
-        return const Color(0xFFFFD700);
+        return DSFortuneColors.fortuneGoldMuted; // 밝은 골드
       case 'SS':
-        return const Color(0xFFC084FC);
+        return const Color(0xFFC084FC); // 연보라 (그라데이션 끝, DS 토큰 없음)
       case 'S':
-        return const Color(0xFFFBBF24);
+        return DSFortuneColors.categoryLotto; // 밝은 오렌지/앰버
       case 'A':
-        return const Color(0xFF60A5FA);
+        return const Color(0xFF60A5FA); // 연파랑 (그라데이션 끝, DS 토큰 없음)
       case 'B':
-        return const Color(0xFF34D399);
+        return const Color(0xFF34D399); // 연초록 (그라데이션 끝, DS 토큰 없음)
       default:
-        return const Color(0xFF9CA3AF);
+        return const Color(0xFF9CA3AF); // 연회색 (그라데이션 끝, DS 토큰 없음)
     }
   }
 
@@ -1683,24 +1684,24 @@ class _ChatGameEnhanceResultCardState
   Color _getStackColor(String stackBonus) {
     switch (stackBonus) {
       case 'UP':
-        return const Color(0xFF10B981);
+        return DSFortuneColors.categoryHealth;
       case 'DOWN':
         return ObangseokColors.jeokMuted;
       default:
-        return const Color(0xFF6B7280);
+        return DSFortuneColors.categoryExLover;
     }
   }
 
   Color _getRiskColor(String riskLevel) {
     switch (riskLevel.toLowerCase()) {
       case 'low':
-        return const Color(0xFF10B981);
+        return DSFortuneColors.categoryHealth;
       case 'medium':
-        return const Color(0xFFF59E0B);
+        return DSFortuneColors.categoryLotto;
       case 'high':
-        return const Color(0xFFEF4444);
+        return DSFortuneColors.categoryNewYear;
       default:
-        return const Color(0xFF6B7280);
+        return DSFortuneColors.categoryExLover;
     }
   }
 }
@@ -1742,7 +1743,7 @@ class _HexPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
+      ..color = DSColors.textPrimary.withValues(alpha: 0.05)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.5;
 

@@ -3,49 +3,57 @@ import 'package:fortune/core/theme/font_config.dart';
 import 'package:fortune/core/theme/font_size_system.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// 통합 타이포그래피 시스템
+/// Unified typography system - Neon Dark Theme
 ///
-/// FontSizeSystem을 기반으로 한 일관된 TextStyle을 제공합니다.
-/// 사용자 설정에 따라 폰트 크기가 자동으로 조절됩니다.
+/// Font Strategy:
+/// - Primary: GmarketSans (bold, modern Korean font)
+/// - All text uses local GmarketSans font files
+/// - Legacy calligraphy: NanumMyeongjo (for specific traditional content)
 ///
-/// 사용 예시:
+/// Usage:
 /// ```dart
-/// // BuildContext extension 사용 (권장)
-/// Text('제목', style: context.typo.heading1)
-/// Text('본문', style: context.typo.bodyMedium)
+/// // BuildContext extension (recommended)
+/// Text('Title', style: context.heading1)
+/// Text('Body', style: context.bodyMedium)
 ///
-/// // 직접 사용
-/// Text('제목', style: TypographyUnified.heading1)
-/// Text('본문', style: TypographyUnified.bodyMedium)
+/// // Direct usage
+/// Text('Title', style: TypographyUnified.heading1)
+/// Text('Body', style: TypographyUnified.bodyMedium)
 /// ```
 class TypographyUnified {
-  static const Color _textPrimaryLight = Color(0xFF1A1A1A);
+  static const Color _textPrimaryLight = Color(0xFF000000);
   static const Color _textPrimaryDark = Color(0xFFFFFFFF);
-  // ==========================================
-  // FONT FAMILIES (FontConfig 참조)
-  // ==========================================
-
-  /// 한글 폰트 (FontConfig.korean 참조)
-  static const String fontFamilyKorean = FontConfig.korean;
-
-  /// 영문 폰트 (FontConfig.english 참조)
-  static const String fontFamilyEnglish = FontConfig.english;
-
-  /// 숫자 전용 폰트 (FontConfig.number 참조)
-  static const String fontFamilyNumber = FontConfig.number;
-
-  /// 기본 폰트 (FontConfig.primary 참조)
-  static const String fontFamilyDefault = FontConfig.primary;
 
   // ==========================================
-  // CALLIGRAPHY STYLES (동양화/서예 스타일)
+  // FONT FAMILIES - GmarketSans (Local)
+  // ==========================================
+
+  /// Primary font - GmarketSans (local)
+  static const String fontFamilyPrimary = 'GmarketSans';
+
+  /// Korean font - GmarketSans
+  static const String fontFamilyKorean = 'GmarketSans';
+
+  /// English font - GmarketSans
+  static const String fontFamilyEnglish = 'GmarketSans';
+
+  /// Number font - GmarketSans
+  static const String fontFamilyNumber = 'GmarketSans';
+
+  /// Default font - GmarketSans
+  static const String fontFamilyDefault = 'GmarketSans';
+
+  /// Font family fallback list
+  static const List<String> fontFamilyFallback = FontConfig.fontFamilyFallback;
+
+  // ==========================================
+  // LEGACY CALLIGRAPHY STYLES (Korean Traditional)
   // ==========================================
   //
-  // 홈 운세 페이지, 운세 결과 제목 등 전통적인 느낌이 필요한 곳에 사용
-  // 나눔명조 (NanumMyeongjo) 폰트 사용
+  // Kept for specific traditional content that needs serif/calligraphy feel
+  // Uses NanumMyeongjo font
 
-  /// Calligraphy Display - 운세 메인 제목 (32pt)
-  /// 홈 운세 카드의 대제목에 사용
+  /// Calligraphy Display - Fortune main title (32pt)
   static TextStyle get calligraphyDisplay => GoogleFonts.nanumMyeongjo(
         fontSize: FontSizeSystem.displaySmallScaled,
         height: 1.4,
@@ -53,8 +61,7 @@ class TypographyUnified {
         letterSpacing: 0.5,
       );
 
-  /// Calligraphy Title - 운세 섹션 제목 (24pt)
-  /// 운세 결과의 섹션 헤더에 사용
+  /// Calligraphy Title - Fortune section title (24pt)
   static TextStyle get calligraphyTitle => GoogleFonts.nanumMyeongjo(
         fontSize: FontSizeSystem.heading2Scaled,
         height: 1.5,
@@ -62,8 +69,7 @@ class TypographyUnified {
         letterSpacing: 0.3,
       );
 
-  /// Calligraphy Subtitle - 운세 부제목 (20pt)
-  /// 운세 카드의 서브타이틀에 사용
+  /// Calligraphy Subtitle - Fortune subtitle (20pt)
   static TextStyle get calligraphySubtitle => GoogleFonts.nanumMyeongjo(
         fontSize: FontSizeSystem.heading3Scaled,
         height: 1.5,
@@ -71,8 +77,7 @@ class TypographyUnified {
         letterSpacing: 0.2,
       );
 
-  /// Calligraphy Body - 운세 본문 (17pt)
-  /// 운세 내용의 주요 텍스트에 사용
+  /// Calligraphy Body - Fortune content (17pt)
   static TextStyle get calligraphyBody => GoogleFonts.nanumMyeongjo(
         fontSize: FontSizeSystem.bodyLargeScaled,
         height: 1.8,
@@ -80,8 +85,7 @@ class TypographyUnified {
         letterSpacing: 0.1,
       );
 
-  /// Calligraphy Quote - 운세 인용구/조언 (15pt)
-  /// 운세의 핵심 조언이나 격언에 사용
+  /// Calligraphy Quote - Fortune quote/advice (15pt)
   static TextStyle get calligraphyQuote => GoogleFonts.nanumMyeongjo(
         fontSize: FontSizeSystem.bodyMediumScaled,
         height: 1.8,
@@ -91,256 +95,234 @@ class TypographyUnified {
       );
 
   // ==========================================
-  // DISPLAY STYLES (대형 헤드라인)
+  // DISPLAY STYLES (Large Headlines)
   // ==========================================
-  //
-  // 스플래시, 온보딩, 메인 배너 등 큰 타이틀에 사용
 
-  /// Display Large - 가장 큰 헤드라인 (48pt)
-  /// (w700→w600 조정으로 부드러운 붓글씨 느낌)
+  /// Display Large - Largest headline (36pt)
   static TextStyle get displayLarge => TextStyle(
+        fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.displayLargeScaled,
-        height: 1.17,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.02,
-        fontFamily: fontFamilyKorean,
-      );
-
-  /// Display Medium - 큰 헤드라인 (40pt)
-  /// (w700→w600 조정으로 부드러운 붓글씨 느낌)
-  static TextStyle get displayMedium => TextStyle(
-        fontSize: FontSizeSystem.displayMediumScaled,
         height: 1.2,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.02,
-        fontFamily: fontFamilyKorean,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
       );
 
-  /// Display Small - 중간 헤드라인 (32pt)
-  /// (w700→w600 조정으로 부드러운 붓글씨 느낌)
-  static TextStyle get displaySmall => TextStyle(
-        fontSize: FontSizeSystem.displaySmallScaled,
+  /// Display Medium - Large headline (32pt)
+  static TextStyle get displayMedium => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.displayMediumScaled,
         height: 1.25,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.01,
-        fontFamily: fontFamilyKorean,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
+      );
+
+  /// Display Small - Medium headline (28pt)
+  static TextStyle get displaySmall => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.displaySmallScaled,
+        height: 1.3,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.25,
       );
 
   // ==========================================
-  // HEADING STYLES (섹션 제목)
+  // HEADING STYLES (Section Titles)
   // ==========================================
-  //
-  // 페이지 제목, 섹션 헤더에 사용
 
-  /// Heading 1 - 메인 페이지 제목 (28pt)
-  /// (w700→w600 조정으로 부드러운 무게감)
+  /// Heading 1 - Main page title (28pt)
   static TextStyle get heading1 => TextStyle(
+        fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading1Scaled,
-        height: 1.29,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.01,
-        fontFamily: fontFamilyKorean,
+        height: 1.35,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.25,
       );
 
-  /// Heading 2 - 섹션 제목 (24pt)
+  /// Heading 2 - Section title (24pt)
   static TextStyle get heading2 => TextStyle(
+        fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading2Scaled,
-        height: 1.33,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
-      );
-
-  /// Heading 3 - 서브 섹션 제목 (20pt)
-  static TextStyle get heading3 => TextStyle(
-        fontSize: FontSizeSystem.heading3Scaled,
         height: 1.4,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.15,
       );
 
-  /// Heading 4 - 작은 섹션 제목 (18pt)
-  static TextStyle get heading4 => TextStyle(
-        fontSize: FontSizeSystem.heading4Scaled,
-        height: 1.44,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
-      );
-
-  // ==========================================
-  // BODY STYLES (본문 텍스트)
-  // ==========================================
-  //
-  // 일반 텍스트, 설명 등에 사용
-
-  /// Body Large - 큰 본문 (17pt)
-  static TextStyle get bodyLarge => TextStyle(
-        fontSize: FontSizeSystem.bodyLargeScaled,
-        height: 1.53,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
-      );
-
-  /// Body Medium - 기본 본문 (15pt)
-  static TextStyle get bodyMedium => TextStyle(
-        fontSize: FontSizeSystem.bodyMediumScaled,
-        height: 1.6,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
-      );
-
-  /// Body Small - 작은 본문 (14pt)
-  static TextStyle get bodySmall => TextStyle(
-        fontSize: FontSizeSystem.bodySmallScaled,
-        height: 1.57,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
-      );
-
-  // ==========================================
-  // LABEL STYLES (라벨, 캡션)
-  // ==========================================
-  //
-  // 버튼 라벨, 입력 필드 힌트, 캡션 등에 사용
-
-  /// Label Large - 큰 라벨 (13pt)
-  static TextStyle get labelLarge => TextStyle(
-        fontSize: FontSizeSystem.labelLargeScaled,
-        height: 1.54,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
-      );
-
-  /// Label Medium - 기본 라벨 (12pt)
-  static TextStyle get labelMedium => TextStyle(
-        fontSize: FontSizeSystem.labelMediumScaled,
-        height: 1.5,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
-      );
-
-  /// Label Small - 작은 라벨 (11pt)
-  static TextStyle get labelSmall => TextStyle(
-        fontSize: FontSizeSystem.labelSmallScaled,
+  /// Heading 3 - Sub section title (20pt)
+  static TextStyle get heading3 => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.heading3Scaled,
         height: 1.45,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
       );
 
-  /// Label Tiny - 매우 작은 라벨 (10pt)
-  /// 배지, NEW 표시 등에 사용
-  static TextStyle get labelTiny => TextStyle(
-        fontSize: FontSizeSystem.labelTinyScaled,
+  /// Heading 4 - Small section title (18pt)
+  static TextStyle get heading4 => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.heading4Scaled,
+        height: 1.5,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+      );
+
+  // ==========================================
+  // BODY STYLES (Body Text)
+  // ==========================================
+
+  /// Body Large - Large body text (16pt)
+  static TextStyle get bodyLarge => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.bodyLargeScaled,
+        height: 1.6,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+      );
+
+  /// Body Medium - Default body text (14pt)
+  static TextStyle get bodyMedium => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.bodyMediumScaled,
+        height: 1.55,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+      );
+
+  /// Body Small - Small body text (13pt)
+  static TextStyle get bodySmall => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.bodySmallScaled,
+        height: 1.5,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+      );
+
+  // ==========================================
+  // LABEL STYLES (Labels, Captions)
+  // ==========================================
+
+  /// Label Large - Large label (14pt)
+  static TextStyle get labelLarge => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.labelLargeScaled,
+        height: 1.5,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+      );
+
+  /// Label Medium - Default label (13pt)
+  static TextStyle get labelMedium => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.labelMediumScaled,
+        height: 1.45,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+      );
+
+  /// Label Small - Small label (12pt)
+  static TextStyle get labelSmall => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.labelSmallScaled,
         height: 1.4,
         fontWeight: FontWeight.w500,
         letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
       );
 
+  /// Label Tiny - Very small label (11pt)
+  static TextStyle get labelTiny => TextStyle(
+        fontFamily: fontFamilyPrimary,
+        fontSize: FontSizeSystem.labelTinyScaled,
+        height: 1.35,
+        fontWeight: FontWeight.w300,
+        letterSpacing: 0.1,
+      );
 
   // ==========================================
-  // BUTTON STYLES (버튼 텍스트)
+  // BUTTON STYLES (Button Text)
   // ==========================================
-  //
-  // 버튼 내부 텍스트에 사용
 
-  /// Button Large - 큰 버튼 (17pt)
+  /// Button Large - Large button (16pt)
   static TextStyle get buttonLarge => TextStyle(
+        fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.buttonLargeScaled,
         height: 1.5,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
       );
 
-  /// Button Medium - 기본 버튼 (16pt)
+  /// Button Medium - Default button (15pt)
   static TextStyle get buttonMedium => TextStyle(
+        fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.buttonMediumScaled,
         height: 1.5,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
       );
 
-  /// Button Small - 작은 버튼 (15pt)
+  /// Button Small - Small button (14pt)
   static TextStyle get buttonSmall => TextStyle(
+        fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.buttonSmallScaled,
-        height: 1.47,
-        fontWeight: FontWeight.w600,
+        height: 1.45,
+        fontWeight: FontWeight.w700,
         letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
       );
 
-  /// Button Tiny - 매우 작은 버튼 (14pt)
+  /// Button Tiny - Very small button (13pt)
   static TextStyle get buttonTiny => TextStyle(
+        fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.buttonTinyScaled,
-        height: 1.43,
-        fontWeight: FontWeight.w600,
+        height: 1.4,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0,
-        fontFamily: fontFamilyKorean,
       );
 
   // ==========================================
-  // NUMBER STYLES (숫자 전용)
+  // NUMBER STYLES (Numbers Only)
   // ==========================================
-  //
-  // 금액, 점수 등 숫자 표시에 사용 (TossFace 폰트)
 
-  /// Number XLarge - 매우 큰 숫자 (40pt)
-  /// (w700→w600 조정으로 부드러운 무게감)
+  /// Number XLarge - Very large number (36pt)
   static TextStyle get numberXLarge => TextStyle(
+        fontFamily: fontFamilyNumber,
         fontSize: FontSizeSystem.numberXLargeScaled,
         height: 1.2,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
-        fontFamily: fontFamilyNumber,
         fontFeatures: const [FontFeature.tabularFigures()],
       );
 
-  /// Number Large - 큰 숫자 (32pt)
-  /// (w700→w600 조정으로 부드러운 무게감)
+  /// Number Large - Large number (28pt)
   static TextStyle get numberLarge => TextStyle(
+        fontFamily: fontFamilyNumber,
         fontSize: FontSizeSystem.numberLargeScaled,
         height: 1.25,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.02,
-        fontFamily: fontFamilyNumber,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.25,
         fontFeatures: const [FontFeature.tabularFigures()],
       );
 
-  /// Number Medium - 중간 숫자 (24pt)
+  /// Number Medium - Medium number (22pt)
   static TextStyle get numberMedium => TextStyle(
-        fontSize: FontSizeSystem.numberMediumScaled,
-        height: 1.33,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.01,
         fontFamily: fontFamilyNumber,
+        fontSize: FontSizeSystem.numberMediumScaled,
+        height: 1.3,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0,
         fontFeatures: const [FontFeature.tabularFigures()],
       );
 
-  /// Number Small - 작은 숫자 (18pt)
+  /// Number Small - Small number (18pt)
   static TextStyle get numberSmall => TextStyle(
-        fontSize: FontSizeSystem.numberSmallScaled,
-        height: 1.44,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
         fontFamily: fontFamilyNumber,
+        fontSize: FontSizeSystem.numberSmallScaled,
+        height: 1.4,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
         fontFeatures: const [FontFeature.tabularFigures()],
       );
 
   // ==========================================
   // BACKWARD COMPATIBILITY ALIASES
   // ==========================================
-  //
-  // 기존 코드와의 호환성을 위한 alias
 
   /// @deprecated Use [bodyLarge] instead
   static TextStyle get body1 => bodyLarge;
@@ -372,24 +354,22 @@ class TypographyUnified {
   // ==========================================
   // COLOR HELPERS
   // ==========================================
-  //
-  // 다크모드 대응을 위한 색상 헬퍼
 
-  /// 라이트모드용 TextStyle 생성
+  /// Light mode TextStyle
   static TextStyle withLightColor(TextStyle style, {Color? color}) {
     return style.copyWith(
       color: color ?? _textPrimaryLight,
     );
   }
 
-  /// 다크모드용 TextStyle 생성
+  /// Dark mode TextStyle
   static TextStyle withDarkColor(TextStyle style, {Color? color}) {
     return style.copyWith(
       color: color ?? _textPrimaryDark,
     );
   }
 
-  /// BuildContext에서 현재 테마에 맞는 색상 적용
+  /// Theme-aware TextStyle
   static TextStyle withThemeColor(
     TextStyle style,
     BuildContext context, {
@@ -432,18 +412,18 @@ class TypographyUnified {
   }
 }
 
-/// BuildContext extension for easy access
+/// BuildContext extension for easy typography access
 ///
-/// 사용 예시:
+/// Usage:
 /// ```dart
-/// Text('제목', style: context.typo.heading1)
-/// Text('본문', style: context.typo.bodyMedium.withColor(context))
+/// Text('Title', style: context.heading1)
+/// Text('Body', style: context.bodyMedium.withColor(context))
 /// ```
 extension TypographyUnifiedExtension on BuildContext {
-  /// TypographyUnified 인스턴스 접근
+  /// TypographyUnified instance access
   TypographyUnified get typo => TypographyUnified();
 
-  // Calligraphy Styles (나눔명조 - 동양화/서예 스타일)
+  // Calligraphy Styles (NanumMyeongjo - Korean traditional)
   TextStyle get calligraphyDisplay => TypographyUnified.calligraphyDisplay;
   TextStyle get calligraphyTitle => TypographyUnified.calligraphyTitle;
   TextStyle get calligraphySubtitle => TypographyUnified.calligraphySubtitle;
@@ -460,6 +440,16 @@ extension TypographyUnifiedExtension on BuildContext {
   TextStyle get heading2 => TypographyUnified.heading2;
   TextStyle get heading3 => TypographyUnified.heading3;
   TextStyle get heading4 => TypographyUnified.heading4;
+
+  // Heading Aliases (Material naming compatibility)
+  TextStyle get headingLarge => TypographyUnified.heading1;
+  TextStyle get headingMedium => TypographyUnified.heading2;
+  TextStyle get headingSmall => TypographyUnified.heading3;
+
+  // Headline Aliases (Material TextTheme compatibility)
+  TextStyle get headlineLarge => TypographyUnified.heading1;
+  TextStyle get headlineMedium => TypographyUnified.heading2;
+  TextStyle get headlineSmall => TypographyUnified.heading3;
 
   // Body Styles
   TextStyle get bodyLarge => TypographyUnified.bodyLarge;
@@ -487,13 +477,13 @@ extension TypographyUnifiedExtension on BuildContext {
 
 /// TextStyle extension for theme color application
 ///
-/// 사용 예시:
+/// Usage:
 /// ```dart
-/// Text('제목', style: TypographyUnified.heading1.withColor(context))
-/// Text('본문', style: context.typo.bodyMedium.withColor(context))
+/// Text('Title', style: TypographyUnified.heading1.withColor(context))
+/// Text('Body', style: context.bodyMedium.withColor(context))
 /// ```
 extension TextStyleThemeColor on TextStyle {
-  /// 현재 테마에 맞는 텍스트 색상 적용
+  /// Apply theme-aware text color
   TextStyle withColor(BuildContext context, {Color? lightColor, Color? darkColor}) {
     return TypographyUnified.withThemeColor(
       this,
@@ -503,12 +493,12 @@ extension TextStyleThemeColor on TextStyle {
     );
   }
 
-  /// 라이트모드 색상 적용
+  /// Apply light mode color
   TextStyle withLightColor({Color? color}) {
     return TypographyUnified.withLightColor(this, color: color);
   }
 
-  /// 다크모드 색상 적용
+  /// Apply dark mode color
   TextStyle withDarkColor({Color? color}) {
     return TypographyUnified.withDarkColor(this, color: color);
   }

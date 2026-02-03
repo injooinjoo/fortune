@@ -68,14 +68,8 @@ class TarotInfoHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colors.accentSecondary.withValues(alpha: 0.08),
-            colors.surface,
-          ],
-        ),
+        color: colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.card),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

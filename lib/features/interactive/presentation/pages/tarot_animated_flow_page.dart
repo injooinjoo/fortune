@@ -329,7 +329,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                             const SizedBox(height: 20),
                             Text(
                               cardData['name'] ?? 'Unknown',
-                              style: DSTypography.displaySmall.copyWith(
+                              style: context.displaySmall.copyWith(
                                 color: TossDesignSystem.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -348,7 +348,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
             // Card info
             Text(
               cardData['name'] ?? 'Unknown Card',
-              style: DSTypography.displaySmall.copyWith(
+              style: context.displaySmall.copyWith(
                 color: TossDesignSystem.white,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2,
@@ -360,7 +360,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
             Text(
               '"Go forward and do whatever\nyour heart tells you"',
               textAlign: TextAlign.center,
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 color: TossDesignSystem.white.withValues(alpha: 0.8),
                 fontStyle: FontStyle.italic,
               ),
@@ -395,7 +395,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
               ),
               child: Text(
                 'View Full Reading',
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -413,7 +413,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
         const SizedBox(width: 8),
         Text(
           text,
-          style: DSTypography.bodySmall.copyWith(
+          style: context.bodySmall.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.6),
           ),
         ),
