@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/design_system/tokens/ds_colors.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../services/supabase_storage_service.dart';
 
 class ProfileImagePicker extends StatefulWidget {
@@ -105,7 +104,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('이미지 파일이 유효하지 않습니다. JPG, PNG, WEBP 형식만 가능합니다.'),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: DSColors.error,
           ),
         );
       }
@@ -143,8 +142,8 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    TossDesignSystem.tossBlue,
-                    TossDesignSystem.gray600,
+                    DSColors.accentDark,
+                    DSColors.textSecondaryDark,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -153,7 +152,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
               child: const Icon(
                 Icons.person,
                 size: 60,
-                color: TossDesignSystem.grayDark900,
+                color: DSColors.textPrimary,
               ),
             );
           },
@@ -187,8 +186,8 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
         shape: BoxShape.circle,
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.tossBlue,
-            TossDesignSystem.gray600,
+            DSColors.accentDark,
+            DSColors.textSecondaryDark,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -197,7 +196,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
       child: const Icon(
         Icons.person,
         size: 60,
-        color: TossDesignSystem.grayDark900,
+        color: DSColors.textPrimary,
       ),
     );
   }
@@ -231,13 +230,13 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: TossDesignSystem.grayDark900,
+                          color: DSColors.textPrimary,
                         ),
                       )
                     : const Icon(
                         Icons.camera_alt,
                         size: 18,
-                        color: TossDesignSystem.grayDark900,
+                        color: DSColors.textPrimary,
                       ),
                 onPressed: widget.isLoading ? null : _showImageSourceDialog,
                 padding: EdgeInsets.zero,

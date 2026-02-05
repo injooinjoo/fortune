@@ -24,7 +24,6 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
   final Function(String) onZoneTap;
   final VoidCallback onScrollToTop;
   final Map<String, dynamic>? ogwanData;
-  final bool isDark;
   final String? faceMapImagePath;
 
   // 터치 가능한 부위들 정의
@@ -100,7 +99,6 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
     required this.onZoneTap,
     required this.onScrollToTop,
     this.ogwanData,
-    required this.isDark,
     this.faceMapImagePath,
   });
 
@@ -119,20 +117,9 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final expandRatio =
         1 - (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
-    final isCollapsed = expandRatio < 0.3;
-
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? DSColors.surface : Colors.white,
-        boxShadow: isCollapsed
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : null,
+        color: context.colors.surface,
       ),
       child: Stack(
         fit: StackFit.expand,
@@ -154,6 +141,8 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
   }
 
   Widget _buildExpandedMap(BuildContext context) {
+    final isDark = context.isDark;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -221,7 +210,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                               faceMapImagePath!,
                               fit: BoxFit.contain,
                             )
-                          : _buildDefaultFaceOutline(constraints),
+                          : _buildDefaultFaceOutline(constraints, isDark),
                     ),
 
                     // 터치 영역 오버레이
@@ -289,6 +278,8 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
   }
 
   Widget _buildCollapsedHeader(BuildContext context) {
+    final isDark = context.isDark;
+
     return GestureDetector(
       onTap: onScrollToTop,
       child: Container(
@@ -353,7 +344,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
     );
   }
 
-  Widget _buildDefaultFaceOutline(BoxConstraints constraints) {
+  Widget _buildDefaultFaceOutline(BoxConstraints constraints, bool isDark) {
     return CustomPaint(
       size: Size(constraints.maxWidth * 0.8, constraints.maxHeight * 0.9),
       painter: _FaceOutlinePainter(

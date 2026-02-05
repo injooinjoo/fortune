@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class TarotDeckMetadata {
   // 사용 가능한 타로 카드 목록
@@ -334,15 +334,15 @@ extension TarotDifficultyExtension on TarotDifficulty {
   Color get color {
     switch (this) {
       case TarotDifficulty.beginner:
-        return TossDesignSystem.success;
+        return DSColors.success;
       case TarotDifficulty.intermediate:
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case TarotDifficulty.advanced:
-        return TossDesignSystem.error;
+        return DSColors.error;
       case TarotDifficulty.expert:
-        return TossDesignSystem.purple;
+        return DSColors.accentTertiary;
       case TarotDifficulty.unique:
-        return TossDesignSystem.tossBlue;
+        return DSColors.accentDark;
     }
   }
 }

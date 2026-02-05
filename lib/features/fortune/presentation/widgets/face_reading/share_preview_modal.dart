@@ -74,7 +74,7 @@ class _SharePreviewModalState extends State<SharePreviewModal> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       constraints: BoxConstraints(

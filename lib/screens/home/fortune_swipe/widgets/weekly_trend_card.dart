@@ -4,12 +4,10 @@ import '../../../../core/design_system/design_system.dart';
 /// 💫 주간 트렌드 카드
 class WeeklyTrendCard extends StatelessWidget {
   final List<int> weeklyScores;
-  final bool isDark;
 
   const WeeklyTrendCard({
     super.key,
     required this.weeklyScores,
-    required this.isDark,
   });
 
   /// 주간 트렌드 레이블 계산 (상승세/평탄/하락세)
@@ -33,14 +31,14 @@ class WeeklyTrendCard extends StatelessWidget {
         Text(
           '주간 운세 트렌드',
           style: context.heading3.copyWith(
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '이번 주 당신의 운세 흐름',
           style: context.bodySmall.copyWith(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+            color: context.colors.textPrimary.withValues(alpha: 0.5),
           ),
         ),
 
@@ -52,8 +50,8 @@ class WeeklyTrendCard extends StatelessWidget {
             // 고유 색상 - 전통 목(木) 색상 그라데이션 (성장과 상승을 상징)
             gradient: LinearGradient(
               colors: [
-                isDark ? const Color(0xFF2E8B57) : const Color(0xFF3D9970), // 고유 색상 - 木 청록
-                isDark ? const Color(0xFF1E5F3C) : const Color(0xFF2E8B57), // 고유 색상 - 木 진한
+                context.isDark ? const Color(0xFF2E8B57) : const Color(0xFF3D9970), // 고유 색상 - 木 청록
+                context.isDark ? const Color(0xFF1E5F3C) : const Color(0xFF2E8B57), // 고유 색상 - 木 진한
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -115,7 +113,7 @@ class WeeklyTrendCard extends StatelessWidget {
                     // 고유 색상 - 전통 목(木) 색상 (좋은 날 강조)
                     color: score >= 80
                         ? const Color(0xFF2E8B57).withValues(alpha: 0.2) // 고유 색상 - 木 청록
-                        : (isDark ? Colors.white10 : Colors.black12),
+                        : context.colors.textPrimary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                     border: score >= 80
                         ? Border.all(color: const Color(0xFF2E8B57), width: 1) // 고유 색상 - 木 청록
@@ -126,7 +124,7 @@ class WeeklyTrendCard extends StatelessWidget {
                       Text(
                         day,
                         style: context.labelTiny.copyWith(
-                          color: isDark ? Colors.white : Colors.black87,
+                          color: context.colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -136,7 +134,7 @@ class WeeklyTrendCard extends StatelessWidget {
                         style: context.labelTiny.copyWith(
                           color: score >= 80
                               ? const Color(0xFF2E8B57) // 고유 색상 - 木 청록
-                              : (isDark ? Colors.white60 : Colors.black54),
+                              : context.colors.textSecondary,
                         ),
                       ),
                     ],

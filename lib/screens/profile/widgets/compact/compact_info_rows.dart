@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../features/fortune/domain/models/saju/ji_jang_gan_data.dart';
 import '../../../../features/fortune/domain/models/saju/twelve_stage_calculator.dart';
 
@@ -15,7 +14,7 @@ class CompactJijangganRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final jijangganData = _getJijangganData();
 
     return _buildInfoRow(
@@ -62,14 +61,14 @@ class CompactJijangganRow extends StatelessWidget {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingS,
-        vertical: TossTheme.spacingXS,
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.15)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
         children: [
@@ -83,14 +82,14 @@ class CompactJijangganRow extends StatelessWidget {
                   label,
                   style: context.labelTiny.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white70 : Colors.black54,
+                    color: context.colors.textSecondary,
                   ),
                 ),
                 Text(
                   hanja,
                   style: context.labelTiny.copyWith(
                     fontSize: 8,
-                    color: isDark ? Colors.white38 : Colors.black26,
+                    color: context.colors.textTertiary,
                   ),
                 ),
               ],
@@ -109,9 +108,7 @@ class CompactJijangganRow extends StatelessWidget {
                       border: index < values.length - 1
                           ? Border(
                               right: BorderSide(
-                                color: isDark
-                                    ? Colors.white12
-                                    : Colors.black12,
+                                color: context.colors.border,
                               ),
                             )
                           : null,
@@ -120,7 +117,7 @@ class CompactJijangganRow extends StatelessWidget {
                       value,
                       style: context.labelTiny.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white : Colors.black87,
+                        color: context.colors.textPrimary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -146,7 +143,7 @@ class CompactTwelveStagesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final stagesData = _calculateTwelveStages();
 
     return _buildInfoRow(
@@ -194,14 +191,14 @@ class CompactTwelveStagesRow extends StatelessWidget {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingS,
-        vertical: TossTheme.spacingXS,
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.15)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
         children: [
@@ -215,14 +212,14 @@ class CompactTwelveStagesRow extends StatelessWidget {
                   label,
                   style: context.labelTiny.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white70 : Colors.black54,
+                    color: context.colors.textSecondary,
                   ),
                 ),
                 Text(
                   hanja,
                   style: context.labelTiny.copyWith(
                     fontSize: 8,
-                    color: isDark ? Colors.white38 : Colors.black26,
+                    color: context.colors.textTertiary,
                   ),
                 ),
               ],
@@ -241,9 +238,7 @@ class CompactTwelveStagesRow extends StatelessWidget {
                       border: index < values.length - 1
                           ? Border(
                               right: BorderSide(
-                                color: isDark
-                                    ? Colors.white12
-                                    : Colors.black12,
+                                color: context.colors.border,
                               ),
                             )
                           : null,
@@ -252,7 +247,7 @@ class CompactTwelveStagesRow extends StatelessWidget {
                       value,
                       style: context.labelTiny.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white : Colors.black87,
+                        color: context.colors.textPrimary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -278,7 +273,7 @@ class CompactNapeumRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final napeumData = _getNapeumData();
 
     return _buildInfoRow(
@@ -365,14 +360,14 @@ class CompactNapeumRow extends StatelessWidget {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingS,
-        vertical: TossTheme.spacingXS,
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.15)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
         children: [
@@ -386,14 +381,14 @@ class CompactNapeumRow extends StatelessWidget {
                   label,
                   style: context.labelTiny.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white70 : Colors.black54,
+                    color: context.colors.textSecondary,
                   ),
                 ),
                 Text(
                   hanja,
                   style: context.labelTiny.copyWith(
                     fontSize: 8,
-                    color: isDark ? Colors.white38 : Colors.black26,
+                    color: context.colors.textTertiary,
                   ),
                 ),
               ],
@@ -412,9 +407,7 @@ class CompactNapeumRow extends StatelessWidget {
                       border: index < values.length - 1
                           ? Border(
                               right: BorderSide(
-                                color: isDark
-                                    ? Colors.white12
-                                    : Colors.black12,
+                                color: context.colors.border,
                               ),
                             )
                           : null,
@@ -423,7 +416,7 @@ class CompactNapeumRow extends StatelessWidget {
                       value,
                       style: context.labelTiny.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white : Colors.black87,
+                        color: context.colors.textPrimary,
                       ),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -450,18 +443,18 @@ class CompactSpecialInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingS,
-        vertical: TossTheme.spacingXS,
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.15)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
         children: [
@@ -477,7 +470,7 @@ class CompactSpecialInfoRow extends StatelessWidget {
           Container(
             width: 1,
             height: 20,
-            color: isDark ? Colors.white12 : Colors.black12,
+            color: context.colors.border,
           ),
           // 천을귀인
           Expanded(
@@ -552,21 +545,21 @@ class CompactSpecialInfoRow extends StatelessWidget {
     required bool isDark,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingXS),
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             '$label: ',
             style: context.labelTiny.copyWith(
-              color: isDark ? Colors.white60 : Colors.black45,
+              color: context.colors.textSecondary,
             ),
           ),
           Text(
             value,
             style: context.labelTiny.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : Colors.black87,
+              color: context.colors.textPrimary,
             ),
           ),
         ],

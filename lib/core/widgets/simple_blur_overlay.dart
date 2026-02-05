@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../design_system/design_system.dart';
 
 /// 심플 블러 오버레이
 ///
@@ -46,8 +47,7 @@ class SimpleBlurOverlay extends StatelessWidget {
       return child;
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = isDark ? Colors.white : Colors.black;
+    final iconColor = context.colors.textPrimary;
 
     return ClipRect(
       child: Stack(

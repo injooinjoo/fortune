@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/design_system/tokens/ds_spacing.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 
 /// 기본 조건 카드 (MBTI, 혈액형, 별자리, 띠)
 class BasicInfoCard extends StatelessWidget {
@@ -11,7 +10,7 @@ class BasicInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final dividerColor = Theme.of(context).dividerColor;
 
     return Container(

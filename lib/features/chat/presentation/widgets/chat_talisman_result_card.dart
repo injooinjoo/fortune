@@ -40,13 +40,6 @@ class ChatTalismanResultCard extends ConsumerWidget {
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: SimpleBlurOverlay(
         isBlurred: isBlurred,

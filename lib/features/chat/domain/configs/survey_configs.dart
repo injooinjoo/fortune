@@ -1,4 +1,4 @@
-import '../../../../core/theme/fortune_colors.dart';
+import '../../../../core/design_system/tokens/fortune_colors.dart';
 import '../models/fortune_survey_config.dart';
 
 /// 인사이트별 설문 설정 정의

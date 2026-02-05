@@ -13,9 +13,6 @@ class WatchDataPreviewCard extends StatelessWidget {
   /// Watch 데이터
   final WatchFaceReadingData watchData;
 
-  /// 다크 모드 여부
-  final bool isDark;
-
   /// Watch 앱 연결 상태
   final bool isWatchConnected;
 
@@ -25,7 +22,6 @@ class WatchDataPreviewCard extends StatelessWidget {
   const WatchDataPreviewCard({
     super.key,
     required this.watchData,
-    this.isDark = false,
     this.isWatchConnected = false,
     this.onSyncToWatch,
   });
@@ -155,13 +151,6 @@ class WatchDataPreviewCard extends StatelessWidget {
             color: Colors.grey.shade800,
             width: 8,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -417,12 +406,10 @@ class WatchComplicationWidget extends StatelessWidget {
 /// Watch 행운 정보 요약 위젯
 class WatchLuckySummary extends StatelessWidget {
   final WatchFaceReadingData watchData;
-  final bool isDark;
 
   const WatchLuckySummary({
     super.key,
     required this.watchData,
-    this.isDark = false,
   });
 
   @override
@@ -430,10 +417,10 @@ class WatchLuckySummary extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? DSColors.surfaceDark : DSColors.surface,
+        color: context.isDark ? DSColors.surfaceDark : DSColors.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark ? DSColors.borderDark : DSColors.border,
+          color: context.isDark ? DSColors.borderDark : DSColors.border,
         ),
       ),
       child: Row(
@@ -445,10 +432,10 @@ class WatchLuckySummary extends StatelessWidget {
             label: '방향',
             value: watchData.luckyDirection,
           ),
-          _buildDivider(),
+          _buildDivider(context),
           // 색상
           _buildColorItem(context),
-          _buildDivider(),
+          _buildDivider(context),
           // 시간
           _buildItem(
             context,
@@ -481,7 +468,7 @@ class WatchLuckySummary extends StatelessWidget {
           Text(
             value,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textPrimaryDark
                   : DSColors.textPrimary,
               fontWeight: FontWeight.w600,
@@ -490,7 +477,7 @@ class WatchLuckySummary extends StatelessWidget {
           Text(
             label,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,
               fontSize: 10,
@@ -512,7 +499,7 @@ class WatchLuckySummary extends StatelessWidget {
               color: _parseColor(watchData.luckyColor.colorCode),
               shape: BoxShape.circle,
               border: Border.all(
-                color: isDark ? DSColors.borderDark : DSColors.border,
+                color: context.isDark ? DSColors.borderDark : DSColors.border,
               ),
             ),
           ),
@@ -520,7 +507,7 @@ class WatchLuckySummary extends StatelessWidget {
           Text(
             watchData.luckyColor.colorName,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textPrimaryDark
                   : DSColors.textPrimary,
               fontWeight: FontWeight.w600,
@@ -529,7 +516,7 @@ class WatchLuckySummary extends StatelessWidget {
           Text(
             '행운 색상',
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,
               fontSize: 10,
@@ -540,11 +527,11 @@ class WatchLuckySummary extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(BuildContext context) {
     return Container(
       width: 1,
       height: 40,
-      color: isDark ? DSColors.borderDark : DSColors.border,
+      color: context.isDark ? DSColors.borderDark : DSColors.border,
     );
   }
 

@@ -48,7 +48,7 @@ class _ChatCelebritySelectorState extends ConsumerState<ChatCelebritySelector> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // 검색 결과 또는 인기 연예인
     final searchResults = ref.watch(celebritySearchProvider);
@@ -278,7 +278,7 @@ class _CelebrityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,

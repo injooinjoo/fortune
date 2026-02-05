@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../core/theme/saju_colors.dart';
+import '../../../../../core/design_system/tokens/ds_saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/ji_jang_gan_data.dart';
@@ -48,7 +48,7 @@ class SajuPillarTablePro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return AppCard(
       padding: const EdgeInsets.all(DSSpacing.md),
@@ -368,9 +368,7 @@ class SajuPillarTablePro extends StatelessWidget {
                   ),
                   color: isDay
                       ? DSColors.accent.withValues(alpha: 0.05)
-                      : (isDark
-                          ? Colors.black.withValues(alpha: 0.1)
-                          : Colors.grey.shade50),
+                      : context.colors.surfaceSecondary,
                 ),
                 child: _buildJijangganCell(context, branch, isDark),
               ),

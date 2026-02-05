@@ -43,7 +43,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     if (widget.celebrities.isEmpty) {
       return const SizedBox.shrink();
@@ -214,7 +214,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? DSColors.backgroundSecondary : Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -363,13 +363,6 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                             : [const Color(0xFFCD7F32), const Color(0xFF8B4513)],
                   ),
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
                 child: Center(
                   child: Text(

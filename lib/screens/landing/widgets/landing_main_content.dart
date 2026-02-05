@@ -21,7 +21,7 @@ class LandingMainContent extends StatelessWidget {
         children: [
           // App Logo
           Image.asset(
-            Theme.of(context).brightness == Brightness.dark
+            context.isDark
                 ? 'assets/images/zpzg_logo_dark.png'
                 : 'assets/images/zpzg_logo_light.png',
             width: 120,

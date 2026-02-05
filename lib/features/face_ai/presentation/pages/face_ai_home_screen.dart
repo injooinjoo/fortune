@@ -62,7 +62,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = context.colors;
     final userProfileAsync = ref.watch(userProfileProvider);
     final profileImageUrl = userProfileAsync.valueOrNull?.profileImageUrl;
@@ -145,7 +145,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
               Text(
                 'Face AI',
                 style: context.headingMedium.copyWith(
-                  color: isDark ? Colors.white : DSColors.textPrimary,
+                  color: context.colors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -212,15 +212,8 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: isDark ? DSColors.backgroundSecondary : Colors.white,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
             ),
             child: Column(
               children: [
@@ -253,7 +246,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                 Text(
                   '오늘의 얼굴 분석하기',
                   style: context.headingMedium.copyWith(
-                    color: isDark ? Colors.white : DSColors.textPrimary,
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ).animate().fadeIn(duration: 400.ms, delay: 200.ms),
@@ -352,7 +345,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                               Text(
                                 '갤러리에서 선택',
                                 style: context.labelMedium.copyWith(
-                                  color: isDark ? Colors.white : DSColors.textPrimary,
+                                  color: context.colors.textPrimary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -405,7 +398,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? DSColors.backgroundSecondary : Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: const Color(0xFF9C27B0).withValues(alpha: 0.3), // 고유 색상 - Face AI 테마
@@ -445,7 +438,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                   Text(
                     '내 프로필 사진으로 분석',
                     style: context.bodyMedium.copyWith(
-                      color: isDark ? Colors.white : DSColors.textPrimary,
+                      color: context.colors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -514,15 +507,8 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? DSColors.backgroundSecondary : Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -545,7 +531,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                 Text(
                   'Face AI란?',
                   style: context.headingSmall.copyWith(
-                    color: isDark ? Colors.white : DSColors.textPrimary,
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -646,7 +632,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
               Text(
                 title,
                 style: context.bodyMedium.copyWith(
-                  color: isDark ? Colors.white : DSColors.textPrimary,
+                  color: context.colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -671,15 +657,8 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? DSColors.backgroundSecondary : Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -702,7 +681,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
                 Text(
                   '분석 팁',
                   style: context.headingSmall.copyWith(
-                    color: isDark ? Colors.white : DSColors.textPrimary,
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -776,7 +755,7 @@ class _FaceAiHomeScreenState extends ConsumerState<FaceAiHomeScreen> {
               Text(
                 title,
                 style: context.bodyMedium.copyWith(
-                  color: isDark ? Colors.white : DSColors.textPrimary,
+                  color: context.colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),

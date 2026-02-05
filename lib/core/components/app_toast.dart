@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 /// TOSS 스타일 Toast
 class AppToast {
@@ -176,9 +176,9 @@ class _AppToastOverlay extends StatelessWidget {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     
     return Positioned(
-      left: TossDesignSystem.spacingM,
-      right: TossDesignSystem.spacingM,
-      bottom: bottomPadding + TossDesignSystem.spacingL,
+      left: DSSpacing.md,
+      right: DSSpacing.md,
+      bottom: bottomPadding + DSSpacing.lg,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: entries
@@ -186,7 +186,7 @@ class _AppToastOverlay extends StatelessWidget {
             .entries
             .map((entry) => Padding(
                   padding: EdgeInsets.only(
-                    bottom: entry.key < entries.length - 1 ? TossDesignSystem.spacingS : 0,
+                    bottom: entry.key < entries.length - 1 ? DSSpacing.sm : 0,
                   ),
                   child: _AppToastItem(
                     key: entry.value.key,
@@ -290,21 +290,14 @@ class _AppToastItemState extends State<_AppToastItem>
           child: Container(
             decoration: BoxDecoration(
               color: colors.backgroundColor,
-              borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
-              boxShadow: [
-                BoxShadow(
-                  color: TossDesignSystem.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              borderRadius: BorderRadius.circular(DSRadius.smd),
             ),
             child: Material(
-              color: TossDesignSystem.white.withValues(alpha: 0.0),
+              color: Colors.transparent,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: TossDesignSystem.spacingM,
-                  vertical: TossDesignSystem.spacingM,
+                  horizontal: DSSpacing.md,
+                  vertical: DSSpacing.md,
                 ),
                 child: Row(
                   children: [
@@ -313,31 +306,31 @@ class _AppToastItemState extends State<_AppToastItem>
                       size: 20,
                       color: colors.iconColor,
                     ),
-                    const SizedBox(width: TossDesignSystem.spacingM),
+                    const SizedBox(width: DSSpacing.md),
                     Expanded(
                       child: Text(
                         widget.entry.message,
-                        style: TossDesignSystem.body3.copyWith(
+                        style: context.bodySmall.copyWith(
                           color: colors.textColor,
                         ),
                       ),
                     ),
                     if (widget.entry.actionText != null) ...[
-                      const SizedBox(width: TossDesignSystem.spacingM),
+                      const SizedBox(width: DSSpacing.md),
                       InkWell(
                         onTap: () {
                           widget.entry.onAction?.call();
                           _dismiss();
                         },
-                        borderRadius: BorderRadius.circular(TossDesignSystem.radiusXS),
+                        borderRadius: BorderRadius.circular(DSRadius.xs),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: TossDesignSystem.spacingS,
-                            vertical: TossDesignSystem.spacingXS,
+                            horizontal: DSSpacing.sm,
+                            vertical: DSSpacing.xs,
                           ),
                           child: Text(
                             widget.entry.actionText!,
-                            style: TossDesignSystem.caption.copyWith(
+                            style: context.labelMedium.copyWith(
                               color: colors.actionColor,
                             ),
                           ),
@@ -359,38 +352,38 @@ class _AppToastItemState extends State<_AppToastItem>
       case AppToastType.success:
         return _ToastColors(
           backgroundColor: isDark
-              ? TossDesignSystem.success.withValues(alpha: 0.9)
-              : TossDesignSystem.success.withValues(alpha: 0.08),
-          iconColor: isDark ? TossDesignSystem.success.withValues(alpha: 0.5) : TossDesignSystem.success.withValues(alpha: 0.9),
-          textColor: isDark ? TossDesignSystem.white : TossDesignSystem.black.withValues(alpha: 0.87),
-          actionColor: isDark ? TossDesignSystem.success.withValues(alpha: 0.5) : TossDesignSystem.success.withValues(alpha: 0.9),
+              ? DSColors.success.withValues(alpha: 0.9)
+              : DSColors.success.withValues(alpha: 0.08),
+          iconColor: isDark ? DSColors.success.withValues(alpha: 0.5) : DSColors.success.withValues(alpha: 0.9),
+          textColor: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+          actionColor: isDark ? DSColors.success.withValues(alpha: 0.5) : DSColors.success.withValues(alpha: 0.9),
         );
       case AppToastType.error:
         return _ToastColors(
           backgroundColor: isDark
-              ? TossDesignSystem.error.withValues(alpha: 0.9)
-              : TossDesignSystem.error.withValues(alpha: 0.08),
-          iconColor: isDark ? TossDesignSystem.error.withValues(alpha: 0.5) : TossDesignSystem.error.withValues(alpha: 0.9),
-          textColor: isDark ? TossDesignSystem.white : TossDesignSystem.black.withValues(alpha: 0.87),
-          actionColor: isDark ? TossDesignSystem.error.withValues(alpha: 0.5) : TossDesignSystem.error.withValues(alpha: 0.9),
+              ? DSColors.error.withValues(alpha: 0.9)
+              : DSColors.error.withValues(alpha: 0.08),
+          iconColor: isDark ? DSColors.error.withValues(alpha: 0.5) : DSColors.error.withValues(alpha: 0.9),
+          textColor: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+          actionColor: isDark ? DSColors.error.withValues(alpha: 0.5) : DSColors.error.withValues(alpha: 0.9),
         );
       case AppToastType.warning:
         return _ToastColors(
           backgroundColor: isDark
-              ? TossDesignSystem.warningOrange.withValues(alpha: 0.9)
-              : TossDesignSystem.warningOrange.withValues(alpha: 0.08),
-          iconColor: isDark ? TossDesignSystem.warningOrange.withValues(alpha: 0.5) : TossDesignSystem.warningOrange.withValues(alpha: 0.9),
-          textColor: isDark ? TossDesignSystem.white : TossDesignSystem.black.withValues(alpha: 0.87),
-          actionColor: isDark ? TossDesignSystem.warningOrange.withValues(alpha: 0.5) : TossDesignSystem.warningOrange.withValues(alpha: 0.9),
+              ? DSColors.warning.withValues(alpha: 0.9)
+              : DSColors.warning.withValues(alpha: 0.08),
+          iconColor: isDark ? DSColors.warning.withValues(alpha: 0.5) : DSColors.warning.withValues(alpha: 0.9),
+          textColor: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+          actionColor: isDark ? DSColors.warning.withValues(alpha: 0.5) : DSColors.warning.withValues(alpha: 0.9),
         );
       case AppToastType.info:
         return _ToastColors(
           backgroundColor: isDark
-              ? TossDesignSystem.gray500.withValues(alpha: 0.9)
-              : TossDesignSystem.gray500.withValues(alpha: 0.08),
-          iconColor: isDark ? TossDesignSystem.gray500.withValues(alpha: 0.5) : TossDesignSystem.gray500.withValues(alpha: 0.9),
-          textColor: isDark ? TossDesignSystem.white : TossDesignSystem.black.withValues(alpha: 0.87),
-          actionColor: isDark ? TossDesignSystem.tossBlue.withValues(alpha: 0.5) : TossDesignSystem.tossBlue.withValues(alpha: 0.9),
+              ? DSColors.textTertiaryDark.withValues(alpha: 0.9)
+              : DSColors.textTertiaryDark.withValues(alpha: 0.08),
+          iconColor: isDark ? DSColors.textTertiaryDark.withValues(alpha: 0.5) : DSColors.textTertiaryDark.withValues(alpha: 0.9),
+          textColor: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+          actionColor: isDark ? DSColors.accentDark.withValues(alpha: 0.5) : DSColors.accentDark.withValues(alpha: 0.9),
         );
     }
   }

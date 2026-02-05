@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/fortune_theme.dart';
-import '../../../../../../core/theme/fortune_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../domain/models/health_fortune_model.dart';
 
 class ConditionOption extends StatelessWidget {
   final ConditionState condition;
   final int index;
-  final bool isDark;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -16,7 +14,6 @@ class ConditionOption extends StatelessWidget {
     super.key,
     required this.condition,
     required this.index,
-    required this.isDark,
     required this.isSelected,
     required this.onTap,
   });
@@ -34,11 +31,11 @@ class ConditionOption extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossTheme.primaryBlue.withValues(alpha: 0.05)
-              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white),
+              ? context.colors.accent.withValues(alpha: 0.05)
+              : context.colors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+            color: isSelected ? context.colors.accent : context.colors.divider,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -48,12 +45,12 @@ class ConditionOption extends StatelessWidget {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: isSelected ? TossTheme.primaryBlue : TossDesignSystem.white.withValues(alpha: 0.0),
-                border: isSelected ? null : Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray300, width: 2),
+                color: isSelected ? context.colors.accent : Colors.white.withValues(alpha: 0.0),
+                border: isSelected ? null : Border.all(color: context.colors.border, width: 2),
                 shape: BoxShape.circle,
               ),
               child: isSelected
-                  ? const Icon(Icons.check, color: TossDesignSystem.white, size: 16)
+                  ? const Icon(Icons.check, color: Colors.white, size: 16)
                   : null,
             ),
             const SizedBox(width: 16),
@@ -63,25 +60,25 @@ class ConditionOption extends StatelessWidget {
                 children: [
                   Text(
                     condition.displayName,
-                    style: TossTheme.body1.copyWith(
+                    style: context.bodyLarge.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                      color: isSelected ? context.colors.accent : context.colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     _getConditionDescription(condition),
-                    style: TossTheme.body3.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                    style: context.buttonMedium.copyWith(
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios,
-                color: TossTheme.primaryBlue,
+                color: context.colors.accent,
                 size: 16,
               ),
           ],

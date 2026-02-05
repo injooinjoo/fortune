@@ -5,8 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../domain/models/models.dart';
 import '../providers/trend_providers.dart';
 
@@ -43,27 +42,24 @@ class _TrendIdealWorldcupPageState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final worldcupAsync =
         ref.watch(trendIdealWorldcupProvider(widget.contentId));
 
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: worldcupAsync.when(
           loading: () => const Center(child: LoadingIndicator()),
-          error: (e, _) => _buildErrorView(isDark, e.toString()),
+          error: (e, _) => _buildErrorView(e.toString()),
           data: (worldcup) {
             if (worldcup == null) {
-              return _buildErrorView(isDark, '월드컵을 찾을 수 없습니다');
+              return _buildErrorView('월드컵을 찾을 수 없습니다');
             }
             // Initialize candidates on first load
             if (_currentRound.isEmpty && _winner == null) {
               _initializeWorldcup(worldcup);
             }
-            return _buildContent(isDark, worldcup);
+            return _buildContent(worldcup);
           },
         ),
       ),
@@ -90,9 +86,9 @@ class _TrendIdealWorldcupPageState
     _currentMatchIndex = 0;
   }
 
-  Widget _buildContent(bool isDark, IdealWorldcup worldcup) {
+  Widget _buildContent(IdealWorldcup worldcup) {
     if (_winner != null) {
-      return _buildResultView(isDark, worldcup, _winner!);
+      return _buildResultView(worldcup, _winner!);
     }
     return Column(
       children: [
@@ -102,16 +98,16 @@ class _TrendIdealWorldcupPageState
           showActions: false,
         ),
         // Round indicator
-        _buildRoundIndicator(isDark),
+        _buildRoundIndicator(),
         // Match view
         Expanded(
-          child: _buildMatchView(isDark),
+          child: _buildMatchView(),
         ),
       ],
     );
   }
 
-  Widget _buildRoundIndicator(bool isDark) {
+  Widget _buildRoundIndicator() {
     final roundName = _getRoundName(_currentRound.length);
     final matchProgress =
         '${_currentMatchIndex + 1}/${_currentRound.length ~/ 2}';
@@ -124,13 +120,13 @@ class _TrendIdealWorldcupPageState
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+              color: DSColors.accentDark.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               roundName,
               style: context.labelMedium.copyWith(
-                color: TossDesignSystem.tossBlue,
+                color: DSColors.accentDark,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -138,9 +134,7 @@ class _TrendIdealWorldcupPageState
           Text(
             matchProgress,
             style: context.labelMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+              color: context.colors.textSecondary,
             ),
           ),
         ],
@@ -163,7 +157,7 @@ class _TrendIdealWorldcupPageState
     }
   }
 
-  Widget _buildMatchView(bool isDark) {
+  Widget _buildMatchView() {
     if (_currentRound.length < 2) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -182,7 +176,6 @@ class _TrendIdealWorldcupPageState
         children: [
           Expanded(
             child: _buildCandidateCard(
-              isDark,
               candidate1,
               true,
             ),
@@ -196,13 +189,13 @@ class _TrendIdealWorldcupPageState
                 shape: BoxShape.circle,
                 gradient: const LinearGradient(
                   colors: [
-                    TossDesignSystem.tossBlue,
-                    TossDesignSystem.purple,
+                    DSColors.accentDark,
+                    DSColors.accentTertiary,
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                    color: DSColors.accentDark.withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -221,7 +214,6 @@ class _TrendIdealWorldcupPageState
           ),
           Expanded(
             child: _buildCandidateCard(
-              isDark,
               candidate2,
               false,
             ),
@@ -232,7 +224,6 @@ class _TrendIdealWorldcupPageState
   }
 
   Widget _buildCandidateCard(
-    bool isDark,
     WorldcupCandidate candidate,
     bool isTop,
   ) {
@@ -242,13 +233,6 @@ class _TrendIdealWorldcupPageState
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
@@ -260,9 +244,7 @@ class _TrendIdealWorldcupPageState
                 candidate.imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Container(
-                  color: isDark
-                      ? TossDesignSystem.cardBackgroundDark
-                      : TossDesignSystem.cardBackgroundLight,
+                  color: context.colors.surface,
                   child: const Center(
                     child: Text(
                       '🎯',
@@ -379,7 +361,6 @@ class _TrendIdealWorldcupPageState
   }
 
   Widget _buildResultView(
-    bool isDark,
     IdealWorldcup worldcup,
     WorldcupCandidate winner,
   ) {
@@ -424,9 +405,7 @@ class _TrendIdealWorldcupPageState
                 Text(
                   '나의 이상형',
                   style: context.labelLarge.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
+                    color: context.colors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -444,9 +423,7 @@ class _TrendIdealWorldcupPageState
                             winner.imageUrl,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Container(
-                              color: isDark
-                                  ? TossDesignSystem.cardBackgroundDark
-                                  : TossDesignSystem.cardBackgroundLight,
+                              color: context.colors.surface,
                               child: const Center(
                                 child: Text(
                                   '🎯',
@@ -490,7 +467,7 @@ class _TrendIdealWorldcupPageState
                 const SizedBox(height: 24),
                 // Rankings section
                 if (_rankings != null && _rankings!.isNotEmpty) ...[
-                  _buildRankingsSection(isDark),
+                  _buildRankingsSection(),
                   const SizedBox(height: 24),
                 ],
                 // Action buttons
@@ -516,7 +493,7 @@ class _TrendIdealWorldcupPageState
                       child: ElevatedButton(
                         onPressed: _reset,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: TossDesignSystem.tossBlue,
+                          backgroundColor: DSColors.accentDark,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -541,18 +518,15 @@ class _TrendIdealWorldcupPageState
     );
   }
 
-  Widget _buildRankingsSection(bool isDark) {
+  Widget _buildRankingsSection() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossDesignSystem.cardBackgroundLight,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: context.colors.border,
         ),
       ),
       child: Column(
@@ -561,9 +535,7 @@ class _TrendIdealWorldcupPageState
           Text(
             '전체 랭킹',
             style: context.labelLarge.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -589,9 +561,7 @@ class _TrendIdealWorldcupPageState
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: isDark
-                                ? TossDesignSystem.grayDark300
-                                : TossDesignSystem.gray200,
+                            color: context.colors.border,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Center(
@@ -608,9 +578,7 @@ class _TrendIdealWorldcupPageState
                       child: Text(
                         ranking.candidateName,
                         style: context.bodyMedium.copyWith(
-                          color: isDark
-                              ? TossDesignSystem.textPrimaryDark
-                              : TossDesignSystem.textPrimaryLight,
+                          color: context.colors.textPrimary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -618,7 +586,7 @@ class _TrendIdealWorldcupPageState
                     Text(
                       '${ranking.winRate.toStringAsFixed(1)}%',
                       style: context.labelMedium.copyWith(
-                        color: TossDesignSystem.tossBlue,
+                        color: DSColors.accentDark,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -645,7 +613,7 @@ class _TrendIdealWorldcupPageState
         badgeColor = Colors.orange.shade700;
         break;
       default:
-        badgeColor = TossDesignSystem.gray400;
+        badgeColor = DSColors.textDisabledDark;
     }
 
     return Container(
@@ -680,7 +648,7 @@ class _TrendIdealWorldcupPageState
     }
   }
 
-  Widget _buildErrorView(bool isDark, String error) {
+  Widget _buildErrorView(String error) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -688,17 +656,13 @@ class _TrendIdealWorldcupPageState
           Icon(
             Icons.error_outline,
             size: 64,
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+            color: context.colors.textSecondary,
           ),
           const SizedBox(height: 16),
           Text(
             error,
             style: context.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+              color: context.colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),

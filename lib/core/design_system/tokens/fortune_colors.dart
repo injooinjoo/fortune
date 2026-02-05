@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
-import 'obangseok_colors.dart';
+import '../theme/ds_extensions.dart';
+import 'ds_colors.dart';
+import 'ds_obangseok_colors.dart';
 
-/// Extended fortune-specific colors following Toss design principles
+/// Semantic fortune category colors with theme-aware helpers
 /// Enhanced with Korean traditional 오방색 (Five Cardinal Colors)
 /// Each color has a clear semantic meaning and purpose
 class FortuneColors {
@@ -40,9 +41,9 @@ class FortuneColors {
       mysticalLight; // Alias for spiritual light color
 
   // Career & Business - Professional, trustworthy colors
-  static const Color career = AppColors.tossBlue; // Using Toss blue for trust
-  static const Color careerDark = AppColors.tossBlueLight;
-  static const Color careerBackground = AppColors.tossBlueBackground;
+  static const Color career = DSColors.accent; // Using accent for trust
+  static const Color careerDark = DSColors.accentSecondary;
+  static const Color careerBackground = DSColors.accentLightDark;
 
   // Financial & Wealth - Gold and prosperity colors
   static const Color wealth = Color(0xFFFFB800); // Bright gold
@@ -58,16 +59,16 @@ class FortuneColors {
   static const Color healthBackground = Color(0xFFE6FFF4);
 
   // Daily Fortune - Neutral but warm
-  static const Color daily = AppColors.gray700;
-  static const Color dailyDark = AppColors.gray300;
-  static const Color dailyAccent = AppColors.tossBlue;
+  static const Color daily = DSColors.textSecondaryDark; // Light mode gray
+  static const Color dailyDark = DSColors.textTertiary; // Dark mode gray
+  static const Color dailyAccent = DSColors.accent;
 
   // Fortune intensity levels - For showing strength/quality
-  static const Color excellent = AppColors.positive; // 90-100%
+  static const Color excellent = DSColors.successDark; // 90-100%
   static const Color good = Color(0xFF00D67A); // 70-89%
-  static const Color moderate = AppColors.caution; // 50-69%
+  static const Color moderate = DSColors.warningDark; // 50-69%
   static const Color careful = Color(0xFFFF9500); // 30-49%
-  static const Color challenging = AppColors.negative; // 0-29%
+  static const Color challenging = DSColors.errorDark; // 0-29%
 
   // Special fortune types
   static const Color tarot = Color(0xFF2D1B69); // Deep mystical purple
@@ -79,35 +80,40 @@ class FortuneColors {
 
   // Helper methods for getting theme-aware colors
   static Color getLove(BuildContext context) {
-    return AppColors.getThemedColor(context, love, loveDark);
+    return _themed(context, love, loveDark);
   }
 
   static Color getMystical(BuildContext context) {
-    return AppColors.getThemedColor(context, mystical, mysticalDark);
+    return _themed(context, mystical, mysticalDark);
   }
 
   static Color getCareer(BuildContext context) {
-    return AppColors.getThemedColor(context, career, careerDark);
+    return _themed(context, career, careerDark);
   }
 
   static Color getWealth(BuildContext context) {
-    return AppColors.getThemedColor(context, wealth, wealthDark);
+    return _themed(context, wealth, wealthDark);
   }
 
   static Color getHealth(BuildContext context) {
-    return AppColors.getThemedColor(context, health, healthDark);
+    return _themed(context, health, healthDark);
   }
 
   static Color getDaily(BuildContext context) {
-    return AppColors.getThemedColor(context, daily, dailyDark);
+    return _themed(context, daily, dailyDark);
   }
 
   static Color getTarot(BuildContext context) {
-    return AppColors.getThemedColor(context, tarot, tarotDark);
+    return _themed(context, tarot, tarotDark);
   }
 
   static Color getZodiac(BuildContext context) {
-    return AppColors.getThemedColor(context, zodiac, zodiacDark);
+    return _themed(context, zodiac, zodiacDark);
+  }
+
+  /// Theme-aware color helper
+  static Color _themed(BuildContext context, Color light, Color dark) {
+    return context.isDark ? dark : light;
   }
 
   // Score-based color selection with Toss-style clarity

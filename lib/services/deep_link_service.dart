@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/utils/logger.dart';
-import '../routes/route_config.dart';
+import '../core/theme/theme_keys.dart';
 
 /// 딥링크 처리 서비스
 /// 카카오톡 공유 링크, 외부 링크 등을 처리
@@ -93,7 +93,7 @@ class DeepLinkService {
   /// 네비게이션 실행
   void _navigateTo(String route) {
     try {
-      final context = rootNavigatorKey.currentContext;
+      final context = appNavigatorKey.currentContext;
       if (context != null) {
         GoRouter.of(context).go(route);
         Logger.info('딥링크 네비게이션: $route');

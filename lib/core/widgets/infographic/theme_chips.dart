@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/typography_unified.dart';
-import '../../design_system/tokens/ds_colors.dart';
+import '../../design_system/design_system.dart';
 
 /// 키워드/테마를 칩 형태로 표시하는 인포그래픽 위젯
 ///
@@ -106,7 +105,7 @@ class _ThemeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     final backgroundColor = _getBackgroundColor(isDark);
     final textColor = _getTextColor(isDark);

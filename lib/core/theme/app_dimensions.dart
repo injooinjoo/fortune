@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
-/// Dimension constants mapped to TossDesignSystem for consistency
+/// Dimension constants mapped to DSRadius for consistency
 class AppDimensions {
-  // Border radius values - mapped to TossDesignSystem
+  // Border radius values - mapped to DSRadius
   static const double radiusXxSmall = 4.0; // Very subtle rounding
   static const double radiusXSmall = 6.0; // Minimal rounding
-  static const double radiusSmall = TossDesignSystem.radiusS; // 8.0
-  static const double radiusMedium = TossDesignSystem.radiusM; // 12.0
-  static const double radiusLarge = TossDesignSystem.radiusL; // 16.0
-  static const double radiusXLarge = TossDesignSystem.radiusXL; // 20.0
-  static const double radiusXxLarge = TossDesignSystem.radiusXL; // Use XL for max
+  static const double radiusSmall = DSRadius.smd; // 8.0
+  static const double radiusMedium = DSRadius.md; // 12.0
+  static const double radiusLarge = DSRadius.lg; // 16.0
+  static const double radiusXLarge = 20.0; // 20.0
+  static const double radiusXxLarge = 20.0; // Use XL for max
   static const double radiusCircle = 9999.0; // Full circle
 
   // BorderRadius helpers for backward compatibility

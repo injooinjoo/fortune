@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
 
@@ -28,11 +28,11 @@ class AppBottomSheet {
       isDismissible: isDismissible,
       enableDrag: enableDrag,
       isScrollControlled: isScrollControlled,
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-      barrierColor: TossDesignSystem.black.withValues(alpha: 0.5),
+      backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(TossDesignSystem.radiusXL),
+          top: Radius.circular(20.0),
         ),
       ),
       builder: (context) => _AppBottomSheetWrapper(
@@ -107,30 +107,28 @@ class _AppBottomSheetWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: backgroundColor ?? (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white),
+        color: backgroundColor ?? context.colors.surface,
         borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(TossDesignSystem.radiusXL),
+          top: Radius.circular(20.0),
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showHandle) ...[
-            const SizedBox(height: TossDesignSystem.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                color: context.colors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: TossDesignSystem.spacingS),
+            const SizedBox(height: DSSpacing.sm),
           ],
           Flexible(child: child),
         ],
@@ -138,7 +136,7 @@ class _AppBottomSheetWrapper extends StatelessWidget {
     ).animate().slideY(
       begin: 1,
       end: 0,
-      duration: TossDesignSystem.durationMedium,
+      duration: DSAnimation.normal,
       curve: Curves.easeOutCubic,
     );
   }
@@ -158,31 +156,29 @@ class _TossSelectionBottomSheet<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+        padding: const EdgeInsets.all(DSSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: TossDesignSystem.heading4.copyWith(
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              style: context.heading3.copyWith(
+                color: context.colors.textPrimary,
               ),
             ),
             if (subtitle != null) ...[
-              const SizedBox(height: TossDesignSystem.spacingS),
+              const SizedBox(height: DSSpacing.sm),
               Text(
                 subtitle!,
-                style: TossDesignSystem.body3.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                style: context.bodySmall.copyWith(
+                  color: context.colors.textDisabled,
                 ),
               ),
             ],
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
             ...options.map((option) => _OptionItem(
               option: option,
               onTap: () => Navigator.of(context).pop(option.value),
@@ -212,29 +208,27 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+        padding: const EdgeInsets.all(DSSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: TossDesignSystem.heading4.copyWith(
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              style: context.heading3.copyWith(
+                color: context.colors.textPrimary,
               ),
             ),
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
             Text(
               message,
-              style: TossDesignSystem.body2.copyWith(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              style: context.bodyMedium.copyWith(
+                color: context.colors.textSecondary,
               ),
             ),
-            const SizedBox(height: TossDesignSystem.spacingL),
+            const SizedBox(height: DSSpacing.lg),
             Row(
               children: [
                 Expanded(
@@ -244,7 +238,7 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(false),
                   ),
                 ),
-                const SizedBox(width: TossDesignSystem.spacingM),
+                const SizedBox(width: DSSpacing.md),
                 Expanded(
                   child: UnifiedButton(
                     text: confirmText,
@@ -273,17 +267,15 @@ class _OptionItem<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return InkWell(
       onTap: () {
         HapticFeedback.selectionClick();
         onTap();
       },
-      borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+      borderRadius: BorderRadius.circular(DSRadius.smd),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: TossDesignSystem.spacingM,
+          vertical: DSSpacing.md,
         ),
         child: Row(
           children: [
@@ -292,10 +284,10 @@ class _OptionItem<T> extends StatelessWidget {
                 option.icon,
                 size: 24,
                 color: option.isDanger
-                    ? TossDesignSystem.errorRed
-                    : (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600),
+                    ? DSColors.error
+                    : context.colors.textSecondary,
               ),
-              const SizedBox(width: TossDesignSystem.spacingM),
+              const SizedBox(width: DSSpacing.md),
             ],
             Expanded(
               child: Column(
@@ -303,19 +295,19 @@ class _OptionItem<T> extends StatelessWidget {
                 children: [
                   Text(
                     option.label,
-                    style: TossDesignSystem.body1.copyWith(
+                    style: context.bodyLarge.copyWith(
                       color: option.isDanger
-                          ? TossDesignSystem.errorRed
-                          : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
+                          ? DSColors.error
+                          : context.colors.textPrimary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   if (option.description != null) ...[
-                    const SizedBox(height: TossDesignSystem.spacingXS),
+                    const SizedBox(height: DSSpacing.xs),
                     Text(
                       option.description!,
-                      style: TossDesignSystem.body3.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                      style: context.bodySmall.copyWith(
+                        color: context.colors.textDisabled,
                       ),
                     ),
                   ],
@@ -323,7 +315,7 @@ class _OptionItem<T> extends StatelessWidget {
               ),
             ),
             if (option.trailing != null) ...[
-              const SizedBox(width: TossDesignSystem.spacingM),
+              const SizedBox(width: DSSpacing.md),
               option.trailing!,
             ],
           ],

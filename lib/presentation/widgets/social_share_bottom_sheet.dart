@@ -57,7 +57,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return AnimatedBuilder(
       animation: _slideAnimation,
@@ -68,13 +68,6 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(DSRadius.xl),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, -4),
-              ),
-            ],
           ),
           child: SafeArea(
             top: false,

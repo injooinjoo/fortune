@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/typography_unified.dart';
-import '../../design_system/tokens/ds_colors.dart';
+import '../../design_system/design_system.dart';
 
 /// 카테고리별 점수를 가로 막대 차트로 표시하는 위젯
 ///
@@ -160,7 +159,7 @@ class _CategoryBarItemState extends State<_CategoryBarItem>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final barColor = widget.category.color ?? _getScoreColor(widget.category.score, isDark);
     final bgColor = isDark ? DSColors.backgroundSecondaryDark : DSColors.backgroundSecondary;
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'tarot_metadata_data.dart';
 
 // TarotHelper utility class
@@ -54,21 +54,21 @@ class TarotHelper {
       case '불':
       case 'fire':
       case 'wands':
-        return TossDesignSystem.error;
+        return DSColors.error;
       case '물':
       case 'water':
       case 'cups':
-        return TossDesignSystem.tossBlue;
+        return DSColors.accentDark;
       case '공기':
       case 'air':
       case 'swords':
-        return TossDesignSystem.warningYellow;
+        return DSColors.warning;
       case '땅':
       case 'earth':
       case 'pentacles':
-        return TossDesignSystem.success;
+        return DSColors.success;
       default:
-        return TossDesignSystem.purple;
+        return DSColors.accentTertiary;
     }
   }
 

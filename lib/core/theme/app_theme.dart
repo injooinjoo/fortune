@@ -1,49 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_theme_extensions.dart';
-import 'obangseok_colors.dart';
-import 'fortune_design_system.dart';
-import 'typography_unified.dart';
+import '../design_system/tokens/ds_obangseok_colors.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class AppTheme {
-  // Use TossDesignSystem colors
-  static const Color primaryColor = TossDesignSystem.tossBlue;
-  static const Color secondaryColor = TossDesignSystem.gray700;
-  static const Color tertiaryColor = TossDesignSystem.gray500;
-  static const Color successColor = TossDesignSystem.successGreen;
-  static const Color warningColor = TossDesignSystem.warningOrange;
-  static const Color errorColor = TossDesignSystem.errorRed;
-  static const Color backgroundColor = TossDesignSystem.gray50;
-  static const Color surfaceColor = TossDesignSystem.white;
-  static const Color borderColor = TossDesignSystem.gray200;
-  static const Color textColor = TossDesignSystem.gray900;
-  static const Color textSecondaryColor = TossDesignSystem.gray600;
-  static const Color dividerColor = TossDesignSystem.gray200;
+  // Use DSColors tokens
+  static const Color primaryColor = DSColors.accentDark;
+  static const Color secondaryColor = Color(0xFF3B352E);
+  static const Color tertiaryColor = DSColors.textTertiaryDark;
+  static const Color successColor = DSColors.success;
+  static const Color warningColor = DSColors.warning;
+  static const Color errorColor = DSColors.error;
+  static const Color backgroundColor = DSColors.backgroundDark;
+  static const Color surfaceColor = DSColors.surfaceDark;
+  static const Color borderColor = DSColors.borderDark;
+  static const Color textColor = DSColors.textPrimaryDark;
+  static const Color textSecondaryColor = DSColors.textSecondaryDark;
+  static const Color dividerColor = DSColors.borderDark;
 
   // Add missing color getters for backward compatibility
-  static Color get textPrimary => TossDesignSystem.gray900;
-  static Color get textSecondary => TossDesignSystem.gray600;
-  static Color get success => TossDesignSystem.successGreen;
-  static Color get warning => TossDesignSystem.warningOrange;
-  static Color get error => TossDesignSystem.errorRed;
+  static Color get textPrimary => DSColors.textPrimaryDark;
+  static Color get textSecondary => DSColors.textSecondaryDark;
+  static Color get success => DSColors.success;
+  static Color get warning => DSColors.warning;
+  static Color get error => DSColors.error;
 
   // Added for theme mode checking
   static bool isDarkMode = false;
 
-  // Use TossDesignSystem radius
-  static const double radiusSmall = TossDesignSystem.radiusS;
-  static const double radiusMedium = TossDesignSystem.radiusM;
-  static const double radiusLarge = TossDesignSystem.radiusL;
-  static const double radiusXLarge = TossDesignSystem.radiusXL;
+  // Radius tokens (mapped to DSRadius)
+  static const double radiusSmall = DSRadius.smd;
+  static const double radiusMedium = DSRadius.md;
+  static const double radiusLarge = DSRadius.lg;
+  static const double radiusXLarge = 20.0;
   static const double radiusXXLarge = 42.0;
 
-  // Use TossDesignSystem spacing
-  static const double spacingXSmall = TossDesignSystem.spacingXS;
-  static const double spacingSmall = TossDesignSystem.spacingS;
-  static const double spacingMedium = TossDesignSystem.spacingM;
-  static const double spacingLarge = TossDesignSystem.spacingL;
-  static const double spacingXLarge = TossDesignSystem.spacingXL;
-  static const double spacingXXLarge = TossDesignSystem.spacingXXL;
+  // Spacing tokens (mapped to DSSpacing)
+  static const double spacingXSmall = DSSpacing.xs;
+  static const double spacingSmall = DSSpacing.sm;
+  static const double spacingMedium = DSSpacing.md;
+  static const double spacingLarge = DSSpacing.lg;
+  static const double spacingXLarge = DSSpacing.xl;
+  static const double spacingXXLarge = DSSpacing.xxl;
 
   static ThemeData lightTheme() {
     return ThemeData(
@@ -61,7 +60,7 @@ class AppTheme {
         // 한지 배경색 (미색) - 오방색 디자인 철학 적용
         scaffoldBackgroundColor: ObangseokColors.misaek,
         appBarTheme: AppBarTheme(
-          backgroundColor: TossDesignSystem.transparent,
+          backgroundColor: Colors.transparent,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
           iconTheme: const IconThemeData(color: Color(0xFF1F2937)),
@@ -69,60 +68,59 @@ class AppTheme {
             color: const Color(0xFF1F2937),
           ),
         ),
-        fontFamily: TossDesignSystem.fontFamilyKorean,
-        textTheme: const TextTheme(
-          displayLarge: TossDesignSystem.display1,
-          displayMedium: TossDesignSystem.display2,
-          displaySmall: TossDesignSystem.heading1,
-          headlineLarge: TossDesignSystem.heading1,
-          headlineMedium: TossDesignSystem.heading2,
-          headlineSmall: TossDesignSystem.heading3,
-          titleLarge: TossDesignSystem.heading3,
-          titleMedium: TossDesignSystem.heading4,
-          titleSmall: TossDesignSystem.body1,
-          bodyLarge: TossDesignSystem.body1,
-          bodyMedium: TossDesignSystem.body2,
-          bodySmall: TossDesignSystem.body3,
-          labelLarge: TossDesignSystem.body2,
-          labelMedium: TossDesignSystem.caption1,
-          labelSmall: TossDesignSystem.small,
+        fontFamily: TypographyUnified.fontFamilyKorean,
+        textTheme: TextTheme(
+          displayLarge: TypographyUnified.displayLarge,
+          displayMedium: TypographyUnified.displayMedium,
+          displaySmall: TypographyUnified.displaySmall,
+          headlineLarge: TypographyUnified.displaySmall,
+          headlineMedium: TypographyUnified.heading1,
+          headlineSmall: TypographyUnified.heading2,
+          titleLarge: TypographyUnified.heading2,
+          titleMedium: TypographyUnified.heading3,
+          titleSmall: TypographyUnified.bodyLarge,
+          bodyLarge: TypographyUnified.bodyLarge,
+          bodyMedium: TypographyUnified.bodyMedium,
+          bodySmall: TypographyUnified.bodySmall,
+          labelLarge: TypographyUnified.bodyMedium,
+          labelMedium: TypographyUnified.labelLarge,
+          labelSmall: TypographyUnified.labelMedium,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: TossDesignSystem.white,
+            foregroundColor: Colors.white,
             backgroundColor: primaryColor,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                  8), // Instagram uses less rounded corners
+              borderRadius: BorderRadius.circular(8),
             ),
-            textStyle: TossDesignSystem.body1.copyWith(fontWeight: FontWeight.w600),
+            textStyle: TypographyUnified.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: TossDesignSystem.gray50,
+          fillColor: DSColors.backgroundDark,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6), // Instagram style
-            borderSide: const BorderSide(color: TossDesignSystem.gray200, width: 1),
+            borderRadius: BorderRadius.circular(6),
+            borderSide: const BorderSide(color: DSColors.borderDark, width: 1),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: TossDesignSystem.gray200, width: 1),
+            borderSide: const BorderSide(color: DSColors.borderDark, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: TossDesignSystem.tossBlue, width: 2),
+            borderSide: const BorderSide(color: DSColors.accentDark, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: TossDesignSystem.errorRed, width: 1),
+            borderSide: const BorderSide(color: DSColors.error, width: 1),
           ),
-          labelStyle: TossDesignSystem.body3.copyWith(color: TossDesignSystem.gray600),
-          hintStyle: TossDesignSystem.body3.copyWith(color: TossDesignSystem.gray400),
+          labelStyle: TypographyUnified.bodySmall.copyWith(color: DSColors.textSecondaryDark),
+          hintStyle: TypographyUnified.bodySmall.copyWith(color: DSColors.textDisabledDark),
         ),
         extensions: <ThemeExtension<dynamic>>[
           FortuneThemeExtension.light,
@@ -140,80 +138,63 @@ class AppTheme {
     return ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        primaryColor: TossDesignSystem.tossBlue,
+        primaryColor: DSColors.accentDark,
         colorScheme: const ColorScheme.dark(
-          primary: TossDesignSystem.tossBlue,
+          primary: DSColors.accentDark,
           secondary: secondaryColor,
-          tertiary: TossDesignSystem.gray600,
-          error: TossDesignSystem.errorRed,
-          surface: TossDesignSystem.gray900,
+          tertiary: DSColors.textSecondaryDark,
+          error: DSColors.error,
+          surface: DSColors.textPrimaryDark,
           // background is deprecated, use surface instead
         ),
         // 다크모드 한지 배경색 (흑색) - 오방색 디자인 철학 적용
         scaffoldBackgroundColor: ObangseokColors.heukLight,
         appBarTheme: AppBarTheme(
-          backgroundColor: TossDesignSystem.transparent,
+          backgroundColor: Colors.transparent,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.light,
-          iconTheme: const IconThemeData(color: TossDesignSystem.white),
+          iconTheme: const IconThemeData(color: DSColors.textPrimary),
           titleTextStyle: TypographyUnified.heading4.copyWith(
-            color: TossDesignSystem.white,
+            color: DSColors.textPrimary,
           ),
         ),
-        fontFamily: TossDesignSystem.fontFamilyKorean,
-        textTheme: TextTheme(
-          displayLarge: TossDesignSystem.display1.copyWith(color: TossDesignSystem.white),
-          displayMedium: TossDesignSystem.display2.copyWith(color: TossDesignSystem.white),
-          displaySmall: TossDesignSystem.heading1.copyWith(color: TossDesignSystem.white),
-          headlineLarge: TossDesignSystem.heading1.copyWith(color: TossDesignSystem.white),
-          headlineMedium: TossDesignSystem.heading2.copyWith(color: TossDesignSystem.white),
-          headlineSmall: TossDesignSystem.heading3.copyWith(color: TossDesignSystem.white),
-          titleLarge: TossDesignSystem.heading3.copyWith(color: TossDesignSystem.white),
-          titleMedium: TossDesignSystem.heading4.copyWith(color: TossDesignSystem.white),
-          titleSmall: TossDesignSystem.body1.copyWith(color: TossDesignSystem.white),
-          bodyLarge: TossDesignSystem.body1.copyWith(color: TossDesignSystem.gray100),
-          bodyMedium: TossDesignSystem.body2.copyWith(color: TossDesignSystem.gray100),
-          bodySmall: TossDesignSystem.body3.copyWith(color: TossDesignSystem.gray100),
-          labelLarge: TossDesignSystem.body2.copyWith(color: TossDesignSystem.gray300),
-          labelMedium: TossDesignSystem.caption1.copyWith(color: TossDesignSystem.gray300),
-          labelSmall: TossDesignSystem.small.copyWith(color: TossDesignSystem.gray300),
-        ),
+        fontFamily: TypographyUnified.fontFamilyKorean,
+        textTheme: TypographyUnified.materialTextTheme(brightness: Brightness.dark),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: TossDesignSystem.white,
+            foregroundColor: Colors.white,
             backgroundColor: primaryColor,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                  8), // Instagram uses less rounded corners
+              borderRadius: BorderRadius.circular(8),
             ),
-            textStyle: TossDesignSystem.body1.copyWith(fontWeight: FontWeight.w600),
+            textStyle: TypographyUnified.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: TossDesignSystem.gray900,
+          fillColor: DSColors.textPrimaryDark,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: TossDesignSystem.gray700, width: 1),
+            borderSide: const BorderSide(color: Color(0xFF3B352E), width: 1),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: TossDesignSystem.gray700, width: 1),
+            borderSide: const BorderSide(color: Color(0xFF3B352E), width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: TossDesignSystem.tossBlue, width: 2),
+            borderSide: const BorderSide(color: DSColors.accentDark, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: TossDesignSystem.errorRed, width: 1),
+            borderSide: const BorderSide(color: DSColors.error, width: 1),
           ),
-          labelStyle: TossDesignSystem.body3.copyWith(color: TossDesignSystem.gray400),
-          hintStyle: TossDesignSystem.body3.copyWith(color: TossDesignSystem.gray500),
+          labelStyle: TypographyUnified.bodySmall.copyWith(color: DSColors.textDisabledDark),
+          hintStyle: TypographyUnified.bodySmall.copyWith(color: DSColors.textTertiaryDark),
         ),
         extensions: <ThemeExtension<dynamic>>[
           FortuneThemeExtension.dark,

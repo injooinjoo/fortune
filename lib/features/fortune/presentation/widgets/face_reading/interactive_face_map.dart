@@ -86,7 +86,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -101,7 +101,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                 ]
               : [
                   DSColors.surface,
-                  Colors.white,
+                  context.colors.background,
                 ],
         ),
         borderRadius: BorderRadius.circular(24),
@@ -271,7 +271,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                           onTap: widget.onUnlockRequested,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: (isDark ? Colors.black : Colors.white)
+                              color: context.colors.background
                                   .withValues(alpha: 0.7),
                               borderRadius: BorderRadius.circular(16),
                             ),

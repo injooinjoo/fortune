@@ -14,7 +14,7 @@ import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/constants/fortune_card_images.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 채팅용 유명인 궁합 결과 카드
 ///
@@ -129,7 +129,6 @@ class _ChatCelebrityResultCardState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isPremium = ref.watch(isPremiumProvider);
 
     return Container(
@@ -159,7 +158,7 @@ class _ChatCelebrityResultCardState
                 .fadeIn(duration: 500.ms, delay: 200.ms),
 
             // 4. 블러 섹션들 (접히는 형태)
-            _buildBlurredSections(context, isDark)
+            _buildBlurredSections(context)
                 .animate()
                 .fadeIn(duration: 500.ms, delay: 300.ms),
 
@@ -359,7 +358,7 @@ class _ChatCelebrityResultCardState
     );
   }
 
-  Widget _buildBlurredSections(BuildContext context, bool isDark) {
+  Widget _buildBlurredSections(BuildContext context) {
     final colors = context.colors;
 
     final sections = <_SectionData>[
@@ -408,7 +407,7 @@ class _ChatCelebrityResultCardState
           return Container(
             margin: const EdgeInsets.only(bottom: DSSpacing.xs),
             decoration: BoxDecoration(
-              color: isDark ? colors.backgroundSecondary : colors.surface,
+              color: context.isDark ? colors.backgroundSecondary : colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
                 color: colors.textPrimary.withValues(alpha: 0.1),

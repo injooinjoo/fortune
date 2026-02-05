@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/theme/fortune_design_system.dart';
 import '../../../core/design_system/design_system.dart';
 
 /// Miscellaneous widgets for fortune infographic
@@ -16,17 +15,17 @@ class MiscWidgets {
       height: 120,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+        color: isDarkMode ? DSColors.surfaceSecondary : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: isDarkMode ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Center(
         child: Text(
           '액션 체크리스트 준비 중...',
           style: TextStyle(
-            color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            color: isDarkMode ? DSColors.textTertiary : DSColors.textSecondaryDark,
           ),
         ),
       ),
@@ -40,23 +39,16 @@ class MiscWidgets {
   ) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: TossDesignSystem.black.withValues(alpha: 0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +57,7 @@ class MiscWidgets {
                 children: [
                   const Icon(
                     Icons.wb_sunny,
-                    color: TossDesignSystem.warningOrange,
+                    color: DSColors.warning,
                     size: 24,
                   ),
                   const SizedBox(width: 8),
@@ -73,7 +65,7 @@ class MiscWidgets {
                     '날씨 운세',
                     style: context.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                     ),
                   ),
                 ],
@@ -82,7 +74,7 @@ class MiscWidgets {
               Text(
                 weatherSummary?['description'] ?? '오늘의 날씨와 함께하는 운세를 확인해보세요.',
                 style: context.bodySmall.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+                  color: isDark ? DSColors.surface : DSColors.textSecondaryDark,
                   height: 1.5,
                 ),
               ),
@@ -91,13 +83,13 @@ class MiscWidgets {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    color: DSColors.accentDark.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     '온도: ${weatherSummary!['temperature']}°C',
                     style: context.labelMedium.copyWith(
-                      color: TossDesignSystem.tossBlue,
+                      color: DSColors.accentDark,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -116,23 +108,23 @@ class MiscWidgets {
   static Widget buildShareableCard(Map<String, dynamic>? shareCard) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           height: 180,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Center(
             child: Text(
               '공유 카드 준비 중...',
               style: TextStyle(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
               ),
             ),
           ),
@@ -149,16 +141,16 @@ class MiscWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           height: 140,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Column(
@@ -190,14 +182,14 @@ class MiscWidgets {
                         Text(
                           title,
                           style: TextStyle(
-                            color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                            color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
                           subtitle,
                           style: TextStyle(
-                            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                            color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                           ),
                         ),
                       ],
@@ -213,7 +205,7 @@ class MiscWidgets {
                       child: Text(
                         '유사 사주 연예인 준비 중...',
                         style: TextStyle(
-                          color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                          color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                         ),
                       ),
                     )
@@ -224,12 +216,12 @@ class MiscWidgets {
                           child: CircleAvatar(
                             radius: 20,
                             backgroundColor: isDark
-                                ? TossDesignSystem.grayDark300
-                                : TossDesignSystem.gray200,
+                                ? DSColors.border
+                                : DSColors.borderDark,
                             child: Text(
                               (celeb['name'] as String?)?.substring(0, 1) ?? '?',
                               style: TextStyle(
-                                color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                                color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -253,15 +245,15 @@ class MiscWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Column(
@@ -272,14 +264,14 @@ class MiscWidgets {
                   Icon(
                     Icons.cake,
                     size: 20,
-                    color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+                    color: isDark ? DSColors.accent : DSColors.accentDark,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '$userAge세 운세',
                     style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                     ),
                   ),
                   if (ageScore != null) ...[
@@ -287,14 +279,14 @@ class MiscWidgets {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                        color: DSColors.accentDark.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         '$ageScore점',
                         style: context.labelMedium.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: TossDesignSystem.tossBlue,
+                          color: DSColors.accentDark,
                         ),
                       ),
                     ),
@@ -305,7 +297,7 @@ class MiscWidgets {
               Text(
                 ageDescription ?? '나이별 운세 정보를 준비 중입니다.',
                 style: context.bodySmall.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                  color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                   height: 1.4,
                 ),
               ),
@@ -323,15 +315,15 @@ class MiscWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Column(
@@ -341,14 +333,14 @@ class MiscWidgets {
                   Icon(
                     Icons.share,
                     size: 20,
-                    color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+                    color: isDark ? DSColors.accent : DSColors.accentDark,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '운세 공유하기',
                     style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                     ),
                   ),
                 ],
@@ -397,7 +389,7 @@ class MiscWidgets {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+          color: DSColors.accentDark.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -406,13 +398,13 @@ class MiscWidgets {
             Icon(
               icon,
               size: 18,
-              color: TossDesignSystem.tossBlue,
+              color: DSColors.accentDark,
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: context.labelSmall.copyWith(
-                color: TossDesignSystem.tossBlue,
+                color: DSColors.accentDark,
                 fontWeight: FontWeight.w600,
               ),
             ),

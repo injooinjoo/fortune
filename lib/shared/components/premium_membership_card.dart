@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/theme/typography_unified.dart';
-import '../../core/theme/obangseok_colors.dart';
+import '../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../presentation/providers/subscription_provider.dart';
 import '../../domain/entities/token.dart';

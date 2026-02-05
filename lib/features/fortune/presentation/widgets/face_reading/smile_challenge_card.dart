@@ -19,9 +19,6 @@ class SmileChallengeCard extends StatelessWidget {
   /// 챌린지 달성 여부
   final bool isChallengeComplete;
 
-  /// 다크 모드 여부
-  final bool isDark;
-
   /// 챌린지 참여 콜백
   final VoidCallback? onJoinChallenge;
 
@@ -33,13 +30,14 @@ class SmileChallengeCard extends StatelessWidget {
     required this.todaySmileScore,
     required this.weeklySmileScores,
     this.isChallengeComplete = false,
-    this.isDark = false,
     this.onJoinChallenge,
     this.onShare,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
+
     return Container(
       padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
@@ -89,6 +87,8 @@ class SmileChallengeCard extends StatelessWidget {
 
   /// 헤더 빌드
   Widget _buildHeader(BuildContext context) {
+    final isDark = context.isDark;
+
     return Row(
       children: [
         Container(
@@ -164,15 +164,14 @@ class SmileChallengeCard extends StatelessWidget {
 
   /// 오늘의 미소 점수
   Widget _buildTodaySmile(BuildContext context) {
+    final isDark = context.isDark;
     final smileEmoji = _getSmileEmoji(todaySmileScore);
     final smileMessage = _getSmileMessage(todaySmileScore);
 
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark
-            ? DSColors.backgroundDark.withValues(alpha: 0.6)
-            : Colors.white.withValues(alpha: 0.7),
+        color: context.colors.surface.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(DSRadius.md),
       ),
       child: Row(
@@ -249,6 +248,7 @@ class SmileChallengeCard extends StatelessWidget {
 
   /// 주간 미소 트래커
   Widget _buildWeeklyTracker(BuildContext context) {
+    final isDark = context.isDark;
     final weekdays = ['일', '월', '화', '수', '목', '금', '토'];
     final today = DateTime.now().weekday % 7; // 일요일 = 0
 
@@ -295,6 +295,7 @@ class SmileChallengeCard extends StatelessWidget {
     bool isToday = false,
     bool hasScore = false,
   }) {
+    final isDark = context.isDark;
     final color = hasScore ? _getScoreColor(score!) : DSColors.border;
 
     return Column(
@@ -347,6 +348,8 @@ class SmileChallengeCard extends StatelessWidget {
 
   /// 액션 버튼
   Widget _buildActionButton(BuildContext context) {
+    final isDark = context.isDark;
+
     if (isChallengeComplete) {
       return GestureDetector(
         onTap: onShare,

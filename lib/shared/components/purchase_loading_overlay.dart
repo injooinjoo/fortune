@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/theme/obangseok_colors.dart';
+import '../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../core/theme/typography_unified.dart';
 
 /// 결제 진행 중 로딩 오버레이
@@ -35,13 +35,6 @@ class PurchaseLoadingOverlay extends StatelessWidget {
             decoration: BoxDecoration(
               color: colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.lg),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

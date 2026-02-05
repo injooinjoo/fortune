@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../theme/ds_extensions.dart';
 import '../../tokens/ds_fortune_colors.dart';
 import '../../tokens/ds_love_colors.dart';
 import '../../tokens/ds_luck_colors.dart';
@@ -141,7 +142,7 @@ class _SealStampWidgetState extends State<SealStampWidget>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final stampColor = _getColor(isDark);
     final stampSize = widget.customSize ?? _getSize();
 

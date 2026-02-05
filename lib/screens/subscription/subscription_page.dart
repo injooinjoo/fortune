@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/theme/obangseok_colors.dart';
+import '../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../core/theme/typography_unified.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import '../../core/widgets/unified_button.dart';

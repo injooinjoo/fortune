@@ -56,7 +56,7 @@ class HanjiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = _HanjiColors.fromScheme(colorScheme, isDark);
 
     return Container(
@@ -634,7 +634,7 @@ class HanjiSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = _HanjiColors.fromScheme(colorScheme, isDark);
     final textColor = colors.ink;
 

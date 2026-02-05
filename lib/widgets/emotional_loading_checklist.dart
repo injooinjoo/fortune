@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../presentation/providers/navigation_visibility_provider.dart';
-import '../core/theme/fortune_design_system.dart';
-import '../core/theme/typography_unified.dart';
+import '../core/design_system/design_system.dart';
 import '../core/services/fortune_haptic_service.dart';
 
 /// 최적화된 감성적인 로딩 체크리스트 위젯 (픽셀 깨짐 방지)
@@ -160,8 +159,8 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? TossDesignSystem.white : TossDesignSystem.black;
+    final isDark = context.isDark;
+    final textColor = context.colors.textPrimary;
     final subtitleColor = textColor.withValues(alpha: 0.6);
 
     return Container(
@@ -175,7 +174,7 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
                 const Color(0xFF0f1624),
               ]
             : [
-                TossDesignSystem.white,
+                context.colors.background,
                 const Color(0xFFF5F5F5),
               ],
         ),

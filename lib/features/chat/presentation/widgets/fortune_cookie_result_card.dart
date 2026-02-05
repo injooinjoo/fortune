@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../domain/entities/fortune.dart';
 
@@ -45,7 +46,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
 
   // 골드 액센트 색상 (프리미엄 디자인)
   Color get _goldenAccent {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     return isDark ? ObangseokColors.hwangLight : ObangseokColors.hwang;
   }
 
@@ -297,9 +298,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white.withValues(alpha: 0.7),
+        color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.7),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _goldenAccent.withValues(alpha: 0.3),
@@ -362,14 +361,12 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
   }
 
   Widget _buildLuckyElementsGrid(ThemeData theme, bool isDark) {
-    final borderColor = isDark ? Colors.white : Colors.black;
+    final borderColor = context.colors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white.withValues(alpha: 0.5),
+        color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.5),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: borderColor.withValues(alpha: 0.08),
@@ -494,9 +491,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
               Text(
                 label,
                 style: context.labelSmall.copyWith(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.5)
-                      : Colors.black.withValues(alpha: 0.5),
+                  color: context.colors.textPrimary.withValues(alpha: 0.5),
                   fontSize: 10,
                 ),
               ),
@@ -512,7 +507,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
                         color: colorDot,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isDark ? Colors.white24 : Colors.black12,
+                          color: context.colors.textPrimary.withValues(alpha: isDark ? 0.24 : 0.12),
                           width: 0.5,
                         ),
                       ),
@@ -523,9 +518,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
                     child: Text(
                       value,
                       style: context.labelMedium.copyWith(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.87)
-                            : Colors.black.withValues(alpha: 0.87),
+                        color: context.colors.textPrimary.withValues(alpha: 0.87),
                         fontWeight: FontWeight.w600,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -600,7 +593,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
           Text(
             _actionMission,
             style: context.bodySmall.copyWith(
-              color: isDark ? Colors.white70 : Colors.black87,
+              color: context.colors.textPrimary.withValues(alpha: 0.87),
               height: 1.5,
             ),
           ),

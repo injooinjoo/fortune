@@ -8,8 +8,7 @@ import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/providers/user_settings_provider.dart';
 
-import '../../../../core/design_system/tokens/ds_colors.dart';
-import '../../../../core/theme/fortune_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 
@@ -471,16 +470,16 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       barrierColor: DSColors.overlay,
       builder: (context) => DreamDetailSheet(entry: entry));
   }
 
   Color _getLuckColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accentDark;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }
 
@@ -743,9 +742,9 @@ class DreamDetailSheet extends ConsumerWidget {
   }
 
   Color _getLuckColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accentDark;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }

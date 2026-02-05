@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 감사일기 결과 카드 (일기장 스타일)
 ///
@@ -39,7 +40,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -90,7 +91,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // 구분선
-                  _buildDivider(isDark),
+                  _buildDivider(context),
 
                   const SizedBox(height: 16),
 
@@ -245,7 +246,8 @@ class ChatGratitudeResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildDivider(bool isDark) {
+  Widget _buildDivider(BuildContext context) {
+    final isDark = context.isDark;
     return Row(
       children: [
         Expanded(
@@ -268,7 +270,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
             '🍃',
             style: TextStyle(
               fontSize: 12,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
+              color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -324,9 +326,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.white.withValues(alpha: 0.6),
+              color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.6),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: (isDark ? _pinkAccent : _goldAccent).withValues(alpha: 0.2),

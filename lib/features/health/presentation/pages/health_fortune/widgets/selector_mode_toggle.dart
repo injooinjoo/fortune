@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../../../core/theme/fortune_theme.dart';
-import '../../../../../../core/theme/fortune_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 class SelectorModeToggle extends StatelessWidget {
   final bool useGridSelector;
@@ -19,13 +18,14 @@ class SelectorModeToggle extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: TossTheme.backgroundSecondary,
+        color: context.colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           Expanded(
             child: _buildToggleOption(
+              context: context,
               icon: Icons.grid_view_rounded,
               label: '목록 선택',
               isSelected: useGridSelector,
@@ -37,6 +37,7 @@ class SelectorModeToggle extends StatelessWidget {
           ),
           Expanded(
             child: _buildToggleOption(
+              context: context,
               icon: Icons.person_outline_rounded,
               label: '실루엣 선택',
               isSelected: !useGridSelector,
@@ -52,6 +53,7 @@ class SelectorModeToggle extends StatelessWidget {
   }
 
   Widget _buildToggleOption({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required bool isSelected,
@@ -63,17 +65,8 @@ class SelectorModeToggle extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? TossDesignSystem.white : TossDesignSystem.white.withValues(alpha: 0.0),
+          color: isSelected ? context.colors.surface : context.colors.surface.withValues(alpha: 0.0),
           borderRadius: BorderRadius.circular(10),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: TossDesignSystem.black.withValues(alpha: 0.08),
-                    offset: const Offset(0, 2),
-                    blurRadius: 4,
-                  ),
-                ]
-              : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -82,17 +75,17 @@ class SelectorModeToggle extends StatelessWidget {
               icon,
               size: 18,
               color: isSelected
-                  ? TossTheme.primaryBlue
-                  : TossTheme.textGray600,
+                  ? context.colors.accent
+                  : context.colors.textSecondary,
             ),
             const SizedBox(width: 6),
             Text(
               label,
-              style: TossTheme.body3.copyWith(
+              style: context.buttonMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isSelected
-                    ? TossTheme.primaryBlue
-                    : TossTheme.textGray600,
+                    ? context.colors.accent
+                    : context.colors.textSecondary,
               ),
             ),
           ],

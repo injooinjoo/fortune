@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-/// Neon Dark Theme - Modern cyberpunk color system
+/// ChatGPT-inspired minimal color system
 ///
-/// Design Philosophy: High contrast, futuristic, bold
-/// "Pure black meets electric neon"
+/// Design Philosophy: Clean, minimal, content-first
+/// "Pure white/black + subtle accent"
 ///
 /// Key Principles:
-/// - Pure Black Background: Maximum contrast, no warm tones
-/// - Neon Green Accent: Electric, vibrant, attention-grabbing
-/// - Consistent Accent: Same neon green in light/dark modes
+/// - Pure white backgrounds (light mode)
+/// - Pure black backgrounds (dark mode)
+/// - Minimal accent color (purple CTA only)
+/// - High contrast, no warm tints
 ///
 /// Usage:
 /// ```dart
@@ -22,222 +23,222 @@ class DSColors {
   DSColors._();
 
   // ============================================
-  // NEON DARK MODE COLORS (Primary/Default)
+  // DARK MODE COLORS (Primary/Default)
   // ============================================
 
-  /// Primary accent color - Neon Green (#39FF14)
-  static const Color accent = Color(0xFF39FF14);
+  /// Primary accent color - Purple CTA
+  static const Color accent = Color(0xFF7C5CFC);
 
-  /// Accent hover/pressed state - Slightly dimmer
-  static const Color accentHover = Color(0xFF32E012);
+  /// Accent hover/pressed state
+  static const Color accentHover = Color(0xFF6B4AEB);
 
-  /// Lighter accent for backgrounds - Very dark green tint
-  static const Color accentLight = Color(0xFF0D2A0A);
+  /// Lighter accent for backgrounds
+  static const Color accentLight = Color(0xFF1E1A2E);
 
-  /// Secondary accent - Neon Cyan for links/info
-  static const Color accentSecondary = Color(0xFF00D4FF);
+  /// Secondary accent - Soft blue for links/info
+  static const Color accentSecondary = Color(0xFF8FB0FF);
 
   /// Secondary accent hover
-  static const Color accentSecondaryHover = Color(0xFF00B8E0);
+  static const Color accentSecondaryHover = Color(0xFF7AA0FF);
 
-  /// Tertiary accent - Neon Pink
-  static const Color accentTertiary = Color(0xFFFF00FF);
+  /// Tertiary accent - Warm amber for highlights
+  static const Color accentTertiary = Color(0xFFE0A76B);
 
-  /// Page background - Pure Black (#000000)
+  /// Page background - Pure black
   static const Color background = Color(0xFF000000);
 
-  /// Secondary background - Very dark gray
-  static const Color backgroundSecondary = Color(0xFF0A0A0A);
+  /// Secondary background - Near black
+  static const Color backgroundSecondary = Color(0xFF1A1A1A);
 
-  /// Tertiary background - Slightly lighter
-  static const Color backgroundTertiary = Color(0xFF121212);
+  /// Tertiary background - Dark gray
+  static const Color backgroundTertiary = Color(0xFF212121);
 
-  /// Card/modal surface - Dark Grey (#1C1C1C)
-  static const Color surface = Color(0xFF1C1C1C);
+  /// Card/modal surface - Dark surface
+  static const Color surface = Color(0xFF1A1A1A);
 
-  /// Nested surface - Slightly lighter gray
-  static const Color surfaceSecondary = Color(0xFF252525);
+  /// Nested surface - Slightly lighter
+  static const Color surfaceSecondary = Color(0xFF2C2C2E);
 
-  /// Primary text - Pure White (#FFFFFF)
+  /// Primary text - Pure white
   static const Color textPrimary = Color(0xFFFFFFFF);
 
-  /// Secondary text - Light gray
-  static const Color textSecondary = Color(0xFFB0B0B0);
+  /// Secondary text - iOS system gray
+  static const Color textSecondary = Color(0xFF8E8E93);
 
-  /// Tertiary text - Medium gray
-  static const Color textTertiary = Color(0xFF808080);
+  /// Tertiary text - Darker gray
+  static const Color textTertiary = Color(0xFF636366);
 
-  /// Disabled text - Dark gray
-  static const Color textDisabled = Color(0xFF505050);
+  /// Disabled text - Mid gray
+  static const Color textDisabled = Color(0xFF48484A);
 
-  /// User message bubble - Dark gray
-  static const Color userBubble = Color(0xFF2A2A2A);
+  /// User message bubble
+  static const Color userBubble = Color(0xFF2C2C2E);
 
-  /// Subtle border - Dark border
-  static const Color border = Color(0xFF333333);
+  /// Subtle border
+  static const Color border = Color(0xFF2C2C2E);
 
-  /// Focus border (neon accent)
+  /// Focus border
   static const Color borderFocus = accent;
 
   /// Divider line
-  static const Color divider = Color(0xFF222222);
+  static const Color divider = Color(0xFF2C2C2E);
 
-  /// Toggle active state - Neon green
+  /// Toggle active state
   static const Color toggleActive = accent;
 
   /// Toggle inactive state
-  static const Color toggleInactive = Color(0xFF404040);
+  static const Color toggleInactive = Color(0xFF39393D);
 
   /// Toggle thumb
   static const Color toggleThumb = Color(0xFFFFFFFF);
 
-  /// CTA button background - Neon Green
-  static const Color ctaBackground = accent;
+  /// CTA button background - White (dark mode)
+  static const Color ctaBackground = Color(0xFFFFFFFF);
 
-  /// CTA button text - Black (#000000)
+  /// CTA button text - Black (dark mode)
   static const Color ctaForeground = Color(0xFF000000);
 
   /// Secondary button background
-  static const Color secondaryBackground = Color(0xFF2A2A2A);
+  static const Color secondaryBackground = Color(0xFF2C2C2E);
 
   /// Secondary button text
   static const Color secondaryForeground = Color(0xFFFFFFFF);
 
-  /// Success color - Neon Green
-  static const Color success = Color(0xFF39FF14);
+  /// Success color
+  static const Color success = Color(0xFF34C759);
 
   /// Success background
-  static const Color successBackground = Color(0xFF0D2A0A);
+  static const Color successBackground = Color(0xFF0D2818);
 
-  /// Error color - Neon Red
-  static const Color error = Color(0xFFFF3B3B);
+  /// Error color
+  static const Color error = Color(0xFFFF3B30);
 
   /// Error background
-  static const Color errorBackground = Color(0xFF2A0D0D);
+  static const Color errorBackground = Color(0xFF2D0F0D);
 
-  /// Warning color - Neon Yellow
-  static const Color warning = Color(0xFFFFE500);
+  /// Warning color
+  static const Color warning = Color(0xFFFFCC00);
 
   /// Warning background
-  static const Color warningBackground = Color(0xFF2A2A0D);
+  static const Color warningBackground = Color(0xFF2D2600);
 
-  /// Info color - Neon Cyan
-  static const Color info = Color(0xFF00D4FF);
+  /// Info color - Soft blue
+  static const Color info = Color(0xFF007AFF);
 
   /// Info background
-  static const Color infoBackground = Color(0xFF0D2A2A);
+  static const Color infoBackground = Color(0xFF001A33);
 
-  /// Overlay for modals (85% black)
-  static const Color overlay = Color(0xD9000000);
+  /// Overlay for modals (60% black)
+  static const Color overlay = Color(0x99000000);
 
   // ============================================
-  // NEON LIGHT MODE COLORS
+  // LIGHT MODE COLORS
   // ============================================
 
-  /// Primary accent - Same Neon Green (consistent)
-  static const Color accentDark = Color(0xFF39FF14);
+  /// Primary accent light - Purple CTA
+  static const Color accentDark = Color(0xFF7C5CFC);
 
-  /// Accent hover light - Slightly dimmer
-  static const Color accentHoverDark = Color(0xFF32E012);
+  /// Accent hover light
+  static const Color accentHoverDark = Color(0xFF6B4AEB);
 
-  /// Accent light background (for light mode - subtle green tint)
-  static const Color accentLightDark = Color(0xFFE8FFE5);
+  /// Accent light background
+  static const Color accentLightDark = Color(0xFFF0ECFF);
 
-  /// Secondary accent light - Cyan
-  static const Color accentSecondaryDark = Color(0xFF00B8E0);
+  /// Secondary accent light
+  static const Color accentSecondaryDark = Color(0xFF3B63D3);
 
   /// Secondary accent hover light
-  static const Color accentSecondaryHoverDark = Color(0xFF00A0C8);
+  static const Color accentSecondaryHoverDark = Color(0xFF2F55C4);
 
-  /// Tertiary accent light - Pink
-  static const Color accentTertiaryDark = Color(0xFFE000E0);
+  /// Tertiary accent light
+  static const Color accentTertiaryDark = Color(0xFFC7702F);
 
-  /// Page background light - Pure White (#FFFFFF)
+  /// Page background light - Pure white
   static const Color backgroundDark = Color(0xFFFFFFFF);
 
   /// Secondary background light - Light gray
-  static const Color backgroundSecondaryDark = Color(0xFFF5F5F5);
+  static const Color backgroundSecondaryDark = Color(0xFFF7F7F8);
 
   /// Tertiary background light
-  static const Color backgroundTertiaryDark = Color(0xFFEEEEEE);
+  static const Color backgroundTertiaryDark = Color(0xFFF0F0F0);
 
-  /// Surface light - Very light gray
-  static const Color surfaceDark = Color(0xFFF5F5F5);
+  /// Surface light - Pure white
+  static const Color surfaceDark = Color(0xFFFFFFFF);
 
-  /// Surface secondary light
-  static const Color surfaceSecondaryDark = Color(0xFFFFFFFF);
+  /// Surface secondary light - Light gray
+  static const Color surfaceSecondaryDark = Color(0xFFF7F7F8);
 
-  /// Primary text light - Black
+  /// Primary text light - Pure black
   static const Color textPrimaryDark = Color(0xFF000000);
 
-  /// Secondary text light - Dark gray
-  static const Color textSecondaryDark = Color(0xFF606060);
+  /// Secondary text light - iOS system gray
+  static const Color textSecondaryDark = Color(0xFF6E6E73);
 
   /// Tertiary text light
-  static const Color textTertiaryDark = Color(0xFF909090);
+  static const Color textTertiaryDark = Color(0xFF8E8E93);
 
   /// Disabled text light
-  static const Color textDisabledDark = Color(0xFFB0B0B0);
+  static const Color textDisabledDark = Color(0xFFAEAEB2);
 
   /// User message bubble light
-  static const Color userBubbleDark = Color(0xFFE0E0E0);
+  static const Color userBubbleDark = Color(0xFFF7F7F8);
 
   /// Border light
-  static const Color borderDark = Color(0xFFDDDDDD);
+  static const Color borderDark = Color(0xFFE5E5EA);
 
   /// Focus border light
   static const Color borderFocusDark = accentDark;
 
   /// Divider light
-  static const Color dividerDark = Color(0xFFEEEEEE);
+  static const Color dividerDark = Color(0xFFE5E5EA);
 
   /// Toggle active light
   static const Color toggleActiveDark = accentDark;
 
   /// Toggle inactive light
-  static const Color toggleInactiveDark = Color(0xFFD0D0D0);
+  static const Color toggleInactiveDark = Color(0xFFD1D1D6);
 
   /// Toggle thumb light
   static const Color toggleThumbDark = Color(0xFFFFFFFF);
 
-  /// CTA background light - Same neon green
-  static const Color ctaBackgroundDark = accentDark;
+  /// CTA background light - Black
+  static const Color ctaBackgroundDark = Color(0xFF000000);
 
-  /// CTA foreground light - Black text on neon
-  static const Color ctaForegroundDark = Color(0xFF000000);
+  /// CTA foreground light - White
+  static const Color ctaForegroundDark = Color(0xFFFFFFFF);
 
   /// Secondary button background light
-  static const Color secondaryBackgroundDark = Color(0xFFE8E8E8);
+  static const Color secondaryBackgroundDark = Color(0xFFF7F7F8);
 
   /// Secondary button foreground light
-  static const Color secondaryForegroundDark = Color(0xFF1A1A1A);
+  static const Color secondaryForegroundDark = Color(0xFF000000);
 
   /// Success light
-  static const Color successDark = Color(0xFF28CC10);
+  static const Color successDark = Color(0xFF34C759);
 
   /// Success background light
-  static const Color successBackgroundDark = Color(0xFFE5FFE0);
+  static const Color successBackgroundDark = Color(0xFFE8F9ED);
 
   /// Error light
-  static const Color errorDark = Color(0xFFE53535);
+  static const Color errorDark = Color(0xFFFF3B30);
 
   /// Error background light
-  static const Color errorBackgroundDark = Color(0xFFFFE5E5);
+  static const Color errorBackgroundDark = Color(0xFFFFEBEA);
 
   /// Warning light
-  static const Color warningDark = Color(0xFFE5C800);
+  static const Color warningDark = Color(0xFFFFCC00);
 
   /// Warning background light
-  static const Color warningBackgroundDark = Color(0xFFFFFDE5);
+  static const Color warningBackgroundDark = Color(0xFFFFF9E0);
 
   /// Info light
-  static const Color infoDark = Color(0xFF00B8E0);
+  static const Color infoDark = Color(0xFF007AFF);
 
   /// Info background light
-  static const Color infoBackgroundDark = Color(0xFFE5FAFF);
+  static const Color infoBackgroundDark = Color(0xFFE5F0FF);
 
   /// Overlay light
-  static const Color overlayDark = Color(0x80000000);
+  static const Color overlayDark = Color(0x4D000000);
 
   // ============================================
   // THEME-AWARE GETTERS (for use with context)

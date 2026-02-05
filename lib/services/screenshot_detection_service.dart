@@ -10,7 +10,6 @@ import 'package:path_provider/path_provider.dart';
 // import 'package:image_gallery_saver/image_gallery_saver.dart';  // AGP 8.x compatibility issue
 import '../core/utils/logger.dart';
 import '../core/services/resilient_service.dart';
-import '../core/theme/fortune_design_system.dart';
 import '../core/design_system/tokens/ds_colors.dart';
 import 'instagram_share_service.dart';
 import 'kakao_share_service.dart';
@@ -154,7 +153,7 @@ class ScreenshotDetectionService extends ResilientService {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       barrierColor: DSColors.overlay,
       builder: (context) => SocialShareBottomSheet(
         fortuneTitle: fortuneTitle,
@@ -491,7 +490,7 @@ class ScreenshotDetectionService extends ResilientService {
                 result['isSuccess'] == true
                   ? '이미지가 저장되었습니다'
                   : '저장 중 오류가 발생했습니다'),
-              backgroundColor: result['isSuccess'] == true ? TossDesignSystem.gray600 : TossDesignSystem.gray600));
+              backgroundColor: result['isSuccess'] == true ? DSColors.textSecondaryDark : DSColors.textSecondaryDark));
         }
       },
       '갤러리 저장',
@@ -509,7 +508,7 @@ class ScreenshotDetectionService extends ResilientService {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('운세가 클립보드에 복사되었습니다'),
-              backgroundColor: TossDesignSystem.gray600));
+              backgroundColor: DSColors.textSecondaryDark));
         }
       },
       '클립보드 복사: $title',

@@ -128,7 +128,7 @@ class _ChatPetRegistrationFormState
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(
@@ -307,7 +307,7 @@ class _ChatPetRegistrationFormState
   }) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Wrap(
       spacing: DSSpacing.xs,

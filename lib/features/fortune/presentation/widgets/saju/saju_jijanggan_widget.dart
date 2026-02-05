@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/saju_colors.dart';
+import '../../../../../core/design_system/tokens/ds_saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/ji_jang_gan_data.dart';
@@ -31,7 +31,7 @@ class SajuJijangganWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return AppCard(
       padding: const EdgeInsets.all(DSSpacing.md),

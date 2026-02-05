@@ -11,11 +11,8 @@ import '../../../../presentation/providers/celebrity_saju_provider.dart';
 /// - API 비용 없음 (로컬 계산)
 /// - 유사도 50점 이상, 최대 3명 표시
 class CelebrityCard extends ConsumerWidget {
-  final bool isDark;
-
   const CelebrityCard({
     super.key,
-    required this.isDark,
   });
 
   @override
@@ -68,7 +65,6 @@ class CelebrityCard extends ConsumerWidget {
                     description: description,
                     imageUrl: celeb.characterImageUrl,
                     compatibility: similarity,
-                    isDark: isDark,
                   ),
                 );
               }).toList(),
@@ -111,14 +107,12 @@ class _CelebrityCardItem extends StatelessWidget {
   final String description;
   final String? imageUrl;
   final int compatibility;
-  final bool isDark;
 
   const _CelebrityCardItem({
     required this.name,
     required this.description,
     this.imageUrl,
     required this.compatibility,
-    required this.isDark,
   });
 
   /// 전통 오방색 기반 궁합 색상 - 변경 금지
@@ -187,13 +181,10 @@ class _CelebrityCardItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+          color: context.colors.border,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [

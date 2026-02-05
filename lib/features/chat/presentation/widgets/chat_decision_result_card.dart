@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 결정 분석 결과 카드
 ///
@@ -39,7 +39,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -72,7 +72,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
         child: Stack(
           children: [
             // 배경 장식
-            ..._buildBackgroundDecorations(isDark),
+            ..._buildBackgroundDecorations(),
 
             // 메인 콘텐츠
             Padding(
@@ -81,7 +81,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 헤더
-                  _buildHeader(context, isDark)
+                  _buildHeader(context)
                     .animate()
                     .fadeIn(duration: 500.ms)
                     .slideY(begin: -0.1, end: 0),
@@ -89,12 +89,12 @@ class ChatDecisionResultCard extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // 구분선
-                  _buildDivider(isDark),
+                  _buildDivider(context),
 
                   const SizedBox(height: 16),
 
                   // 질문
-                  _buildQuestionSection(context, isDark)
+                  _buildQuestionSection(context)
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 200.ms),
 
@@ -106,7 +106,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
                     final option = entry.value;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: _buildOptionCard(context, index + 1, option, isDark)
+                      child: _buildOptionCard(context, index + 1, option)
                         .animate()
                         .fadeIn(duration: 400.ms, delay: Duration(milliseconds: 400 + (index * 200)))
                         .slideX(begin: -0.05, end: 0),
@@ -116,7 +116,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
                   const SizedBox(height: 8),
 
                   // AI 추천
-                  _buildRecommendation(context, isDark)
+                  _buildRecommendation(context)
                     .animate()
                     .fadeIn(duration: 500.ms, delay: 800.ms),
 
@@ -130,7 +130,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
     );
   }
 
-  List<Widget> _buildBackgroundDecorations(bool isDark) {
+  List<Widget> _buildBackgroundDecorations() {
     final decorations = <Widget>[];
 
     // 우측 상단 저울 장식
@@ -168,7 +168,8 @@ class ChatDecisionResultCard extends ConsumerWidget {
     return decorations;
   }
 
-  Widget _buildHeader(BuildContext context, bool isDark) {
+  Widget _buildHeader(BuildContext context) {
+    final isDark = context.isDark;
     final formattedDate = DateFormat('M월 d일 HH:mm').format(date);
     final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
@@ -234,7 +235,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildDivider(bool isDark) {
+  Widget _buildDivider(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -257,7 +258,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
             '🔍',
             style: TextStyle(
               fontSize: 12,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
+              color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -279,15 +280,14 @@ class ChatDecisionResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuestionSection(BuildContext context, bool isDark) {
+  Widget _buildQuestionSection(BuildContext context) {
+    final isDark = context.isDark;
     final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white.withValues(alpha: 0.6),
+        color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.6),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _purpleAccent.withValues(alpha: 0.2),
@@ -326,7 +326,8 @@ class ChatDecisionResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildOptionCard(BuildContext context, int index, Map<String, dynamic> option, bool isDark) {
+  Widget _buildOptionCard(BuildContext context, int index, Map<String, dynamic> option) {
+    final isDark = context.isDark;
     final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
     final optionName = option['option'] ?? '선택지 $index';
     final pros = (option['pros'] as List?)?.cast<String>() ?? [];
@@ -441,7 +442,8 @@ class ChatDecisionResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecommendation(BuildContext context, bool isDark) {
+  Widget _buildRecommendation(BuildContext context) {
+    final isDark = context.isDark;
     final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Container(

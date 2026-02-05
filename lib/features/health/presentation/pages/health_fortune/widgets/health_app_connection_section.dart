@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/obangseok_colors.dart';
+import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../../../core/widgets/unified_button.dart';
 import '../../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../../services/health_data_service.dart';
@@ -11,7 +12,6 @@ const Color _healthAccent = Color(0xFF38A169); // 고유 색상 - Health 앱 연
 const Color _healthAccentLight = Color(0xFF68D391); // 고유 색상 - Health 앱 연동 액센트 라이트
 
 class HealthAppConnectionSection extends StatelessWidget {
-  final bool isDark;
   final bool isPremium;
   final bool isLoadingHealthData;
   final HealthSummary? healthSummary;
@@ -20,7 +20,6 @@ class HealthAppConnectionSection extends StatelessWidget {
 
   const HealthAppConnectionSection({
     super.key,
-    required this.isDark,
     required this.isPremium,
     required this.isLoadingHealthData,
     required this.healthSummary,
@@ -48,14 +47,14 @@ class HealthAppConnectionSection extends StatelessWidget {
             : null,
         color: isPremium
             ? null
-            : (isDark
+            : (context.isDark
                 ? ObangseokColors.heukLight.withValues(alpha: 0.5)
                 : ObangseokColors.misaekDark),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isPremium
               ? _healthAccent.withValues(alpha: 0.3)
-              : (isDark
+              : (context.isDark
                   ? ObangseokColors.heukMuted.withValues(alpha: 0.5)
                   : ObangseokColors.baekMuted),
         ),
@@ -70,7 +69,7 @@ class HealthAppConnectionSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isPremium
                       ? _healthAccent.withValues(alpha: 0.15)
-                      : (isDark
+                      : (context.isDark
                           ? ObangseokColors.heukLight
                           : ObangseokColors.baek),
                   borderRadius: BorderRadius.circular(10),
@@ -128,7 +127,7 @@ class HealthAppConnectionSection extends StatelessWidget {
                         fontFamily: 'Pretendard',
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
-                        color: isDark
+                        color: context.isDark
                             ? ObangseokColors.baekMuted
                             : ObangseokColors.meokFaded,
                       ),
@@ -145,7 +144,6 @@ class HealthAppConnectionSection extends StatelessWidget {
             if (healthSummary != null) ...[
               // 연결된 건강 데이터 표시
               ConnectedHealthDataSummary(
-                isDark: isDark,
                 healthSummary: healthSummary!,
                 onRefresh: onRefresh,
               ),
@@ -176,7 +174,7 @@ class HealthAppConnectionSection extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: isDark
+                color: context.isDark
                     ? ObangseokColors.heukLight.withValues(alpha: 0.7)
                     : ObangseokColors.baek.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(8),
@@ -212,13 +210,11 @@ class HealthAppConnectionSection extends StatelessWidget {
 }
 
 class ConnectedHealthDataSummary extends StatelessWidget {
-  final bool isDark;
   final HealthSummary healthSummary;
   final VoidCallback onRefresh;
 
   const ConnectedHealthDataSummary({
     super.key,
-    required this.isDark,
     required this.healthSummary,
     required this.onRefresh,
   });
@@ -228,7 +224,7 @@ class ConnectedHealthDataSummary extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark
+        color: context.isDark
             ? ObangseokColors.heukLight
             : ObangseokColors.baek,
         borderRadius: BorderRadius.circular(12),
@@ -273,22 +269,18 @@ class ConnectedHealthDataSummary extends StatelessWidget {
               if (healthSummary.todaySteps != null)
                 HealthDataChip(
                   text: '👣 ${_formatNumber(healthSummary.todaySteps!)}보',
-                  isDark: isDark,
                 ),
               if (healthSummary.averageSleepHours != null)
                 HealthDataChip(
                   text: '😴 ${healthSummary.averageSleepHours!.toStringAsFixed(1)}시간',
-                  isDark: isDark,
                 ),
               if (healthSummary.averageHeartRate != null)
                 HealthDataChip(
                   text: '❤️ ${healthSummary.averageHeartRate}bpm',
-                  isDark: isDark,
                 ),
               if (healthSummary.weightKg != null)
                 HealthDataChip(
                   text: '⚖️ ${healthSummary.weightKg!.toStringAsFixed(1)}kg',
-                  isDark: isDark,
                 ),
             ],
           ),
@@ -299,7 +291,7 @@ class ConnectedHealthDataSummary extends StatelessWidget {
               fontFamily: 'Pretendard',
               fontSize: 11,
               fontWeight: FontWeight.w400,
-              color: isDark
+              color: context.isDark
                   ? ObangseokColors.baekMuted
                   : ObangseokColors.meokFaded,
             ),
@@ -319,12 +311,10 @@ class ConnectedHealthDataSummary extends StatelessWidget {
 
 class HealthDataChip extends StatelessWidget {
   final String text;
-  final bool isDark;
 
   const HealthDataChip({
     super.key,
     required this.text,
-    required this.isDark,
   });
 
   @override
@@ -332,7 +322,7 @@ class HealthDataChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isDark
+        color: context.isDark
             ? ObangseokColors.heukMuted.withValues(alpha: 0.5)
             : ObangseokColors.misaekDark,
         borderRadius: BorderRadius.circular(20),

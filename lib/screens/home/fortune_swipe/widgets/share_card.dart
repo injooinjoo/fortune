@@ -14,7 +14,6 @@ import '../../../../core/services/fortune_haptic_service.dart';
 class ShareCard extends ConsumerStatefulWidget {
   final int score;
   final String message;
-  final bool isDark;
 
   // 풀 버전 데이터
   final Map<String, int>? categoryScores;
@@ -27,7 +26,6 @@ class ShareCard extends ConsumerStatefulWidget {
     super.key,
     required this.score,
     required this.message,
-    required this.isDark,
     this.categoryScores,
     this.luckyItems,
     this.fiveElements,
@@ -115,7 +113,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
                 children: [
                   Text(
                     '오늘의 인사이트 공유하기',
-                    style: context.calligraphyTitle.copyWith(
+                    style: context.heading3.copyWith(
                       color: context.colors.textPrimary,
                     ),
                   ),

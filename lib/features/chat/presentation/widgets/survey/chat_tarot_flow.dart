@@ -323,13 +323,6 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                           color: colors.surface,
                           width: 2,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colors.textPrimary.withValues(alpha: 0.2),
-                            blurRadius: 6,
-                            offset: const Offset(1, 2),
-                          ),
-                        ],
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
@@ -937,13 +930,6 @@ class _SpreadCard extends StatelessWidget {
                               color: colors.surface,
                               width: 1,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colors.textPrimary.withValues(alpha: 0.1),
-                                blurRadius: 2,
-                                offset: const Offset(1, 1),
-                              ),
-                            ],
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(2),

@@ -8,7 +8,7 @@ import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import 'fortune_card.dart';
@@ -44,7 +44,7 @@ class FortuneResultCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),

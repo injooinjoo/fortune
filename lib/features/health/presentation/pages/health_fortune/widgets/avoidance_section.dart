@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/fortune_theme.dart';
-import '../../../../../../core/theme/fortune_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 class AvoidanceSection extends StatelessWidget {
   final List<String> avoidanceList;
@@ -16,16 +15,8 @@ class AvoidanceSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
-            offset: const Offset(0, 2),
-            blurRadius: 16,
-            spreadRadius: 0,
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,14 +25,14 @@ class AvoidanceSection extends StatelessWidget {
             children: [
               const Icon(
                 Icons.warning_rounded,
-                color: TossTheme.warning,
+                color: DSColors.warning,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 '오늘 피해야 할 것들',
-                style: TossTheme.heading3.copyWith(
-                  color: TossTheme.textBlack,
+                style: context.heading3.copyWith(
+                  color: context.colors.textPrimary,
                 ),
               ),
             ],
@@ -55,16 +46,16 @@ class AvoidanceSection extends StatelessWidget {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: TossTheme.warning.withValues(alpha: 0.1),
+                  color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: TossTheme.warning.withValues(alpha: 0.3),
+                    color: DSColors.warning.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
                   item,
-                  style: TossTheme.caption.copyWith(
-                    color: TossTheme.warning,
+                  style: context.bodySmall.copyWith(
+                    color: DSColors.warning,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

@@ -9,7 +9,7 @@
 library;
 
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/saju_colors.dart';
+import '../../../../../core/design_system/tokens/ds_saju_colors.dart';
 
 /// 순(旬) - 60갑자의 6개 구간
 enum Xun {

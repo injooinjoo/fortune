@@ -104,7 +104,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
   @override
   Widget build(BuildContext context) {
     debugPrint('🟠 TarotQuestionSelector build - selectedQuestion: ${widget.selectedQuestion}');
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = context.colors;
     final typography = context.typography;
     final hasSelection = widget.selectedQuestion != null ||
@@ -270,7 +270,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
     final typography = context.typography;
 
     return Material(
-      color: Colors.white.withValues(alpha: 0.0),
+      color: Colors.transparent,
       borderRadius: BorderRadius.circular(DSRadius.md),
       child: Ink(
         decoration: BoxDecoration(

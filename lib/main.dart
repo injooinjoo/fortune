@@ -12,7 +12,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/config/environment.dart';
 import 'core/utils/logger.dart';
 import 'routes/route_config.dart';
-import 'core/theme/fortune_design_system.dart';
+import 'core/design_system/theme/ds_theme.dart';
 // // import 'presentation/providers/app_providers.dart'; // Has syntax errors
 import 'presentation/providers/theme_provider.dart';
 import 'core/theme/font_size_system.dart';
@@ -288,8 +288,8 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'ZPZG',
-      theme: FortuneDesignSystem.lightTheme(fontScale: userSettings.fontScale),
-      darkTheme: FortuneDesignSystem.darkTheme(fontScale: userSettings.fontScale),
+      theme: DSTheme.light(fontScale: userSettings.fontScale),
+      darkTheme: DSTheme.dark(fontScale: userSettings.fontScale),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       routerConfig: router,

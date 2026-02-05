@@ -6,7 +6,7 @@ import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/widgets/smart_image.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 채팅용 이사운 결과 카드
 ///
@@ -52,7 +52,7 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // additionalInfo에서 이사운 데이터 추출
     final data = widget.fortune.additionalInfo ?? {};
@@ -69,13 +69,6 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(

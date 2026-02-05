@@ -67,7 +67,6 @@ class _ChatInvestmentTickerSelectorState
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final tickerState = ref.watch(tickerProvider);
 
     return Container(
@@ -84,7 +83,7 @@ class _ChatInvestmentTickerSelectorState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 검색 필드
-          _buildSearchField(colors, typography, isDark),
+          _buildSearchField(colors, typography),
           const SizedBox(height: DSSpacing.md),
 
           // 로딩 상태
@@ -97,7 +96,7 @@ class _ChatInvestmentTickerSelectorState
               _buildSectionHeader('인기 종목', colors, typography),
               const SizedBox(height: DSSpacing.sm),
               _buildPopularTickers(
-                  tickerState.popularTickers, colors, typography, isDark),
+                  tickerState.popularTickers, colors, typography),
               const SizedBox(height: DSSpacing.md),
             ],
 
@@ -113,7 +112,6 @@ class _ChatInvestmentTickerSelectorState
                 tickerState.tickers.take(8).toList(),
                 colors,
                 typography,
-                isDark,
               ),
             ] else if (_searchQuery.isNotEmpty)
               _buildEmptyState(colors, typography),
@@ -126,8 +124,8 @@ class _ChatInvestmentTickerSelectorState
   Widget _buildSearchField(
     DSColorScheme colors,
     DSTypographyScheme typography,
-    bool isDark,
   ) {
+    final isDark = context.isDark;
     return Container(
       decoration: BoxDecoration(
         color: isDark ? colors.backgroundSecondary : colors.surface,
@@ -184,7 +182,6 @@ class _ChatInvestmentTickerSelectorState
     List<InvestmentTicker> tickers,
     DSColorScheme colors,
     DSTypographyScheme typography,
-    bool isDark,
   ) {
     return Wrap(
       spacing: DSSpacing.xs,
@@ -194,7 +191,6 @@ class _ChatInvestmentTickerSelectorState
           ticker: ticker,
           colors: colors,
           typography: typography,
-          isDark: isDark,
           onTap: () {
             HapticFeedback.lightImpact();
             widget.onTickerSelected(ticker);
@@ -208,7 +204,6 @@ class _ChatInvestmentTickerSelectorState
     List<InvestmentTicker> tickers,
     DSColorScheme colors,
     DSTypographyScheme typography,
-    bool isDark,
   ) {
     return Column(
       children: tickers.map((ticker) {
@@ -216,7 +211,6 @@ class _ChatInvestmentTickerSelectorState
           ticker: ticker,
           colors: colors,
           typography: typography,
-          isDark: isDark,
           onTap: () {
             HapticFeedback.lightImpact();
             widget.onTickerSelected(ticker);
@@ -289,19 +283,18 @@ class _TickerChip extends StatelessWidget {
   final InvestmentTicker ticker;
   final DSColorScheme colors;
   final DSTypographyScheme typography;
-  final bool isDark;
   final VoidCallback onTap;
 
   const _TickerChip({
     required this.ticker,
     required this.colors,
     required this.typography,
-    required this.isDark,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -349,14 +342,12 @@ class _TickerListItem extends StatelessWidget {
   final InvestmentTicker ticker;
   final DSColorScheme colors;
   final DSTypographyScheme typography;
-  final bool isDark;
   final VoidCallback onTap;
 
   const _TickerListItem({
     required this.ticker,
     required this.colors,
     required this.typography,
-    required this.isDark,
     required this.onTap,
   });
 

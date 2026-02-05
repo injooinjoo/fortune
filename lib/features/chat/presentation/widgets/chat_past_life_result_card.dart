@@ -4,7 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/simple_blur_overlay.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -148,7 +148,6 @@ class _ChatPastLifeResultCardState
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isPremium = ref.watch(isPremiumProvider);
 
     return Container(
@@ -158,18 +157,11 @@ class _ChatPastLifeResultCardState
         horizontal: DSSpacing.md,
       ),
       decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
+        color: context.isDark ? colors.backgroundSecondary : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -190,13 +182,13 @@ class _ChatPastLifeResultCardState
               .fadeIn(duration: 500.ms, delay: 200.ms),
 
           // 4. 전생 스토리 (블러)
-          _buildStorySection(context, isDark)
+          _buildStorySection(context)
               .animate()
               .fadeIn(duration: 500.ms, delay: 300.ms),
 
           // 5. 현생 조언 (블러)
           if (widget.result.advice.isNotEmpty)
-            _buildAdviceSection(context, isDark)
+            _buildAdviceSection(context)
                 .animate()
                 .fadeIn(duration: 500.ms, delay: 400.ms),
 
@@ -375,7 +367,7 @@ class _ChatPastLifeResultCardState
     );
   }
 
-  Widget _buildStorySection(BuildContext context, bool isDark) {
+  Widget _buildStorySection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
     final isBlurredSection = _blurredSections.contains('story');
@@ -383,7 +375,7 @@ class _ChatPastLifeResultCardState
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
+        color: context.isDark ? colors.backgroundSecondary : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
@@ -471,7 +463,7 @@ class _ChatPastLifeResultCardState
     );
   }
 
-  Widget _buildAdviceSection(BuildContext context, bool isDark) {
+  Widget _buildAdviceSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
     final isBlurredSection = _blurredSections.contains('advice');
@@ -479,7 +471,7 @@ class _ChatPastLifeResultCardState
     return Container(
       margin: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
+        color: context.isDark ? colors.backgroundSecondary : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: ObangseokColors.hwangMuted.withValues(alpha: 0.2),

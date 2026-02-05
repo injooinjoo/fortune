@@ -4,7 +4,7 @@ import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../../core/widgets/simple_blur_overlay.dart';
-import '../../../../../core/theme/obangseok_colors.dart';
+import '../../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import 'tarot_card_detail_modal.dart';
 
 class TarotMultiCardResult extends ConsumerStatefulWidget {
@@ -79,7 +79,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return AnimatedBuilder(
       animation: _animationController,

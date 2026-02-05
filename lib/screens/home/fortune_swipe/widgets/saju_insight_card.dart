@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/utils/hanja_utils.dart';
-import '../../../../core/theme/saju_colors.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_saju_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 🔮 사주 인사이트 카드
 class SajuInsightCard extends StatelessWidget {
   final Map<String, String?> sajuData;
-  final bool isDark;
 
   const SajuInsightCard({
     super.key,
     required this.sajuData,
-    required this.isDark,
   });
 
   /// 사주 민화 이미지 목록 (4개)
@@ -42,14 +40,14 @@ class SajuInsightCard extends StatelessWidget {
         Text(
           '사주 인사이트',
           style: context.heading3.copyWith(
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '당신의 사주가 말하는 오늘',
           style: context.labelLarge.copyWith(
-            color: isDark ? Colors.white60 : Colors.black54,
+            color: context.colors.textSecondary,
           ),
         ),
 
@@ -62,7 +60,7 @@ class SajuInsightCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: isDark ? DSColors.surface : DSFortuneColors.hanjiCream,
+            color: context.isDark ? DSColors.surface : DSFortuneColors.hanjiCream,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -73,8 +71,8 @@ class SajuInsightCard extends StatelessWidget {
                 return Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: isDark
-                        ? [const Color(0xFF2C2C2E), DSColors.surface] // 고유 색상(dark gradient start)
+                      colors: context.isDark
+                        ? [DSColors.surfaceSecondary, DSColors.surface] // 고유 색상(dark gradient start)
                         : [DSFortuneColors.hanjiCream, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -92,7 +90,7 @@ class SajuInsightCard extends StatelessWidget {
                         Text(
                           minhwaInfo['label']!,
                           style: context.labelSmall.copyWith(
-                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                            color: context.colors.textPrimary.withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -110,8 +108,8 @@ class SajuInsightCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                isDark ? ObangseokColors.cheongMuted : ObangseokColors.cheong,
-                isDark ? ObangseokColors.cheongDark : ObangseokColors.cheongMuted,
+                context.isDark ? ObangseokColors.cheongMuted : ObangseokColors.cheong,
+                context.isDark ? ObangseokColors.cheongDark : ObangseokColors.cheongMuted,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -123,10 +121,10 @@ class SajuInsightCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _SajuPillar(hanjaLabel: '時柱', koreanLabel: '시주', value: sajuData['hour_pillar'] ?? '○○', isDark: isDark),
-                  _SajuPillar(hanjaLabel: '日柱', koreanLabel: '일주', value: sajuData['day_pillar'] ?? '○○', isDark: isDark),
-                  _SajuPillar(hanjaLabel: '月柱', koreanLabel: '월주', value: sajuData['month_pillar'] ?? '○○', isDark: isDark),
-                  _SajuPillar(hanjaLabel: '年柱', koreanLabel: '년주', value: sajuData['year_pillar'] ?? '○○', isDark: isDark),
+                  _SajuPillar(hanjaLabel: '時柱', koreanLabel: '시주', value: sajuData['hour_pillar'] ?? '○○'),
+                  _SajuPillar(hanjaLabel: '日柱', koreanLabel: '일주', value: sajuData['day_pillar'] ?? '○○'),
+                  _SajuPillar(hanjaLabel: '月柱', koreanLabel: '월주', value: sajuData['month_pillar'] ?? '○○'),
+                  _SajuPillar(hanjaLabel: '年柱', koreanLabel: '년주', value: sajuData['year_pillar'] ?? '○○'),
                 ],
               ),
               const SizedBox(height: 16),
@@ -158,13 +156,11 @@ class _SajuPillar extends StatelessWidget {
   final String hanjaLabel;   // 時柱, 日柱, 月柱, 年柱
   final String koreanLabel;  // 시주, 일주, 월주, 년주
   final String value;        // 갑자, 을축 등
-  final bool isDark;
 
   const _SajuPillar({
     required this.hanjaLabel,
     required this.koreanLabel,
     required this.value,
-    required this.isDark,
   });
 
   @override
@@ -176,7 +172,7 @@ class _SajuPillar extends StatelessWidget {
     // 천간 추출하여 오행 색상 결정
     final stem = value.isNotEmpty ? value[0] : '';
     final element = HanjaUtils.getStemElement(stem) ?? '';
-    final elementColor = SajuColors.getStemColor(stem, isDark: isDark);
+    final elementColor = SajuColors.getStemColor(stem, isDark: context.isDark);
 
     return Column(
       children: [

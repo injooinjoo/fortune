@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../constants/fortune_card_images.dart';
-import '../theme/typography_unified.dart';
+import '../design_system/design_system.dart';
 
 /// 프리미엄 운세 결과 히어로 섹션
 /// SliverAppBar를 사용하여 스크롤 시 축소되는 효과를 제공하며,
@@ -29,15 +29,13 @@ class FortuneHeroSection extends StatelessWidget {
     final heroImage = FortuneCardImages.getHeroImage(fortuneType, score);
     final mascotImage = FortuneCardImages.getMascotImage(fortuneType, score);
     final scoreColor = _getScoreColor(score);
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return SliverAppBar(
       expandedHeight: 220,
       pinned: true,
       stretch: true,
-      backgroundColor:
-          isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF5F0E6),
+      backgroundColor: context.colors.backgroundSecondary,
       leading: IconButton(
         icon: Container(
           padding: const EdgeInsets.all(8),

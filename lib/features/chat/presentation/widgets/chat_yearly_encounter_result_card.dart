@@ -140,13 +140,6 @@ class _ChatYearlyEncounterResultCardState
           colors: [_beigeLight, _beigeDark],
         ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: DSColors.background.withValues(alpha: 0.1),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(

@@ -78,7 +78,7 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       width: double.infinity,
@@ -138,18 +138,11 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
       decoration: BoxDecoration(
         color: isDark
             ? colors.surface.withValues(alpha: 0.8)
-            : Colors.white,
+            : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.accentSecondary.withValues(alpha: 0.2),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,7 +339,7 @@ class _ImageOptionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,

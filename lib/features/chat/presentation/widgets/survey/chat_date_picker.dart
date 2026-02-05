@@ -43,7 +43,7 @@ class _ChatDatePickerState extends State<ChatDatePicker> {
       firstDate: widget.firstDate ?? DateTime(now.year - 1),
       lastDate: widget.lastDate ?? DateTime(now.year + 1),
       builder: (context, child) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: isDark
@@ -178,7 +178,7 @@ class _QuickDateChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,
@@ -248,7 +248,7 @@ class _DatePickerChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,

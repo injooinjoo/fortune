@@ -5,7 +5,6 @@ import '../../presentation/providers/providers.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import 'ads/interstitial_ad_helper.dart';
 import '../../core/utils/logger.dart';
-import '../../core/theme/fortune_design_system.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/widgets/date_picker/numeric_date_input.dart';
 
@@ -29,7 +28,7 @@ class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   }) {
     return showModalBottomSheet(
       context: context,
-      backgroundColor: TossDesignSystem.black.withValues(alpha: 0.0),
+      backgroundColor: Colors.black.withValues(alpha: 0.0),
       barrierColor: DSColors.overlay,
       isScrollControlled: true,
       isDismissible: true,
@@ -109,9 +108,9 @@ class _FortuneExplanationBottomSheetState
         return Container(
           height: MediaQuery.of(context).size.height * 0.9,
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark100
-                : TossDesignSystem.white,
+            color: context.isDark
+                ? DSColors.surface
+                : DSColors.surfaceDark,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -154,9 +153,9 @@ class _FortuneExplanationBottomSheetState
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark300
-            : TossDesignSystem.gray300,
+        color: context.isDark
+            ? DSColors.border
+            : DSColors.borderDark,
         borderRadius: BorderRadius.circular(2),
       ),
     );
@@ -200,9 +199,9 @@ class _FortuneExplanationBottomSheetState
                     Text(
                       _getFortuneDescription(widget.fortuneType),
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark600
-                            : TossDesignSystem.gray600,
+                        color: context.isDark
+                            ? DSColors.textTertiary
+                            : DSColors.textSecondaryDark,
                       ),
                     ),
                   ],
@@ -407,26 +406,26 @@ class _FortuneExplanationBottomSheetState
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).primaryColor
-              : (Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark100
-                  : TossDesignSystem.gray100),
+              : (context.isDark
+                  ? DSColors.surface
+                  : DSColors.backgroundSecondaryDark),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
                 ? Theme.of(context).primaryColor
-                : (Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark300
-                    : TossDesignSystem.gray300),
+                : (context.isDark
+                    ? DSColors.border
+                    : DSColors.borderDark),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
             color: isSelected
-                ? TossDesignSystem.white
-                : (Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark900
-                    : TossDesignSystem.black),
+                ? Colors.white
+                : (context.isDark
+                    ? DSColors.textPrimary
+                    : DSColors.textPrimaryDark),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
@@ -448,24 +447,24 @@ class _FortuneExplanationBottomSheetState
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark50.withValues(alpha: 0.5)
-                : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+            color: context.isDark
+                ? DSColors.background.withValues(alpha: 0.5)
+                : DSColors.accentDark.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark200
-                  : TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+              color: context.isDark
+                  ? DSColors.surfaceSecondary
+                  : DSColors.accentDark.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
             children: [
-              _buildScoreRow('90-100점', '최고운', TossDesignSystem.errorRed),
-              _buildScoreRow('80-89점', '대길', TossDesignSystem.warningOrange),
-              _buildScoreRow('70-79점', '길', TossDesignSystem.warningYellow),
-              _buildScoreRow('60-69점', '평', TossDesignSystem.successGreen),
-              _buildScoreRow('50-59점', '하', TossDesignSystem.tossBlue),
-              _buildScoreRow('~49점', '흉', TossDesignSystem.gray500),
+              _buildScoreRow('90-100점', '최고운', DSColors.error),
+              _buildScoreRow('80-89점', '대길', DSColors.warning),
+              _buildScoreRow('70-79점', '길', DSColors.warning),
+              _buildScoreRow('60-69점', '평', DSColors.success),
+              _buildScoreRow('50-59점', '하', DSColors.accentDark),
+              _buildScoreRow('~49점', '흉', DSColors.textTertiaryDark),
             ],
           ),
         ),
@@ -513,14 +512,14 @@ class _FortuneExplanationBottomSheetState
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: Theme.of(context).brightness == Brightness.dark
+              colors: context.isDark
                   ? [
-                      TossDesignSystem.grayDark100.withValues(alpha: 0.8),
-                      TossDesignSystem.grayDark50.withValues(alpha: 0.8),
+                      DSColors.surface.withValues(alpha: 0.8),
+                      DSColors.background.withValues(alpha: 0.8),
                     ]
                   : [
-                      TossDesignSystem.purple.withValues(alpha: 0.1),
-                      TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                      DSColors.accentTertiary.withValues(alpha: 0.1),
+                      DSColors.accentDark.withValues(alpha: 0.1),
                     ],
             ),
             borderRadius: BorderRadius.circular(12),
@@ -532,18 +531,18 @@ class _FortuneExplanationBottomSheetState
                 children: [
                   Icon(
                     Icons.auto_awesome,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.purple.withValues(alpha: 0.7)
-                        : TossDesignSystem.purple,
+                    color: context.isDark
+                        ? DSColors.accentTertiary.withValues(alpha: 0.7)
+                        : DSColors.accentTertiary,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '신령이 점지하는 개인 맞춤 운세',
                     style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.purple.withValues(alpha: 0.7)
-                          : TossDesignSystem.purple,
+                      color: context.isDark
+                          ? DSColors.accentTertiary.withValues(alpha: 0.7)
+                          : DSColors.accentTertiary,
                     ),
                   ),
                 ],
@@ -567,14 +566,14 @@ class _FortuneExplanationBottomSheetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
+        color: context.isDark
+            ? DSColors.surface
+            : DSColors.surfaceDark,
         boxShadow: [
           BoxShadow(
-            color: (Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark900
-                    : TossDesignSystem.black)
+            color: (context.isDark
+                    ? DSColors.textPrimary
+                    : DSColors.textPrimaryDark)
                 .withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
@@ -621,7 +620,7 @@ class _FortuneExplanationBottomSheetState
                 : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: theme.primaryColor,
-              foregroundColor: TossDesignSystem.white,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
 import 'ads/interstitial_ad_helper.dart';
-import '../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/services/personality_dna_service.dart';
 import '../../core/models/personality_dna_model.dart';
 import '../../presentation/providers/providers.dart';
-import '../../core/theme/typography_unified.dart';
+
 import '../../features/fortune/presentation/widgets/personality_dna/personality_dna_result_page.dart';
 import '../providers/subscription_provider.dart';
 
@@ -67,9 +67,9 @@ class _PersonalityDNABottomSheetState
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
+        color: context.isDark
+            ? DSColors.surface
+            : DSColors.surfaceDark,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
@@ -80,9 +80,9 @@ class _PersonalityDNABottomSheetState
             height: 4,
             margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark300
-                  : TossDesignSystem.gray200,
+              color: context.isDark
+                  ? DSColors.border
+                  : DSColors.borderDark,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -100,9 +100,9 @@ class _PersonalityDNABottomSheetState
                         _showDetailedView ? '성격 탐구 정보 입력' : '나의 성격 탐구',
                         style: context.displaySmall.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark900
-                              : TossDesignSystem.gray900,
+                          color: context.isDark
+                              ? DSColors.textPrimary
+                              : DSColors.textPrimaryDark,
                           height: 1.2,
                         ),
                       ),
@@ -113,9 +113,9 @@ class _PersonalityDNABottomSheetState
                             : '현재 설정을 확인하고 DNA 분석을 시작하세요',
                         style: context.labelMedium.copyWith(
                           fontWeight: FontWeight.w400,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark400
-                              : TossDesignSystem.gray600,
+                          color: context.isDark
+                              ? DSColors.toggleInactive
+                              : DSColors.textSecondaryDark,
                           height: 1.4,
                         ),
                       ),
@@ -125,21 +125,20 @@ class _PersonalityDNABottomSheetState
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
                   child: Container(
-                    width: TossDesignSystem.iconButtonSizeSmall,
-                    height: TossDesignSystem.iconButtonSizeSmall,
+                    width: 48.0,
+                    height: 48.0,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.grayDark200
-                          : TossDesignSystem.gray100,
-                      borderRadius: BorderRadius.circular(
-                          TossDesignSystem.iconButtonSizeSmall / 2),
+                      color: context.isDark
+                          ? DSColors.surfaceSecondary
+                          : DSColors.backgroundSecondaryDark,
+                      borderRadius: BorderRadius.circular(24.0),
                     ),
                     child: Icon(
                       Icons.close,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.grayDark400
-                          : TossDesignSystem.gray600,
-                      size: TossDesignSystem.iconSizeSmall,
+                      color: context.isDark
+                          ? DSColors.toggleInactive
+                          : DSColors.textSecondaryDark,
+                      size: 20.0,
                     ),
                   ),
                 ),
@@ -222,9 +221,9 @@ class _PersonalityDNABottomSheetState
             '현재 설정된 정보',
             style: context.heading3.copyWith(
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark900
-                  : TossDesignSystem.gray900,
+              color: context.isDark
+                  ? DSColors.textPrimary
+                  : DSColors.textPrimaryDark,
             ),
           ),
           const SizedBox(height: 20),
@@ -247,9 +246,9 @@ class _PersonalityDNABottomSheetState
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark200
-                  : TossDesignSystem.gray50,
+              color: context.isDark
+                  ? DSColors.surfaceSecondary
+                  : DSColors.backgroundDark,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -259,9 +258,9 @@ class _PersonalityDNABottomSheetState
                   '💡 성격 DNA란?',
                   style: context.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.grayDark900
-                        : TossDesignSystem.gray900,
+                    color: context.isDark
+                        ? DSColors.textPrimary
+                        : DSColors.textPrimaryDark,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -269,9 +268,9 @@ class _PersonalityDNABottomSheetState
                   'MBTI, 혈액형, 별자리, 띠를 조합하여 당신만의 독특한 성격 분석 결과를 만들어드립니다.',
                   style: context.bodySmall.copyWith(
                     fontWeight: FontWeight.w400,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.grayDark600
-                        : TossDesignSystem.gray600,
+                    color: context.isDark
+                        ? DSColors.textTertiary
+                        : DSColors.textSecondaryDark,
                     height: 1.4,
                   ),
                 ),
@@ -292,18 +291,18 @@ class _PersonalityDNABottomSheetState
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
+        color: context.isDark
+            ? DSColors.surface
+            : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isSet
-              ? (Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.3)
-                  : TossDesignSystem.tossBlue.withValues(alpha: 0.2))
-              : (Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark300
-                  : TossDesignSystem.gray200),
+              ? (context.isDark
+                  ? DSColors.accentDark.withValues(alpha: 0.3)
+                  : DSColors.accentDark.withValues(alpha: 0.2))
+              : (context.isDark
+                  ? DSColors.border
+                  : DSColors.borderDark),
         ),
       ),
       child: Row(
@@ -313,10 +312,10 @@ class _PersonalityDNABottomSheetState
             height: 48,
             decoration: BoxDecoration(
               color: isSet
-                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                  : (Theme.of(context).brightness == Brightness.dark
-                      ? TossDesignSystem.grayDark200
-                      : TossDesignSystem.gray100),
+                  ? DSColors.accentDark.withValues(alpha: 0.1)
+                  : (context.isDark
+                      ? DSColors.surfaceSecondary
+                      : DSColors.backgroundSecondaryDark),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
@@ -335,9 +334,9 @@ class _PersonalityDNABottomSheetState
                   title,
                   style: context.bodySmall.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.grayDark600
-                        : TossDesignSystem.gray600,
+                    color: context.isDark
+                        ? DSColors.textTertiary
+                        : DSColors.textSecondaryDark,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -346,12 +345,12 @@ class _PersonalityDNABottomSheetState
                   style: context.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isSet
-                        ? (Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark900
-                            : TossDesignSystem.gray900)
-                        : (Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark400
-                            : TossDesignSystem.gray400),
+                        ? (context.isDark
+                            ? DSColors.textPrimary
+                            : DSColors.textPrimaryDark)
+                        : (context.isDark
+                            ? DSColors.toggleInactive
+                            : DSColors.textDisabledDark),
                   ),
                 ),
               ],
@@ -361,9 +360,9 @@ class _PersonalityDNABottomSheetState
             Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark400
-                  : TossDesignSystem.gray400,
+              color: context.isDark
+                  ? DSColors.toggleInactive
+                  : DSColors.textDisabledDark,
             ),
         ],
       ),
@@ -394,14 +393,14 @@ class _PersonalityDNABottomSheetState
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
+        color: context.isDark
+            ? DSColors.surface
+            : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark300
-              : TossDesignSystem.gray200,
+          color: context.isDark
+              ? DSColors.border
+              : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -411,9 +410,9 @@ class _PersonalityDNABottomSheetState
             'MBTI 유형',
             style: context.heading3.copyWith(
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark900
-                  : TossDesignSystem.gray900,
+              color: context.isDark
+                  ? DSColors.textPrimary
+                  : DSColors.textPrimaryDark,
               height: 1.3,
             ),
           ),
@@ -438,17 +437,17 @@ class _PersonalityDNABottomSheetState
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue
-                        : (Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark200
-                            : TossDesignSystem.gray100),
+                        ? DSColors.accentDark
+                        : (context.isDark
+                            ? DSColors.surfaceSecondary
+                            : DSColors.backgroundSecondaryDark),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
-                          ? TossDesignSystem.tossBlue
-                          : (Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark300
-                              : TossDesignSystem.gray200),
+                          ? DSColors.accentDark
+                          : (context.isDark
+                              ? DSColors.border
+                              : DSColors.borderDark),
                       width: 1,
                     ),
                   ),
@@ -458,10 +457,10 @@ class _PersonalityDNABottomSheetState
                       style: context.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
-                            ? TossDesignSystem.white
-                            : (Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.grayDark900
-                                : TossDesignSystem.gray900),
+                            ? Colors.white
+                            : (context.isDark
+                                ? DSColors.textPrimary
+                                : DSColors.textPrimaryDark),
                       ),
                     ),
                   ),
@@ -479,14 +478,14 @@ class _PersonalityDNABottomSheetState
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
+        color: context.isDark
+            ? DSColors.surface
+            : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark300
-              : TossDesignSystem.gray200,
+          color: context.isDark
+              ? DSColors.border
+              : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -496,9 +495,9 @@ class _PersonalityDNABottomSheetState
             '혈액형',
             style: context.heading3.copyWith(
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark900
-                  : TossDesignSystem.gray900,
+              color: context.isDark
+                  ? DSColors.textPrimary
+                  : DSColors.textPrimaryDark,
               height: 1.3,
             ),
           ),
@@ -521,17 +520,17 @@ class _PersonalityDNABottomSheetState
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? TossDesignSystem.tossBlue
-                            : (Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.grayDark200
-                                : TossDesignSystem.gray100),
+                            ? DSColors.accentDark
+                            : (context.isDark
+                                ? DSColors.surfaceSecondary
+                                : DSColors.backgroundSecondaryDark),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected
-                              ? TossDesignSystem.tossBlue
-                              : (Theme.of(context).brightness == Brightness.dark
-                                  ? TossDesignSystem.grayDark300
-                                  : TossDesignSystem.gray200),
+                              ? DSColors.accentDark
+                              : (context.isDark
+                                  ? DSColors.border
+                                  : DSColors.borderDark),
                           width: 1,
                         ),
                       ),
@@ -541,11 +540,11 @@ class _PersonalityDNABottomSheetState
                           style: context.labelMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isSelected
-                                ? TossDesignSystem.white
+                                ? Colors.white
                                 : (Theme.of(context).brightness ==
                                         Brightness.dark
-                                    ? TossDesignSystem.grayDark900
-                                    : TossDesignSystem.gray900),
+                                    ? DSColors.textPrimary
+                                    : DSColors.textPrimaryDark),
                           ),
                         ),
                       ),
@@ -565,14 +564,14 @@ class _PersonalityDNABottomSheetState
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
+        color: context.isDark
+            ? DSColors.surface
+            : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark300
-              : TossDesignSystem.gray200,
+          color: context.isDark
+              ? DSColors.border
+              : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -582,9 +581,9 @@ class _PersonalityDNABottomSheetState
             '별자리',
             style: context.heading3.copyWith(
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark900
-                  : TossDesignSystem.gray900,
+              color: context.isDark
+                  ? DSColors.textPrimary
+                  : DSColors.textPrimaryDark,
               height: 1.3,
             ),
           ),
@@ -609,17 +608,17 @@ class _PersonalityDNABottomSheetState
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue
-                        : (Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark200
-                            : TossDesignSystem.gray100),
+                        ? DSColors.accentDark
+                        : (context.isDark
+                            ? DSColors.surfaceSecondary
+                            : DSColors.backgroundSecondaryDark),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
-                          ? TossDesignSystem.tossBlue
-                          : (Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark300
-                              : TossDesignSystem.gray200),
+                          ? DSColors.accentDark
+                          : (context.isDark
+                              ? DSColors.border
+                              : DSColors.borderDark),
                       width: 1,
                     ),
                   ),
@@ -629,10 +628,10 @@ class _PersonalityDNABottomSheetState
                       style: context.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
-                            ? TossDesignSystem.white
-                            : (Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.grayDark900
-                                : TossDesignSystem.gray900),
+                            ? Colors.white
+                            : (context.isDark
+                                ? DSColors.textPrimary
+                                : DSColors.textPrimaryDark),
                       ),
                     ),
                   ),
@@ -650,14 +649,14 @@ class _PersonalityDNABottomSheetState
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
+        color: context.isDark
+            ? DSColors.surface
+            : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark300
-              : TossDesignSystem.gray200,
+          color: context.isDark
+              ? DSColors.border
+              : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -667,9 +666,9 @@ class _PersonalityDNABottomSheetState
             '띠 (12지)',
             style: context.heading3.copyWith(
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark900
-                  : TossDesignSystem.gray900,
+              color: context.isDark
+                  ? DSColors.textPrimary
+                  : DSColors.textPrimaryDark,
               height: 1.3,
             ),
           ),
@@ -694,17 +693,17 @@ class _PersonalityDNABottomSheetState
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue
-                        : (Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark200
-                            : TossDesignSystem.gray100),
+                        ? DSColors.accentDark
+                        : (context.isDark
+                            ? DSColors.surfaceSecondary
+                            : DSColors.backgroundSecondaryDark),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
-                          ? TossDesignSystem.tossBlue
-                          : (Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark300
-                              : TossDesignSystem.gray200),
+                          ? DSColors.accentDark
+                          : (context.isDark
+                              ? DSColors.border
+                              : DSColors.borderDark),
                       width: 1,
                     ),
                   ),
@@ -714,10 +713,10 @@ class _PersonalityDNABottomSheetState
                       style: context.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
-                            ? TossDesignSystem.white
-                            : (Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.grayDark900
-                                : TossDesignSystem.gray900),
+                            ? Colors.white
+                            : (context.isDark
+                                ? DSColors.textPrimary
+                                : DSColors.textPrimaryDark),
                       ),
                     ),
                   ),

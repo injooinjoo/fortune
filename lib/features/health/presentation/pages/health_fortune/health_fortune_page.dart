@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +11,7 @@ import '../../widgets/health_score_card.dart';
 import '../../widgets/health_timeline_chart.dart';
 import '../../../domain/models/health_fortune_model.dart';
 import '../../../data/services/health_fortune_service.dart';
-import '../../../../../core/theme/obangseok_colors.dart';
+import '../../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../../core/widgets/unified_button.dart' show UnifiedButton, BottomButtonSpacing;
 import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../shared/components/toast.dart';
@@ -64,7 +65,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Scaffold(
       backgroundColor: isDark
@@ -163,7 +164,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
           const SizedBox(height: 24),
 
           HealthAppConnectionSection(
-            isDark: isDark,
             isPremium: isPremium,
             isLoadingHealthData: _isLoadingHealthData,
             healthSummary: _healthSummary,
@@ -175,7 +175,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
           // 전문 진단 서류 업로드 섹션
           MedicalDocumentUploadSection(
-            isDark: isDark,
             tokenCost: 3,
             onTap: _showDocumentUploadSheet,
           ),
@@ -187,7 +186,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
             return ConditionOption(
               condition: condition,
               index: index,
-              isDark: isDark,
               isSelected: _currentCondition == condition,
               onTap: () {
                 setState(() {
@@ -305,8 +303,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -319,14 +315,12 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
             BodyPartHealthSection(
               bodyPartHealthList: _fortuneResult!.bodyPartHealthList,
               selectedBodyParts: _selectedBodyParts,
-              isDark: isDark,
             ),
             const SizedBox(height: 20),
           ],
 
           RecommendationsSection(
             recommendations: _fortuneResult!.recommendations,
-            isDark: isDark,
           ),
 
           const SizedBox(height: 20),

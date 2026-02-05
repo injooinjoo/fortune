@@ -186,13 +186,6 @@ class TarotCardDetailModal extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(DSRadius.md),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                ),
-              ],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(DSRadius.md),

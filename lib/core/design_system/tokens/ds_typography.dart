@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/font_config.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'ds_colors.dart';
 
 /// Modern AI Chat typography system
@@ -9,8 +8,7 @@ import 'ds_colors.dart';
 /// Design Philosophy: Clean, readable, content-focused
 ///
 /// Font Strategy:
-/// - Primary: Inter (modern sans-serif)
-/// - Korean fallback: Pretendard
+/// - Primary: NotoSansKR (local, clean sans-serif)
 /// - Legacy calligraphy: NanumMyeongjo (for specific traditional content)
 ///
 /// Usage:
@@ -22,11 +20,11 @@ import 'ds_colors.dart';
 class DSTypography {
   DSTypography._();
 
-  /// Primary font family - Inter
-  static String get headlineFamily => GoogleFonts.inter().fontFamily!;
+  /// Primary font family - NotoSansKR
+  static String get headlineFamily => FontConfig.primary;
 
-  /// Body font family - Inter
-  static String get bodyFamily => GoogleFonts.inter().fontFamily!;
+  /// Body font family - NotoSansKR
+  static String get bodyFamily => FontConfig.primary;
 
   /// UI font family - FontConfig.primary reference
   static const String uiFamily = FontConfig.primary;

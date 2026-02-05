@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_dimensions.dart';
 import 'profile_field_edit_dialog.dart';
@@ -42,7 +42,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('오류가 발생했습니다: ${e.toString()}'),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: DSColors.error,
           ),
         );
       }
@@ -65,9 +65,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
           Text(
             '혈액형을 선택해주세요',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.gray300
-                  : TossDesignSystem.gray600,
+              color: context.colors.textSecondary,
             ),
           ),
           const SizedBox(height: AppSpacing.spacing5),
@@ -99,7 +97,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
     final isSelected = _selectedBloodType == value;
 
     return Material(
-      color: TossDesignSystem.white.withValues(alpha: 0.0),
+      color: Colors.white.withValues(alpha: 0.0),
       child: InkWell(
         onTap: () {
           setState(() {
@@ -110,11 +108,11 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
+              color: isSelected ? DSColors.accentDark : DSColors.borderDark,
               width: isSelected ? 2 : 1,
             ),
             borderRadius: AppDimensions.borderRadiusSmall,
-            color: isSelected ? TossDesignSystem.tossBlue.withValues(alpha: 0.1) : null,
+            color: isSelected ? DSColors.accentDark.withValues(alpha: 0.1) : null,
           ),
           child: Center(
             child: Row(
@@ -124,15 +122,15 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                   Icons.water_drop,
                   size: AppDimensions.iconSizeSmall,
                   color: isSelected
-                      ? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
-                      : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.gray300 : TossDesignSystem.gray600),
+                      ? context.colors.textPrimary
+                      : context.colors.textSecondary,
                 ),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   label,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: isSelected
-                        ? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
+                        ? context.colors.textPrimary
                         : null,
                   ),
                 ),

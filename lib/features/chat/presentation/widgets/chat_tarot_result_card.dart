@@ -470,7 +470,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     String interpretation,
     bool isReversed,
   ) {
-    final goldColor = DSFortuneColors.getGold(Theme.of(context).brightness == Brightness.dark);
+    final goldColor = DSFortuneColors.getGold(context.isDark);
 
     return Stack(
       fit: StackFit.expand,

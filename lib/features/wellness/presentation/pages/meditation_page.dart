@@ -91,7 +91,7 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final timerState = ref.watch(breathingTimerProvider);
 
     // 타이머 상태 변화 감지하여 배경 음악 제어
@@ -240,7 +240,7 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
   }
 
   void _showExitConfirmation(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     showDialog(
       context: context,

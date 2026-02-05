@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'font_config.dart';
 
 /// 앱 전체 타이포그래피 테마 시스템
 /// 5단계 크기 레벨 + 글꼴 통합 관리
@@ -37,29 +38,29 @@ class TypographyTheme {
   /// 5단계 폰트 크기 체계
   static const Map<String, double> _baseFontSizes = {
     // Display (특대 제목) - 히어로 섹션, 랜딩 페이지
-    'display_large': 48.0, // 예: "당신의 운명을 만나보세요"
-    'display_medium': 40.0, // 예: "오늘의 타로"
-    'display_small': 32.0, // 예: "운세 카테고리"
+    'display_large': 40.0, // 예: "당신의 운명을 만나보세요"
+    'display_medium': 34.0, // 예: "오늘의 타로"
+    'display_small': 28.0, // 예: "운세 카테고리"
 
     // Heading (제목) - 페이지 제목, 섹션 제목
-    'heading_large': 28.0, // 예: "타로 카드 선택"
-    'heading_medium': 24.0, // 예: "오늘의 운세"
+    'heading_large': 26.0, // 예: "타로 카드 선택"
+    'heading_medium': 22.0, // 예: "오늘의 운세"
     'heading_small': 20.0, // 예: "카드 해석"
 
     // Title (소제목) - 카드 타이틀, 리스트 아이템 제목
     'title_large': 18.0, // 예: "연애운"
-    'title_medium': 17.0, // 예: "재물운"
-    'title_small': 16.0, // 예: "건강운"
+    'title_medium': 16.0, // 예: "재물운"
+    'title_small': 15.0, // 예: "건강운"
 
     // Body (본문) - 일반 텍스트, 설명
-    'body_large': 17.0, // 예: "메인 설명 텍스트"
-    'body_medium': 15.0, // 예: "일반 본문"
-    'body_small': 14.0, // 예: "보조 설명"
+    'body_large': 16.0, // 예: "메인 설명 텍스트"
+    'body_medium': 14.0, // 예: "일반 본문"
+    'body_small': 13.0, // 예: "보조 설명"
 
     // Label (라벨) - 버튼, 태그, 캡션
-    'label_large': 16.0, // 예: "버튼 텍스트"
-    'label_medium': 13.0, // 예: "태그, 배지"
-    'label_small': 12.0, // 예: "캡션, 힌트"
+    'label_large': 13.0, // 예: "버튼 텍스트"
+    'label_medium': 12.0, // 예: "태그, 배지"
+    'label_small': 11.0, // 예: "캡션, 힌트"
   };
 
   // ==========================================
@@ -68,9 +69,9 @@ class TypographyTheme {
 
   const TypographyTheme({
     this.fontScale = 1.0,
-    this.bodyFontFamily = 'NanumMyeongjo',
-    this.headingFontFamily = 'NanumMyeongjo',
-    this.numberFontFamily = 'NanumMyeongjo',
+    this.bodyFontFamily = FontConfig.primary,
+    this.headingFontFamily = FontConfig.primary,
+    this.numberFontFamily = FontConfig.number,
   });
 
   // ==========================================
@@ -106,7 +107,7 @@ class TypographyTheme {
   TextStyle get displayLarge => TextStyle(
         fontSize: _baseFontSizes['display_large']! * fontScale,
         height: 1.2,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.02,
         fontFamily: headingFontFamily,
       );
@@ -116,7 +117,7 @@ class TypographyTheme {
   TextStyle get displayMedium => TextStyle(
         fontSize: _baseFontSizes['display_medium']! * fontScale,
         height: 1.2,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.02,
         fontFamily: headingFontFamily,
       );
@@ -126,7 +127,7 @@ class TypographyTheme {
   TextStyle get displaySmall => TextStyle(
         fontSize: _baseFontSizes['display_small']! * fontScale,
         height: 1.25,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.01,
         fontFamily: headingFontFamily,
       );
@@ -136,7 +137,7 @@ class TypographyTheme {
   TextStyle get headingLarge => TextStyle(
         fontSize: _baseFontSizes['heading_large']! * fontScale,
         height: 1.3,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.01,
         fontFamily: headingFontFamily,
       );
@@ -166,7 +167,7 @@ class TypographyTheme {
   TextStyle get titleLarge => TextStyle(
         fontSize: _baseFontSizes['title_large']! * fontScale,
         height: 1.45,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0,
         fontFamily: bodyFontFamily,
       );
@@ -176,7 +177,7 @@ class TypographyTheme {
   TextStyle get titleMedium => TextStyle(
         fontSize: _baseFontSizes['title_medium']! * fontScale,
         height: 1.5,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0,
         fontFamily: bodyFontFamily,
       );
@@ -226,7 +227,7 @@ class TypographyTheme {
   TextStyle get labelLarge => TextStyle(
         fontSize: _baseFontSizes['label_large']! * fontScale,
         height: 1.5,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0,
         fontFamily: bodyFontFamily,
       );
@@ -246,7 +247,7 @@ class TypographyTheme {
   TextStyle get labelSmall => TextStyle(
         fontSize: _baseFontSizes['label_small']! * fontScale,
         height: 1.5,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0,
         fontFamily: bodyFontFamily,
       );
@@ -266,7 +267,7 @@ class TypographyTheme {
   TextStyle get numberLarge => TextStyle(
         fontSize: _baseFontSizes['display_small']! * fontScale,
         height: 1.25,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.02,
         fontFamily: numberFontFamily,
         fontFeatures: const [FontFeature.tabularFigures()],
@@ -278,7 +279,7 @@ class TypographyTheme {
         fontSize: _baseFontSizes['heading_medium']! * fontScale,
         height: 1.35,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.01,
+        letterSpacing: 0,
         fontFamily: numberFontFamily,
         fontFeatures: const [FontFeature.tabularFigures()],
       );
@@ -288,7 +289,7 @@ class TypographyTheme {
   TextStyle get numberSmall => TextStyle(
         fontSize: _baseFontSizes['body_medium']! * fontScale,
         height: 1.6,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
         fontFamily: numberFontFamily,
         fontFeatures: const [FontFeature.tabularFigures()],
@@ -347,7 +348,7 @@ class TypographyTheme {
 /// Text(
 ///   '오늘의 타로',
 ///   style: context.typography.displayMedium.copyWith(
-///     color: TossDesignSystem.textPrimaryLight,
+///     color: DSColors.textPrimaryDark,
 ///   ),
 /// )
 ///
@@ -356,7 +357,7 @@ class TypographyTheme {
 /// Text(
 ///   '본문 텍스트',
 ///   style: customTheme.bodyMedium.copyWith(
-///     color: TossDesignSystem.textSecondaryLight,
+///     color: DSColors.textSecondaryDark,
 ///   ),
 /// )
 ///

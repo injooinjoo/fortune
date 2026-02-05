@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../theme/fortune_design_system.dart';
 import '../../design_system/design_system.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_dimensions.dart';
@@ -82,25 +81,25 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
     if (widget.auspiciousDays?.any((d) =>
             DatePickerUtils.isSameDay(d, normalizedDay)) ??
         false) {
-      return TossDesignSystem.warningOrange.withValues(alpha: 0.6);
+      return DSColors.warning.withValues(alpha: 0.6);
     }
 
     // 길흉 점수 체크
     final score = widget.luckyScores?[normalizedDay];
     if (score != null) {
       if (score >= 0.8) {
-        return TossDesignSystem.successGreen.withValues(alpha: 0.6);
+        return DSColors.success.withValues(alpha: 0.6);
       }
       if (score >= 0.6) {
-        return TossDesignSystem.tossBlue.withValues(alpha: 0.6);
+        return DSColors.accentDark.withValues(alpha: 0.6);
       }
       if (score >= 0.4) {
-        return TossDesignSystem.warningOrange.withValues(alpha: 0.6);
+        return DSColors.warning.withValues(alpha: 0.6);
       }
-      return TossDesignSystem.errorRed.withValues(alpha: 0.6);
+      return DSColors.error.withValues(alpha: 0.6);
     }
 
-    return TossDesignSystem.gray500.withValues(alpha: 0.5);
+    return DSColors.textTertiaryDark.withValues(alpha: 0.5);
   }
 
   Widget? _buildLegend() {
@@ -125,24 +124,24 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
             children: [
               if (widget.auspiciousDays != null)
                 _buildLegendItem(
-                  TossDesignSystem.warningOrange.withValues(alpha: 0.6),
+                  DSColors.warning.withValues(alpha: 0.6),
                   '손없는날',
                 ),
               if (widget.luckyScores != null) ...[
                 _buildLegendItem(
-                  TossDesignSystem.successGreen.withValues(alpha: 0.6),
+                  DSColors.success.withValues(alpha: 0.6),
                   '매우 길한 날',
                 ),
                 _buildLegendItem(
-                  TossDesignSystem.tossBlue.withValues(alpha: 0.6),
+                  DSColors.accentDark.withValues(alpha: 0.6),
                   '길한 날',
                 ),
                 _buildLegendItem(
-                  TossDesignSystem.warningOrange.withValues(alpha: 0.6),
+                  DSColors.warning.withValues(alpha: 0.6),
                   '보통',
                 ),
                 _buildLegendItem(
-                  TossDesignSystem.errorRed.withValues(alpha: 0.6),
+                  DSColors.error.withValues(alpha: 0.6),
                   '피해야 할 날',
                 ),
               ],
@@ -164,7 +163,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
             color: color,
             borderRadius: AppDimensions.borderRadiusSmall,
             border: Border.all(
-              color: TossDesignSystem.gray500.withValues(alpha: 0.6),
+              color: DSColors.textTertiaryDark.withValues(alpha: 0.6),
               width: 0.5,
             ),
           ),
@@ -190,20 +189,14 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
       return null;
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       margin: const EdgeInsets.only(top: AppSpacing.spacing4),
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.grayDark800
-            : TossDesignSystem.gray50,
+        color: context.colors.surfaceSecondary,
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
-          color: isDark
-              ? TossDesignSystem.borderDark
-              : TossDesignSystem.borderLight,
+          color: context.colors.border,
         ),
       ),
       child: Column(
@@ -221,7 +214,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
               children: [
                 Icon(
                   Icons.star,
-                  color: TossDesignSystem.warningOrange.withValues(alpha: 0.8),
+                  color: DSColors.warning.withValues(alpha: 0.8),
                   size: 16,
                 ),
                 const SizedBox(width: AppSpacing.spacing1),
@@ -259,13 +252,13 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                 const Icon(
                   Icons.calendar_today,
                   size: 16,
-                  color: TossDesignSystem.errorRed,
+                  color: DSColors.error,
                 ),
                 const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   holiday,
                   style: context.bodySmall.copyWith(
-                    color: TossDesignSystem.errorRed,
+                    color: DSColors.error,
                   ),
                 ),
               ],
@@ -278,21 +271,15 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       children: [
         Card(
           elevation: 0,
-          color: isDark
-              ? TossDesignSystem.grayDark900
-              : TossDesignSystem.white,
+          color: context.colors.surface,
           shape: RoundedRectangleBorder(
             borderRadius: AppDimensions.borderRadiusLarge,
             side: BorderSide(
-              color: isDark
-                  ? TossDesignSystem.borderDark
-                  : TossDesignSystem.borderLight,
+              color: context.colors.border,
             ),
           ),
           child: Padding(
@@ -328,17 +315,17 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
               calendarStyle: CalendarStyle(
                 outsideDaysVisible: false,
                 weekendTextStyle: const TextStyle(
-                  color: TossDesignSystem.errorRed,
+                  color: DSColors.error,
                 ),
                 holidayTextStyle: const TextStyle(
-                  color: TossDesignSystem.errorRed,
+                  color: DSColors.error,
                 ),
                 selectedDecoration: const BoxDecoration(
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accentDark,
                   shape: BoxShape.circle,
                 ),
                 todayDecoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                  color: DSColors.accentDark.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -357,7 +344,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                         width: 7,
                         height: 7,
                         decoration: const BoxDecoration(
-                          color: TossDesignSystem.warningOrange,
+                          color: DSColors.warning,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -389,10 +376,8 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                         '${day.day}',
                         style: context.bodyMedium.copyWith(
                           color: isWeekend
-                              ? TossDesignSystem.errorRed
-                              : (isDark
-                                  ? TossDesignSystem.textPrimaryDark
-                                  : TossDesignSystem.textPrimaryLight),
+                              ? DSColors.error
+                              : context.colors.textPrimary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -405,11 +390,11 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                 titleCentered: true,
                 formatButtonShowsNext: false,
                 formatButtonDecoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  color: DSColors.accentDark.withValues(alpha: 0.1),
                   borderRadius: AppDimensions.borderRadiusSmall,
                 ),
                 formatButtonTextStyle: context.bodySmall.copyWith(
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accentDark,
                   fontWeight: FontWeight.w500,
                 ),
                 titleTextStyle: context.headingSmall,

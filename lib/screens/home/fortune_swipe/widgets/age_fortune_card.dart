@@ -10,12 +10,10 @@ import '../../../../core/design_system/design_system.dart';
 /// - zodiacAnimal: 띠 (선택)
 class AgeFortuneCard extends StatelessWidget {
   final Map<String, dynamic>? ageFortune;
-  final bool isDark;
 
   const AgeFortuneCard({
     super.key,
     required this.ageFortune,
-    required this.isDark,
   });
 
   @override
@@ -87,7 +85,7 @@ class AgeFortuneCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: isDark
+              colors: context.isDark
                 ? [const Color(0xFF2D2440), context.colors.surface] // 고유 색상: 다크 보라 그라디언트
                 : [const Color(0xFFF5F0FF), const Color(0xFFEDE9FE)], // 고유 색상: 라이트 보라 그라디언트
             ),
@@ -98,7 +96,7 @@ class AgeFortuneCard extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: isDark ? 0.2 : 0.1),
+                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: context.isDark ? 0.2 : 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),

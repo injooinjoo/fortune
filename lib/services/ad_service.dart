@@ -1,4 +1,4 @@
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/tokens/ds_colors.dart';
 import 'package:universal_io/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
@@ -483,20 +483,20 @@ class AdService {
             mainBackgroundColor: const material.Color(0xFFF5F5F5),
             cornerRadius: 8.0,
             callToActionTextStyle: NativeTemplateTextStyle(
-              textColor: TossDesignSystem.gray900,
+              textColor: DSColors.textPrimaryDark,
               backgroundColor: const material.Color(0xFF4285F4),
               style: NativeTemplateFontStyle.bold,
               size: 16.0),
             primaryTextStyle: NativeTemplateTextStyle(
-              textColor: TossDesignSystem.gray900.withValues(alpha: 0.87),
+              textColor: DSColors.textPrimaryDark.withValues(alpha: 0.87),
               style: NativeTemplateFontStyle.normal,
               size: 16.0),
             secondaryTextStyle: NativeTemplateTextStyle(
-              textColor: TossDesignSystem.gray900.withValues(alpha: 0.54),
+              textColor: DSColors.textPrimaryDark.withValues(alpha: 0.54),
               style: NativeTemplateFontStyle.normal,
               size: 14.0),
             tertiaryTextStyle: NativeTemplateTextStyle(
-              textColor: TossDesignSystem.gray900.withValues(alpha: 0.54),
+              textColor: DSColors.textPrimaryDark.withValues(alpha: 0.54),
               style: NativeTemplateFontStyle.normal,
               size: 12.0)));
   }

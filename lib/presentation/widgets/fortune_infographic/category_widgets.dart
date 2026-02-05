@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/fortune_design_system.dart';
 import '../../../core/design_system/design_system.dart';
 import 'helpers.dart';
 
@@ -27,17 +26,17 @@ class CategoryWidgets {
         height: 120,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+          color: isDarkMode ? DSColors.surfaceSecondary : DSColors.surfaceDark,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            color: isDarkMode ? DSColors.border : DSColors.borderDark,
           ),
         ),
         child: Center(
           child: Text(
             '카테고리 데이터를 불러오는 중...',
             style: TextStyle(
-              color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              color: isDarkMode ? DSColors.textTertiary : DSColors.textSecondaryDark,
             ),
           ),
         ),
@@ -116,11 +115,11 @@ class CategoryWidgets {
             end: Alignment.bottomRight,
             colors: isDarkMode
               ? [
-                  TossDesignSystem.grayDark200,
-                  TossDesignSystem.grayDark300.withValues(alpha: 0.5),
+                  DSColors.surfaceSecondary,
+                  DSColors.border.withValues(alpha: 0.5),
                 ]
               : [
-                  TossDesignSystem.white,
+                  DSColors.surfaceDark,
                   scoreColor.withValues(alpha: 0.05),
                 ],
           ),
@@ -141,7 +140,7 @@ class CategoryWidgets {
                   '오늘의 총운',
                   style: context.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    color: isDarkMode ? DSColors.textPrimary : DSColors.textPrimaryDark,
                   ),
                 ),
                 Container(
@@ -192,7 +191,7 @@ class CategoryWidgets {
             Text(
               description,
               style: context.bodySmall.copyWith(
-                color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray700,
+                color: isDarkMode ? DSColors.toggleInactive : DSColors.textSecondaryDark,
                 height: 1.5,
               ),
             ),
@@ -215,10 +214,10 @@ class CategoryWidgets {
         width: double.infinity,  // 전체 너비 사용
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+          color: isDarkMode ? DSColors.surfaceSecondary : DSColors.surfaceDark,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            color: isDarkMode ? DSColors.border : DSColors.borderDark,
           ),
         ),
         child: Column(
@@ -232,7 +231,7 @@ class CategoryWidgets {
                     title,
                     style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      color: isDarkMode ? DSColors.textPrimary : DSColors.textPrimaryDark,
                     ),
                   ),
                 ),
@@ -257,7 +256,7 @@ class CategoryWidgets {
             Text(
               description,
               style: context.bodySmall.copyWith(
-                color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                color: isDarkMode ? DSColors.toggleInactive : DSColors.textSecondaryDark,
                 height: 1.5,
               ),
             ),
@@ -276,7 +275,7 @@ class CategoryWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         // Extract summary from fortuneSummary data
         final summary = fortuneSummary?['summary'] as String? ??
@@ -289,10 +288,10 @@ class CategoryWidgets {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Column(
@@ -303,7 +302,7 @@ class CategoryWidgets {
                   Icon(
                     Icons.auto_awesome,
                     size: 20,
-                    color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+                    color: isDark ? DSColors.accent : DSColors.accentDark,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -311,7 +310,7 @@ class CategoryWidgets {
                       title,
                       style: context.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                       ),
                     ),
                   ),
@@ -336,7 +335,7 @@ class CategoryWidgets {
                 summary,
                 style: context.bodySmall.copyWith(
                   height: 1.4,
-                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                  color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                 ),
               ),
               if (userZodiacAnimal != null || userZodiacSign != null || userMBTI != null) ...[
@@ -369,15 +368,15 @@ class CategoryWidgets {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: isDark
-          ? TossDesignSystem.primaryBlue.withValues(alpha: 0.2)
-          : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+          ? DSColors.accent.withValues(alpha: 0.2)
+          : DSColors.accentDark.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         text,
         style: context.labelMedium.copyWith(
           fontWeight: FontWeight.w500,
-          color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+          color: isDark ? DSColors.accent : DSColors.accentDark,
         ),
       ),
     );
@@ -390,15 +389,15 @@ class CategoryWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Column(
@@ -426,7 +425,7 @@ class CategoryWidgets {
                   Text(
                     '신의 통찰',
                     style: TextStyle(
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -440,14 +439,14 @@ class CategoryWidgets {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? TossDesignSystem.grayDark300.withValues(alpha: 0.5)
-                        : TossDesignSystem.gray50,
+                        ? DSColors.border.withValues(alpha: 0.5)
+                        : DSColors.backgroundDark,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     insight,
                     style: TextStyle(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                      color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                       height: 1.4,
                     ),
                   ),
@@ -460,7 +459,7 @@ class CategoryWidgets {
                 Text(
                   '✨ 추천 팁',
                   style: TextStyle(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -483,7 +482,7 @@ class CategoryWidgets {
                         child: Text(
                           tip,
                           style: TextStyle(
-                            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                            color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                             height: 1.3,
                           ),
                         ),
@@ -501,7 +500,7 @@ class CategoryWidgets {
                     child: Text(
                       '신의 통찰 준비 중...',
                       style: TextStyle(
-                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                       ),
                     ),
                   ),

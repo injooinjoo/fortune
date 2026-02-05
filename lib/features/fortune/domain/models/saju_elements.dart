@@ -401,20 +401,11 @@ class WuxingDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,7 +415,7 @@ class WuxingDetailCard extends StatelessWidget {
             '오행 분포 분석',
             style: context.headingSmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : Colors.black87,
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -445,7 +436,7 @@ class WuxingDetailCard extends StatelessWidget {
                 '균형 점수',
                 style: context.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white70 : Colors.black54,
+                  color: context.colors.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -469,7 +460,7 @@ class WuxingDetailCard extends StatelessWidget {
             distribution.description,
             style: context.bodySmall.copyWith(
               height: 1.5,
-              color: isDark ? Colors.white70 : Colors.black87,
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -480,7 +471,7 @@ class WuxingDetailCard extends StatelessWidget {
               '추천 사항',
               style: context.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : Colors.black54,
+                color: context.colors.textSecondary,
               ),
             ),
             const SizedBox(height: 8),
@@ -492,7 +483,7 @@ class WuxingDetailCard extends StatelessWidget {
                       Text(
                         '• ',
                         style: context.bodySmall.copyWith(
-                          color: isDark ? Colors.white70 : Colors.black87,
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       Expanded(
@@ -500,7 +491,7 @@ class WuxingDetailCard extends StatelessWidget {
                           rec,
                           style: context.bodySmall.copyWith(
                             height: 1.4,
-                            color: isDark ? Colors.white70 : Colors.black87,
+                            color: context.colors.textPrimary,
                           ),
                         ),
                       ),

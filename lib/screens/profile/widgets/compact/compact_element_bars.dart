@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/saju_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/tokens/ds_saju_colors.dart';
 
 /// 압축된 오행 바 차트
 ///
@@ -17,19 +15,19 @@ class CompactElementBars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final elements = _getElementCounts();
     final maxCount = elements.values.fold<int>(0, (max, v) => v > max ? v : max);
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingS),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.2)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+          color: isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -41,19 +39,19 @@ class CompactElementBars extends StatelessWidget {
               Icon(
                 Icons.pie_chart_rounded,
                 size: 14,
-                color: isDark ? Colors.white60 : Colors.black45,
+                color: context.colors.textSecondary,
               ),
               const SizedBox(width: 4),
               Text(
                 '오행 균형',
                 style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white70 : Colors.black54,
+                  color: context.colors.textSecondary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
           // 바 차트
           ...['목', '화', '토', '금', '수'].map((element) {
             final count = elements[element] ?? 0;
@@ -132,9 +130,7 @@ class CompactElementBars extends StatelessWidget {
             child: Container(
               height: 14,
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : Colors.black.withValues(alpha: 0.05),
+                color: context.colors.textPrimary.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(3),
               ),
               child: Stack(
@@ -161,7 +157,7 @@ class CompactElementBars extends StatelessWidget {
               style: context.labelTiny.copyWith(
                 fontWeight: FontWeight.bold,
                 color: count == 0
-                    ? (isDark ? Colors.white30 : Colors.black26)
+                    ? context.colors.textTertiary
                     : color,
               ),
               textAlign: TextAlign.right,

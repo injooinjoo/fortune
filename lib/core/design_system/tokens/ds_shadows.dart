@@ -37,75 +37,32 @@ class DSShadows {
   // Low opacity + Large blur radius
   // ============================================
 
-  /// Extra small shadow - 2% black, 8px blur
+  /// Extra small shadow - neutralized (flat design, no shadows)
   /// Use for: Subtle elevation, hover states
-  static List<BoxShadow> get xs => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.02),
-          offset: const Offset(0, 2),
-          blurRadius: 8,
-          spreadRadius: 0,
-        ),
-      ];
+  static List<BoxShadow> get xs => [];
 
-  /// Small shadow - 3% black, 12px blur
+  /// Small shadow - neutralized (flat design, no shadows)
   /// Use for: Buttons, small cards
-  static List<BoxShadow> get sm => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.03),
-          offset: const Offset(0, 3),
-          blurRadius: 12,
-          spreadRadius: 0,
-        ),
-      ];
+  static List<BoxShadow> get sm => [];
 
-  /// Medium shadow - 3.5% black, 20px blur (Claude card shadow)
+  /// Medium shadow - neutralized (flat design, no shadows)
   /// Use for: Standard cards, elevated content
-  /// This is the signature Claude shadow
-  static List<BoxShadow> get md => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.035),
-          offset: const Offset(0, 4),
-          blurRadius: 20,
-          spreadRadius: 0,
-        ),
-      ];
+  static List<BoxShadow> get md => [];
 
   /// Card shadow alias - same as md (Claude's main card shadow)
   static List<BoxShadow> get card => md;
 
-  /// Large shadow - 5% black, 24px blur
+  /// Large shadow - neutralized (flat design, no shadows)
   /// Use for: Hover states, elevated cards
-  static List<BoxShadow> get lg => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
-          offset: const Offset(0, 6),
-          blurRadius: 24,
-          spreadRadius: 0,
-        ),
-      ];
+  static List<BoxShadow> get lg => [];
 
-  /// Extra large shadow - 8% black, 32px blur
+  /// Extra large shadow - neutralized (flat design, no shadows)
   /// Use for: Modals, popovers
-  static List<BoxShadow> get xl => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.08),
-          offset: const Offset(0, 8),
-          blurRadius: 32,
-          spreadRadius: 0,
-        ),
-      ];
+  static List<BoxShadow> get xl => [];
 
-  /// 2XL shadow - 10% black, 40px blur
+  /// 2XL shadow - neutralized (flat design, no shadows)
   /// Use for: Large modals, full-page overlays
-  static List<BoxShadow> get xxl => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.10),
-          offset: const Offset(0, 12),
-          blurRadius: 40,
-          spreadRadius: 0,
-        ),
-      ];
+  static List<BoxShadow> get xxl => [];
 
   // ============================================
   // DARK MODE SHADOWS
@@ -113,68 +70,26 @@ class DSShadows {
   // But we provide softer dark shadows for compatibility
   // ============================================
 
-  /// Extra small shadow dark
-  static List<BoxShadow> get xsDark => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.15),
-          offset: const Offset(0, 2),
-          blurRadius: 8,
-          spreadRadius: 0,
-        ),
-      ];
+  /// Extra small shadow dark - neutralized (flat design, no shadows)
+  static List<BoxShadow> get xsDark => [];
 
-  /// Small shadow dark
-  static List<BoxShadow> get smDark => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.20),
-          offset: const Offset(0, 3),
-          blurRadius: 12,
-          spreadRadius: 0,
-        ),
-      ];
+  /// Small shadow dark - neutralized (flat design, no shadows)
+  static List<BoxShadow> get smDark => [];
 
-  /// Medium shadow dark
-  static List<BoxShadow> get mdDark => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.25),
-          offset: const Offset(0, 4),
-          blurRadius: 20,
-          spreadRadius: 0,
-        ),
-      ];
+  /// Medium shadow dark - neutralized (flat design, no shadows)
+  static List<BoxShadow> get mdDark => [];
 
   /// Card shadow dark alias
   static List<BoxShadow> get cardDark => mdDark;
 
-  /// Large shadow dark
-  static List<BoxShadow> get lgDark => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.30),
-          offset: const Offset(0, 6),
-          blurRadius: 24,
-          spreadRadius: 0,
-        ),
-      ];
+  /// Large shadow dark - neutralized (flat design, no shadows)
+  static List<BoxShadow> get lgDark => [];
 
-  /// Extra large shadow dark
-  static List<BoxShadow> get xlDark => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.35),
-          offset: const Offset(0, 8),
-          blurRadius: 32,
-          spreadRadius: 0,
-        ),
-      ];
+  /// Extra large shadow dark - neutralized (flat design, no shadows)
+  static List<BoxShadow> get xlDark => [];
 
-  /// 2XL shadow dark
-  static List<BoxShadow> get xxlDark => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.40),
-          offset: const Offset(0, 12),
-          blurRadius: 40,
-          spreadRadius: 0,
-        ),
-      ];
+  /// 2XL shadow dark - neutralized (flat design, no shadows)
+  static List<BoxShadow> get xxlDark => [];
 
   // ============================================
   // LEGACY COMPATIBILITY
@@ -220,7 +135,7 @@ class DSShadows {
   // ============================================
 
   /// Standard card decoration (light mode)
-  /// Uses Claude's signature soft shadow
+  /// Flat design with border only, no shadows
   static BoxDecoration cardDecoration({
     Color? backgroundColor,
     double borderRadius = 16,
@@ -229,11 +144,15 @@ class DSShadows {
       BoxDecoration(
         color: backgroundColor ?? DSColors.surface,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: shadow ?? md,
+        border: Border.all(
+          color: DSColors.border.withValues(alpha: 0.5),
+          width: 1,
+        ),
+        boxShadow: [],
       );
 
   /// Card decoration for dark mode
-  /// Uses border instead of shadow (Claude pattern)
+  /// Flat design with border only, no shadows
   static BoxDecoration cardDecorationDark({
     Color? backgroundColor,
     double borderRadius = 16,
@@ -249,10 +168,10 @@ class DSShadows {
                 width: 1,
               )
             : null,
-        boxShadow: shadow ?? smDark,
+        boxShadow: [],
       );
 
-  /// Elevated card decoration
+  /// Elevated card decoration - flat design with border only
   static BoxDecoration elevatedDecoration({
     Color? backgroundColor,
     double borderRadius = 16,
@@ -260,10 +179,14 @@ class DSShadows {
       BoxDecoration(
         color: backgroundColor ?? DSColors.surface,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: lg,
+        border: Border.all(
+          color: DSColors.border.withValues(alpha: 0.5),
+          width: 1,
+        ),
+        boxShadow: [],
       );
 
-  /// Modal decoration
+  /// Modal decoration - flat design, no shadows
   static BoxDecoration modalDecoration({
     Color? backgroundColor,
     double borderRadius = 28,
@@ -271,10 +194,10 @@ class DSShadows {
       BoxDecoration(
         color: backgroundColor ?? DSColors.surface,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: xl,
+        boxShadow: [],
       );
 
-  /// Subtle decoration (minimal shadow for nested content)
+  /// Subtle decoration - flat design, no shadows
   static BoxDecoration subtleDecoration({
     Color? backgroundColor,
     double borderRadius = 12,
@@ -282,7 +205,7 @@ class DSShadows {
       BoxDecoration(
         color: backgroundColor ?? DSColors.surface,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: xs,
+        boxShadow: [],
       );
 
   /// @deprecated Use [cardDecoration] instead
@@ -317,7 +240,7 @@ class DSShadows {
       BoxDecoration(
         color: isPressed ? DSColors.accentHover : DSColors.accent,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: isPressed ? [] : sm,
+        boxShadow: [],
       );
 
   /// @deprecated Gold decoration - no longer used in modern design
@@ -330,7 +253,7 @@ class DSShadows {
           color: DSColors.warning.withValues(alpha: 0.6),
           width: 1,
         ),
-        boxShadow: sm,
+        boxShadow: [],
       );
 
   // ============================================
@@ -420,11 +343,11 @@ class DSShadowScheme {
   List<BoxShadow> get inkWashMd => md;
   List<BoxShadow> get inkWashLg => lg;
 
-  // Semantic shadow accessors (first shadow for single-shadow use)
-  BoxShadow get cardShadow => card.first;
-  BoxShadow get modalShadow => xl.first;
-  BoxShadow get toastShadow => md.first;
-  BoxShadow get dropdownShadow => lg.first;
+  // Semantic shadow accessors - neutralized (flat design, no shadows)
+  BoxShadow get cardShadow => const BoxShadow(color: Color(0x00000000));
+  BoxShadow get modalShadow => const BoxShadow(color: Color(0x00000000));
+  BoxShadow get toastShadow => const BoxShadow(color: Color(0x00000000));
+  BoxShadow get dropdownShadow => const BoxShadow(color: Color(0x00000000));
 
   // List accessors for semantic shadows
   List<BoxShadow> get modal => xl;

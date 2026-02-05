@@ -11,7 +11,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../core/components/fortune_loading_screen.dart';
-import '../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -184,7 +184,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('발생했습니다: $e'),
-              backgroundColor: TossDesignSystem.errorRed,
+              backgroundColor: DSColors.error,
             ),
           );
           // Navigate back using go_router
@@ -271,7 +271,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                           onPressed: _completeLoading,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).colorScheme.primary,
-                            foregroundColor: TossDesignSystem.white,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.spacing12,
                               vertical: AppSpacing.spacing4),
@@ -323,14 +323,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                   horizontal: AppSpacing.spacing4,
                   vertical: AppSpacing.spacing4),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  color: context.colors.surface,
                 ),
                 child: Row(
                   children: [
@@ -338,7 +331,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                     IconButton(
                       icon: const Icon(
                         Icons.close,
-                        color: TossDesignSystem.gray900,
+                        color: DSColors.textPrimaryDark,
                         size: 24),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -369,14 +362,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                     top: AppSpacing.spacing6,
                     bottom: MediaQuery.of(context).padding.bottom + 24),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: TossDesignSystem.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
+                    color: context.colors.surface,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -392,8 +378,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                         child: ElevatedButton(
                           onPressed: widget.onSkip,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: TossDesignSystem.gray900,
-                            foregroundColor: TossDesignSystem.white,
+                            backgroundColor: DSColors.textPrimaryDark,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                               vertical: AppSpacing.spacing3 * 1.17),
                             shape: RoundedRectangleBorder(

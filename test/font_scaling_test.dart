@@ -1,8 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortune/core/theme/font_size_system.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
-
 void main() {
   group('FontSizeSystem Tests', () {
     tearDown(() {
@@ -42,14 +40,4 @@ void main() {
     });
   });
 
-  group('TossDesignSystem Consistency Tests', () {
-    test('TossDesignSystem constants match FontSizeSystem', () {
-      expect(TossDesignSystem.display1.fontSize, FontSizeSystem.displayLarge);
-      expect(TossDesignSystem.display2.fontSize, FontSizeSystem.displayMedium);
-      expect(TossDesignSystem.heading1.fontSize, FontSizeSystem.displaySmall);
-      expect(TossDesignSystem.heading2.fontSize, FontSizeSystem.heading1);
-      expect(TossDesignSystem.body1.fontSize, FontSizeSystem.bodyLarge);
-      expect(TossDesignSystem.button.fontSize, FontSizeSystem.buttonMedium);
-    });
-  });
 }

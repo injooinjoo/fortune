@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../theme/ds_extensions.dart';
 import '../../tokens/ds_fortune_colors.dart';
 import '../../tokens/ds_love_colors.dart';
 import '../../tokens/ds_luck_colors.dart';
@@ -101,7 +102,7 @@ class _TraditionalButtonState extends State<TraditionalButton>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = _getColors(isDark);
     final isDisabled = widget.onPressed == null || widget.isLoading;
 
@@ -520,7 +521,7 @@ class _TraditionalTextButtonState extends State<TraditionalTextButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final color = _getColor(isDark);
     final isDisabled = widget.onPressed == null;
 
@@ -612,7 +613,7 @@ class _TraditionalIconButtonState extends State<TraditionalIconButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final color = _getColor(isDark);
     final isDisabled = widget.onPressed == null;
 

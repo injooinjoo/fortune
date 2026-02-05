@@ -11,9 +11,6 @@ import '../../providers/face_condition_tracker_provider.dart';
 /// 핵심 가치: 위로·공감·공유 (자기계발 ❌)
 /// 타겟: 2-30대 여성
 class TrendInsightBanner extends ConsumerWidget {
-  /// 다크 모드 여부
-  final bool isDark;
-
   /// 사용자 성별 (콘텐츠 차별화)
   final String? gender;
 
@@ -25,7 +22,6 @@ class TrendInsightBanner extends ConsumerWidget {
 
   const TrendInsightBanner({
     super.key,
-    this.isDark = false,
     this.gender,
     this.customInsight,
     this.onTap,
@@ -33,6 +29,7 @@ class TrendInsightBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = context.isDark;
     final trackerState = ref.watch(faceConditionTrackerProvider);
     final trendDirection = ref.watch(conditionTrendDirectionProvider);
     final trendInsight = customInsight ?? ref.watch(conditionTrendInsightProvider) ?? '이번 주 트렌드를 분석 중이에요';
@@ -170,11 +167,8 @@ class TrendInsightBanner extends ConsumerWidget {
 
 /// 간단한 트렌드 칩 (작은 공간용)
 class TrendChip extends ConsumerWidget {
-  final bool isDark;
-
   const TrendChip({
     super.key,
-    this.isDark = false,
   });
 
   @override

@@ -9,7 +9,7 @@
 library;
 
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/saju_colors.dart';
+import '../../../../../core/design_system/tokens/ds_saju_colors.dart';
 
 /// 관계 유형
 enum RelationType {

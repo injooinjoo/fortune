@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/design_system/components/traditional/seal_stamp_widget.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -734,7 +734,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final isPremium = ref.watch(isPremiumProvider);
     final customChildren = _buildCustomLayout(context, isDark, isPremium);
 
@@ -1463,13 +1463,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           border: Border.all(
             color: colors.textPrimary.withValues(alpha: 0.08),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: colors.textPrimary.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1634,7 +1627,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   ) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // 카테고리별 색상 (파스텔톤으로 조정)
     const categoryColors = {
@@ -1739,13 +1732,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         decoration: BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: colors.textPrimary.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -4226,7 +4212,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
           const SizedBox(height: DSSpacing.sm),
           FortuneInfographicWidgets.buildCategoryCards(
             categories,
-            isDarkMode: Theme.of(context).brightness == Brightness.dark,
+            isDarkMode: context.isDark,
           ),
         ],
       ),
@@ -5060,13 +5046,9 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    (isDark
-                            ? TossDesignSystem.backgroundDark
-                            : TossDesignSystem.backgroundLight)
+                    context.colors.background
                         .withValues(alpha: 0.3),
-                    (isDark
-                            ? TossDesignSystem.backgroundDark
-                            : TossDesignSystem.backgroundLight)
+                    context.colors.background
                         .withValues(alpha: 0.7),
                   ],
                 ),
@@ -5873,7 +5855,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     final score = data['score'] as int? ?? 0;
     final phase = data['phase'] as String? ?? '';
@@ -9066,7 +9048,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   /// 블러 플레이스홀더 빌더 (심플화 - 자물쇠 아이콘만)
   Widget _buildBlurredPlaceholder(BuildContext context, String message) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final iconColor = isDark ? DSColors.textPrimary : DSColors.textPrimaryDark;
 
     return Container(
@@ -9611,13 +9593,6 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(color: colors.textPrimary.withValues(alpha: 0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -16178,7 +16153,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       BuildContext context, MbtiDimensionFortune dimension) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: DSSpacing.sm),
@@ -16353,7 +16328,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   Widget _buildWishFortuneFlowSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final wishData = _wishData;
     if (wishData?.fortuneFlow == null) return const SizedBox.shrink();
 
@@ -16486,7 +16461,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   Widget _buildWishLuckyMissionSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final wishData = _wishData;
     if (wishData?.luckyMission == null) return const SizedBox.shrink();
 
@@ -16558,7 +16533,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: DSSpacing.md),
@@ -16640,7 +16615,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   Widget _buildWishDragonWisdomSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final wishData = _wishData;
     if (wishData?.dragonMessage == null) return const SizedBox.shrink();
 
@@ -16841,7 +16816,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   Widget _buildWishAdviceSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final wishData = _wishData;
     if (wishData == null || wishData.advice.isEmpty)
       return const SizedBox.shrink();
@@ -16915,7 +16890,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   Widget _buildTalismanDetailsSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final details = _talismanDetails;
     if (details == null || details.isEmpty) return const SizedBox.shrink();
 
@@ -16999,7 +16974,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   Widget _buildTalismanLuckyItemsSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final luckyItems = _talismanLuckyItems;
     if (luckyItems.isEmpty) return const SizedBox.shrink();
 
@@ -17057,7 +17032,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   Widget _buildTalismanWarningsSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final warnings = _talismanWarnings;
     if (warnings.isEmpty) return const SizedBox.shrink();
 

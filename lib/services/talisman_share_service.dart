@@ -8,7 +8,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../presentation/widgets/social_share_bottom_sheet.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
 import '../core/theme/typography_unified.dart';
 
 class TalismanShareService {
@@ -33,7 +32,7 @@ class TalismanShareService {
           text: 'Fortune App',
           style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.bold,
-            color: TossDesignSystem.white.withValues(alpha: 0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -52,7 +51,7 @@ class TalismanShareService {
         text: TextSpan(
           text: DateTime.now().toString().split(' ')[0],
           style: TypographyUnified.bodySmall.copyWith(
-            color: TossDesignSystem.white.withValues(alpha: 0.6),
+            color: Colors.white.withValues(alpha: 0.6),
           ),
         ),
         textDirection: TextDirection.ltr,

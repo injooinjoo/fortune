@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import '../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../domain/entities/fortune.dart';
 
 class TimeSpecificFortuneCard extends StatelessWidget {
@@ -141,10 +141,10 @@ class TimeSpecificFortuneCard extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accentDark;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }
 

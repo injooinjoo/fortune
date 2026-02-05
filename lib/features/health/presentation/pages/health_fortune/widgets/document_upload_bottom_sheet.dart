@@ -5,8 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../../core/design_system/design_system.dart';
-import '../../../../../../core/theme/fortune_theme.dart';
-import '../../../../../../core/theme/fortune_design_system.dart';
+
 import '../../../../../../core/widgets/unified_button.dart';
 import '../../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../../shared/components/toast.dart';
@@ -51,13 +50,12 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
       padding: EdgeInsets.only(bottom: bottomPadding),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.backgroundDark : Colors.white,
+        color: context.colors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(
@@ -68,31 +66,31 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 헤더
-              _buildHeader(isDark),
+              _buildHeader(context),
               const SizedBox(height: 24),
 
               // 문서 유형 선택
-              _buildDocumentTypeSelector(isDark),
+              _buildDocumentTypeSelector(context),
               const SizedBox(height: 20),
 
               // 파일 선택 옵션
-              _buildFileSelectionOptions(isDark),
+              _buildFileSelectionOptions(context),
 
               // 선택된 파일 미리보기
               if (_selectedFile != null) ...[
                 const SizedBox(height: 20),
-                _buildSelectedFilePreview(isDark),
+                _buildSelectedFilePreview(context),
               ],
 
               const SizedBox(height: 24),
 
               // 분석 버튼
-              _buildAnalyzeButton(isDark),
+              _buildAnalyzeButton(),
 
               const SizedBox(height: 12),
 
               // 안내 텍스트
-              _buildInfoText(isDark),
+              _buildInfoText(context),
             ],
           ),
         ),
@@ -100,7 +98,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
     );
   }
 
-  Widget _buildHeader(bool isDark) {
+  Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
         Container(
@@ -122,15 +120,15 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
             children: [
               Text(
                 '건강 문서 분석',
-                style: TossTheme.heading3.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                style: context.heading3.copyWith(
+                  color: context.colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 '신령이 검진 결과를 분석해드려요',
-                style: TossTheme.caption.copyWith(
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                style: context.bodySmall.copyWith(
+                  color: context.colors.textSecondary,
                 ),
               ),
             ],
@@ -140,22 +138,22 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
           onPressed: () => Navigator.pop(context),
           icon: Icon(
             Icons.close_rounded,
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+            color: context.colors.textSecondary,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildDocumentTypeSelector(bool isDark) {
+  Widget _buildDocumentTypeSelector(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '문서 유형',
-          style: TossTheme.body2.copyWith(
+          style: context.heading3.copyWith(
             fontWeight: FontWeight.w600,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 10),
@@ -176,23 +174,23 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? DSFortuneColors.categoryHealth.withValues(alpha: 0.1)
-                        : (isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary),
+                        : context.colors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isSelected
                           ? DSFortuneColors.categoryHealth
-                          : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                          : context.colors.divider,
                       width: isSelected ? 1.5 : 1,
                     ),
                   ),
                   child: Text(
                     type.displayName,
                     textAlign: TextAlign.center,
-                    style: TossTheme.caption.copyWith(
+                    style: context.bodySmall.copyWith(
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                       color: isSelected
                           ? DSFortuneColors.categoryHealth
-                          : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+                          : context.colors.textSecondary,
                     ),
                   ),
                 ),
@@ -204,15 +202,15 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
     );
   }
 
-  Widget _buildFileSelectionOptions(bool isDark) {
+  Widget _buildFileSelectionOptions(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '파일 선택',
-          style: TossTheme.body2.copyWith(
+          style: context.heading3.copyWith(
             fontWeight: FontWeight.w600,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 10),
@@ -221,7 +219,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
             // PDF 파일 선택
             Expanded(
               child: _buildOptionButton(
-                isDark: isDark,
+                context: context,
                 icon: Icons.picture_as_pdf_rounded,
                 label: 'PDF 파일',
                 onTap: _pickPdfFile,
@@ -231,7 +229,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
             // 카메라 촬영
             Expanded(
               child: _buildOptionButton(
-                isDark: isDark,
+                context: context,
                 icon: Icons.camera_alt_rounded,
                 label: '사진 촬영',
                 onTap: _takePhoto,
@@ -241,7 +239,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
             // 갤러리 선택
             Expanded(
               child: _buildOptionButton(
-                isDark: isDark,
+                context: context,
                 icon: Icons.photo_library_rounded,
                 label: '갤러리',
                 onTap: _pickFromGallery,
@@ -254,7 +252,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
   }
 
   Widget _buildOptionButton({
-    required bool isDark,
+    required BuildContext context,
     required IconData icon,
     required String label,
     required VoidCallback onTap,
@@ -267,10 +265,10 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary,
+          color: context.colors.backgroundSecondary,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
+            color: context.colors.divider,
           ),
         ),
         child: Column(
@@ -278,13 +276,13 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
             Icon(
               icon,
               size: 28,
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: context.colors.textSecondary,
             ),
             const SizedBox(height: 6),
             Text(
               label,
-              style: TossTheme.caption.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              style: context.bodySmall.copyWith(
+                color: context.colors.textSecondary,
               ),
             ),
           ],
@@ -293,7 +291,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
     );
   }
 
-  Widget _buildSelectedFilePreview(bool isDark) {
+  Widget _buildSelectedFilePreview(BuildContext context) {
     final fileName = _selectedFile?.path.split('/').last ?? '';
     final fileSize = _selectedFile?.lengthSync() ?? 0;
     final fileSizeStr = fileSize < 1024 * 1024
@@ -323,15 +321,15 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
               children: [
                 Text(
                   fileName.length > 25 ? '${fileName.substring(0, 22)}...' : fileName,
-                  style: TossTheme.body2.copyWith(
+                  style: context.heading3.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 Text(
                   fileSizeStr,
-                  style: TossTheme.caption.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                  style: context.bodySmall.copyWith(
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ],
@@ -346,7 +344,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
             },
             icon: Icon(
               Icons.close_rounded,
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: context.colors.textSecondary,
               size: 20,
             ),
           ),
@@ -355,7 +353,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
     );
   }
 
-  Widget _buildAnalyzeButton(bool isDark) {
+  Widget _buildAnalyzeButton() {
     final isEnabled = _selectedFile != null && _base64Data != null;
 
     return UnifiedButton(
@@ -366,11 +364,11 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
     );
   }
 
-  Widget _buildInfoText(bool isDark) {
+  Widget _buildInfoText(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary,
+        color: context.colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -379,14 +377,14 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
           Icon(
             Icons.info_outline_rounded,
             size: 16,
-            color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
+            color: context.colors.textTertiary,
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               '업로드된 문서는 분석에만 사용되며, 분석 후 즉시 삭제됩니다. 의사의 전문적 진단을 대체하지 않습니다.',
-              style: TossTheme.caption.copyWith(
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
+              style: context.bodySmall.copyWith(
+                color: context.colors.textTertiary,
                 height: 1.4,
               ),
             ),

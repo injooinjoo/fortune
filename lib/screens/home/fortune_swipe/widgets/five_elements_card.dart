@@ -9,7 +9,6 @@ class FiveElementsCard extends StatelessWidget {
   final Map<String, String?> sajuInfo;
   final String balance;
   final String explanation;
-  final bool isDark;
 
   const FiveElementsCard({
     super.key,
@@ -17,7 +16,6 @@ class FiveElementsCard extends StatelessWidget {
     required this.sajuInfo,
     required this.balance,
     required this.explanation,
-    required this.isDark,
   });
 
   /// 오행 전통색 (오방색 기반) - 변경 금지
@@ -82,21 +80,18 @@ class FiveElementsCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(
+              color: context.colors.border,
+              width: 1,
+            ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _PillarItem(label: '년주', value: sajuInfo['year_pillar'] ?? '○○', isDark: isDark),
-              _PillarItem(label: '월주', value: sajuInfo['month_pillar'] ?? '○○', isDark: isDark),
-              _PillarItem(label: '일주', value: sajuInfo['day_pillar'] ?? '○○', isDark: isDark),
-              _PillarItem(label: '시주', value: sajuInfo['hour_pillar'] ?? '○○', isDark: isDark),
+              _PillarItem(label: '년주', value: sajuInfo['year_pillar'] ?? '○○'),
+              _PillarItem(label: '월주', value: sajuInfo['month_pillar'] ?? '○○'),
+              _PillarItem(label: '일주', value: sajuInfo['day_pillar'] ?? '○○'),
+              _PillarItem(label: '시주', value: sajuInfo['hour_pillar'] ?? '○○'),
             ],
           ),
         ),
@@ -109,13 +104,10 @@ class FiveElementsCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(
+              color: context.colors.border,
+              width: 1,
+            ),
           ),
           child: Column(
             children: elements.entries.map((entry) {
@@ -207,7 +199,7 @@ class FiveElementsCard extends StatelessWidget {
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: isDark
+              colors: context.isDark
                   ? [const Color(0xFF2E8B57).withValues(alpha: 0.15), const Color(0xFF1E3A5F).withValues(alpha: 0.15)] // 오방색: 목/수
                   : [const Color(0xFF2E8B57).withValues(alpha: 0.08), const Color(0xFF1E3A5F).withValues(alpha: 0.08)], // 오방색: 목/수
               begin: Alignment.topLeft,
@@ -215,7 +207,7 @@ class FiveElementsCard extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark
+              color: context.isDark
                   ? const Color(0xFF2E8B57).withValues(alpha: 0.3) // 오방색: 목
                   : const Color(0xFF2E8B57).withValues(alpha: 0.2), // 오방색: 목
               width: 1,
@@ -270,12 +262,10 @@ class FiveElementsCard extends StatelessWidget {
 class _PillarItem extends StatelessWidget {
   final String label;
   final String value;
-  final bool isDark;
 
   const _PillarItem({
     required this.label,
     required this.value,
-    required this.isDark,
   });
 
   @override

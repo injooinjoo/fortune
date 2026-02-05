@@ -96,7 +96,7 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = context.colors;
 
     final effectiveBorderRadius =
@@ -104,7 +104,7 @@ class ChatBubble extends StatelessWidget {
     final effectivePadding = padding ?? const EdgeInsets.all(16);
     final effectiveBackgroundColor =
         backgroundColor ?? colors.backgroundSecondary;
-    final effectiveBorderColor = borderColor ?? Colors.white.withValues(alpha: 0.1);
+    final effectiveBorderColor = borderColor ?? colors.surface.withValues(alpha: 0.1);
     final effectiveTailColor =
         tailColor ?? (useGlass ? DSColors.accentSecondary.withValues(alpha: 0.2) : effectiveBackgroundColor);
 
@@ -131,8 +131,8 @@ class ChatBubble extends StatelessWidget {
                             DSColors.textTertiary.withValues(alpha: 0.05),
                           ]
                         : [
-                            Colors.white.withValues(alpha: 0.9),
-                            Colors.white.withValues(alpha: 0.7),
+                            colors.surface.withValues(alpha: 0.9),
+                            colors.surface.withValues(alpha: 0.7),
                           ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,

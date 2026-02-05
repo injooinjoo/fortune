@@ -59,13 +59,11 @@ import 'routes/wellness_routes.dart';
 import '../core/utils/page_transitions.dart';
 import '../core/utils/route_observer_logger.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
-
-/// 전역 Navigator Key - FCM 딥링크 등에서 사용
-final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+import '../core/theme/theme_keys.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    navigatorKey: rootNavigatorKey,
+    navigatorKey: appNavigatorKey,
     initialLocation: '/splash', // Premium Splash Screen으로 진입점 변경 (기존: /chat)
     debugLogDiagnostics: false,
     observers: kDebugMode ? [RouteObserverLogger()] : [],

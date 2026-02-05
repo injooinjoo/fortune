@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../constants/loading_messages.dart';
-import '../theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'loading_video_player.dart';
 
 class FortuneLoadingScreen extends StatefulWidget {
@@ -112,12 +112,8 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.white;
-    final textColor = isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
-    
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Center(
           child: Column(
@@ -133,8 +129,8 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
                 loop: true,
               ),
               
-              const SizedBox(height: TossDesignSystem.spacing4XL),
-              
+              const SizedBox(height: DSSpacing.xxxxl),
+
               // 감성 메시지 (롤링 애니메이션)
               Container(
                 height: 50, // 고정 높이로 텍스트 점프 방지
@@ -148,8 +144,8 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
                         position: _slideAnimation,
                         child: Text(
                           _messages[_currentMessageIndex],
-                          style: TossDesignSystem.body2.copyWith(
-                            color: textColor.withValues(alpha: 0.7),
+                          style: context.bodyMedium.copyWith(
+                            color: context.colors.textPrimary.withValues(alpha: 0.7),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -158,21 +154,21 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
                   },
                 ),
               ),
-              
+
               // 하단 여백
               const Spacer(flex: 3),
-              
+
               // 아주 작은 부가 텍스트 (선택적)
               Text(
                 'ZPZG',
-                style: TossDesignSystem.small.copyWith(
-                  color: textColor.withValues(alpha: 0.3),
+                style: context.labelSmall.copyWith(
+                  color: context.colors.textPrimary.withValues(alpha: 0.3),
                   letterSpacing: 1.5,
                 ),
               ).animate()
                 .fadeIn(delay: 1000.ms, duration: 800.ms),
-              
-              const SizedBox(height: TossDesignSystem.spacing4XL),
+
+              const SizedBox(height: DSSpacing.xxxxl),
             ],
           ),
         ),
@@ -194,9 +190,6 @@ class TossFortuneLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -206,11 +199,11 @@ class TossFortuneLoadingWidget extends StatelessWidget {
           loop: true,
         ),
         if (message != null) ...[
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: DSSpacing.md),
           Text(
             message!,
-            style: TossDesignSystem.caption.copyWith(
-              color: textColor.withValues(alpha: 0.6),
+            style: context.labelMedium.copyWith(
+              color: context.colors.textPrimary.withValues(alpha: 0.6),
             ),
           ),
         ],

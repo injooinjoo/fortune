@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/theme/font_config.dart';
-import '../../../../../../core/theme/fortune_theme.dart';
-import '../../../../../../core/theme/fortune_design_system.dart';
+
 
 /// 전문 진단 서류 업로드 섹션
 /// 건강검진표, 처방전, 진단서 분석 기능으로 연결
 class MedicalDocumentUploadSection extends StatelessWidget {
-  final bool isDark;
   final int tokenCost;
   final VoidCallback onTap;
 
   const MedicalDocumentUploadSection({
     super.key,
-    required this.isDark,
     this.tokenCost = 3,
     required this.onTap,
   });
@@ -66,9 +63,9 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                     children: [
                       Text(
                         '전문 진단 서류가 있다면',
-                        style: TossTheme.body2.copyWith(
+                        style: context.heading3.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -80,7 +77,7 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                         ),
                         child: Text(
                           '신령 분석',
-                          style: TossTheme.caption.copyWith(
+                          style: context.bodySmall.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
                             fontSize: FontConfig.badgeText,
@@ -92,8 +89,8 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '건강검진표 · 처방전 · 진단서',
-                    style: TossTheme.caption.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                    style: context.bodySmall.copyWith(
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
@@ -110,14 +107,14 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                     const Icon(
                       Icons.monetization_on_rounded,
                       size: 14,
-                      color: TossTheme.warning,
+                      color: DSColors.warning,
                     ),
                     const SizedBox(width: 2),
                     Text(
                       '$tokenCost',
-                      style: TossTheme.body2.copyWith(
+                      style: context.heading3.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: TossTheme.warning,
+                        color: DSColors.warning,
                       ),
                     ),
                   ],
@@ -126,7 +123,7 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 14,
-                  color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray400,
+                  color: context.colors.textDisabled,
                 ),
               ],
             ),

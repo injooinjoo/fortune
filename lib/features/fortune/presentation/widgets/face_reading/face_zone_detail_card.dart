@@ -34,7 +34,7 @@ class FaceZoneDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // zoneData가 Map인 경우 파싱
     final observation = zoneData?['observation'] as String? ?? '';

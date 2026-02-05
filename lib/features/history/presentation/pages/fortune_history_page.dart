@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../core/providers/user_settings_provider.dart';
@@ -84,11 +82,11 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
           
           return Column(
             children: [
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 토스 스타일 탭 바
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
                 child: Row(
                   children: [
                     _buildTabButton(0, '타임라인'),
@@ -104,13 +102,13 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 이번 달 요약 카드 (토스 스타일)
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
                 child: AppCard(
-                  padding: const EdgeInsets.all(TossTheme.spacingL),
+                  padding: const EdgeInsets.all(DSSpacing.lg),
                   child: Column(
                     children: [
                       Row(
@@ -131,7 +129,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                           ),
                         ],
                       ),
-                      const SizedBox(height: TossTheme.spacingM),
+                      const SizedBox(height: DSSpacing.md),
                       Row(
                         children: [
                           Expanded(
@@ -198,7 +196,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 탭별 컨텐츠
               Expanded(
@@ -268,9 +266,9 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     final colors = context.colors;
     return Center(
       child: Container(
-        margin: const EdgeInsets.all(TossTheme.spacingXL),
+        margin: const EdgeInsets.all(DSSpacing.xl),
         child: AppCard(
-          padding: const EdgeInsets.all(TossTheme.spacingXL),
+          padding: const EdgeInsets.all(DSSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -278,7 +276,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 '📜',
                 style: context.displayLarge,
               ),
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               Text(
                 '아직 인사이트 기록이 없어요',
                 style: context.heading2.copyWith(
@@ -287,7 +285,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: TossTheme.spacingS),
+              const SizedBox(height: DSSpacing.sm),
               Text(
                 '인사이트를 보고 나면 여기에 기록됩니다',
                 style: context.bodyMedium.copyWith(
@@ -295,7 +293,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               UnifiedButton(
                 text: '인사이트 보러 가기',
                 onPressed: () => Navigator.of(context).pop(),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/typography_unified.dart';
-import '../../design_system/tokens/ds_colors.dart';
+import '../../design_system/design_system.dart';
 
 /// 에너지/진행률을 수평 게이지로 표시하는 인포그래픽 위젯
 ///
@@ -68,7 +67,7 @@ class EnergyGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +112,6 @@ class EnergyGauge extends StatelessWidget {
           animate: animate,
           animationDuration: animationDuration,
           useGradient: useGradient,
-          isDark: isDark,
         ),
       ],
     );
@@ -145,7 +143,6 @@ class _AnimatedGaugeBar extends StatefulWidget {
   final bool animate;
   final Duration animationDuration;
   final bool useGradient;
-  final bool isDark;
 
   const _AnimatedGaugeBar({
     required this.value,
@@ -156,7 +153,6 @@ class _AnimatedGaugeBar extends StatefulWidget {
     required this.animate,
     required this.animationDuration,
     required this.useGradient,
-    required this.isDark,
   });
 
   @override
@@ -285,8 +281,6 @@ class DualGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Row(
       children: [
         Expanded(
@@ -295,7 +289,6 @@ class DualGauge extends StatelessWidget {
             maxValue: maxValue,
             label: label1,
             icon: icon1,
-            isDark: isDark,
           ),
         ),
         const SizedBox(width: 16),
@@ -305,7 +298,6 @@ class DualGauge extends StatelessWidget {
             maxValue: maxValue,
             label: label2,
             icon: icon2,
-            isDark: isDark,
           ),
         ),
       ],
@@ -319,18 +311,17 @@ class _GaugeBox extends StatelessWidget {
   final int maxValue;
   final String label;
   final String? icon;
-  final bool isDark;
 
   const _GaugeBox({
     required this.value,
     required this.maxValue,
     required this.label,
     this.icon,
-    required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

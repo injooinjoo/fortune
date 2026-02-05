@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../core/design_system/tokens/ds_luck_colors.dart';
 
 /// Helper methods for fortune infographic widgets
@@ -73,13 +73,13 @@ class FortuneInfographicHelpers {
   /// Get category score color
   static Color getCategoryScoreColor(int score, bool isDarkMode) {
     if (score >= 80) {
-      return isDarkMode ? TossDesignSystem.primaryGreen : TossDesignSystem.successGreen;
+      return DSColors.success;
     } else if (score >= 60) {
-      return isDarkMode ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue;
+      return DSColors.accentDark;
     } else if (score >= 40) {
-      return isDarkMode ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange;
+      return DSColors.warning;
     } else {
-      return isDarkMode ? TossDesignSystem.primaryRed : TossDesignSystem.errorRed;
+      return DSColors.error;
     }
   }
 

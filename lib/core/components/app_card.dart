@@ -80,6 +80,7 @@ class AppCard extends StatelessWidget {
 
   BoxBorder? _getBorder(DSColorScheme colors) {
     switch (style) {
+      case AppCardStyle.elevated:
       case AppCardStyle.outlined:
         return Border.all(
           color: colors.border,
@@ -96,14 +97,8 @@ class AppCard extends StatelessWidget {
   }
 
   List<BoxShadow>? _getBoxShadow(DSShadowScheme shadows) {
-    switch (style) {
-      case AppCardStyle.elevated:
-        return shadows.card;
-      case AppCardStyle.glassmorphism:
-        return shadows.modal;
-      default:
-        return null;
-    }
+    // Flat design - no depth shadows
+    return null;
   }
 }
 

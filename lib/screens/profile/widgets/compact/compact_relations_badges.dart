@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/design_system/design_system.dart';
 
 /// 압축된 합충형해 배지
@@ -16,7 +14,7 @@ class CompactRelationsBadges extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final relations = _extractRelations();
 
     if (relations.isEmpty) {
@@ -24,14 +22,14 @@ class CompactRelationsBadges extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingS),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.2)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+          color: isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -43,14 +41,14 @@ class CompactRelationsBadges extends StatelessWidget {
               Icon(
                 Icons.link_rounded,
                 size: 14,
-                color: isDark ? Colors.white60 : Colors.black45,
+                color: context.colors.textSecondary,
               ),
               const SizedBox(width: 4),
               Text(
                 '합충형해',
                 style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white70 : Colors.black54,
+                  color: context.colors.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -58,12 +56,12 @@ class CompactRelationsBadges extends StatelessWidget {
                 '合沖刑破害',
                 style: context.labelTiny.copyWith(
                   fontSize: 9,
-                  color: isDark ? Colors.white38 : Colors.black26,
+                  color: context.colors.textTertiary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
           // 배지들
           Wrap(
             spacing: 6,
@@ -195,7 +193,7 @@ class CompactRelationsBadges extends StatelessWidget {
             '$type: $description',
             style: context.labelTiny.copyWith(
               fontWeight: FontWeight.w500,
-              color: isDark ? Colors.white70 : Colors.black54,
+              color: context.colors.textSecondary,
             ),
           ),
         ],

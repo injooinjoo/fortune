@@ -178,21 +178,21 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
   }
 
   Future<void> _showPermissionDialog(MicrophonePermissionStatus status) async {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+        backgroundColor: context.colors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            Icon(Icons.mic, color: isDark ? Colors.white : Colors.black),
+            Icon(Icons.mic, color: context.colors.textPrimary),
             const SizedBox(width: 8),
             Text(
               '마이크 권한 필요',
               style: TextStyle(
-                color: isDark ? Colors.white : Colors.black,
+                color: context.colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -242,8 +242,8 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDark ? Colors.white : Colors.black,
-              foregroundColor: isDark ? Colors.black : Colors.white,
+              backgroundColor: context.colors.ctaBackground,
+              foregroundColor: context.colors.ctaForeground,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -261,7 +261,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = context.colors;
     final hasText = widget.controller.text.trim().isNotEmpty;
 
@@ -496,7 +496,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
                 IconButton(
                   icon: Icon(
                     Icons.mic_none,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: colors.textPrimary,
                     size: 24,
                   ),
                   onPressed: widget.enabled ? _startRecording : null,
@@ -512,7 +512,6 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
   /// 수정 바텀시트
   void _showEditSheet() {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final editController =
         TextEditingController(text: widget.controller.text);
 
@@ -543,7 +542,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white24 : Colors.black12,
+                    color: colors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),

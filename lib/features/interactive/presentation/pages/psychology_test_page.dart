@@ -6,7 +6,7 @@ import '../../../../shared/components/korean_date_picker.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/providers/user_settings_provider.dart';
-import '../../../../core/theme/fortune_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 
 // Import domain models
@@ -433,10 +433,10 @@ class _TestResultView extends ConsumerWidget {
   });
 
   Color _getLuckColor(int score) {
-    if (score >= 85) return TossDesignSystem.successGreen;
-    if (score >= 70) return TossDesignSystem.tossBlue;
-    if (score >= 55) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 85) return DSColors.success;
+    if (score >= 70) return DSColors.accentDark;
+    if (score >= 55) return DSColors.warning;
+    return DSColors.error;
   }
 
   String _getLuckText(int score) {

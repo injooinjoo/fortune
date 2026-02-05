@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/utils/logger.dart';
 import '../../core/network/api_client.dart';
-import '../../routes/route_config.dart';
+import '../../core/theme/theme_keys.dart';
 
 // 백그라운드 메시지 핸들러 (반드시 톱레벨 함수여야 함)
 @pragma('vm:entry-point')
@@ -397,7 +397,7 @@ class FCMService {
   // 네비게이션 실행
   void _navigateTo(String route) {
     try {
-      final context = rootNavigatorKey.currentContext;
+      final context = appNavigatorKey.currentContext;
       if (context != null) {
         GoRouter.of(context).go(route);
         Logger.info('알림 딥링크 이동: $route');

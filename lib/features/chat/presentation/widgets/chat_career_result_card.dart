@@ -5,7 +5,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../shared/widgets/smart_image.dart';
 
 /// 채팅용 커리어 운세 결과 카드

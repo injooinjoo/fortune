@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
 import 'package:fortune/core/theme/typography_theme.dart';
 import 'package:fortune/core/providers/user_settings_provider.dart';
-import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 
 /// 폰트 설정 페이지
@@ -13,38 +12,29 @@ class FontSettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final settings = ref.watch(userSettingsProvider);
     final settingsNotifier = ref.read(userSettingsProvider.notifier);
     final typography = ref.watch(typographyThemeProvider);
 
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: isDark
-            ? TossDesignSystem.backgroundDark
-            : TossDesignSystem.backgroundLight,
+        backgroundColor: context.colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         iconTheme: IconThemeData(
-          color: isDark
-              ? TossDesignSystem.textPrimaryDark
-              : TossDesignSystem.textPrimaryLight,
+          color: context.colors.textPrimary,
         ),
         title: Text(
           '폰트 설정',
           style: typography.titleLarge.copyWith(
-            color: isDark
-                ? TossDesignSystem.textPrimaryDark
-                : TossDesignSystem.textPrimaryLight,
+            color: context.colors.textPrimary,
           ),
         ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+        padding: const EdgeInsets.all(DSSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -52,12 +42,10 @@ class FontSettingsPage extends ConsumerWidget {
             // 1. 폰트 크기 미리보기
             // ========================================
             Container(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+              padding: const EdgeInsets.all(DSSpacing.lg),
               decoration: BoxDecoration(
-                color: isDark
-                    ? TossDesignSystem.cardBackgroundDark
-                    : TossDesignSystem.cardBackgroundLight,
-                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                color: context.colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,43 +53,35 @@ class FontSettingsPage extends ConsumerWidget {
                   Text(
                     '미리보기',
                     style: typography.labelMedium.copyWith(
-                      color: isDark
-                          ? TossDesignSystem.textSecondaryDark
-                          : TossDesignSystem.textSecondaryLight,
+                      color: context.colors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingM),
+                  const SizedBox(height: DSSpacing.md),
                   Text(
                     '제목 텍스트',
                     style: typography.headingMedium.copyWith(
-                      color: isDark
-                          ? TossDesignSystem.textPrimaryDark
-                          : TossDesignSystem.textPrimaryLight,
+                      color: context.colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingS),
+                  const SizedBox(height: DSSpacing.sm),
                   Text(
                     '본문 텍스트입니다. 이 텍스트는 일반적인 본문에 사용됩니다.',
                     style: typography.bodyMedium.copyWith(
-                      color: isDark
-                          ? TossDesignSystem.textPrimaryDark
-                          : TossDesignSystem.textPrimaryLight,
+                      color: context.colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingS),
+                  const SizedBox(height: DSSpacing.sm),
                   Text(
                     '작은 텍스트 - 캡션이나 부가 설명',
                     style: typography.labelSmall.copyWith(
-                      color: isDark
-                          ? TossDesignSystem.textSecondaryDark
-                          : TossDesignSystem.textSecondaryLight,
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingXL),
+            const SizedBox(height: DSSpacing.xl),
 
             // ========================================
             // 2. 폰트 크기 조절
@@ -109,23 +89,19 @@ class FontSettingsPage extends ConsumerWidget {
             Text(
               '폰트 크기',
               style: typography.titleMedium.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textPrimaryDark
-                    : TossDesignSystem.textPrimaryLight,
+                color: context.colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             // 폰트 크기 슬라이더
             Container(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+              padding: const EdgeInsets.all(DSSpacing.lg),
               decoration: BoxDecoration(
-                color: isDark
-                    ? TossDesignSystem.cardBackgroundDark
-                    : TossDesignSystem.cardBackgroundLight,
-                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                color: context.colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Column(
                 children: [
@@ -135,37 +111,31 @@ class FontSettingsPage extends ConsumerWidget {
                       Text(
                         '현재 크기',
                         style: typography.labelMedium.copyWith(
-                          color: isDark
-                              ? TossDesignSystem.textSecondaryDark
-                              : TossDesignSystem.textSecondaryLight,
+                          color: context.colors.textSecondary,
                         ),
                       ),
                       Text(
                         '${(settings.fontScale * 100).toInt()}%',
                         style: typography.titleSmall.copyWith(
-                          color: isDark
-                              ? TossDesignSystem.textPrimaryDark
-                              : TossDesignSystem.textPrimaryLight,
+                          color: context.colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingM),
+                  const SizedBox(height: DSSpacing.md),
                   Row(
                     children: [
                       // 감소 버튼
                       IconButton(
                         icon: const Icon(Icons.remove_circle_outline),
                         color: settings.fontScale <= 0.85
-                            ? (isDark
-                                ? TossDesignSystem.textTertiaryDark
-                                : TossDesignSystem.textTertiaryLight)
-                            : TossDesignSystem.tossBlue,
+                            ? context.colors.textTertiary
+                            : DSColors.accentDark,
                         onPressed: settings.fontScale <= 0.85
                             ? null
                             : () {
-                                TossDesignSystem.hapticLight();
+                                DSHaptics.light();
                                 settingsNotifier.decreaseFontScale();
                               },
                       ),
@@ -176,10 +146,8 @@ class FontSettingsPage extends ConsumerWidget {
                           min: 0.85,
                           max: 1.3,
                           divisions: 9,
-                          activeColor: TossDesignSystem.tossBlue,
-                          inactiveColor: isDark
-                              ? TossDesignSystem.dividerDark
-                              : TossDesignSystem.dividerLight,
+                          activeColor: DSColors.accentDark,
+                          inactiveColor: context.colors.divider,
                           onChanged: (value) {
                             // 스냅 포인트 변경 시에만 햅틱 피드백
                             final oldStep = ((settings.fontScale - 0.85) / 0.05).round();
@@ -195,14 +163,12 @@ class FontSettingsPage extends ConsumerWidget {
                       IconButton(
                         icon: const Icon(Icons.add_circle_outline),
                         color: settings.fontScale >= 1.3
-                            ? (isDark
-                                ? TossDesignSystem.textTertiaryDark
-                                : TossDesignSystem.textTertiaryLight)
-                            : TossDesignSystem.tossBlue,
+                            ? context.colors.textTertiary
+                            : DSColors.accentDark,
                         onPressed: settings.fontScale >= 1.3
                             ? null
                             : () {
-                                TossDesignSystem.hapticLight();
+                                DSHaptics.light();
                                 settingsNotifier.increaseFontScale();
                               },
                       ),
@@ -212,71 +178,64 @@ class FontSettingsPage extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             // 프리셋 버튼들
             Wrap(
-              spacing: TossDesignSystem.spacingS,
-              runSpacing: TossDesignSystem.spacingS,
+              spacing: DSSpacing.sm,
+              runSpacing: DSSpacing.sm,
               children: TypographyTheme.fontScalePresets.entries.map((entry) {
                 final isSelected =
                     (settings.fontScale - entry.value).abs() < 0.01;
                 return _PresetButton(
                   label: TypographyTheme.fontScaleLabels[entry.key]!,
                   isSelected: isSelected,
-                  isDark: isDark,
                   onPressed: () {
-                    TossDesignSystem.hapticMedium();
+                    DSHaptics.medium();
                     settingsNotifier.setFontScalePreset(entry.key);
                   },
                 );
               }).toList(),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingXL),
+            const SizedBox(height: DSSpacing.xl),
 
             // ========================================
             // 3. 리셋 버튼
             // ========================================
             SizedBox(
               width: double.infinity,
-              height: TossDesignSystem.buttonHeightMedium,
+              height: 48.0,
               child: OutlinedButton(
                 onPressed: () {
-                  TossDesignSystem.hapticMedium();
+                  DSHaptics.medium();
                   settingsNotifier.reset();
                 },
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
-                    color: isDark
-                        ? TossDesignSystem.borderDark
-                        : TossDesignSystem.borderLight,
+                    color: context.colors.border,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.circular(TossDesignSystem.radiusM),
+                        BorderRadius.circular(DSRadius.md),
                   ),
                 ),
                 child: Text(
                   '기본 설정으로 되돌리기',
                   style: typography.labelLarge.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingL),
+            const SizedBox(height: DSSpacing.lg),
 
             // 안내 텍스트
             Text(
               '폰트 크기 설정은 앱 전체에 적용됩니다. 가독성을 위해 권장 크기는 100%입니다.',
               style: typography.labelSmall.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textTertiaryDark
-                    : TossDesignSystem.textTertiaryLight,
+                color: context.colors.textTertiary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -291,13 +250,11 @@ class FontSettingsPage extends ConsumerWidget {
 class _PresetButton extends StatelessWidget {
   final String label;
   final bool isSelected;
-  final bool isDark;
   final VoidCallback onPressed;
 
   const _PresetButton({
     required this.label,
     required this.isSelected,
-    required this.isDark,
     required this.onPressed,
   });
 
@@ -305,25 +262,21 @@ class _PresetButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPressed,
-      borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+      borderRadius: BorderRadius.circular(DSRadius.smd),
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: TossDesignSystem.spacingM,
-          vertical: TossDesignSystem.spacingS,
+          horizontal: DSSpacing.md,
+          vertical: DSSpacing.sm,
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.tossBlue
-              : (isDark
-                  ? TossDesignSystem.cardBackgroundDark
-                  : TossDesignSystem.cardBackgroundLight),
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+              ? DSColors.accentDark
+              : context.colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.smd),
           border: Border.all(
             color: isSelected
-                ? TossDesignSystem.tossBlue
-                : (isDark
-                    ? TossDesignSystem.borderDark
-                    : TossDesignSystem.borderLight),
+                ? DSColors.accentDark
+                : context.colors.border,
           ),
         ),
         child: Text(
@@ -331,10 +284,8 @@ class _PresetButton extends StatelessWidget {
           style: context.bodySmall.copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             color: isSelected
-                ? TossDesignSystem.white
-                : (isDark
-                    ? TossDesignSystem.textPrimaryDark
-                    : TossDesignSystem.textPrimaryLight),
+                ? Colors.white
+                : context.colors.textPrimary,
           ),
         ),
       ),

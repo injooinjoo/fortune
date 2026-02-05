@@ -71,7 +71,7 @@ class _PersonalityDnaChatCardState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final isPremium = ref.watch(isPremiumProvider);
 
     return Container(
@@ -165,8 +165,8 @@ class _PersonalityDnaChatCardState
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.white.withValues(alpha: 0.3),
-                    Colors.white.withValues(alpha: 0.7),
+                    context.colors.surface.withValues(alpha: 0.3),
+                    context.colors.surface.withValues(alpha: 0.7),
                   ],
                 ),
               ),

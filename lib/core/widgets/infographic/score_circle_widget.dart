@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../theme/typography_unified.dart';
-import '../../design_system/tokens/ds_colors.dart';
+import '../../design_system/design_system.dart';
 
 /// 점수를 원형 게이지로 표시하는 인포그래픽 위젯
 ///
@@ -64,7 +63,7 @@ class ScoreCircleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final effectiveScoreColor = scoreColor ?? _getScoreColor(isDark);
     final effectiveBgColor = backgroundColor ??
         (isDark ? DSColors.backgroundSecondaryDark : DSColors.backgroundSecondary);
@@ -206,7 +205,7 @@ class _AnimatedScoreCircleState extends State<_AnimatedScoreCircle>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return AnimatedBuilder(
       animation: _animation,

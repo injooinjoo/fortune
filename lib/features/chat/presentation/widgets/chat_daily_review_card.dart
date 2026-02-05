@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 하루 회고 결과 카드
 ///
@@ -39,7 +39,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -72,7 +72,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
         child: Stack(
           children: [
             // 배경 장식
-            ..._buildBackgroundDecorations(isDark),
+            ..._buildBackgroundDecorations(),
 
             // 메인 콘텐츠
             Padding(
@@ -81,7 +81,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 헤더
-                  _buildHeader(context, isDark)
+                  _buildHeader(context)
                     .animate()
                     .fadeIn(duration: 500.ms)
                     .slideY(begin: -0.1, end: 0),
@@ -89,12 +89,12 @@ class ChatDailyReviewCard extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // 구분선
-                  _buildDivider(isDark),
+                  _buildDivider(context),
 
                   const SizedBox(height: 16),
 
                   // 오늘의 하이라이트
-                  _buildHighlightSection(context, isDark)
+                  _buildHighlightSection(context)
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 200.ms)
                     .slideX(begin: -0.05, end: 0),
@@ -102,7 +102,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // 오늘 배운 점
-                  _buildLearningSection(context, isDark)
+                  _buildLearningSection(context)
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 400.ms)
                     .slideX(begin: -0.05, end: 0),
@@ -110,7 +110,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // 내일을 위한 한 마디
-                  _buildTomorrowSection(context, isDark)
+                  _buildTomorrowSection(context)
                     .animate()
                     .fadeIn(duration: 500.ms, delay: 600.ms),
 
@@ -124,7 +124,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
     );
   }
 
-  List<Widget> _buildBackgroundDecorations(bool isDark) {
+  List<Widget> _buildBackgroundDecorations() {
     final decorations = <Widget>[];
 
     // 우측 상단 달 장식
@@ -166,7 +166,8 @@ class ChatDailyReviewCard extends ConsumerWidget {
     return decorations;
   }
 
-  Widget _buildHeader(BuildContext context, bool isDark) {
+  Widget _buildHeader(BuildContext context) {
+    final isDark = context.isDark;
     final formattedDate = DateFormat('M월 d일 (E)', 'ko').format(date);
     final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
@@ -232,7 +233,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildDivider(bool isDark) {
+  Widget _buildDivider(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -255,7 +256,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
             '🌿',
             style: TextStyle(
               fontSize: 12,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
+              color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -277,7 +278,8 @@ class ChatDailyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildHighlightSection(BuildContext context, bool isDark) {
+  Widget _buildHighlightSection(BuildContext context) {
+    final isDark = context.isDark;
     final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Container(
@@ -325,15 +327,14 @@ class ChatDailyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildLearningSection(BuildContext context, bool isDark) {
+  Widget _buildLearningSection(BuildContext context) {
+    final isDark = context.isDark;
     final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white.withValues(alpha: 0.6),
+        color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.6),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: _mintAccent.withValues(alpha: 0.2),
@@ -368,7 +369,8 @@ class ChatDailyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildTomorrowSection(BuildContext context, bool isDark) {
+  Widget _buildTomorrowSection(BuildContext context) {
+    final isDark = context.isDark;
     final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Container(

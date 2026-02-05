@@ -11,7 +11,7 @@ class StatsRadarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final dividerColor = Theme.of(context).dividerColor;
 
     return Container(

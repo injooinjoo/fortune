@@ -14,7 +14,7 @@ class BreathingTimerWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(breathingTimerProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -265,7 +265,7 @@ class BreathingPatternSelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedPattern = ref.watch(selectedBreathingPatternProvider);
     final timerState = ref.watch(breathingTimerProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,7 +348,7 @@ class MeditationDurationSelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDuration = ref.watch(selectedMeditationDurationProvider);
     final timerState = ref.watch(breathingTimerProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

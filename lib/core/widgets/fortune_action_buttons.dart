@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../presentation/providers/content_interaction_provider.dart';
 import '../../services/fortune_share_service.dart';
 
@@ -96,10 +96,7 @@ class _FortuneActionButtonsState extends ConsumerState<FortuneActionButtons>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultColor = isDark
-        ? FortuneDesignSystem.grayDark400
-        : FortuneDesignSystem.gray500;
+    final defaultColor = context.colors.textTertiary;
     final iconColor = widget.iconColor ?? defaultColor;
 
     final interactionState = ref.watch(contentInteractionProvider(widget.contentId));
@@ -208,7 +205,7 @@ class _LikeButton extends StatelessWidget {
                   isSaved ? Icons.favorite : Icons.favorite_outline,
                   key: ValueKey(isSaved),
                   size: iconSize,
-                  color: isSaved ? FortuneDesignSystem.errorRed : iconColor,
+                  color: isSaved ? DSColors.error : iconColor,
                 ),
               ),
             );
@@ -265,10 +262,7 @@ class LikeOnlyButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultColor = isDark
-        ? FortuneDesignSystem.grayDark400
-        : FortuneDesignSystem.gray500;
+    final defaultColor = context.colors.textTertiary;
     final color = iconColor ?? defaultColor;
 
     final interactionState = ref.watch(contentInteractionProvider(contentId));
@@ -286,7 +280,7 @@ class LikeOnlyButton extends ConsumerWidget {
         child: Icon(
           interactionState.isSaved ? Icons.favorite : Icons.favorite_outline,
           size: iconSize,
-          color: interactionState.isSaved ? FortuneDesignSystem.errorRed : color,
+          color: interactionState.isSaved ? DSColors.error : color,
         ),
       ),
     );
@@ -316,10 +310,7 @@ class ShareOnlyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultColor = isDark
-        ? FortuneDesignSystem.grayDark400
-        : FortuneDesignSystem.gray500;
+    final defaultColor = context.colors.textTertiary;
     final color = iconColor ?? defaultColor;
 
     return GestureDetector(

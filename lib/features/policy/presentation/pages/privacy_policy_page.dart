@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class PrivacyPolicyPage extends ConsumerStatefulWidget {
   const PrivacyPolicyPage({super.key});
@@ -11,56 +11,33 @@ class PrivacyPolicyPage extends ConsumerStatefulWidget {
 }
 
 class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
-  // TOSS Design System Helper Methods
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: _getTextColor(context)),
+          icon: Icon(Icons.arrow_back_ios, color: context.colors.textPrimary),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '개인정보처리방침',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: context.heading3.copyWith(
+            color: context.colors.textPrimary,
           ),
         ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
-            horizontal: TossDesignSystem.marginHorizontal),
+            horizontal: DSSpacing.pageHorizontal),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             _buildSection(
               '1. 개인정보의 수집 및 이용 목적',
@@ -161,15 +138,15 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
               '• 전화: 02-1234-5678',
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingL),
+            const SizedBox(height: DSSpacing.lg),
 
             Container(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+              padding: const EdgeInsets.all(DSSpacing.md),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+                color: DSColors.accentDark.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  color: DSColors.accentDark.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -178,20 +155,20 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
                   const Icon(
                     Icons.calendar_today,
                     size: 18,
-                    color: TossDesignSystem.tossBlue,
+                    color: DSColors.accentDark,
                   ),
-                  const SizedBox(width: TossDesignSystem.spacingS),
+                  const SizedBox(width: DSSpacing.sm),
                   Text(
                     '시행일: 2025년 1월 1일',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: _getSecondaryTextColor(context),
+                    style: context.labelSmall.copyWith(
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingXXL),
+            const SizedBox(height: DSSpacing.xxl),
           ],
         ),
       ),
@@ -200,21 +177,21 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
 
   Widget _buildSection(String title, String content) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingL),
+      padding: const EdgeInsets.only(bottom: DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: TossDesignSystem.body1.copyWith(
-              color: _getTextColor(context),
+            style: context.bodyLarge.copyWith(
+              color: context.colors.textPrimary,
             ),
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: DSSpacing.md),
           Text(
             content,
-            style: TossDesignSystem.caption.copyWith(
-              color: _getSecondaryTextColor(context),
+            style: context.labelSmall.copyWith(
+              color: context.colors.textSecondary,
             ),
           ),
         ],

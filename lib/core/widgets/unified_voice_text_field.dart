@@ -257,21 +257,21 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
 
   /// 권한 요청 다이얼로그
   Future<void> _showPermissionDialog(MicrophonePermissionStatus status) async {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+        backgroundColor: context.colors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            Icon(Icons.mic, color: isDark ? Colors.white : Colors.black),
+            Icon(Icons.mic, color: context.colors.textPrimary),
             const SizedBox(width: 8),
             Text(
               '마이크 권한 필요',
               style: TextStyle(
-                color: isDark ? Colors.white : Colors.black,
+                color: context.colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -321,8 +321,8 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDark ? Colors.white : Colors.black,
-              foregroundColor: isDark ? Colors.black : Colors.white,
+              backgroundColor: context.colors.ctaBackground,
+              foregroundColor: context.colors.ctaForeground,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -340,7 +340,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final isRecordingOrTranscribing = _state == VoiceInputState.recording ||
         _state == VoiceInputState.transcribing;
 
@@ -358,26 +358,8 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
           child: Container(
             height: 48,
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF2A2A2A).withValues(alpha: 0.9)
-                  : Colors.white.withValues(alpha: 0.95),
+              color: context.colors.surfaceSecondary,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.12)
-                    : Colors.black.withValues(alpha: 0.06),
-                width: 0.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: isDark
-                      ? Colors.black.withValues(alpha: 0.4)
-                      : Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                  spreadRadius: 0,
-                ),
-              ],
             ),
             child: Row(
               children: [
@@ -389,7 +371,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
                   IconButton(
                     icon: Icon(
                       Icons.mic_none,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: context.colors.textPrimary,
                       size: 24,
                     ),
                     onPressed: widget.enabled ? _startRecording : null,
@@ -545,14 +527,14 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
         height: 48,
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? Colors.white : Colors.black)
+              ? context.colors.ctaBackground
               : (isDark ? Colors.grey[700] : Colors.grey[400]),
           shape: BoxShape.circle,
         ),
         child: Icon(
           Icons.arrow_upward,
           color: isActive
-              ? (isDark ? Colors.black : Colors.white)
+              ? context.colors.ctaForeground
               : (isDark ? Colors.grey[500] : Colors.grey[600]),
           size: 22,
         ),

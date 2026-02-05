@@ -23,43 +23,43 @@ class FontSizeSystem {
 
   /// Display Sizes (대형 헤드라인)
   /// 스플래시, 온보딩 등 큰 타이틀에 사용
-  static const double displayLarge = 50.0;   // 가장 큰 헤드라인
-  static const double displayMedium = 42.0;  // 큰 헤드라인
-  static const double displaySmall = 34.0;   // 중간 헤드라인
+  static const double displayLarge = 40.0;   // 가장 큰 헤드라인
+  static const double displayMedium = 34.0;  // 큰 헤드라인
+  static const double displaySmall = 28.0;   // 중간 헤드라인
 
   /// Heading Sizes (섹션 제목)
   /// 페이지 제목, 섹션 헤더에 사용
-  static const double heading1 = 30.0;  // 메인 페이지 제목
-  static const double heading2 = 26.0;  // 섹션 제목
-  static const double heading3 = 22.0;  // 서브 섹션 제목
-  static const double heading4 = 20.0;  // 작은 섹션 제목
+  static const double heading1 = 26.0;  // 메인 페이지 제목
+  static const double heading2 = 22.0;  // 섹션 제목
+  static const double heading3 = 20.0;  // 서브 섹션 제목
+  static const double heading4 = 18.0;  // 작은 섹션 제목
 
   /// Body Sizes (본문 텍스트)
   /// 일반 텍스트, 설명 등에 사용
-  static const double bodyLarge = 19.0;   // 큰 본문
-  static const double bodyMedium = 17.0;  // 기본 본문
-  static const double bodySmall = 16.0;   // 작은 본문
+  static const double bodyLarge = 16.0;   // 큰 본문
+  static const double bodyMedium = 14.0;  // 기본 본문
+  static const double bodySmall = 13.0;   // 작은 본문
 
   /// Label Sizes (라벨, 캡션)
   /// 버튼 라벨, 입력 필드 힌트, 캡션 등에 사용
-  static const double labelLarge = 15.0;   // 큰 라벨
-  static const double labelMedium = 14.0;  // 기본 라벨
-  static const double labelSmall = 13.0;   // 작은 라벨
-  static const double labelTiny = 12.0;    // 매우 작은 라벨 (배지, NEW 표시 등)
+  static const double labelLarge = 13.0;   // 큰 라벨
+  static const double labelMedium = 12.0;  // 기본 라벨
+  static const double labelSmall = 11.0;   // 작은 라벨
+  static const double labelTiny = 10.0;    // 매우 작은 라벨 (배지, NEW 표시 등)
 
   /// Button Sizes (버튼 텍스트)
   /// 버튼 내부 텍스트에 사용
-  static const double buttonLarge = 19.0;   // 큰 버튼
-  static const double buttonMedium = 18.0;  // 기본 버튼
-  static const double buttonSmall = 17.0;   // 작은 버튼
-  static const double buttonTiny = 16.0;    // 매우 작은 버튼
+  static const double buttonLarge = 16.0;   // 큰 버튼
+  static const double buttonMedium = 15.0;  // 기본 버튼
+  static const double buttonSmall = 14.0;   // 작은 버튼
+  static const double buttonTiny = 13.0;    // 매우 작은 버튼
 
   /// Number Sizes (숫자 전용)
   /// 금액, 점수 등 숫자 표시에 사용 (TossFace 폰트)
-  static const double numberXLarge = 42.0;  // 매우 큰 숫자
-  static const double numberLarge = 34.0;   // 큰 숫자
-  static const double numberMedium = 26.0;  // 중간 숫자
-  static const double numberSmall = 20.0;   // 작은 숫자
+  static const double numberXLarge = 36.0;  // 매우 큰 숫자
+  static const double numberLarge = 28.0;   // 큰 숫자
+  static const double numberMedium = 22.0;  // 중간 숫자
+  static const double numberSmall = 18.0;   // 작은 숫자
 
   // ==========================================
   // SCALE FACTOR (사용자 폰트 크기 조절)

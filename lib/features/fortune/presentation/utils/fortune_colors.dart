@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import '../../../../core/design_system/tokens/ds_fortune_colors.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// Utility class for fortune-specific colors that are theme-aware
 ///
@@ -103,64 +102,70 @@ class FortuneColors {
     '수': Color(0xFF63B3ED), // Water - Light Blue
   };
 
+  static bool _isDark(BuildContext context) =>
+      context.isDark;
+
+  static Color _themed(BuildContext context, Color light, Color dark) =>
+      _isDark(context) ? dark : light;
+
   // Helper methods for theme-aware colors
   static Color getLove(BuildContext context) {
-    return AppColors.getThemedColor(context, love, loveDark);
+    return _themed(context, love, loveDark);
   }
 
   static Color getSpiritual(BuildContext context) {
-    return AppColors.getThemedColor(context, spiritual, spiritualDark);
+    return _themed(context, spiritual, spiritualDark);
   }
 
   static Color getEnergy(BuildContext context) {
-    return AppColors.getThemedColor(context, energy, energyDark);
+    return _themed(context, energy, energyDark);
   }
 
   static Color getEarth(BuildContext context) {
-    return AppColors.getThemedColor(context, earth, earthDark);
+    return _themed(context, earth, earthDark);
   }
 
   static LinearGradient getLoveGradient(BuildContext context) {
-    return AppColors.isDarkMode(context) ? loveGradientDark : loveGradient;
+    return _isDark(context) ? loveGradientDark : loveGradient;
   }
 
   static LinearGradient getSpiritualGradient(BuildContext context) {
-    return AppColors.isDarkMode(context) ? spiritualGradientDark : spiritualGradient;
+    return _isDark(context) ? spiritualGradientDark : spiritualGradient;
   }
 
   static LinearGradient getEnergyGradient(BuildContext context) {
-    return AppColors.isDarkMode(context) ? energyGradientDark : energyGradient;
+    return _isDark(context) ? energyGradientDark : energyGradient;
   }
 
   static LinearGradient getEarthGradient(BuildContext context) {
-    return AppColors.isDarkMode(context) ? earthGradientDark : earthGradient;
+    return _isDark(context) ? earthGradientDark : earthGradient;
   }
 
   static Color getSportsRed(BuildContext context) {
-    return AppColors.getThemedColor(context, sportsRed, sportsRedDark);
+    return _themed(context, sportsRed, sportsRedDark);
   }
 
   static Color getSportsBlue(BuildContext context) {
-    return AppColors.getThemedColor(context, sportsBlue, sportsBlueDark);
+    return _themed(context, sportsBlue, sportsBlueDark);
   }
 
   static Color getSportsGreen(BuildContext context) {
-    return AppColors.getThemedColor(context, sportsGreen, sportsGreenDark);
+    return _themed(context, sportsGreen, sportsGreenDark);
   }
 
   static Color getElementColor(BuildContext context, String element) {
-    final colors = AppColors.isDarkMode(context) ? elementColorsDark : elementColors;
-    return colors[element] ?? AppColors.getTextPrimary(context);
+    final colors = _isDark(context) ? elementColorsDark : elementColors;
+    return colors[element] ?? (_isDark(context) ? const Color(0xFFFFFFFF) : const Color(0xFF000000));
   }
 
   // Score-based color selection
   static Color getScoreColor(BuildContext context, int score) {
     if (score >= 80) {
-      return AppColors.getThemedColor(context, AppColors.success, AppColors.successDark);
+      return _themed(context, const Color(0xFF34C759), const Color(0xFF34C759));
     } else if (score >= 60) {
-      return AppColors.getThemedColor(context, AppColors.warning, AppColors.warningDark);
+      return _themed(context, const Color(0xFFFFCC00), const Color(0xFFFFCC00));
     } else {
-      return AppColors.getThemedColor(context, AppColors.error, AppColors.errorDark);
+      return _themed(context, const Color(0xFFFF3B30), const Color(0xFFFF3B30));
     }
   }
 }

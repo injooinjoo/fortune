@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../features/fortune/domain/models/match_insight.dart';
 import '../../../../shared/widgets/smart_image.dart';
@@ -33,7 +32,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(
@@ -46,13 +45,6 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.08),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -363,7 +355,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
             Text(
               '강점: ${team.strengths.join(', ')}',
               style: typography.labelSmall.copyWith(
-                color: AppColors.positive,
+                color: colors.success,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -375,7 +367,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
             Text(
               '우려: ${team.concerns.join(', ')}',
               style: typography.labelSmall.copyWith(
-                color: AppColors.negative,
+                color: colors.error,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -672,9 +664,9 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return AppColors.positive;
-    if (score >= 60) return AppColors.primary;
+    if (score >= 80) return DSColors.successDark;
+    if (score >= 60) return DSColors.accent;
     if (score >= 40) return Colors.orange;
-    return AppColors.negative;
+    return DSColors.errorDark;
   }
 }

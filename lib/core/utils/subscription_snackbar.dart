@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 /// 광고 시청 후 구독 유도 스낵바를 표시하는 유틸리티
 ///
@@ -21,8 +21,6 @@ class SubscriptionSnackbar {
   }) {
     // 이미 구독 중이면 표시하지 않음
     if (hasUnlimitedAccess) return;
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -57,9 +55,9 @@ class SubscriptionSnackbar {
             ],
           ),
         ),
-        backgroundColor: isDark
-            ? TossDesignSystem.gray700
-            : TossDesignSystem.gray800,
+        backgroundColor: context.isDark
+            ? const Color(0xFF3B352E)
+            : const Color(0xFF2A2620),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

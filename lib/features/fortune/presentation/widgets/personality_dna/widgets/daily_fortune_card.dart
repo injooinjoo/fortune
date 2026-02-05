@@ -17,7 +17,7 @@ class DailyFortuneCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return SectionCard(
       title: '오늘의 데일리 운세',

@@ -4910,7 +4910,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   Widget _buildChatBackground() {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // Neon Dark Theme: 순수 검정 배경 (이미지 없음)
     if (isDark) {
@@ -4951,7 +4951,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final surveyState = ref.watch(chatSurveyProvider);
     final onboardingState = ref.watch(onboardingChatProvider);
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // 온보딩 상태 변경 시 자동 스크롤
     ref.listen<OnboardingState>(onboardingChatProvider, (previous, next) {

@@ -538,13 +538,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   color: context.colors.border,
                   width: 1,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: SettingsListTile(
                 leading: CircleAvatar(
@@ -716,13 +709,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   color: context.colors.border,
                   width: 1,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Column(
                 children: [
@@ -813,13 +799,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   color: context.colors.border,
                   width: 1,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Column(
                 children: [

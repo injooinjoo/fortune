@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../theme/ds_extensions.dart';
 import '../../tokens/ds_fortune_colors.dart';
 
 /// Traditional Korean endless knot (吉祥結, 길상결) loading indicator
@@ -57,7 +58,7 @@ class _TraditionalKnotIndicatorState extends State<TraditionalKnotIndicator>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final knotColor = widget.color ?? DSFortuneColors.getInk(isDark);
 
     return AnimatedBuilder(
@@ -246,7 +247,7 @@ class _TraditionalPatternIndicatorState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final patternColor = widget.color ?? DSFortuneColors.getInk(isDark);
 
     return AnimatedBuilder(

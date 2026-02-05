@@ -9,8 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/design_system/tokens/ds_colors.dart';
-import '../../../../core/theme/fortune_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -201,12 +200,12 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                       icon: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.black.withValues(alpha: 0.54),
+                          color: Colors.black.withValues(alpha: 0.54),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Icon(
                           Icons.close,
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           size: 20,
                         ),
                       ),
@@ -385,7 +384,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       barrierColor: DSColors.overlay,
       builder: (context) => GlassContainer(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -693,7 +692,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       barrierColor: DSColors.overlay,
       builder: (context) => const TokenInsufficientModal(
         requiredTokens: _requiredTokens,

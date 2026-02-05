@@ -16,9 +16,6 @@ class FaceReadingHistoryCalendar extends ConsumerStatefulWidget {
   /// 히스토리 엔트리 목록
   final List<FaceReadingHistoryEntry> entries;
 
-  /// 다크 모드 여부
-  final bool isDark;
-
   /// 날짜 선택 콜백
   final void Function(DateTime date, FaceReadingHistoryEntry? entry)? onDateSelected;
 
@@ -37,7 +34,6 @@ class FaceReadingHistoryCalendar extends ConsumerStatefulWidget {
   const FaceReadingHistoryCalendar({
     super.key,
     required this.entries,
-    this.isDark = false,
     this.onDateSelected,
     this.onEntryTap,
     this.onCompareRequest,
@@ -104,10 +100,10 @@ class _FaceReadingHistoryCalendarState
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: widget.isDark ? DSColors.surfaceDark : DSColors.surface,
+        color: context.isDark ? DSColors.surfaceDark : DSColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: widget.isDark ? DSColors.borderDark : DSColors.border,
+          color: context.isDark ? DSColors.borderDark : DSColors.border,
         ),
       ),
       child: Column(
@@ -189,7 +185,7 @@ class _FaceReadingHistoryCalendarState
                 Text(
                   '나의 분석 기록',
                   style: context.labelMedium.copyWith(
-                    color: widget.isDark
+                    color: context.isDark
                         ? DSColors.textPrimaryDark
                         : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
@@ -198,7 +194,7 @@ class _FaceReadingHistoryCalendarState
                 Text(
                   '${widget.entries.length}번의 순간이 기록되었어요',
                   style: context.labelSmall.copyWith(
-                    color: widget.isDark
+                    color: context.isDark
                         ? DSColors.textSecondaryDark
                         : DSColors.textSecondary,
                   ),
@@ -341,7 +337,7 @@ class _FaceReadingHistoryCalendarState
               child: Text(
                 '${day.day}',
                 style: context.labelSmall.copyWith(
-                  color: widget.isDark
+                  color: context.isDark
                       ? DSColors.textPrimaryDark
                       : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -370,20 +366,20 @@ class _FaceReadingHistoryCalendarState
         fontWeight: FontWeight.w600,
       ),
       titleTextStyle: context.labelLarge.copyWith(
-        color: widget.isDark
+        color: context.isDark
             ? DSColors.textPrimaryDark
             : DSColors.textPrimary,
         fontWeight: FontWeight.w600,
       ),
       leftChevronIcon: Icon(
         Icons.chevron_left,
-        color: widget.isDark
+        color: context.isDark
             ? DSColors.textSecondaryDark
             : DSColors.textSecondary,
       ),
       rightChevronIcon: Icon(
         Icons.chevron_right,
-        color: widget.isDark
+        color: context.isDark
             ? DSColors.textSecondaryDark
             : DSColors.textSecondary,
       ),
@@ -394,7 +390,7 @@ class _FaceReadingHistoryCalendarState
   DaysOfWeekStyle _buildDaysOfWeekStyle() {
     return DaysOfWeekStyle(
       weekdayStyle: context.labelSmall.copyWith(
-        color: widget.isDark
+        color: context.isDark
             ? DSColors.textSecondaryDark
             : DSColors.textSecondary,
         fontWeight: FontWeight.w600,
@@ -453,12 +449,12 @@ class _FaceReadingHistoryCalendarState
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: widget.isDark
+        color: context.isDark
             ? DSColors.backgroundDark.withValues(alpha: 0.5)
             : DSColors.background,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: widget.isDark ? DSColors.borderDark : DSColors.border,
+          color: context.isDark ? DSColors.borderDark : DSColors.border,
         ),
       ),
       child: entry != null
@@ -501,7 +497,7 @@ class _FaceReadingHistoryCalendarState
                 Text(
                   dateStr,
                   style: context.labelMedium.copyWith(
-                    color: widget.isDark
+                    color: context.isDark
                         ? DSColors.textPrimaryDark
                         : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
@@ -513,7 +509,7 @@ class _FaceReadingHistoryCalendarState
                       ? entry.priorityInsights.first.message
                       : '분석 결과가 기록되어 있어요',
                   style: context.labelSmall.copyWith(
-                    color: widget.isDark
+                    color: context.isDark
                         ? DSColors.textSecondaryDark
                         : DSColors.textSecondary,
                   ),
@@ -527,7 +523,7 @@ class _FaceReadingHistoryCalendarState
           // 화살표
           Icon(
             Icons.chevron_right,
-            color: widget.isDark
+            color: context.isDark
                 ? DSColors.textSecondaryDark
                 : DSColors.textSecondary,
             size: 20,
@@ -550,7 +546,7 @@ class _FaceReadingHistoryCalendarState
           ),
           child: Icon(
             Icons.face_outlined,
-            color: widget.isDark
+            color: context.isDark
                 ? DSColors.textSecondaryDark
                 : DSColors.textSecondary,
             size: 24,
@@ -564,7 +560,7 @@ class _FaceReadingHistoryCalendarState
               Text(
                 dateStr,
                 style: context.labelMedium.copyWith(
-                  color: widget.isDark
+                  color: context.isDark
                       ? DSColors.textPrimaryDark
                       : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -574,7 +570,7 @@ class _FaceReadingHistoryCalendarState
               Text(
                 '이 날은 기록이 없어요',
                 style: context.labelSmall.copyWith(
-                  color: widget.isDark
+                  color: context.isDark
                       ? DSColors.textSecondaryDark
                       : DSColors.textSecondary,
                 ),
@@ -679,13 +675,13 @@ class _FaceReadingHistoryCalendarState
           Container(
             width: 1,
             height: 32,
-            color: widget.isDark ? DSColors.borderDark : DSColors.border,
+            color: context.isDark ? DSColors.borderDark : DSColors.border,
           ),
           _buildStatItem('연속 기록', '$streakDays일', Icons.local_fire_department),
           Container(
             width: 1,
             height: 32,
-            color: widget.isDark ? DSColors.borderDark : DSColors.border,
+            color: context.isDark ? DSColors.borderDark : DSColors.border,
           ),
           _buildStatItem('총 기록', '${widget.entries.length}회', Icons.history),
         ],
@@ -706,7 +702,7 @@ class _FaceReadingHistoryCalendarState
         Text(
           value,
           style: context.labelMedium.copyWith(
-            color: widget.isDark
+            color: context.isDark
                 ? DSColors.textPrimaryDark
                 : DSColors.textPrimary,
             fontWeight: FontWeight.w700,
@@ -715,7 +711,7 @@ class _FaceReadingHistoryCalendarState
         Text(
           label,
           style: context.labelSmall.copyWith(
-            color: widget.isDark
+            color: context.isDark
                 ? DSColors.textSecondaryDark
                 : DSColors.textSecondary,
             fontSize: 10,

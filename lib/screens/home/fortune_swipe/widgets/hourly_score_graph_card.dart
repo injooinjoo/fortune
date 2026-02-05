@@ -8,7 +8,6 @@ class HourlyScoreGraphCard extends StatelessWidget {
   final List<FlSpot> spots;
   final int bestHour;
   final int worstHour;
-  final bool isDark;
 
   // 고유 색상: 吉/凶 전통 표시 색상 (DS 토큰에 매칭 없음)
   static const _goodFortuneGreen = Color(0xFF4CAF50); // 고유 색상: 吉 녹색
@@ -19,7 +18,6 @@ class HourlyScoreGraphCard extends StatelessWidget {
     required this.spots,
     required this.bestHour,
     required this.worstHour,
-    required this.isDark,
   });
 
   @override
@@ -49,13 +47,10 @@ class HourlyScoreGraphCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(
+              color: context.colors.border,
+              width: 1,
+            ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -167,13 +162,10 @@ class HourlyScoreGraphCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(
+              color: context.colors.border,
+              width: 1,
+            ),
           ),
           child: LineChart(
             LineChartData(
@@ -217,7 +209,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                   isCurved: true,
                   // 고유 색상: 그래프 그라디언트 라인
                   gradient: LinearGradient(
-                    colors: isDark
+                    colors: context.isDark
                       ? [const Color(0xFF64B5F6), const Color(0xFF81C784)] // 고유 색상: 다크모드 파랑→녹색
                       : [const Color(0xFF1E88E5), const Color(0xFF43A047)], // 고유 색상: 라이트모드 파랑→녹색
                   ),
@@ -242,7 +234,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     show: true,
                     // 고유 색상: 그래프 영역 그라디언트
                     gradient: LinearGradient(
-                      colors: isDark
+                      colors: context.isDark
                         ? [
                             const Color(0xFF64B5F6).withValues(alpha: 0.45), // 고유 색상
                             const Color(0xFF81C784).withValues(alpha: 0.15), // 고유 색상

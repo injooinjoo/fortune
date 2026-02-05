@@ -189,12 +189,12 @@ class FortuneCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     
     final Widget cardContent = Container(
       margin: margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color: backgroundColor ?? (isDark ? DSColors.surface : Colors.white),
+        color: backgroundColor ?? context.colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: showBorder 
             ? Border.all(
@@ -202,19 +202,9 @@ class FortuneCard extends StatelessWidget {
                 width: 1,
               )
             : null,
-        boxShadow: elevation != null && elevation! > 0
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  offset: const Offset(0, 2),
-                  blurRadius: 8,
-                  spreadRadius: 0,
-                ),
-              ]
-            : null,
       ),
       child: Material(
-        color: Colors.white.withValues(alpha: 0.0),
+        color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),

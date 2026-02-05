@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// 사주(四柱) 전용 색상 시스템
 ///
 /// 오행(五行), 신살(神殺) 등 사주 관련 UI의 색상을 정의합니다.
-/// 다크모드를 지원하며, TossDesignSystem과 일관성을 유지합니다.
+/// 다크모드를 지원하며, DSColors와 일관성을 유지합니다.
 class SajuColors {
   SajuColors._();
 

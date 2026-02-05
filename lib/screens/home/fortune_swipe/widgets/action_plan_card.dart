@@ -4,12 +4,10 @@ import '../../../../core/design_system/design_system.dart';
 /// 🎯 오늘의 액션 플랜 카드
 class ActionPlanCard extends StatelessWidget {
   final List<Map<String, String>> actions;
-  final bool isDark;
 
   const ActionPlanCard({
     super.key,
     required this.actions,
-    required this.isDark,
   });
 
   @override
@@ -20,14 +18,14 @@ class ActionPlanCard extends StatelessWidget {
         Text(
           '오늘의 액션 플랜',
           style: context.heading3.copyWith(
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '오늘 꼭 실천할 것들',
           style: context.bodySmall.copyWith(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+            color: context.colors.textPrimary.withValues(alpha: 0.5),
           ),
         ),
 
@@ -39,7 +37,6 @@ class ActionPlanCard extends StatelessWidget {
             title: action['title'] ?? '',
             description: action['description'] ?? '',
             priority: action['priority'] ?? 'medium',
-            isDark: isDark,
           ),
         )),
       ],
@@ -51,13 +48,11 @@ class _ActionItem extends StatelessWidget {
   final String title;
   final String description;
   final String priority;
-  final bool isDark;
 
   const _ActionItem({
     required this.title,
     required this.description,
     required this.priority,
-    required this.isDark,
   });
 
   /// 전통 오방색 기반 우선순위 색상
@@ -79,19 +74,12 @@ class _ActionItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? DSColors.surface : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _priorityColor.withValues(alpha: 0.3),
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +100,7 @@ class _ActionItem extends StatelessWidget {
                 Text(
                   title,
                   style: context.labelMedium.copyWith(
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -120,7 +108,7 @@ class _ActionItem extends StatelessWidget {
                 Text(
                   description,
                   style: context.labelTiny.copyWith(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                    color: context.colors.textPrimary.withValues(alpha: 0.6),
                     height: 1.4,
                   ),
                 ),

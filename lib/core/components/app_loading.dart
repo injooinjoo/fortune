@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 /// TOSS 스타일 스켈레톤 로딩
 class TossSkeleton extends StatelessWidget {
@@ -21,14 +21,12 @@ class TossSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     final Widget skeleton = Container(
       width: width,
       height: height,
       margin: margin,
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
     );
@@ -40,9 +38,7 @@ class TossSkeleton extends StatelessWidget {
           )
           .shimmer(
             duration: const Duration(milliseconds: 1500),
-            color: isDark
-                ? TossDesignSystem.grayDark300.withValues(alpha: 0.6)
-                : TossDesignSystem.gray200.withValues(alpha: 0.6),
+            color: context.colors.border.withValues(alpha: 0.6),
           );
     }
 
@@ -58,7 +54,7 @@ class TossSkeleton extends StatelessWidget {
     return TossSkeleton(
       width: width,
       height: height,
-      borderRadius: TossDesignSystem.radiusXS,
+      borderRadius: DSRadius.xs,
       margin: margin,
     );
   }
@@ -108,27 +104,22 @@ class AppCardSkeleton extends StatelessWidget {
     return Container(
       height: height,
       margin: margin,
-      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: context.colors.border,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TossSkeleton.text(width: 120),
-          const SizedBox(height: TossDesignSystem.spacingS),
+          const SizedBox(height: DSSpacing.sm),
           TossSkeleton.text(width: double.infinity, height: 14),
-          const SizedBox(height: TossDesignSystem.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
           TossSkeleton.text(width: double.infinity, height: 14),
           const Spacer(),
           Row(
@@ -159,19 +150,19 @@ class TossListItemSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin,
-      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       child: Row(
         children: [
           if (showAvatar) ...[
             TossSkeleton.circle(size: 48),
-            const SizedBox(width: TossDesignSystem.spacingM),
+            const SizedBox(width: DSSpacing.md),
           ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TossSkeleton.text(width: 120, height: 16),
-                const SizedBox(height: TossDesignSystem.spacingS),
+                const SizedBox(height: DSSpacing.sm),
                 TossSkeleton.text(width: double.infinity, height: 14),
               ],
             ),
@@ -197,15 +188,13 @@ class AppLoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return SizedBox(
       width: size,
       height: size,
       child: CircularProgressIndicator(
         strokeWidth: strokeWidth,
         valueColor: AlwaysStoppedAnimation<Color>(
-          color ?? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.tossBlue),
+          color ?? context.colors.accent,
         ),
       ),
     );
@@ -223,21 +212,19 @@ class TossFullScreenLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Container(
-      color: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+      color: context.colors.background,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const AppLoadingIndicator(size: 48),
             if (message != null) ...[
-              const SizedBox(height: TossDesignSystem.spacingM),
+              const SizedBox(height: DSSpacing.md),
               Text(
                 message!,
-                style: TossDesignSystem.body2.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                style: context.bodyMedium.copyWith(
+                  color: context.colors.textDisabled,
                 ),
               ),
             ],

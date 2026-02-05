@@ -534,7 +534,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     required DSColorScheme colors,
     bool compact = false,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,

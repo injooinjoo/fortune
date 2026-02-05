@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/font_config.dart';
-import '../../../../../core/theme/obangseok_colors.dart';
+import '../../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 class TarotResultCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> result;
@@ -145,7 +145,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/design_system/design_system.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/utils/profile_validation.dart';
@@ -13,7 +14,7 @@ class _LandingHanjiTexture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final texturePath = isDark
         ? 'assets/textures/hanji_dark.png'
         : 'assets/textures/hanji_light.png';

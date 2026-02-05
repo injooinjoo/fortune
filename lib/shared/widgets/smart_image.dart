@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../core/design_system/design_system.dart';
 import '../../core/services/asset_delivery_service.dart';
 import '../../core/models/asset_pack.dart';
 
@@ -271,7 +272,7 @@ class _SmartImageState extends State<SmartImage> {
       child: Container(
         width: widget.width,
         height: widget.height,
-        color: Colors.white,
+        color: context.colors.surface,
       ),
     );
   }

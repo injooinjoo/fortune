@@ -2,7 +2,6 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/fortune.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
 import '../../core/design_system/design_system.dart';
 
 class BirthYearFortuneList extends StatelessWidget {
@@ -79,7 +78,7 @@ class BirthYearFortuneCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: AppDimensions.borderRadiusLarge,
           side: isHighlighted
-              ? const BorderSide(color: TossDesignSystem.tossBlue, width: 2)
+              ? const BorderSide(color: DSColors.accentDark, width: 2)
               : BorderSide.none,
         ),
         child: Container(
@@ -91,8 +90,8 @@ class BirthYearFortuneCard extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      TossDesignSystem.tossBlue.withValues(alpha:0.1),
-                      TossDesignSystem.tossBlue.withValues(alpha:0.05),
+                      DSColors.accentDark.withValues(alpha:0.1),
+                      DSColors.accentDark.withValues(alpha:0.05),
                     ],
                   )
                 : null,
@@ -116,7 +115,7 @@ class BirthYearFortuneCard extends StatelessWidget {
                           Text(
                             '나의 띠',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: TossDesignSystem.tossBlue,
+                              color: DSColors.accentDark,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -142,7 +141,7 @@ class BirthYearFortuneCard extends StatelessWidget {
                     vertical: AppSpacing.spacing1,
                   ),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.warningOrange.withValues(alpha:0.2),
+                    color: DSColors.warning.withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
                   ),
                   child: Row(
@@ -151,7 +150,7 @@ class BirthYearFortuneCard extends StatelessWidget {
                       const Icon(
                         Icons.tips_and_updates,
                         size: 14,
-                        color: TossDesignSystem.warningOrange,
+                        color: DSColors.warning,
                       ),
                       const SizedBox(width: AppSpacing.spacing1),
                       Expanded(
@@ -193,7 +192,7 @@ class BirthYearFortuneCard extends StatelessWidget {
       width: AppDimensions.buttonHeightMedium,
       height: AppDimensions.buttonHeightMedium,
       decoration: BoxDecoration(
-        color: TossDesignSystem.tossBlue.withValues(alpha:0.1),
+        color: DSColors.accentDark.withValues(alpha:0.1),
         shape: BoxShape.circle,
       ),
       child: Center(
@@ -245,7 +244,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                       Text(
                         '특별 운세',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: TossDesignSystem.gray600,
+                          color: DSColors.textSecondaryDark,
                         ),
                       ),
                     ],
@@ -263,10 +262,10 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
               Container(
                 padding: AppSpacing.paddingAll16,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
+                  color: DSColors.warning.withValues(alpha:0.1),
                   borderRadius: AppDimensions.borderRadiusMedium,
                   border: Border.all(
-                    color: TossDesignSystem.warningOrange.withValues(alpha:0.3),
+                    color: DSColors.warning.withValues(alpha:0.3),
                   ),
                 ),
                 child: Row(
@@ -274,7 +273,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                   children: [
                     const Icon(
                       Icons.tips_and_updates,
-                      color: TossDesignSystem.warningOrange,
+                      color: DSColors.warning,
                       size: AppDimensions.iconSizeSmall,
                     ),
                     const SizedBox(width: AppSpacing.spacing3),
@@ -326,7 +325,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
       width: AppDimensions.buttonHeightLarge,
       height: AppDimensions.buttonHeightLarge,
       decoration: BoxDecoration(
-        color: TossDesignSystem.tossBlue.withValues(alpha:0.1),
+        color: DSColors.accentDark.withValues(alpha:0.1),
         shape: BoxShape.circle,
       ),
       child: Center(

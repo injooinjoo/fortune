@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/ootd_info_header.dart';
@@ -531,7 +531,6 @@ class ChatOotdResultCard extends ConsumerWidget {
   Widget _buildCelebCard(
       BuildContext context, Map<String, dynamic> celebMatch) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final name = celebMatch['name'] as String? ?? '';
     final similarity = (celebMatch['similarity'] as num?)?.toInt() ?? 0;
     final reason = celebMatch['reason'] as String? ?? '';
@@ -539,18 +538,11 @@ class ChatOotdResultCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark ? colors.surface : Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -638,7 +630,6 @@ class ChatOotdResultCard extends ConsumerWidget {
   /// 추천 아이템 카드
   Widget _buildRecommendCard(BuildContext context, Map<String, dynamic> item) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final emoji = item['emoji'] as String? ?? '👗';
     final itemName = item['item'] as String? ?? '';
     final reason = item['reason'] as String? ?? '';
@@ -646,18 +637,11 @@ class ChatOotdResultCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark ? colors.surface : Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -742,7 +726,6 @@ class ChatOotdResultCard extends ConsumerWidget {
     String emoji,
   ) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
@@ -750,7 +733,7 @@ class ChatOotdResultCard extends ConsumerWidget {
       builder: (context) => Container(
         padding: const EdgeInsets.all(DSSpacing.lg),
         decoration: BoxDecoration(
-          color: isDark ? colors.surface : Colors.white,
+          color: colors.surface,
           borderRadius: const BorderRadius.vertical(
             top: Radius.circular(DSRadius.lg),
           ),

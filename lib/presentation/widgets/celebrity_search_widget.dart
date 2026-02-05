@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../data/models/celebrity_saju.dart';
 import '../providers/celebrity_saju_provider.dart';
 
@@ -79,19 +79,19 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: TossDesignSystem.gray300,
+                color: DSColors.borderDark,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: TossDesignSystem.gray300,
+                color: DSColors.borderDark,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: TossDesignSystem.tossBlue,
+                color: DSColors.accentDark,
                 width: 2,
               ),
             ),
@@ -157,14 +157,14 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return Container(
       constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
-        color: TossDesignSystem.backgroundPrimary,
+        color: DSColors.backgroundDark,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: TossDesignSystem.gray300,
+          color: DSColors.borderDark,
         ),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.gray900.withValues(alpha:0.1),
+            color: DSColors.textPrimaryDark.withValues(alpha:0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -183,14 +183,14 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
                   title,
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: TossDesignSystem.tossBlue,
+                    color: DSColors.accentDark,
                   ),
                 ),
                 const Spacer(),
                 Text(
                   '${celebrities.length}명',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: TossDesignSystem.gray500,
+                    color: DSColors.textTertiaryDark,
                   ),
                 ),
               ],
@@ -223,11 +223,11 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: CircleAvatar(
-        backgroundColor: TossDesignSystem.tossBlue.withValues(alpha:0.2),
+        backgroundColor: DSColors.accentDark.withValues(alpha:0.2),
         child: Text(
           celebrity.name.isNotEmpty ? celebrity.name[0] : '?',
           style: const TextStyle(
-            color: TossDesignSystem.tossBlue,
+            color: DSColors.accentDark,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -246,7 +246,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
           Text(
             '사주: ${celebrity.sajuString}',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: TossDesignSystem.tossBlue.withValues(alpha:0.8),
+              color: DSColors.accentDark.withValues(alpha:0.8),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -275,10 +275,10 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.backgroundPrimary,
+        color: DSColors.backgroundDark,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: TossDesignSystem.gray300,
+          color: DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -286,20 +286,20 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
           const Icon(
             Icons.search_off,
             size: 48,
-            color: TossDesignSystem.gray400,
+            color: DSColors.textDisabledDark,
           ),
           const SizedBox(height: 12),
           Text(
             '검색 결과가 없습니다',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: TossDesignSystem.gray500,
+              color: DSColors.textTertiaryDark,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '다른 연예인 이름으로 검색해보세요',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: TossDesignSystem.gray400,
+              color: DSColors.textDisabledDark,
             ),
           ),
         ],
@@ -312,10 +312,10 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.errorRed.withValues(alpha:0.1),
+        color: DSColors.error.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: TossDesignSystem.errorRed.withValues(alpha:0.3),
+          color: DSColors.error.withValues(alpha:0.3),
         ),
       ),
       child: Column(
@@ -323,20 +323,20 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
           const Icon(
             Icons.error_outline,
             size: 48,
-            color: TossDesignSystem.errorRed,
+            color: DSColors.error,
           ),
           const SizedBox(height: 12),
           Text(
             '검색 중 오류가 발생했습니다',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: TossDesignSystem.errorRed,
+              color: DSColors.error,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             error,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: TossDesignSystem.gray500,
+              color: DSColors.textTertiaryDark,
             ),
             textAlign: TextAlign.center,
           ),
@@ -348,17 +348,17 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return TossDesignSystem.successGreen;
+        return DSColors.success;
       case '화':
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case '토':
-        return TossDesignSystem.brownPrimary;
+        return const Color(0xFF8B5A3C);
       case '금':
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case '수':
-        return TossDesignSystem.tossBlue;
+        return DSColors.accentDark;
       default:
-        return TossDesignSystem.gray600;
+        return DSColors.textSecondaryDark;
     }
   }
 }

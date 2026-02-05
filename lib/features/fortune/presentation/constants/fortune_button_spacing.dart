@@ -36,15 +36,8 @@ class FortuneButtonSpacing {
   );
   
   // 하단 고정 버튼 컨테이너 데코레이션
-  static BoxDecoration get bottomButtonDecoration => BoxDecoration(
+  static BoxDecoration get bottomButtonDecoration => const BoxDecoration(
     color: Colors.white,
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withValues(alpha: 0.05),
-        blurRadius: 10,
-        offset: const Offset(0, -2),
-      ),
-    ],
   );
   
   // Safe Area 포함 하단 패딩 계산

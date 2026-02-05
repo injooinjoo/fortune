@@ -114,7 +114,7 @@ class _MeditationCompletionSheetState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final historyState = ref.watch(meditationHistoryProvider);
     final statistics = historyState.statistics;
 
@@ -130,13 +130,6 @@ class _MeditationCompletionSheetState
               decoration: BoxDecoration(
                 color: isDark ? DSColors.surfaceDark : DSColors.surface,
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
               ),
               child: SafeArea(
                 top: false,

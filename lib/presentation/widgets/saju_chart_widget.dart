@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../core/theme/app_typography.dart';
-import '../../core/theme/fortune_colors.dart';
+import '../../core/design_system/tokens/fortune_colors.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'saju_loading_widget.dart';
 // import 'saju_element_explanation_bottom_sheet.dart';
@@ -145,9 +145,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       return Container(
         padding: AppSpacing.paddingAll20,
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark600
-              : TossDesignSystem.white,
+          color: context.colors.surface,
           borderRadius: AppDimensions.borderRadiusMedium,
           border: Border.all(
             color: theme.colorScheme.outline.withValues(alpha: 0.1),
@@ -177,9 +175,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark600
-            : TossDesignSystem.white,
+        color: context.colors.surface,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.colorScheme.outline.withValues(alpha: 0.1),
@@ -420,21 +416,21 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
     switch (element?.toLowerCase()) {
       case 'wood':
       case '목':
-        return TossDesignSystem.successGreen; // Green for wood
+        return DSColors.success; // Green for wood
       case 'fire':
       case '화':
-        return TossDesignSystem.warningOrange; // Red/orange for fire
+        return DSColors.warning; // Red/orange for fire
       case 'earth':
       case '토':
         return FortuneColors.goldLight; // Yellow/gold for earth
       case 'metal':
       case '금':
-        return TossDesignSystem.gray600; // Gray/silver for metal
+        return DSColors.textSecondaryDark; // Gray/silver for metal
       case 'water':
       case '수':
-        return TossDesignSystem.tossBlue; // Blue for water
+        return DSColors.accentDark; // Blue for water
       default:
-        return TossDesignSystem.gray600;
+        return DSColors.textSecondaryDark;
     }
   }
 }

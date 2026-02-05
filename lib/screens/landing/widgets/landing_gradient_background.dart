@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/design_system/tokens/ds_fortune_colors.dart';
+import '../../../core/design_system/design_system.dart';
 
 /// Korean Traditional Hanji (한지) style gradient background for landing page
 /// Design Philosophy: "Ink on Hanji Paper" (한지 위의 먹)
@@ -10,7 +10,7 @@ class LandingGradientBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: Theme.of(context).brightness == Brightness.dark
+        gradient: context.isDark
             // Dark Mode: 벼루(砚) & 먹(墨) inspired - Inkstone aesthetic
             ? const LinearGradient(
                 begin: Alignment.topCenter,

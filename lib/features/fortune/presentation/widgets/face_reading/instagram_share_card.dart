@@ -29,9 +29,6 @@ class InstagramShareCard extends StatelessWidget {
   /// 그라데이션 색상
   final List<Color>? gradientColors;
 
-  /// 다크 모드 여부
-  final bool isDark;
-
   const InstagramShareCard({
     super.key,
     this.size = 375,
@@ -40,7 +37,6 @@ class InstagramShareCard extends StatelessWidget {
     required this.todayQuote,
     this.userName,
     this.gradientColors,
-    this.isDark = false,
   });
 
   @override
@@ -305,7 +301,6 @@ class EmotionShareCard extends StatelessWidget {
   final String emotionEmoji;
   final String message;
   final int emotionPercentage;
-  final bool isDark;
 
   const EmotionShareCard({
     super.key,
@@ -314,7 +309,6 @@ class EmotionShareCard extends StatelessWidget {
     required this.emotionEmoji,
     required this.message,
     required this.emotionPercentage,
-    this.isDark = false,
   });
 
   @override

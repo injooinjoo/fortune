@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../shared/glassmorphism/glass_container.dart';
@@ -52,9 +52,7 @@ class UserInfoVisualization extends StatelessWidget {
           ),
           child: Icon(
             _getIconForFortuneType(),
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.white
-                : TossDesignSystem.grayDark900,
+            color: context.colors.textPrimary,
             size: AppDimensions.iconSizeMedium,
           ),
         ),
@@ -245,14 +243,12 @@ class UserInfoVisualization extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
-            colors: [TossDesignSystem.errorRed.withValues(alpha: 0.5), TossDesignSystem.tossBlue.withValues(alpha: 0.5)],
+            colors: [DSColors.error.withValues(alpha: 0.5), DSColors.accentDark.withValues(alpha: 0.5)],
           ),
         ),
         child: Icon(
           Icons.favorite,
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.white
-              : TossDesignSystem.grayDark900,
+          color: context.colors.textPrimary,
           size: AppDimensions.iconSizeMedium,
         ),
       ),
@@ -294,7 +290,7 @@ class UserInfoVisualization extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: AppDimensions.iconSizeXSmall, color: itemColor),
-          const SizedBox(width: TossDesignSystem.spacingXS),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             '$label: ',
             style: theme.textTheme.bodySmall?.copyWith(

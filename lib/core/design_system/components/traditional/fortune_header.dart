@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../theme/ds_extensions.dart';
 import '../../tokens/ds_fortune_colors.dart';
 import '../../tokens/ds_love_colors.dart';
 import '../../tokens/ds_luck_colors.dart';
@@ -77,7 +78,7 @@ class FortuneHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = _getColors(isDark);
 
     switch (style) {
@@ -620,7 +621,7 @@ class FortuneHeaderSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return SliverAppBar(
       expandedHeight: expandedHeight,

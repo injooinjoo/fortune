@@ -13,7 +13,7 @@ class DailyMatchingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       padding: const EdgeInsets.all(DSSpacing.cardPadding),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/exercise_fortune_model.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../core/widgets/unified_button.dart' show UnifiedButton, BottomButtonSpacing;
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/widgets/simple_blur_overlay.dart';
@@ -63,7 +64,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Scaffold(
       backgroundColor:
@@ -177,7 +178,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
         decoration: BoxDecoration(
           color: isSelected
               ? ObangseokColors.jeok.withOpacity(0.1)
-              : (isDark ? Colors.grey.shade900 : Colors.white),
+              : (context.colors.surface),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected ? ObangseokColors.jeok : Colors.grey.shade300,
@@ -270,7 +271,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
         decoration: BoxDecoration(
           color: isSelected
               ? ObangseokColors.jeok.withOpacity(0.1)
-              : (isDark ? Colors.grey.shade900 : Colors.white),
+              : (context.colors.surface),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected ? ObangseokColors.jeok : Colors.grey.shade300,
@@ -407,7 +408,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           label: Text('${level.nameKo} (${level.period})'),
           selected: isSelected,
           selectedColor: ObangseokColors.jeok.withOpacity(0.2),
-          backgroundColor: isDark ? Colors.grey.shade900 : Colors.white,
+          backgroundColor: context.colors.surface,
           labelStyle: TextStyle(
             color: isSelected ? ObangseokColors.jeok : ObangseokColors.getMeok(context),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
@@ -464,7 +465,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           label: Text(area.nameKo),
           selected: isSelected,
           selectedColor: ObangseokColors.jeok.withOpacity(0.2),
-          backgroundColor: isDark ? Colors.grey.shade900 : Colors.white,
+          backgroundColor: context.colors.surface,
           labelStyle: TextStyle(
             color: isSelected ? ObangseokColors.jeok : ObangseokColors.getMeok(context),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
@@ -502,7 +503,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           label: Text('${time.emoji} ${time.nameKo}'),
           selected: isSelected,
           selectedColor: ObangseokColors.jeok.withOpacity(0.2),
-          backgroundColor: isDark ? Colors.grey.shade900 : Colors.white,
+          backgroundColor: context.colors.surface,
           labelStyle: TextStyle(
             color: isSelected ? ObangseokColors.jeok : ObangseokColors.getMeok(context),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
@@ -687,7 +688,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
       ),
@@ -808,7 +809,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
             ),
             child: Text(
               exercise.category,
-              style: const TextStyle(fontSize: 10, color: Colors.black54),
+              style: TextStyle(fontSize: 10, color: context.colors.textSecondary),
             ),
           ),
         ],
@@ -859,7 +860,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
       ),
@@ -965,7 +966,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: ObangseokColors.jeok.withOpacity(0.3)),
       ),
@@ -1112,7 +1113,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: ObangseokColors.cheong.withOpacity(0.3)),
       ),
@@ -1219,7 +1220,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: ObangseokColors.cheong.withOpacity(0.3)),
       ),
@@ -1318,7 +1319,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: ObangseokColors.baek.withOpacity(0.3)),
       ),
@@ -1391,7 +1392,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
       ),
@@ -1463,7 +1464,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.orange.withOpacity(0.3)),
       ),

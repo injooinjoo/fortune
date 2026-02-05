@@ -6,7 +6,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -267,7 +266,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                       ),
                       child: const Icon(
                         Icons.spa,
-                        color: TossDesignSystem.white,
+                        color: Colors.white,
                         size: 30,
                       ),
                     ),
@@ -310,7 +309,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
-                      color: TossDesignSystem.white,
+                      color: Colors.white,
                       strokeWidth: 2,
                     ),
                   )
@@ -519,7 +518,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       barrierColor: DSColors.overlay,
       builder: (context) => const TokenInsufficientModal(
         requiredTokens: _requiredTokens,

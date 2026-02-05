@@ -462,13 +462,6 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
         color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(color: colors.textPrimary.withValues(alpha: 0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: ListView.builder(
         shrinkWrap: true,

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../core/theme/fortune_design_system.dart';
 import '../presentation/providers/navigation_visibility_provider.dart';
-import '../core/theme/typography_unified.dart';
+import '../core/design_system/design_system.dart';
 
 /// 최적화된 감성적인 로딩 체크리스트 위젯
 class EmotionalLoadingChecklistOptimized extends ConsumerStatefulWidget {
@@ -175,20 +174,20 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
   
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: isDark 
+          colors: isDark
             ? [
                 const Color(0xFF1a1a2e),
                 const Color(0xFF0f1624),
               ]
             : [
-                TossDesignSystem.white,
+                context.colors.background,
                 const Color(0xFFF5F5F5),
               ],
         ),
@@ -207,7 +206,6 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
                     steps: _coreLoadingMessages,
                     currentStep: _currentStep,
                     checkAnimation: _checkAnimation,
-                    isDark: isDark,
                   ),
                 ),
               ),
@@ -224,13 +222,11 @@ class _OptimizedLoadingList extends StatelessWidget {
   final List<LoadingStep> steps;
   final int currentStep;
   final Animation<double> checkAnimation;
-  final bool isDark;
-  
+
   const _OptimizedLoadingList({
     required this.steps,
     required this.currentStep,
     required this.checkAnimation,
-    required this.isDark,
   });
   
   @override
@@ -271,7 +267,6 @@ class _OptimizedLoadingList extends StatelessWidget {
               step: step,
               isCompleted: isCompleted,
               isActive: isActive,
-              isDark: isDark,
               checkAnimation: isActive ? checkAnimation : null,
             ),
           ),
@@ -286,14 +281,12 @@ class _OptimizedStepItem extends StatelessWidget {
   final LoadingStep step;
   final bool isCompleted;
   final bool isActive;
-  final bool isDark;
   final Animation<double>? checkAnimation;
-  
+
   const _OptimizedStepItem({
     required this.step,
     required this.isCompleted,
     required this.isActive,
-    required this.isDark,
     this.checkAnimation,
   });
   
@@ -309,15 +302,15 @@ class _OptimizedStepItem extends StatelessWidget {
           height: isActive ? 32 : 28,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isCompleted 
+            color: isCompleted
               ? const Color(0xFF52C41A).withValues(alpha: 0.15)
-              : TossDesignSystem.transparent,
+              : Colors.transparent,
             border: Border.all(
               color: isCompleted
                 ? const Color(0xFF52C41A)
-                : isActive 
-                  ? (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.5)
-                  : (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.2),
+                : isActive
+                  ? context.colors.textPrimary.withValues(alpha: 0.5)
+                  : context.colors.textPrimary.withValues(alpha: 0.2),
               width: isCompleted ? 2.5 : isActive ? 2 : 1.5,
             ),
           ),
@@ -345,9 +338,9 @@ class _OptimizedStepItem extends StatelessWidget {
                   )
                 : null),
         ),
-        
+
         const SizedBox(width: 20),
-        
+
         // 최적화된 텍스트
         Expanded(
           child: Column(
@@ -360,8 +353,8 @@ class _OptimizedStepItem extends StatelessWidget {
                   fontSize: isActive ? 18 : 16,
                   fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                   color: isCompleted || isActive
-                    ? (isDark ? TossDesignSystem.white : TossDesignSystem.black)
-                    : (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.5),
+                    ? (context.colors.textPrimary)
+                    : context.colors.textPrimary.withValues(alpha: 0.5),
                 ),
                 child: Text(step.title),
               ),
@@ -374,7 +367,7 @@ class _OptimizedStepItem extends StatelessWidget {
                     step.subtitle,
                     style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.w300,
-                      color: (isDark ? TossDesignSystem.white : TossDesignSystem.black)
+                      color: (context.colors.textPrimary)
                           .withValues(alpha: 0.6),
                     ),
                   ),

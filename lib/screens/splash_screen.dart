@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../core/theme/obangseok_colors.dart';
+import '../core/design_system/design_system.dart';
 import '../services/app_version_service.dart';
 import '../presentation/widgets/app_update_dialog.dart';
 
@@ -156,89 +156,33 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
+
+    final colors = context.colors;
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          // 수묵화 스타일 그라데이션 배경
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDark
-                ? [
-                    ObangseokColors.heukLight,
-                    ObangseokColors.heuk,
-                    ObangseokColors.heukDark,
-                  ]
-                : [
-                    ObangseokColors.misaekLight,
-                    ObangseokColors.misaek,
-                    ObangseokColors.misaekDark,
-                  ],
+      backgroundColor: colors.background,
+      body: Center(
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 1500),
+          curve: Curves.easeInCubic,
+          builder: (context, value, child) {
+            return Opacity(
+              opacity: value,
+              child: Transform.scale(
+                scale: 0.95 + (0.05 * value),
+                child: child,
+              ),
+            );
+          },
+          child: Image.asset(
+            isDark
+                ? 'assets/images/zpzg_logo_dark.png'
+                : 'assets/images/zpzg_logo_light.png',
+            width: 180,
+            height: 180,
           ),
-        ),
-        child: Stack(
-          children: [
-            // 한지 텍스처 오버레이
-            Positioned.fill(
-              child: Opacity(
-                opacity: isDark ? 0.03 : 0.06,
-                child: Image.asset(
-                  'assets/images/hanji_texture.png',
-                  fit: BoxFit.cover,
-                  repeat: ImageRepeat.repeat,
-                  color: isDark ? Colors.white : null,
-                  colorBlendMode: isDark ? BlendMode.overlay : null,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox.shrink(),
-                ),
-              ),
-            ),
-            // 중앙 로고 및 로딩 인디케이터
-            Center(
-              child: TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.0, end: 1.0),
-                duration: const Duration(milliseconds: 1500),
-                curve: Curves.easeInCubic,
-                builder: (context, value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Transform.scale(
-                      scale: 0.95 + (0.05 * value),
-                      child: child,
-                    ),
-                  );
-                },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // 서클 로딩 인디케이터
-                    SizedBox(
-                      width: 200,
-                      height: 200,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          isDark
-                              ? ObangseokColors.baekMuted.withValues(alpha: 0.5)
-                              : ObangseokColors.meokFaded.withValues(alpha: 0.4),
-                        ),
-                      ),
-                    ),
-                    // 로고
-                    Image.asset(
-                      isDark
-                          ? 'assets/images/zpzg_logo_dark.png'
-                          : 'assets/images/zpzg_logo_light.png',
-                      width: 180,
-                      height: 180,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );

@@ -118,10 +118,7 @@ class SajuInfoHeader extends StatelessWidget {
           ),
           child: Text(
             '四柱',
-            style: context.calligraphyTitle.copyWith(
-              color: colors.accent,
-              fontSize: 20,
-            ),
+            style: context.heading3.copyWith(color: colors.accent),
           ),
         ),
         const SizedBox(width: DSSpacing.sm),
@@ -180,9 +177,8 @@ class SajuInfoHeader extends StatelessWidget {
                   child: Center(
                     child: Text(
                       sky,
-                      style: context.calligraphySubtitle.copyWith(
+                      style: context.heading4.copyWith(
                         color: _getElementColor(sky, colors),
-                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -210,9 +206,8 @@ class SajuInfoHeader extends StatelessWidget {
                   child: Center(
                     child: Text(
                       earth,
-                      style: context.calligraphySubtitle.copyWith(
+                      style: context.heading4.copyWith(
                         color: _getElementColor(earth, colors),
-                        fontSize: 18,
                       ),
                     ),
                   ),

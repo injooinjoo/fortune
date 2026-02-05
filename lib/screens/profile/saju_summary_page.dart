@@ -5,9 +5,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import '../../core/theme/fortune_theme.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/theme/typography_unified.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 // 전통사주 페이지의 상세 위젯들
 import '../../features/fortune/presentation/widgets/saju/saju_widgets.dart';
@@ -65,7 +63,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final sajuState = ref.watch(sajuProvider);
 
     return Scaffold(
@@ -80,7 +78,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
             onPressed: _isCapturing ? null : _showShareBottomSheet,
             icon: Icon(
               Icons.download_rounded,
-              color: isDark ? Colors.white : Colors.black87,
+              color: context.colors.textPrimary,
             ),
             tooltip: '이미지로 저장',
           ),
@@ -89,7 +87,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
             onPressed: _isCapturing ? null : () => _shareImage(context),
             icon: Icon(
               Icons.share_rounded,
-              color: isDark ? Colors.white : Colors.black87,
+              color: context.colors.textPrimary,
             ),
             tooltip: '공유하기',
           ),
@@ -119,7 +117,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
     };
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       child: Screenshot(
         controller: _screenshotController,
         child: Container(
@@ -249,24 +247,24 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
           children: [
             Icon(
               Icons.timeline_rounded,
-              color: isDark ? Colors.white70 : Colors.black54,
+              color: context.colors.textSecondary,
               size: 20,
             ),
-            const SizedBox(width: TossTheme.spacingS),
+            const SizedBox(width: DSSpacing.sm),
             Text(
               '대운 흐름',
               style: context.heading3.copyWith(
                 fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+                color: context.colors.textPrimary,
               ),
             ),
           ],
         ),
-        const SizedBox(height: TossTheme.spacingXS),
+        const SizedBox(height: DSSpacing.xs),
         Text(
           '10년 단위로 변화하는 인생의 큰 흐름입니다',
           style: context.labelMedium.copyWith(
-            color: isDark ? Colors.white60 : Colors.black54,
+            color: context.colors.textSecondary,
           ),
         ),
         const SizedBox(height: DSSpacing.md),
@@ -298,7 +296,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
             size: 20,
           ),
         ),
-        const SizedBox(width: TossTheme.spacingS),
+        const SizedBox(width: DSSpacing.sm),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,13 +305,13 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
                 '사주 종합',
                 style: context.heading3.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: context.colors.textPrimary,
                 ),
               ),
               Text(
                 '四柱綜合 · 나의 사주 팔자',
                 style: context.labelSmall.copyWith(
-                  color: isDark ? Colors.white60 : Colors.black54,
+                  color: context.colors.textSecondary,
                 ),
               ),
             ],
@@ -326,32 +324,32 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
   Widget _buildErrorView(String error, bool isDark) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(TossTheme.spacingL),
+        padding: const EdgeInsets.all(DSSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline_rounded,
               size: 64,
-              color: isDark ? Colors.white38 : Colors.black26,
+              color: context.colors.textTertiary,
             ),
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: DSSpacing.md),
             Text(
               '사주 정보를 불러올 수 없습니다',
               style: context.heading3.copyWith(
-                color: isDark ? Colors.white : Colors.black87,
+                color: context.colors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             Text(
               error,
               style: context.bodyMedium.copyWith(
-                color: isDark ? Colors.white60 : Colors.black54,
+                color: context.colors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: TossTheme.spacingL),
+            const SizedBox(height: DSSpacing.lg),
             ElevatedButton(
               onPressed: () {
                 ref.read(sajuProvider.notifier).fetchUserSaju();
@@ -367,28 +365,28 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
   Widget _buildEmptyView(bool isDark) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(TossTheme.spacingL),
+        padding: const EdgeInsets.all(DSSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.auto_awesome_rounded,
               size: 64,
-              color: isDark ? Colors.white38 : Colors.black26,
+              color: context.colors.textTertiary,
             ),
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: DSSpacing.md),
             Text(
               '사주 정보가 없습니다',
               style: context.heading3.copyWith(
-                color: isDark ? Colors.white : Colors.black87,
+                color: context.colors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             Text(
               '프로필에서 생년월일을 입력하면\n사주를 계산해 드립니다',
               style: context.bodyMedium.copyWith(
-                color: isDark ? Colors.white60 : Colors.black54,
+                color: context.colors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -399,7 +397,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
   }
 
   void _showShareBottomSheet() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     showModalBottomSheet(
       context: context,
@@ -410,7 +408,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
       ),
       builder: (context) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(TossTheme.spacingM),
+          padding: const EdgeInsets.all(DSSpacing.md),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -418,9 +416,9 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
               Container(
                 width: 40,
                 height: 4,
-                margin: const EdgeInsets.only(bottom: TossTheme.spacingM),
+                margin: const EdgeInsets.only(bottom: DSSpacing.md),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white24 : Colors.black12,
+                  color: context.colors.textTertiary.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -428,10 +426,10 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
               Text(
                 '사주 카드 저장/공유',
                 style: context.heading3.copyWith(
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: context.colors.textPrimary,
                 ),
               ),
-              const SizedBox(height: TossTheme.spacingM),
+              const SizedBox(height: DSSpacing.md),
               // 옵션들
               _buildShareOption(
                 icon: Icons.save_alt_rounded,
@@ -474,13 +472,13 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage>
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white : Colors.black87,
+          color: context.colors.textPrimary,
         ),
       ),
       title: Text(
         label,
         style: context.bodyLarge.copyWith(
-          color: isDark ? Colors.white : Colors.black87,
+          color: context.colors.textPrimary,
         ),
       ),
       onTap: onTap,

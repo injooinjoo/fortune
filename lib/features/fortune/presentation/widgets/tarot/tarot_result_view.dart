@@ -331,7 +331,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     required String label,
     required Color color,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm + 4, vertical: 6),
       decoration: BoxDecoration(
@@ -864,7 +864,7 @@ $interpretation''';
     required String label,
     required Color color,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm + 2, vertical: 6),
       decoration: BoxDecoration(

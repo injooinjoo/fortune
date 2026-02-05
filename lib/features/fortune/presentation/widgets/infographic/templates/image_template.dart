@@ -263,13 +263,6 @@ class _TarotCard extends StatelessWidget {
             height: height,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -513,13 +506,6 @@ class PastLifeImageTemplate extends StatelessWidget {
           height: 180,
           decoration: BoxDecoration(
             borderRadius: DSRadius.lgBorder,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
           ),
           child: ClipRRect(
             borderRadius: DSRadius.lgBorder,

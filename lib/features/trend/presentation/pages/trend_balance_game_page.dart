@@ -5,8 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../domain/models/models.dart';
 import '../providers/trend_providers.dart';
 
@@ -39,31 +38,28 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final gameAsync = ref.watch(trendBalanceGameProvider(widget.contentId));
 
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: gameAsync.when(
           loading: () => const Center(child: LoadingIndicator()),
-          error: (e, _) => _buildErrorView(isDark, e.toString()),
+          error: (e, _) => _buildErrorView(e.toString()),
           data: (game) {
             if (game == null) {
-              return _buildErrorView(isDark, '게임을 찾을 수 없습니다');
+              return _buildErrorView('게임을 찾을 수 없습니다');
             }
-            return _buildContent(isDark, game);
+            return _buildContent(game);
           },
         ),
       ),
     );
   }
 
-  Widget _buildContent(bool isDark, BalanceGameSet game) {
+  Widget _buildContent(BalanceGameSet game) {
     if (_showResult && _summary != null) {
-      return _buildResultView(isDark, game, _summary!);
+      return _buildResultView(game, _summary!);
     }
     return Column(
       children: [
@@ -73,16 +69,16 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
           showActions: false,
         ),
         // Progress indicator
-        _buildProgressBar(isDark, game),
+        _buildProgressBar(game),
         // Question content
         Expanded(
-          child: _buildQuestionView(isDark, game),
+          child: _buildQuestionView(game),
         ),
       ],
     );
   }
 
-  Widget _buildProgressBar(bool isDark, BalanceGameSet game) {
+  Widget _buildProgressBar(BalanceGameSet game) {
     final progress = (game.questions.isEmpty)
         ? 0.0
         : (_currentQuestionIndex + 1) / game.questions.length;
@@ -97,15 +93,13 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
               Text(
                 '질문 ${_currentQuestionIndex + 1}/${game.questions.length}',
                 style: context.labelMedium.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.textSecondaryLight,
+                  color: context.colors.textSecondary,
                 ),
               ),
               Text(
                 '${(progress * 100).toInt()}%',
                 style: context.labelMedium.copyWith(
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accentDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -116,11 +110,9 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: isDark
-                  ? TossDesignSystem.grayDark300
-                  : TossDesignSystem.gray200,
+              backgroundColor: context.colors.border,
               valueColor: const AlwaysStoppedAnimation<Color>(
-                TossDesignSystem.tossBlue,
+                DSColors.accentDark,
               ),
               minHeight: 6,
             ),
@@ -130,15 +122,13 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
     );
   }
 
-  Widget _buildQuestionView(bool isDark, BalanceGameSet game) {
+  Widget _buildQuestionView(BalanceGameSet game) {
     if (game.questions.isEmpty) {
       return Center(
         child: Text(
           '질문이 없습니다',
           style: context.bodyMedium.copyWith(
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+            color: context.colors.textSecondary,
           ),
         ),
       );
@@ -156,7 +146,6 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
           Expanded(
             flex: 4,
             child: _buildChoiceButton(
-              isDark,
               question.choiceA,
               'A',
               selectedChoice == 'A',
@@ -171,9 +160,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
               children: [
                 Expanded(
                   child: Divider(
-                    color: isDark
-                        ? TossDesignSystem.grayDark300
-                        : TossDesignSystem.gray300,
+                    color: context.colors.border,
                   ),
                 ),
                 Container(
@@ -181,26 +168,20 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? TossDesignSystem.grayDark200
-                        : TossDesignSystem.gray100,
+                    color: context.colors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     'VS',
                     style: context.labelLarge.copyWith(
-                      color: isDark
-                          ? TossDesignSystem.textPrimaryDark
-                          : TossDesignSystem.textPrimaryLight,
+                      color: context.colors.textPrimary,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
                 Expanded(
                   child: Divider(
-                    color: isDark
-                        ? TossDesignSystem.grayDark300
-                        : TossDesignSystem.gray300,
+                    color: context.colors.border,
                   ),
                 ),
               ],
@@ -210,7 +191,6 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
           Expanded(
             flex: 4,
             child: _buildChoiceButton(
-              isDark,
               question.choiceB,
               'B',
               selectedChoice == 'B',
@@ -225,7 +205,6 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
   }
 
   Widget _buildChoiceButton(
-    bool isDark,
     BalanceGameChoice choice,
     String choiceKey,
     bool isSelected,
@@ -248,16 +227,12 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
               : null,
           color: isSelected
               ? null
-              : isDark
-                  ? TossDesignSystem.cardBackgroundDark
-                  : TossDesignSystem.cardBackgroundLight,
+              : context.colors.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
                 ? accentColor
-                : isDark
-                    ? TossDesignSystem.grayDark300
-                    : TossDesignSystem.gray200,
+                : context.colors.border,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -305,9 +280,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                       style: context.headingSmall.copyWith(
                         color: isSelected
                             ? Colors.white
-                            : isDark
-                                ? TossDesignSystem.textPrimaryDark
-                                : TossDesignSystem.textPrimaryLight,
+                            : context.colors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                       textAlign: TextAlign.center,
@@ -372,7 +345,6 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
   }
 
   Widget _buildResultView(
-    bool isDark,
     BalanceGameSet game,
     BalanceGameSummary summary,
   ) {
@@ -390,7 +362,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
             child: Column(
               children: [
                 // Result summary
-                _buildResultSummaryCard(isDark, summary),
+                _buildResultSummaryCard(summary),
                 const SizedBox(height: 24),
                 // Question breakdown
                 ...List.generate(
@@ -398,7 +370,6 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                   (index) => Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: _buildQuestionSummaryCard(
-                      isDark,
                       index + 1,
                       summary.questionSummaries[index],
                       game.questions[index],
@@ -440,7 +411,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                       child: ElevatedButton(
                         onPressed: _reset,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: TossDesignSystem.tossBlue,
+                          backgroundColor: DSColors.accentDark,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -465,7 +436,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
     );
   }
 
-  Widget _buildResultSummaryCard(bool isDark, BalanceGameSummary summary) {
+  Widget _buildResultSummaryCard(BalanceGameSummary summary) {
     final majorityPercentage =
         (summary.majorityMatchCount / summary.totalQuestions * 100).round();
 
@@ -475,14 +446,14 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
-            TossDesignSystem.tossBlue,
-            TossDesignSystem.purple,
+            DSColors.accentDark,
+            DSColors.accentTertiary,
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+            color: DSColors.accentDark.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -562,7 +533,6 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
   }
 
   Widget _buildQuestionSummaryCard(
-    bool isDark,
     int questionNumber,
     BalanceQuestionSummary summary,
     BalanceGameQuestion question,
@@ -571,13 +541,10 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossDesignSystem.cardBackgroundLight,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: context.colors.border,
         ),
       ),
       child: Column(
@@ -589,17 +556,13 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? TossDesignSystem.grayDark200
-                      : TossDesignSystem.gray100,
+                  color: context.colors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   'Q$questionNumber',
                   style: context.labelSmall.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
+                    color: context.colors.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -609,16 +572,16 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: summary.isMajority
-                      ? TossDesignSystem.successGreen.withValues(alpha: 0.1)
-                      : TossDesignSystem.orange.withValues(alpha: 0.1),
+                      ? DSColors.success.withValues(alpha: 0.1)
+                      : DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   summary.isMajority ? '다수파' : '소수파',
                   style: context.labelSmall.copyWith(
                     color: summary.isMajority
-                        ? TossDesignSystem.successGreen
-                        : TossDesignSystem.orange,
+                        ? DSColors.success
+                        : DSColors.warning,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -628,7 +591,6 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
           const SizedBox(height: 16),
           // Choice A bar
           _buildChoiceBar(
-            isDark,
             summary.choiceAText,
             summary.percentageA,
             summary.userChoice == 'A',
@@ -638,7 +600,6 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
           const SizedBox(height: 8),
           // Choice B bar
           _buildChoiceBar(
-            isDark,
             summary.choiceBText,
             summary.percentageB,
             summary.userChoice == 'B',
@@ -651,7 +612,6 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
   }
 
   Widget _buildChoiceBar(
-    bool isDark,
     String text,
     double percentage,
     bool isSelected,
@@ -673,9 +633,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                 style: context.bodySmall.copyWith(
                   color: isSelected
                       ? color
-                      : isDark
-                          ? TossDesignSystem.textSecondaryDark
-                          : TossDesignSystem.textSecondaryLight,
+                      : context.colors.textSecondary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
@@ -695,9 +653,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
             Container(
               height: 8,
               decoration: BoxDecoration(
-                color: isDark
-                    ? TossDesignSystem.grayDark300
-                    : TossDesignSystem.gray200,
+                color: context.colors.border,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -726,7 +682,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
     });
   }
 
-  Widget _buildErrorView(bool isDark, String error) {
+  Widget _buildErrorView(String error) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -734,17 +690,13 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
           Icon(
             Icons.error_outline,
             size: 64,
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+            color: context.colors.textSecondary,
           ),
           const SizedBox(height: 16),
           Text(
             error,
             style: context.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+              color: context.colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),

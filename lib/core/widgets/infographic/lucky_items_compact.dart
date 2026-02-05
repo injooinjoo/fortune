@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/typography_unified.dart';
-import '../../design_system/tokens/ds_colors.dart';
+import '../../design_system/design_system.dart';
 
 /// 행운 요소를 컴팩트하게 가로 배열하는 인포그래픽 위젯
 ///
@@ -60,7 +59,7 @@ class LuckyItemsCompact extends StatelessWidget {
   Widget build(BuildContext context) {
     if (items.isEmpty) return const SizedBox.shrink();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final bgColor = showBackground
         ? (isDark ? DSColors.surfaceDark : DSColors.surface)
         : Colors.transparent;
@@ -122,7 +121,7 @@ class _LuckyItemChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

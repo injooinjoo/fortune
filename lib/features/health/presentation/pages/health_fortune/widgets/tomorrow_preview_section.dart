@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/fortune_theme.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 class TomorrowPreviewSection extends StatelessWidget {
   final String tomorrowPreview;
@@ -19,29 +19,29 @@ class TomorrowPreviewSection extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            TossTheme.primaryBlue.withValues(alpha: 0.1),
-            TossTheme.success.withValues(alpha: 0.1),
+            context.colors.accent.withValues(alpha: 0.1),
+            DSColors.success.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
+          color: context.colors.accent.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.wb_sunny_rounded,
-                color: TossTheme.primaryBlue,
+                color: context.colors.accent,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 '내일 건강 미리보기',
-                style: TossTheme.heading3.copyWith(
-                  color: TossTheme.textBlack,
+                style: context.heading3.copyWith(
+                  color: context.colors.textPrimary,
                 ),
               ),
             ],
@@ -50,8 +50,8 @@ class TomorrowPreviewSection extends StatelessWidget {
 
           Text(
             tomorrowPreview,
-            style: TossTheme.body2.copyWith(
-              color: TossTheme.textBlack,
+            style: context.heading3.copyWith(
+              color: context.colors.textPrimary,
               height: 1.4,
             ),
             textAlign: TextAlign.center,

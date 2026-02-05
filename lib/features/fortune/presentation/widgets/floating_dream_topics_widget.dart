@@ -121,8 +121,6 @@ class _RollingChipRowState extends State<_RollingChipRow>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     // 무한 스크롤을 위해 리스트를 3배로 늘림
     final extendedTopics = [...widget.topics, ...widget.topics, ...widget.topics];
 
@@ -144,19 +142,12 @@ class _RollingChipRowState extends State<_RollingChipRow>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: isDark ? DSColors.surface : Colors.white,
+                color: context.colors.surface,
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(
                   color: DSColors.border,
                   width: 1,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.06),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Text(
                 topic,

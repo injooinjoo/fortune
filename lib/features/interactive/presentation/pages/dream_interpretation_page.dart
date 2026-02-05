@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../fortune/domain/models/conditions/dream_fortune_conditions.dart';
 import '../../../../core/theme/font_config.dart';
-import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -118,16 +117,12 @@ class _DreamInterpretationPageState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: isDark
-            ? TossDesignSystem.backgroundDark
-            : TossDesignSystem.backgroundLight,
+        backgroundColor: context.colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: !_showResult,
@@ -136,18 +131,14 @@ class _DreamInterpretationPageState
             : IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: isDark
-                      ? TossDesignSystem.textPrimaryDark
-                      : TossDesignSystem.textPrimaryLight,
+                  color: context.colors.textPrimary,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
         title: Text(
           _showResult ? '꿈 해몽 결과' : '꿈 해몽',
           style: context.headingSmall.copyWith(
-            color: isDark
-                ? TossDesignSystem.textPrimaryDark
-                : TossDesignSystem.textPrimaryLight,
+            color: context.colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -156,9 +147,7 @@ class _DreamInterpretationPageState
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: context.colors.textPrimary,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -193,7 +182,7 @@ class _DreamInterpretationPageState
 
   /// F15: 초기 로딩 화면 (저장된 결과 확인 중)
   Widget _buildInitialLoadingView() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Center(
       child: Column(
@@ -218,9 +207,7 @@ class _DreamInterpretationPageState
           Text(
             '꿈 해몽 준비 중...',
             style: context.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+              color: context.colors.textSecondary,
             ),
           ),
         ],
@@ -230,7 +217,7 @@ class _DreamInterpretationPageState
 
   /// 버블 선택 화면
   Widget _buildBubbleSelectionView() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Stack(
       children: [
@@ -252,9 +239,7 @@ class _DreamInterpretationPageState
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: (isDark
-                      ? TossDesignSystem.surfaceBackgroundDark
-                      : TossDesignSystem.white)
+              color: context.colors.surfaceSecondary
                   .withValues(alpha: 0.98),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
@@ -282,9 +267,7 @@ class _DreamInterpretationPageState
                 Text(
                   '🌙 어떤 꿈을 꾸셨나요?',
                   style: context.headingSmall.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -292,9 +275,7 @@ class _DreamInterpretationPageState
                 Text(
                   '꿈 내용을 입력하거나 아래 버블을 선택하세요',
                   style: context.bodySmall.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
+                    color: context.colors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -323,9 +304,7 @@ class _DreamInterpretationPageState
                   padding: const EdgeInsets.all(2), // 테두리 두께
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? TossDesignSystem.backgroundDark
-                          : TossDesignSystem.white,
+                      color: context.colors.background,
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: UnifiedVoiceTextField(
@@ -360,7 +339,7 @@ class _DreamInterpretationPageState
 
   /// 로딩 화면
   Widget _buildLoadingView() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Center(
       child: Column(
@@ -376,9 +355,7 @@ class _DreamInterpretationPageState
             Text(
               '${_selectedTopic!.title} 해몽 중...',
               style: context.headingSmall.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textPrimaryDark
-                    : TossDesignSystem.textPrimaryLight,
+                color: context.colors.textPrimary,
               ),
             ),
           ],
@@ -389,7 +366,7 @@ class _DreamInterpretationPageState
             child: CircularProgressIndicator(
               strokeWidth: 3,
               valueColor: AlwaysStoppedAnimation<Color>(
-                TossDesignSystem.tossBlue,
+                DSColors.accentDark,
               ),
             ),
           ),
@@ -397,9 +374,7 @@ class _DreamInterpretationPageState
           Text(
             '신령이 꿈을 풀이하고 있어요',
             style: context.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+              color: context.colors.textSecondary,
             ),
           ),
         ],
@@ -499,7 +474,7 @@ class _DreamInterpretationPageState
   }
 
   Widget _buildSymbolsCard(FortuneResult result) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final symbols = (result.data['relatedSymbols'] as List<dynamic>?)
         ?.map((e) => e.toString())
         .toList() ?? [];
@@ -507,9 +482,7 @@ class _DreamInterpretationPageState
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.surfaceBackgroundDark
-            : TossDesignSystem.surfaceBackgroundLight,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -518,9 +491,7 @@ class _DreamInterpretationPageState
           Text(
             '🔮 주요 상징',
             style: context.headingSmall.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -554,15 +525,13 @@ class _DreamInterpretationPageState
   }
 
   Widget _buildInterpretationCard(FortuneResult result) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final interpretation = FortuneTextCleaner.clean(result.data['interpretation'] as String? ?? '해석 정보가 없습니다.');
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.surfaceBackgroundDark
-            : TossDesignSystem.surfaceBackgroundLight,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -571,9 +540,7 @@ class _DreamInterpretationPageState
           Text(
             '📖 꿈 해석',
             style: context.headingSmall.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -581,9 +548,7 @@ class _DreamInterpretationPageState
           Text(
             interpretation,
             style: context.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+              color: context.colors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -593,15 +558,13 @@ class _DreamInterpretationPageState
   }
 
   Widget _buildAdviceCard(FortuneResult result) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final advice = FortuneTextCleaner.clean(result.data['todayGuidance'] as String? ?? '조언 정보가 없습니다.');
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.surfaceBackgroundDark
-            : TossDesignSystem.surfaceBackgroundLight,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -610,9 +573,7 @@ class _DreamInterpretationPageState
           Text(
             '💡 조언',
             style: context.headingSmall.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -620,9 +581,7 @@ class _DreamInterpretationPageState
           Text(
             advice,
             style: context.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+              color: context.colors.textSecondary,
               height: 1.6,
             ),
           ),

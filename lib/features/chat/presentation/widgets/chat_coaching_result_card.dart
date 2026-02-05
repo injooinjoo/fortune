@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// AI 코칭 결과 카드
 ///
@@ -40,7 +40,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -90,7 +90,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // 구분선
-                  _buildDivider(isDark),
+                  _buildDivider(context),
 
                   const SizedBox(height: 16),
 
@@ -238,7 +238,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildDivider(bool isDark) {
+  Widget _buildDivider(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -261,7 +261,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
             '✨',
             style: TextStyle(
               fontSize: 12,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
+              color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -289,9 +289,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white.withValues(alpha: 0.6),
+        color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.6),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _pinkAccent.withValues(alpha: 0.2),
@@ -441,9 +439,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : Colors.white.withValues(alpha: 0.6),
+                color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.6),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(

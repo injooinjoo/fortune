@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../core/theme/fortune_design_system.dart';
-import '../core/theme/typography_unified.dart';
+import '../core/design_system/design_system.dart';
 
 class ProfileCompletionDialog extends StatelessWidget {
   final List<String> missingFields;
@@ -36,13 +35,13 @@ class ProfileCompletionDialog extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                color: DSColors.accentDark.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.auto_awesome,
                 size: 32,
-                color: TossDesignSystem.tossBlue,
+                color: DSColors.accentDark,
               ),
             ).animate()
               .scale(
@@ -57,8 +56,8 @@ class ProfileCompletionDialog extends StatelessWidget {
             // Title
             Text(
               '인사이트가 정확하려면\n정보가 더 필요합니다',
-              style: TossDesignSystem.heading3.copyWith(
-                color: TossDesignSystem.gray900,
+              style: context.heading2.copyWith(
+                color: DSColors.textPrimaryDark,
                 height: 1.4,
               ),
               textAlign: TextAlign.center,
@@ -71,8 +70,8 @@ class ProfileCompletionDialog extends StatelessWidget {
             // Subtitle
             Text(
               _buildSubtitleText(),
-              style: TossDesignSystem.body2.copyWith(
-                color: TossDesignSystem.gray600,
+              style: context.bodyMedium.copyWith(
+                color: DSColors.textSecondaryDark,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -91,13 +90,13 @@ class ProfileCompletionDialog extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.gray100,
+                      color: DSColors.backgroundSecondaryDark,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       field,
-                      style: TossDesignSystem.caption1.copyWith(
-                        color: TossDesignSystem.gray700,
+                      style: context.labelLarge.copyWith(
+                        color: DSColors.textSecondaryDark,
                       ),
                     ),
                   ).animate()
@@ -124,8 +123,8 @@ class ProfileCompletionDialog extends StatelessWidget {
                   context.go('/chat');
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: TossDesignSystem.tossBlue,
-                  foregroundColor: TossDesignSystem.white,
+                  backgroundColor: DSColors.accentDark,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -135,7 +134,7 @@ class ProfileCompletionDialog extends StatelessWidget {
                   '정보 입력하기',
                   style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -152,8 +151,8 @@ class ProfileCompletionDialog extends StatelessWidget {
               },
               child: Text(
                 '나중에 하기',
-                style: TossDesignSystem.body2.copyWith(
-                  color: TossDesignSystem.gray500,
+                style: context.bodyMedium.copyWith(
+                  color: DSColors.textTertiaryDark,
                 ),
               ),
             ).animate()

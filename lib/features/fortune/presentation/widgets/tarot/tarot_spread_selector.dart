@@ -104,7 +104,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = context.colors;
     final typography = context.typography;
 
@@ -194,7 +194,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
     final typography = context.typography;
 
     return Material(
-      color: Colors.white.withValues(alpha: 0.0),
+      color: Colors.transparent,
       borderRadius: BorderRadius.circular(DSRadius.lg),
       child: Ink(
         decoration: BoxDecoration(

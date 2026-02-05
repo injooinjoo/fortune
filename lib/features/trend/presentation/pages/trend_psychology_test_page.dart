@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/models.dart';
 import '../providers/trend_providers.dart';
 
@@ -38,31 +37,28 @@ class _TrendPsychologyTestPageState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final testAsync = ref.watch(trendPsychologyTestProvider(widget.contentId));
 
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: testAsync.when(
           loading: () => const Center(child: LoadingIndicator()),
-          error: (e, _) => _buildErrorView(isDark, e.toString()),
+          error: (e, _) => _buildErrorView(e.toString()),
           data: (test) {
             if (test == null) {
-              return _buildErrorView(isDark, '테스트를 찾을 수 없습니다');
+              return _buildErrorView('테스트를 찾을 수 없습니다');
             }
-            return _buildContent(isDark, test);
+            return _buildContent(test);
           },
         ),
       ),
     );
   }
 
-  Widget _buildContent(bool isDark, TrendPsychologyTest test) {
+  Widget _buildContent(TrendPsychologyTest test) {
     if (_result != null) {
-      return _buildResultView(isDark, test, _result!);
+      return _buildResultView(test, _result!);
     }
     return Column(
       children: [
@@ -72,16 +68,16 @@ class _TrendPsychologyTestPageState
           showActions: false,
         ),
         // Progress indicator
-        _buildProgressBar(isDark, test),
+        _buildProgressBar(test),
         // Question content
         Expanded(
-          child: _buildQuestionView(isDark, test),
+          child: _buildQuestionView(test),
         ),
       ],
     );
   }
 
-  Widget _buildProgressBar(bool isDark, TrendPsychologyTest test) {
+  Widget _buildProgressBar(TrendPsychologyTest test) {
     final progress = (test.questions.isEmpty)
         ? 0.0
         : (_currentQuestionIndex + 1) / test.questions.length;
@@ -96,15 +92,13 @@ class _TrendPsychologyTestPageState
               Text(
                 '질문 ${_currentQuestionIndex + 1}/${test.questions.length}',
                 style: context.labelMedium.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.textSecondaryLight,
+                  color: context.colors.textSecondary,
                 ),
               ),
               Text(
                 '${(progress * 100).toInt()}%',
                 style: context.labelMedium.copyWith(
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accentDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -115,11 +109,9 @@ class _TrendPsychologyTestPageState
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: isDark
-                  ? TossDesignSystem.grayDark300
-                  : TossDesignSystem.gray200,
+              backgroundColor: context.colors.border,
               valueColor: const AlwaysStoppedAnimation<Color>(
-                TossDesignSystem.tossBlue,
+                DSColors.accentDark,
               ),
               minHeight: 6,
             ),
@@ -129,15 +121,13 @@ class _TrendPsychologyTestPageState
     );
   }
 
-  Widget _buildQuestionView(bool isDark, TrendPsychologyTest test) {
+  Widget _buildQuestionView(TrendPsychologyTest test) {
     if (test.questions.isEmpty) {
       return Center(
         child: Text(
           '질문이 없습니다',
           style: context.bodyMedium.copyWith(
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+            color: context.colors.textSecondary,
           ),
         ),
       );
@@ -155,9 +145,7 @@ class _TrendPsychologyTestPageState
           Text(
             question.questionText,
             style: context.heading3.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
@@ -180,7 +168,7 @@ class _TrendPsychologyTestPageState
             final isSelected = selectedOptionId == option.id;
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: _buildOptionButton(isDark, option, isSelected, question.id),
+              child: _buildOptionButton(option, isSelected, question.id),
             );
           }),
           const SizedBox(height: 24),
@@ -195,9 +183,7 @@ class _TrendPsychologyTestPageState
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: BorderSide(
-                        color: isDark
-                            ? TossDesignSystem.grayDark400
-                            : TossDesignSystem.gray400,
+                        color: context.colors.textDisabled,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -206,9 +192,7 @@ class _TrendPsychologyTestPageState
                     child: Text(
                       '이전',
                       style: context.bodyMedium.copyWith(
-                        color: isDark
-                            ? TossDesignSystem.textSecondaryDark
-                            : TossDesignSystem.textSecondaryLight,
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ),
@@ -221,10 +205,8 @@ class _TrendPsychologyTestPageState
                       ? () => _handleNext(test)
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: TossDesignSystem.tossBlue,
-                    disabledBackgroundColor: isDark
-                        ? TossDesignSystem.grayDark300
-                        : TossDesignSystem.gray300,
+                    backgroundColor: DSColors.accentDark,
+                    disabledBackgroundColor: context.colors.border,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -258,7 +240,6 @@ class _TrendPsychologyTestPageState
   }
 
   Widget _buildOptionButton(
-    bool isDark,
     TrendPsychologyOption option,
     bool isSelected,
     String questionId,
@@ -270,17 +251,13 @@ class _TrendPsychologyTestPageState
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-              : isDark
-                  ? TossDesignSystem.cardBackgroundDark
-                  : TossDesignSystem.cardBackgroundLight,
+              ? DSColors.accentDark.withValues(alpha: 0.1)
+              : context.colors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-                ? TossDesignSystem.tossBlue
-                : isDark
-                    ? TossDesignSystem.grayDark300
-                    : TossDesignSystem.gray200,
+                ? DSColors.accentDark
+                : context.colors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -304,10 +281,8 @@ class _TrendPsychologyTestPageState
                 option.label,
                 style: context.bodyMedium.copyWith(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue
-                      : isDark
-                          ? TossDesignSystem.textPrimaryDark
-                          : TossDesignSystem.textPrimaryLight,
+                      ? DSColors.accentDark
+                      : context.colors.textPrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
@@ -319,14 +294,12 @@ class _TrendPsychologyTestPageState
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected
-                    ? TossDesignSystem.tossBlue
+                    ? DSColors.accentDark
                     : Colors.transparent,
                 border: Border.all(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue
-                      : isDark
-                          ? TossDesignSystem.grayDark400
-                          : TossDesignSystem.gray400,
+                      ? DSColors.accentDark
+                      : context.colors.textDisabled,
                   width: 2,
                 ),
               ),
@@ -402,7 +375,6 @@ class _TrendPsychologyTestPageState
   }
 
   Widget _buildResultView(
-    bool isDark,
     TrendPsychologyTest test,
     TrendPsychologyResult result,
   ) {
@@ -433,8 +405,8 @@ class _TrendPsychologyTestPageState
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [
-                              TossDesignSystem.tossBlue,
-                              TossDesignSystem.purple,
+                              DSColors.accentDark,
+                              DSColors.accentTertiary,
                             ],
                           ),
                           borderRadius: BorderRadius.circular(20),
@@ -450,13 +422,13 @@ class _TrendPsychologyTestPageState
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    color: DSColors.accentDark.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     '${test.resultType.emoji} ${test.resultType.displayName}',
                     style: context.labelMedium.copyWith(
-                      color: TossDesignSystem.tossBlue,
+                      color: DSColors.accentDark,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -465,9 +437,7 @@ class _TrendPsychologyTestPageState
                 Text(
                   result.title,
                   style: context.heading2.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                   textAlign: TextAlign.center,
@@ -476,21 +446,19 @@ class _TrendPsychologyTestPageState
                 Text(
                   result.description,
                   style: context.bodyMedium.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
+                    color: context.colors.textSecondary,
                     height: 1.6,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 if (result.characteristics.isNotEmpty) ...[
                   const SizedBox(height: 24),
-                  _buildCharacteristicsSection(isDark, result.characteristics),
+                  _buildCharacteristicsSection(result.characteristics),
                 ],
                 if (result.compatibleWith != null ||
                     result.incompatibleWith != null) ...[
                   const SizedBox(height: 24),
-                  _buildCompatibilitySection(isDark, result),
+                  _buildCompatibilitySection(result),
                 ],
                 const SizedBox(height: 32),
                 // Action buttons
@@ -516,7 +484,7 @@ class _TrendPsychologyTestPageState
                       child: ElevatedButton(
                         onPressed: () => _reset(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: TossDesignSystem.tossBlue,
+                          backgroundColor: DSColors.accentDark,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -541,19 +509,15 @@ class _TrendPsychologyTestPageState
     );
   }
 
-  Widget _buildCharacteristicsSection(bool isDark, List<String> characteristics) {
+  Widget _buildCharacteristicsSection(List<String> characteristics) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossDesignSystem.cardBackgroundLight,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? TossDesignSystem.grayDark300
-              : TossDesignSystem.gray200,
+          color: context.colors.border,
         ),
       ),
       child: Column(
@@ -562,9 +526,7 @@ class _TrendPsychologyTestPageState
           Text(
             '특징',
             style: context.labelLarge.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -577,7 +539,7 @@ class _TrendPsychologyTestPageState
                     const Text(
                       '•',
                       style: TextStyle(
-                        color: TossDesignSystem.tossBlue,
+                        color: DSColors.accentDark,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -587,9 +549,7 @@ class _TrendPsychologyTestPageState
                       child: Text(
                         c,
                         style: context.bodyMedium.copyWith(
-                          color: isDark
-                              ? TossDesignSystem.textSecondaryDark
-                              : TossDesignSystem.textSecondaryLight,
+                          color: context.colors.textSecondary,
                         ),
                       ),
                     ),
@@ -601,7 +561,7 @@ class _TrendPsychologyTestPageState
     );
   }
 
-  Widget _buildCompatibilitySection(bool isDark, TrendPsychologyResult result) {
+  Widget _buildCompatibilitySection(TrendPsychologyResult result) {
     return Row(
       children: [
         if (result.compatibleWith != null)
@@ -609,7 +569,7 @@ class _TrendPsychologyTestPageState
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                color: DSColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -622,16 +582,14 @@ class _TrendPsychologyTestPageState
                   Text(
                     '잘 맞는 유형',
                     style: context.labelSmall.copyWith(
-                      color: TossDesignSystem.successGreen,
+                      color: DSColors.success,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     result.compatibleWith!,
                     style: context.bodySmall.copyWith(
-                      color: isDark
-                          ? TossDesignSystem.textPrimaryDark
-                          : TossDesignSystem.textPrimaryLight,
+                      color: context.colors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.center,
@@ -647,7 +605,7 @@ class _TrendPsychologyTestPageState
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.errorRed.withValues(alpha: 0.1),
+                color: DSColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -660,16 +618,14 @@ class _TrendPsychologyTestPageState
                   Text(
                     '안 맞는 유형',
                     style: context.labelSmall.copyWith(
-                      color: TossDesignSystem.errorRed,
+                      color: DSColors.error,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     result.incompatibleWith!,
                     style: context.bodySmall.copyWith(
-                      color: isDark
-                          ? TossDesignSystem.textPrimaryDark
-                          : TossDesignSystem.textPrimaryLight,
+                      color: context.colors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.center,
@@ -690,7 +646,7 @@ class _TrendPsychologyTestPageState
     });
   }
 
-  Widget _buildErrorView(bool isDark, String error) {
+  Widget _buildErrorView(String error) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -698,17 +654,13 @@ class _TrendPsychologyTestPageState
           Icon(
             Icons.error_outline,
             size: 64,
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+            color: context.colors.textSecondary,
           ),
           const SizedBox(height: 16),
           Text(
             error,
             style: context.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+              color: context.colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/theme/obangseok_colors.dart';
+import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 주간 리포트 결과 카드
 ///
@@ -39,21 +39,19 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark
+          colors: context.isDark
               ? [_darkBg1, _darkBg2]
               : [_creamLight, _creamDark],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark
+          color: context.isDark
               ? _orangeAccent.withValues(alpha: 0.3)
               : _orangeAccent.withValues(alpha: 0.5),
           width: 1.5,
@@ -72,7 +70,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
         child: Stack(
           children: [
             // 배경 장식
-            ..._buildBackgroundDecorations(isDark),
+            ..._buildBackgroundDecorations(),
 
             // 메인 콘텐츠
             Padding(
@@ -81,7 +79,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 헤더
-                  _buildHeader(context, isDark)
+                  _buildHeader(context)
                     .animate()
                     .fadeIn(duration: 500.ms)
                     .slideY(begin: -0.1, end: 0),
@@ -89,12 +87,12 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // 구분선
-                  _buildDivider(isDark),
+                  _buildDivider(context),
 
                   const SizedBox(height: 16),
 
                   // 이번 주 요약
-                  _buildSummarySection(context, isDark)
+                  _buildSummarySection(context)
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 200.ms)
                     .slideX(begin: -0.05, end: 0),
@@ -103,18 +101,18 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
 
                   // 성장 트렌드
                   if (trends.isNotEmpty) ...[
-                    _buildTrendsSection(context, isDark),
+                    _buildTrendsSection(context),
                     const SizedBox(height: 16),
                   ],
 
                   // 다음 주 액션 제안
                   if (actions.isNotEmpty) ...[
-                    _buildActionsSection(context, isDark),
+                    _buildActionsSection(context),
                     const SizedBox(height: 16),
                   ],
 
                   // 마무리 메시지
-                  _buildClosingMessage(context, isDark)
+                  _buildClosingMessage(context)
                     .animate()
                     .fadeIn(duration: 500.ms, delay: 800.ms),
 
@@ -128,7 +126,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
     );
   }
 
-  List<Widget> _buildBackgroundDecorations(bool isDark) {
+  List<Widget> _buildBackgroundDecorations() {
     final decorations = <Widget>[];
 
     // 우측 상단 캘린더 장식
@@ -166,12 +164,12 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
     return decorations;
   }
 
-  Widget _buildHeader(BuildContext context, bool isDark) {
+  Widget _buildHeader(BuildContext context) {
     // 주간 범위 계산 (월~일)
     final weekStart = date.subtract(Duration(days: date.weekday - 1));
     final weekEnd = weekStart.add(const Duration(days: 6));
     final formattedRange = '${DateFormat('M/d').format(weekStart)} - ${DateFormat('M/d').format(weekEnd)}';
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = context.isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Row(
       children: [
@@ -217,7 +215,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
           child: Icon(
             Icons.calendar_view_week_outlined,
             size: 20,
-            color: isDark ? _orangeAccent : _amberAccent,
+            color: context.isDark ? _orangeAccent : _amberAccent,
           ),
         ),
         const SizedBox(width: 8),
@@ -229,13 +227,13 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
           shareTitle: '주간 리포트',
           shareContent: summary,
           iconSize: 18,
-          iconColor: isDark ? _orangeAccent : _amberAccent,
+          iconColor: context.isDark ? _orangeAccent : _amberAccent,
         ),
       ],
     );
   }
 
-  Widget _buildDivider(bool isDark) {
+  Widget _buildDivider(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -258,7 +256,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
             '🔥',
             style: TextStyle(
               fontSize: 12,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
+              color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -280,8 +278,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummarySection(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+  Widget _buildSummarySection(BuildContext context) {
+    final textColor = context.isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -290,8 +288,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _orangeAccent.withValues(alpha: isDark ? 0.15 : 0.1),
-            _amberAccent.withValues(alpha: isDark ? 0.1 : 0.08),
+            _orangeAccent.withValues(alpha: context.isDark ? 0.15 : 0.1),
+            _amberAccent.withValues(alpha: context.isDark ? 0.1 : 0.08),
           ],
         ),
         borderRadius: BorderRadius.circular(14),
@@ -328,8 +326,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildTrendsSection(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+  Widget _buildTrendsSection(BuildContext context) {
+    final textColor = context.isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,7 +349,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
         ...trends.asMap().entries.map((entry) {
           final index = entry.key;
           final trend = entry.value;
-          return _buildTrendItem(context, index + 1, trend, isDark)
+          return _buildTrendItem(context, index + 1, trend)
             .animate()
             .fadeIn(duration: 300.ms, delay: Duration(milliseconds: 400 + (index * 150)))
             .slideX(begin: 0.1, end: 0);
@@ -360,8 +358,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildTrendItem(BuildContext context, int index, String text, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+  Widget _buildTrendItem(BuildContext context, int index, String text) {
+    final textColor = context.isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -374,8 +372,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _orangeAccent.withValues(alpha: isDark ? 0.4 : 0.3),
-                  _amberAccent.withValues(alpha: isDark ? 0.3 : 0.2),
+                  _orangeAccent.withValues(alpha: context.isDark ? 0.4 : 0.3),
+                  _amberAccent.withValues(alpha: context.isDark ? 0.3 : 0.2),
                 ],
               ),
               borderRadius: BorderRadius.circular(6),
@@ -386,7 +384,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? _orangeAccent : Colors.orange.shade700,
+                  color: context.isDark ? _orangeAccent : Colors.orange.shade700,
                 ),
               ),
             ),
@@ -396,9 +394,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : Colors.white.withValues(alpha: 0.6),
+                color: context.colors.surface.withValues(alpha: context.isDark ? 0.05 : 0.6),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -415,8 +411,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionsSection(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+  Widget _buildActionsSection(BuildContext context) {
+    final textColor = context.isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,7 +434,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
         ...actions.asMap().entries.map((entry) {
           final index = entry.key;
           final action = entry.value;
-          return _buildActionItem(context, index + 1, action, isDark)
+          return _buildActionItem(context, index + 1, action)
             .animate()
             .fadeIn(duration: 300.ms, delay: Duration(milliseconds: 600 + (index * 150)))
             .slideX(begin: 0.1, end: 0);
@@ -447,8 +443,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionItem(BuildContext context, int index, String text, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+  Widget _buildActionItem(BuildContext context, int index, String text) {
+    final textColor = context.isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -459,7 +455,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: _amberAccent.withValues(alpha: isDark ? 0.3 : 0.2),
+              color: _amberAccent.withValues(alpha: context.isDark ? 0.3 : 0.2),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Center(
@@ -468,7 +464,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? _orangeAccent : Colors.orange.shade700,
+                  color: context.isDark ? _orangeAccent : Colors.orange.shade700,
                 ),
               ),
             ),
@@ -478,9 +474,7 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : Colors.white.withValues(alpha: 0.6),
+                color: context.colors.surface.withValues(alpha: context.isDark ? 0.05 : 0.6),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: _orangeAccent.withValues(alpha: 0.15),
@@ -500,8 +494,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildClosingMessage(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+  Widget _buildClosingMessage(BuildContext context) {
+    final textColor = context.isDark ? Colors.white : ObangseokColors.hwangDark;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -510,8 +504,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _amberAccent.withValues(alpha: isDark ? 0.15 : 0.1),
-            _orangeAccent.withValues(alpha: isDark ? 0.1 : 0.08),
+            _amberAccent.withValues(alpha: context.isDark ? 0.15 : 0.1),
+            _orangeAccent.withValues(alpha: context.isDark ? 0.1 : 0.08),
           ],
         ),
         borderRadius: BorderRadius.circular(14),

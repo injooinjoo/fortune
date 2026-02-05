@@ -18,9 +18,6 @@ class MissionProgressWidget extends StatelessWidget {
   /// 미션 타입
   final MissionType missionType;
 
-  /// 다크 모드 여부
-  final bool isDark;
-
   /// 미션 완료 콜백
   final VoidCallback? onComplete;
 
@@ -29,7 +26,6 @@ class MissionProgressWidget extends StatelessWidget {
     required this.currentCount,
     required this.targetCount,
     required this.missionType,
-    this.isDark = false,
     this.onComplete,
   });
 
@@ -43,12 +39,12 @@ class MissionProgressWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? DSColors.surfaceDark : DSColors.surface,
+        color: context.isDark ? DSColors.surfaceDark : DSColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isComplete
               ? DSColors.success.withValues(alpha: 0.4)
-              : isDark
+              : context.isDark
                   ? DSColors.borderDark
                   : DSColors.border,
         ),
@@ -67,7 +63,7 @@ class MissionProgressWidget extends StatelessWidget {
                 Text(
                   _getMissionTitle(),
                   style: context.labelMedium.copyWith(
-                    color: isDark
+                    color: context.isDark
                         ? DSColors.textPrimaryDark
                         : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
@@ -77,7 +73,7 @@ class MissionProgressWidget extends StatelessWidget {
                 Text(
                   _getMissionSubtitle(),
                   style: context.labelSmall.copyWith(
-                    color: isDark
+                    color: context.isDark
                         ? DSColors.textSecondaryDark
                         : DSColors.textSecondary,
                   ),
@@ -152,7 +148,7 @@ class MissionProgressWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: isDark
+                  backgroundColor: context.isDark
                       ? DSColors.borderDark
                       : DSColors.border.withValues(alpha: 0.5),
                   valueColor: AlwaysStoppedAnimation<Color>(
@@ -168,7 +164,7 @@ class MissionProgressWidget extends StatelessWidget {
               style: context.labelSmall.copyWith(
                 color: isComplete
                     ? DSColors.success
-                    : isDark
+                    : context.isDark
                         ? DSColors.textSecondaryDark
                         : DSColors.textSecondary,
                 fontWeight: FontWeight.w600,
@@ -304,16 +300,12 @@ class MissionListCard extends StatelessWidget {
   /// 미션 목록
   final List<MissionItem> missions;
 
-  /// 다크 모드 여부
-  final bool isDark;
-
   /// 미션 탭 콜백
   final void Function(MissionItem mission)? onMissionTap;
 
   const MissionListCard({
     super.key,
     required this.missions,
-    this.isDark = false,
     this.onMissionTap,
   });
 
@@ -324,10 +316,10 @@ class MissionListCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? DSColors.surfaceDark : DSColors.surface,
+        color: context.isDark ? DSColors.surfaceDark : DSColors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? DSColors.borderDark : DSColors.border,
+          color: context.isDark ? DSColors.borderDark : DSColors.border,
         ),
       ),
       child: Column(
@@ -355,7 +347,7 @@ class MissionListCard extends StatelessWidget {
                     Text(
                       '오늘의 작은 도전',
                       style: context.labelMedium.copyWith(
-                        color: isDark
+                        color: context.isDark
                             ? DSColors.textPrimaryDark
                             : DSColors.textPrimary,
                         fontWeight: FontWeight.w600,
@@ -364,7 +356,7 @@ class MissionListCard extends StatelessWidget {
                     Text(
                       '$completedCount/${missions.length} 완료',
                       style: context.labelSmall.copyWith(
-                        color: isDark
+                        color: context.isDark
                             ? DSColors.textSecondaryDark
                             : DSColors.textSecondary,
                       ),
@@ -413,7 +405,6 @@ class MissionListCard extends StatelessWidget {
                     currentCount: mission.currentCount,
                     targetCount: mission.targetCount,
                     missionType: mission.type,
-                    isDark: isDark,
                   ),
                 ),
               )),
