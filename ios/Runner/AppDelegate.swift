@@ -36,13 +36,12 @@ import NaverThirdPartyLogin
     setupNaverLogin()
     #endif
     
-    // Register native platform plugin
-    // TODO: Add NativePlatformPlugin.swift to Xcode project before uncommenting
-    // if #available(iOS 16.1, *) {
-    //   if let registrar = self.registrar(forPlugin: "NativePlatformPlugin") {
-    //     NativePlatformPlugin.register(with: registrar)
-    //   }
-    // }
+    // Register native platform plugin for widget and Live Activity support
+    if #available(iOS 16.1, *) {
+      if let registrar = self.registrar(forPlugin: "NativePlatformPlugin") {
+        NativePlatformPlugin.register(with: registrar)
+      }
+    }
 
     // Register background tasks for widget refresh
     registerBackgroundTasks()

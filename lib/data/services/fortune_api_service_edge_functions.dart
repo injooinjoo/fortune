@@ -115,93 +115,57 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         debugPrint('👤 [GUEST] 게스트 사용자 감지 - DB 쿼리 스킵');
       }
 
-      // Get user profile to include name (게스트는 스킵)
+      // Get user profile and saju data in parallel (게스트는 스킵)
       final supabase = Supabase.instance.client;
       Map<String, dynamic>? userProfileResponse;
+      Map<String, dynamic>? sajuData;
 
       if (!isGuest) {
-        userProfileResponse = await supabase
-            .from('user_profiles')
-            .select('name, birth_date, birth_time, gender, mbti, blood_type, zodiac_sign, chinese_zodiac, saju_calculated')
-            .eq('id', userId)
-            .maybeSingle();
-      }
-
-      // 프로필 데이터 로깅
-      debugPrint('👤 [PROFILE] user_profiles 데이터:');
-      if (userProfileResponse != null) {
-        debugPrint('👤 [PROFILE] - name: ${userProfileResponse['name']}');
-        debugPrint('👤 [PROFILE] - birth_date: ${userProfileResponse['birth_date']}');
-        debugPrint('👤 [PROFILE] - birth_time: ${userProfileResponse['birth_time']}');
-        debugPrint('👤 [PROFILE] - gender: ${userProfileResponse['gender']}');
-        debugPrint('👤 [PROFILE] - saju_calculated: ${userProfileResponse['saju_calculated']}');
-        debugPrint('👤 [PROFILE] - zodiac_sign: ${userProfileResponse['zodiac_sign']}');
-        debugPrint('👤 [PROFILE] - chinese_zodiac: ${userProfileResponse['chinese_zodiac']}');
-      } else {
-        debugPrint('👤 [PROFILE] ❌ user_profiles 데이터가 없습니다!');
-      }
-
-      // Get saju data if available (게스트는 스킵)
-      Map<String, dynamic>? sajuData;
-      if (isGuest) {
-        debugPrint('🔮 [SAJU] 게스트 사용자 - 사주 데이터 쿼리 스킵');
-      } else {
-        try {
-          final sajuResponse = await supabase
+        // 🚀 병렬 쿼리 실행 (성능 최적화: ~300ms 절약)
+        final queryResults = await Future.wait([
+          supabase
+              .from('user_profiles')
+              .select('name, birth_date, birth_time, gender, mbti, blood_type, zodiac_sign, chinese_zodiac, saju_calculated')
+              .eq('id', userId)
+              .maybeSingle(),
+          supabase
               .from('user_saju')
               .select('*')
               .eq('user_id', userId)
-              .maybeSingle();
+              .maybeSingle(),
+        ]);
 
-          if (sajuResponse != null) {
-            debugPrint('✅ Saju data found for user');
-            debugPrint('🔮 [SAJU] user_saju 테이블 데이터:');
-            // 실제 DB 컬럼명 사용 (stem/branch)
-            debugPrint('🔮 [SAJU] - year_stem: ${sajuResponse['year_stem']}');
-            debugPrint('🔮 [SAJU] - year_branch: ${sajuResponse['year_branch']}');
-            debugPrint('🔮 [SAJU] - month_stem: ${sajuResponse['month_stem']}');
-            debugPrint('🔮 [SAJU] - month_branch: ${sajuResponse['month_branch']}');
-            debugPrint('🔮 [SAJU] - day_stem: ${sajuResponse['day_stem']}');
-            debugPrint('🔮 [SAJU] - day_branch: ${sajuResponse['day_branch']}');
-            debugPrint('🔮 [SAJU] - hour_stem: ${sajuResponse['hour_stem']}');
-            debugPrint('🔮 [SAJU] - hour_branch: ${sajuResponse['hour_branch']}');
-            debugPrint('🔮 [SAJU] - weak_element: ${sajuResponse['weak_element']}');
-            debugPrint('🔮 [SAJU] - strong_element: ${sajuResponse['strong_element']}');
+        userProfileResponse = queryResults[0];
+        final sajuResponse = queryResults[1];
 
-            // Edge Function 호환을 위해 pillar 형태로 변환하여 sajuData 구성
-            sajuData = {
-              ...sajuResponse,
-              // 천간(stem) + 지지(branch) 결합하여 pillar 형태 추가
-              'year_pillar': '${sajuResponse['year_stem'] ?? ''}${sajuResponse['year_branch'] ?? ''}',
-              'month_pillar': '${sajuResponse['month_stem'] ?? ''}${sajuResponse['month_branch'] ?? ''}',
-              'day_pillar': '${sajuResponse['day_stem'] ?? ''}${sajuResponse['day_branch'] ?? ''}',
-              'hour_pillar': '${sajuResponse['hour_stem'] ?? ''}${sajuResponse['hour_branch'] ?? ''}',
-              // 일간 (day master) = 일주의 천간
-              'day_master': sajuResponse['day_stem'],
-              // 오행 균형 데이터 매핑
-              'five_elements': {
-                '목': sajuResponse['element_wood'] ?? 0,
-                '화': sajuResponse['element_fire'] ?? 0,
-                '토': sajuResponse['element_earth'] ?? 0,
-                '금': sajuResponse['element_metal'] ?? 0,
-                '수': sajuResponse['element_water'] ?? 0,
-              },
-              // 부족/강한 오행
-              'weak_element': sajuResponse['weak_element'],
-              'strong_element': sajuResponse['strong_element'],
-            };
+        debugPrint('👤 [PROFILE] user_profiles: ${userProfileResponse != null ? '✅' : '❌'}, user_saju: ${sajuResponse != null ? '✅' : '❌'}');
 
-            debugPrint('🔮 [SAJU] 변환된 pillar 데이터:');
-            debugPrint('🔮 [SAJU] - year_pillar: ${sajuData['year_pillar']}');
-            debugPrint('🔮 [SAJU] - day_pillar: ${sajuData['day_pillar']}');
-            debugPrint('🔮 [SAJU] - day_master: ${sajuData['day_master']}');
-            debugPrint('🔮 [SAJU] - five_elements: ${sajuData['five_elements']}');
-          } else {
-            debugPrint('⚠️ No saju data found in user_saju table for user: $userId');
-          }
-        } catch (e) {
-          debugPrint('⚠️ Error fetching saju data: $e');
+        // Saju 데이터 변환
+        if (sajuResponse != null) {
+          sajuData = {
+            ...sajuResponse,
+            // 천간(stem) + 지지(branch) 결합하여 pillar 형태 추가
+            'year_pillar': '${sajuResponse['year_stem'] ?? ''}${sajuResponse['year_branch'] ?? ''}',
+            'month_pillar': '${sajuResponse['month_stem'] ?? ''}${sajuResponse['month_branch'] ?? ''}',
+            'day_pillar': '${sajuResponse['day_stem'] ?? ''}${sajuResponse['day_branch'] ?? ''}',
+            'hour_pillar': '${sajuResponse['hour_stem'] ?? ''}${sajuResponse['hour_branch'] ?? ''}',
+            // 일간 (day master) = 일주의 천간
+            'day_master': sajuResponse['day_stem'],
+            // 오행 균형 데이터 매핑
+            'five_elements': {
+              '목': sajuResponse['element_wood'] ?? 0,
+              '화': sajuResponse['element_fire'] ?? 0,
+              '토': sajuResponse['element_earth'] ?? 0,
+              '금': sajuResponse['element_metal'] ?? 0,
+              '수': sajuResponse['element_water'] ?? 0,
+            },
+            // 부족/강한 오행
+            'weak_element': sajuResponse['weak_element'],
+            'strong_element': sajuResponse['strong_element'],
+          };
         }
+      } else {
+        debugPrint('👤 [GUEST] 게스트 사용자 - DB 쿼리 스킵');
       }
       
       // Debug info
@@ -233,31 +197,12 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
           'sajuCalculated': userProfileResponse['saju_calculated'] ?? false},
         if (sajuData != null) 'sajuData': sajuData,
         if (userLocation != null) 'location': userLocation,
-        // 🔒 프리미엄 상태 전달 - Edge Function에서 블러 처리 결정에 사용
-        'isPremium': _ref.read(isPremiumProvider),
+        'isSubscriber': _ref.read(isSubscriptionActiveProvider),
       };
 
-      // 📤 API 요청 데이터 상세 로깅
-      debugPrint('📤 [API REQUEST] Edge Function으로 전송할 데이터:');
-      debugPrint('📤 [API REQUEST] - keys: ${requestData.keys.toList()}');
-      debugPrint('📤 [API REQUEST] - name: ${requestData['name']}');
-      debugPrint('📤 [API REQUEST] - birthDate: ${requestData['birthDate']}');
-      debugPrint('📤 [API REQUEST] - birthTime: ${requestData['birthTime']}');
-      debugPrint('📤 [API REQUEST] - gender: ${requestData['gender']}');
-      debugPrint('📤 [API REQUEST] - sajuCalculated: ${requestData['sajuCalculated']}');
-      debugPrint('📤 [API REQUEST] - sajuData 존재: ${requestData['sajuData'] != null}');
-      if (requestData['sajuData'] != null) {
-        final saju = requestData['sajuData'] as Map<String, dynamic>;
-        debugPrint('📤 [API REQUEST] - sajuData.year_pillar: ${saju['year_pillar']}');
-        debugPrint('📤 [API REQUEST] - sajuData.month_pillar: ${saju['month_pillar']}');
-        debugPrint('📤 [API REQUEST] - sajuData.day_pillar: ${saju['day_pillar']}');
-        debugPrint('📤 [API REQUEST] - sajuData.hour_pillar: ${saju['hour_pillar']}');
-        debugPrint('📤 [API REQUEST] - sajuData.day_master: ${saju['day_master']}');
-        debugPrint('📤 [API REQUEST] - sajuData.five_elements: ${saju['five_elements']}');
-      }
-      debugPrint('📤 [API REQUEST] - date: ${requestData['date']}');
-      debugPrint('📤 [API REQUEST] - period: ${requestData['period']}');
-      debugPrint('🔒 [API REQUEST] - isPremium: ${requestData['isPremium']}');
+      // 📤 API 요청 요약 (개인정보 제외)
+      debugPrint('📤 [API REQUEST] keys: ${requestData.keys.toList()}');
+      debugPrint('📤 [API REQUEST] sajuData: ${requestData['sajuData'] != null ? '✅' : '❌'}, isSubscriber: ${requestData['isSubscriber']}');
 
       // Create a custom Dio instance for Edge Functions
       debugPrint('URL: ${EdgeFunctionsEndpoints.currentBaseUrl}');
@@ -299,8 +244,8 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         receiveTimeout: timeout,
         sendTimeout: timeout,
         validateStatus: (status) => status! < 500));
-      debugPrint('present: ${Environment.supabaseAnonKey.isNotEmpty}');
-      debugPrint('prefix: ${Environment.supabaseAnonKey.substring(0, 20)}...');
+      // API 키 존재 확인 (보안상 키 값은 로깅하지 않음)
+      debugPrint('📡 [API] Supabase key: ${Environment.supabaseAnonKey.isNotEmpty ? '✅' : '❌'}');
 
       // Get auth token from Supabase session
       final session = Supabase.instance.client.auth.currentSession;
@@ -390,11 +335,6 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         throw Exception('Unknown response format from Edge Function');
       }
 
-      // 🔒 isBlurred와 blurredSections는 fortuneData(data 내부)에서 추출
-      // Edge Functions는 { success, data: { ..., isBlurred, blurredSections } } 형식으로 반환
-      final responseIsBlurred = fortuneData['isBlurred'] as bool? ?? false;
-      final responseBlurredSections = (fortuneData['blurredSections'] as List?)?.cast<String>() ?? <String>[];
-      debugPrint('🔒 [_getFortuneFromEdgeFunction] Blur from fortuneData: isBlurred=$responseIsBlurred, sections=$responseBlurredSections');
 
       // 📥 운세 응답 데이터 상세 로깅
       debugPrint('📥 [API RESPONSE] 운세 데이터 상세:');
@@ -1142,13 +1082,9 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         birthYearFortunes: fortuneData['birthYearFortunes'],
         fiveElements: fortuneData['fiveElements'],
         specialTip: fortuneData['special_tip'] ?? fortuneData['specialTip'],
-        period: fortuneData['period'],
-        // 🔒 응답 최상위에서 추출한 블러 정보 전달
-        isBlurred: responseIsBlurred,
-        blurredSections: responseBlurredSections);
+        period: fortuneData['period']);
 
       debugPrint('📝 [_getFortuneFromEdgeFunction] FortuneData.score: ${fortuneDataModel.score}');
-      debugPrint('🔒 [_getFortuneFromEdgeFunction] FortuneData.isBlurred: ${fortuneDataModel.isBlurred}, sections: ${fortuneDataModel.blurredSections}');
 
       final fortuneResponse = FortuneResponseModel(
         success: true,

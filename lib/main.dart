@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
-import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
@@ -8,19 +7,15 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-import 'core/config/environment.dart';
 import 'core/utils/logger.dart';
+import 'firebase_options_secure.dart';
 import 'routes/route_config.dart';
 import 'core/design_system/theme/ds_theme.dart';
-// // import 'presentation/providers/app_providers.dart'; // Has syntax errors
 import 'presentation/providers/theme_provider.dart';
 import 'core/theme/font_size_system.dart';
-//     if (dart.library.html) 'core/utils/url_cleaner_web.dart';
-import 'services/ad_service.dart';
-import 'services/att_service.dart';
 import 'services/remote_config_service.dart';
-// import 'presentation/providers/font_size_provider.dart'; // ⚠️ REMOVED: 이제 user_settings_provider 사용
 import 'core/services/test_auth_service.dart';
 import 'services/notification/fcm_service.dart';
 import 'core/services/supabase_connection_service.dart';
@@ -82,9 +77,18 @@ void main() async {
   }
 
   // Initialize Firebase
-  // Firebase Core는 플러그인에 의해 자동 초기화되지만,
-  // Remote Config 같은 일부 서비스는 명시적 초기화가 필요할 수 있음
-  debugPrint('🚀 [STARTUP] Firebase initialized by plugin');
+  try {
+    debugPrint('🚀 [STARTUP] Initializing Firebase...');
+    await Firebase.initializeApp(
+      options: SecureFirebaseOptions.currentPlatform,
+    );
+    debugPrint('🚀 [STARTUP] Firebase initialized successfully');
+    Logger.info('Firebase initialized successfully');
+  } catch (e) {
+    debugPrint('❌ [STARTUP] Firebase initialization failed: $e');
+    Logger.error('Firebase initialization failed', e);
+    // 실패해도 앱은 계속 실행 (Remote Config, FCM 등 일부 기능 제한)
+  }
 
   // Initialize Supabase with enhanced connection management
   try {
@@ -134,47 +138,7 @@ void main() async {
     // The SDK is initialized when first login is attempted
     Logger.info('Naver SDK ready (initialized on first use)');
   }
-  
-  // Initialize ATT (App Tracking Transparency) first - required before ads on iOS 14.5+
-  if (!kIsWeb) {
-    try {
-      debugPrint('🔒 [ATT] Requesting App Tracking Transparency authorization...');
-      final attStatus = await AttService.instance.requestTrackingAuthorization();
-      debugPrint('🔒 [ATT] Authorization status: $attStatus');
-      Logger.info('ATT authorization status: $attStatus');
-    } catch (e) {
-      debugPrint('⚠️ [ATT] ATT request failed: $e');
-      Logger.warning('ATT request failed: $e');
-    }
-  }
 
-  // Initialize Ad Service in background - don't block app startup
-  // DISABLE ADS FOR TESTING ON REAL DEVICES
-  const bool disableAdsForTesting = false; // Enable ads for release build
-
-  debugPrint('🎯 [ADMOB] kIsWeb: $kIsWeb, DISABLE_ADS_FOR_TESTING: $disableAdsForTesting');
-  debugPrint('🎯 [ADMOB] Environment.enableAds: ${Environment.enableAds}');
-  debugPrint('🎯 [ADMOB] Environment.admobAppId: ${Environment.admobAppId}');
-
-  if (!kIsWeb && !disableAdsForTesting) {
-    // Don't await - let it run in the background
-    Future(() async {
-      try {
-        debugPrint('🎯 [ADMOB] Starting Ad Service initialization in background...');
-        Logger.info('Initializing Ad Service in background...');
-        await AdService.instance.initialize();
-        debugPrint('✅ [ADMOB] Ad Service initialized successfully in background');
-        Logger.info('Ad Service initialized successfully in background');
-      } catch (e) {
-        debugPrint('❌ [ADMOB] Ad Service initialization failed in background: $e');
-        Logger.error('Ad Service initialization failed in background: $e');
-      }
-    });
-  } else {
-    debugPrint('⚠️ [ADMOB] Ad Service disabled for testing');
-    Logger.info('Ad Service disabled for testing');
-  }
-  
   // Initialize SharedPreferences (used by user settings)
   try {
     await SharedPreferences.getInstance();

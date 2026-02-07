@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/utils/logger.dart';
@@ -51,8 +52,14 @@ class RemoteConfigService {
   /// Remote Config 초기화
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     try {
+      // Firebase 초기화 상태 확인
+      if (Firebase.apps.isEmpty) {
+        Logger.warning('[RemoteConfigService] Firebase가 초기화되지 않음, Remote Config 스킵');
+        return;
+      }
+
       _remoteConfig = FirebaseRemoteConfig.instance;
       
       // 기본값 설정
@@ -92,7 +99,7 @@ class RemoteConfigService {
       subscriptionDescriptionKey: '한 달 동안 모든 운세 무제한 이용',
       subscriptionFeaturesKey: json.encode([
         '모든 운세 무제한 이용',
-        '광고 제거',
+        '월간 토큰 50개',
         '우선 고객 지원',
         '프리미엄 기능 이용']),
       subscriptionBadgeKey: '추천',
@@ -161,7 +168,7 @@ class RemoteConfigService {
     if (!_isInitialized) {
       return [
         '모든 운세 무제한 이용',
-        '광고 제거',
+        '월간 토큰 50개',
         '우선 고객 지원',
         '프리미엄 기능 이용'];
     }
