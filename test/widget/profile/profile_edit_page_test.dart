@@ -1,5 +1,5 @@
-/// Profile Edit Page - Widget Test
-/// 프로필 편집 화면 UI 테스트
+// Profile Edit Page - Widget Test
+// 프로필 편집 화면 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -412,8 +412,6 @@ void main() {
 
 class _MockProfileEditPage extends StatefulWidget {
   final String initialName;
-  final String? initialBirthDate;
-  final String? initialGender;
   final bool hasChanges;
   final VoidCallback? onSave;
   final void Function(String)? onValidationError;
@@ -422,8 +420,6 @@ class _MockProfileEditPage extends StatefulWidget {
 
   const _MockProfileEditPage({
     this.initialName = '홍길동',
-    this.initialBirthDate,
-    this.initialGender = 'male',
     this.hasChanges = false,
     this.onSave,
     this.onValidationError,
@@ -445,7 +441,7 @@ class _MockProfileEditPageState extends State<_MockProfileEditPage> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialName);
-    _selectedGender = widget.initialGender ?? 'male';
+    _selectedGender = 'male';
   }
 
   @override
@@ -563,12 +559,12 @@ class _MockProfileEditPageState extends State<_MockProfileEditPage> {
                   // 생년월일
                   GestureDetector(
                     onTap: _showDatePicker,
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
+                    child: const InputDecorator(
+                      decoration: InputDecoration(
                         labelText: '생년월일',
                       ),
                       child: Text(
-                        widget.initialBirthDate ?? '선택해주세요',
+                        '선택해주세요',
                       ),
                     ),
                   ),

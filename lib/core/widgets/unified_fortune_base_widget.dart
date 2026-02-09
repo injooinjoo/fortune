@@ -5,11 +5,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
 import '../models/fortune_result.dart';
 import '../services/unified_fortune_service.dart';
-import '../services/debug_premium_service.dart';
 import '../utils/logger.dart';
 import '../../shared/components/toast.dart';
 import '../design_system/design_system.dart';
-import '../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import '../utils/haptic_utils.dart';
 import '../constants/soul_rates.dart';
 import '../errors/exceptions.dart';
@@ -202,49 +200,43 @@ class _UnifiedFortuneBaseWidgetState
     super.dispose();
   }
 
-  /// 운세 생성 실행 (신규 플로우: 블러 결과 즉시 표시 → 광고 → 블러 해제)
+  /// 운세 생성 실행 (토큰 소비 → 운세 생성 → 결과 표시)
   Future<void> _handleSubmit() async {
     Logger.info('[UnifiedFortuneBaseWidget] 운세 생성 시작: ${widget.fortuneType}');
 
-    // 1. 프리미엄/영혼 체크
-    final tokenState = ref.read(tokenProvider);
     final tokenNotifier = ref.read(tokenProvider.notifier);
+    final requiredTokens = SoulRates.getTokenCost(widget.fortuneType);
 
-    // 디버그 모드에서 프리미엄 오버라이드 확인
-    final premiumOverride = await DebugPremiumService.getOverrideValue();
-    if (!mounted) return;
-    final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
-
-    if (premiumOverride != null) {
-      Logger.debug('[UnifiedFortuneBaseWidget] 디버그 프리미엄 오버라이드 활성화: $premiumOverride');
+    // 1. 토큰 확인
+    if (!tokenNotifier.canAccessFortune(widget.fortuneType)) {
+      Logger.warning('[UnifiedFortuneBaseWidget] 토큰 부족');
+      HapticUtils.warning();
+      await TokenInsufficientModal.show(
+        context: context,
+        requiredTokens: requiredTokens,
+        fortuneType: widget.fortuneType,
+      );
+      return;
     }
 
-    // 프리미엄 운세인 경우 영혼 확인
-    if (!isPremium && SoulRates.isPremiumFortune(widget.fortuneType)) {
-      final canAccess = tokenNotifier.canAccessFortune(widget.fortuneType);
-      final requiredSouls = -SoulRates.getSoulAmount(widget.fortuneType);
-
-      Logger.debug('[UnifiedFortuneBaseWidget] 영혼 체크', {
-        'fortuneType': widget.fortuneType,
-        'requiredSouls': requiredSouls,
-        'canAccess': canAccess,
-      });
-
-      if (!canAccess) {
-        Logger.warning('[UnifiedFortuneBaseWidget] 영혼 부족');
-        HapticUtils.warning();
-        await TokenInsufficientModal.show(
-          context: context,
-          requiredTokens: requiredSouls,
-          fortuneType: widget.fortuneType,
-        );
+    // 2. 토큰 소비 후 운세 생성
+    try {
+      // 2-0. 토큰 소비
+      final consumed = await tokenNotifier.consumeTokens(fortuneType: widget.fortuneType);
+      if (!consumed) {
+        Logger.warning('[UnifiedFortuneBaseWidget] 토큰 소비 실패');
+        // 토큰 부족 모달 표시
+        if (mounted) {
+          await TokenInsufficientModal.show(
+            context: context,
+            requiredTokens: requiredTokens,
+            fortuneType: widget.fortuneType,
+          );
+        }
         return;
       }
-    }
 
-    // 2. 신규 플로우: 즉시 결과 화면 전환 → 스켈레톤 → 운세 생성 → 블러 상태 표시 → 광고 → 블러 해제
-    try {
-      // 2-0. 즉시 결과 화면으로 전환 (스켈레톤 표시)
+      // 2-1. 결과 화면으로 전환 (스켈레톤 표시)
       setState(() {
         _showResult = true;
         _isLoading = true;
@@ -252,24 +244,8 @@ class _UnifiedFortuneBaseWidgetState
       });
       Logger.info('[UnifiedFortuneBaseWidget] 📱 결과 화면으로 전환 (로딩 스켈레톤 표시)');
 
-      // 2-1. 운세 생성 (블러 상태)
-      await _generateFortuneBlurred(isPremium: isPremium);
-
-      // 2-2~2-3. Premium/Frequency 체크 및 광고 표시 (Helper가 처리)
-      await InterstitialAdHelper.showInterstitialAdWithCallback(
-        ref,
-        onAdCompleted: () async {
-          Logger.info('[UnifiedFortuneBaseWidget] 광고 시청 완료 또는 생략 - 블러 해제');
-          await _unlockBlurredContent();
-        },
-        onAdFailed: () async {
-          Logger.info('[UnifiedFortuneBaseWidget] 광고 표시 실패 - 블러 유지 (사용자가 다시 시도하도록)');
-          // ❌ 자동으로 블러 해제하지 않음!
-          // 사용자가 FloatingBottomButton을 다시 눌러서 재시도하도록 유도
-        },
-      );
-      // ✅ 광고가 준비 안 됐으면 블러 유지 (AdService에서 콜백 호출 안함)
-      // FloatingBottomButton을 통해 사용자가 직접 블러 해제하도록 유도
+      // 2-2. 운세 생성 (토큰 소비 완료, 바로 결과 표시)
+      await _generateFortune();
     } catch (e) {
       Logger.error('[UnifiedFortuneBaseWidget] 운세 생성 실패', e);
       // ❌ 에러 발생 시 로딩 해제하고 입력 화면으로 복귀
@@ -284,51 +260,32 @@ class _UnifiedFortuneBaseWidgetState
     }
   }
 
-  /// 블러 상태로 운세 생성 (신규)
-  Future<void> _generateFortuneBlurred({required bool isPremium}) async {
+  /// 운세 생성 (토큰 소비 완료 후 호출)
+  Future<void> _generateFortune() async {
     try {
-      Logger.info('[UnifiedFortuneBaseWidget] 블러 상태 운세 생성 시작');
+      Logger.info('[UnifiedFortuneBaseWidget] 운세 생성 시작');
 
       // 1. FortuneConditions 생성
       final conditions = await widget.conditionsBuilder();
 
-      // 2. UnifiedFortuneService 호출 (블러 처리 활성화)
+      // 2. UnifiedFortuneService 호출
       final result = await _fortuneService.getFortune(
         fortuneType: widget.fortuneType,
         dataSource: widget.dataSource,
         inputConditions: conditions.toJson(),
         conditions: conditions,
-        isPremium: isPremium,
-        onBlurredResult: (blurredResult) async {
-          // 블러 상태 결과를 즉시 UI에 표시
-          Logger.info('[UnifiedFortuneBaseWidget] 📥 onBlurredResult 콜백 호출됨');
-          Logger.info('[UnifiedFortuneBaseWidget] mounted: $mounted, isBlurred: ${blurredResult.isBlurred}');
-
-          // ✅ 1초 대기 (로딩 애니메이션 보여주기)
-          await Future.delayed(const Duration(milliseconds: 1000));
-
-          if (mounted) {
-            setState(() {
-              _fortuneResult = blurredResult;
-              _showResult = true;
-              _isLoading = false; // 로딩 완료
-            });
-            Logger.info('[UnifiedFortuneBaseWidget] 🔒 블러 상태 결과 표시 완료 (_showResult: $_showResult, _isLoading: false)');
-          } else {
-            Logger.warning('[UnifiedFortuneBaseWidget] ⚠️ mounted=false - setState 스킵됨');
-          }
-        },
+        isPremium: true, // 토큰 소비 완료 = 프리미엄 접근
       );
 
       Logger.info('[UnifiedFortuneBaseWidget] 운세 생성 완료: ${result.id}');
 
       if (!mounted) return;
 
-      // Premium 사용자는 블러 없이 즉시 표시
+      // 결과 즉시 표시
       setState(() {
         _fortuneResult = result;
         _showResult = true;
-        _isLoading = false; // 로딩 완료
+        _isLoading = false;
       });
 
       HapticUtils.success();
@@ -369,26 +326,6 @@ class _UnifiedFortuneBaseWidgetState
       }
     }
   }
-
-  /// 블러 해제 (광고 시청 후)
-  Future<void> _unlockBlurredContent() async {
-    Logger.info('[UnifiedFortuneBaseWidget] 🔓 블러 해제 시작');
-
-    if (!mounted) return;
-
-    setState(() {
-      if (_fortuneResult != null) {
-        _fortuneResult = _fortuneResult!.copyWith(
-          isBlurred: false,
-          blurredSections: [],
-        );
-      }
-    });
-
-    HapticUtils.success();
-    Logger.info('[UnifiedFortuneBaseWidget] ✅ 블러 해제 완료');
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -471,8 +408,7 @@ class _UnifiedFortuneBaseWidgetState
       return const Center(child: Text('결과가 없습니다.'));
     }
 
-    // ✅ BlurredFortuneContent 제거 - 각 페이지에서 _buildBlurWrapper로 개별 섹션 블러 처리
-    // 블러 상태든 아니든 그냥 resultBuilder 호출
+    // resultBuilder 호출
     return widget.resultBuilder(context, _fortuneResult!);
   }
 }

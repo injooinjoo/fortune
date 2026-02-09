@@ -1,6 +1,6 @@
-/// 2026 올해의 인연 결과 모델
-///
-/// 미래 애인 얼굴 이미지와 만남 예측 정보를 담습니다.
+// 2026 올해의 인연 결과 모델
+//
+// 미래 애인 얼굴 이미지와 만남 예측 정보를 담습니다.
 class YearlyEncounterResult {
   /// 생성된 이미지 URL
   final String imageUrl;
@@ -38,12 +38,6 @@ class YearlyEncounterResult {
   /// 생성 시간
   final DateTime createdAt;
 
-  /// 블러 상태 (프리미엄 미구매 시 true)
-  final bool isBlurred;
-
-  /// 블러 처리된 섹션 목록
-  final List<String> blurredSections;
-
   const YearlyEncounterResult({
     required this.imageUrl,
     required this.appearanceHashtags,
@@ -57,8 +51,6 @@ class YearlyEncounterResult {
     required this.compatibilityDescription,
     required this.targetGender,
     required this.createdAt,
-    this.isBlurred = false,
-    this.blurredSections = const [],
   });
 
   /// 운세 타입 식별자
@@ -134,10 +126,6 @@ class YearlyEncounterResult {
           : json['created_at'] != null
               ? DateTime.parse(json['created_at'])
               : DateTime.now(),
-      isBlurred: json['isBlurred'] ?? false,
-      blurredSections: json['blurredSections'] != null
-          ? List<String>.from(json['blurredSections'])
-          : [],
     );
   }
 
@@ -155,8 +143,6 @@ class YearlyEncounterResult {
         'compatibilityDescription': compatibilityDescription,
         'targetGender': targetGender,
         'createdAt': createdAt.toIso8601String(),
-        'isBlurred': isBlurred,
-        'blurredSections': blurredSections,
       };
 
   /// copyWith 메서드
@@ -173,8 +159,6 @@ class YearlyEncounterResult {
     String? compatibilityDescription,
     String? targetGender,
     DateTime? createdAt,
-    bool? isBlurred,
-    List<String>? blurredSections,
   }) {
     return YearlyEncounterResult(
       imageUrl: imageUrl ?? this.imageUrl,
@@ -190,8 +174,6 @@ class YearlyEncounterResult {
           compatibilityDescription ?? this.compatibilityDescription,
       targetGender: targetGender ?? this.targetGender,
       createdAt: createdAt ?? this.createdAt,
-      isBlurred: isBlurred ?? this.isBlurred,
-      blurredSections: blurredSections ?? this.blurredSections,
     );
   }
 

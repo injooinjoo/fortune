@@ -1,5 +1,5 @@
-/// Settings Screen - Widget Test
-/// 설정 화면 UI 테스트
+// Settings Screen - Widget Test
+// 설정 화면 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -371,14 +371,12 @@ void main() {
 // ============================================
 
 class _MockSettingsScreen extends StatefulWidget {
-  final bool isDarkMode;
   final int tokenBalance;
   final List<String> connectedAccounts;
   final VoidCallback? onLogout;
   final VoidCallback? onProfileTap;
 
   const _MockSettingsScreen({
-    this.isDarkMode = false,
     this.tokenBalance = 0,
     this.connectedAccounts = const [],
     this.onLogout,
@@ -395,7 +393,7 @@ class _MockSettingsScreenState extends State<_MockSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _isDarkMode = widget.isDarkMode;
+    _isDarkMode = false;
   }
 
   @override
@@ -415,7 +413,7 @@ class _MockSettingsScreenState extends State<_MockSettingsScreen> {
             ),
 
             // 계정 섹션
-            _SectionHeader(title: '계정'),
+            const _SectionHeader(title: '계정'),
             _SettingsItem(
               icon: Icons.person,
               title: '프로필 설정',
@@ -437,7 +435,7 @@ class _MockSettingsScreenState extends State<_MockSettingsScreen> {
             const Divider(),
 
             // 앱 설정 섹션
-            _SectionHeader(title: '앱 설정'),
+            const _SectionHeader(title: '앱 설정'),
             _SettingsItem(
               icon: Icons.notifications,
               title: '알림 설정',
@@ -459,7 +457,7 @@ class _MockSettingsScreenState extends State<_MockSettingsScreen> {
             const Divider(),
 
             // 결제 섹션
-            _SectionHeader(title: '결제 & 구독'),
+            const _SectionHeader(title: '결제 & 구독'),
             _SettingsItem(
               icon: Icons.star,
               title: '프리미엄',
@@ -480,7 +478,7 @@ class _MockSettingsScreenState extends State<_MockSettingsScreen> {
             const Divider(),
 
             // 정보 섹션
-            _SectionHeader(title: '정보 & 지원'),
+            const _SectionHeader(title: '정보 & 지원'),
             _SettingsItem(
               icon: Icons.info,
               title: '버전 정보',
@@ -511,7 +509,7 @@ class _MockSettingsScreenState extends State<_MockSettingsScreen> {
             const Divider(),
 
             // 데이터 관리
-            _SectionHeader(title: '데이터 관리'),
+            const _SectionHeader(title: '데이터 관리'),
             _SettingsItem(
               icon: Icons.cleaning_services,
               title: '캐시 삭제',

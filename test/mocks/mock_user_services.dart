@@ -1,5 +1,5 @@
-/// Mock User Services - 사용자 관련 Mock 클래스
-/// Phase 2: 프로필 & 사용자 테스트용
+// Mock User Services - 사용자 관련 Mock 클래스
+// Phase 2: 프로필 & 사용자 테스트용
 
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter/material.dart';

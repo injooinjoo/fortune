@@ -50,14 +50,12 @@ const corsHeaders = {
 interface TraditionalSajuResponse {
   question: string;
   sections: {
-    analysis: string;      // 사주 분석 (항상 표시)
-    answer: string;        // 질문에 대한 답변 (블러)
-    advice: string;        // 실용적인 조언 (블러)
-    supplement: string;    // 오행 보완 방법 (블러)
+    analysis: string;      // 사주 분석
+    answer: string;        // 질문에 대한 답변
+    advice: string;        // 실용적인 조언
+    supplement: string;    // 오행 보완 방법
   };
   summary: string;
-  isBlurred: boolean;
-  blurredSections: string[];
 }
 
 serve(async (req) => {
@@ -115,18 +113,10 @@ serve(async (req) => {
           calculatePercentile(75)
         )
 
-        // 블러 설정
-        const isBlurred = !isPremium
-        const blurredSections = isBlurred ? ['answer', 'advice', 'supplement'] : []
-
         return new Response(
           JSON.stringify({
             success: true,
-            data: {
-              ...resultWithPercentile,
-              isBlurred,
-              blurredSections,
-            },
+            data: resultWithPercentile,
             cohortHit: true,
           }),
           {
@@ -241,14 +231,8 @@ serve(async (req) => {
     // 요약 생성 (analysis 섹션 사용)
     const summary = sections.analysis || '사주 분석'
 
-    // 블러 처리 (일반 사용자는 answer, advice, supplement 블러)
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred ? ['answer', 'advice', 'supplement'] : []
-
     console.log('');
     console.log('📊 [Traditional-Saju] 결과 생성 완료');
-    console.log(`   - isBlurred: ${isBlurred}`);
-    console.log(`   - blurredSections: ${blurredSections.join(', ')}`);
     console.log(`   - sections: analysis(${sections.analysis?.length || 0}), answer(${sections.answer?.length || 0}), advice(${sections.advice?.length || 0}), supplement(${sections.supplement?.length || 0})`);
     console.log('');
 
@@ -265,9 +249,7 @@ serve(async (req) => {
         // 기존 필드 유지 (하위 호환성)
         question,
         sections,
-        saju_summary: summary,
-        isBlurred,
-        blurredSections
+        saju_summary: summary
       }
     }
 

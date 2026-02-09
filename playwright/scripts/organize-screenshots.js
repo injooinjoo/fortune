@@ -252,82 +252,91 @@ function generateTokenReference() {
 
   const tokenRef = `# Fortune Design Tokens → Figma Variables
 
-## Colors (TossDesignSystem)
+## Colors (DSColors - ChatGPT Style)
 
-### Semantic Colors
+### Core Colors (Monochrome)
 | Token | Light | Dark | Figma Variable |
 |-------|-------|------|----------------|
-| background/primary | #FFFFFF | #17171C | \`semantic/background/primary\` |
-| background/secondary | #F9FAFB | #1D1D24 | \`semantic/background/secondary\` |
-| text/primary | #191F28 | #FFFFFF | \`semantic/text/primary\` |
-| text/secondary | #4E5968 | #8B95A1 | \`semantic/text/secondary\` |
-| border/default | #E5E8EB | #3A3D46 | \`semantic/border/default\` |
-| brand/primary | #1F4EF5 | #1E5EDB | \`semantic/brand/primary\` |
+| background | #FFFFFF | #000000 | \`core/background\` |
+| surface | #F7F7F8 | #1A1A1A | \`core/surface\` |
+| textPrimary | #000000 | #FFFFFF | \`core/text/primary\` |
+| textSecondary | #6B7280 | #9CA3AF | \`core/text/secondary\` |
+| divider | #E5E7EB | #374151 | \`core/divider\` |
 
-### Saju Colors (오행)
+### Semantic Colors
 | Token | Color | Figma Variable |
 |-------|-------|----------------|
-| wuxing/wood | #10B981 | \`saju/wuxing/wood\` |
-| wuxing/fire | #F43F5E | \`saju/wuxing/fire\` |
-| wuxing/earth | #FBBF24 | \`saju/wuxing/earth\` |
-| wuxing/metal | #94A3B8 | \`saju/wuxing/metal\` |
-| wuxing/water | #3B82F6 | \`saju/wuxing/water\` |
+| success | #10B981 | \`semantic/success\` |
+| warning | #F59E0B | \`semantic/warning\` |
+| error | #EF4444 | \`semantic/error\` |
+| info | #3B82F6 | \`semantic/info\` |
+| accentSecondary | #8B5CF6 | \`semantic/accent\` |
 
-## Typography (TypographyUnified)
+### Saju Colors (오행 - 시각화 전용)
+| Token | Color | Figma Variable |
+|-------|-------|----------------|
+| wood (목) | #10B981 | \`saju/wood\` |
+| fire (화) | #F43F5E | \`saju/fire\` |
+| earth (토) | #FBBF24 | \`saju/earth\` |
+| metal (금) | #94A3B8 | \`saju/metal\` |
+| water (수) | #3B82F6 | \`saju/water\` |
 
-| Style | Size | Weight | Line Height | Figma Style |
-|-------|------|--------|-------------|-------------|
-| Display/Large | 48px | 700 | 1.17 | \`Fortune/Display/Large\` |
-| Heading/1 | 28px | 700 | 1.29 | \`Fortune/Heading/1\` |
-| Heading/2 | 24px | 700 | 1.33 | \`Fortune/Heading/2\` |
-| Heading/3 | 20px | 600 | 1.4 | \`Fortune/Heading/3\` |
-| Body/Large | 17px | 400 | 1.65 | \`Fortune/Body/Large\` |
-| Body/Medium | 15px | 400 | 1.6 | \`Fortune/Body/Medium\` |
-| Body/Small | 13px | 400 | 1.54 | \`Fortune/Body/Small\` |
-| Label/Large | 14px | 500 | 1.43 | \`Fortune/Label/Large\` |
-| Label/Medium | 12px | 500 | 1.5 | \`Fortune/Label/Medium\` |
-| Button/Large | 18px | 600 | 1.33 | \`Fortune/Button/Large\` |
-| Button/Medium | 16px | 600 | 1.5 | \`Fortune/Button/Medium\` |
+## Typography (context extensions)
 
-## Spacing
+| Style | Size | Weight | Usage |
+|-------|------|--------|-------|
+| heading1 | 30pt | Bold | Page main title |
+| heading2 | 26pt | SemiBold | Section title |
+| heading3 | 22pt | SemiBold | AppBar, subsection |
+| heading4 | 20pt | Medium | Card title |
+| body1 | 17pt | Regular | Body text |
+| body2 | 15pt | Regular | Secondary text |
+| bodySmall | 14pt | Regular | Small body |
+| caption | 12pt | Regular | Caption, hints |
+
+## Spacing (DSSpacing)
 
 | Token | Value | Figma Variable |
 |-------|-------|----------------|
-| spacing/xxs | 2px | \`spacing/xxs\` |
-| spacing/xs | 4px | \`spacing/xs\` |
-| spacing/s | 8px | \`spacing/s\` |
-| spacing/m | 16px | \`spacing/m\` |
-| spacing/l | 24px | \`spacing/l\` |
-| spacing/xl | 32px | \`spacing/xl\` |
-| spacing/xxl | 48px | \`spacing/xxl\` |
+| xxs | 2px | \`spacing/xxs\` |
+| xs | 4px | \`spacing/xs\` |
+| sm | 8px | \`spacing/sm\` |
+| md | 16px | \`spacing/md\` |
+| lg | 24px | \`spacing/lg\` |
+| xl | 32px | \`spacing/xl\` |
+| xxl | 48px | \`spacing/xxl\` |
 
-## Border Radius
+## Border Radius (DSRadius)
 
 | Token | Value | Figma Variable |
 |-------|-------|----------------|
-| radius/xs | 4px | \`radius/xs\` |
-| radius/s | 8px | \`radius/s\` |
-| radius/m | 12px | \`radius/m\` |
-| radius/l | 16px | \`radius/l\` |
-| radius/xl | 24px | \`radius/xl\` |
-| radius/full | 9999px | \`radius/full\` |
+| xs | 4px | \`radius/xs\` |
+| sm | 8px | \`radius/sm\` |
+| md | 12px | \`radius/md\` |
+| lg | 16px | \`radius/lg\` |
+| xl | 24px | \`radius/xl\` |
+| card | 16px | \`radius/card\` |
+| button | 12px | \`radius/button\` |
 
-## Shadow
+## Shadow (DSShadows)
 
-| Token | Value | Figma Style |
+| Token | Usage | Figma Style |
 |-------|-------|-------------|
-| shadow/xs | 0 1px 2px rgba(0,0,0,0.05) | \`Fortune/Shadow/XS\` |
-| shadow/s | 0 2px 8px rgba(0,0,0,0.04) | \`Fortune/Shadow/S\` |
-| shadow/m | 0 4px 16px rgba(0,0,0,0.08) | \`Fortune/Shadow/M\` |
-| shadow/l | 0 8px 24px rgba(0,0,0,0.12) | \`Fortune/Shadow/L\` |
+| sm | Small shadow | \`Fortune/Shadow/sm\` |
+| md | Medium shadow | \`Fortune/Shadow/md\` |
+| lg | Large shadow | \`Fortune/Shadow/lg\` |
+| card | Card shadow | \`Fortune/Shadow/card\` |
+| elevated | Elevated shadow | \`Fortune/Shadow/elevated\` |
 
 ---
 
 ## 참조 파일
 
-- \`lib/core/theme/toss_design_system.dart\` - 색상, 간격, 반경
+- \`lib/core/design_system/tokens/ds_colors.dart\` - ChatGPT 스타일 색상
+- \`lib/core/design_system/tokens/ds_spacing.dart\` - 간격
+- \`lib/core/design_system/tokens/ds_radius.dart\` - 반경
+- \`lib/core/design_system/tokens/ds_saju_colors.dart\` - 사주 오행 색상
 - \`lib/core/theme/typography_unified.dart\` - 타이포그래피
-- \`lib/core/theme/saju_colors.dart\` - 사주 전용 색상
 `;
 
   const tokenPath = path.join(CONFIG.metadataDir, 'figma-token-reference.md');

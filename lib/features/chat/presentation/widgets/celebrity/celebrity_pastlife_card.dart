@@ -150,8 +150,8 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            DSFortuneColors.mysticalPurpleDark.withValues(alpha: 0.15), // 신비로운 남보라색
-            DSFortuneColors.categoryTarot.withValues(alpha: 0.1),
+            DSColors.accentSecondary.withValues(alpha: 0.15), // 신비로운 남보라색
+            DSColors.accentSecondary.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -165,9 +165,9 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
                 height: 56,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: DSFortuneColors.mysticalPurpleDark.withValues(alpha: 0.2),
+                  color: DSColors.accentSecondary.withValues(alpha: 0.2),
                   border: Border.all(
-                    color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.4),
+                    color: DSColors.accentSecondary.withValues(alpha: 0.4),
                     width: 2,
                   ),
                 ),
@@ -230,7 +230,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [DSFortuneColors.categoryPersonalityDna, DSFortuneColors.categoryLuckyItems],
+                colors: [DSColors.accentSecondary, DSColors.success],
               ),
               borderRadius: BorderRadius.circular(DSRadius.full),
             ),
@@ -263,10 +263,10 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: DSFortuneColors.mysticalPurpleDark.withValues(alpha: 0.05),
+          color: DSColors.accentSecondary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.1),
+            color: DSColors.accentSecondary.withValues(alpha: 0.1),
           ),
         ),
         child: Text(
@@ -295,8 +295,8 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              DSFortuneColors.mysticalPurpleDark.withValues(alpha: 0.1),
-              DSFortuneColors.categoryTarot.withValues(alpha: 0.05),
+              DSColors.accentSecondary.withValues(alpha: 0.1),
+              DSColors.accentSecondary.withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(DSRadius.md),
@@ -311,7 +311,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
               ),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [DSFortuneColors.categoryPersonalityDna, DSFortuneColors.categoryLuckyItems],
+                  colors: [DSColors.accentSecondary, DSColors.success],
                 ),
                 borderRadius: BorderRadius.circular(DSRadius.full),
               ),
@@ -328,9 +328,9 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildInfoChip(context, '🏛️', data['era'] ?? '', DSFortuneColors.fortuneGold),
+                _buildInfoChip(context, '🏛️', data['era'] ?? '', DSColors.warning),
                 const SizedBox(width: DSSpacing.sm),
-                _buildInfoChip(context, '📍', data['location'] ?? '', DSFortuneColors.categoryMoney),
+                _buildInfoChip(context, '📍', data['location'] ?? '', DSColors.warning),
               ],
             ),
           ],
@@ -389,7 +389,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
               borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border(
                 left: BorderSide(
-                  color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.5),
+                  color: DSColors.accentSecondary.withValues(alpha: 0.5),
                   width: 3,
                 ),
               ),
@@ -437,7 +437,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryLove.withValues(alpha: 0.1),
+                color: DSColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -478,7 +478,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryLotto.withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Column(
@@ -487,7 +487,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
                   Text(
                     '🔮 못다한 이야기',
                     style: typography.labelSmall.copyWith(
-                      color: DSFortuneColors.categoryLotto,
+                      color: DSColors.warning,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -507,7 +507,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryMoney.withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Column(
@@ -516,7 +516,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
                   Text(
                     '🎯 이번 생의 목적',
                     style: typography.labelSmall.copyWith(
-                      color: DSFortuneColors.categoryMoney,
+                      color: DSColors.warning,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -572,7 +572,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Text(
               '전생 인연의 증거',
               style: typography.labelSmall.copyWith(
-                color: DSFortuneColors.categoryPersonalityDna,
+                color: DSColors.accentSecondary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -601,7 +601,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.1),
+                color: DSColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Column(
@@ -610,7 +610,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
                   Text(
                     '👁️ 데자뷔 순간',
                     style: typography.labelSmall.copyWith(
-                      color: DSFortuneColors.categoryLuckyItems,
+                      color: DSColors.success,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -631,7 +631,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryLove.withValues(alpha: 0.1),
+                color: DSColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Column(
@@ -640,7 +640,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
                   Text(
                     '💫 설명 안 되는 끌림',
                     style: typography.labelSmall.copyWith(
-                      color: DSFortuneColors.categoryLove,
+                      color: DSColors.error,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -682,13 +682,13 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.1),
-                    DSFortuneColors.resultGoodFortune.withValues(alpha: 0.05),
+                    DSColors.warning.withValues(alpha: 0.1),
+                    DSColors.success.withValues(alpha: 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(DSRadius.md),
                 border: Border.all(
-                  color: DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.3),
+                  color: DSColors.warning.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -740,7 +740,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryMoney.withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -792,7 +792,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
                       height: 20,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [DSFortuneColors.categoryPersonalityDna, DSFortuneColors.categoryLuckyItems],
+                          colors: [DSColors.accentSecondary, DSColors.success],
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -826,7 +826,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.1),
+                color: DSColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -855,7 +855,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
               ),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [DSFortuneColors.fortuneGoldMuted, DSFortuneColors.resultGoodFortune],
+                  colors: [DSColors.warning, DSColors.success],
                 ),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
@@ -919,7 +919,7 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
 
   Widget _buildDefaultAvatar() {
     return Container(
-      color: DSFortuneColors.mysticalPurpleDark.withValues(alpha: 0.3),
+      color: DSColors.accentSecondary.withValues(alpha: 0.3),
       child: const Center(
         child: Icon(
           Icons.person,

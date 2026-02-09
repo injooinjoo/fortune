@@ -142,12 +142,12 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
           padding: EdgeInsets.all(fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
           decoration: BoxDecoration(
             color: isSelected
-                ? colors.accentSecondary.withValues(alpha: 0.2)
+                ? colors.textPrimary.withValues(alpha: 0.1)
                 : colors.surface,
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
               color: isSelected
-                  ? colors.accentSecondary
+                  ? colors.textPrimary
                   : colors.textPrimary.withValues(alpha: 0.2),
               width: isSelected ? 1.5 : 1,
             ),
@@ -163,7 +163,7 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
                       style: context.typography.headingSmall.copyWith(
                         fontWeight: FontWeight.bold,
                         color: isSelected
-                            ? colors.accentSecondary
+                            ? colors.textPrimary
                             : colors.textPrimary,
                       ),
                     ),
@@ -180,7 +180,7 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
               if (isSelected)
                 Icon(
                   Icons.check_circle,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   size: 24,
                 ),
             ],

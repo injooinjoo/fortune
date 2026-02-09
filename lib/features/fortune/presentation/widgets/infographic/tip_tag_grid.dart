@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/tokens/ds_spacing.dart';
 import 'package:fortune/core/design_system/tokens/ds_radius.dart';
-import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
+import 'package:fortune/core/design_system/tokens/ds_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
 
 /// 팁 태그 그리드 위젯
@@ -231,59 +231,59 @@ enum TipCategory {
 
 /// 카테고리별 스타일
 extension TipCategoryStyle on TipCategory {
-  _CategoryStyle get style {
+  TipCategoryStyleData get style {
     switch (this) {
       case TipCategory.love:
-        return const _CategoryStyle(
+        return const TipCategoryStyleData(
           icon: Icons.favorite_rounded,
-          color: DSFortuneColors.categoryLove,
+          color: DSColors.accentSecondary,
         );
       case TipCategory.career:
-        return const _CategoryStyle(
+        return const TipCategoryStyleData(
           icon: Icons.work_rounded,
-          color: DSFortuneColors.categoryCareer,
+          color: DSColors.info,
         );
       case TipCategory.health:
-        return const _CategoryStyle(
+        return const TipCategoryStyleData(
           icon: Icons.fitness_center_rounded,
-          color: DSFortuneColors.categoryHealth,
+          color: DSColors.success,
         );
       case TipCategory.money:
-        return const _CategoryStyle(
+        return const TipCategoryStyleData(
           icon: Icons.monetization_on_rounded,
-          color: DSFortuneColors.categoryMoney,
+          color: DSColors.warning,
         );
       case TipCategory.timing:
-        return const _CategoryStyle(
+        return const TipCategoryStyleData(
           icon: Icons.schedule_rounded,
-          color: DSFortuneColors.mysticalPurple,
+          color: DSColors.accentSecondary,
         );
       case TipCategory.warning:
-        return const _CategoryStyle(
+        return const TipCategoryStyleData(
           icon: Icons.warning_rounded,
-          color: DSFortuneColors.sealVermilion,
+          color: DSColors.error,
         );
       case TipCategory.positive:
-        return const _CategoryStyle(
+        return const TipCategoryStyleData(
           icon: Icons.star_rounded,
-          color: DSFortuneColors.categoryGratitude,
+          color: DSColors.success,
         );
       case TipCategory.action:
-        return const _CategoryStyle(
+        return const TipCategoryStyleData(
           icon: Icons.arrow_forward_rounded,
-          color: DSFortuneColors.categoryFaceReading,
+          color: DSColors.accentSecondary,
         );
       case TipCategory.general:
-        return const _CategoryStyle(
+        return const TipCategoryStyleData(
           icon: Icons.lightbulb_rounded,
-          color: DSFortuneColors.celebrityPolitician,
+          color: DSColors.textSecondary,
         );
     }
   }
 }
 
-class _CategoryStyle {
-  const _CategoryStyle({
+class TipCategoryStyleData {
+  const TipCategoryStyleData({
     required this.icon,
     required this.color,
   });

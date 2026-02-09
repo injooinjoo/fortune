@@ -61,38 +61,31 @@ const FIGMA_CONFIG = {
 };
 
 // =============================================================================
-// 디자인 토큰 (TossDesignSystem 기반)
+// 디자인 토큰 (DSColors - ChatGPT 스타일)
 // =============================================================================
 
 const DESIGN_TOKENS = {
   colors: {
-    // Semantic Colors
+    // Core Colors (Monochrome)
+    core: {
+      background: { light: '#FFFFFF', dark: '#000000' },
+      surface: { light: '#F7F7F8', dark: '#1A1A1A' },
+      surfaceElevated: { light: '#FFFFFF', dark: '#2D2D2D' },
+      divider: { light: '#E5E7EB', dark: '#374151' },
+    },
+    text: {
+      primary: { light: '#000000', dark: '#FFFFFF' },
+      secondary: { light: '#6B7280', dark: '#9CA3AF' },
+      tertiary: { light: '#9CA3AF', dark: '#6B7280' },
+      disabled: { light: '#D1D5DB', dark: '#4B5563' },
+    },
+    // Semantic (iOS system colors)
     semantic: {
-      background: {
-        primary: { light: '#FFFFFF', dark: '#17171C' },
-        secondary: { light: '#F9FAFB', dark: '#1D1D24' },
-        tertiary: { light: '#F2F4F6', dark: '#26262E' },
-      },
-      text: {
-        primary: { light: '#191F28', dark: '#FFFFFF' },
-        secondary: { light: '#4E5968', dark: '#8B95A1' },
-        tertiary: { light: '#8B95A1', dark: '#6B7684' },
-        disabled: { light: '#B0B8C1', dark: '#4E5968' },
-      },
-      border: {
-        default: { light: '#E5E8EB', dark: '#3A3D46' },
-        strong: { light: '#D1D6DB', dark: '#4E5968' },
-      },
-      brand: {
-        primary: { light: '#1F4EF5', dark: '#1E5EDB' },
-        secondary: { light: '#3182F6', dark: '#4593FC' },
-      },
-      status: {
-        success: { light: '#10B981', dark: '#34D399' },
-        warning: { light: '#F59E0B', dark: '#FBBF24' },
-        error: { light: '#EF4444', dark: '#F87171' },
-        info: { light: '#3B82F6', dark: '#60A5FA' },
-      },
+      success: '#10B981',
+      warning: '#F59E0B',
+      error: '#EF4444',
+      info: '#3B82F6',
+      accentSecondary: '#8B5CF6',
     },
     // 사주 전용 색상
     saju: {

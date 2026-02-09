@@ -117,7 +117,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
                       color: context.colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text(
                     '친구들과 함께 나눠보세요',
                     style: context.bodySmall.copyWith(
@@ -154,7 +154,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
           ],
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: DSSpacing.md),
 
         // 캡처 대상 영역
         Screenshot(
@@ -172,7 +172,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
           .fadeIn(duration: 500.ms)
           .scale(begin: const Offset(0.95, 0.95), duration: 500.ms, curve: Curves.easeOut),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: DSSpacing.md),
 
         // 이미지로 공유하기 버튼
         SizedBox(
@@ -372,7 +372,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         // 사자성어/메시지
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),

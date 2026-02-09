@@ -172,8 +172,6 @@ interface LoveFortuneResponse {
         tip: string;            // 대화 팁
       };
     };
-    isBlurred?: boolean; // ✅ 블러 상태
-    blurredSections?: string[]; // ✅ 블러 처리된 섹션 목록
   };
   cachedAt?: string;
 }
@@ -684,13 +682,6 @@ serve(async (req) => {
         charmPoints: params.charmPoints,
       })
 
-      // ✅ Blur 로직 적용
-      const isPremium = params.isPremium ?? false
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['loveProfile', 'detailedAnalysis', 'predictions', 'actionPlan']
-        : []
-
       // ✅ Percentile 계산
       const percentileData = await calculatePercentile(supabase, 'love', personalizedResult.score || 75)
       const resultWithPercentile = addPercentileToResult({
@@ -701,8 +692,6 @@ serve(async (req) => {
           gender: params.gender,
           relationshipStatus: params.relationshipStatus,
         },
-        isBlurred,
-        blurredSections,
       }, percentileData)
 
       return new Response(
@@ -719,13 +708,6 @@ serve(async (req) => {
 
     // ✅ 연애 상태별 기본값 가져오기
     const statusDefaults = getStatusDefaults(params.relationshipStatus);
-
-    // ✅ Blur 로직 적용 (프리미엄이 아니면 상세 분석 블러 처리)
-    const isPremium = params.isPremium ?? false;
-    const isBlurred = !isPremium;
-    const blurredSections = isBlurred
-      ? ['loveProfile', 'detailedAnalysis', 'predictions', 'actionPlan']
-      : [];
 
     // ✅ Deep merge 헬퍼: 빈 문자열이나 짧은 값은 기본값으로 대체
     const getValidString = (value: any, fallback: string, minLength: number = 10): string => {
@@ -928,14 +910,8 @@ serve(async (req) => {
             tip: fortuneData.recommendations.conversation?.tip || '상대방 이야기를 먼저 들어주고, 공감하면서 자연스럽게 대화를 이어가세요'
           }
         } : undefined,
-
-        // ✅ 블러 상태 정보
-        isBlurred,
-        blurredSections
       }
     }
-
-    console.log(`✅ [연애운] isPremium: ${isPremium}, isBlurred: ${!isPremium}`)
 
     // ✅ 퍼센타일 계산
     const percentileData = await calculatePercentile(supabase, 'love', response.data.score)

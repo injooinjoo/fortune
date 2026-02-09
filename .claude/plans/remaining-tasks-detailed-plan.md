@@ -12,7 +12,7 @@
 Fortune 앱의 남은 버그 수정 및 기능 개선을 체계적으로 수행하기 위한 상세 기획서
 
 ### 1.2 범위
-- Critical 버그 4건 (1.1~1.4)
+- Critical 버그 3건 (1.1~1.4)
 - Phase 2.3 네비게이션 개선
 - Phase 3 기능 개선 9건 (3.1~3.9)
 
@@ -24,26 +24,6 @@ Fortune 앱의 남은 버그 수정 및 기능 개선을 체계적으로 수행�
 
 ## 2. 코드베이스 패턴 분석 요약
 
-### 2.1 블러 처리 패턴
-```dart
-// 표준 패턴: UnifiedBlurWrapper 사용
-UnifiedBlurWrapper(
-  isBlurred: fortuneResult.isBlurred,
-  blurredSections: fortuneResult.blurredSections,
-  sectionKey: 'advice',
-  child: MyContentWidget(),
-)
-
-// 프리미엄 사용자 자동 해제 (initState에서)
-if (isPremium && _fortuneResult.isBlurred) {
-  setState(() {
-    _fortuneResult = _fortuneResult.copyWith(
-      isBlurred: false,
-      blurredSections: [],
-    );
-  });
-}
-```
 
 ### 2.2 Edge Function 호출 패턴
 ```dart
@@ -53,29 +33,6 @@ final requestData = {
   'isPremium': ref.read(isPremiumProvider),
 };
 
-// Edge Function에서 블러 처리
-const isBlurred = !isPremium;
-const blurredSections = isBlurred ? ['section1', 'section2'] : [];
-```
-
-### 2.3 타로 이미지 경로 패턴
-```dart
-// Court Card 경로 (숫자 프리픽스 없음)
-'page_of_wands.jpg'    // NOT '11_page_of_wands.jpg'
-'knight_of_wands.jpg'  // NOT '12_knight_of_wands.jpg'
-```
-
-### 2.4 네비게이션 패턴
-```dart
-// 현재: 배지/닷 없음
-// 필요: 안 본 운세에 빨간 점 표시
-```
-
----
-
-## 3. Critical 버그 상세 설계
-
-### 3.1 [1.1] 해몽 기능 미작동
 
 #### 3.1.1 현상
 - 해몽 페이지에서 꿈 입력 후 결과가 표시되지 않음
@@ -147,127 +104,6 @@ const blurredSections = isBlurred ? ['section1', 'section2'] : [];
 - 소드의 시종(Page of Swords) 카드 이미지 404 에러
 
 #### 3.3.2 원인 분석
-**코드 경로 생성**: `swords/11_page_of_swords.jpg`
-**실제 파일명**: `swords/page_of_swords.jpg`
-
-Court Card에 숫자 프리픽스가 잘못 추가됨
-
-#### 3.3.3 수정 계획
-```dart
-// 파일: lib/features/fortune/presentation/pages/tarot_summary/tarot_card_helpers.dart
-// 라인: 129-135 (대략)
-
-// 수정 전
-return '$deckPath/$suit/${index}_${courtName}_of_$suit.jpg';
-
-// 수정 후
-return '$deckPath/$suit/${courtName}_of_$suit.jpg';
-```
-
-#### 3.3.4 영향 범위
-- Wands: Page(11), Knight(12), Queen(13), King(14)
-- Cups: Page(11), Knight(12), Queen(13), King(14)
-- Swords: Page(11), Knight(12), Queen(13), King(14)
-- Pentacles: Page(11), Knight(12), Queen(13), King(14)
-
-총 16장의 Court Card 영향
-
-#### 3.3.5 검증 방법
-- 타로 결과 페이지에서 Court Card 이미지 로드 확인
-- 에셋 파일 존재 여부 재확인
-
----
-
-### 3.4 [1.4] 연애운 블러 오류
-
-#### 3.4.1 현상
-- 프리미엄 구독자도 블러 처리됨
-- 또는 비구독자에게 블러가 적용되지 않음
-
-#### 3.4.2 원인 분석
-```dart
-// 현재 문제: FortuneResult.isBlurred가 구독 상태와 무관하게 판단
-// 필요: isPremiumProvider 체크 추가
-```
-
-#### 3.4.3 수정 계획
-```dart
-// 파일: lib/features/fortune/presentation/pages/love/love_fortune_result_page.dart
-// 라인: 159 부근 (initState)
-
-@override
-void initState() {
-  super.initState();
-  _fortuneResult = widget.fortuneResult;
-
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    // ✅ 프리미엄 사용자 자동 블러 해제 추가
-    final isPremium = ref.read(isPremiumProvider);
-    if (isPremium && _fortuneResult.isBlurred) {
-      setState(() {
-        _fortuneResult = _fortuneResult.copyWith(
-          isBlurred: false,
-          blurredSections: [],
-        );
-      });
-    }
-  });
-}
-```
-
-#### 3.4.4 추가 확인 사항
-- Edge Function에서 isPremium 전달 여부 확인
-- 다른 운세 페이지와 패턴 일치 확인
-
----
-
-## 4. Phase 2.3 네비게이션 개선
-
-### 4.1 요구사항
-- 운세 탭에 "안 본 운세" 빨간 점 표시
-
-### 4.2 설계
-
-#### 4.2.1 상태 관리
-```dart
-// 새 Provider 생성
-// 파일: lib/presentation/providers/unread_fortune_provider.dart
-
-final unreadFortuneCountProvider = StateProvider<int>((ref) => 0);
-
-final hasUnreadFortuneProvider = Provider<bool>((ref) {
-  return ref.watch(unreadFortuneCountProvider) > 0;
-});
-```
-
-#### 4.2.2 UI 수정
-```dart
-// 파일: lib/shared/components/bottom_navigation_bar.dart
-
-// 운세 탭 아이템에 Badge 추가
-_NavItem(
-  icon: Icons.auto_awesome_outlined,
-  selectedIcon: Icons.auto_awesome,
-  label: '운세',
-  route: '/fortune',
-  showBadge: ref.watch(hasUnreadFortuneProvider),  // 추가
-),
-```
-
-#### 4.2.3 Badge 위젯
-```dart
-Widget _buildNavItemWithBadge({
-  required IconData icon,
-  required bool isSelected,
-  required bool showBadge,
-}) {
-  return Stack(
-    clipBehavior: Clip.none,
-    children: [
-      Icon(icon, ...),
-      if (showBadge)
-        Positioned(
-          right: -4,
           top: -4,
           child: Container(
             width: 8,
@@ -671,7 +507,6 @@ Future<void> _loadSelections() async {
 ### Phase 1: Critical 버그 (즉시)
 ```
 1.3 타로 이미지 경로 수정 (5분) ⭐ 가장 쉬움
-1.4 연애운 블러 오류 수정 (10분)
 1.1 해몽 기능 디버깅 (30분)
 1.2 MBTI 운세 디버깅 (30분)
 ```
@@ -706,7 +541,6 @@ Future<void> _loadSelections() async {
 | 1.1 해몽 | 꿈 입력 후 결과 확인 | 운세 결과 정상 표시 |
 | 1.2 MBTI | 16개 타입 순차 테스트 | 모든 타입 정상 작동 |
 | 1.3 타로 | Court Card 이미지 확인 | 16장 모두 로드 성공 |
-| 1.4 연애 | 프리미엄/일반 유저 테스트 | 블러 정상 동작 |
 
 ### 7.2 기능 테스트
 | 항목 | 테스트 방법 | 예상 결과 |
@@ -724,7 +558,6 @@ Future<void> _loadSelections() async {
 ```bash
 # 커밋 구조 예시
 git commit -m "fix(1.3): 타로 Court Card 이미지 경로 수정"
-git commit -m "fix(1.4): 연애운 프리미엄 블러 처리 수정"
 git commit -m "feat(2.3): 운세 탭 안읽음 배지 추가"
 ```
 
@@ -750,4 +583,4 @@ git commit -m "feat(2.3): 운세 탭 안읽음 배지 추가"
 
 기획서 검토 후 구현 시작 예정
 
-**다음 단계**: Critical 버그 1.3 (타로 이미지) → 1.4 (연애 블러) → 1.1/1.2 (해몽/MBTI)
+**다음 단계**: Critical 버그 1.3 (타로 이미지) → → 1.1/1.2 (해몽/MBTI)

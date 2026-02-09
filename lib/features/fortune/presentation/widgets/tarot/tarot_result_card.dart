@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/font_config.dart';
-import '../../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 class TarotResultCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> result;
@@ -139,9 +138,9 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
     super.dispose();
   }
 
-  // 동양화 스타일 - 테마 색상 (ObangseokColors 사용)
-  static Color _getPrimaryColor(BuildContext context) => ObangseokColors.getMeok(context);
-  static Color _getSecondaryColor(BuildContext context) => ObangseokColors.cheongMuted;
+  // 동양화 스타일 - 테마 색상 (DSColors 사용)
+  static Color _getPrimaryColor(BuildContext context) => context.colors.textPrimary;
+  static Color _getSecondaryColor(BuildContext context) => DSColors.info;
 
   @override
   Widget build(BuildContext context) {
@@ -393,12 +392,12 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
       height: 280,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            ObangseokColors.cheong,
-            ObangseokColors.cheongDark,
+            DSColors.info,
+            DSColors.info.withValues(alpha: 0.7),
           ],
         ),
         boxShadow: [
@@ -448,13 +447,13 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                 return Container(
                   width: 200,
                   height: 280,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        ObangseokColors.cheong,
-                        ObangseokColors.cheongMuted,
+                        DSColors.info,
+                        DSColors.info.withValues(alpha: 0.6),
                       ],
                     ),
                   ),

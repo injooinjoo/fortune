@@ -155,7 +155,7 @@ class _KeywordTag extends StatelessWidget {
         vertical: DSSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha:0.15),
         borderRadius: DSRadius.smBorder,
       ),
       child: Row(
@@ -189,7 +189,7 @@ class _KeywordTag extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         border: Border.all(
-          color: color.withOpacity(0.5),
+          color: color.withValues(alpha:0.5),
           width: 1,
         ),
         borderRadius: DSRadius.smBorder,
@@ -246,10 +246,10 @@ class _KeywordTag extends StatelessWidget {
         vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha:0.3),
           width: 1,
         ),
       ),
@@ -375,7 +375,7 @@ class SentimentKeywordTags extends StatelessWidget {
             vertical: DSSpacing.xxs,
           ),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
+            color: color.withValues(alpha:0.15),
             borderRadius: DSRadius.smBorder,
           ),
           child: Row(
@@ -464,10 +464,10 @@ class HighlightKeyword extends StatelessWidget {
         vertical: DSSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: effectiveColor.withOpacity(0.1),
+        color: effectiveColor.withValues(alpha:0.1),
         borderRadius: DSRadius.mdBorder,
         border: Border.all(
-          color: effectiveColor.withOpacity(0.2),
+          color: effectiveColor.withValues(alpha:0.2),
           width: 1,
         ),
       ),

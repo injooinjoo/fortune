@@ -143,7 +143,7 @@
 | **Survey** | `birthDateTime` 기반 |
 | **Edge Function 필수** | `userId`, `birthDate`, `birthTime`, `gender` |
 | **Edge Function 선택** | `isLunar`, `question` |
-| **응답** | `question`, `sections`, `summary`, `isBlurred`, `blurredSections` |
+| **응답** | `question`, `sections`, `summary` |
 
 ---
 
@@ -395,7 +395,7 @@
 | **Survey** | `motherBirth`, `expectedBirth`, `gender`, `familyName`, `nameStyle?` (4-5단계) |
 | **Edge Function 필수** | `userId`, `motherBirthDate`, `expectedBirthDate`, `babyGender`, `familyName` |
 | **Edge Function 선택** | `motherBirthTime`, `familyNameHanja`, `nameStyle`, `avoidSounds[]`, `desiredMeanings[]`, `isPremium` |
-| **응답** | `fortuneType`, `ohaengAnalysis`, `recommendedNames[]`, `namingTips[]`, `warnings[]`, `isBlurred`, `blurredSections` |
+| **응답** | `fortuneType`, `ohaengAnalysis`, `recommendedNames[]`, `namingTips[]`, `warnings[]` |
 
 ---
 

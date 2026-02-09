@@ -1,6 +1,6 @@
-/// Three Card spread interpretations for all 78 tarot cards
-///
-/// Positions: past, present, future
+// Three Card spread interpretations for all 78 tarot cards
+//
+// Positions: past, present, future
 class ThreeCardMeanings {
   ThreeCardMeanings._();
 

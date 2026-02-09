@@ -107,20 +107,7 @@ class ExamGenerator {
     final fortuneData = data['data'] as Map<String, dynamic>? ?? {};
     final score = (fortuneData['score'] as num?)?.toInt();
 
-    // 블러 처리할 섹션 정의
-    final blurredSections = isPremium
-        ? <String>[]
-        : [
-            'pass_possibility',
-            'focus_subject',
-            'cautions',
-            'study_methods',
-            'dday_advice',
-            'lucky_hours',
-            'exam_keyword',
-            'strengths',
-            'positive_message'
-          ];
+    // 🎯 토큰 소비형 모델: 블러 처리 제거
 
     return FortuneResult(
       type: 'exam',
@@ -138,8 +125,6 @@ class ExamGenerator {
       data: fortuneData,
       score: score,
       createdAt: DateTime.now(),
-      isBlurred: !isPremium,
-      blurredSections: blurredSections,
     );
   }
 }

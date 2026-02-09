@@ -1,4 +1,4 @@
-/// 호흡 패턴 종류
+// 호흡 패턴 종류
 enum BreathingPattern {
   /// 4-7-8 호흡법 (수면 유도, 긴장 완화)
   pattern478(

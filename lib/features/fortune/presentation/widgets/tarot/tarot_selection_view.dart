@@ -97,7 +97,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
       children: [
         // Header
         _buildHeader(theme, fontScale),
-        const SizedBox(height: 24),
+        const SizedBox(height: DSSpacing.lg),
         
         // Progress indicator
         _buildProgressIndicator(theme),
@@ -136,7 +136,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         Text(
           '${widget.requiredCards}장의 카드를 선택해주세요',
           style: context.typography.labelLarge.copyWith(
@@ -144,7 +144,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
           ),
         ),
         if (widget.question != null && widget.question!.isNotEmpty) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           GlassContainer(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
@@ -155,7 +155,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
                   size: 18,
                   color: theme.colorScheme.primary,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: DSSpacing.sm),
                 Flexible(
                   child: Text(
                     widget.question!,
@@ -215,7 +215,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
               );
             },
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           Text(
             '카드를 섞는 중...',
             style: Theme.of(context).textTheme.titleLarge,
@@ -239,7 +239,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
               icon: const Icon(Icons.shuffle),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: UnifiedButton(
               text: '다시 선택',

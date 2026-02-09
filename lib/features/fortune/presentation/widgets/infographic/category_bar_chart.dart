@@ -191,7 +191,7 @@ class _CategoryBarItem extends StatelessWidget {
               return Container(
                 height: barHeight,
                 decoration: BoxDecoration(
-                  color: context.colors.border.withOpacity(0.3),
+                  color: context.colors.border.withValues(alpha:0.3),
                   borderRadius: BorderRadius.circular(barHeight / 2),
                 ),
                 child: FractionallySizedBox(
@@ -319,7 +319,7 @@ class _CompactCategoryItem extends StatelessWidget {
                   progress * _getDelayedProgress(animation.value, delay);
               return Container(
                 decoration: BoxDecoration(
-                  color: context.colors.border.withOpacity(0.3),
+                  color: context.colors.border.withValues(alpha:0.3),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: FractionallySizedBox(

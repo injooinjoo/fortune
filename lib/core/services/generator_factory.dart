@@ -283,8 +283,6 @@ class GeneratorFactory {
         data: fortune,
         score: (fortune['energyLevel'] as num?)?.toInt() ?? 75,
         createdAt: DateTime.now(),
-        isBlurred: fortune['isBlurred'] as bool? ?? false,
-        blurredSections: List<String>.from(fortune['blurredSections'] ?? []),
       );
     }
     throw Exception('MBTI API 응답 형식 오류');
@@ -377,10 +375,6 @@ class GeneratorFactory {
       summary: {'message': fortune['interpretation'] as String? ?? '해몽 완료'},
       data: fortune,
       createdAt: DateTime.now(),
-      isBlurred: fortune['isBlurred'] as bool? ?? false,
-      blurredSections: fortune['blurredSections'] != null
-          ? List<String>.from(fortune['blurredSections'] as List)
-          : [],
     );
   }
 
@@ -450,8 +444,6 @@ class GeneratorFactory {
         data: fortune,
         score: (fortune['overall_score'] as num?)?.toInt() ?? 75,
         createdAt: DateTime.now(),
-        isBlurred: fortune['isBlurred'] as bool? ?? false,
-        blurredSections: List<String>.from(fortune['blurredSections'] ?? []),
       );
     }
     throw Exception('Celebrity API 응답 형식 오류');
@@ -485,8 +477,6 @@ class GeneratorFactory {
         summary: {'message': fortune['babyMessage'] as String? ?? '아기가 메시지를 전해요'},
         data: fortune,
         createdAt: DateTime.now(),
-        isBlurred: fortune['isBlurred'] as bool? ?? false,
-        blurredSections: List<String>.from(fortune['blurredSections'] ?? []),
       );
     }
     throw Exception('Baby Nickname API 응답 형식 오류');
@@ -526,8 +516,6 @@ class GeneratorFactory {
         summary: {},
         data: fortune,
         createdAt: DateTime.now(),
-        isBlurred: fortune['isBlurred'] as bool? ?? false,
-        blurredSections: List<String>.from(fortune['blurredSections'] ?? []),
       );
     }
     throw Exception('Naming API 응답 형식 오류');
@@ -605,66 +593,6 @@ class GeneratorFactory {
     Logger.info('[GeneratorFactory] ✅ Default API: $fortuneType');
     return FortuneResult.fromJson(response.data);
   }
-
-  // ==================== 블러 섹션 설정 ====================
-
-  /// 운세 타입별 블러 처리할 섹션 반환
-  ///
-  /// Premium 사용자가 아닌 경우 광고 시청 전 숨길 정보
-  static List<String> getBlurredSections(String fortuneType) {
-    final type = fortuneType.toLowerCase().replaceAll('-', '_');
-
-    return _blurSectionsMap[type] ?? _defaultBlurSections;
-  }
-
-  static const _defaultBlurSections = ['advice', 'details', 'recommendations'];
-
-  static const Map<String, List<String>> _blurSectionsMap = {
-    'tarot': ['interpretation', 'advice', 'future_outlook'],
-    'daily': ['advice', 'ai_tips', 'caution'],
-    'daily_calendar': ['advice', 'ai_tips', 'caution'],
-    'time_based': ['advice', 'ai_tips', 'caution'],
-    'mbti': ['personality_insights', 'today_advice', 'lucky_color'],
-    'compatibility': ['compatibility_score', 'relationship_advice', 'future_prediction'],
-    'love': ['compatibilityInsights', 'predictions', 'actionPlan', 'warningArea'],
-    'talent': ['top3_talents', 'career_roadmap', 'growth_timeline'],
-    'moving': ['direction_analysis', 'moving_advice', 'auspicious_dates'],
-    'career': ['career_path', 'success_factors', 'growth_advice'],
-    'career_future': ['career_path', 'success_factors', 'growth_advice'],
-    'career_seeker': ['career_path', 'success_factors', 'growth_advice'],
-    'career_change': ['career_path', 'success_factors', 'growth_advice'],
-    'startup_career': ['career_path', 'success_factors', 'growth_advice'],
-    'career_coaching': [
-      'predictions',
-      'skillAnalysis',
-      'actionPlan',
-      'strengthsAssessment',
-      'improvementAreas',
-    ],
-    'health': ['health_advice', 'precautions', 'wellness_tips'],
-    'exercise': ['todayRoutine', 'weeklyPlan', 'injuryPrevention'],
-    'family_health': ['wealthCategories', 'monthlyTrend', 'familyAdvice', 'recommendations', 'warnings'],
-    'family_wealth': ['wealthCategories', 'monthlyTrend', 'familyAdvice', 'recommendations', 'warnings'],
-    'family_children': ['wealthCategories', 'monthlyTrend', 'familyAdvice', 'recommendations', 'warnings'],
-    'family_relationship': ['wealthCategories', 'monthlyTrend', 'familyAdvice', 'recommendations', 'warnings'],
-    'family_change': ['wealthCategories', 'monthlyTrend', 'familyAdvice', 'recommendations', 'warnings'],
-    'exam': ['study_tips', 'success_probability', 'recommended_subjects'],
-    'lucky_exam': ['study_tips', 'success_probability', 'recommended_subjects'],
-    'personality_dna': ['loveStyle', 'workStyle', 'dailyMatching', 'compatibility'],
-    'lucky_items': ['lotto', 'shopping', 'game', 'food', 'travel', 'health', 'fashion', 'lifestyle', 'today_color'],
-    'face_reading': [
-      'detailed_analysis',
-      'personality',
-      'special_features',
-      'advice',
-      'wealth_fortune',
-      'love_fortune',
-      'career_fortune',
-      'health_fortune',
-    ],
-    'baby_nickname': ['todayMission', 'dreamInterpretation'],
-    'babynickname': ['todayMission', 'dreamInterpretation'],
-  };
 }
 
 /// 운세 데이터 소스

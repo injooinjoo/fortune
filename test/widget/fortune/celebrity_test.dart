@@ -1,5 +1,5 @@
-/// Celebrity Fortune Page - Widget Test
-/// 유명인 운세 페이지 UI 테스트
+// Celebrity Fortune Page - Widget Test
+// 유명인 운세 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -190,23 +190,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 일부 콘텐츠 블러', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockCelebrityFortuneResult(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('전체 분석 보기'), findsOneWidget);
-      });
-    });
-
     group('인터랙션', () {
       testWidgets('분석하기 버튼이 있어야 함', (tester) async {
         await tester.pumpWidget(
@@ -304,11 +287,9 @@ class _MockCelebrityFortunePage extends StatelessWidget {
 
 class _MockCelebrityFortuneResult extends StatelessWidget {
   final String celebrityName;
-  final bool isBlurred;
 
   const _MockCelebrityFortuneResult({
     this.celebrityName = '손흥민',
-    this.isBlurred = false,
   });
 
   @override
@@ -380,15 +361,6 @@ class _MockCelebrityFortuneResult extends StatelessWidget {
               title: Text('유명인 B'),
             ),
 
-            if (isBlurred) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('전체 분석 보기'),
-                ),
-              ),
-            ],
           ],
         ),
       ),

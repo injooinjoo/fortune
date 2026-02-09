@@ -158,16 +158,6 @@ class FaceReadingStateNotifier extends StateNotifier<FaceReadingState> {
     }
   }
 
-  /// 블러 해제
-  void removeBlur() {
-    if (state.result != null) {
-      state = state.copyWith(
-        result: state.result!.copyWith(isBlurred: false, blurredSections: []),
-      );
-      developer.log('🔓 FaceReadingState: 블러 해제');
-    }
-  }
-
   /// 상태 초기화
   void reset() {
     state = const FaceReadingState();

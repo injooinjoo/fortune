@@ -137,7 +137,7 @@ class _OverallCardState extends State<OverallCard> {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: context.isDark ? DSColors.surface : DSFortuneColors.hanjiCream,
+            color: context.isDark ? DSColors.surface : DSColors.backgroundSecondaryDark,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -150,7 +150,7 @@ class _OverallCardState extends State<OverallCard> {
                     gradient: LinearGradient(
                       colors: context.isDark
                         ? [DSColors.surfaceSecondary, DSColors.surface] // 고유 색상(dark gradient start)
-                        : [DSFortuneColors.hanjiCream, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
+                        : [DSColors.backgroundSecondaryDark, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -163,7 +163,7 @@ class _OverallCardState extends State<OverallCard> {
                           minhwaInfo['emoji']!,
                           style: const TextStyle(fontSize: 48),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: DSSpacing.sm),
                         Text(
                           minhwaInfo['label']!,
                           style: context.labelMedium.copyWith(
@@ -199,7 +199,7 @@ class _OverallCardState extends State<OverallCard> {
           ],
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: DSSpacing.md),
 
         // 카드 컨테이너 (Pulse 스타일 - 흰색 배경 + 그림자)
         Container(
@@ -230,7 +230,7 @@ class _OverallCardState extends State<OverallCard> {
                       height: 1.0,
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: DSSpacing.xs),
                   Text(
                     '점',
                     style: context.bodyLarge.copyWith(
@@ -243,7 +243,7 @@ class _OverallCardState extends State<OverallCard> {
                 .fadeIn(duration: 500.ms)
                 .scale(begin: const Offset(0.9, 0.9), duration: 500.ms, curve: Curves.easeOut),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: DSSpacing.md),
 
               // 프로그레스 바 (얇고 심플)
               Stack(
@@ -347,7 +347,7 @@ class _OverallCardState extends State<OverallCard> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: DSSpacing.xs),
                       Icon(
                         Icons.keyboard_arrow_down,
                         color: scoreColor.withValues(alpha: 0.6),

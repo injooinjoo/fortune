@@ -1,5 +1,5 @@
-/// Face Reading Fortune Page - Widget Test
-/// 관상 페이지 UI 테스트
+// Face Reading Fortune Page - Widget Test
+// 관상 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -225,23 +225,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 일부 콘텐츠 블러', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockFaceReadingResult(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('상세 분석 보기'), findsOneWidget);
-      });
-    });
-
     group('인터랙션', () {
       testWidgets('분석하기 버튼이 있어야 함', (tester) async {
         await tester.pumpWidget(
@@ -344,9 +327,7 @@ class _MockFaceReadingPage extends StatelessWidget {
 }
 
 class _MockFaceReadingResult extends StatelessWidget {
-  final bool isBlurred;
-
-  const _MockFaceReadingResult({this.isBlurred = false});
+  const _MockFaceReadingResult();
 
   @override
   Widget build(BuildContext context) {
@@ -395,16 +376,6 @@ class _MockFaceReadingResult extends StatelessWidget {
                 subtitle: Text('분석 중...'),
               ),
             ),
-
-            if (isBlurred) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('상세 분석 보기'),
-                ),
-              ),
-            ],
           ],
         ),
       ),

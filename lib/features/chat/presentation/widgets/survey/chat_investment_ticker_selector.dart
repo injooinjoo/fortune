@@ -234,7 +234,7 @@ class _ChatInvestmentTickerSelectorState
               height: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: colors.accentSecondary,
+                color: colors.textSecondary,
               ),
             ),
             const SizedBox(height: DSSpacing.sm),
@@ -370,7 +370,7 @@ class _TickerListItem extends StatelessWidget {
                 width: 48,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: colors.accentSecondary.withValues(alpha: 0.1),
+                  color: colors.textPrimary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DSRadius.xs),
                 ),
                 alignment: Alignment.center,
@@ -379,7 +379,7 @@ class _TickerListItem extends StatelessWidget {
                       ? ticker.symbol.substring(0, 5)
                       : ticker.symbol,
                   style: typography.labelSmall.copyWith(
-                    color: colors.accentSecondary,
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

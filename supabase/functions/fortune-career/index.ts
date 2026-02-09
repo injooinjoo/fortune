@@ -595,12 +595,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabase, 'career', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // Blur 처리 (Premium 여부)
-      resultWithPercentile.isBlurred = !isPremium
-      resultWithPercentile.blurredSections = !isPremium
-        ? ['predictions', 'skillAnalysis', 'strengthsAssessment', 'improvementAreas', 'actionPlan', 'industryInsights', 'networkingAdvice', 'luckyPeriods', 'cautionPeriods', 'careerKeywords', 'mentorshipAdvice']
-        : []
-
       return new Response(JSON.stringify({ success: true, data: resultWithPercentile }), {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -760,12 +754,6 @@ ${concernSection}
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
 
-      // ✅ Blur 로직 적용
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['predictions', 'skillAnalysis', 'strengthsAssessment', 'improvementAreas', 'actionPlan', 'industryInsights', 'networkingAdvice', 'luckyPeriods', 'cautionPeriods', 'careerKeywords', 'mentorshipAdvice']
-        : []
-
       // 응답 데이터 구조화 (✅ 표준화된 필드명 사용)
       fortuneData = {
         fortuneType,
@@ -793,8 +781,6 @@ ${concernSection}
         careerKeywords: parsedResponse.핵심키워드 || parsedResponse.careerKeywords || ['전문성', '리더십', '혁신', '네트워킹', '지속학습'],
         mentorshipAdvice: parsedResponse.멘토링조언 || parsedResponse.mentorshipAdvice || '업계 선배와의 멘토링 관계를 적극적으로 구축하세요.',
         timestamp: new Date().toISOString(),
-        isBlurred, // ✅ 블러 상태
-        blurredSections // ✅ 블러된 섹션 목록
       }
 
       // 결과 캐싱

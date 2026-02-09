@@ -180,7 +180,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: DSSpacing.xxs),
                     Text(
                       '부위를 터치하여 상세 분석 보기',
                       style: context.labelSmall.copyWith(
@@ -195,7 +195,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 얼굴 맵 이미지 + 터치 영역
           Expanded(
@@ -327,7 +327,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                     color: DSColors.accentSecondary,
                     size: 18,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: DSSpacing.xs),
                   Text(
                     '맵 보기',
                     style: context.labelSmall.copyWith(

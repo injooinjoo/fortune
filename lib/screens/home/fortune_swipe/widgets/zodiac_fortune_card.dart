@@ -216,7 +216,7 @@ class ZodiacFortuneCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: context.isDark ? DSColors.surfaceSecondary : DSFortuneColors.hanjiCream, // 고유 색상(dark) + hanjiCream(light)
+          color: context.isDark ? DSColors.surfaceSecondary : DSColors.backgroundSecondaryDark, // 배경
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: const Color(0xFFDAA520).withValues(alpha: 0.3), // 고유 색상 - 전통 금색

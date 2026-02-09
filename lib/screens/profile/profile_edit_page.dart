@@ -15,7 +15,6 @@ import '../../presentation/providers/user_profile_notifier.dart';
 import '../onboarding/widgets/birth_date_preview.dart';
 import '../../core/utils/logger.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/theme/typography_unified.dart';
 
 class ProfileEditPage extends ConsumerStatefulWidget {
   const ProfileEditPage({super.key});
@@ -140,8 +139,9 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   }
 
   Future<String?> _uploadProfileImage() async {
-    if (_pendingImageFile == null || _currentUser == null)
+    if (_pendingImageFile == null || _currentUser == null) {
       return _profileImageUrl;
+    }
 
     setState(() => _isUploadingImage = true);
 
@@ -451,7 +451,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           final isSelected = _bloodType == type;
 
                           return _buildSelectionChip(
-                            label: '${type}형',
+                            label: '$type형',
                             isSelected: isSelected,
                             onTap: () {
                               ref
@@ -499,7 +499,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                           gender.icon,
                                           size: 32,
                                           color: isSelected
-                                              ? Colors.white
+                                              ? context.colors.ctaForeground
                                               : _textColor,
                                         ),
                                         const SizedBox(height: DSSpacing.sm),
@@ -508,7 +508,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                           style:
                                               context.bodySmall.copyWith(
                                             color: isSelected
-                                                ? Colors.white
+                                                ? context.colors.ctaForeground
                                                 : _textColor,
                                             fontWeight: isSelected
                                                 ? FontWeight.bold
@@ -542,18 +542,18 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                     ),
                   ),
                   child: _isSaving
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: context.colors.ctaForeground,
                           ),
                         )
                       : Text(
                           '저장',
                           style: context.buttonMedium.copyWith(
-                            color: Colors.white,
+                            color: context.colors.ctaForeground,
                           ),
                         ),
                 ),
@@ -645,7 +645,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
           child: Text(
             label,
             style: context.bodySmall.copyWith(
-              color: isSelected ? Colors.white : _textColor,
+              color: isSelected ? context.colors.ctaForeground : _textColor,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),

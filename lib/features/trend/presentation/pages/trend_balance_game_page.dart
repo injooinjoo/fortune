@@ -390,7 +390,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                             );
                           } catch (e) {
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              ScaffoldMessenger.of(context).showSnackBar( // ignore: use_build_context_synchronously
                                 const SnackBar(content: Text('공유에 실패했습니다')),
                               );
                             }

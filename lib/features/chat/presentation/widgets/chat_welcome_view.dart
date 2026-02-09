@@ -37,20 +37,20 @@ class ChatWelcomeView extends StatelessWidget {
               height: 56,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: colors.accentSecondary.withValues(alpha: 0.1),
+                color: colors.textSecondary.withValues(alpha: 0.1),
               ),
               child: Icon(
                 Icons.auto_awesome,
                 size: 28,
-                color: colors.accentSecondary,
+                color: colors.textSecondary,
               ),
             ),
             const SizedBox(height: DSSpacing.sm),
 
             // 환영 텍스트
             Text(
-              '오늘 무엇이 궁금하세요?',
-              style: typography.bodyLarge.copyWith(
+              "How's your day?",
+              style: typography.headingSmall.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
@@ -60,7 +60,7 @@ class ChatWelcomeView extends StatelessWidget {
 
             Text(
               '인사이트, 타로, 꿈해몽 등\n다양한 서비스를 채팅으로 이용해보세요',
-              style: typography.bodySmall.copyWith(
+              style: typography.bodyLarge.copyWith(
                 color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,

@@ -82,22 +82,22 @@ class TarotCardDetailModal extends StatelessWidget {
                       // 카드 이미지
                       _buildCardImage(context),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: DSSpacing.md),
 
                       // 원소 & 점성술 정보
                       if (cardInfo != null) _buildElementInfo(context, cardInfo),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: DSSpacing.md),
 
                       // 키워드 칩
                       if (cardInfo != null) _buildKeywordChips(context, cardInfo),
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: DSSpacing.lg),
 
                       // 스토리텔링 해석 섹션 (API 결과) - 핵심!
                       _buildStorytellingSection(context),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: DSSpacing.md),
 
                       // 정방향/역방향 의미
                       if (cardInfo != null) _buildMeaningSection(context, cardInfo),
@@ -135,7 +135,7 @@ class TarotCardDetailModal extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: DSSpacing.xs),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
@@ -338,7 +338,7 @@ class TarotCardDetailModal extends StatelessWidget {
                 color: DSColors.accent,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '당신을 위한 해석',
                 style: context.typography.labelLarge.copyWith(
@@ -438,7 +438,7 @@ class TarotCardDetailModal extends StatelessWidget {
                   fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: DSSpacing.xs),
               Text(
                 meaning,
                 style: context.typography.bodySmall.copyWith(

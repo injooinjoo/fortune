@@ -59,7 +59,7 @@ class AppWatermark extends StatelessWidget {
         vertical: padding * 0.5,
       ),
       decoration: BoxDecoration(
-        color: context.colors.textPrimary.withOpacity(0.1),
+        color: context.colors.textPrimary.withValues(alpha:0.1),
         borderRadius: DSRadius.smBorder,
       ),
       child: Row(
@@ -149,14 +149,14 @@ class AppWatermark extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            context.colors.accent.withOpacity(0.8),
-            context.colors.accentSecondary.withOpacity(0.8),
+            context.colors.accent.withValues(alpha:0.8),
+            context.colors.accentSecondary.withValues(alpha:0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: context.colors.accent.withOpacity(0.3),
+            color: context.colors.accent.withValues(alpha:0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -348,7 +348,7 @@ class DateWatermark extends StatelessWidget {
         vertical: padding * 0.5,
       ),
       decoration: BoxDecoration(
-        color: context.colors.textPrimary.withOpacity(0.1),
+        color: context.colors.textPrimary.withValues(alpha:0.1),
         borderRadius: DSRadius.smBorder,
       ),
       child: Row(

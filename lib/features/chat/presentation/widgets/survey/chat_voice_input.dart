@@ -75,8 +75,8 @@ class _ChatVoiceInputState extends State<ChatVoiceInput> {
               child: ElevatedButton(
                 onPressed: _handleSubmit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.accentSecondary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colors.ctaBackground,
+                  foregroundColor: colors.ctaForeground,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(DSRadius.md),
@@ -85,7 +85,7 @@ class _ChatVoiceInputState extends State<ChatVoiceInput> {
                 child: Text(
                   widget.submitLabel ?? '확인',
                   style: typography.labelMedium.copyWith(
-                    color: Colors.white,
+                    color: colors.ctaForeground,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

@@ -51,47 +51,13 @@ class Environment {
   static String get sentryDsn => dotenv.env['SENTRY_DSN'] ?? '';
   static String get mixpanelToken => dotenv.env['MIXPANEL_TOKEN'] ?? '';
   
-  // 광고 설정
-  static String get admobAppId {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return dotenv.env['ADMOB_IOS_APP_ID'] ?? '';
-    }
-    return dotenv.env['ADMOB_ANDROID_APP_ID'] ?? '';
-  }
-  
-  static String get admobBannerAdUnitId {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return dotenv.env['ADMOB_IOS_BANNER_AD_UNIT_ID'] ?? '';
-    }
-    return dotenv.env['ADMOB_ANDROID_BANNER_AD_UNIT_ID'] ?? '';
-  }
-  
-  static String get admobInterstitialAdUnitId {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return dotenv.env['ADMOB_IOS_INTERSTITIAL_AD_UNIT_ID'] ?? '';
-    }
-    return dotenv.env['ADMOB_ANDROID_INTERSTITIAL_AD_UNIT_ID'] ?? '';
-  }
-  
-  static String get admobRewardedAdUnitId {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return dotenv.env['ADMOB_IOS_REWARDED_AD_UNIT_ID'] ?? '';
-    }
-    return dotenv.env['ADMOB_ANDROID_REWARDED_AD_UNIT_ID'] ?? '';
-  }
-  
   // 보안 설정
   static String get encryptionKey => dotenv.env['ENCRYPTION_KEY'] ?? '';
   static String get jwtSecret => dotenv.env['JWT_SECRET'] ?? '';
   
   // AI API 설정
   static String get openAiApiKey => dotenv.env['OPENAI_API_KEY'] ?? '';
-  
-  // Google AdSense 설정
-  static String get adsenseClientId => dotenv.env['ADSENSE_CLIENT_ID'] ?? '';
-  static String get adsenseSlotId => dotenv.env['ADSENSE_SLOT_ID'] ?? '';
-  static String get adsenseDisplaySlot => dotenv.env['ADSENSE_DISPLAY_SLOT'] ?? '';
-  
+
   // 내부 API 키
   static String get internalApiKey => dotenv.env['INTERNAL_API_KEY'] ?? '';
   
@@ -117,17 +83,9 @@ class Environment {
   // 기능 플래그
   static bool get enableAnalytics =>
       dotenv.env['ENABLE_ANALYTICS']?.toLowerCase() == 'true';
-  static bool get enableCrashReporting => 
+  static bool get enableCrashReporting =>
       dotenv.env['ENABLE_CRASH_REPORTING']?.toLowerCase() == 'true';
-  static bool get enableAds {
-    final value = dotenv.env['ENABLE_ADS']?.toLowerCase();
-    // .env 값이 없으면: release=true, debug=false (기본값)
-    if (value == null) {
-      return kReleaseMode;
-    }
-    return value == 'true';
-  }
-  static bool get enablePayment => 
+  static bool get enablePayment =>
       dotenv.env['ENABLE_PAYMENT']?.toLowerCase() == 'true';
   
   // 환경 체크
@@ -207,7 +165,6 @@ class Environment {
       debugPrint('API URL: ${apiBaseUrl.substring(0, 20)}...');
       debugPrint('Supabase URL: ${supabaseUrl.substring(0, 20)}...');
       debugPrint('Analytics enabled: $enableAnalytics');
-      debugPrint('Ads enabled: $enableAds');
       debugPrint('================================');
     }
   }

@@ -21,8 +21,6 @@
  * - warnings: string[] - 주의사항
  * - recommendations: string[] - 추천 사항
  * - advice: string - 종합 조언
- * - isBlurred: boolean - 블러 상태
- * - blurredSections: string[] - 블러된 섹션 목록
  *
  * @example
  * // Request
@@ -272,14 +270,6 @@ serve(async (req) => {
           ? JSON.parse(personalizedResult)
           : personalizedResult
 
-        // Blur 처리
-        const isBlurred = !isPremium
-        const blurredSections = isBlurred
-          ? ['direction_analysis', 'timing_analysis', 'lucky_dates', 'feng_shui_tips', 'cautions', 'recommendations', 'lucky_items', 'terrain_analysis', 'settlement_index', 'neighborhood_chemistry', 'lucky_checklist']
-          : []
-        fortuneData.isBlurred = isBlurred
-        fortuneData.blurredSections = blurredSections
-
         // Percentile 계산
         const percentileData = await calculatePercentile(supabase, 'moving', fortuneData.score || 80)
         const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
@@ -492,13 +482,7 @@ ${concernsText}
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
 
-      // ✅ Blur 로직 적용 (프리미엄이 아니면 상세 분석 블러 처리)
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['direction_analysis', 'timing_analysis', 'lucky_dates', 'feng_shui_tips', 'cautions', 'recommendations', 'lucky_items', 'terrain_analysis', 'settlement_index', 'neighborhood_chemistry', 'lucky_checklist']
-        : []
-
-      // ✅ 응답 데이터 구조화 (항상 실제 데이터 반환, 클라이언트에서 블러 처리)
+      // ✅ 응답 데이터 구조화
       fortuneData = {
         // ✅ 표준화된 필드명: score, content, summary, advice
         fortuneType: 'moving',
@@ -624,8 +608,6 @@ ${concernsText}
         },
 
         timestamp: new Date().toISOString(),
-        isBlurred, // ✅ 블러 상태
-        blurredSections, // ✅ 블러된 섹션 목록
         // 메타데이터 추가
         llm_provider: response.provider,
         llm_model: response.model,

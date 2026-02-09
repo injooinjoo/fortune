@@ -59,7 +59,6 @@ class ChatMessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
           child: PersonalityDnaChatCard(
             dna: message.personalityDna!,
-            isBlurred: message.isBlurred,
           ),
         ),
       );
@@ -77,8 +76,6 @@ class ChatMessageBubble extends StatelessWidget {
           child: ChatSajuResultCard(
             sajuData: message.sajuData!,
             fortuneResult: message.sajuFortuneResult,
-            isBlurred: message.isBlurred,
-            blurredSections: message.blurredSections,
           ),
         ),
       );
@@ -106,8 +103,6 @@ class ChatMessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
           child: ChatOotdResultCard(
             ootdData: ootdData,
-            isBlurred: message.isBlurred,
-            blurredSections: message.blurredSections,
           ),
         ),
       );
@@ -128,8 +123,6 @@ class ChatMessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
           child: ChatCareerResultCard(
             fortune: message.fortune!,
-            isBlurred: message.isBlurred,
-            blurredSections: message.blurredSections,
           ),
         ),
       );
@@ -148,8 +141,6 @@ class ChatMessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
           child: ChatMovingResultCard(
             fortune: message.fortune!,
-            isBlurred: message.isBlurred,
-            blurredSections: message.blurredSections,
           ),
         ),
       );
@@ -192,7 +183,6 @@ class ChatMessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
           child: ChatMatchInsightCard(
             insight: message.matchInsight!,
-            isBlurred: message.isBlurred,
           ),
         ),
       );
@@ -220,8 +210,6 @@ class ChatMessageBubble extends StatelessWidget {
               'overallReading': additionalInfo['overallReading'] ?? message.fortune!.content ?? '',
               'advice': additionalInfo['advice'] ?? '',
               'energyLevel': additionalInfo['energyLevel'] ?? message.fortune!.overallScore ?? 75,
-              'isBlurred': message.isBlurred,
-              'blurredSections': message.blurredSections,
             },
             question: additionalInfo['question'] as String?,
           ),
@@ -298,7 +286,6 @@ class ChatMessageBubble extends StatelessWidget {
             imageUrl: message.talismanImageUrl!,
             categoryName: message.talismanCategoryName ?? '부적',
             shortDescription: message.talismanShortDescription ?? '',
-            isBlurred: message.isBlurred,
           ),
         ),
       );
@@ -443,7 +430,6 @@ class ChatMessageBubble extends StatelessWidget {
             fortune: message.fortune!,
             fortuneType: message.fortuneType ?? 'default',
             typeName: message.text ?? '운세 결과',
-            isBlurred: message.isBlurred,
             selectedDate: message.selectedDate,
           ),
         ),
@@ -463,7 +449,7 @@ class ChatMessageBubble extends StatelessWidget {
         ),
         child: CloudBubble(
           type: isUser ? CloudBubbleType.user : CloudBubbleType.ai,
-          showInkBleed: !isUser, // AI 메시지에만 잉크 번짐 효과
+          showInkBleed: false, // ChatGPT style: no ink bleed effect
           cornerAsset: 'assets/images/chat/corner_motif.svg',
           cornerSize: 16,
           padding: const EdgeInsets.symmetric(

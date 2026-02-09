@@ -135,10 +135,10 @@ class TarotAnimations {
     double translateY = 0}) {
     return Matrix4.identity()
       ..setEntry(3, 2, 0.002) // Perspective
-      ..translate(translateX, translateY)
+      ..translateByDouble(translateX, translateY, 0.0, 0.0)
       ..rotateY(math.pi * flipProgress)
       ..rotateZ(rotationZ)
-      ..scale(scale, scale);
+      ..scaleByDouble(scale, scale, 1.0, 1.0);
 }
 }
 
@@ -220,8 +220,8 @@ class TarotCardEntrance extends StatelessWidget {
         return Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
-            ..translate(0.0, 50 * (1 - progress))
-            ..scale(progress, progress),
+            ..translateByDouble(0.0, 50 * (1 - progress), 0.0, 0.0)
+            ..scaleByDouble(progress, progress, 1.0, 1.0),
           child: Opacity(
             opacity: (() {
               debugPrint('Fortune cached');

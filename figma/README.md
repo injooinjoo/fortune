@@ -1,11 +1,23 @@
 # Fortune App → Figma 마이그레이션 가이드
 
+> 업데이트: 2025.02 - ChatGPT 스타일 디자인 시스템 (DSColors)
+
 ## 📁 이 폴더의 파일들
 
 | 파일 | 용도 |
 |------|------|
 | `design-tokens.json` | 디자인 토큰 (색상, 타이포, 스페이싱) |
 | `README.md` | 이 가이드 |
+
+---
+
+## 🎨 디자인 철학
+
+**ChatGPT 스타일 미니멀 디자인**:
+- 모노크롬 기반 (흰/검 + iOS 시스템 컬러)
+- 깔끔하고 콘텐츠 중심적인 UI
+- 다크 모드 우선
+- DSColors 단일 색상 시스템
 
 ---
 
@@ -34,7 +46,7 @@ Figma에서 다음 페이지들을 생성하세요:
 Fortune App Design System
 ├── 📋 Cover (커버 페이지)
 ├── 🎨 Foundation
-│   ├── Colors (색상)
+│   ├── Colors (ChatGPT 스타일)
 │   ├── Typography (타이포그래피)
 │   └── Spacing & Effects (스페이싱, 그림자)
 ├── 🧩 Components
@@ -97,68 +109,83 @@ node playwright/scripts/mass-screenshot.js
 
 ---
 
-## 🎨 디자인 토큰 매핑
+## 🎨 디자인 토큰 매핑 (DSColors)
 
-### 색상 (Colors)
+### 색상 - Core (Monochrome)
 
-| Figma Variable | Flutter 상수 | 값 |
-|----------------|-------------|-----|
-| `color/brand/tossBlue` | `TossDesignSystem.tossBlue` | `#1F4EF5` |
-| `color/gray/900` | `TossDesignSystem.gray900` | `#191F28` |
-| `color/gray/50` | `TossDesignSystem.gray50` | `#F9FAFB` |
-| `color/semantic/success` | `TossDesignSystem.successGreen` | `#10B981` |
-| `color/semantic/error` | `TossDesignSystem.errorRed` | `#EF4444` |
-| `color/semantic/warning` | `TossDesignSystem.warningOrange` | `#F59E0B` |
+| Figma Variable | Flutter 상수 | Light | Dark |
+|----------------|-------------|-------|------|
+| `color/background` | `DSColors.background` / `DSColors.backgroundDark` | `#FFFFFF` | `#000000` |
+| `color/surface` | `DSColors.surface` / `DSColors.surfaceDark` | `#F7F7F8` | `#1A1A1A` |
+| `color/textPrimary` | `context.colors.textPrimary` | `#000000` | `#FFFFFF` |
+| `color/textSecondary` | `context.colors.textSecondary` | `#6B7280` | `#9CA3AF` |
+| `color/divider` | `context.colors.divider` | `#E5E7EB` | `#374151` |
 
-### 다크모드 색상
+### 색상 - Semantic (iOS System Colors)
 
-| Figma Variable | Flutter 상수 | 값 |
-|----------------|-------------|-----|
-| `color/grayDark/900` | `TossDesignSystem.grayDark900` | `#FFFFFF` |
-| `color/grayDark/50` | `TossDesignSystem.grayDark50` | `#17171C` |
-| `color/background/dark/primary` | `TossDesignSystem.backgroundDark` | `#17171C` |
-| `color/text/dark/primary` | `TossDesignSystem.textPrimaryDark` | `#FFFFFF` |
+| Figma Variable | Flutter 상수 | Hex | 용도 |
+|----------------|-------------|-----|------|
+| `color/success` | `DSColors.success` | `#10B981` | 성공, 건강 |
+| `color/warning` | `DSColors.warning` | `#F59E0B` | 경고, 토큰 |
+| `color/error` | `DSColors.error` | `#EF4444` | 에러, 위험 |
+| `color/info` | `DSColors.info` | `#3B82F6` | 정보 |
+| `color/accent` | `DSColors.accentSecondary` | `#8B5CF6` | 액센트 |
 
-### 타이포그래피 (Typography)
+### 색상 - 사주 오행 (Saju Only)
+
+| Figma Variable | Flutter 상수 | Hex | 오행 |
+|----------------|-------------|-----|------|
+| `saju/wood` | `SajuColors.wood` | `#10B981` | 목(木) |
+| `saju/fire` | `SajuColors.fire` | `#F43F5E` | 화(火) |
+| `saju/earth` | `SajuColors.earth` | `#FBBF24` | 토(土) |
+| `saju/metal` | `SajuColors.metal` | `#94A3B8` | 금(金) |
+| `saju/water` | `SajuColors.water` | `#3B82F6` | 수(水) |
+
+### 타이포그래피 (Context Extensions)
 
 | Figma Text Style | Flutter 스타일 | 크기/굵기 |
 |------------------|---------------|-----------|
-| `typography/display/large` | `TypographyUnified.displayLarge` | 50pt Bold |
-| `typography/heading/h1` | `TypographyUnified.heading1` | 30pt Bold |
-| `typography/heading/h2` | `TypographyUnified.heading2` | 26pt Bold |
-| `typography/body/medium` | `TypographyUnified.bodyMedium` | 17pt Regular |
-| `typography/label/medium` | `TypographyUnified.labelMedium` | 14pt Regular |
-| `typography/button/medium` | `TypographyUnified.buttonMedium` | 18pt SemiBold |
+| `typography/heading/h1` | `context.heading1` | 30pt Bold |
+| `typography/heading/h2` | `context.heading2` | 26pt SemiBold |
+| `typography/heading/h3` | `context.heading3` | 22pt SemiBold |
+| `typography/heading/h4` | `context.heading4` | 20pt Medium |
+| `typography/body/medium` | `context.body1` / `context.bodyMedium` | 17pt Regular |
+| `typography/body/small` | `context.body2` | 15pt Regular |
+| `typography/label/small` | `context.caption` / `context.labelSmall` | 12pt Regular |
 
-### 스페이싱 (Spacing)
-
-| Figma Variable | Flutter 상수 | 값 |
-|----------------|-------------|-----|
-| `spacing/xxs` | `TossDesignSystem.spacingXXS` | 2px |
-| `spacing/xs` | `TossDesignSystem.spacingXS` | 4px |
-| `spacing/s` | `TossDesignSystem.spacingS` | 8px |
-| `spacing/m` | `TossDesignSystem.spacingM` | 16px |
-| `spacing/l` | `TossDesignSystem.spacingL` | 24px |
-| `spacing/xl` | `TossDesignSystem.spacingXL` | 32px |
-
-### 모서리 반경 (Border Radius)
+### 스페이싱 (DSSpacing)
 
 | Figma Variable | Flutter 상수 | 값 |
 |----------------|-------------|-----|
-| `borderRadius/xs` | `TossDesignSystem.radiusXS` | 4px |
-| `borderRadius/s` | `TossDesignSystem.radiusS` | 8px |
-| `borderRadius/m` | `TossDesignSystem.radiusM` | 12px |
-| `borderRadius/l` | `TossDesignSystem.radiusL` | 16px |
-| `borderRadius/full` | `TossDesignSystem.radiusFull` | 9999px |
+| `spacing/xxs` | `DSSpacing.xxs` | 2px |
+| `spacing/xs` | `DSSpacing.xs` | 4px |
+| `spacing/sm` | `DSSpacing.sm` | 8px |
+| `spacing/md` | `DSSpacing.md` | 16px |
+| `spacing/lg` | `DSSpacing.lg` | 24px |
+| `spacing/xl` | `DSSpacing.xl` | 32px |
+| `spacing/xxl` | `DSSpacing.xxl` | 48px |
 
-### 그림자 (Shadows)
+### 모서리 반경 (DSRadius)
 
-| Figma Effect Style | Flutter 상수 | 설정 |
+| Figma Variable | Flutter 상수 | 값 |
+|----------------|-------------|-----|
+| `radius/xs` | `DSRadius.xs` | 4px |
+| `radius/sm` | `DSRadius.sm` | 8px |
+| `radius/md` | `DSRadius.md` | 12px |
+| `radius/lg` | `DSRadius.lg` | 16px |
+| `radius/xl` | `DSRadius.xl` | 24px |
+| `radius/card` | `DSRadius.card` | 16px |
+| `radius/button` | `DSRadius.button` | 12px |
+
+### 그림자 (DSShadows)
+
+| Figma Effect Style | Flutter 상수 | 용도 |
 |-------------------|-------------|------|
-| `boxShadow/xs` | `TossDesignSystem.shadowXS` | y:1, blur:3, 4% |
-| `boxShadow/s` | `TossDesignSystem.shadowS` | y:2, blur:8, 4% |
-| `boxShadow/m` | `TossDesignSystem.shadowM` | y:4, blur:16, 8% |
-| `boxShadow/l` | `TossDesignSystem.shadowL` | y:8, blur:24, 12% |
+| `shadow/sm` | `DSShadows.sm` | 작은 그림자 |
+| `shadow/md` | `DSShadows.md` | 중간 그림자 |
+| `shadow/lg` | `DSShadows.lg` | 큰 그림자 |
+| `shadow/card` | `DSShadows.card` | 카드용 |
+| `shadow/elevated` | `DSShadows.elevated` | 강조 |
 
 ---
 
@@ -213,7 +240,7 @@ node playwright/scripts/mass-screenshot.js
 - [ ] Figma 파일 생성 및 페이지 구조 설정
 - [ ] design-tokens.json import
 - [ ] Color Variables 생성 (Light/Dark 모드)
-- [ ] Text Styles 생성 (15개)
+- [ ] Text Styles 생성
 
 ### Day 3-4: 스크린샷 캡처 + Figma 작업
 - [ ] Flutter Web 서버 실행 (`flutter run -d chrome --web-port=3000`)
@@ -222,11 +249,11 @@ node playwright/scripts/mass-screenshot.js
 - [ ] Figma AI (Make Designs) 활용하여 작업 가속화
 
 ### Day 5-7: 컴포넌트 라이브러리
-- [ ] UnifiedButton (4 스타일 × 3 사이즈)
-- [ ] TossCard
-- [ ] TossInput
+- [ ] DSButton (Primary, Secondary, Text variants)
+- [ ] DSCard
+- [ ] DSTextField
 - [ ] AppBar / BottomNav
-- [ ] Toast / Dialog
+- [ ] DSModal / DSBottomSheet
 - [ ] FortuneCard (블러/언블러)
 
 ### Day 8-10: 핵심 화면

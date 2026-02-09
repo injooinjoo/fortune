@@ -73,17 +73,7 @@ class HealthGenerator {
         throw Exception('API 응답에서 data 필드를 찾을 수 없습니다');
       }
 
-      // 프리미엄이 아니면 블러 섹션 설정
-      final blurredSections = isPremium
-          ? <String>[]
-          : [
-              'body_part_advice',
-              'cautions',
-              'recommended_activities',
-              'diet_advice',
-              'exercise_advice',
-              'health_keyword',
-            ];
+      // 🎯 토큰 소비형 모델: 블러 처리 제거
 
       // 점수 및 메시지 추출 (안전한 타입 처리)
       final healthScore = data['score'] as int? ?? 75;
@@ -129,8 +119,6 @@ class HealthGenerator {
         data: data,
         score: healthScore,
         createdAt: DateTime.now(),
-        isBlurred: !isPremium,
-        blurredSections: blurredSections,
       );
 
       // ✅ 현재 설문 저장 (다음 비교용)
@@ -138,7 +126,6 @@ class HealthGenerator {
 
       Logger.info('[HealthGenerator] 건강운세 생성 완료');
       Logger.info('   - fortuneId: ${result.id}');
-      Logger.info('   - isBlurred: ${result.isBlurred}');
 
       return result;
     } catch (e, stackTrace) {

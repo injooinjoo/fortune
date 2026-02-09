@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../providers/face_condition_tracker_provider.dart';
 
 /// 트렌드 인사이트 배너
@@ -90,7 +89,7 @@ class TrendInsightBanner extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
 
                   // 인사이트 메시지
                   Text(
@@ -105,7 +104,7 @@ class TrendInsightBanner extends ConsumerWidget {
 
                   // 로딩 상태
                   if (trackerState.isLoading) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: DSSpacing.sm),
                     SizedBox(
                       width: 16,
                       height: 16,
@@ -191,7 +190,7 @@ class TrendChip extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: color, size: 14),
-          const SizedBox(width: 4),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             label,
             style: context.labelSmall.copyWith(

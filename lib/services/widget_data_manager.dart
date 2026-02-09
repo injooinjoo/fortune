@@ -41,16 +41,7 @@ class WidgetDataManager {
           'luckyNumber': luckyNumber,
           'fortuneType': fortune.data?.type ?? 'daily',
           'createdAt': DateTime.now().toIso8601String()});
-      
-      // Update live activity if iOS
-      // if (defaultTargetPlatform == TargetPlatform.iOS) {
-      //   await LiveActivityService.startDailyFortune(
-      //     score: score.toString(),
-      //     message: fortune.data?.content ?? '',
-      //     luckyColor: luckyColor,
-      // luckyNumber: luckyNumber);
-      // }
-      
+
       // Save to local storage
       await _saveFortuneData(_dailyFortuneKey, fortune);
       

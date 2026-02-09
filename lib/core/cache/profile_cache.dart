@@ -1,4 +1,4 @@
-/// In-memory cache for user profiles to reduce repeated database queries
+// In-memory cache for user profiles to reduce repeated database queries
 class ProfileCache {
   static final ProfileCache _instance = ProfileCache._internal();
   factory ProfileCache() => _instance;

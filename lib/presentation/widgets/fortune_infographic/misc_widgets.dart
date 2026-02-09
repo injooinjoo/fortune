@@ -164,7 +164,7 @@ class MiscWidgets {
                     height: 32,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [DSFortuneColors.categoryLotto, DSFortuneColors.categoryTraditional],
+                        colors: [DSColors.warning, DSColors.accentSecondary],
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),

@@ -1,5 +1,5 @@
-/// Mock Fortune Services - 운세 관련 Mock 클래스
-/// Phase 3: 운세 기능 테스트용
+// Mock Fortune Services - 운세 관련 Mock 클래스
+// Phase 3: 운세 기능 테스트용
 
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,6 @@ class FortuneTestData {
   static Map<String, dynamic> createDailyFortune({
     String userId = 'test-user-id',
     int score = 75,
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -29,7 +28,6 @@ class FortuneTestData {
       'lucky_number': 7,
       'lucky_direction': '동쪽',
       'advice': '새로운 시작에 좋은 날입니다',
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -39,7 +37,6 @@ class FortuneTestData {
     String userId = 'test-user-id',
     String relationshipStatus = 'single',
     int score = 80,
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -52,7 +49,6 @@ class FortuneTestData {
       'meeting_time': relationshipStatus == 'single' ? '봄에 좋은 인연이 있습니다' : null,
       'meeting_place': relationshipStatus == 'single' ? '동호회, 모임' : null,
       'relationship_advice': relationshipStatus == 'dating' ? '서로의 시간을 존중하세요' : null,
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -62,7 +58,6 @@ class FortuneTestData {
     String userId = 'test-user-id',
     int score = 85,
     String? grade,
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -79,7 +74,6 @@ class FortuneTestData {
       'strengths': ['서로를 보완하는 관계', '대화가 잘 통함'],
       'cautions': ['가치관 차이에 주의', '의사소통 노력 필요'],
       'advice': '서로의 차이를 인정하고 존중하세요',
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -89,7 +83,6 @@ class FortuneTestData {
     String userId = 'test-user-id',
     String currentStatus = 'employed',
     int successRate = 75,
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -102,7 +95,6 @@ class FortuneTestData {
       'timing_advice': '상반기에 집중하세요',
       'strengths': ['리더십', '창의성', '분석력'],
       'improvements': ['인내심', '세부 집중'],
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -112,7 +104,6 @@ class FortuneTestData {
     String userId = 'test-user-id',
     String dreamContent = '돼지가 나오는 꿈',
     String fortune = '대길',
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -122,7 +113,6 @@ class FortuneTestData {
       'meaning': '재물운의 상승을 의미합니다',
       'lucky_numbers': [3, 7, 12, 24, 36, 45],
       'caution': '오늘은 중요한 결정을 피하세요',
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -131,7 +121,6 @@ class FortuneTestData {
   static Map<String, dynamic> createFaceReading({
     String userId = 'test-user-id',
     int overallScore = 85,
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -150,7 +139,6 @@ class FortuneTestData {
         'career': 85,
       },
       'similar_celebrity': '분석 중...',
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -160,7 +148,6 @@ class FortuneTestData {
     String userId = 'test-user-id',
     String mbtiType = 'INTJ',
     bool hasSajuData = false,
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -173,7 +160,6 @@ class FortuneTestData {
       'worst_match': ['ESFP', 'ISFP'],
       'recommended_jobs': ['과학자', '엔지니어', '전략 컨설턴트'],
       'saju_integration': hasSajuData ? '사주의 목(木) 기운과 INTJ의 전략적 성향이 조화롭게 어우러집니다' : null,
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -182,7 +168,6 @@ class FortuneTestData {
   static Map<String, dynamic> createBiorhythm({
     String userId = 'test-user-id',
     String date = '2024-12-07',
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -196,7 +181,6 @@ class FortuneTestData {
       },
       'advice': '지적 활동에 적합한 날입니다',
       'caution': '격한 운동은 피하세요',
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -206,7 +190,6 @@ class FortuneTestData {
     String userId = 'test-user-id',
     String investmentType = 'stock',
     int score = 72,
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -221,7 +204,6 @@ class FortuneTestData {
       'strategy': '장기 투자에 집중하세요',
       'caution': '3월에는 큰 결정을 피하세요',
       'disclaimer': '본 분석은 참고용이며 실제 투자 결정에 대한 책임은 본인에게 있습니다.',
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -231,7 +213,6 @@ class FortuneTestData {
     String userId = 'test-user-id',
     String celebrityName = '손흥민',
     String category = 'sports',
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -247,7 +228,6 @@ class FortuneTestData {
       'comparison_with_user': '당신과 비슷한 오행 구성을 가지고 있습니다',
       'lessons': ['꾸준한 노력과 자기 관리'],
       'same_birthday_celebrities': ['유명인 A', '유명인 B'],
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -257,7 +237,6 @@ class FortuneTestData {
     String userId = 'test-user-id',
     String category = 'general',
     List<String>? cards,
-    bool isBlurred = false,
   }) {
     return {
       'user_id': userId,
@@ -269,7 +248,6 @@ class FortuneTestData {
       'present': '현재는 변화의 시기입니다',
       'future': '밝은 미래가 기다리고 있습니다',
       'advice': '직관을 믿고 앞으로 나아가세요',
-      'is_blurred': isBlurred,
       'created_at': DateTime.now().toIso8601String(),
     };
   }

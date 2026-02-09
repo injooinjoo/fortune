@@ -1,15 +1,9 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/personality_dna_model.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
-import '../../../../core/utils/fortune_completion_helper.dart';
-import '../../../../core/utils/subscription_snackbar.dart';
-import '../../../../presentation/providers/subscription_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';
-import '../../../../services/ad_service.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 
 /// 채팅용 성격 DNA 결과 카드
@@ -27,12 +21,10 @@ import '../../../../core/constants/fortune_card_images.dart';
 /// - 인기 순위
 class PersonalityDnaChatCard extends ConsumerStatefulWidget {
   final PersonalityDNA dna;
-  final bool isBlurred;
 
   const PersonalityDnaChatCard({
     super.key,
     required this.dna,
-    this.isBlurred = false,
   });
 
   @override
@@ -42,12 +34,9 @@ class PersonalityDnaChatCard extends ConsumerStatefulWidget {
 
 class _PersonalityDnaChatCardState
     extends ConsumerState<PersonalityDnaChatCard> {
-  late bool _isBlurred;
-
   @override
   void initState() {
     super.initState();
-    _isBlurred = widget.isBlurred;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -56,23 +45,11 @@ class _PersonalityDnaChatCardState
     });
   }
 
-  @override
-  void didUpdateWidget(covariant PersonalityDnaChatCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
-    if (oldWidget.isBlurred != widget.isBlurred && !widget.isBlurred) {
-      setState(() {
-        _isBlurred = false;
-      });
-    }
-  }
-
   PersonalityDNA get dna => widget.dna;
 
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
-    final isPremium = ref.watch(isPremiumProvider);
 
     return Container(
       width: double.infinity,
@@ -80,7 +57,7 @@ class _PersonalityDnaChatCardState
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      child: DSCard.hanji(
+      child: DSCard.flat(
         padding: EdgeInsets.zero,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -115,7 +92,7 @@ class _PersonalityDnaChatCardState
   }
 
   Widget _buildBlurrableContent(BuildContext context, bool isDark) {
-    final content = Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // 능력치 바 차트
@@ -146,41 +123,6 @@ class _PersonalityDnaChatCardState
         // 인기 순위
         if (dna.popularityRank != null) _buildPopularitySection(context),
       ],
-    );
-
-    if (!_isBlurred) return content;
-
-    // 블러 처리
-    return ClipRRect(
-      child: Stack(
-        children: [
-          ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: content,
-          ),
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    context.colors.surface.withValues(alpha: 0.3),
-                    context.colors.surface.withValues(alpha: 0.7),
-                  ],
-                ),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.lock_outline,
-                  size: 48,
-                  color: context.colors.textSecondary.withValues(alpha: 0.5),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 

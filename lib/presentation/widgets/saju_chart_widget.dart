@@ -5,7 +5,6 @@ import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../core/theme/app_typography.dart';
-import '../../core/design_system/tokens/fortune_colors.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'saju_loading_widget.dart';
 // import 'saju_element_explanation_bottom_sheet.dart';
@@ -422,7 +421,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
         return DSColors.warning; // Red/orange for fire
       case 'earth':
       case '토':
-        return FortuneColors.goldLight; // Yellow/gold for earth
+        return DSColors.warning; // Yellow/gold for earth
       case 'metal':
       case '금':
         return DSColors.textSecondaryDark; // Gray/silver for metal

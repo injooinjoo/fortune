@@ -5,7 +5,6 @@ import '../../core/utils/logger.dart';
 import '../../core/utils/supabase_helper.dart';
 import '../../utils/date_utils.dart' as legacy_date_utils;
 import '../providers/providers.dart';
-import 'auth_provider.dart';
 import '../../data/models/secondary_profile.dart';
 import '../../constants/fortune_constants.dart';
 

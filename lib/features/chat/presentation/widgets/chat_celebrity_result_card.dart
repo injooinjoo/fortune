@@ -2,19 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
-import '../../../../core/utils/fortune_completion_helper.dart';
-import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/subscription_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/widgets/hexagon_chart.dart';
-import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/constants/fortune_card_images.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 채팅용 유명인 궁합 결과 카드
 ///
@@ -43,10 +36,7 @@ class ChatCelebrityResultCard extends ConsumerStatefulWidget {
 
 class _ChatCelebrityResultCardState
     extends ConsumerState<ChatCelebrityResultCard> {
-  bool _isBlurred = false;
-  List<String> _blurredSections = [];
   final Set<String> _expandedSections = {};
-  bool _hasInitializedBlur = false;
 
   // 데이터 추출
   Map<String, dynamic>? get _sajuAnalysis =>
@@ -73,49 +63,6 @@ class _ChatCelebrityResultCardState
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // ref는 didChangeDependencies에서 안전하게 접근 가능
-    if (!_hasInitializedBlur) {
-      _hasInitializedBlur = true;
-      _initBlurState();
-    }
-  }
-
-  void _initBlurState() {
-    final tokenState = ref.read(tokenProvider);
-    // 프리미엄 사용자(무제한 또는 토큰 보유)는 절대 블러 안 함
-    final isPremium = tokenState.hasUnlimitedAccess ||
-        (tokenState.balance?.remainingTokens ?? 0) > 0;
-
-    // 프리미엄이면 무조건 블러 해제
-    if (isPremium) {
-      _isBlurred = false;
-      _blurredSections = [];
-    } else {
-      // 비프리미엄: additionalInfo에서 블러 상태 읽거나 기본 true
-      _isBlurred = widget.fortune.additionalInfo?['isBlurred'] as bool? ?? true;
-      _blurredSections =
-          (widget.fortune.additionalInfo?['blurredSections'] as List?)?.cast<String>() ??
-              ['saju_analysis', 'intimate_compatibility', 'past_life', 'destined_timing'];
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant ChatCelebrityResultCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
-    final oldBlurred = oldWidget.fortune.additionalInfo?['isBlurred'] as bool? ?? true;
-    final newBlurred = widget.fortune.additionalInfo?['isBlurred'] as bool? ?? true;
-    if (oldBlurred != newBlurred && !newBlurred) {
-      setState(() {
-        _isBlurred = false;
-        _blurredSections = [];
-      });
-    }
-  }
-
   void _toggleSection(String section) {
     setState(() {
       if (_expandedSections.contains(section)) {
@@ -129,15 +76,13 @@ class _ChatCelebrityResultCardState
 
   @override
   Widget build(BuildContext context) {
-    final isPremium = ref.watch(isPremiumProvider);
-
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      child: DSCard.hanji(
+      child: DSCard.flat(
         padding: EdgeInsets.zero,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -170,6 +115,7 @@ class _ChatCelebrityResultCardState
   }
 
   Widget _buildHeader(BuildContext context) {
+    final colors = context.colors;
     final typography = context.typography;
     final score = widget.fortune.score;
     final heroImage = FortuneCardImages.getHeroImage('compatibility', score);
@@ -189,8 +135,8 @@ class _ChatCelebrityResultCardState
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    ObangseokColors.jeokMuted.withValues(alpha: 0.2),
-                    ObangseokColors.cheongDark.withValues(alpha: 0.15),
+                    DSColors.error.withValues(alpha: 0.2),
+                    DSColors.info.withValues(alpha: 0.15),
                   ],
                 ),
               ),
@@ -204,7 +150,7 @@ class _ChatCelebrityResultCardState
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.6),
+                  colors.background.withValues(alpha: 0.6),
                 ],
               ),
             ),
@@ -222,9 +168,9 @@ class _ChatCelebrityResultCardState
                   height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: colors.surface.withValues(alpha: 0.2),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: colors.surface.withValues(alpha: 0.5),
                       width: 2,
                     ),
                   ),
@@ -249,11 +195,11 @@ class _ChatCelebrityResultCardState
                       Text(
                         '${widget.celebrityName ?? '유명인'}과의 궁합',
                         style: typography.headingSmall.copyWith(
-                          color: Colors.white,
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.bold,
                           shadows: [
                             Shadow(
-                              color: Colors.black.withValues(alpha: 0.5),
+                              color: colors.background.withValues(alpha: 0.5),
                               blurRadius: 8,
                             ),
                           ],
@@ -262,7 +208,7 @@ class _ChatCelebrityResultCardState
                       Text(
                         _getConnectionTypeLabel(widget.connectionType),
                         style: typography.labelSmall.copyWith(
-                          color: Colors.white.withValues(alpha: 0.8),
+                          color: colors.textPrimary.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -278,7 +224,7 @@ class _ChatCelebrityResultCardState
                   child: Text(
                     '$score점',
                     style: typography.labelMedium.copyWith(
-                      color: Colors.white,
+                      color: colors.surface,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -298,7 +244,7 @@ class _ChatCelebrityResultCardState
                   ? widget.fortune.message
                   : widget.fortune.content,
               iconSize: 20,
-              iconColor: Colors.white,
+              iconColor: colors.textPrimary,
             ),
           ),
         ],
@@ -402,7 +348,6 @@ class _ChatCelebrityResultCardState
       child: Column(
         children: sections.map((section) {
           final isExpanded = _expandedSections.contains(section.key);
-          final isBlurredSection = _blurredSections.contains(section.key);
 
           return Container(
             margin: const EdgeInsets.only(bottom: DSSpacing.xs),
@@ -456,17 +401,14 @@ class _ChatCelebrityResultCardState
 
                 // 내용 (펼쳤을 때)
                 if (isExpanded)
-                  SimpleBlurOverlay(
-                    isBlurred: _isBlurred && isBlurredSection,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        DSSpacing.sm,
-                        0,
-                        DSSpacing.sm,
-                        DSSpacing.sm,
-                      ),
-                      child: section.content,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      DSSpacing.sm,
+                      0,
+                      DSSpacing.sm,
+                      DSSpacing.sm,
                     ),
+                    child: section.content,
                   ),
               ],
             ),
@@ -555,13 +497,13 @@ class _ChatCelebrityResultCardState
               vertical: 2,
             ),
             decoration: BoxDecoration(
-              color: ObangseokColors.cheongDark.withValues(alpha: 0.1),
+              color: DSColors.info.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               connection,
               style: typography.labelSmall.copyWith(
-                color: ObangseokColors.cheongDark,
+                color: DSColors.info,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -625,7 +567,7 @@ class _ChatCelebrityResultCardState
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: ObangseokColors.cheong.withValues(alpha: 0.1),
+        color: DSColors.info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -641,7 +583,7 @@ class _ChatCelebrityResultCardState
           Text(
             value,
             style: typography.labelSmall.copyWith(
-              color: ObangseokColors.cheong,
+              color: DSColors.info,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -680,11 +622,11 @@ class _ChatCelebrityResultCardState
 
   Widget _buildDefaultAvatar() {
     return Container(
-      color: ObangseokColors.jeokMuted.withValues(alpha: 0.3),
+      color: DSColors.error.withValues(alpha: 0.3),
       child: const Icon(
         Icons.star,
         size: 28,
-        color: ObangseokColors.jeokMuted,
+        color: DSColors.error,
       ),
     );
   }
@@ -705,12 +647,12 @@ class _ChatCelebrityResultCardState
   }
 
   Color _getScoreColor(int score) {
-    // 동양화 스타일 - 톤다운 오방색
-    if (score >= 90) return ObangseokColors.jeokMuted;
-    if (score >= 80) return ObangseokColors.cheongDark;
-    if (score >= 70) return ObangseokColors.cheong;
-    if (score >= 60) return ObangseokColors.cheongMuted;
-    return ObangseokColors.hwangMuted;
+    // ChatGPT monochrome style - semantic colors
+    if (score >= 90) return DSColors.error;
+    if (score >= 80) return DSColors.info;
+    if (score >= 70) return DSColors.info;
+    if (score >= 60) return DSColors.info;
+    return DSColors.warning;
   }
 }
 

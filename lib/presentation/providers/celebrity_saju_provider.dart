@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/celebrity_saju.dart';
-import '../../domain/entities/fortune.dart';
+
 import '../../services/celebrity_saju_service.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import './today_fortune_provider.dart';

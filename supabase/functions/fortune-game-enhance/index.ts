@@ -6,7 +6,7 @@
  * 특징:
  * - 입력 없이 범용 (게임/대상 선택 불필요)
  * - 블러 없음 (완전 무료)
- * - 복주머니 후원 기능 지원
+ * - 토큰 후원 기능 지원
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'

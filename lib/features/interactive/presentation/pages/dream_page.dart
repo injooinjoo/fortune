@@ -157,12 +157,12 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               width: 200,
               height: 200,
               repeat: true),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
             Text(
               '아직 기록된 꿈이 없어요',
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontSize: fontSize + 4)),
-            const SizedBox(height: 8),
+            const SizedBox(height: DSSpacing.sm),
             Text(
               '오늘 밤 꾼 꿈을 기록해보세요',
               style: theme.textTheme.bodyLarge?.copyWith(
@@ -229,7 +229,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: DSSpacing.sm),
               Text(
                 entry.content,
                 style: theme.textTheme.bodyLarge?.copyWith(
@@ -246,7 +246,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     size: 16,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: DSSpacing.xs),
                   Text(
                     '${entry.date.year}년 ${entry.date.month}월 ${entry.date.day}일',
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -260,7 +260,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                       size: 16,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: DSSpacing.xs),
                     Text(
                       entry.tags.take(3).join(', '),
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -289,7 +289,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               size: 80,
               color: theme.colorScheme.primary.withValues(alpha: 0.5),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
             Text(
               '신령의 꿈 해석',
               style: theme.textTheme.headlineMedium?.copyWith(
@@ -297,7 +297,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: DSSpacing.md),
             Text(
               '기록한 꿈을 선택하면\n신령이 상세하게 해석해드립니다',
               style: theme.textTheme.bodyLarge?.copyWith(
@@ -342,7 +342,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
                 NumericDateInput(
                   selectedDate: _selectedDate,
                   onDateChanged: (date) => setState(() => _selectedDate = date),
@@ -352,7 +352,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           // Title Input
           GlassContainer(
             padding: const EdgeInsets.all(16),
@@ -367,7 +367,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
                 UnifiedVoiceTextField(
                   controller: _titleController,
                   onSubmit: (text) {},
@@ -377,7 +377,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           // Content Input
           GlassContainer(
             padding: const EdgeInsets.all(16),
@@ -390,7 +390,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontSize: fontSize + 2,
                     fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
                 UnifiedVoiceTextField(
                   controller: _contentController,
                   onSubmit: (text) {},
@@ -400,7 +400,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           // Tags Selection
           GlassContainer(
             padding: const EdgeInsets.all(16),
@@ -413,7 +413,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontSize: fontSize + 2,
                     fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -437,7 +437,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                 ],
               ),
             ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           // Action Buttons
           Row(
             children: [
@@ -526,7 +526,7 @@ class DreamDetailSheet extends ConsumerWidget {
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontSize: baseFontSize + 4,
                       fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: DSSpacing.sm),
                   Text(
                     '${entry.date.year}년 ${entry.date.month}월 ${entry.date.day}일',
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -555,7 +555,7 @@ class DreamDetailSheet extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DSSpacing.md),
                   // Tags
                   if (entry.tags.isNotEmpty) ...[
                     GlassContainer(
@@ -581,7 +581,7 @@ class DreamDetailSheet extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: DSSpacing.md),
                   ],
 
                   // Analysis
@@ -605,13 +605,13 @@ class DreamDetailSheet extends ConsumerWidget {
                                 Icon(
                                   Icons.auto_awesome_rounded,
                                   color: theme.colorScheme.primary),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: DSSpacing.sm),
                                 Text(
                                   '신령의 꿈 해석',
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontSize: baseFontSize + 2,
                                     fontWeight: FontWeight.bold))]),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: DSSpacing.md),
                             // Dream Type and Score
                             Row(
                               children: [
@@ -644,21 +644,21 @@ class DreamDetailSheet extends ConsumerWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: DSSpacing.md),
                             // Interpretation
                             Text(
                               analysis.interpretation,
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 fontSize: baseFontSize,
                                 height: 1.6)),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: DSSpacing.md),
                             // Symbols
                             Text(
                               '주요 상징',
                               style: theme.textTheme.titleSmall?.copyWith(
                                 fontSize: baseFontSize,
                                 fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: DSSpacing.sm),
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
@@ -667,7 +667,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                   label: Text(symbol),
                                   backgroundColor: theme.colorScheme.secondaryContainer);
                               }).toList()),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: DSSpacing.md),
                             // Advice
                             Container(
                               padding: const EdgeInsets.all(12),
@@ -684,7 +684,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                     Icons.tips_and_updates_rounded,
                                     color: theme.colorScheme.tertiary,
                                     size: 20),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: DSSpacing.sm),
                                   Expanded(
                                     child: Text(
                                       analysis.advice,

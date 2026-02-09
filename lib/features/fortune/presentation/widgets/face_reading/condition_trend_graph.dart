@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../domain/models/face_condition.dart';
 import '../../providers/face_condition_tracker_provider.dart';
 
@@ -107,7 +106,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
           children: [
             // 헤더
             _buildHeader(),
-            const SizedBox(height: 16),
+            const SizedBox(height: DSSpacing.md),
 
             // 범례
             _buildLegend(),
@@ -128,8 +127,8 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
 
             // 로딩 상태
             if (trackerState.isLoading) ...[
-              const SizedBox(height: 8),
-              Center(
+              const SizedBox(height: DSSpacing.sm),
+              const Center(
                 child: SizedBox(
                   width: 16,
                   height: 16,
@@ -158,13 +157,13 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
             color: DSColors.accent.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.show_chart,
             color: DSColors.accent,
             size: 20,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: DSSpacing.sm + 4),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -499,7 +498,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
               size: 32,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '아직 기록이 없어요',
             style: context.bodyMedium.copyWith(
@@ -509,7 +508,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             '매일 분석을 받으면 변화를 볼 수 있어요',
             style: context.labelSmall.copyWith(

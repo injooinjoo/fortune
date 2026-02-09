@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../../core/design_system/design_system.dart';
-import '../../../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../../../core/widgets/unified_button.dart';
 import '../../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../../services/health_data_service.dart';
@@ -29,6 +28,7 @@ class HealthAppConnectionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final typography = context.typography;
     final platformName = Platform.isIOS ? 'Apple Health' : 'Google Fit';
     final platformIcon = Platform.isIOS ? Icons.favorite_rounded : Icons.fitness_center_rounded;
 
@@ -48,15 +48,15 @@ class HealthAppConnectionSection extends StatelessWidget {
         color: isPremium
             ? null
             : (context.isDark
-                ? ObangseokColors.heukLight.withValues(alpha: 0.5)
-                : ObangseokColors.misaekDark),
+                ? DSColors.backgroundSecondary.withValues(alpha: 0.5)
+                : DSColors.backgroundSecondaryDark),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isPremium
               ? _healthAccent.withValues(alpha: 0.3)
               : (context.isDark
-                  ? ObangseokColors.heukMuted.withValues(alpha: 0.5)
-                  : ObangseokColors.baekMuted),
+                  ? DSColors.border.withValues(alpha: 0.5)
+                  : DSColors.borderDark),
         ),
       ),
       child: Column(
@@ -70,15 +70,15 @@ class HealthAppConnectionSection extends StatelessWidget {
                   color: isPremium
                       ? _healthAccent.withValues(alpha: 0.15)
                       : (context.isDark
-                          ? ObangseokColors.heukLight
-                          : ObangseokColors.baek),
+                          ? DSColors.backgroundSecondary
+                          : DSColors.backgroundDark),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   platformIcon,
                   color: isPremium
                       ? _healthAccent
-                      : ObangseokColors.meokFaded,
+                      : DSColors.textSecondary,
                   size: 20,
                 ),
               ),
@@ -91,11 +91,9 @@ class HealthAppConnectionSection extends StatelessWidget {
                       children: [
                         Text(
                           '$platformName 연동',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
+                          style: typography.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: ObangseokColors.getMeok(context),
+                            color: context.colors.textPrimary,
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -108,10 +106,9 @@ class HealthAppConnectionSection extends StatelessWidget {
                             color: _healthAccent,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text(
+                          child: Text(
                             'PREMIUM',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
+                            style: typography.labelTiny.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
                               fontSize: 9,
@@ -123,13 +120,9 @@ class HealthAppConnectionSection extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       '건강 데이터로 더 정확한 분석',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 12,
+                      style: typography.bodySmall.copyWith(
                         fontWeight: FontWeight.w400,
-                        color: context.isDark
-                            ? ObangseokColors.baekMuted
-                            : ObangseokColors.meokFaded,
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ],
@@ -175,26 +168,24 @@ class HealthAppConnectionSection extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 color: context.isDark
-                    ? ObangseokColors.heukLight.withValues(alpha: 0.7)
-                    : ObangseokColors.baek.withValues(alpha: 0.7),
+                    ? DSColors.backgroundSecondary.withValues(alpha: 0.7)
+                    : DSColors.backgroundDark.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.lock_rounded,
-                    color: ObangseokColors.meokFaded,
+                    color: context.colors.textSecondary,
                     size: 14,
                   ),
-                  SizedBox(width: 6),
+                  const SizedBox(width: 6),
                   Text(
                     '프리미엄 구독 시 사용 가능',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 12,
+                    style: typography.bodySmall.copyWith(
                       fontWeight: FontWeight.w400,
-                      color: ObangseokColors.meokFaded,
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
@@ -221,12 +212,13 @@ class ConnectedHealthDataSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final typography = context.typography;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: context.isDark
-            ? ObangseokColors.heukLight
-            : ObangseokColors.baek,
+            ? DSColors.backgroundSecondary
+            : DSColors.backgroundDark,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -240,11 +232,9 @@ class ConnectedHealthDataSummary extends StatelessWidget {
                 size: 16,
               ),
               const SizedBox(width: 6),
-              const Text(
+              Text(
                 '건강 데이터 연동됨',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 12,
+                style: typography.bodySmall.copyWith(
                   color: _healthAccent,
                   fontWeight: FontWeight.w600,
                 ),
@@ -287,13 +277,9 @@ class ConnectedHealthDataSummary extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '이 데이터가 건강운세 분석에 활용됩니다',
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 11,
+            style: typography.labelTiny.copyWith(
               fontWeight: FontWeight.w400,
-              color: context.isDark
-                  ? ObangseokColors.baekMuted
-                  : ObangseokColors.meokFaded,
+              color: context.colors.textSecondary,
             ),
           ),
         ],
@@ -319,20 +305,19 @@ class HealthDataChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final typography = context.typography;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: context.isDark
-            ? ObangseokColors.heukMuted.withValues(alpha: 0.5)
-            : ObangseokColors.misaekDark,
+            ? DSColors.border.withValues(alpha: 0.5)
+            : DSColors.backgroundSecondaryDark,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         text,
-        style: TextStyle(
-          fontFamily: 'Pretendard',
-          fontSize: 12,
-          color: ObangseokColors.getMeok(context),
+        style: typography.bodySmall.copyWith(
+          color: context.colors.textPrimary,
           fontWeight: FontWeight.w500,
         ),
       ),

@@ -268,7 +268,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
             children: [
               const Icon(
                 Icons.lightbulb_outline,
-                color: DSFortuneColors.categoryTalent, // 0xFFFFB300
+                color: DSColors.warning,
                 size: 20,
               ),
               const SizedBox(width: 8),

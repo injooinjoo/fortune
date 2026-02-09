@@ -1,5 +1,5 @@
-/// Career Coaching Page - Widget Test
-/// 직업 코칭 페이지 UI 테스트
+// Career Coaching Page - Widget Test
+// 직업 코칭 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -171,23 +171,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 일부 콘텐츠 블러', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockCareerCoachingResult(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('상세 분석 보기'), findsOneWidget);
-      });
-    });
-
     group('인터랙션', () {
       testWidgets('분석하기 버튼이 있어야 함', (tester) async {
         await tester.pumpWidget(
@@ -259,13 +242,11 @@ class _MockCareerCoachingResult extends StatelessWidget {
   final int successRate;
   final List<String> strengths;
   final List<String> improvements;
-  final bool isBlurred;
 
   const _MockCareerCoachingResult({
     this.successRate = 75,
     this.strengths = const [],
     this.improvements = const [],
-    this.isBlurred = false,
   });
 
   @override
@@ -305,15 +286,6 @@ class _MockCareerCoachingResult extends StatelessWidget {
               Wrap(
                 spacing: 8,
                 children: improvements.map((s) => Chip(label: Text(s))).toList(),
-              ),
-            ],
-            if (isBlurred) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('상세 분석 보기'),
-                ),
               ),
             ],
           ],

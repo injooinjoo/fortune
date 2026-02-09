@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
-/// ChatGPT-inspired minimal color system
+/// ChatGPT-inspired monochrome color system
 ///
 /// Design Philosophy: Clean, minimal, content-first
-/// "Pure white/black + subtle accent"
+/// "Pure white/black + zero color accent"
 ///
 /// Key Principles:
 /// - Pure white backgrounds (light mode)
 /// - Pure black backgrounds (dark mode)
-/// - Minimal accent color (purple CTA only)
+/// - Monochrome accent (black/white) - NO colored accent
+/// - Toggle: iOS green (#34C759)
+/// - Links/info: Blue (accentSecondary)
 /// - High contrast, no warm tints
 ///
 /// Usage:
@@ -26,14 +28,14 @@ class DSColors {
   // DARK MODE COLORS (Primary/Default)
   // ============================================
 
-  /// Primary accent color - Purple CTA
-  static const Color accent = Color(0xFF7C5CFC);
+  /// Primary accent color - Monochrome (ChatGPT style: white in dark, black in light)
+  static const Color accent = Color(0xFFFFFFFF);
 
   /// Accent hover/pressed state
-  static const Color accentHover = Color(0xFF6B4AEB);
+  static const Color accentHover = Color(0xFFE5E5EA);
 
   /// Lighter accent for backgrounds
-  static const Color accentLight = Color(0xFF1E1A2E);
+  static const Color accentLight = Color(0xFF1C1C1E);
 
   /// Secondary accent - Soft blue for links/info
   static const Color accentSecondary = Color(0xFF8FB0FF);
@@ -77,14 +79,14 @@ class DSColors {
   /// Subtle border
   static const Color border = Color(0xFF2C2C2E);
 
-  /// Focus border
-  static const Color borderFocus = accent;
+  /// Focus border - Stronger gray (decoupled from accent)
+  static const Color borderFocus = Color(0xFF48484A);
 
   /// Divider line
   static const Color divider = Color(0xFF2C2C2E);
 
-  /// Toggle active state
-  static const Color toggleActive = accent;
+  /// Toggle active state - iOS system green (decoupled from accent)
+  static const Color toggleActive = Color(0xFF34C759);
 
   /// Toggle inactive state
   static const Color toggleInactive = Color(0xFF39393D);
@@ -135,14 +137,14 @@ class DSColors {
   // LIGHT MODE COLORS
   // ============================================
 
-  /// Primary accent light - Purple CTA
-  static const Color accentDark = Color(0xFF7C5CFC);
+  /// Primary accent light - Monochrome (ChatGPT style: black in light mode)
+  static const Color accentDark = Color(0xFF000000);
 
   /// Accent hover light
-  static const Color accentHoverDark = Color(0xFF6B4AEB);
+  static const Color accentHoverDark = Color(0xFF3C3C43);
 
   /// Accent light background
-  static const Color accentLightDark = Color(0xFFF0ECFF);
+  static const Color accentLightDark = Color(0xFFF2F2F7);
 
   /// Secondary accent light
   static const Color accentSecondaryDark = Color(0xFF3B63D3);
@@ -186,14 +188,14 @@ class DSColors {
   /// Border light
   static const Color borderDark = Color(0xFFE5E5EA);
 
-  /// Focus border light
-  static const Color borderFocusDark = accentDark;
+  /// Focus border light - Medium gray (decoupled from accent)
+  static const Color borderFocusDark = Color(0xFFC7C7CC);
 
   /// Divider light
   static const Color dividerDark = Color(0xFFE5E5EA);
 
-  /// Toggle active light
-  static const Color toggleActiveDark = accentDark;
+  /// Toggle active light - iOS system green (decoupled from accent)
+  static const Color toggleActiveDark = Color(0xFF34C759);
 
   /// Toggle inactive light
   static const Color toggleInactiveDark = Color(0xFFD1D1D6);

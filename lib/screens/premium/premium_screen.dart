@@ -51,7 +51,7 @@ class PremiumScreen extends StatelessWidget {
             size: 64,
             color: colors.accent,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '프리미엄 사주',
             style: context.headingMedium.copyWith(
@@ -59,7 +59,7 @@ class PremiumScreen extends StatelessWidget {
               color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '만화로 보는 재미있는 사주 풀이',
             style: context.bodyLarge.copyWith(
@@ -67,7 +67,7 @@ class PremiumScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           // Feature list
           _buildFeatureItem(
             context,
@@ -75,21 +75,21 @@ class PremiumScreen extends StatelessWidget {
             title: '아름다운 일러스트',
             description: '전문 작가의 손길로 그려진 당신만의 이야기',
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           _buildFeatureItem(
             context,
             icon: Icons.book,
             title: '스토리텔링',
             description: '지루하지 않은 재미있는 사주 해석',
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           _buildFeatureItem(
             context,
             icon: Icons.insights,
             title: '심층 분석',
             description: '더 깊이 있는 인사이트 분석 제공',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -153,7 +153,7 @@ class PremiumScreen extends StatelessWidget {
                   color: colors.textPrimary,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: DSSpacing.xxs),
               Text(
                 description,
                 style: context.labelSmall.copyWith(

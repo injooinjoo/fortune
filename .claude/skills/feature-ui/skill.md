@@ -22,7 +22,7 @@ Discovery 보고서 없이 feature-ui 실행 시:
 필수 확인 사항:
 - 유사한 UI 위젯이 이미 있는지 확인
 - 공통 위젯(core/widgets/) 확인
-- TossDesignSystem 토큰 확인
+- DSColors 토큰 확인
 ```
 
 ---
@@ -60,8 +60,8 @@ Discovery 보고서 없이 feature-ui 실행 시:
 final isDark = Theme.of(context).brightness == Brightness.dark;
 Container(
   color: isDark
-    ? TossDesignSystem.backgroundDark
-    : TossDesignSystem.backgroundLight,
+    ? DSColors.backgroundDark
+    : DSColors.backgroundLight,
 )
 
 // ❌ 금지
@@ -77,19 +77,7 @@ Text('본문', style: context.bodyMedium)
 
 // ❌ 금지
 Text('제목', style: TextStyle(fontSize: 24))
-Text('본문', style: TossDesignSystem.bodyMedium)
-```
-
-### 컴포넌트 (필수)
-```dart
-// ✅ 블러 처리
-UnifiedBlurWrapper(
-  isBlurred: result.isBlurred,
-  child: content,
-)
-
-// ❌ 금지
-ImageFilter.blur(sigmaX: 10, sigmaY: 10)
+Text('본문', style: DSColors.bodyMedium)
 ```
 
 ### 아이콘 (필수)
@@ -127,9 +115,8 @@ UI 변경 시 자동 검증:
 - [ ] 하드코딩 색상 없음
 - [ ] 하드코딩 fontSize 없음
 - [ ] isDark 다크모드 대응
-- [ ] TossDesignSystem 토큰 사용
+- [ ] DSColors 토큰 사용
 - [ ] TypographyUnified 사용
-- [ ] UnifiedBlurWrapper 사용 (블러 필요시)
 
 ---
 

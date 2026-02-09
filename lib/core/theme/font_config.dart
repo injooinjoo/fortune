@@ -1,15 +1,15 @@
-/// App-wide font configuration - Central management
-///
-/// Claude-inspired Theme - NotoSansKR Font Family
-///
-/// Usage:
-/// ```dart
-/// // Font family reference
-/// fontFamily: FontConfig.primary
-///
-/// // Font size reference
-/// fontSize: FontConfig.displayLarge
-/// ```
+// App-wide font configuration - Central management
+//
+// Claude-inspired Theme - NotoSansKR Font Family
+//
+// Usage:
+// ```dart
+// // Font family reference
+// fontFamily: FontConfig.primary
+//
+// // Font size reference
+// fontSize: FontConfig.displayLarge
+// ```
 class FontConfig {
   FontConfig._();
 

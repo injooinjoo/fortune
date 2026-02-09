@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/design_system/design_system.dart';
-import '../../../core/theme/typography_unified.dart';
 
 /// Main content area of landing page with logo, title, and start button
 class LandingMainContent extends StatelessWidget {

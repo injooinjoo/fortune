@@ -90,7 +90,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '합',
           'hanja': '合',
           'description': hap.toString(),
-          'color': DSFortuneColors.categoryHealth, // 초록 - 조화
+          'color': DSColors.success, // 초록 - 조화
         });
       }
     }
@@ -103,7 +103,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '충',
           'hanja': '沖',
           'description': chung.toString(),
-          'color': DSFortuneColors.categoryTraditional, // 빨강 - 충돌
+          'color': DSColors.error, // 빨강 - 충돌
         });
       }
     }
@@ -116,7 +116,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '형',
           'hanja': '刑',
           'description': hyung.toString(),
-          'color': DSFortuneColors.categoryLotto, // 주황 - 형벌
+          'color': DSColors.warning, // 주황 - 형벌
         });
       }
     }
@@ -129,7 +129,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '파',
           'hanja': '破',
           'description': pa.toString(),
-          'color': DSFortuneColors.categoryLuckyItems, // 보라 - 파괴
+          'color': DSColors.accentSecondary, // 보라 - 파괴
         });
       }
     }
@@ -142,7 +142,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '해',
           'hanja': '害',
           'description': hae.toString(),
-          'color': DSFortuneColors.categoryDailyCalendar, // 인디고 - 해침
+          'color': DSColors.info, // 인디고 - 해침
         });
       }
     }

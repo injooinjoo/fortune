@@ -17,13 +17,13 @@ class ElementBalanceChart extends StatelessWidget {
     this.animated = true,
   });
 
-  // 오행별 색상과 아이콘
+  // 오행별 색상과 아이콘 (ChatGPT monochrome style)
   static const elementData = {
-    '목': {'color': DSFortuneColors.elementWood, 'icon': '🌳', 'name': '목(木)'},
-    '화': {'color': DSFortuneColors.elementFire, 'icon': '🔥', 'name': '화(火)'},
-    '토': {'color': DSFortuneColors.elementEarth, 'icon': '⛰️', 'name': '토(土)'},
-    '금': {'color': DSFortuneColors.elementMetal, 'icon': '⚡', 'name': '금(金)'},
-    '수': {'color': DSFortuneColors.elementWater, 'icon': '💧', 'name': '수(水)'},
+    '목': {'color': DSColors.success, 'icon': '🌳', 'name': '목(木)'},
+    '화': {'color': DSColors.error, 'icon': '🔥', 'name': '화(火)'},
+    '토': {'color': DSColors.warning, 'icon': '⛰️', 'name': '토(土)'},
+    '금': {'color': DSColors.textSecondaryDark, 'icon': '⚡', 'name': '금(金)'},
+    '수': {'color': DSColors.info, 'icon': '💧', 'name': '수(水)'},
   };
 
   @override

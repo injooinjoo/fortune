@@ -10,7 +10,7 @@ import '../theme/ds_extensions.dart';
 ///
 /// Features:
 /// - Gray background (no border by default)
-/// - Purple focus border
+/// - Gray focus border (monochrome)
 /// - Clean, minimal design
 ///
 /// Usage:
@@ -153,7 +153,7 @@ class _DSTextFieldState extends State<DSTextField> {
     if (hasError) {
       borderColor = colors.error;
     } else if (_isFocused) {
-      borderColor = colors.accent;
+      borderColor = colors.borderFocus;
     } else {
       borderColor = Colors.transparent;
     }
@@ -206,7 +206,7 @@ class _DSTextFieldState extends State<DSTextField> {
             style: typography.bodyMedium.copyWith(
               color: colors.textPrimary,
             ),
-            cursorColor: colors.accent,
+            cursorColor: colors.textPrimary,
             decoration: InputDecoration(
               hintText: widget.placeholder,
               hintStyle: typography.bodyMedium.copyWith(
@@ -215,7 +215,7 @@ class _DSTextFieldState extends State<DSTextField> {
               prefixIcon: widget.leadingIcon != null
                   ? Icon(
                       widget.leadingIcon,
-                      color: _isFocused ? colors.accent : colors.textTertiary,
+                      color: _isFocused ? colors.textPrimary : colors.textTertiary,
                       size: 20,
                     )
                   : null,

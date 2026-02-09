@@ -56,11 +56,11 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                 child: Column(
                   children: [
                     _buildInstructions(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: DSSpacing.lg),
                     _buildDreamInput(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: DSSpacing.lg),
                     _buildKeywordSelection(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: DSSpacing.lg),
                     _buildAnalyzeButton(),
                     if (_analysisResult != null) ...[
                       const SizedBox(height: 32),
@@ -85,14 +85,14 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             size: 48,
             color: DSColors.accentDark,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '태몽의 의미를 해석해드립니다',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '임신 중 꾼 특별한 꿈을 입력하면\n'
             '아기의 미래와 성향을 예측해드립니다.',
@@ -101,7 +101,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -116,9 +116,9 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                   size: 16,
                   color: DSColors.accentDark,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: DSSpacing.xs),
                 Text(
-                  '$_requiredTokens 복주머니 필요',
+                  '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: DSColors.accentDark,
                     fontWeight: FontWeight.bold,
@@ -178,14 +178,14 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             '꿈에 나온 주요 상징을 선택하면 더 정확한 해석이 가능합니다',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: DSColors.textSecondaryDark,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           ..._keywordCategories.entries.map((entry) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -196,13 +196,13 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: DSSpacing.sm),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: entry.value.map((keyword) => _buildKeywordChip(keyword)).toList(),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: DSSpacing.md),
             ],
           ),
         ),
@@ -293,7 +293,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                 color: DSColors.accentDark,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '태몽 해석 결과',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -302,14 +302,14 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             _analysisResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               height: 1.6,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           Row(
             children: [
               Expanded(

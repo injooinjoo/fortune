@@ -64,7 +64,7 @@ class MetricPillsWidget extends StatelessWidget {
   }
 
   Color _colorForValue(int value, DSColorScheme colors) {
-    if (value >= 70) return colors.accent;
+    if (value >= 70) return colors.success;
     if (value >= 40) return colors.accentSecondary;
     return colors.error;
   }

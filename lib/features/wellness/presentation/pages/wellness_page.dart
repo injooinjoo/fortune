@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 /// 웰니스 메인 페이지
 class WellnessPage extends ConsumerWidget {
@@ -39,25 +38,25 @@ class WellnessPage extends ConsumerWidget {
             children: [
               // 인사말 섹션
               _buildGreetingSection(context, colors),
-              const SizedBox(height: 32),
+              const SizedBox(height: DSSpacing.xl),
 
               // 오늘의 무드
               _buildSectionTitle(context, colors, '오늘의 기분'),
               const SizedBox(height: 12),
               _buildMoodSelector(context, colors),
-              const SizedBox(height: 32),
+              const SizedBox(height: DSSpacing.xl),
 
               // 웰니스 메뉴
               _buildSectionTitle(context, colors, '마음 챙김'),
               const SizedBox(height: 12),
               _buildWellnessMenu(context, colors),
-              const SizedBox(height: 32),
+              const SizedBox(height: DSSpacing.xl),
 
               // 오늘의 감사
               _buildSectionTitle(context, colors, '오늘 감사한 것'),
               const SizedBox(height: 12),
               _buildGratitudeCard(context, colors),
-              const SizedBox(height: 32),
+              const SizedBox(height: DSSpacing.xl),
 
               // 주간 통계
               _buildSectionTitle(context, colors, '이번 주 기록'),
@@ -92,7 +91,7 @@ class WellnessPage extends ConsumerWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         Text(
           '오늘 하루도 나를 돌보는 시간을 가져보세요',
           style: context.bodyMedium.copyWith(color: colors.textSecondary),
@@ -154,7 +153,7 @@ class WellnessPage extends ConsumerWidget {
                   mood.$2,
                   style: const TextStyle(fontSize: 32),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   mood.$3,
                   style: context.labelLarge.copyWith(
@@ -265,7 +264,7 @@ class WellnessPage extends ConsumerWidget {
                 size: 24,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: DSSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,7 +276,7 @@ class WellnessPage extends ConsumerWidget {
                       color: colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text(
                     subtitle,
                     style: context.labelLarge.copyWith(
@@ -320,7 +319,7 @@ class WellnessPage extends ConsumerWidget {
           Row(
             children: [
               const Text('✨', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '오늘의 감사',
                 style: context.bodyLarge.copyWith(
@@ -330,7 +329,7 @@ class WellnessPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           ...[1, 2, 3].map((index) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -414,7 +413,7 @@ class WellnessPage extends ConsumerWidget {
                       fontWeight: isToday ? FontWeight.w600 : FontWeight.w400,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: DSSpacing.sm),
                   Container(
                     width: 32,
                     height: 32,
@@ -443,7 +442,7 @@ class WellnessPage extends ConsumerWidget {
               );
             }).toList(),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -452,7 +451,7 @@ class WellnessPage extends ConsumerWidget {
                 color: Color(0xFFF97316),
                 size: 20,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 '${today + 1}일 연속 기록 중!',
                 style: context.bodyMedium.copyWith(

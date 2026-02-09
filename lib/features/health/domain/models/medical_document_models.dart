@@ -335,8 +335,6 @@ class MedicalDocumentAnalysisResult {
   final HealthRecommendations recommendations;
   final HealthRegimen healthRegimen;
   final DateTime timestamp;
-  final bool isBlurred;
-  final List<String> blurredSections;
 
   const MedicalDocumentAnalysisResult({
     required this.id,
@@ -348,8 +346,6 @@ class MedicalDocumentAnalysisResult {
     required this.recommendations,
     required this.healthRegimen,
     required this.timestamp,
-    this.isBlurred = false,
-    this.blurredSections = const [],
   });
 
   factory MedicalDocumentAnalysisResult.fromJson(Map<String, dynamic> json) {
@@ -368,8 +364,6 @@ class MedicalDocumentAnalysisResult {
       timestamp: data['timestamp'] != null
           ? DateTime.parse(data['timestamp'])
           : DateTime.now(),
-      isBlurred: data['isBlurred'] ?? false,
-      blurredSections: List<String>.from(data['blurredSections'] ?? []),
     );
   }
 
@@ -383,8 +377,6 @@ class MedicalDocumentAnalysisResult {
     'recommendations': recommendations.toJson(),
     'healthRegimen': healthRegimen.toJson(),
     'timestamp': timestamp.toIso8601String(),
-    'isBlurred': isBlurred,
-    'blurredSections': blurredSections,
   };
 
   /// 총 검사 항목 수

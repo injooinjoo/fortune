@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import '../../domain/entities/fortune.dart';
 import '../../core/constants/fortune_detailed_metadata.dart';
 
@@ -47,12 +46,6 @@ class FortuneResponseModel {
     if (data == null) {
       throw Exception('No fortune data available');
     }
-
-    // 블러 상태 로깅
-    developer.log(
-      '🔄 [toEntity] type=${data!.type}, isBlurred=${data!.isBlurred}, sections=${data!.blurredSections}',
-      name: 'FortuneResponseModel.toEntity',
-    );
 
     // Extract common fields
     final overallScore = data!.score ?? 
@@ -173,9 +166,6 @@ class FortuneResponseModel {
       fiveElements: data!.fiveElements,
       specialTip: data!.specialTip,
       period: data!.period,
-      // 블러 필드 전달 + 로깅
-      isBlurred: data!.isBlurred,
-      blurredSections: data!.blurredSections,
     );
   }
 }
@@ -255,10 +245,6 @@ class FortuneData {
   final String? specialTip;
   final String? period;
 
-  // Blur fields for premium content
-  final bool isBlurred;
-  final List<String> blurredSections;
-
   FortuneData({
     this.id,
     this.userId,
@@ -319,8 +305,7 @@ class FortuneData {
     this.fiveElements,
     this.specialTip,
     this.period,
-    this.isBlurred = false,
-    this.blurredSections = const []});
+  });
 
   factory FortuneData.fromJson(Map<String, dynamic> json) {
     // Handle fortune-specific content mapping
@@ -1178,37 +1163,7 @@ class FortuneData {
       fiveElements: json['fiveElements'],
       specialTip: json['special_tip'] ?? json['specialTip'],
       period: json['period'],
-
-      // Blur fields - 프리미엄 콘텐츠 블러 처리
-      isBlurred: _parseAndLogBlur(json),
-      blurredSections: _parseBlurredSections(json));
-  }
-
-  /// 블러 상태 파싱 및 로깅
-  static bool _parseAndLogBlur(Map<String, dynamic> json) {
-    final isBlurred = json['isBlurred'] as bool? ?? false;
-    final fortuneType = json['type'] ?? json['fortuneType'] ?? json['fortune_type'] ?? 'unknown';
-
-    developer.log(
-      '🔒 [BLUR] fortuneType=$fortuneType, isBlurred=$isBlurred',
-      name: 'FortuneData.fromJson',
     );
-
-    return isBlurred;
-  }
-
-  /// 블러 섹션 파싱 및 로깅
-  static List<String> _parseBlurredSections(Map<String, dynamic> json) {
-    final blurredSections = (json['blurredSections'] as List?)?.cast<String>() ?? [];
-
-    if (blurredSections.isNotEmpty) {
-      developer.log(
-        '🔒 [BLUR_SECTIONS] sections=${blurredSections.join(", ")}',
-        name: 'FortuneData.fromJson',
-      );
-    }
-
-    return blurredSections;
   }
 
   // Convert to domain entities

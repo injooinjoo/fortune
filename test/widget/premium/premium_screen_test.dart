@@ -1,5 +1,5 @@
-/// Premium Screen - Widget Test
-/// 프리미엄 화면 UI 테스트
+// Premium Screen - Widget Test
+// 프리미엄 화면 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -436,11 +436,11 @@ class _MockPremiumScreenState extends State<_MockPremiumScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         children: [
-                          const Icon(Icons.star, color: Colors.amber),
-                          const SizedBox(width: 8),
-                          const Text(
+                          Icon(Icons.star, color: Colors.amber),
+                          SizedBox(width: 8),
+                          Text(
                             '현재 구독 중',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
@@ -692,8 +692,8 @@ class _SubscriptionOption extends StatelessWidget {
           children: [
             Radio<String>(
               value: title.toLowerCase(),
-              groupValue: isSelected ? title.toLowerCase() : '',
-              onChanged: (_) => onTap(),
+              groupValue: isSelected ? title.toLowerCase() : '', // ignore: deprecated_member_use
+              onChanged: (_) => onTap(), // ignore: deprecated_member_use
             ),
             const SizedBox(width: 8),
             Expanded(

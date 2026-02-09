@@ -361,11 +361,6 @@ serve(async (req) => {
     // =====================================================
     // 응답 구성
     // =====================================================
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['categories', 'softSuggestions', 'recommendedItems', 'celebrityMatch']
-      : []
-
     const fortuneResponse = {
       // 표준화된 필드
       fortuneType: 'ootd-evaluation',
@@ -392,9 +387,7 @@ serve(async (req) => {
         celebrityMatch: analysisResult.celebrityMatch,
       },
 
-      timestamp: new Date().toISOString(),
-      isBlurred,
-      blurredSections,
+      timestamp: new Date().toISOString()
     }
 
     // =====================================================

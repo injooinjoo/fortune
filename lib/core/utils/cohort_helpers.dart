@@ -538,6 +538,6 @@ class CohortHelpers {
       }
     });
 
-    return '${dominant}과다';
+    return '$dominant과다';
   }
 }

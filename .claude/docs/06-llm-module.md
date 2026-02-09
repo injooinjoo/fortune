@@ -213,9 +213,6 @@ interface StandardFortuneResponse {
     luckyItems?: LuckyItems;      // 행운 아이템
     metadata?: object;            // 추가 메타데이터
 
-    // === Premium 블러 관련 ===
-    isBlurred: boolean;           // 블러 처리 여부
-    blurredSections?: string[];   // 블러된 섹션 목록
     percentile?: Percentile;      // 백분위 정보
 
     timestamp: string;            // ISO 8601 형식
@@ -290,8 +287,6 @@ interface Percentile {
       "direction": "남쪽",
       "time": "오후 3시"
     },
-    "isBlurred": false,
-    "blurredSections": [],
     "percentile": {
       "rank": 15,
       "total": 100,
@@ -320,7 +315,6 @@ interface Percentile {
 - [ ] `overallOutlook` → `content`
 - [ ] `overall_health` → `content`
 - [ ] 응답 wrapper: `{ success: true, data: {...} }` 형식 확인
-- [ ] `isBlurred`, `blurredSections` 필드 포함
 
 ---
 
@@ -522,7 +516,7 @@ faceCondition_preview: { score, message }
 emotionAnalysis_preview: { dominantEmotion, message }
 watchData: WatchData                      // Watch 경량 데이터
 
-// 프리미엄 섹션
+// 구독 섹션
 faceCondition: FaceCondition             // 상세 컨디션
 emotionAnalysis: EmotionAnalysis         // 감정 분석 전체
 makeupStyleRecommendations: {...}        // 여성 전용

@@ -653,8 +653,6 @@ class DecisionAnalysisResult {
   final List<String> confidenceFactors;
   final List<String> nextSteps;
   final DateTime timestamp;
-  final bool isBlurred;
-  final List<String> blurredSections;
   final String? decisionReceiptId;
 
   DecisionAnalysisResult({
@@ -666,8 +664,6 @@ class DecisionAnalysisResult {
     required this.confidenceFactors,
     required this.nextSteps,
     required this.timestamp,
-    required this.isBlurred,
-    required this.blurredSections,
     this.decisionReceiptId,
   });
 
@@ -686,8 +682,6 @@ class DecisionAnalysisResult {
       timestamp: json['timestamp'] != null
           ? DateTime.parse(json['timestamp'] as String)
           : DateTime.now(),
-      isBlurred: json['isBlurred'] as bool? ?? false,
-      blurredSections: (json['blurredSections'] as List<dynamic>?)?.cast<String>() ?? [],
       decisionReceiptId: json['decisionReceiptId'] as String?,
     );
   }
@@ -701,8 +695,6 @@ class DecisionAnalysisResult {
     'confidenceFactors': confidenceFactors,
     'nextSteps': nextSteps,
     'timestamp': timestamp.toIso8601String(),
-    'isBlurred': isBlurred,
-    'blurredSections': blurredSections,
     if (decisionReceiptId != null) 'decisionReceiptId': decisionReceiptId,
   };
 }

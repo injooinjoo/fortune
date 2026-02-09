@@ -1,20 +1,20 @@
-/// Performance Integration Test (Category C1)
-/// 성능 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/performance_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 8개:
-/// - PERF-001: 앱 시작 시간 (< 3초)
-/// - PERF-002: 화면 전환 시간 (< 300ms)
-/// - PERF-003: 리스트 스크롤 성능 (60fps)
-/// - PERF-004: 이미지 로딩 시간 (< 2초)
-/// - PERF-005: API 응답 대기 (< 5초)
-/// - PERF-006: 메모리 사용량 (< 200MB)
-/// - PERF-007: 배터리 소모 측정
-/// - PERF-008: 애니메이션 성능 (60fps)
+// Performance Integration Test (Category C1)
+// 성능 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/performance_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 8개:
+// - PERF-001: 앱 시작 시간 (< 3초)
+// - PERF-002: 화면 전환 시간 (< 300ms)
+// - PERF-003: 리스트 스크롤 성능 (60fps)
+// - PERF-004: 이미지 로딩 시간 (< 2초)
+// - PERF-005: API 응답 대기 (< 5초)
+// - PERF-006: 메모리 사용량 (< 200MB)
+// - PERF-007: 배터리 소모 측정
+// - PERF-008: 애니메이션 성능 (60fps)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -157,14 +157,12 @@ void main() {
       final stopwatch = Stopwatch()..start();
 
       // 콘텐츠 로딩 대기 (최대 5초)
-      bool contentLoaded = false;
       for (int i = 0; i < 50; i++) {
         await tester.pump(const Duration(milliseconds: 100));
 
         // 로딩 인디케이터가 사라졌는지 확인
         final loadingIndicator = find.byType(CircularProgressIndicator);
         if (loadingIndicator.evaluate().isEmpty) {
-          contentLoaded = true;
           break;
         }
       }

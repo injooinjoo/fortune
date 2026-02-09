@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/design_system.dart';
-import '../../../core/design_system/tokens/ds_luck_colors.dart';
 
 /// Helper methods for fortune infographic widgets
 class FortuneInfographicHelpers {
@@ -15,38 +14,38 @@ class FortuneInfographicHelpers {
     return 'D';
   }
 
-  /// Get keyword color based on weight (한국 전통 테마)
+  /// Get keyword color based on weight (ChatGPT 스타일)
   static Color getKeywordColor(double weight) {
-    if (weight >= 0.8) return DSLuckColors.levelSupreme; // 대대길
-    if (weight >= 0.6) return DSLuckColors.levelGreat; // 대길
-    if (weight >= 0.4) return DSLuckColors.levelGood; // 길
-    if (weight >= 0.2) return DSLuckColors.levelAverage; // 평
-    return DSLuckColors.levelSmallBad; // 소흉
+    if (weight >= 0.8) return DSColors.success; // 대대길
+    if (weight >= 0.6) return DSColors.info; // 대길
+    if (weight >= 0.4) return DSColors.accentSecondary; // 길
+    if (weight >= 0.2) return DSColors.warning; // 평
+    return DSColors.error; // 소흉
   }
 
-  /// Get lucky item color based on type (한국 전통 테마)
+  /// Get lucky item color based on type (ChatGPT 스타일)
   static Color getLuckyItemColor(String type) {
     switch (type.toLowerCase()) {
       case 'color':
       case '색상':
-        return DSLuckColors.categoryColor;
+        return DSColors.accentSecondary;
       case 'food':
       case '음식':
-        return DSLuckColors.categoryFood;
+        return DSColors.warning;
       case 'item':
       case '아이템':
-        return DSLuckColors.categoryFashion;
+        return DSColors.info;
       case 'number':
       case '숫자':
-        return DSLuckColors.categoryNumber;
+        return DSColors.success;
       case 'direction':
       case '방향':
-        return DSLuckColors.categoryDirection;
+        return DSColors.info;
       case 'place':
       case '장소':
-        return DSLuckColors.categoryTravel;
+        return DSColors.accentSecondary;
       default:
-        return DSLuckColors.fortuneGold;
+        return DSColors.warning;
     }
   }
 

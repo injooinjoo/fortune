@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 
 /// 부적 결과 카드 (이미지 중심 UI)
@@ -11,14 +10,12 @@ class ChatTalismanResultCard extends ConsumerWidget {
   final String imageUrl;
   final String categoryName;
   final String shortDescription;
-  final bool isBlurred;
 
   const ChatTalismanResultCard({
     super.key,
     required this.imageUrl,
     required this.categoryName,
     required this.shortDescription,
-    this.isBlurred = false,
   });
 
   @override
@@ -41,38 +38,35 @@ class ChatTalismanResultCard extends ConsumerWidget {
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
       ),
-      child: SimpleBlurOverlay(
-        isBlurred: isBlurred,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 부적 이미지 (9:16 비율)
-            _buildTalismanImage(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 부적 이미지 (9:16 비율)
+          _buildTalismanImage(context),
 
-            // 하단 정보
-            Padding(
-              padding: const EdgeInsets.all(DSSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // 카테고리 태그
-                  _buildCategoryTag(context),
-                  const SizedBox(height: DSSpacing.md),
+          // 하단 정보
+          Padding(
+            padding: const EdgeInsets.all(DSSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 카테고리 태그
+                _buildCategoryTag(context),
+                const SizedBox(height: DSSpacing.md),
 
-                  // 짧은 설명 (효능 + 사용법)
-                  Text(
-                    shortDescription,
-                    style: typography.bodyMedium.copyWith(
-                      color: colors.textSecondary,
-                      height: 1.6,
-                    ),
-                    textAlign: TextAlign.center,
+                // 짧은 설명 (효능 + 사용법)
+                Text(
+                  shortDescription,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.6,
                   ),
-                ],
-              ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
     // 좋아요 + 공유 버튼 (우상단)

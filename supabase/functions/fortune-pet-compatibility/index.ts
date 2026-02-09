@@ -29,8 +29,6 @@
  *   - activity: string - 행운의 활동
  * - health_forecast: object - 건강 예보 (프리미엄)
  * - activity_guide: object - 활동 가이드 (프리미엄)
- * - isBlurred: boolean - 블러 상태
- * - blurredSections: string[] - 블러된 섹션 목록
  *
  * @example
  * // Request
@@ -225,10 +223,8 @@ serve(async (req) => {
     if (cachedResult) {
       console.log('📦 [PetFortune] 캐시 히트!')
       const fortune = cachedResult.result
-      // 블러 처리 적용
-      const processedFortune = applyBlurring(fortune, isPremium)
       return new Response(
-        JSON.stringify({ success: true, data: processedFortune, cached: true, tokensUsed: 0 }),
+        JSON.stringify({ success: true, data: fortune, cached: true, tokensUsed: 0 }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -260,12 +256,9 @@ serve(async (req) => {
         ? JSON.parse(personalizedResult)
         : personalizedResult
 
-      // 블러 처리 적용
-      const processedFortune = applyBlurring(fortune, isPremium)
-
       // Percentile 계산
       const percentileData = await calculatePercentile(supabaseClient, 'pet-compatibility', fortune.score || fortune.overallScore || 80)
-      const fortuneWithPercentile = addPercentileToResult(processedFortune, percentileData)
+      const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
 
       return new Response(
         JSON.stringify({
@@ -737,12 +730,9 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
       .then(() => console.log(`[fortune-pet-compatibility] 💾 Cohort Pool 저장 완료`))
       .catch((err) => console.error(`[fortune-pet-compatibility] ⚠️ Cohort Pool 저장 실패:`, err))
 
-    // 블러 처리 적용
-    const processedFortune = applyBlurring(fortune, isPremium)
-
     // Percentile 계산
     const percentileData = await calculatePercentile(supabaseClient, 'pet-compatibility', fortune.score)
-    const fortuneWithPercentile = addPercentileToResult(processedFortune, percentileData)
+    const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
 
     return new Response(
       JSON.stringify({
@@ -773,19 +763,6 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
   }
 })
 
-// 블러 처리 함수 (데이터는 그대로 유지, 플래그만 설정)
-function applyBlurring(fortune: any, isPremium: boolean): any {
-  const blurredSections = isPremium ? [] : [
-    'pets_voice', 'health_insight', 'activity_recommendation',
-    'emotional_care', 'special_tips'
-  ]
-
-  return {
-    ...fortune,  // 실제 데이터 그대로 유지 (클라이언트에서 블러 처리)
-    isBlurred: !isPremium,
-    blurredSections
-  }
-}
 
 // Fallback 운세 생성
 function generateFallbackFortune(petName: string, petSpecies: string, petAge: number, ownerName: string, season: string): PetFortuneResponse {

@@ -6,7 +6,7 @@
 
 ## 역할
 
-1. **도메인 결정**: 토큰 소비율, 블러 섹션, 입력 필드 구성
+1. **도메인 결정**: 토큰 소비율, 입력 필드 구성
 2. **비즈니스 로직 검증**: 6단계 운세 조회 프로세스 준수
 3. **프롬프트 설계**: LLM 호출용 프롬프트 구조 검토
 4. **비용 최적화**: 72% API 비용 절감 로직 적용
@@ -29,29 +29,6 @@
 
 ---
 
-## 블러 섹션 가이드
-
-### 표준 블러 섹션 (4개)
-```
-blurredSections: [
-  'advice',           // 조언
-  'future_outlook',   // 미래 전망
-  'luck_items',       // 행운 아이템
-  'warnings',         // 주의사항
-]
-```
-
-### 운세 유형별 커스텀 섹션
-
-| 유형 | 추가 블러 섹션 |
-|------|--------------|
-| 궁합 | compatibility_detail, relationship_advice |
-| 타로 | card_interpretation, hidden_meaning |
-| 사주 | yearly_fortune, career_path |
-| 관상 | facial_analysis, personality_deep |
-
----
-
 ## 6단계 운세 조회 프로세스
 
 ```
@@ -67,13 +44,9 @@ blurredSections: [
 4️⃣ API 호출
    └─ 70% 확률로 LLM API 호출
 
-5️⃣ 결과 분기
+5️⃣ 결과 표시
    └─ 프리미엄: 전체 표시
-   └─ 일반: 블러 처리
-
-6️⃣ 블러 처리
-   └─ 일반 사용자: 4개 섹션 블러
-   └─ 광고 시청 후 해제 가능
+   └─ 일반: 기본 결과 표시
 ```
 
 ---
@@ -141,7 +114,6 @@ interface FortuneResponse {
 → 응답:
   - 토큰 소비: Medium (2)
   - 입력 필드: [birthDate, gender, petType, petBirthDate]
-  - 블러 섹션: [compatibility_detail, advice, future_outlook, warnings]
   - 결과 섹션: [overall, compatibility, care_tips, advice, warnings]
 ```
 
@@ -152,7 +124,6 @@ interface FortuneResponse {
 이 Agent는 다음 상황에서 활성화됩니다:
 - 운세, 사주, 타로, 궁합, 관상, 해몽, MBTI 관련 도메인 결정
 - 토큰 소비율 결정이 필요할 때
-- 블러 섹션 구성이 필요할 때
 - LLM 프롬프트 구조 검토가 필요할 때
 
 ---

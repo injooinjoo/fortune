@@ -10,7 +10,6 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/token_provider.dart';
-import '../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/floating_dream_bubbles.dart';
@@ -23,7 +22,6 @@ import '../../../../services/storage_service.dart';
 ///
 /// **개선 사항**:
 /// - ✅ UnifiedFortuneService 사용 (72% API 비용 절감)
-/// - ✅ BlurredFortuneContent 사용 (자동 블러/광고 처리)
 /// - ✅ FortuneResult 모델 사용 (일관성)
 class DreamInterpretationPage extends ConsumerStatefulWidget {
   const DreamInterpretationPage({super.key});
@@ -192,7 +190,7 @@ class _DreamInterpretationPageState
             '🌙',
             style: TextStyle(fontSize: FontConfig.emojiMedium),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           const SizedBox(
             width: 32,
             height: 32,
@@ -278,7 +276,7 @@ class _DreamInterpretationPageState
                     color: context.colors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: DSSpacing.md),
 
                 // 텍스트 입력바 (그라데이션 테두리)
                 Container(
@@ -287,7 +285,7 @@ class _DreamInterpretationPageState
                     gradient: LinearGradient(
                       colors: [
                         const Color(0xFF8B5CF6).withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
-                        DSFortuneColors.categoryDream.withValues(alpha: 0.6),
+                        DSColors.accentSecondary.withValues(alpha: 0.6),
                         const Color(0xFF8B5CF6).withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
                       ],
                       begin: Alignment.topLeft,
@@ -351,7 +349,7 @@ class _DreamInterpretationPageState
               _selectedTopic!.emoji,
               style: const TextStyle(fontSize: FontConfig.emojiXLarge),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: DSSpacing.md),
             Text(
               '${_selectedTopic!.title} 해몽 중...',
               style: context.headingSmall.copyWith(
@@ -370,7 +368,7 @@ class _DreamInterpretationPageState
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '신령이 꿈을 풀이하고 있어요',
             style: context.bodyMedium.copyWith(
@@ -400,27 +398,18 @@ class _DreamInterpretationPageState
         children: [
           // 종합 운세 카드
           _buildOverallCard(result),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
-          // 꿈 상징 (블러 대상)
-          BlurredFortuneContent(
-            fortuneResult: result,
-            child: _buildSymbolsCard(result),
-          ),
-          const SizedBox(height: 16),
+          // 꿈 상징
+          _buildSymbolsCard(result),
+          const SizedBox(height: DSSpacing.md),
 
-          // 해석 (블러 대상)
-          BlurredFortuneContent(
-            fortuneResult: result,
-            child: _buildInterpretationCard(result),
-          ),
-          const SizedBox(height: 16),
+          // 해석
+          _buildInterpretationCard(result),
+          const SizedBox(height: DSSpacing.md),
 
-          // 조언 (블러 대상)
-          BlurredFortuneContent(
-            fortuneResult: result,
-            child: _buildAdviceCard(result),
-          ),
+          // 조언
+          _buildAdviceCard(result),
 
           const SizedBox(height: 100),
         ],
@@ -437,7 +426,7 @@ class _DreamInterpretationPageState
         gradient: const LinearGradient(
           colors: [
             Color(0xFF8B5CF6), // 고유 색상 - 꿈 해몽 테마
-            DSFortuneColors.categoryDream,
+            DSColors.accentSecondary,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -453,14 +442,14 @@ class _DreamInterpretationPageState
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '행운 점수',
             style: context.bodySmall.copyWith(
               color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             '$score점',
             style: context.displayMedium.copyWith(
@@ -495,7 +484,7 @@ class _DreamInterpretationPageState
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -544,7 +533,7 @@ class _DreamInterpretationPageState
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             interpretation,
             style: context.bodyMedium.copyWith(
@@ -577,7 +566,7 @@ class _DreamInterpretationPageState
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             advice,
             style: context.bodyMedium.copyWith(
@@ -600,7 +589,7 @@ class _DreamInterpretationPageState
       // 프리미엄 상태 확인
       final tokenState = ref.read(tokenProvider);
       final premiumOverride = await DebugPremiumService.getOverrideValue();
-      final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+      final isPremium = premiumOverride ?? tokenState.hasUnlimitedTokens;
       debugPrint('🌙 [DreamPage] isPremium: $isPremium');
 
       FortuneResult result;
@@ -612,7 +601,6 @@ class _DreamInterpretationPageState
         if (hardcodedData != null) {
           debugPrint('🌙 [DreamPage] 하드코딩 데이터 사용: ${topic.id}');
           result = hardcodedData.toFortuneResult(
-            isPremium: isPremium,
             dreamTitle: topic.title,
           );
         } else {
@@ -626,16 +614,10 @@ class _DreamInterpretationPageState
         result = await _callDreamApi(topic, isPremium);
       }
 
-      // 일반 사용자는 블러 적용
-      if (!isPremium) {
-        result = result.copyWith(
-          isBlurred: true,
-          blurredSections: ['relatedSymbols', 'interpretation', 'todayGuidance'],
-        );
-      }
+      // 🎯 토큰 소비형 모델: 블러 처리 제거 (토큰 소비 후 바로 결과 표시)
 
       if (mounted) {
-        debugPrint('🌙 [DreamPage] 결과 설정 중: isBlurred=${result.isBlurred}, data keys=${result.data.keys.toList()}');
+        debugPrint('🌙 [DreamPage] 결과 설정 중: data keys=${result.data.keys.toList()}');
         setState(() {
           _fortuneResult = result;
           _showResult = true;

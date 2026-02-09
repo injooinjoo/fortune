@@ -194,7 +194,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       
       if (!hasEnoughTokens) {
         messages.updateLastMessage(ChatMessage(
-          text: '복주머니가 부족합니다. 복주머니를 충전해주세요.',
+          text: '토큰가 부족합니다. 토큰를 충전해주세요.',
           isUser: false,
           timestamp: DateTime.now()));
         setState(() => _isProcessing = false);
@@ -381,7 +381,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
               size: 40,
               color: DSColors.textPrimaryDark)),
           
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           
           // Welcome text
           Text(
@@ -407,7 +407,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
               fontWeight: FontWeight.w600,
               color: DSColors.textPrimaryDark)),
           
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           
           // Question grid
           Wrap(
@@ -490,7 +490,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                 color: DSColors.textPrimaryDark,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: DSSpacing.sm),
           ],
           
           Flexible(
@@ -519,7 +519,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                               DSColors.textSecondaryDark),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: DSSpacing.sm),
                         Text(
                           message.text,
                           style: context.bodySmall.copyWith(
@@ -554,7 +554,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             ),
           ),
           
-          if (isUser) const SizedBox(width: 8),
+          if (isUser) const SizedBox(width: DSSpacing.sm),
         ],
       ),
     );
@@ -610,7 +610,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (card.isReversed) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: DSSpacing.xxs),
                     Text(
                       '(역방향)',
                       style: context.labelSmall.copyWith(

@@ -1,5 +1,5 @@
-/// Fortune Cookie Widget Test
-/// 포춘쿠키 인터랙티브 기능 테스트
+// Fortune Cookie Widget Test
+// 포춘쿠키 인터랙티브 기능 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -392,7 +392,7 @@ class _MockFortuneCookieScreenState extends State<_MockFortuneCookieScreen> {
         // 쿠키 이미지
         GestureDetector(
           onTap: _breakCookie,
-          child: Container(
+          child: SizedBox(
             key: const Key('fortune_cookie_image'),
             width: 200,
             height: 200,

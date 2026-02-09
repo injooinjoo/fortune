@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/design_system/design_system.dart';
 
 class TarotDeckFanWidget extends StatefulWidget {
   final int cardCount;
@@ -122,9 +121,9 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
                   child: Transform(
                     alignment: Alignment.bottomCenter,
                     transform: Matrix4.identity()
-                      ..translate(0.0, -floatOffset + (1 - fanProgress) * 100)
+                      ..translateByDouble(0.0, -floatOffset + (1 - fanProgress) * 100, 0.0, 0.0)
                       ..rotateZ(angle)
-                      ..scale(0.9 + scaleBoost + fanProgress * 0.1),
+                      ..scaleByDouble(0.9 + scaleBoost + fanProgress * 0.1, 0.9 + scaleBoost + fanProgress * 0.1, 1.0, 1.0),
                     child: Opacity(
                       opacity: 0.5 + fanProgress * 0.5,
                       child: Stack(

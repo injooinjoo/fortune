@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fortune/core/design_system/design_system.dart';

@@ -4,10 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/exercise_fortune_model.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
-import '../../../../core/widgets/unified_button.dart' show UnifiedButton, BottomButtonSpacing;
+import '../../../../core/widgets/unified_button.dart' show UnifiedButton;
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/providers.dart';
 
@@ -67,8 +65,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     final isDark = context.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? ObangseokColors.hanjiBackgroundDark : ObangseokColors.hanjiBackground,
+      backgroundColor: context.colors.background,
       appBar: _buildAppBar(isDark),
       body: SafeArea(
         child: Stack(
@@ -97,26 +94,25 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
   }
 
   PreferredSizeWidget _buildAppBar(bool isDark) {
+    final typography = context.typography;
     return AppBar(
-      backgroundColor:
-          isDark ? ObangseokColors.hanjiBackgroundDark : ObangseokColors.hanjiBackground,
+      backgroundColor: context.colors.background,
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
         onPressed: _handleBack,
         icon: Icon(
           Icons.arrow_back_ios,
-          color: ObangseokColors.getMeok(context),
+          color: context.colors.textPrimary,
           size: 20,
         ),
       ),
       title: Text(
         '오늘의 운동',
-        style: TextStyle(
-          fontFamily: 'NanumMyeongjo',
+        style: typography.fortuneTitle.copyWith(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: ObangseokColors.getMeok(context),
+          color: context.colors.textPrimary,
         ),
       ),
       centerTitle: true,
@@ -136,31 +132,29 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
   // ============================================================================
 
   Widget _buildGoalSelectionPage(bool isDark) {
+    final typography = context.typography;
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: DSSpacing.pageHorizontal),
           Text(
             '어떤 목표로\n운동하시나요?',
-            style: TextStyle(
-              fontFamily: 'NanumMyeongjo',
+            style: typography.fortuneTitle.copyWith(
               fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: ObangseokColors.getMeok(context),
+              color: context.colors.textPrimary,
               height: 1.3,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           Text(
             '목표에 맞는 운동을 추천해 드립니다',
-            style: TextStyle(
-              fontSize: 14,
-              color: ObangseokColors.getMeok(context).withOpacity(0.7),
+            style: typography.bodyMedium.copyWith(
+              color: context.colors.textSecondary,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: DSSpacing.xl),
           ...ExerciseGoal.values.map((goal) => _buildGoalCard(goal, isDark)),
           const SizedBox(height: 100),
         ],
@@ -173,15 +167,15 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return GestureDetector(
       onTap: () => setState(() => _selectedGoal = goal),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(bottom: DSSpacing.buttonGap),
+        padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
           color: isSelected
-              ? ObangseokColors.jeok.withOpacity(0.1)
+              ? DSColors.error.withValues(alpha:0.1)
               : (context.colors.surface),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? ObangseokColors.jeok : Colors.grey.shade300,
+            color: isSelected ? DSColors.error : context.colors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -197,23 +191,23 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: isSelected
-                          ? ObangseokColors.jeok
-                          : ObangseokColors.getMeok(context),
+                          ? DSColors.error
+                          : context.colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text(
                     goal.description,
                     style: TextStyle(
                       fontSize: 13,
-                      color: ObangseokColors.getMeok(context).withOpacity(0.7),
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle, color: ObangseokColors.jeok, size: 24),
+              const Icon(Icons.check_circle, color: DSColors.error, size: 24),
           ],
         ),
       ),
@@ -226,22 +220,22 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
 
   Widget _buildSportSelectionPage(bool isDark) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: DSSpacing.pageHorizontal),
           Text(
             '어떤 운동을\n하시나요?',
             style: TextStyle(
               fontFamily: 'NanumMyeongjo',
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: ObangseokColors.getMeok(context),
+              color: context.colors.textPrimary,
               height: 1.3,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: DSSpacing.xl),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -270,11 +264,11 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       child: Container(
         decoration: BoxDecoration(
           color: isSelected
-              ? ObangseokColors.jeok.withOpacity(0.1)
+              ? DSColors.error.withValues(alpha:0.1)
               : (context.colors.surface),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? ObangseokColors.jeok : Colors.grey.shade300,
+            color: isSelected ? DSColors.error : context.colors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -282,15 +276,15 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(sport.emoji, style: const TextStyle(fontSize: 28)),
-            const SizedBox(height: 8),
+            const SizedBox(height: DSSpacing.sm),
             Text(
               sport.nameKo,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: isSelected
-                    ? ObangseokColors.jeok
-                    : ObangseokColors.getMeok(context),
+                    ? DSColors.error
+                    : context.colors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -306,50 +300,50 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
 
   Widget _buildDetailsInputPage(bool isDark) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: DSSpacing.pageHorizontal),
           Text(
             '상세 정보를\n알려주세요',
             style: TextStyle(
               fontFamily: 'NanumMyeongjo',
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: ObangseokColors.getMeok(context),
+              color: context.colors.textPrimary,
               height: 1.3,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: DSSpacing.xl),
 
           // 주당 운동 횟수
           _buildSectionTitle('주당 운동 횟수', isDark),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           _buildFrequencySlider(isDark),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
 
           // 운동 경력
           _buildSectionTitle('운동 경력', isDark),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           _buildExperienceChips(isDark),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
 
           // 체력 수준
           _buildSectionTitle('체력 수준', isDark),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           _buildFitnessSlider(isDark),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
 
           // 부상 이력
           _buildSectionTitle('부상 이력 (해당 시 선택)', isDark),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           _buildInjuryChips(isDark),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
 
           // 선호 시간대
           _buildSectionTitle('선호 시간대', isDark),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           _buildTimeChips(isDark),
           const SizedBox(height: 100),
         ],
@@ -363,7 +357,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       style: TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.w600,
-        color: ObangseokColors.getMeok(context),
+        color: context.colors.textPrimary,
       ),
     );
   }
@@ -374,16 +368,16 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('1회', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+            Text('1회', style: TextStyle(color: context.colors.textSecondary, fontSize: 12)),
             Text(
               '주 $_weeklyFrequency회',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: ObangseokColors.jeok,
+                color: DSColors.error,
               ),
             ),
-            Text('7회', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+            Text('7회', style: TextStyle(color: context.colors.textSecondary, fontSize: 12)),
           ],
         ),
         Slider(
@@ -391,7 +385,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           min: 1,
           max: 7,
           divisions: 6,
-          activeColor: ObangseokColors.jeok,
+          activeColor: DSColors.error,
           onChanged: (value) => setState(() => _weeklyFrequency = value.toInt()),
         ),
       ],
@@ -407,15 +401,15 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
         return ChoiceChip(
           label: Text('${level.nameKo} (${level.period})'),
           selected: isSelected,
-          selectedColor: ObangseokColors.jeok.withOpacity(0.2),
+          selectedColor: DSColors.error.withValues(alpha:0.2),
           backgroundColor: context.colors.surface,
           labelStyle: TextStyle(
-            color: isSelected ? ObangseokColors.jeok : ObangseokColors.getMeok(context),
+            color: isSelected ? DSColors.error : context.colors.textPrimary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             fontSize: 13,
           ),
           side: BorderSide(
-            color: isSelected ? ObangseokColors.jeok : Colors.grey.shade300,
+            color: isSelected ? DSColors.error : context.colors.border,
           ),
           onSelected: (_) => setState(() => _experienceLevel = level),
         );
@@ -429,18 +423,18 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('낮음', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+            Text('낮음', style: TextStyle(color: context.colors.textSecondary, fontSize: 12)),
             Row(
               children: List.generate(5, (index) {
                 final isFilled = index < _fitnessLevel;
                 return Icon(
                   isFilled ? Icons.star : Icons.star_border,
-                  color: isFilled ? ObangseokColors.jeok : Colors.grey.shade400,
+                  color: isFilled ? DSColors.error : context.colors.textTertiary,
                   size: 20,
                 );
               }),
             ),
-            Text('높음', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+            Text('높음', style: TextStyle(color: context.colors.textSecondary, fontSize: 12)),
           ],
         ),
         Slider(
@@ -448,7 +442,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           min: 1,
           max: 5,
           divisions: 4,
-          activeColor: ObangseokColors.jeok,
+          activeColor: DSColors.error,
           onChanged: (value) => setState(() => _fitnessLevel = value.toInt()),
         ),
       ],
@@ -464,15 +458,15 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
         return FilterChip(
           label: Text(area.nameKo),
           selected: isSelected,
-          selectedColor: ObangseokColors.jeok.withOpacity(0.2),
+          selectedColor: DSColors.error.withValues(alpha:0.2),
           backgroundColor: context.colors.surface,
           labelStyle: TextStyle(
-            color: isSelected ? ObangseokColors.jeok : ObangseokColors.getMeok(context),
+            color: isSelected ? DSColors.error : context.colors.textPrimary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             fontSize: 13,
           ),
           side: BorderSide(
-            color: isSelected ? ObangseokColors.jeok : Colors.grey.shade300,
+            color: isSelected ? DSColors.error : context.colors.border,
           ),
           onSelected: (selected) {
             setState(() {
@@ -502,15 +496,15 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
         return ChoiceChip(
           label: Text('${time.emoji} ${time.nameKo}'),
           selected: isSelected,
-          selectedColor: ObangseokColors.jeok.withOpacity(0.2),
+          selectedColor: DSColors.error.withValues(alpha:0.2),
           backgroundColor: context.colors.surface,
           labelStyle: TextStyle(
-            color: isSelected ? ObangseokColors.jeok : ObangseokColors.getMeok(context),
+            color: isSelected ? DSColors.error : context.colors.textPrimary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             fontSize: 13,
           ),
           side: BorderSide(
-            color: isSelected ? ObangseokColors.jeok : Colors.grey.shade300,
+            color: isSelected ? DSColors.error : context.colors.border,
           ),
           onSelected: (_) => setState(() => _preferredTime = time),
         );
@@ -528,18 +522,18 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     }
 
     final tokenState = ref.watch(tokenProvider);
-    final isPremium = tokenState.hasUnlimitedAccess;
+    final isPremium = tokenState.hasUnlimitedTokens;
 
     return Column(
       children: [
         // 탭바
         Container(
-          color: isDark ? ObangseokColors.hanjiBackgroundDark : ObangseokColors.hanjiBackground,
+          color: context.colors.background,
           child: TabBar(
             controller: _resultTabController,
-            labelColor: ObangseokColors.jeok,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: ObangseokColors.jeok,
+            labelColor: DSColors.error,
+            unselectedLabelColor: context.colors.textSecondary,
+            indicatorColor: DSColors.error,
             tabs: const [
               Tab(text: '추천 운동'),
               Tab(text: '오늘의 루틴'),
@@ -565,13 +559,13 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     final primary = result.primaryExercise;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.pageHorizontal),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 점수 카드
           _buildScoreCard(result, isDark),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
 
           // 추천 운동
           if (primary != null) ...[
@@ -580,12 +574,12 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: ObangseokColors.getMeok(context),
+                color: context.colors.textPrimary,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: DSSpacing.buttonGap),
             _buildPrimaryExerciseCard(primary, isDark),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
           ],
 
           // 대체 운동
@@ -595,25 +589,25 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: ObangseokColors.getMeok(context),
+                color: context.colors.textPrimary,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: DSSpacing.buttonGap),
             ...result.alternatives.map((alt) => _buildAlternativeCard(alt, isDark)),
           ],
 
           // 최적 시간
           if (result.optimalTime != null) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
             _buildOptimalTimeCard(result.optimalTime!, isDark),
           ],
 
           // 영양 팁
           if (result.nutritionTip != null) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
             _buildNutritionCard(result.nutritionTip!, isDark),
           ],
-          const SizedBox(height: 40),
+          const SizedBox(height: DSSpacing.xxl),
         ],
       ),
     );
@@ -621,10 +615,10 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
 
   Widget _buildScoreCard(ExerciseFortuneResult result, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.pageHorizontal),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [ObangseokColors.jeok, ObangseokColors.jeok.withOpacity(0.7)],
+          colors: [DSColors.error, DSColors.error.withValues(alpha:0.7)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -643,7 +637,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                     color: Colors.white70,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   result.summary,
                   style: const TextStyle(
@@ -652,11 +646,11 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
                 if (result.percentile != null)
                   Text(
                     '상위 ${result.percentile}%',
-                    style: const TextStyle(fontSize: 13, color: Colors.white70),
+                    style: context.bodySmall.copyWith(color: Colors.white70),
                   ),
               ],
             ),
@@ -665,7 +659,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
             width: 70,
             height: 70,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha:0.2),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -686,11 +680,11 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
 
   Widget _buildPrimaryExerciseCard(RecommendedExercise exercise, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: context.colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -703,61 +697,61 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: ObangseokColors.getMeok(context),
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
                 decoration: BoxDecoration(
-                  color: ObangseokColors.jeok.withOpacity(0.1),
+                  color: DSColors.error.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   exercise.intensity.nameKo,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
-                    color: ObangseokColors.jeok,
+                    color: DSColors.error,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             exercise.description,
             style: TextStyle(
               fontSize: 14,
-              color: ObangseokColors.getMeok(context).withOpacity(0.8),
+              color: context.colors.textSecondary,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           Row(
             children: [
-              Icon(Icons.schedule, size: 16, color: Colors.grey.shade600),
+              Icon(Icons.schedule, size: 16, color: context.colors.textSecondary),
               const SizedBox(width: 4),
               Text(
                 exercise.duration,
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                style: context.bodySmall.copyWith(color: context.colors.textSecondary),
               ),
               const SizedBox(width: 16),
-              Icon(Icons.category, size: 16, color: Colors.grey.shade600),
+              Icon(Icons.category, size: 16, color: context.colors.textSecondary),
               const SizedBox(width: 4),
               Text(
                 exercise.category,
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                style: context.bodySmall.copyWith(color: context.colors.textSecondary),
               ),
             ],
           ),
           if (exercise.benefits.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: DSSpacing.buttonGap),
             Wrap(
               spacing: 8,
               runSpacing: 4,
               children: exercise.benefits.map((b) => Chip(
-                    label: Text(b, style: const TextStyle(fontSize: 11)),
-                    backgroundColor: ObangseokColors.cheong.withOpacity(0.1),
+                    label: Text(b, style: context.labelSmall),
+                    backgroundColor: DSColors.info.withValues(alpha:0.1),
                     padding: EdgeInsets.zero,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   )).toList(),
@@ -773,7 +767,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.grey.shade50,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -787,15 +781,15 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: ObangseokColors.getMeok(context),
+                    color: context.colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: DSSpacing.xxs),
                 Text(
                   exercise.reason,
                   style: TextStyle(
                     fontSize: 12,
-                    color: ObangseokColors.getMeok(context).withOpacity(0.7),
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ],
@@ -804,12 +798,12 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: context.colors.backgroundTertiary,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               exercise.category,
-              style: TextStyle(fontSize: 10, color: context.colors.textSecondary),
+              style: context.labelTiny.copyWith(color: context.colors.textSecondary),
             ),
           ),
         ],
@@ -821,12 +815,12 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: ObangseokColors.cheong.withOpacity(0.1),
+        color: DSColors.info.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          Icon(Icons.schedule, color: ObangseokColors.cheong, size: 24),
+          const Icon(Icons.schedule, color: DSColors.info, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -837,15 +831,15 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: ObangseokColors.getMeok(context),
+                    color: context.colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: DSSpacing.xxs),
                 Text(
                   optimalTime.reason,
                   style: TextStyle(
                     fontSize: 13,
-                    color: ObangseokColors.getMeok(context).withOpacity(0.7),
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ],
@@ -862,28 +856,28 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: context.colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.restaurant, size: 20, color: ObangseokColors.hwang),
+              const Icon(Icons.restaurant, size: 20, color: DSColors.warning),
               const SizedBox(width: 8),
               Text(
                 '영양 팁',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: ObangseokColors.getMeok(context),
+                  color: context.colors.textPrimary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           _buildNutritionRow('운동 전', nutrition.preworkout, isDark),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           _buildNutritionRow('운동 후', nutrition.postworkout, isDark),
         ],
       ),
@@ -898,12 +892,12 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           width: 60,
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: ObangseokColors.hwang.withOpacity(0.1),
+            color: DSColors.warning.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
             label,
-            style: TextStyle(fontSize: 11, color: ObangseokColors.hwang),
+            style: context.labelSmall.copyWith(color: DSColors.warning),
             textAlign: TextAlign.center,
           ),
         ),
@@ -913,7 +907,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
             value,
             style: TextStyle(
               fontSize: 13,
-              color: ObangseokColors.getMeok(context).withOpacity(0.8),
+              color: context.colors.textSecondary,
             ),
           ),
         ),
@@ -931,33 +925,30 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
-      child: SimpleBlurOverlay(
-        isBlurred: result.isSectionBlurred('todayRoutine'),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 종목별 루틴
-            if (routine != null) ...[
-              if (routine.gymRoutine != null) _buildGymRoutineCard(routine.gymRoutine!, isDark),
-              if (routine.yogaRoutine != null) _buildYogaRoutineCard(routine.yogaRoutine!, isDark),
-              if (routine.cardioRoutine != null) _buildCardioRoutineCard(routine.cardioRoutine!, isDark),
-              if (routine.sportsRoutine != null) _buildSportsRoutineCard(routine.sportsRoutine!, isDark),
-            ],
-
-            // 주간 계획
-            if (result.weeklyPlan != null) ...[
-              const SizedBox(height: 24),
-              _buildWeeklyPlanCard(result.weeklyPlan!, isDark),
-            ],
-
-            // 부상 예방
-            if (result.injuryPrevention != null) ...[
-              const SizedBox(height: 24),
-              _buildInjuryPreventionCard(result.injuryPrevention!, isDark),
-            ],
-            const SizedBox(height: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 종목별 루틴
+          if (routine != null) ...[
+            if (routine.gymRoutine != null) _buildGymRoutineCard(routine.gymRoutine!, isDark),
+            if (routine.yogaRoutine != null) _buildYogaRoutineCard(routine.yogaRoutine!, isDark),
+            if (routine.cardioRoutine != null) _buildCardioRoutineCard(routine.cardioRoutine!, isDark),
+            if (routine.sportsRoutine != null) _buildSportsRoutineCard(routine.sportsRoutine!, isDark),
           ],
-        ),
+
+          // 주간 계획
+          if (result.weeklyPlan != null) ...[
+            const SizedBox(height: DSSpacing.lg),
+            _buildWeeklyPlanCard(result.weeklyPlan!, isDark),
+          ],
+
+          // 부상 예방
+          if (result.injuryPrevention != null) ...[
+            const SizedBox(height: DSSpacing.lg),
+            _buildInjuryPreventionCard(result.injuryPrevention!, isDark),
+          ],
+          const SizedBox(height: DSSpacing.xxl),
+        ],
       ),
     );
   }
@@ -968,7 +959,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ObangseokColors.jeok.withOpacity(0.3)),
+        border: Border.all(color: DSColors.error.withValues(alpha:0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -982,58 +973,58 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: ObangseokColors.getMeok(context),
+                  color: context.colors.textPrimary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 웜업
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: ObangseokColors.cheong.withOpacity(0.1),
+              color: DSColors.info.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
-                Icon(Icons.directions_run, color: ObangseokColors.cheong, size: 18),
+                const Icon(Icons.directions_run, color: DSColors.info, size: 18),
                 const SizedBox(width: 8),
                 Text('웜업 ${routine.warmupDuration}', style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     routine.warmupActivities.join(', '),
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                    style: context.bodySmall.copyWith(color: context.colors.textSecondary),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
 
           // 운동 목록
           ...routine.exercises.map((exercise) => _buildGymExerciseRow(exercise, isDark)),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           // 쿨다운
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: ObangseokColors.cheong.withOpacity(0.1),
+              color: DSColors.info.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
-                Icon(Icons.self_improvement, color: ObangseokColors.cheong, size: 18),
+                const Icon(Icons.self_improvement, color: DSColors.info, size: 18),
                 const SizedBox(width: 8),
                 Text('쿨다운 ${routine.cooldownDuration}', style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     routine.cooldownActivities.join(', '),
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                    style: context.bodySmall.copyWith(color: context.colors.textSecondary),
                   ),
                 ),
               ],
@@ -1049,7 +1040,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade800 : Colors.grey.shade50,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1057,8 +1048,8 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           Container(
             width: 24,
             height: 24,
-            decoration: BoxDecoration(
-              color: ObangseokColors.jeok,
+            decoration: const BoxDecoration(
+              color: DSColors.error,
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -1077,12 +1068,12 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                   exercise.name,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: ObangseokColors.getMeok(context),
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 Text(
                   exercise.targetMuscle,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  style: context.labelMedium.copyWith(color: context.colors.textSecondary),
                 ),
               ],
             ),
@@ -1092,15 +1083,15 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
             children: [
               Text(
                 '${exercise.sets}세트 x ${exercise.reps}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: ObangseokColors.jeok,
+                  color: DSColors.error,
                 ),
               ),
               Text(
                 '휴식 ${exercise.restSeconds}초',
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                style: context.labelSmall.copyWith(color: context.colors.textSecondary),
               ),
             ],
           ),
@@ -1115,7 +1106,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ObangseokColors.cheong.withOpacity(0.3)),
+        border: Border.all(color: DSColors.info.withValues(alpha:0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1129,32 +1120,32 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: ObangseokColors.getMeok(context),
+                  color: context.colors.textPrimary,
                 ),
               ),
               const Spacer(),
-              Text(routine.duration, style: TextStyle(color: Colors.grey.shade600)),
+              Text(routine.duration, style: TextStyle(color: context.colors.textSecondary)),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           ...routine.poses.map((pose) => _buildYogaPoseRow(pose, isDark)),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: ObangseokColors.cheong.withOpacity(0.1),
+              color: DSColors.info.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
-                Icon(Icons.air, color: ObangseokColors.cheong, size: 18),
+                const Icon(Icons.air, color: DSColors.info, size: 18),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     routine.breathingFocus,
                     style: TextStyle(
                       fontSize: 13,
-                      color: ObangseokColors.getMeok(context),
+                      color: context.colors.textPrimary,
                     ),
                   ),
                 ),
@@ -1171,7 +1162,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade800 : Colors.grey.shade50,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1179,8 +1170,8 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           Container(
             width: 24,
             height: 24,
-            decoration: BoxDecoration(
-              color: ObangseokColors.cheong,
+            decoration: const BoxDecoration(
+              color: DSColors.info,
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -1199,18 +1190,18 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                   pose.name,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: ObangseokColors.getMeok(context),
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 if (pose.sanskritName != null)
                   Text(
                     pose.sanskritName!,
-                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+                    style: context.labelSmall.copyWith(color: context.colors.textSecondary, fontStyle: FontStyle.italic),
                   ),
               ],
             ),
           ),
-          Text(pose.duration, style: TextStyle(fontSize: 13, color: ObangseokColors.cheong)),
+          Text(pose.duration, style: context.bodySmall.copyWith(color: DSColors.info)),
         ],
       ),
     );
@@ -1222,7 +1213,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ObangseokColors.cheong.withOpacity(0.3)),
+        border: Border.all(color: DSColors.info.withValues(alpha:0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1239,31 +1230,31 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: ObangseokColors.getMeok(context),
+                  color: context.colors.textPrimary,
                 ),
               ),
               if (routine.targetPace != null) ...[
                 const Spacer(),
-                Text('목표: ${routine.targetPace}', style: TextStyle(color: ObangseokColors.cheong)),
+                Text('목표: ${routine.targetPace}', style: const TextStyle(color: DSColors.info)),
               ],
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           ...routine.intervals.map((interval) => _buildCardioIntervalRow(interval, isDark)),
           if (routine.technique.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: DSSpacing.buttonGap),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: ObangseokColors.cheong.withOpacity(0.1),
+                color: DSColors.info.withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('테크닉 팁', style: TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 4),
-                  ...routine.technique.map((t) => Text('• $t', style: const TextStyle(fontSize: 13))),
+                  const SizedBox(height: DSSpacing.xs),
+                  ...routine.technique.map((t) => Text('• $t', style: context.bodySmall)),
                 ],
               ),
             ),
@@ -1278,15 +1269,15 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
     IconData phaseIcon;
     switch (interval.phase) {
       case '워밍업':
-        phaseColor = ObangseokColors.cheong;
+        phaseColor = DSColors.info;
         phaseIcon = Icons.directions_walk;
         break;
       case '쿨다운':
-        phaseColor = ObangseokColors.cheong;
+        phaseColor = DSColors.info;
         phaseIcon = Icons.self_improvement;
         break;
       default:
-        phaseColor = ObangseokColors.jeok;
+        phaseColor = DSColors.error;
         phaseIcon = Icons.flash_on;
     }
 
@@ -1294,7 +1285,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: phaseColor.withOpacity(0.1),
+        color: phaseColor.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1306,10 +1297,10 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
           Expanded(
             child: Text(
               interval.intensity,
-              style: TextStyle(fontSize: 13, color: ObangseokColors.getMeok(context)),
+              style: context.bodySmall.copyWith(color: context.colors.textPrimary),
             ),
           ),
-          Text(interval.duration, style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+          Text(interval.duration, style: context.bodySmall.copyWith(color: context.colors.textSecondary)),
         ],
       ),
     );
@@ -1321,7 +1312,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ObangseokColors.baek.withOpacity(0.3)),
+        border: Border.all(color: context.colors.border.withValues(alpha:0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1331,10 +1322,10 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: ObangseokColors.getMeok(context),
+              color: context.colors.textPrimary,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           ...routine.drills.map((drill) => _buildDrillRow(drill, isDark)),
         ],
       ),
@@ -1346,7 +1337,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade800 : Colors.grey.shade50,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -1358,13 +1349,13 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: ObangseokColors.baek,
+                  color: context.colors.surface,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
                   child: Text(
                     '${drill.order}',
-                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: context.colors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -1372,13 +1363,13 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
               Expanded(
                 child: Text(drill.name, style: const TextStyle(fontWeight: FontWeight.w600)),
               ),
-              Text(drill.duration, style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+              Text(drill.duration, style: context.bodySmall.copyWith(color: context.colors.textSecondary)),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             drill.purpose,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            style: context.labelMedium.copyWith(color: context.colors.textSecondary),
           ),
         ],
       ),
@@ -1394,31 +1385,31 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: context.colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.calendar_month, color: ObangseokColors.jeok, size: 20),
+              const Icon(Icons.calendar_month, color: DSColors.error, size: 20),
               const SizedBox(width: 8),
               Text(
                 '주간 계획',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: ObangseokColors.getMeok(context),
+                  color: context.colors.textPrimary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             plan.summary,
-            style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+            style: context.bodySmall.copyWith(color: context.colors.textSecondary),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.buttonGap),
           Row(
             children: List.generate(7, (index) {
               final day = days[index];
@@ -1431,7 +1422,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                   margin: EdgeInsets.only(right: index < 6 ? 4 : 0),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: isRest ? Colors.grey.shade200 : ObangseokColors.jeok.withOpacity(0.1),
+                    color: isRest ? context.colors.backgroundSecondary : DSColors.error.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -1441,13 +1432,13 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: isRest ? Colors.grey : ObangseokColors.jeok,
+                          color: isRest ? context.colors.textSecondary : DSColors.error,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         isRest ? '휴식' : '운동',
-                        style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                        style: context.labelTiny.copyWith(color: context.colors.textSecondary),
                       ),
                     ],
                   ),
@@ -1466,27 +1457,27 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+        border: Border.all(color: DSColors.warning.withValues(alpha:0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.health_and_safety, color: Colors.orange, size: 20),
+              const Icon(Icons.health_and_safety, color: DSColors.warning, size: 20),
               const SizedBox(width: 8),
               Text(
                 '부상 예방',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: ObangseokColors.getMeok(context),
+                  color: context.colors.textPrimary,
                 ),
               ),
             ],
           ),
           if (prevention.warnings.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: DSSpacing.buttonGap),
             ...prevention.warnings.map((w) => Padding(
                   padding: const EdgeInsets.only(bottom: 4),
                   child: Row(
@@ -1494,16 +1485,16 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                     children: [
                       const Text('⚠️', style: TextStyle(fontSize: 12)),
                       const SizedBox(width: 4),
-                      Expanded(child: Text(w, style: const TextStyle(fontSize: 13))),
+                      Expanded(child: Text(w, style: context.bodySmall)),
                     ],
                   ),
                 )),
           ],
           if (prevention.stretches.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text('추천 스트레칭', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: ObangseokColors.cheong)),
-            const SizedBox(height: 4),
-            ...prevention.stretches.map((s) => Text('• $s', style: const TextStyle(fontSize: 13))),
+            const SizedBox(height: DSSpacing.buttonGap),
+            Text('추천 스트레칭', style: context.bodySmall.copyWith(fontWeight: FontWeight.w600, color: DSColors.info)),
+            const SizedBox(height: DSSpacing.xs),
+            ...prevention.stretches.map((s) => Text('• $s', style: context.bodySmall)),
           ],
         ],
       ),
@@ -1567,7 +1558,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
 
     try {
       final tokenState = ref.read(tokenProvider);
-      final isPremium = tokenState.hasUnlimitedAccess;
+      final isPremium = tokenState.hasUnlimitedTokens;
 
       final payload = {
         'exerciseGoal': _selectedGoal!.toApiValue(),
@@ -1600,9 +1591,11 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
         );
       } else {
         final error = response.data?['error'] ?? '운동 분석에 실패했습니다';
+        if (!mounted) return;
         Toast.error(context, error);
       }
     } catch (e) {
+      if (!mounted) return;
       Toast.error(context, '운동 분석 중 오류가 발생했습니다');
       debugPrint('Exercise fortune error: $e');
     } finally {

@@ -1,12 +1,11 @@
-/// Fortune Flow - Integration Test
-/// 운세 조회 플로우 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/fortune_flow_test.dart -d <device_id>
-/// ```
+// Fortune Flow - Integration Test
+// 운세 조회 플로우 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/fortune_flow_test.dart -d <device_id>
+// ```
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:fortune/main.dart' as app;
@@ -100,7 +99,6 @@ void main() {
 
       // 블러 처리된 콘텐츠가 있는지 확인
       // UnifiedBlurWrapper 사용 확인
-      final blurredContent = find.byType(ClipRect);
       // 블러 콘텐츠가 있으면 광고 또는 프리미엄 버튼이 있어야 함
     });
 

@@ -154,7 +154,7 @@ class RarityCard extends StatelessWidget {
     if (popularityRank! <= 5) {
       return _RarityData(
         tier: 'LEGENDARY',
-        color: DSFortuneColors.fortuneGoldMuted,
+        color: DSColors.warning,
         percentage: (popularityRank! / 60 * 100),
         rankText: 'TOP $popularityRank',
         description: '전설적인 조합!',
@@ -162,7 +162,7 @@ class RarityCard extends StatelessWidget {
     } else if (popularityRank! <= 15) {
       return _RarityData(
         tier: 'EPIC',
-        color: DSFortuneColors.mysticalPurpleMuted,
+        color: DSColors.accentSecondary,
         percentage: (popularityRank! / 60 * 100),
         rankText: '$popularityRank위',
         description: '희귀한 조합',

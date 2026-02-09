@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'five_elements_explanation_bottom_sheet.dart';
-import 'package:fortune/core/design_system/tokens/fortune_colors.dart';
 
 class FiveElementsWidget extends ConsumerWidget {
   final Map<String, dynamic>? userProfile;
@@ -579,7 +578,7 @@ class FiveElementsWidget extends ConsumerWidget {
       case '화':
         return DSColors.warning;
       case '토':
-        return FortuneColors.goldLight;
+        return DSColors.warning;
       case '금':
         return DSColors.textSecondaryDark;
       case '수':

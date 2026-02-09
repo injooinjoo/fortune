@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
 import '../../theme/ds_extensions.dart';
-import '../../tokens/ds_fortune_colors.dart';
-import '../../tokens/ds_love_colors.dart';
-import '../../tokens/ds_luck_colors.dart';
+import '../../tokens/ds_colors.dart';
 import '../../../theme/font_config.dart';
+
+/// Legacy color helpers for traditional button (ChatGPT style migration)
+/// Maps old DSLuckColors/DSLoveColors to DSColors equivalents
+class _ButtonColors {
+  // Gold colors
+  static Color getGold(bool isDark) => isDark ? const Color(0xFFFFD700) : DSColors.warning;
+  static const Color fortuneGoldDark = Color(0xFFB8860B);
+
+  // Lucky red colors
+  static Color getLucky(bool isDark) => isDark ? DSColors.error : const Color(0xFFDC143C);
+  static const Color luckyRedDark = Color(0xFFB22222);
+
+  // Love colors
+  static Color getPrimary(bool isDark) => isDark ? const Color(0xFFE91E63) : const Color(0xFFD81B60);
+  static const Color rougePinkDark = Color(0xFFC2185B);
+
+  // Wealth/earth color
+  static const Color wealthLuck = Color(0xFFD4A017);
+}
 
 /// Korean Traditional Button Styles
 ///
@@ -141,7 +158,7 @@ class _TraditionalButtonState extends State<TraditionalButton>
   Widget _buildStandardButton(
       bool isDark, _TraditionalButtonColors colors, bool isDisabled) {
     final hanjiColor =
-        isDark ? DSFortuneColors.hanjiDark : DSFortuneColors.hanjiCream;
+        isDark ? DSColors.backgroundSecondary : DSColors.backgroundSecondaryDark;
 
     return Container(
       width: widget.isExpanded ? double.infinity : widget.width,
@@ -369,35 +386,36 @@ class _TraditionalButtonState extends State<TraditionalButton>
   }
 
   _TraditionalButtonColors _getColors(bool isDark) {
+    final brightness = isDark ? Brightness.dark : Brightness.light;
     switch (widget.colorScheme) {
       case TraditionalButtonColorScheme.fortune:
         return _TraditionalButtonColors(
-          primary: DSFortuneColors.getPrimary(isDark),
-          primaryDark: DSFortuneColors.mysticalPurpleDark,
+          primary: DSColors.getAccentSecondary(brightness),
+          primaryDark: DSColors.accentSecondaryDark,
         );
       case TraditionalButtonColorScheme.gold:
         return _TraditionalButtonColors(
-          primary: DSLuckColors.getGold(isDark),
-          primaryDark: DSLuckColors.fortuneGoldDark,
+          primary: _ButtonColors.getGold(isDark),
+          primaryDark: _ButtonColors.fortuneGoldDark,
         );
       case TraditionalButtonColorScheme.vermilion:
         return _TraditionalButtonColors(
-          primary: DSLuckColors.getLucky(isDark),
-          primaryDark: DSLuckColors.luckyRedDark,
+          primary: _ButtonColors.getLucky(isDark),
+          primaryDark: _ButtonColors.luckyRedDark,
         );
       case TraditionalButtonColorScheme.love:
         return _TraditionalButtonColors(
-          primary: DSLoveColors.getPrimary(isDark),
-          primaryDark: DSLoveColors.rougePinkDark,
+          primary: _ButtonColors.getPrimary(isDark),
+          primaryDark: _ButtonColors.rougePinkDark,
         );
       case TraditionalButtonColorScheme.ink:
         return _TraditionalButtonColors(
-          primary: DSFortuneColors.getInk(isDark),
-          primaryDark: DSFortuneColors.inkBlack,
+          primary: DSColors.getTextPrimary(brightness),
+          primaryDark: DSColors.textPrimaryDark,
         );
       case TraditionalButtonColorScheme.earth:
         return const _TraditionalButtonColors(
-          primary: DSLuckColors.wealthLuck,
+          primary: _ButtonColors.wealthLuck,
           primaryDark: Color(0xFF8B6914),
         );
     }
@@ -568,19 +586,20 @@ class _TraditionalTextButtonState extends State<TraditionalTextButton> {
   }
 
   Color _getColor(bool isDark) {
+    final brightness = isDark ? Brightness.dark : Brightness.light;
     switch (widget.colorScheme) {
       case TraditionalButtonColorScheme.fortune:
-        return DSFortuneColors.getPrimary(isDark);
+        return DSColors.getAccentSecondary(brightness);
       case TraditionalButtonColorScheme.gold:
-        return DSLuckColors.getGold(isDark);
+        return _ButtonColors.getGold(isDark);
       case TraditionalButtonColorScheme.vermilion:
-        return DSLuckColors.getLucky(isDark);
+        return _ButtonColors.getLucky(isDark);
       case TraditionalButtonColorScheme.love:
-        return DSLoveColors.getPrimary(isDark);
+        return _ButtonColors.getPrimary(isDark);
       case TraditionalButtonColorScheme.ink:
-        return DSFortuneColors.getInk(isDark);
+        return DSColors.getTextPrimary(brightness);
       case TraditionalButtonColorScheme.earth:
-        return DSLuckColors.wealthLuck;
+        return _ButtonColors.wealthLuck;
     }
   }
 }
@@ -661,19 +680,20 @@ class _TraditionalIconButtonState extends State<TraditionalIconButton> {
   }
 
   Color _getColor(bool isDark) {
+    final brightness = isDark ? Brightness.dark : Brightness.light;
     switch (widget.colorScheme) {
       case TraditionalButtonColorScheme.fortune:
-        return DSFortuneColors.getPrimary(isDark);
+        return DSColors.getAccentSecondary(brightness);
       case TraditionalButtonColorScheme.gold:
-        return DSLuckColors.getGold(isDark);
+        return _ButtonColors.getGold(isDark);
       case TraditionalButtonColorScheme.vermilion:
-        return DSLuckColors.getLucky(isDark);
+        return _ButtonColors.getLucky(isDark);
       case TraditionalButtonColorScheme.love:
-        return DSLoveColors.getPrimary(isDark);
+        return _ButtonColors.getPrimary(isDark);
       case TraditionalButtonColorScheme.ink:
-        return DSFortuneColors.getInk(isDark);
+        return DSColors.getTextPrimary(brightness);
       case TraditionalButtonColorScheme.earth:
-        return DSLuckColors.wealthLuck;
+        return _ButtonColors.wealthLuck;
     }
   }
 }

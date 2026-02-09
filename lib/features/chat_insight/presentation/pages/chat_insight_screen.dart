@@ -132,12 +132,12 @@ class _ChatInsightScreenState extends ConsumerState<ChatInsightScreen> {
               color: colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.full),
               border: Border.all(
-                  color: colors.accent.withValues(alpha: 0.2)),
+                  color: colors.border),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.lock, color: colors.accent, size: 14),
+                Icon(Icons.lock, color: colors.textSecondary, size: 14),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '로컬 분석 ON | 서버 OFF',
@@ -170,12 +170,12 @@ class _ChatInsightScreenState extends ConsumerState<ChatInsightScreen> {
             child: Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: colors.accent.withValues(alpha: 0.15),
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Text(
                 '카톡 대화 $messageCount줄 업로드 완료 ✓',
-                style: typography.bodySmall.copyWith(color: colors.accent),
+                style: typography.bodySmall.copyWith(color: colors.textPrimary),
               ),
             ),
           ),
@@ -202,7 +202,7 @@ class _ChatInsightScreenState extends ConsumerState<ChatInsightScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.analytics_outlined, color: colors.accent, size: 48),
+            Icon(Icons.analytics_outlined, color: colors.textSecondary, size: 48),
             const SizedBox(height: DSSpacing.lg),
             Text(
               '분석 중...',
@@ -213,7 +213,7 @@ class _ChatInsightScreenState extends ConsumerState<ChatInsightScreen> {
             LinearProgressIndicator(
               value: _progress,
               backgroundColor: colors.surface,
-              valueColor: AlwaysStoppedAnimation(colors.accent),
+              valueColor: AlwaysStoppedAnimation(colors.textSecondary),
             ),
             const SizedBox(height: DSSpacing.sm),
             Text(
@@ -475,7 +475,7 @@ class _SystemBubble extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: colors.accent, size: 20),
+            Icon(icon, color: colors.textSecondary, size: 20),
             const SizedBox(width: DSSpacing.sm),
             Expanded(
               child: Text(

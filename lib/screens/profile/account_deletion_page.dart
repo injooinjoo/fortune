@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/theme/typography_unified.dart';
 import '../../services/account_deletion_service.dart';
 import '../../shared/components/section_header.dart';
 import '../../shared/components/toast.dart';
@@ -132,7 +131,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
           const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
-              '회원 탈퇴는 되돌릴 수 없습니다.\n탈퇴 전 남은 복주머니와 프리미엄 상태를 확인해 주세요.',
+              '회원 탈퇴는 되돌릴 수 없습니다.\n탈퇴 전 남은 토큰와 프리미엄 상태를 확인해 주세요.',
               style: context.bodySmall.copyWith(
                 color: context.colors.textSecondary,
                 height: 1.4,
@@ -233,7 +232,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
               _buildConfirmItem(
                 value: _ackSubscription,
                 onChanged: (value) => setState(() => _ackSubscription = value),
-                text: '남은 복주머니/프리미엄 혜택은 소멸됩니다.',
+                text: '남은 토큰/프리미엄 혜택은 소멸됩니다.',
               ),
               const SizedBox(height: DSSpacing.md),
 

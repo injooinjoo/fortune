@@ -1,4 +1,4 @@
-/// 사주 천간과 지지에 대한 상세 설명 데이터
+// 사주 천간과 지지에 대한 상세 설명 데이터
 class SajuElementExplanations {
   /// 천간(天干) 설명
   static const Map<String, Map<String, dynamic>> cheonganExplanations = {

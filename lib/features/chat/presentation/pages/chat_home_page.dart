@@ -12,7 +12,6 @@ import '../../../../core/services/personality_dna_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/services/asset_delivery_service.dart';
 import '../../../../core/constants/asset_pack_config.dart';
-import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../shared/components/profile_header_icon.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
@@ -34,7 +33,6 @@ import '../../data/services/free_chat_service.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../providers/chat_messages_provider.dart';
 import '../providers/chat_survey_provider.dart';
-import '../../domain/models/chat_message.dart';
 import '../widgets/chat_welcome_view.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/survey/fortune_type_chips.dart';
@@ -79,11 +77,20 @@ import '../../../../data/dream_interpretations.dart';
 import '../../../interactive/presentation/widgets/cookie_shard_break_widget.dart';
 import '../../../../core/services/talisman_generation_service.dart';
 import '../../../../services/storage_service.dart';
-import '../../../../services/ad_service.dart';
 import '../../constants/chat_placeholders.dart';
 import '../../../../services/deep_link_service.dart';
 import '../widgets/profile_required_bottom_sheet.dart';
 import '../../services/chat_scroll_service.dart';
+import '../../../chat_insight/domain/services/kakao_parser.dart';
+import '../../../chat_insight/domain/services/anonymizer.dart';
+import '../../../chat_insight/domain/services/feature_extractor.dart';
+import '../../../chat_insight/data/models/chat_insight_result.dart';
+import '../../../chat_insight/data/storage/insight_storage.dart';
+import '../../../chat_insight/presentation/widgets/paste_dialog.dart';
+import '../../../chat_insight/presentation/widgets/relation_context_card.dart';
+import '../../../character/presentation/providers/character_provider.dart';
+import '../widgets/survey/multi_select_survey_widget.dart';
+import '../widgets/survey/text_with_skip_input.dart';
 
 /// Chat-First 메인 홈 페이지
 class ChatHomePage extends ConsumerStatefulWidget {
@@ -132,11 +139,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   /// 포춘쿠키 애니메이션 오버레이 표시 여부
   bool _showCookieAnimation = false;
 
+  /// 카톡 대화 분석: 파싱된 메시지 (분석 완료 후 null 처리)
+  List<ParsedMessage>? _chatInsightParsedMessages;
+
   /// 오늘의 타로 덱 (다운로드 완료 시 설정)
   String? _todaysTarotDeck;
-
-  /// 타로 덱 다운로드 중 여부
-  bool _isDownloadingTarotDeck = false;
 
   static const Map<FortuneSurveyType, String> _fortuneBackgroundAssets = {
     FortuneSurveyType.daily: 'assets/images/chat/backgrounds/bg_daily.png',
@@ -198,6 +205,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       _checkAndStartOnboarding();
       _precacheChatBackgrounds();
       _checkPendingDeepLink();
+      _checkPendingFortuneChip();
     });
   }
 
@@ -224,6 +232,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       }
     } catch (e) {
       debugPrint('⚠️ [DeepLink] Error checking pending deep link: $e');
+    }
+  }
+
+  /// 운세 패널에서 선택된 칩 확인 및 자동 처리
+  void _checkPendingFortuneChip() {
+    final pendingChip = ref.read(pendingFortuneChipProvider);
+    if (pendingChip != null) {
+      debugPrint('🎯 [FortunePanel] Pending chip found: ${pendingChip.label}');
+      // 처리 후 초기화
+      ref.read(pendingFortuneChipProvider.notifier).state = null;
+      // 칩 탭 핸들러 호출
+      _handleChipTap(pendingChip);
     }
   }
 
@@ -319,11 +339,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               vertical: DSSpacing.md,
             ),
             decoration: BoxDecoration(
-              color: colors.accentSecondary,
+              color: colors.textSecondary,
               borderRadius: BorderRadius.circular(DSRadius.lg),
               boxShadow: [
                 BoxShadow(
-                  color: colors.accentSecondary.withValues(alpha: 0.3),
+                  color: colors.textSecondary.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -332,16 +352,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.calendar_month_rounded,
-                  color: Colors.white,
+                  color: colors.textPrimary,
                   size: 22,
                 ),
                 const SizedBox(width: DSSpacing.sm),
                 Text(
                   '날짜 선택하기',
                   style: typography.labelLarge.copyWith(
-                    color: Colors.white,
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -577,8 +597,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         text: '오늘의 메시지',
         fortuneType: 'fortune-cookie',
         fortune: fortune,
-        isBlurred: false,
-        blurredSections: const [],
       );
 
       // 추천 칩 표시
@@ -659,6 +677,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
 
     // 4. 프로필 없음 → 선택 모달 표시
+    if (!mounted) return false;
     final action = await ProfileRequiredBottomSheet.show(context);
 
     if (action == ProfileRequiredAction.login) {
@@ -693,9 +712,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       if (!canProceed) return;
     }
 
-    // 카톡 대화 분석: Chat Insight 화면으로 직접 이동
+    // 카톡 대화 분석: 인라인 채팅 플로우
     if (chip.fortuneType == 'chatInsight') {
-      context.push('/chat-insight');
+      chatNotifier.addUserMessage(chip.label);
+      _scrollToBottom();
+      _startChatInsightFlow();
       return;
     }
 
@@ -722,6 +743,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       _setChatBackgroundAsset(
         'assets/images/chat/backgrounds/bg_breathing.png',
       );
+      if (!mounted) return;
       context.push('/wellness/meditation');
       return;
     }
@@ -802,6 +824,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           final typeName = _getTypeDisplayName(surveyType);
           final fortuneTypeStr = _mapSurveyTypeToString(surveyType);
 
+          // 로딩 인디케이터 표시
+          chatNotifier.showTypingIndicator();
+          _scrollToBottom();
+
           _callFortuneApiWithCache(type: surveyType, answers: {})
               .then((fortune) {
             // Fortune 객체와 함께 리치 카드 표시
@@ -810,8 +836,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               text: typeName,
               fortuneType: fortuneTypeStr,
               fortune: fortune,
-              isBlurred: fortune.isBlurred,
-              blurredSections: fortune.blurredSections,
             );
 
             // 운세 결과 후 추천 칩 표시 (스크롤 없이 - 결과 카드가 보이게 유지)
@@ -820,6 +844,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             });
           }).catchError((error) {
             Logger.error('Fortune API 호출 실패', error);
+            chatNotifier.hideTypingIndicator();
             chatNotifier.addAiMessage(
               '죄송해요, 분석 중 문제가 발생했어요. 😢\n'
               '잠시 후 다시 시도해주세요.\n\n'
@@ -856,8 +881,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                   text: '기간별 인사이트',
                   fortuneType: 'daily_calendar',
                   fortune: cachedFortune,
-                  isBlurred: cachedFortune.isBlurred,
-                  blurredSections: cachedFortune.blurredSections,
                   selectedDate: DateTime.now(), // 캐시된 결과는 오늘 날짜
                 );
 
@@ -1898,8 +1921,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             awayTeam: awayTeam,
             gameDate: gameDate,
             favoriteTeam: favoriteTeam,
-            isBlurred: fortune.isBlurred,
-            blurredSections: fortune.blurredSections,
           );
 
           Logger.info(
@@ -1920,8 +1941,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           pastLifeResult = PastLifeResult.fromJson({
             'id': fortune.id,
             ...metadata,
-            'isBlurred': fortune.isBlurred,
-            'blurredSections': fortune.blurredSections,
           });
 
           Logger.info(
@@ -1941,8 +1960,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
           yearlyEncounterResult = YearlyEncounterResult.fromJson({
             ...metadata,
-            'isBlurred': fortune.isBlurred,
-            'blurredSections': fortune.blurredSections,
           });
 
           Logger.info(
@@ -1952,14 +1969,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
       }
 
-      // 블러 상태 로깅
-      Logger.info(
-        '🔒 [ChatHome] addFortuneResult - '
-        'type=$fortuneTypeStr, '
-        'isBlurred=${fortune.isBlurred}, '
-        'sections=${fortune.blurredSections}',
-      );
-
       // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
       chatNotifier.addFortuneResultMessage(
         text: typeName,
@@ -1968,8 +1977,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         matchInsight: matchInsight,
         pastLifeResult: pastLifeResult,
         yearlyEncounterResult: yearlyEncounterResult,
-        isBlurred: fortune.isBlurred,
-        blurredSections: fortune.blurredSections,
         selectedDate: selectedDate,
       );
       surveyNotifier.clearCompleted();
@@ -2051,13 +2058,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         zodiacAnimal: zodiacAnimal,
       );
 
-      // 프리미엄 상태 확인
-      final isPremium = ref.read(isPremiumProvider);
-
       // 결과 메시지 추가
       chatNotifier.addPersonalityDnaResult(
         dna: dna,
-        isBlurred: !isPremium,
       );
       _scrollToBottom();
 
@@ -2094,14 +2097,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       );
 
       // 프리미엄 상태 확인
-      final isPremium = ref.read(isPremiumProvider);
-
       // 결과 메시지 추가 (이미지 URL + 짧은 설명)
       chatNotifier.addTalismanResult(
         imageUrl: result.imageUrl,
         categoryName: result.categoryName,
         shortDescription: result.shortDescription,
-        isBlurred: !isPremium,
       );
       _scrollToBottom();
 
@@ -2454,10 +2454,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       return;
     }
 
-    setState(() {
-      _isDownloadingTarotDeck = true;
-    });
-
     // 오늘의 덱 이름 가져오기
     final deckName = AssetPackConfig.getTodaysDeck();
     final deckDisplayName = AssetPackConfig.getTarotDeckDisplayName(deckName);
@@ -2480,7 +2476,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       if (preparedDeck != null) {
         setState(() {
           _todaysTarotDeck = preparedDeck;
-          _isDownloadingTarotDeck = false;
         });
 
         chatNotifier.addAiMessage(
@@ -2492,10 +2487,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // 설문 시작
         _startTarotSurvey(surveyNotifier, chatNotifier);
       } else {
-        setState(() {
-          _isDownloadingTarotDeck = false;
-        });
-
         chatNotifier.addAiMessage(
           '덱 준비 중 문제가 발생했어요. 😢\n'
           '기본 덱으로 진행할게요.',
@@ -2514,7 +2505,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       if (!mounted) return;
 
       setState(() {
-        _isDownloadingTarotDeck = false;
         _todaysTarotDeck = 'rider_waite'; // 기본 덱으로 폴백
       });
 
@@ -2587,14 +2577,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // ChatSajuResultCard로 결과 표시
       // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
-      final isPremiumForSaju = ref.read(isPremiumProvider);
       chatNotifier.addSajuResultMessage(
         text: '사주 분석',
         sajuData: sajuState.sajuData!,
-        isBlurred: !isPremiumForSaju,
-        blurredSections: !isPremiumForSaju
-            ? const ['sajuInterpretation', 'yearlyFortune', 'compatibility']
-            : const [],
       );
 
       // 오늘의 운세 자동 호출 (사주 분석 후 무료 제공)
@@ -2609,16 +2594,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             answers: {}, // 기본 파라미터로 호출 (mood, schedule, category 없이)
           );
 
-          // 프리미엄 구독 상태에 따라 블러 적용
           // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
-          // API에서 반환한 blurredSections 사용
-          final isPremium = ref.read(isPremiumProvider);
           chatNotifier.addFortuneResultMessage(
             text: '오늘의 인사이트',
             fortuneType: 'daily',
-            fortune: isPremium ? fortune.copyWith(isBlurred: false) : fortune,
-            isBlurred: fortune.isBlurred,
-            blurredSections: fortune.blurredSections,
+            fortune: fortune,
           );
         } catch (e) {
           Logger.error('오늘의 운세 호출 실패', e);
@@ -2698,8 +2678,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           // 짧은 딜레이로 자연스러운 로딩 효과
           await Future.delayed(const Duration(milliseconds: 800));
 
-          // 프리미엄 상태에 따라 블러 적용 (Edge Function과 동일한 로직)
-          final isPremium = ref.read(isPremiumProvider);
           final fortune = Fortune(
             id: 'hardcoded_dream_${DateTime.now().millisecondsSinceEpoch}',
             userId: userId,
@@ -2720,16 +2698,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               'psychologicalAnalysis': hardcodedData['psychologicalAnalysis'],
               'categories': hardcodedData['categories'],
             },
-            isBlurred: !isPremium,
-            // Edge Function과 동일한 blurredSections
-            blurredSections: isPremium
-                ? const []
-                : const [
-                    'psychologicalInsight',
-                    'todayGuidance',
-                    'symbolAnalysis',
-                    'actionAdvice',
-                  ],
           );
 
           // DB 저장
@@ -2800,9 +2768,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       shareCard: data['shareCard'] as Map<String, dynamic>?,
       uiBlocks: (data['uiBlocks'] as List?)?.cast<String>(),
       explain: data['explain'] as Map<String, dynamic>?,
-      isBlurred: data['isBlurred'] as bool? ?? false,
-      blurredSections:
-          (data['blurredSections'] as List?)?.cast<String>() ?? const [],
       percentile: data['percentile'] as int?,
       totalTodayViewers: data['totalTodayViewers'] as int?,
       isPercentileValid: data['isPercentileValid'] as bool? ?? false,
@@ -4212,7 +4177,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case SurveyInputType.multiSelect:
         if (options.isEmpty) return null;
         // ✅ 다중 선택용 위젯 (완료 버튼 포함)
-        return _MultiSelectSurveyWidget(
+        return MultiSelectSurveyWidget(
           options: options,
           maxSelections: 3, // 최대 3개 선택
           onConfirm: (selectedIds) {
@@ -4387,7 +4352,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       case SurveyInputType.textWithSkip:
         // "없음" 칩 + 텍스트 입력 (텍스트 입력 시 칩 숨김)
-        return _TextWithSkipInput(
+        return TextWithSkipInput(
           onSkip: () => _handleSurveyAnswerValue('', '없음'),
           textController: _textController,
         );
@@ -4814,100 +4779,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     return padding;
   }
 
-  /// 블러된 메시지가 있는지 확인
-  /// isBlurred가 true이면서 blurredSections가 비어있지 않아야 실제 블러가 적용됨
-  bool _hasAnyBlurredMessage() {
-    final chatState = ref.read(chatMessagesProvider);
-    return chatState.messages.any((msg) =>
-      (msg.type == ChatMessageType.fortuneResult ||
-       msg.type == ChatMessageType.sajuResult ||
-       msg.type == ChatMessageType.personalityDnaResult ||
-       msg.type == ChatMessageType.talismanResult) &&
-      msg.isBlurred &&
-      msg.blurredSections.isNotEmpty
-    );
-  }
-
-  /// 광고 FloatingButton 빌더
-  Widget _buildAdFloatingButton() {
-    final colors = context.colors;
-
-    return Center(
-      child: Material(
-        color: colors.accent,
-        borderRadius: BorderRadius.circular(DSRadius.full),
-        elevation: 4,
-        child: InkWell(
-          onTap: _showAdAndUnblurAll,
-          borderRadius: BorderRadius.circular(DSRadius.full),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.lg,
-              vertical: DSSpacing.md,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.play_circle_outline, color: Colors.white, size: 20),
-                const SizedBox(width: DSSpacing.sm),
-                Text(
-                  '광고보고 전체 보기',
-                  style: context.labelLarge.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// 광고 시청 후 전체 블러 해제
-  Future<void> _showAdAndUnblurAll() async {
-    try {
-      final adService = AdService();
-
-      // 광고가 준비되지 않았으면 로딩 표시
-      if (!adService.isRewardedAdReady) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('광고를 준비하는 중...'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-      }
-
-      // showRewardedAdWithCallback은 광고 미준비 시 자동 로드 후 표시
-      await adService.showRewardedAdWithCallback(
-        onUserEarnedReward: () {
-          Logger.info('[ChatHomePage] 광고 시청 완료, 전체 블러 해제 시작');
-          // 전체 블러 해제
-          ref.read(chatMessagesProvider.notifier).unblurAllMessages();
-          Logger.info('[ChatHomePage] unblurAllMessages() 호출 완료');
-          if (mounted) {
-            setState(() {}); // FloatingButton 숨기기 위해 리빌드
-          }
-        },
-        onAdFailedToShow: () {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고를 불러오지 못했습니다. 다시 시도해주세요.'),
-              ),
-            );
-          }
-        },
-      );
-    } catch (e) {
-      Logger.error('광고 표시 실패: $e');
-    }
-  }
-
   Widget _buildChatBackground() {
     final colors = context.colors;
     final isDark = context.isDark;
@@ -4933,7 +4804,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         child: SizedBox.expand(
           key: ValueKey(asset),
           child: Opacity(
-            opacity: 0.3,
+            opacity: 0.1,
             child: Image.asset(
               asset,
               fit: BoxFit.cover,
@@ -4966,6 +4837,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           previous?.activeProgress?.currentStep.id !=
               next.activeProgress?.currentStep.id) {
         _scrollToBottom();
+      }
+    });
+
+    // 운세 패널에서 선택된 칩 감시 → 바로 설문 시작
+    ref.listen<RecommendationChip?>(pendingFortuneChipProvider, (previous, next) {
+      if (next != null) {
+        // 선택된 칩으로 설문 시작
+        _handleChipTap(next);
+        // 처리 후 초기화
+        ref.read(pendingFortuneChipProvider.notifier).state = null;
       }
     });
 
@@ -5240,16 +5121,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                 isLoading: _isLoadingRecommendations,
                               ),
 
-                            // "광고보고 전체 보기" FloatingButton (블러된 콘텐츠가 있을 때만)
-                            if (_hasAnyBlurredMessage())
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: DSSpacing.md,
-                                  vertical: DSSpacing.sm,
-                                ),
-                                child: _buildAdFloatingButton(),
-                              ),
-
                             // 텍스트 입력란 (선택형 설문/온보딩 시 슬라이드 아웃)
                             IgnorePointer(
                               ignoring: shouldHideInput,
@@ -5358,7 +5229,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                     imagePath:
                                         'assets/images/fortune_cards/fortune_cookie_fortune.png',
                                     size: 220,
-                                    accentColor: DSFortuneColors.categoryTarot,
+                                    accentColor: DSColors.accentSecondary,
                                     onBreakComplete: _onCookieAnimationComplete,
                                   ),
                                 ],
@@ -5377,161 +5248,165 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       ),
     );
   }
-}
 
-/// 다중 선택 설문 위젯 (완료 버튼 포함)
-class _MultiSelectSurveyWidget extends StatefulWidget {
-  final List<SurveyOption> options;
-  final int maxSelections;
-  final void Function(List<String> selectedIds) onConfirm;
+  // ── 카톡 대화 분석 인라인 플로우 ──────────────────────────
 
-  const _MultiSelectSurveyWidget({
-    required this.options,
-    required this.maxSelections,
-    required this.onConfirm,
-  });
+  /// Step 1: AI 인트로 메시지 + 붙여넣기 다이얼로그 표시
+  void _startChatInsightFlow() {
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
 
-  @override
-  State<_MultiSelectSurveyWidget> createState() =>
-      _MultiSelectSurveyWidgetState();
-}
+    Future.delayed(const Duration(milliseconds: 300), () {
+      chatNotifier.addAiMessage(
+        '카카오톡 대화를 분석해서 관계 인사이트를 알려드릴게요.\n'
+        '대화 내용은 기기에서만 처리되고, 서버로 전송되지 않아요. 🔒\n\n'
+        '아래에서 대화 내용을 붙여넣어 주세요.',
+      );
+      _scrollToBottom();
 
-class _MultiSelectSurveyWidgetState extends State<_MultiSelectSurveyWidget> {
-  final Set<String> _selectedIds = {};
-
-  void _toggleSelection(SurveyOption option) {
-    setState(() {
-      if (_selectedIds.contains(option.id)) {
-        _selectedIds.remove(option.id);
-      } else {
-        if (_selectedIds.length < widget.maxSelections) {
-          _selectedIds.add(option.id);
-        }
-      }
+      // 붙여넣기 다이얼로그 표시
+      Future.delayed(const Duration(milliseconds: 400), () {
+        if (!mounted) return;
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => PasteDialog(
+            onSubmit: (text) {
+              Navigator.pop(context);
+              _handleChatInsightPaste(text);
+            },
+          ),
+        );
+      });
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
+  /// Step 2: 파싱 결과 처리 + 관계 설정 바텀시트
+  void _handleChatInsightPaste(String text) {
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
+    final result = KakaoParser.parse(text);
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // 칩 선택 영역
-        ChatSurveyChips(
-          options: widget.options,
-          onSelect: _toggleSelection,
-          allowMultiple: true,
-          selectedIds: _selectedIds,
-        ),
-        // 완료 버튼
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.md,
-            vertical: DSSpacing.sm,
-          ),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _selectedIds.isEmpty
-                  ? null
-                  : () => widget.onConfirm(_selectedIds.toList()),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colors.accentSecondary,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor:
-                    colors.textTertiary.withValues(alpha: 0.3),
-                padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(DSRadius.md),
-                ),
-              ),
-              child: Text(
-                _selectedIds.isEmpty
-                    ? '선택해주세요'
-                    : '완료 (${_selectedIds.length}/${widget.maxSelections})',
-                style: context.typography.labelLarge.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// 텍스트 입력 + "없음" 스킵 칩 위젯
-class _TextWithSkipInput extends StatefulWidget {
-  final VoidCallback onSkip;
-  final TextEditingController textController;
-
-  const _TextWithSkipInput({
-    required this.onSkip,
-    required this.textController,
-  });
-
-  @override
-  State<_TextWithSkipInput> createState() => _TextWithSkipInputState();
-}
-
-class _TextWithSkipInputState extends State<_TextWithSkipInput> {
-  bool _hasText = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _hasText = widget.textController.text.isNotEmpty;
-    widget.textController.addListener(_onTextChanged);
-  }
-
-  @override
-  void dispose() {
-    widget.textController.removeListener(_onTextChanged);
-    super.dispose();
-  }
-
-  void _onTextChanged() {
-    final hasText = widget.textController.text.isNotEmpty;
-    if (hasText != _hasText) {
-      setState(() => _hasText = hasText);
+    if (!result.isSuccess && !result.hasWarning) {
+      chatNotifier.addAiMessage(
+        '😅 ${result.errorMessage}\n\n'
+        '카카오톡 > 채팅방 > ≡ > 대화내용 내보내기로\n'
+        '텍스트를 복사해서 붙여넣어 주세요.',
+      );
+      _scrollToBottom();
+      // 추천 칩 다시 표시
+      Future.delayed(const Duration(milliseconds: 300), () {
+        chatNotifier.addSystemMessage();
+        _scrollToBottom();
+      });
+      return;
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    // 텍스트가 있으면 칩 숨김
-    if (_hasText) return const SizedBox.shrink();
+    // 파싱 성공 → 임시 저장
+    _chatInsightParsedMessages = result.messages;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Wrap(
-        spacing: 8,
-        children: [
-          GestureDetector(
-            onTap: () {
-              DSHaptics.light();
-              widget.onSkip();
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: context.colors.textSecondary.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Text(
-                '🎲 없음',
-                style: context.typography.bodyMedium,
-              ),
+    chatNotifier.addAiMessage(
+      '대화 ${result.messages.length}줄 분석 준비 완료! ✓\n'
+      '관계를 설정하면 더 정확한 인사이트를 드릴 수 있어요.',
+    );
+    _scrollToBottom();
+
+    // 관계 설정 바텀시트 표시
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.7,
+          ),
+          decoration: BoxDecoration(
+            color: context.colors.background,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(DSRadius.xl),
             ),
           ),
-        ],
-      ),
-    );
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(DSSpacing.lg),
+            child: RelationContextCard(
+              onConfigSubmit: (config) {
+                Navigator.pop(context);
+                _handleChatInsightConfig(config);
+              },
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  /// Step 3: 관계 설정 완료 → 분석 시작
+  void _handleChatInsightConfig(AnalysisConfig config) {
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
+
+    chatNotifier.addAiMessage('분석 중이에요... 잠시만 기다려주세요 🔍');
+    chatNotifier.showTypingIndicator();
+    _scrollToBottom();
+
+    _runChatInsightAnalysis(config);
+  }
+
+  /// Step 4: 분석 실행 → 결과 메시지 추가
+  Future<void> _runChatInsightAnalysis(AnalysisConfig config) async {
+    final chatNotifier = ref.read(chatMessagesProvider.notifier);
+
+    if (_chatInsightParsedMessages == null ||
+        _chatInsightParsedMessages!.isEmpty) {
+      chatNotifier.hideTypingIndicator();
+      chatNotifier.addAiMessage('분석할 대화가 없어요. 다시 시도해주세요.');
+      _scrollToBottom();
+      return;
+    }
+
+    try {
+      // Step 1: 익명화
+      final senders =
+          _chatInsightParsedMessages!.map((m) => m.sender).toSet().toList();
+      final userSender = senders.first;
+      final mapping = Anonymizer.createSenderMapping(senders, userSender);
+      final anonymized =
+          Anonymizer.anonymize(_chatInsightParsedMessages!, mapping);
+
+      // Step 2: 로컬 분석
+      final result = FeatureExtractor.analyze(anonymized, config);
+
+      // 원문 즉시 폐기 (프라이버시)
+      _chatInsightParsedMessages = null;
+
+      // 결과 로컬 저장
+      await InsightStorage.save(result);
+
+      // 타이핑 숨기고 결과 표시
+      chatNotifier.hideTypingIndicator();
+      chatNotifier.addChatInsightResult(chatInsight: result);
+
+      // 추천 칩 표시
+      Future.delayed(const Duration(milliseconds: 500), () {
+        chatNotifier.addSystemMessage();
+        _scrollToBottom();
+      });
+    } catch (e) {
+      Logger.error('Chat Insight 분석 실패', e);
+      chatNotifier.hideTypingIndicator();
+      chatNotifier.addAiMessage(
+        '분석 중 오류가 발생했어요 😢\n잠시 후 다시 시도해주세요.',
+      );
+      _scrollToBottom();
+
+      // 원문 폐기
+      _chatInsightParsedMessages = null;
+
+      // 추천 칩 다시 표시
+      Future.delayed(const Duration(milliseconds: 300), () {
+        chatNotifier.addSystemMessage();
+        _scrollToBottom();
+      });
+    }
   }
 }

@@ -341,7 +341,7 @@ serve(async (req) => {
           transaction_type: 'purchase',
           amount: tokensToAdd,
           balance_after: newBalance,
-          description: `복주머니 ${tokensToAdd}개 구매`,
+          description: `토큰 ${tokensToAdd}개 구매`,
           reference_type: 'in_app_purchase',
           reference_id: transactionId || orderId
         }

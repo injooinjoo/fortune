@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -118,7 +116,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   Future<void> _loadProducts() async {
     await _purchaseService.loadProducts();
     setState(() {
-      // 월간 구독 제외, 복주머니(소모성) 상품만 필터링
+      // 월간 구독 제외, 토큰(소모성) 상품만 필터링
       final filteredProducts = _purchaseService.products.where((product) {
         // 월간 구독 제외
         if (product.id == InAppProducts.monthlySubscription) return false;
@@ -130,7 +128,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       filteredProducts.sort((a, b) {
         final aInfo = InAppProducts.productDetails[a.id];
         final bInfo = InAppProducts.productDetails[b.id];
-        return (aInfo?.tokens ?? 0).compareTo(bInfo?.tokens ?? 0);
+        return (aInfo?.points ?? 0).compareTo(bInfo?.points ?? 0);
       });
 
       _products = filteredProducts;
@@ -152,7 +150,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(title: '복주머니 구매'),
+            const AppHeader(title: '토큰 구매'),
             Expanded(
               child: _isLoading 
                 ? const Center(child: CircularProgressIndicator())
@@ -250,7 +248,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     // 에러가 있거나 balance가 null이면 무제한 이용권 확인
     if (tokenBalance == null) {
       // 무제한 구독이 있으면 무제한 표시
-      if (tokenState.hasUnlimitedAccess) {
+      if (tokenState.hasUnlimitedTokens) {
         return CustomCard(
           padding: const EdgeInsets.all(20),
           child: Row(
@@ -260,7 +258,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '현재 보유 복주머니',
+                    '현재 보유 토큰',
                     style: context.labelSmall.copyWith(
                       color: colors.textSecondary,
                     ),
@@ -270,7 +268,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                     '무제한',
                     style: context.heading2.copyWith(
                       // 황색(Hwang) - 복/풍요를 상징
-                      color: ObangseokColors.hwang,
+                      color: DSColors.warning,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -279,7 +277,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               Icon(
                 Icons.all_inclusive,
                 size: 40,
-                color: ObangseokColors.hwang.withValues(alpha: 0.3),
+                color: DSColors.warning.withValues(alpha: 0.3),
               ),
             ],
           ),
@@ -298,7 +296,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '현재 보유 복주머니',
+                  '현재 보유 토큰',
                   style: context.labelSmall.copyWith(
                     color: colors.textSecondary,
                   ),
@@ -310,7 +308,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                       '0',
                       style: context.heading2.copyWith(
                         // 황색(Hwang) - 복/풍요를 상징
-                        color: ObangseokColors.hwang,
+                        color: DSColors.warning,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -328,7 +326,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             Icon(
               Icons.toll,
               size: 40,
-              color: ObangseokColors.hwang.withValues(alpha: 0.3),
+              color: DSColors.warning.withValues(alpha: 0.3),
             ),
           ],
         ),
@@ -346,7 +344,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '현재 보유 복주머니',
+                '현재 보유 토큰',
                 style: context.labelSmall.copyWith(
                   color: colors.textSecondary,
                 ),
@@ -360,7 +358,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                       : '${tokenBalance.remainingTokens}',
                     style: context.heading2.copyWith(
                       // 황색(Hwang) - 복/풍요를 상징
-                      color: ObangseokColors.hwang,
+                      color: DSColors.warning,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -382,7 +380,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               ? Icons.all_inclusive
               : Icons.toll,
             size: 40,
-            color: ObangseokColors.hwang.withValues(alpha: 0.3),
+            color: DSColors.warning.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -405,7 +403,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '복주머니 패키지 선택',
+          '토큰 패키지 선택',
           style: context.heading3.copyWith(
             fontWeight: FontWeight.bold,
             color: colors.textPrimary,
@@ -492,22 +490,22 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           gradient: isSelected
             ? LinearGradient(
                 colors: [
-                  ObangseokColors.hwang.withValues(alpha: 0.1),
-                  ObangseokColors.hwang.withValues(alpha: 0.05),
+                  DSColors.warning.withValues(alpha: 0.1),
+                  DSColors.warning.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               )
             : null,
           border: Border.all(
-            color: isSelected ? ObangseokColors.hwang : colors.border,
+            color: isSelected ? DSColors.warning : colors.border,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(DSRadius.lg),
           boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: ObangseokColors.hwang.withValues(alpha: 0.2),
+                  color: DSColors.warning.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -522,7 +520,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               height: 60,
               decoration: BoxDecoration(
                 color: isSelected
-                  ? ObangseokColors.hwang.withValues(alpha: 0.1)
+                  ? DSColors.warning.withValues(alpha: 0.1)
                   : colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.md),
               ),
@@ -530,7 +528,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 child: Icon(
                   isSubscription ? Icons.all_inclusive : Icons.toll,
                   size: 28,
-                  color: isSelected ? ObangseokColors.hwang : colors.textSecondary,
+                  color: isSelected ? DSColors.warning : colors.textSecondary,
                 ),
               ),
             ),
@@ -564,7 +562,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                   style: context.heading3.copyWith(
                     fontWeight: FontWeight.bold,
                     // 황색(Hwang) - 선택 시 풍요를 상징
-                    color: isSelected ? ObangseokColors.hwangDark : colors.textPrimary,
+                    color: isSelected ? DSColors.warning : colors.textPrimary,
                   ),
                 ),
                 if (isSubscription) ...[
@@ -648,8 +646,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
         ),
         const SizedBox(height: 8),
         ...[
-          '• 복주머니는 운세를 볼 때 사용됩니다',
-          '• 구매한 복주머니는 즉시 계정에 추가됩니다',
+          '• 토큰는 운세를 볼 때 사용됩니다',
+          '• 구매한 토큰는 즉시 계정에 추가됩니다',
           '• 무제한 구독은 매월 자동 갱신됩니다',
           '• 구독은 언제든지 취소할 수 있습니다',
           '• 환불은 앱스토어/구글플레이 정책을 따릅니다'

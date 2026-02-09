@@ -27,143 +27,6 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
-# Pre-install hook: mediapipe_face_mesh 시뮬레이터/기기 빌드 모두 지원
-# TensorFlowLiteC.framework: 시뮬레이터용 스텁과 기기용 원본 모두 준비
-pre_install do |installer|
-  mediapipe_path = "#{ENV['HOME']}/.pub-cache/hosted/pub.dev"
-  Dir.glob("#{mediapipe_path}/mediapipe_face_mesh-*/ios/Frameworks/TensorFlowLiteC.framework").each do |framework_path|
-    binary_path = "#{framework_path}/TensorFlowLiteC"
-    device_backup_path = "#{framework_path}/TensorFlowLiteC.device"
-    simulator_path = "#{framework_path}/TensorFlowLiteC.simulator"
-
-    # 시뮬레이터 스텁이 이미 있는지 확인
-    if File.exist?(simulator_path) && File.exist?(device_backup_path)
-      puts "✅ TensorFlowLiteC: 시뮬레이터/기기용 바이너리 준비 완료"
-      next
-    end
-
-    puts "🔧 TensorFlowLiteC: 시뮬레이터/기기용 바이너리 생성 중..."
-
-    # 원본이 기기용인지 확인 후 백업
-    vtool_output = `vtool -show-build "#{binary_path}" 2>/dev/null` rescue ""
-    is_device_binary = vtool_output.include?('platform IOS') && !vtool_output.include?('IOSSIMULATOR')
-
-    if is_device_binary && !File.exist?(device_backup_path)
-      FileUtils.cp(binary_path, device_backup_path)
-      puts "📋 기기용 원본 저장: #{device_backup_path}"
-    elsif File.exist?(device_backup_path)
-      puts "📋 기기용 백업 존재함"
-    end
-
-    # 시뮬레이터 스텁 생성
-    unless File.exist?(simulator_path)
-      temp_dir = Dir.mktmpdir
-      dummy_c = "#{temp_dir}/dummy.c"
-      File.write(dummy_c, <<~DUMMY
-        // TensorFlowLiteC stub for iOS Simulator (non-functional)
-        void* TfLiteInterpreterCreate(void* model, void* options) { return (void*)0; }
-        void TfLiteInterpreterDelete(void* interpreter) {}
-        int TfLiteInterpreterInvoke(void* interpreter) { return 1; }
-        int TfLiteInterpreterAllocateTensors(void* interpreter) { return 1; }
-        int TfLiteInterpreterGetInputTensorCount(void* interpreter) { return 0; }
-        int TfLiteInterpreterGetOutputTensorCount(void* interpreter) { return 0; }
-        void* TfLiteInterpreterGetInputTensor(void* interpreter, int index) { return (void*)0; }
-        void* TfLiteInterpreterGetOutputTensor(void* interpreter, int index) { return (void*)0; }
-        int TfLiteInterpreterResizeInputTensor(void* interpreter, int index, void* dims, int dims_size) { return 1; }
-        void* TfLiteModelCreate(void* data, int size) { return (void*)0; }
-        void* TfLiteModelCreateFromFile(const char* path) { return (void*)0; }
-        void TfLiteModelDelete(void* model) {}
-        void* TfLiteTensorData(void* tensor) { return (void*)0; }
-        int TfLiteTensorByteSize(void* tensor) { return 0; }
-        int TfLiteTensorType(void* tensor) { return 0; }
-        int TfLiteTensorNumDims(void* tensor) { return 0; }
-        int TfLiteTensorDim(void* tensor, int index) { return 0; }
-        int TfLiteTensorCopyFromBuffer(void* tensor, void* buffer, int size) { return 1; }
-        int TfLiteTensorCopyToBuffer(void* tensor, void* buffer, int size) { return 1; }
-        const char* TfLiteTensorName(void* tensor) { return "stub"; }
-        void* TfLiteInterpreterOptionsCreate() { return (void*)0; }
-        void TfLiteInterpreterOptionsDelete(void* options) {}
-        void TfLiteInterpreterOptionsSetNumThreads(void* options, int threads) {}
-        void TfLiteInterpreterOptionsSetErrorReporter(void* options, void* reporter, void* user_data) {}
-        void TfLiteInterpreterOptionsAddDelegate(void* options, void* delegate) {}
-        void* TfLiteGpuDelegateV2Create(void* options) { return (void*)0; }
-        void TfLiteGpuDelegateV2Delete(void* delegate) {}
-        void* TfLiteCoreMlDelegateCreate(void* options) { return (void*)0; }
-        void TfLiteCoreMlDelegateDelete(void* delegate) {}
-        void* TfLiteXNNPackDelegateCreate(void* options) { return (void*)0; }
-        void TfLiteXNNPackDelegateDelete(void* delegate) {}
-        const char* TfLiteVersion() { return "stub-2.0.0"; }
-      DUMMY
-      )
-
-      sdk_path = `xcrun --sdk iphonesimulator --show-sdk-path`.strip
-      x86_dylib = "#{temp_dir}/x86_64.dylib"
-      arm64_sim_dylib = "#{temp_dir}/arm64_sim.dylib"
-
-      system("xcrun clang -arch x86_64 -isysroot '#{sdk_path}' " \
-             "-mios-simulator-version-min=15.0 -dynamiclib " \
-             "-install_name @rpath/TensorFlowLiteC.framework/TensorFlowLiteC " \
-             "-o '#{x86_dylib}' '#{dummy_c}' 2>/dev/null")
-
-      system("xcrun clang -arch arm64 -isysroot '#{sdk_path}' " \
-             "-target arm64-apple-ios15.0-simulator -dynamiclib " \
-             "-install_name @rpath/TensorFlowLiteC.framework/TensorFlowLiteC " \
-             "-o '#{arm64_sim_dylib}' '#{dummy_c}' 2>/dev/null")
-
-      lipo_inputs = []
-      lipo_inputs << x86_dylib if File.exist?(x86_dylib) && File.size(x86_dylib) > 0
-      lipo_inputs << arm64_sim_dylib if File.exist?(arm64_sim_dylib) && File.size(arm64_sim_dylib) > 0
-
-      if lipo_inputs.length >= 1
-        system("lipo -create #{lipo_inputs.map { |f| "'#{f}'" }.join(' ')} -output '#{simulator_path}'")
-        puts "✅ 시뮬레이터 스텁 생성: #{simulator_path}"
-      end
-
-      FileUtils.rm_rf(temp_dir)
-    end
-
-    # Info.plist 생성 (없는 경우)
-    info_plist_path = "#{framework_path}/Info.plist"
-    unless File.exist?(info_plist_path)
-      File.write(info_plist_path, <<~PLIST
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-          <key>CFBundleDevelopmentRegion</key>
-          <string>en</string>
-          <key>CFBundleExecutable</key>
-          <string>TensorFlowLiteC</string>
-          <key>CFBundleIdentifier</key>
-          <string>org.tensorflow.lite.c</string>
-          <key>CFBundleInfoDictionaryVersion</key>
-          <string>6.0</string>
-          <key>CFBundleName</key>
-          <string>TensorFlowLiteC</string>
-          <key>CFBundlePackageType</key>
-          <string>FMWK</string>
-          <key>CFBundleShortVersionString</key>
-          <string>2.0.0</string>
-          <key>CFBundleVersion</key>
-          <string>1</string>
-          <key>MinimumOSVersion</key>
-          <string>15.0</string>
-        </dict>
-        </plist>
-      PLIST
-      )
-      puts "📋 Info.plist 생성"
-    end
-
-    # 메인 바이너리는 시뮬레이터용으로 설정 (post_install에서 기기용으로 전환 가능)
-    # Xcode에서 빌드 시 FRAMEWORK_SEARCH_PATHS로 조건부 선택
-    if File.exist?(simulator_path)
-      FileUtils.cp(simulator_path, binary_path)
-      puts "✅ 메인 바이너리: 시뮬레이터 스텁으로 설정"
-    end
-  end
-end
-
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
@@ -232,42 +95,6 @@ post_install do |installer|
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = ""
     end
 
-    # MediaPipe Face Mesh - weak linking으로 시뮬레이터 빌드 지원
-    # 시뮬레이터: 빌드 O, Face Mesh 런타임 X (카메라만)
-    # 실제 기기: 빌드 O, Face Mesh 완전 동작
-    if target.name == 'mediapipe_face_mesh'
-      target.build_configurations.each do |config|
-        # 프레임워크 경로 추가 (pre-install에서 생성한 유니버설 바이너리 포함)
-        framework_path = "#{ENV['HOME']}/.pub-cache/hosted/pub.dev/mediapipe_face_mesh-1.2.4/ios/Frameworks"
-        config.build_settings['FRAMEWORK_SEARCH_PATHS'] ||= ['$(inherited)']
-        config.build_settings['FRAMEWORK_SEARCH_PATHS'] << "\"#{framework_path}\""
-
-        # 시뮬레이터에서 TensorFlowLiteC 링크 완전 제거하고 undefined symbol 허용
-        config.build_settings['OTHER_LDFLAGS[sdk=iphonesimulator*]'] = [
-          '$(inherited)',
-          '-Wl,-undefined,dynamic_lookup'
-        ]
-
-        # 시뮬레이터에서 TensorFlowLiteC를 빌드하지만 링크하지 않음
-        # 기존 -framework TensorFlowLiteC를 제거
-        if config.build_settings['OTHER_LDFLAGS'].is_a?(Array)
-          config.build_settings['OTHER_LDFLAGS'].reject! { |flag| flag.include?('TensorFlowLiteC') }
-        end
-      end
-
-      # 빌드 페이즈에서 TensorFlowLiteC를 Weak로 마킹 (실제 기기용)
-      target.build_phases.each do |phase|
-        if phase.respond_to?(:name) && phase.name == 'Frameworks'
-          phase.files.each do |file|
-            if file.file_ref && file.file_ref.path && file.file_ref.path.include?('TensorFlowLiteC')
-              file.settings ||= {}
-              file.settings['ATTRIBUTES'] ||= []
-              file.settings['ATTRIBUTES'] << 'Weak' unless file.settings['ATTRIBUTES'].include?('Weak')
-            end
-          end
-        end
-      end
-    end
   end
   
   # Fix Xcode 15 compatibility issues and deployment targets
@@ -284,4 +111,5 @@ post_install do |installer|
     config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
     config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = ""
   end
+
 end

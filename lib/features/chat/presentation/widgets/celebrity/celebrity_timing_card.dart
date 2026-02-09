@@ -150,8 +150,8 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            DSFortuneColors.categoryLotto.withValues(alpha: 0.15), // 골드/오렌지 계열
-            DSFortuneColors.elementEarth.withValues(alpha: 0.1),
+            DSColors.warning.withValues(alpha: 0.15), // 골드/오렌지 계열
+            DSColors.warning.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -165,9 +165,9 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                 height: 56,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: DSFortuneColors.categoryLotto.withValues(alpha: 0.2),
+                  color: DSColors.warning.withValues(alpha: 0.2),
                   border: Border.all(
-                    color: DSFortuneColors.categoryLotto.withValues(alpha: 0.4),
+                    color: DSColors.warning.withValues(alpha: 0.4),
                     width: 2,
                   ),
                 ),
@@ -230,7 +230,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [DSFortuneColors.categoryLotto, DSFortuneColors.elementEarth],
+                colors: [DSColors.warning, DSColors.warning],
               ),
               borderRadius: BorderRadius.circular(DSRadius.full),
             ),
@@ -263,10 +263,10 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: DSFortuneColors.categoryLotto.withValues(alpha: 0.05),
+          color: DSColors.warning.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: DSFortuneColors.categoryLotto.withValues(alpha: 0.1),
+            color: DSColors.warning.withValues(alpha: 0.1),
           ),
         ),
         child: Text(
@@ -296,10 +296,10 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
           Row(
             children: [
               if (data['best_year'] != null)
-                _buildTimeBadge(context, '📅', data['best_year'], DSFortuneColors.categoryFamily),
+                _buildTimeBadge(context, '📅', data['best_year'], DSColors.info),
               const SizedBox(width: DSSpacing.sm),
               if (data['best_month'] != null)
-                _buildTimeBadge(context, '🗓️', data['best_month'], DSFortuneColors.categoryMoney),
+                _buildTimeBadge(context, '🗓️', data['best_month'], DSColors.warning),
             ],
           ),
           if (data['best_day_type'] != null) ...[
@@ -310,13 +310,13 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                 vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.1),
+                color: DSColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Text(
                 '💫 ${data['best_day_type']}',
                 style: typography.labelSmall.copyWith(
-                  color: DSFortuneColors.categoryLuckyItems,
+                  color: DSColors.success,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -386,8 +386,8 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    DSFortuneColors.categoryLove.withValues(alpha: 0.1),
-                    DSFortuneColors.categoryBlindDate.withValues(alpha: 0.05),
+                    DSColors.error.withValues(alpha: 0.1),
+                    DSColors.error.withValues(alpha: 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(DSRadius.md),
@@ -399,7 +399,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   Text(
                     data['optimal_period'],
                     style: typography.labelLarge.copyWith(
-                      color: DSFortuneColors.categoryLove,
+                      color: DSColors.error,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
@@ -437,7 +437,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryGratitude.withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -543,10 +543,10 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
           Container(
             padding: const EdgeInsets.all(DSSpacing.sm),
             decoration: BoxDecoration(
-              color: DSFortuneColors.categoryNewYear.withValues(alpha: 0.1),
+              color: DSColors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DSRadius.sm),
               border: Border.all(
-                color: DSFortuneColors.categoryNewYear.withValues(alpha: 0.2),
+                color: DSColors.error.withValues(alpha: 0.2),
               ),
             ),
             child: Column(
@@ -572,7 +572,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                               Text(
                                 time.toString(),
                                 style: typography.labelSmall.copyWith(
-                                  color: DSFortuneColors.categoryNewYear,
+                                  color: DSColors.error,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -598,7 +598,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryMoney.withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -650,8 +650,8 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.1),
-                      DSFortuneColors.resultGoodFortune.withValues(alpha: 0.05),
+                      DSColors.warning.withValues(alpha: 0.1),
+                      DSColors.success.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -662,13 +662,13 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.3),
+                        color: DSColors.warning.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         '${index + 1}',
                         style: typography.labelSmall.copyWith(
-                          color: DSFortuneColors.fortuneGold,
+                          color: DSColors.warning,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -681,7 +681,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                           Text(
                             date.toString(),
                             style: typography.labelMedium.copyWith(
-                              color: DSFortuneColors.fortuneGold,
+                              color: DSColors.warning,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -740,7 +740,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   '🌸',
                   '봄',
                   data['spring'],
-                  DSFortuneColors.categoryBlindDate,
+                  DSColors.error,
                 ),
               ),
               const SizedBox(width: DSSpacing.xs),
@@ -750,7 +750,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   '🌊',
                   '여름',
                   data['summer'],
-                  DSFortuneColors.categoryFamily,
+                  DSColors.info,
                 ),
               ),
             ],
@@ -764,7 +764,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   '🍂',
                   '가을',
                   data['autumn'],
-                  DSFortuneColors.categoryLotto,
+                  DSColors.warning,
                 ),
               ),
               const SizedBox(width: DSSpacing.xs),
@@ -774,7 +774,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   '❄️',
                   '겨울',
                   data['winter'],
-                  DSFortuneColors.categoryLuckyItems,
+                  DSColors.success,
                 ),
               ),
             ],
@@ -872,7 +872,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
 
   Widget _buildDefaultAvatar() {
     return Container(
-      color: DSFortuneColors.categoryLotto.withValues(alpha: 0.3),
+      color: DSColors.warning.withValues(alpha: 0.3),
       child: const Center(
         child: Icon(
           Icons.person,

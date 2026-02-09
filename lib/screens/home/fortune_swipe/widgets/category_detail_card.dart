@@ -80,7 +80,7 @@ class CategoryDetailCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: context.isDark ? DSColors.surface : DSFortuneColors.hanjiCream,
+            color: context.isDark ? DSColors.surface : DSColors.backgroundSecondaryDark,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -93,7 +93,7 @@ class CategoryDetailCard extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: context.isDark
                         ? [DSColors.surfaceSecondary, DSColors.surface] // 고유 색상(dark gradient start)
-                        : [DSFortuneColors.hanjiCream, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
+                        : [DSColors.backgroundSecondaryDark, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),

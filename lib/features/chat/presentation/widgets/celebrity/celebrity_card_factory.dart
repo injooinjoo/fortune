@@ -101,15 +101,15 @@ class CelebrityCardFactory {
   static Color getThemeColor(String? questionType) {
     switch (questionType) {
       case 'personality':
-        return DSFortuneColors.categoryPersonalityDna; // 보라색
+        return DSColors.accentSecondary; // 보라색
       case 'love':
-        return DSFortuneColors.categoryLove; // 핑크
+        return DSColors.error; // 핑크
       case 'pastLife':
-        return DSFortuneColors.mysticalPurpleDark; // 남보라
+        return DSColors.accentSecondary; // 남보라
       case 'timing':
-        return DSFortuneColors.categoryLotto; // 골드
+        return DSColors.warning; // 골드
       default:
-        return DSFortuneColors.categoryPersonalityDna;
+        return DSColors.accentSecondary;
     }
   }
 }

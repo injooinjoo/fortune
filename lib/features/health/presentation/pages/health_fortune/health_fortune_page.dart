@@ -11,7 +11,6 @@ import '../../widgets/health_score_card.dart';
 import '../../widgets/health_timeline_chart.dart';
 import '../../../domain/models/health_fortune_model.dart';
 import '../../../data/services/health_fortune_service.dart';
-import '../../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../../core/widgets/unified_button.dart' show UnifiedButton, BottomButtonSpacing;
 import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../shared/components/toast.dart';
@@ -68,9 +67,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
     final isDark = context.isDark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? ObangseokColors.hanjiBackgroundDark
-          : ObangseokColors.hanjiBackground,
+      backgroundColor: context.colors.background,
       appBar: _buildAppBar(isDark),
       body: SafeArea(
         child: Stack(
@@ -99,16 +96,14 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
   PreferredSizeWidget _buildAppBar(bool isDark) {
     return AppBar(
-      backgroundColor: isDark
-          ? ObangseokColors.hanjiBackgroundDark
-          : ObangseokColors.hanjiBackground,
+      backgroundColor: context.colors.background,
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
         onPressed: () => context.pop(),
         icon: Icon(
           Icons.arrow_back_ios,
-          color: ObangseokColors.getMeok(context),
+          color: context.colors.textPrimary,
           size: 20,
         ),
       ),
@@ -118,7 +113,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
           fontFamily: 'NanumMyeongjo',
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: ObangseokColors.getMeok(context),
+          color: context.colors.textPrimary,
         ),
       ),
       centerTitle: true,
@@ -127,7 +122,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
   Widget _buildConditionSelectionPage(bool isDark) {
     final tokenState = ref.watch(tokenProvider);
-    final isPremium = tokenState.hasUnlimitedAccess;
+    final isPremium = tokenState.hasUnlimitedTokens;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -142,7 +137,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
               fontFamily: 'NanumMyeongjo',
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: ObangseokColors.getMeok(context),
+              color: context.colors.textPrimary,
               height: 1.3,
             ),
           ),
@@ -155,9 +150,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
               fontFamily: 'Pretendard',
               fontSize: 15,
               fontWeight: FontWeight.w400,
-              color: isDark
-                  ? ObangseokColors.baekMuted
-                  : ObangseokColors.meokFaded,
+              color: context.colors.textSecondary,
             ),
           ),
 
@@ -423,7 +416,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
     final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
     final tokenState = ref.read(tokenProvider);
-    final isPremium = tokenState.hasUnlimitedAccess;
+    final isPremium = tokenState.hasUnlimitedTokens;
 
     final inputConditions = <String, dynamic>{
       'current_condition': _currentCondition?.name ?? 'good',

@@ -18,7 +18,7 @@ class FiveElementsCard extends StatelessWidget {
     required this.explanation,
   });
 
-  /// 오행 전통색 (오방색 기반) - 변경 금지
+  /// 오행 색상
   /// 목(木) - 청색 (동쪽, 봄, 성장)
   /// 화(火) - 적색 (남쪽, 여름, 열정)
   /// 토(土) - 황색 (중앙, 환절기, 안정)
@@ -27,17 +27,17 @@ class FiveElementsCard extends StatelessWidget {
   Color _getElementColor(String element) {
     switch (element) {
       case '목(木)':
-        return const Color(0xFF2E8B57); // 오방색: 청록
+        return DSColors.success; // 청록
       case '화(火)':
-        return const Color(0xFFDC143C); // 오방색: 진홍
+        return DSColors.error; // 진홍
       case '토(土)':
-        return const Color(0xFFDAA520); // 오방색: 금황
+        return DSColors.warning; // 금황
       case '금(金)':
-        return const Color(0xFFC0A062); // 오방색: 금색
+        return DSColors.accentSecondary; // 금색
       case '수(水)':
-        return const Color(0xFF1E3A5F); // 오방색: 남색
+        return DSColors.info; // 남색
       default:
-        return const Color(0xFF6B7280); // 고유 색상: 기본 회색
+        return DSColors.textSecondary; // 기본 회색
     }
   }
 
@@ -194,22 +194,22 @@ class FiveElementsCard extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        // 균형 설명 - 오방색 기반 그라디언트 유지
+        // 균형 설명
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: context.isDark
-                  ? [const Color(0xFF2E8B57).withValues(alpha: 0.15), const Color(0xFF1E3A5F).withValues(alpha: 0.15)] // 오방색: 목/수
-                  : [const Color(0xFF2E8B57).withValues(alpha: 0.08), const Color(0xFF1E3A5F).withValues(alpha: 0.08)], // 오방색: 목/수
+                  ? [DSColors.success.withValues(alpha: 0.15), DSColors.info.withValues(alpha: 0.15)]
+                  : [DSColors.success.withValues(alpha: 0.08), DSColors.info.withValues(alpha: 0.08)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: context.isDark
-                  ? const Color(0xFF2E8B57).withValues(alpha: 0.3) // 오방색: 목
-                  : const Color(0xFF2E8B57).withValues(alpha: 0.2), // 오방색: 목
+                  ? DSColors.success.withValues(alpha: 0.3)
+                  : DSColors.success.withValues(alpha: 0.2),
               width: 1,
             ),
           ),

@@ -64,11 +64,11 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
   Color _getDifficultyColor(TarotDifficulty difficulty) {
     switch (difficulty) {
       case TarotDifficulty.beginner:
-        return const Color(0xFF22C55E); // 초록 - 쉬움
+        return DSColors.success; // 초록 - 쉬움
       case TarotDifficulty.intermediate:
-        return DSFortuneColors.categoryLotto; // 주황 - 중간
+        return DSColors.warning; // 주황 - 중간
       case TarotDifficulty.advanced:
-        return DSFortuneColors.categoryNewYear; // 빨강 - 어려움
+        return DSColors.accentSecondary; // 빨강 - 어려움
     }
   }
 
@@ -78,25 +78,25 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
       case TarotSpreadType.single:
         return {
           'icon': Icons.style,
-          'color': DSFortuneColors.categoryExam,
+          'color': DSColors.accentSecondary,
           'recommended': '빠른 답변이 필요할 때',
         };
       case TarotSpreadType.threeCard:
         return {
           'icon': Icons.timeline,
-          'color': DSFortuneColors.categoryDaily,
+          'color': DSColors.accentSecondary,
           'recommended': '시간의 흐름을 보고 싶을 때',
         };
       case TarotSpreadType.relationship:
         return {
           'icon': Icons.favorite,
-          'color': DSFortuneColors.categoryLove,
+          'color': DSColors.accentSecondary,
           'recommended': '연애/관계 질문',
         };
       case TarotSpreadType.celticCross:
         return {
           'icon': Icons.apps,
-          'color': DSFortuneColors.categoryHealth,
+          'color': DSColors.success,
           'recommended': '심층 분석이 필요할 때',
         };
     }
@@ -135,7 +135,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: DSSpacing.sm),
 
                   // 부제목
                   Text(
@@ -267,7 +267,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                       : colors.textPrimary,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: DSSpacing.sm),
                               // F11: 난이도 뱃지
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -307,7 +307,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: DSSpacing.xs),
                           Text(
                             spread.description,
                             style: typography.bodySmall.copyWith(
@@ -427,7 +427,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                         width: 45,
                         height: 68,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         labels[index],
                         style: context.typography.labelSmall.copyWith(
@@ -465,7 +465,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                         width: 38,
                         height: 57,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         labels[index],
                         style: context.typography.labelSmall.copyWith(

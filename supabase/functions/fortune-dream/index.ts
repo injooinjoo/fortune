@@ -410,20 +410,12 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabase, 'dream', personalizedResult.score || 75)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // Blur 로직 적용
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['psychologicalInsight', 'todayGuidance', 'symbolAnalysis', 'actionAdvice']
-        : []
-
       const finalResult = {
         ...resultWithPercentile,
         dream,
         inputType,
         date: date || new Date().toISOString().split('T')[0],
         dreamType,
-        isBlurred,
-        blurredSections,
         timestamp: new Date().toISOString(),
       }
 
@@ -458,19 +450,7 @@ serve(async (req) => {
       console.log('✅ [Step 7] Cache hit for dream fortune')
       fortuneData = cachedResult.result
 
-      // ✅ Blur 로직 적용 (캐시된 데이터에도 적용)
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['psychologicalInsight', 'todayGuidance', 'symbolAnalysis', 'actionAdvice']
-        : []
-
-      fortuneData = {
-        ...fortuneData,
-        isBlurred,
-        blurredSections
-      }
-
-      console.log('✅ [Step 7.1] Blur logic applied to cached result:', { isPremium, isBlurred })
+      console.log('✅ [Step 7.1] Using cached result')
     } else {
       console.log('🔄 [Step 7] Cache miss, calling LLM API')
 
@@ -620,13 +600,6 @@ serve(async (req) => {
 
       // 응답 데이터 구조화
       console.log('🔄 [Step 13] Building fortune data structure')
-      // ✅ Blur 로직 적용 (DreamResultWidget의 sectionKey와 일치)
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['psychologicalInsight', 'todayGuidance', 'symbolAnalysis', 'actionAdvice']
-        : []
-
-      console.log('🔍 [Step 13.1] Blur logic:', { isPremium, isBlurred, blurredSections })
 
       // 점수 계산 (emotionalBalance 기반, 1-10 → 0-100 스케일)
       const emotionalBalanceScore = Math.round((analysis.scenes.reduce((sum, scene) => sum + scene.emotionLevel, 0) / Math.max(analysis.scenes.length, 1)))
@@ -657,8 +630,6 @@ serve(async (req) => {
         affirmations: parsedResponse.긍정확언 || parsedResponse.affirmations || ['나는 항상 올바른 선택을 할 수 있다', '내 직감은 나를 올바른 길로 안내한다', '나는 내면의 지혜를 믿는다'],
         relatedSymbols: analysis.symbolAnalysis.slice(0, 7).map(s => s.symbol),
         timestamp: new Date().toISOString(),
-        isBlurred, // ✅ 블러 상태 (Flutter UI에서 사용)
-        blurredSections // ✅ 블러된 섹션 목록 (Flutter UI에서 사용)
       }
 
       console.log('✅ [Step 14] Fortune data structure complete')

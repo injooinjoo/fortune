@@ -1,5 +1,5 @@
-/// Auth Service - Unit Test
-/// 인증 서비스 비즈니스 로직 테스트
+// Auth Service - Unit Test
+// 인증 서비스 비즈니스 로직 테스트
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';

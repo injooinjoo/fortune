@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/tokens/ds_fortune_colors.dart';
+import '../../../../core/design_system/tokens/ds_colors.dart';
 
 /// 부적 타입 정의
 enum TalismanType {
-  wealth('재물부적', '재물운과 금전운을 상승시키는 부적', Icons.monetization_on_rounded, [DSFortuneColors.fortuneGoldMuted, DSFortuneColors.fortuneGold]),
-  love('연애부적', '사랑과 인연을 불러오는 부적', Icons.favorite_rounded, [DSFortuneColors.categoryLove, Color(0xFFDB2777)]),
-  health('건강부적', '건강과 장수를 기원하는 부적', Icons.favorite_border_rounded, [DSFortuneColors.categoryHealth, Color(0xFF059669)]),
+  wealth('재물부적', '재물운과 금전운을 상승시키는 부적', Icons.monetization_on_rounded, [DSColors.warning, DSColors.warning]),
+  love('연애부적', '사랑과 인연을 불러오는 부적', Icons.favorite_rounded, [DSColors.accentSecondary, Color(0xFFDB2777)]),
+  health('건강부적', '건강과 장수를 기원하는 부적', Icons.favorite_border_rounded, [DSColors.success, Color(0xFF059669)]),
   protection('액막이부적', '나쁜 기운과 액운을 막아주는 부적', Icons.shield_rounded, [Color(0xFF6B7280), Color(0xFF4B5563)]),
-  success('성공부적', '목표 달성과 성공을 돕는 부적', Icons.star_rounded, [DSFortuneColors.categoryLotto, DSFortuneColors.categoryExercise]),
-  study('학업부적', '학업 성취와 합격을 기원하는 부적', Icons.school_rounded, [DSFortuneColors.categoryExam, DSFortuneColors.categoryCareer]),
-  business('사업부적', '사업 번창과 번영을 기원하는 부적', Icons.business_rounded, [DSFortuneColors.categoryDaily, Color(0xFF6D28D9)]),
+  success('성공부적', '목표 달성과 성공을 돕는 부적', Icons.star_rounded, [DSColors.warning, DSColors.accentSecondary]),
+  study('학업부적', '학업 성취와 합격을 기원하는 부적', Icons.school_rounded, [DSColors.accentSecondary, DSColors.info]),
+  business('사업부적', '사업 번창과 번영을 기원하는 부적', Icons.business_rounded, [DSColors.accentSecondary, Color(0xFF6D28D9)]),
   family('가정화목부적', '가족의 화목과 평안을 지키는 부적', Icons.home_rounded, [Color(0xFF0EA5E9), Color(0xFF0284C7)]),
-  custom('맞춤형부적', '개인의 소원을 담은 특별한 부적', Icons.auto_awesome_rounded, [DSFortuneColors.mysticalPurpleMuted, Color(0xFF8B008B)]);
+  custom('맞춤형부적', '개인의 소원을 담은 특별한 부적', Icons.auto_awesome_rounded, [DSColors.accentSecondary, Color(0xFF8B008B)]);
   
   final String displayName;
   final String description;

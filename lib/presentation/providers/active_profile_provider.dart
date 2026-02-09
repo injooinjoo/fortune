@@ -4,7 +4,6 @@ import 'dart:developer' as developer;
 import '../../data/models/secondary_profile.dart';
 import 'providers.dart';
 import 'secondary_profiles_provider.dart';
-import 'user_profile_notifier.dart';
 
 /// 활성 프로필 타입
 enum ActiveProfileType {

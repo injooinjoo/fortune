@@ -177,8 +177,8 @@ class _ChatFaceReadingFlowState extends ConsumerState<ChatFaceReadingFlow> {
                       icon: const Icon(Icons.auto_awesome, size: 18),
                       label: const Text('분석 시작'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: colors.accentSecondary,
-                        foregroundColor: Colors.white,
+                        backgroundColor: colors.ctaBackground,
+                        foregroundColor: colors.ctaForeground,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(DSRadius.md),
@@ -239,8 +239,6 @@ class _ImageOptionChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = context.isDark;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -253,10 +251,10 @@ class _ImageOptionChip extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color:
-                colors.accentSecondary.withValues(alpha: isDark ? 0.2 : 0.1),
+                colors.textPrimary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
-              color: colors.accentSecondary.withValues(alpha: 0.3),
+              color: colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -268,20 +266,20 @@ class _ImageOptionChip extends StatelessWidget {
                   height: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: colors.accentSecondary,
+                    color: colors.textPrimary,
                   ),
                 )
               else
                 Icon(
                   icon,
                   size: 16,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                 ),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 label,
                 style: typography.labelMedium.copyWith(
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w500,
                 ),
               ),

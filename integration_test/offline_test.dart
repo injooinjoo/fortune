@@ -1,18 +1,18 @@
-/// Offline Integration Test (Category C2)
-/// 오프라인 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/offline_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 6개:
-/// - OFF-001: 오프라인 상태 감지
-/// - OFF-002: 캐시 데이터 표시
-/// - OFF-003: 오프라인 안내 메시지
-/// - OFF-004: 네트워크 재연결 처리
-/// - OFF-005: 오프라인 요청 큐잉
-/// - OFF-006: 온라인 복구 시 동기화
+// Offline Integration Test (Category C2)
+// 오프라인 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/offline_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 6개:
+// - OFF-001: 오프라인 상태 감지
+// - OFF-002: 캐시 데이터 표시
+// - OFF-003: 오프라인 안내 메시지
+// - OFF-004: 네트워크 재연결 처리
+// - OFF-005: 오프라인 요청 큐잉
+// - OFF-006: 온라인 복구 시 동기화
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

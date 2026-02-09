@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/constants/edge_functions_endpoints.dart';
+
 import '../../domain/models/ai_recommendation.dart';
 
 /// 로컬 키워드 매칭 맵 (운세 타입 → 검색 키워드들)
@@ -103,25 +101,13 @@ const Map<String, String> _fortuneReasons = {
 
 /// AI 기반 운세 추천 서비스
 class FortuneRecommendService {
-  final Dio _dio;
   final Map<String, AIRecommendResponse> _cache = {};
 
   // 디바운싱
   Timer? _debounceTimer;
   static const Duration _debounceDelay = Duration(milliseconds: 300);
 
-  // 타임아웃
-  static const Duration _timeout = Duration(milliseconds: 3000);
-
-  FortuneRecommendService({Dio? dio}) : _dio = dio ?? _createDio();
-
-  static Dio _createDio() {
-    return Dio(BaseOptions(
-      baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
-      connectTimeout: _timeout,
-      receiveTimeout: _timeout,
-    ));
-  }
+  FortuneRecommendService();
 
   /// 로컬 키워드 매칭 (LLM 호출 없이 즉시 반환)
   /// 단어별로 쪼개서 매칭하므로 대부분의 쿼리가 여기서 처리됨

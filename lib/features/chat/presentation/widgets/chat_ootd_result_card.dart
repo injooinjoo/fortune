@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
-import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/ootd_info_header.dart';
 import '../../../../core/constants/fortune_card_images.dart';
@@ -19,18 +16,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// - 셀럽 + 추천 아이템 2열 카드
 class ChatOotdResultCard extends ConsumerWidget {
   final Map<String, dynamic> ootdData;
-  final bool isBlurred;
-  final List<String> blurredSections;
 
   const ChatOotdResultCard({
     super.key,
     required this.ootdData,
-    this.isBlurred = false,
-    this.blurredSections = const [],
   });
 
   // 동양화 스타일 - 포인트 색상은 쪽빛(cheongMuted) 사용
-  static Color _getAccentColor(BuildContext context) => ObangseokColors.cheongMuted;
+  static Color _getAccentColor(BuildContext context) => DSColors.info;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +33,7 @@ class ChatOotdResultCard extends ConsumerWidget {
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      child: DSCard.hanji(
+      child: DSCard.flat(
         padding: EdgeInsets.zero,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,16 +46,9 @@ class ChatOotdResultCard extends ConsumerWidget {
             _buildHighlightsSection(context),
             // TPO 피드백 (무료 공개)
             _buildTpoFeedbackSection(context),
-            SimpleBlurOverlay(
-              isBlurred: isBlurred || blurredSections.contains('ootd-result'),
-              child: Column(
-                children: [
-                  _buildPrescriptionSection(context),
-                  _buildBottomCardsSection(context),
-                  const SizedBox(height: DSSpacing.md),
-                ],
-              ),
-            ),
+            _buildPrescriptionSection(context),
+            _buildBottomCardsSection(context),
+            const SizedBox(height: DSSpacing.md),
           ],
         ),
       ),
@@ -554,7 +540,7 @@ class ChatOotdResultCard extends ConsumerWidget {
                 width: 20,
                 height: 20,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 '셀럽 스타일 매칭',
                 style: context.labelSmall.copyWith(
@@ -570,7 +556,7 @@ class ChatOotdResultCard extends ConsumerWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: ObangseokColors.getMeok(context).withValues(alpha: 0.2),
+              color: DSColors.textPrimary.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Center(
@@ -594,7 +580,7 @@ class ChatOotdResultCard extends ConsumerWidget {
           Text(
             '$similarity% 일치',
             style: context.labelSmall.copyWith(
-              color: ObangseokColors.getMeok(context),
+              color: DSColors.textPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -653,7 +639,7 @@ class ChatOotdResultCard extends ConsumerWidget {
                 width: 20,
                 height: 20,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 '추천 아이템',
                 style: context.labelSmall.copyWith(

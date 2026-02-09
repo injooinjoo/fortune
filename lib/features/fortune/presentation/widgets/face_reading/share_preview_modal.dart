@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import 'instagram_share_card.dart';
 
 /// 공유 미리보기 모달
@@ -97,7 +96,7 @@ class _SharePreviewModalState extends State<SharePreviewModal> {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 헤더
           _buildHeader(context, isDark),
@@ -137,7 +136,7 @@ class _SharePreviewModalState extends State<SharePreviewModal> {
             ),
             child: const Text('📤', style: TextStyle(fontSize: 20)),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: DSSpacing.sm + 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,10 +291,10 @@ class _SharePreviewModalState extends State<SharePreviewModal> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text('✨', style: TextStyle(fontSize: 40)),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             widget.todayQuote,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: DSColors.textPrimary,
               fontWeight: FontWeight.w500,
@@ -350,7 +349,7 @@ class _SharePreviewModalState extends State<SharePreviewModal> {
                               : DSColors.textSecondary,
                       size: 20,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: DSSpacing.sm),
                     Text(
                       '앱 로고 포함',
                       style: context.labelSmall.copyWith(
@@ -446,7 +445,7 @@ class _SharePreviewModalState extends State<SharePreviewModal> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: color, size: 20),
-            const SizedBox(width: 8),
+            const SizedBox(width: DSSpacing.sm),
             Text(
               label,
               style: context.labelMedium.copyWith(

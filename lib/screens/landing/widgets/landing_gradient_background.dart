@@ -24,14 +24,14 @@ class LandingGradientBackground extends StatelessWidget {
                 stops: [0.0, 0.35, 0.7, 1.0],
               )
             // Light Mode: 한지(韓紙) & 미색(米色) - Hanji paper aesthetic
-            : LinearGradient(
+            : const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  const Color(0xFFF8F4EC), // 고유 색상 - 순백색 한지 (Pure hanji)
-                  DSFortuneColors.hanjiCream, // 기본 한지색 (Hanji)
-                  const Color(0xFFF2EBE0), // 고유 색상 - 담황색 (Light tan)
-                  const Color(0xFFEDE5D5), // 고유 색상 - 미색 (Cream/Ivory)
+                  Color(0xFFF8F4EC), // 고유 색상 - 순백색 한지 (Pure hanji)
+                  DSColors.backgroundSecondaryDark, // 기본 한지색 (Hanji)
+                  Color(0xFFF2EBE0), // 고유 색상 - 담황색 (Light tan)
+                  Color(0xFFEDE5D5), // 고유 색상 - 미색 (Cream/Ivory)
                 ],
                 stops: [0.0, 0.35, 0.7, 1.0],
               ),

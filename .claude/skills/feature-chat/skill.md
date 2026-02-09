@@ -124,8 +124,6 @@ class {{typePascal}}Converter {
       ChatMessage.fortuneResult(
         fortuneType: '{{typeName}}',
         result: result,
-        isBlurred: result.isBlurred,
-        blurredSections: result.blurredSections,
       ),
     ];
   }

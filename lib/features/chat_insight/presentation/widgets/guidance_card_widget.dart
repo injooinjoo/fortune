@@ -24,7 +24,7 @@ class GuidanceCardWidget extends StatelessWidget {
           // 헤더
           Row(
             children: [
-              Icon(Icons.lightbulb_outline, color: colors.accent, size: 20),
+              Icon(Icons.lightbulb_outline, color: colors.textSecondary, size: 20),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '행동 가이드',
@@ -40,12 +40,12 @@ class GuidanceCardWidget extends StatelessWidget {
           if (guidance.doList.isNotEmpty) ...[
             Row(
               children: [
-                Icon(Icons.check_circle, color: colors.accent, size: 16),
+                Icon(Icons.check_circle, color: colors.success, size: 16),
                 const SizedBox(width: DSSpacing.xxs),
                 Text(
                   '이렇게 해보세요',
                   style: typography.labelMedium.copyWith(
-                    color: colors.accent,
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

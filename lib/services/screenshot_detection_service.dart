@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
-// import 'package:image_gallery_saver/image_gallery_saver.dart';  // AGP 8.x compatibility issue
 import '../core/utils/logger.dart';
 import '../core/services/resilient_service.dart';
 import '../core/design_system/tokens/ds_colors.dart';
@@ -361,6 +360,7 @@ class ScreenshotDetectionService extends ResilientService {
         final imageData = await imageFile.readAsBytes();
 
         // 카카오 SDK 직접 공유 시도
+        if (!context.mounted) return;
         final success = await _kakaoShareService.shareFortuneResult(
           context: context,
           title: title,
@@ -470,13 +470,7 @@ class ScreenshotDetectionService extends ResilientService {
   Future<void> _saveToGallery(Uint8List image, BuildContext context) async {
     await safeExecute(
       () async {
-        // Temporarily disabled due to AGP 8.x compatibility issue
-        // final result = await ImageGallerySaver.saveImage(
-        //   image,
-        //   quality: 100,
-        //   name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
-
-        // Temporary workaround: Save to app's document directory
+        // Save to app's document directory (AGP 8.x workaround)
         final directory = await getApplicationDocumentsDirectory();
         final imagePath = '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
         final imageFile = File(imagePath);
@@ -548,15 +542,8 @@ class ScreenshotDetectionService extends ResilientService {
         template: ShareCardTemplate.modern);
       
       if (image == null) return false;
-      
-      // Temporarily disabled due to AGP 8.x compatibility issue
-      // final result = await ImageGallerySaver.saveImage(
-      //   image,
-      //   quality: 100,
-      //   name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
-      // return result['isSuccess'] ?? false;
-      
-      // Temporary workaround: Save to app's document directory
+
+      // Save to app's document directory (AGP 8.x workaround)
       final directory = await getApplicationDocumentsDirectory();
       final imagePath = '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
       final imageFile = File(imagePath);

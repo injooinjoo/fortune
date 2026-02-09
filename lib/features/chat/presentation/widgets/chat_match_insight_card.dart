@@ -11,12 +11,10 @@ import '../../../../shared/widgets/smart_image.dart';
 /// 경기 정보, 승률 예측, 팀 분석, 행운 요소 표시
 class ChatMatchInsightCard extends ConsumerStatefulWidget {
   final MatchInsight insight;
-  final bool isBlurred;
 
   const ChatMatchInsightCard({
     super.key,
     required this.insight,
-    this.isBlurred = false,
   });
 
   @override
@@ -91,8 +89,8 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withValues(alpha: 0.1),
-                  Colors.black.withValues(alpha: 0.65),
+                  colors.background.withValues(alpha: 0.1),
+                  colors.background.withValues(alpha: 0.65),
                 ],
               ),
             ),
@@ -103,17 +101,17 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.4),
+                color: colors.background.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(DSRadius.md),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: colors.border,
                 ),
               ),
               child: Text(
                 '${insight.score}점',
                 style: typography.labelLarge.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: colors.textPrimary,
                 ),
               ),
             ),
@@ -138,20 +136,20 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
                         insight.matchTitle,
                         style: typography.headingMedium.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: colors.textPrimary,
                           shadows: [
                             Shadow(
-                              color: Colors.black.withValues(alpha: 0.45),
+                              color: colors.background.withValues(alpha: 0.45),
                               blurRadius: 8,
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: DSSpacing.xxs),
                       Text(
                         '${insight.leagueName} · ${_formatGameDate(insight.gameDate)}',
                         style: typography.labelSmall.copyWith(
-                          color: Colors.white.withValues(alpha: 0.85),
+                          color: colors.textPrimary.withValues(alpha: 0.85),
                         ),
                       ),
                     ],
@@ -188,7 +186,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
                 prediction.confidenceEmoji,
                 style: const TextStyle(fontSize: 16),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 '신뢰도: ${prediction.confidenceText}',
                 style: typography.labelSmall.copyWith(
@@ -232,7 +230,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
                     '$winProb%',
                     style: typography.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: colors.surface,
                     ),
                   ),
                 ),
@@ -331,7 +329,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
             children: [
               if (team.formEmoji != null) ...[
                 Text(team.formEmoji!, style: const TextStyle(fontSize: 16)),
-                const SizedBox(width: 4),
+                const SizedBox(width: DSSpacing.xs),
               ],
               Text(
                 team.name,
@@ -351,7 +349,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
           ),
 
           if (team.strengths.isNotEmpty) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: DSSpacing.xs),
             Text(
               '강점: ${team.strengths.join(', ')}',
               style: typography.labelSmall.copyWith(
@@ -363,7 +361,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
           ],
 
           if (team.concerns.isNotEmpty) ...[
-            const SizedBox(height: 2),
+            const SizedBox(height: DSSpacing.xxs),
             Text(
               '우려: ${team.concerns.join(', ')}',
               style: typography.labelSmall.copyWith(
@@ -440,7 +438,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
                 height: 20,
                 fit: BoxFit.contain,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 '행운 요소',
                 style: typography.labelMedium.copyWith(
@@ -599,7 +597,7 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
           Row(
             children: [
               const Text('💬', style: TextStyle(fontSize: 16)),
-              const SizedBox(width: 4),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 '오늘의 조언',
                 style: typography.labelMedium.copyWith(
@@ -663,10 +661,4 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
     return '${date.month}/${date.day}($weekday) $hour:$minute';
   }
 
-  Color _getScoreColor(int score) {
-    if (score >= 80) return DSColors.successDark;
-    if (score >= 60) return DSColors.accent;
-    if (score >= 40) return Colors.orange;
-    return DSColors.errorDark;
-  }
 }

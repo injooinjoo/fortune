@@ -70,12 +70,12 @@ class _ActionCard extends StatelessWidget {
           color: colors.surface,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: colors.accent.withValues(alpha: 0.15),
+            color: colors.border,
           ),
         ),
         child: Column(
           children: [
-            Icon(icon, color: colors.accent, size: 28),
+            Icon(icon, color: colors.textSecondary, size: 28),
             const SizedBox(height: DSSpacing.sm),
             Text(
               label,

@@ -1,8 +1,7 @@
-/// User Provider - Unit Test
-/// 사용자 상태 관리 테스트
+// User Provider - Unit Test
+// 사용자 상태 관리 테스트
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import '../../../mocks/mock_user_services.dart';
 import '../../../mocks/mock_auth_services.dart';
 

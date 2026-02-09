@@ -30,7 +30,7 @@ class DreamInterpretationData {
   });
 
   /// FortuneResult로 변환 (기존 UI와 호환)
-  FortuneResult toFortuneResult({required bool isPremium, required String dreamTitle}) {
+  FortuneResult toFortuneResult({required String dreamTitle}) {
     return FortuneResult(
       type: 'dream',
       title: '$dreamTitle 해몽',
@@ -52,10 +52,6 @@ class DreamInterpretationData {
         'relatedSymbols': relatedSymbols,
         'timestamp': DateTime.now().toIso8601String(),
       },
-      isBlurred: !isPremium,
-      blurredSections: isPremium
-          ? []
-          : ['relatedSymbols', 'interpretation', 'todayGuidance'],
     );
   }
 }

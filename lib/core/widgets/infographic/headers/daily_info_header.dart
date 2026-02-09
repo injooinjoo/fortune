@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../design_system/design_system.dart';
-import '../../../theme/typography_unified.dart';
 import '../score_circle_widget.dart';
 import '../category_bar_chart.dart';
 import '../lucky_items_compact.dart';

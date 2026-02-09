@@ -62,17 +62,17 @@ class UnifiedFortuneService {
 
   /// ==================== 메인 엔트리포인트 ====================
 
-  /// 운세 조회 (통합 플로우 + 최적화 + 블러 처리)
+  /// 운세 조회 (통합 플로우 + 최적화)
   ///
   /// 최적화 프로세스 (enableOptimization = true):
-  /// 1. FortuneOptimizationService 사용 (6단계 프로세스)
+  /// 1. FortuneOptimizationService 사용 (5단계 프로세스)
   ///    - 개인 캐시 확인 (20% 절감)
+  ///    - Cohort Pool 조회 (90% 절감)
   ///    - DB 풀 랜덤 선택 (50% 절감)
   ///    - 30% 확률 랜덤 (30% 절감)
   ///    - API 호출 (28%만 실행)
-  /// 2. 블러 상태로 즉시 반환 (광고 전)
-  /// 3. onAdComplete 콜백으로 블러 해제
-  /// 4. fortune_results + fortune_history 양쪽 저장
+  /// 2. fortune_results + fortune_history 양쪽 저장
+  /// 3. 결과 반환
   ///
   /// 레거시 프로세스 (enableOptimization = false):
   /// 1. checkExistingFortune (기존 방식)
@@ -84,8 +84,7 @@ class UnifiedFortuneService {
     required FortuneDataSource dataSource,
     required Map<String, dynamic> inputConditions,
     FortuneConditions? conditions, // 최적화용 조건 객체 (선택)
-    Function(FortuneResult)? onBlurredResult, // 블러 상태 결과 즉시 콜백
-    bool isPremium = false, // Premium 사용자는 블러 없이 표시
+    bool isPremium = false,
   }) async {
     try {
       final userId = await _getUserId();
@@ -145,10 +144,6 @@ class UnifiedFortuneService {
             userId: userId,
             fortuneType: fortuneType,
             conditions: conditions,
-            onShowAd: () async {
-              // 광고 표시는 UI에서 처리 (onBlurredResult 콜백 이후)
-              Logger.info('[$fortuneType] 📺 광고 표시 대기 (UI에서 처리)');
-            },
             onAPICall: (payload) async {
               // ✅ payload와 inputConditions 머지 (이미지 데이터 등 포함)
               Logger.info('[$fortuneType] 🔄 API 호출');
@@ -180,34 +175,13 @@ class UnifiedFortuneService {
               '[$fortuneType] ✅ 최적화 시스템 완료 (소스: ${cachedResult.source})');
 
           // CachedFortuneResult → FortuneResult 변환
-          var fortuneResult = _convertCachedToFortuneResult(cachedResult);
-
-          // Premium이 아니면 블러 처리
-          if (!isPremium) {
-            final blurredSections =
-                GeneratorFactory.getBlurredSections(fortuneType);
-            fortuneResult = fortuneResult.copyWith(
-              isBlurred: true,
-              blurredSections: blurredSections,
-            );
-
-            // 블러 상태 결과를 UI에 즉시 전달
-            if (onBlurredResult != null) {
-              Logger.info('[$fortuneType] 🔒 블러 상태 결과 전달 (광고 전)');
-              onBlurredResult(fortuneResult);
-            }
-
-            // TODO: 광고 표시 대기 (UI에서 처리)
-            // 광고 시청 후 블러 해제된 결과를 반환하려면
-            // UI 계층에서 이 메서드를 다시 호출하거나
-            // copyWith(isBlurred: false)를 사용
-          }
+          final fortuneResult = _convertCachedToFortuneResult(cachedResult);
 
           // fortune_history에도 저장 (기존 시스템과 호환성)
           if (cachedResult.apiCall) {
             // API 호출한 경우만 fortune_history에 저장
             await saveFortune(
-              result: fortuneResult.copyWith(isBlurred: false), // 저장 시 블러 해제
+              result: fortuneResult,
               fortuneType: fortuneType,
               inputConditions: inputConditions,
             );

@@ -1,5 +1,5 @@
-/// Integration Test Mocks
-/// 테스트에서 사용할 Mock Provider 및 데이터
+// Integration Test Mocks
+// 테스트에서 사용할 Mock Provider 및 데이터
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

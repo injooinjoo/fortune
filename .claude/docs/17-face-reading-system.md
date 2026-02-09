@@ -333,7 +333,7 @@ interface WatchData {
 
 ---
 
-## 무료/프리미엄 분기
+## 무료/구독 분기
 
 ### 무료 공개 섹션
 
@@ -348,7 +348,7 @@ interface WatchData {
 | simplifiedSibigung | 십이궁 요약 |
 | watchData | Watch 경량 데이터 |
 
-### 프리미엄 전용 섹션
+### 구독 전용 섹션
 
 | 섹션 | 설명 |
 |------|------|
@@ -485,8 +485,6 @@ POST /fortune-face-reading
   userGender: string
   userAgeGroup: string
   timestamp: string
-  isBlurred: boolean
-  blurredSections: string[]
 }
 ```
 

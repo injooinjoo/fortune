@@ -1,5 +1,5 @@
-/// Dream Fortune Page - Widget Test
-/// 꿈 해몽 페이지 UI 테스트
+// Dream Fortune Page - Widget Test
+// 꿈 해몽 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -173,23 +173,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 일부 콘텐츠 블러', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockDreamFortuneResult(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('전체 해석 보기'), findsOneWidget);
-      });
-    });
-
     group('인터랙션', () {
       testWidgets('해몽하기 버튼이 있어야 함', (tester) async {
         await tester.pumpWidget(
@@ -326,11 +309,9 @@ class _MockDreamFortunePage extends StatelessWidget {
 
 class _MockDreamFortuneResult extends StatelessWidget {
   final String fortune;
-  final bool isBlurred;
 
   const _MockDreamFortuneResult({
     this.fortune = '길',
-    this.isBlurred = false,
   });
 
   @override
@@ -375,15 +356,6 @@ class _MockDreamFortuneResult extends StatelessWidget {
                 subtitle: Text('오늘은 중요한 결정을 피하세요'),
               ),
             ),
-            if (isBlurred) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('전체 해석 보기'),
-                ),
-              ),
-            ],
           ],
         ),
       ),

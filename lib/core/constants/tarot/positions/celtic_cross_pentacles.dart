@@ -1,7 +1,7 @@
-/// Celtic Cross spread interpretations for Pentacles suit (indices 64-77)
-///
-/// Pentacles represent the element of Earth - material world, finances, career,
-/// physical health, practical matters, security, stability, and manifestation.
+// Celtic Cross spread interpretations for Pentacles suit (indices 64-77)
+//
+// Pentacles represent the element of Earth - material world, finances, career,
+// physical health, practical matters, security, stability, and manifestation.
 class CelticCrossPentacles {
   CelticCrossPentacles._();
 

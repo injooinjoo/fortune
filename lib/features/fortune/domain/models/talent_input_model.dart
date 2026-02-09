@@ -1,9 +1,9 @@
-/// 재능 발견 운세 입력 데이터 모델
-///
-/// 3단계 입력:
-/// - Phase 1: 사주 정보 (변하지 않는 것 - The Unchangeable)
-/// - Phase 2: 현재 상태 (환경으로 만들어진 것 - The Nurture)
-/// - Phase 3: 성향 선택 (선호하는 것 - The Preference)
+// 재능 발견 운세 입력 데이터 모델
+//
+// 3단계 입력:
+// - Phase 1: 사주 정보 (변하지 않는 것 - The Unchangeable)
+// - Phase 2: 현재 상태 (환경으로 만들어진 것 - The Nurture)
+// - Phase 3: 성향 선택 (선호하는 것 - The Preference)
 library;
 
 import 'package:flutter/material.dart';

@@ -20,8 +20,6 @@
  * - score: number (1-100) - 궁합 점수
  * - content: string - 운세 내용
  * - recommendations: string[] - 추천 조언
- * - isBlurred: boolean - 블러 상태
- * - blurredSections: string[] - 블러 처리된 섹션
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -476,15 +474,6 @@ ${category ? `- 카테고리: ${category}` : ''}
   }
 })
 
-// 블러 처리 함수 - 블러 비활성화 (모든 콘텐츠 전체 공개)
-function applyBlurring(fortune: any, isPremium: boolean): any {
-  // 블러 완전 비활성화 - isPremium 여부와 관계없이 전체 콘텐츠 공개
-  return {
-    ...fortune,
-    isBlurred: false,
-    blurredSections: []
-  }
-}
 
 // Fallback 운세 생성
 function generateFallbackFortune(userName: string, celebrityName: string, connectionType: string): CelebrityFortuneResponse {

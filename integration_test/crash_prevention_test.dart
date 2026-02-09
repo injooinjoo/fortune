@@ -1,27 +1,27 @@
-/// Crash Prevention Integration Test (Category A1)
-/// 앱스토어 리젝 방지를 위한 크래시 방지 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/crash_prevention_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 15개:
-/// - CRASH-001: 앱 시작 (Cold start 크래시 없음)
-/// - CRASH-002: 메모리 부족 (대용량 이미지 로드)
-/// - CRASH-003: 빠른 탭 전환 (연속 탭 전환 시 안정성)
-/// - CRASH-004: 백그라운드 복귀 (앱 전환 후 복귀)
-/// - CRASH-005: 네트워크 끊김 (요청 중 네트워크 끊김)
-/// - CRASH-006: 잘못된 입력 (특수문자/이모지 입력)
-/// - CRASH-007: 빈 데이터 (API 빈 응답 처리)
-/// - CRASH-008: Null 처리 (Null 데이터 처리)
-/// - CRASH-009: 딥링크 (잘못된 딥링크 처리)
-/// - CRASH-010: 화면 회전 (Portrait/Landscape 전환)
-/// - CRASH-011: 폰트 스케일 (시스템 폰트 크기 변경)
-/// - CRASH-012: 다크모드 전환 (시스템 테마 변경)
-/// - CRASH-013: 앱 업데이트 (버전 업데이트 후 실행)
-/// - CRASH-014: 로그아웃 중 (로그아웃 진행 중 네비게이션)
-/// - CRASH-015: 결제 중단 (결제 진행 중 앱 종료)
+// Crash Prevention Integration Test (Category A1)
+// 앱스토어 리젝 방지를 위한 크래시 방지 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/crash_prevention_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 15개:
+// - CRASH-001: 앱 시작 (Cold start 크래시 없음)
+// - CRASH-002: 메모리 부족 (대용량 이미지 로드)
+// - CRASH-003: 빠른 탭 전환 (연속 탭 전환 시 안정성)
+// - CRASH-004: 백그라운드 복귀 (앱 전환 후 복귀)
+// - CRASH-005: 네트워크 끊김 (요청 중 네트워크 끊김)
+// - CRASH-006: 잘못된 입력 (특수문자/이모지 입력)
+// - CRASH-007: 빈 데이터 (API 빈 응답 처리)
+// - CRASH-008: Null 처리 (Null 데이터 처리)
+// - CRASH-009: 딥링크 (잘못된 딥링크 처리)
+// - CRASH-010: 화면 회전 (Portrait/Landscape 전환)
+// - CRASH-011: 폰트 스케일 (시스템 폰트 크기 변경)
+// - CRASH-012: 다크모드 전환 (시스템 테마 변경)
+// - CRASH-013: 앱 업데이트 (버전 업데이트 후 실행)
+// - CRASH-014: 로그아웃 중 (로그아웃 진행 중 네비게이션)
+// - CRASH-015: 결제 중단 (결제 진행 중 앱 종료)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

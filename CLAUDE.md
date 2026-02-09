@@ -17,7 +17,7 @@
 
 ### Agent 협업
 - **feature-orchestrator**: 모든 요청의 진입점, 자동 라우팅
-- **fortune-specialist**: 인사이트 도메인 결정 (토큰, 블러, 입력 필드)
+- **fortune-specialist**: 인사이트 도메인 결정 (토큰, 입력 필드)
 - **quality-guardian**: 모든 코드 생성 후 품질 검증
 
 **우선순위**: 사용자 명시적 요청 > 프로젝트 규칙 > 글로벌 SuperClaude
@@ -60,7 +60,7 @@
 | `flutter run` 직접 실행 | 로그 확인 불가 | 사용자에게 실행 요청 |
 | 일괄 수정 (for, sed -i) | 프로젝트 망가짐 | 한 파일씩 Edit |
 | @riverpod 어노테이션 | 프로젝트 패턴 위반 | StateNotifier 사용 |
-| 하드코딩 색상/폰트 | 디자인 시스템 위반 | TossDesignSystem, context.heading1 |
+| 하드코딩 색상/폰트 | 디자인 시스템 위반 | DSColors, context.heading1 |
 
 ---
 
@@ -197,7 +197,7 @@ grep -rn "class.*Service" lib/
 
 ---
 
-## 핵심 패턴 (6가지)
+## 핵심 패턴 (5가지)
 
 ### 1. StateNotifier (Riverpod)
 ```dart
@@ -207,23 +207,17 @@ class FortuneNotifier extends StateNotifier<FortuneState> { }
 
 ### 2. Typography
 ```dart
-// ✅ context.heading1 | ❌ TossDesignSystem.heading1 금지
+// ✅ context.heading1 | ❌ 하드코딩 TextStyle 금지
 Text('제목', style: context.heading1)
 ```
 
-### 3. 블러 처리
-```dart
-// ✅ UnifiedBlurWrapper | ❌ ImageFilter.blur 금지
-UnifiedBlurWrapper(isBlurred: result.isBlurred, child: content)
-```
-
-### 4. Edge Function
+### 3. Edge Function
 ```typescript
 // ✅ LLMFactory | ❌ OpenAI/Gemini 직접 호출 금지
 const llm = LLMFactory.createFromConfig('fortune-type')
 ```
 
-### 5. 채팅 상태 (Chat-First)
+### 4. 채팅 상태 (Chat-First)
 ```dart
 // ✅ ChatMessagesNotifier | ❌ 직접 setState 금지
 class ChatMessagesNotifier extends StateNotifier<ChatState> {
@@ -233,7 +227,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
 }
 ```
 
-### 6. 추천 칩
+### 5. 추천 칩
 ```dart
 // ✅ FortuneChipGrid | ❌ 하드코딩 칩 금지
 FortuneChipGrid(

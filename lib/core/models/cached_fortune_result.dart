@@ -1,6 +1,6 @@
-/// 캐시된 운세 결과 모델 (최적화 시스템 전용)
-///
-/// fortune_results 테이블의 데이터를 담는 클래스
+// 캐시된 운세 결과 모델 (최적화 시스템 전용)
+//
+// fortune_results 테이블의 데이터를 담는 클래스
 class CachedFortuneResult {
   /// DB ID
   final String id;

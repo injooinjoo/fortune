@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/theme/typography_unified.dart';
 
 class ProfileVerificationPage extends ConsumerStatefulWidget {
   const ProfileVerificationPage({super.key});
@@ -110,8 +109,8 @@ class _ProfileVerificationPageState
               // 선택 라디오
               Radio<String>(
                 value: method,
-                groupValue: _selectedMethod,
-                onChanged: (value) {
+                groupValue: _selectedMethod, // ignore: deprecated_member_use
+                onChanged: (value) { // ignore: deprecated_member_use
                   if (value != null) {
                     setState(() {
                       _selectedMethod = value;
@@ -336,8 +335,8 @@ class _ProfileVerificationPageState
                           ),
                           _buildBenefitItem(
                             icon: Icons.card_giftcard,
-                            title: '보너스 복주머니',
-                            description: '인증 완료 시 1000 복주머니를 지급합니다',
+                            title: '보너스 토큰',
+                            description: '인증 완료 시 1000 토큰를 지급합니다',
                             isLast: true,
                           ),
                         ],

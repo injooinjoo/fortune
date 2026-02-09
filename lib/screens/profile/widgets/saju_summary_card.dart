@@ -83,8 +83,8 @@ class SajuSummaryCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
-                  ? [DSFortuneColors.categoryDaily, DSFortuneColors.categoryCareer] // 사주 헤더 그라디언트
-                  : [DSFortuneColors.categoryLuckyItems, DSFortuneColors.categoryFamily], // 사주 헤더 그라디언트
+                  ? [DSColors.accentSecondary, DSColors.info] // 사주 헤더 그라디언트
+                  : [DSColors.accentSecondary, DSColors.info], // 사주 헤더 그라디언트
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

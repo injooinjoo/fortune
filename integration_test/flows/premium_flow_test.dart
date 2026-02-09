@@ -1,24 +1,24 @@
-/// Premium/Payment Flow Integration Test (Category A3)
-/// 결제 플로우 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/flows/premium_flow_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 12개:
-/// - PREM-001: 토큰 잔액 표시
-/// - PREM-002: 토큰 부족 시 UI 확인
-/// - PREM-003: 토큰 구매 페이지 접근
-/// - PREM-004: 토큰 패키지 선택 UI
-/// - PREM-005: 구매 취소 플로우
-/// - PREM-006: 구독 페이지 표시
-/// - PREM-007: 구독 옵션 선택 UI
-/// - PREM-008: 구독 상태 표시
-/// - PREM-009: 구매 복원 버튼
-/// - PREM-010: 무료 토큰 수령 UI
-/// - PREM-011: 광고 시청 보상 UI
-/// - PREM-012: 구매 내역/영수증 접근
+// Premium/Payment Flow Integration Test (Category A3)
+// 결제 플로우 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/flows/premium_flow_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 12개:
+// - PREM-001: 토큰 잔액 표시
+// - PREM-002: 토큰 부족 시 UI 확인
+// - PREM-003: 토큰 구매 페이지 접근
+// - PREM-004: 토큰 패키지 선택 UI
+// - PREM-005: 구매 취소 플로우
+// - PREM-006: 구독 페이지 표시
+// - PREM-007: 구독 옵션 선택 UI
+// - PREM-008: 구독 상태 표시
+// - PREM-009: 구매 복원 버튼
+// - PREM-010: 무료 토큰 수령 UI
+// - PREM-011: 광고 시청 보상 UI
+// - PREM-012: 구매 내역/영수증 접근
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -204,7 +204,7 @@ void main() {
       final monthOption = find.textContaining('월');
       final yearOption = find.textContaining('년');
 
-      bool hasOptions = monthlyOption.evaluate().isNotEmpty ||
+      final hasOptions = monthlyOption.evaluate().isNotEmpty ||
           yearlyOption.evaluate().isNotEmpty ||
           monthOption.evaluate().isNotEmpty ||
           yearOption.evaluate().isNotEmpty;

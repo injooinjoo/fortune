@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
-import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 
 class BottomTarotDeckWidget extends ConsumerStatefulWidget {
@@ -154,27 +153,17 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
       child: Transform(
         alignment: Alignment.bottomCenter,
         transform: Matrix4.identity()
-          ..translate(x * fanProgress, y * fanProgress, zIndex.toDouble())
+          ..translateByDouble(x * fanProgress, y * fanProgress, zIndex.toDouble(), 0.0)
           ..rotateZ(angle * 0.3 * fanProgress)
-          ..scale(scale * fanProgress),
+          ..scaleByDouble(scale * fanProgress, scale * fanProgress, 1.0, 1.0),
         child: Opacity(
           opacity: (0.3 + fanProgress * 0.7).clamp(0.0, 1.0),
           child: GestureDetector(
             onTap: () {
               if (isCenter) {
                 HapticFeedback.mediumImpact();
-                // Show ad before selecting card
-                InterstitialAdHelper.showInterstitialAdWithCallback(
-                  ref,
-                  onAdCompleted: () async {
-                    // Select card after ad is completed or skipped
-                    widget.onCardSelected(index);
-                  },
-                  onAdFailed: () async {
-                    // If ad fails, still select the card
-                    widget.onCardSelected(index);
-                  },
-                );
+                // 카드 선택
+                widget.onCardSelected(index);
               } else {
                 // Animate to this card
                 _animateToCard(index);

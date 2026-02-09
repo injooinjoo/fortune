@@ -1,5 +1,5 @@
-/// Integration Test Helpers
-/// 테스트에서 자주 사용되는 유틸리티 함수 모음
+// Integration Test Helpers
+// 테스트에서 자주 사용되는 유틸리티 함수 모음
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

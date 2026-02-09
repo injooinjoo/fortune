@@ -90,11 +90,11 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                 child: Column(
                   children: [
                     _buildInstructions(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: DSSpacing.lg),
                     _buildWorryInput(),
                     const SizedBox(height: 32),
                     _buildWorryBead(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: DSSpacing.lg),
                     _buildActionButton(),
                     if (_adviceResult != null) ...[
                       const SizedBox(height: 32),
@@ -118,14 +118,14 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
             Icons.self_improvement,
             size: 48,
             color: AppTheme.primaryColor),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '걱정을 내려놓으세요',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '마음속 걱정을 적고 염주를 돌리면\n'
             '마음의 평안과 함께 조언을 드립니다.',
@@ -133,7 +133,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
               color: AppTheme.textSecondaryColor),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -147,9 +147,9 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   Icons.toll,
                   size: 16,
                   color: AppTheme.primaryColor),
-                const SizedBox(width: 4),
+                const SizedBox(width: DSSpacing.xs),
                 Text(
-                  '$_requiredTokens 복주머니 필요',
+                  '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppTheme.primaryColor,
                     fontWeight: FontWeight.bold,
@@ -292,7 +292,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
               color: AppTheme.primaryColor,
             ),
           ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
@@ -337,7 +337,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                 color: AppTheme.primaryColor,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '마음의 조언',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -346,14 +346,14 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             _adviceResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               height: 1.6,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           Row(
             children: [
               Expanded(

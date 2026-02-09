@@ -91,41 +91,6 @@ class DSShadows {
   /// 2XL shadow dark - neutralized (flat design, no shadows)
   static List<BoxShadow> get xxlDark => [];
 
-  // ============================================
-  // LEGACY COMPATIBILITY
-  // Old ink-wash names map to new clean shadows
-  // ============================================
-
-  /// @deprecated Use [xs] instead
-  static List<BoxShadow> get inkWashXs => xs;
-
-  /// @deprecated Use [sm] instead
-  static List<BoxShadow> get inkWashSm => sm;
-
-  /// @deprecated Use [md] instead
-  static List<BoxShadow> get inkWash => md;
-
-  /// @deprecated Use [md] instead
-  static List<BoxShadow> get inkWashMd => md;
-
-  /// @deprecated Use [lg] instead
-  static List<BoxShadow> get inkWashLg => lg;
-
-  /// @deprecated Use [xsDark] instead
-  static List<BoxShadow> get inkWashXsDark => xsDark;
-
-  /// @deprecated Use [smDark] instead
-  static List<BoxShadow> get inkWashSmDark => smDark;
-
-  /// @deprecated Use [mdDark] instead
-  static List<BoxShadow> get inkWashDark => mdDark;
-
-  /// @deprecated Use [mdDark] instead
-  static List<BoxShadow> get inkWashMdDark => mdDark;
-
-  /// @deprecated Use [lgDark] instead
-  static List<BoxShadow> get inkWashLgDark => lgDark;
-
   /// No shadow
   static List<BoxShadow> get none => [];
 
@@ -208,54 +173,6 @@ class DSShadows {
         boxShadow: [],
       );
 
-  /// @deprecated Use [cardDecoration] instead
-  static BoxDecoration inkWashDecoration({
-    Color? backgroundColor,
-    double borderRadius = 16,
-    double intensity = 0.06,
-    double spread = 4,
-  }) =>
-      cardDecoration(
-        backgroundColor: backgroundColor,
-        borderRadius: borderRadius,
-      );
-
-  /// @deprecated Use [cardDecorationDark] instead
-  static BoxDecoration inkWashDecorationDark({
-    Color? backgroundColor,
-    double borderRadius = 16,
-    double intensity = 0.25,
-    double spread = 4,
-  }) =>
-      cardDecorationDark(
-        backgroundColor: backgroundColor,
-        borderRadius: borderRadius,
-      );
-
-  /// @deprecated Seal decoration - no longer used in modern design
-  static BoxDecoration sealDecoration({
-    double borderRadius = 12,
-    bool isPressed = false,
-  }) =>
-      BoxDecoration(
-        color: isPressed ? DSColors.accentHover : DSColors.accent,
-        borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: [],
-      );
-
-  /// @deprecated Gold decoration - no longer used in modern design
-  static BoxDecoration goldAccentDecoration({
-    double borderRadius = 16,
-  }) =>
-      BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(
-          color: DSColors.warning.withValues(alpha: 0.6),
-          width: 1,
-        ),
-        boxShadow: [],
-      );
-
   // ============================================
   // THEME-AWARE GETTERS
   // ============================================
@@ -280,26 +197,6 @@ class DSShadows {
 
   static List<BoxShadow> getXxl(Brightness brightness) =>
       brightness == Brightness.dark ? xxlDark : xxl;
-
-  /// @deprecated Use [getMd] instead
-  static List<BoxShadow> getInkWash(Brightness brightness) =>
-      getMd(brightness);
-
-  /// @deprecated Use theme-aware card decoration
-  static BoxDecoration getInkWashDecoration(
-    Brightness brightness, {
-    Color? backgroundColor,
-    double borderRadius = 16,
-  }) =>
-      brightness == Brightness.dark
-          ? cardDecorationDark(
-              backgroundColor: backgroundColor,
-              borderRadius: borderRadius,
-            )
-          : cardDecoration(
-              backgroundColor: backgroundColor,
-              borderRadius: borderRadius,
-            );
 
   /// Get card decoration based on brightness
   static BoxDecoration getCardDecoration(
@@ -335,13 +232,6 @@ class DSShadowScheme {
   List<BoxShadow> get xl => isDark ? DSShadows.xlDark : DSShadows.xl;
   List<BoxShadow> get xxl => isDark ? DSShadows.xxlDark : DSShadows.xxl;
   List<BoxShadow> get none => DSShadows.none;
-
-  // Legacy compatibility (ink-wash)
-  List<BoxShadow> get inkWashXs => xs;
-  List<BoxShadow> get inkWashSm => sm;
-  List<BoxShadow> get inkWash => md;
-  List<BoxShadow> get inkWashMd => md;
-  List<BoxShadow> get inkWashLg => lg;
 
   // Semantic shadow accessors - neutralized (flat design, no shadows)
   BoxShadow get cardShadow => const BoxShadow(color: Color(0x00000000));

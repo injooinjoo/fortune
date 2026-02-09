@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/design_system/tokens/ds_fortune_colors.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 인생 컨설팅 대분류 카테고리
 enum LifeCategory {
@@ -8,7 +8,7 @@ enum LifeCategory {
     'love_relationship',
     '연애/관계',
     Icons.favorite_rounded,
-    DSFortuneColors.categoryLove,
+    DSColors.accentSecondary,
   ),
 
   /// 돈/재정
@@ -16,7 +16,7 @@ enum LifeCategory {
     'money_finance',
     '돈/재정',
     Icons.attach_money_rounded,
-    DSFortuneColors.categoryMoney,
+    DSColors.accentSecondary,
   ),
 
   /// 커리어/학업
@@ -24,7 +24,7 @@ enum LifeCategory {
     'career_study',
     '커리어/학업',
     Icons.work_rounded,
-    DSFortuneColors.categoryCareer,
+    DSColors.accentSecondary,
   ),
 
   /// 건강/웰빙
@@ -32,7 +32,7 @@ enum LifeCategory {
     'health_wellness',
     '건강/웰빙',
     Icons.health_and_safety_rounded,
-    DSFortuneColors.categoryHealth,
+    DSColors.accentSecondary,
   );
 
   const LifeCategory(this.value, this.label, this.icon, this.color);

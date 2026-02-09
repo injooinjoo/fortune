@@ -34,7 +34,7 @@ class WeeklyTrendCard extends StatelessWidget {
             color: context.colors.textPrimary,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: DSSpacing.xs),
         Text(
           '이번 주 당신의 운세 흐름',
           style: context.bodySmall.copyWith(
@@ -42,7 +42,7 @@ class WeeklyTrendCard extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: DSSpacing.md),
 
         Container(
           padding: const EdgeInsets.all(16),
@@ -50,8 +50,8 @@ class WeeklyTrendCard extends StatelessWidget {
             // 고유 색상 - 전통 목(木) 색상 그라데이션 (성장과 상승을 상징)
             gradient: LinearGradient(
               colors: [
-                context.isDark ? const Color(0xFF2E8B57) : const Color(0xFF3D9970), // 고유 색상 - 木 청록
-                context.isDark ? const Color(0xFF1E5F3C) : const Color(0xFF2E8B57), // 고유 색상 - 木 진한
+                context.isDark ? DSColors.success : const Color(0xFF3D9970), // 고유 색상 - 木 청록
+                context.isDark ? const Color(0xFF1E5F3C) : DSColors.success, // 고유 색상 - 木 진한
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -112,11 +112,11 @@ class WeeklyTrendCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     // 고유 색상 - 전통 목(木) 색상 (좋은 날 강조)
                     color: score >= 80
-                        ? const Color(0xFF2E8B57).withValues(alpha: 0.2) // 고유 색상 - 木 청록
+                        ? DSColors.success.withValues(alpha: 0.2) // 좋은 날 강조
                         : context.colors.textPrimary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                     border: score >= 80
-                        ? Border.all(color: const Color(0xFF2E8B57), width: 1) // 고유 색상 - 木 청록
+                        ? Border.all(color: DSColors.success, width: 1) // 좋은 날 강조
                         : null,
                   ),
                   child: Column(
@@ -128,12 +128,12 @@ class WeeklyTrendCard extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: DSSpacing.xxs),
                       Text(
                         '$score',
                         style: context.labelTiny.copyWith(
                           color: score >= 80
-                              ? const Color(0xFF2E8B57) // 고유 색상 - 木 청록
+                              ? DSColors.success // 좋은 날 강조
                               : context.colors.textSecondary,
                         ),
                       ),

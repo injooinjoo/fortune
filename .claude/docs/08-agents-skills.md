@@ -26,7 +26,7 @@ Fortune App 개발에 최적화된 7개의 Agent(전문가 페르소나)와 10�
 | **flutter-architect** | Clean Architecture 설계자 | 레이어 분리, DI, 의존성 규칙 |
 | **riverpod-specialist** | 상태관리 전문가 | StateNotifier, Provider 패턴 |
 | **freezed-generator** | 모델 생성 전문가 | Freezed, JsonSerializable |
-| **toss-design-guardian** | UI/UX 표준 수호자 | TossDesignSystem, 다크모드 |
+| **design-system-guardian** | UI/UX 표준 수호자 | DSColors, 다크모드 |
 | **fortune-domain-expert** | 운세 도메인 전문가 | 비용 최적화, 블러 시스템 |
 | **testing-architect** | 테스트 설계자 | 단위/통합/E2E 테스트 |
 | **error-resolver** | 버그 헌터 | 근본원인 분석, 에러 패턴 |
@@ -106,13 +106,13 @@ class FortuneResult with _$FortuneResult {
 **역할**: UI/UX 표준 수호자
 
 **전문 영역**:
-- TossDesignSystem 색상 토큰
+- DSColors 색상 토큰 (ChatGPT 스타일)
 - TypographyUnified 폰트 시스템
 - 다크모드 대응 패턴
 - UnifiedBlurWrapper 블러 처리
 
 **검증 항목**:
-- [ ] 하드코딩 색상 금지 → TossDesignSystem 사용
+- [ ] 하드코딩 색상 금지 → DSColors 사용
 - [ ] 하드코딩 fontSize 금지 → TypographyUnified 사용
 - [ ] isDark 조건문으로 다크모드 대응
 - [ ] AppBar에 Icons.arrow_back_ios 사용
@@ -128,8 +128,8 @@ class FortuneResult with _$FortuneResult {
 **전문 영역**:
 - 6단계 운세 조회 프로세스
 - 72% API 비용 절감 로직
-- 프리미엄/일반 사용자 분기
-- 블러 해제 광고 시스템
+- 구독자/일반 사용자 분기
+- 블러 해제 시스템
 
 **핵심 지식**:
 - 개인 캐시 → DB 풀 → 30% 랜덤 → API 호출
@@ -339,7 +339,7 @@ testWidgets('renders correctly', (tester) async {
 **출력**: `lib/core/widgets/{name}.dart`
 
 **포함 내용**:
-- TossDesignSystem 색상
+- DSColors 색상 (ChatGPT 스타일)
 - TypographyUnified 폰트
 - 다크모드 대응
 - 접근성 고려

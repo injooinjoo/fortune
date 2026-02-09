@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../presentation/providers/providers.dart';
 import 'package:fortune/core/theme/app_animations.dart';
-import 'ads/interstitial_ad_helper.dart';
 import '../../core/utils/logger.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/widgets/date_picker/numeric_date_input.dart';
@@ -600,22 +599,11 @@ class _FortuneExplanationBottomSheetState
 
                     final fortuneRoute = _getFortuneRoute(widget.fortuneType);
 
-                    // Premium/Frequency 체크 및 광고 표시 (Helper가 처리)
-                    await InterstitialAdHelper.showInterstitialAdWithCallback(
-                      ref,
-                      onAdCompleted: () async {
-                        Logger.debug(
-                            '📺 [FortuneExplanationBottomSheet] Ad completed or skipped, navigating');
-                        if (context.mounted)
-                          context.go(fortuneRoute, extra: fortuneParams);
-                      },
-                      onAdFailed: () async {
-                        Logger.debug(
-                            '📺 [FortuneExplanationBottomSheet] Ad failed, navigating anyway');
-                        if (context.mounted)
-                          context.go(fortuneRoute, extra: fortuneParams);
-                      },
-                    );
+                    // 운세 페이지로 이동
+                    Logger.debug('[FortuneExplanationBottomSheet] Navigating to $fortuneRoute');
+                    if (context.mounted) {
+                      context.go(fortuneRoute, extra: fortuneParams);
+                    }
                   }
                 : null,
             style: ElevatedButton.styleFrom(

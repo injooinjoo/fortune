@@ -1,5 +1,5 @@
-/// Auth Provider - Unit Test
-/// 인증 상태 관리 테스트
+// Auth Provider - Unit Test
+// 인증 상태 관리 테스트
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';

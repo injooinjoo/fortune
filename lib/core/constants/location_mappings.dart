@@ -1,4 +1,4 @@
-/// 위치 관련 상수 및 매핑 데이터
+// 위치 관련 상수 및 매핑 데이터
 class LocationMappings {
   LocationMappings._(); // Private constructor to prevent instantiation
 

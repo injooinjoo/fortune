@@ -7,7 +7,7 @@ class WorkStyleCard extends StatelessWidget {
   final WorkStyle workStyle;
 
   // 테마 색상 상수
-  static const Color _workColor = DSFortuneColors.categoryCareer;
+  static const Color _workColor = DSColors.info;
 
   const WorkStyleCard({super.key, required this.workStyle});
 
@@ -43,7 +43,7 @@ class WorkStyleCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [DSFortuneColors.categoryCareer, Color(0xFF67B8F5)], // 고유 그라데이션 끝 색상
+                colors: [DSColors.info, Color(0xFF67B8F5)], // 고유 그라데이션 끝 색상
               ),
               borderRadius: BorderRadius.circular(20),
             ),

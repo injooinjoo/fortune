@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../domain/models/face_reading_history_entry.dart';
 
 /// 관상 분석 히스토리 캘린더
@@ -171,7 +170,7 @@ class _FaceReadingHistoryCalendarState
               color: DSColors.accent.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.calendar_month,
               color: DSColors.accent,
               size: 22,
@@ -232,12 +231,12 @@ class _FaceReadingHistoryCalendarState
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            const Icon(
               Icons.compare_arrows,
               color: DSColors.accent,
               size: 16,
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: DSSpacing.xs),
             Text(
               '비교',
               style: context.labelSmall.copyWith(
@@ -255,7 +254,7 @@ class _FaceReadingHistoryCalendarState
   CalendarStyle _buildCalendarStyle() {
     return CalendarStyle(
       outsideDaysVisible: false,
-      weekendTextStyle: TextStyle(
+      weekendTextStyle: const TextStyle(
         color: DSColors.warning,
         fontWeight: FontWeight.w500,
       ),
@@ -263,11 +262,11 @@ class _FaceReadingHistoryCalendarState
         color: DSColors.accent.withValues(alpha: 0.2),
         shape: BoxShape.circle,
       ),
-      todayTextStyle: TextStyle(
+      todayTextStyle: const TextStyle(
         color: DSColors.accent,
         fontWeight: FontWeight.w700,
       ),
-      selectedDecoration: BoxDecoration(
+      selectedDecoration: const BoxDecoration(
         color: DSColors.accent,
         shape: BoxShape.circle,
       ),
@@ -275,7 +274,7 @@ class _FaceReadingHistoryCalendarState
         color: Colors.white,
         fontWeight: FontWeight.w700,
       ),
-      markerDecoration: BoxDecoration(
+      markerDecoration: const BoxDecoration(
         color: DSColors.success,
         shape: BoxShape.circle,
       ),
@@ -503,7 +502,7 @@ class _FaceReadingHistoryCalendarState
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: DSSpacing.xxs),
                 Text(
                   entry.priorityInsights.isNotEmpty
                       ? entry.priorityInsights.first.message
@@ -566,7 +565,7 @@ class _FaceReadingHistoryCalendarState
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: DSSpacing.xxs),
               Text(
                 '이 날은 기록이 없어요',
                 style: context.labelSmall.copyWith(
@@ -604,12 +603,12 @@ class _FaceReadingHistoryCalendarState
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.info_outline,
             color: DSColors.accentSecondary,
             size: 18,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.sm),
           Text(
             message,
             style: context.labelSmall.copyWith(
@@ -698,7 +697,7 @@ class _FaceReadingHistoryCalendarState
           color: DSColors.accent,
           size: 18,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: DSSpacing.xs),
         Text(
           value,
           style: context.labelMedium.copyWith(

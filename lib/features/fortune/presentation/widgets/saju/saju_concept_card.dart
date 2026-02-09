@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/font_config.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 /// 사주 개념 설명 카드 위젯
 /// 각 탭에서 해당 개념에 대한 설명을 접을 수 있는 형태로 제공합니다.
@@ -154,10 +153,10 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                     width: double.infinity,
                     padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: DSFortuneColors.categoryFamily.withValues(alpha: 0.08),
+                      color: DSColors.accentSecondary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                       border: Border.all(
-                        color: DSFortuneColors.categoryFamily.withValues(alpha: 0.2),
+                        color: DSColors.accentSecondary.withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),
@@ -168,20 +167,20 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                           children: [
                             const Icon(
                               Icons.lightbulb_outline,
-                              color: DSFortuneColors.categoryFamily,
+                              color: DSColors.accentSecondary,
                               size: 16,
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: DSSpacing.xs + 2),
                             Text(
                               '실생활에서는?',
                               style: context.labelMedium.copyWith(
-                                color: DSFortuneColors.categoryFamily,
+                                color: DSColors.accentSecondary,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: DSSpacing.sm),
                         Text(
                           widget.realLife!,
                           style: context.bodySmall.copyWith(
@@ -200,10 +199,10 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                     width: double.infinity,
                     padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: DSFortuneColors.categoryHealth.withValues(alpha: 0.08),
+                      color: DSColors.success.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                       border: Border.all(
-                        color: DSFortuneColors.categoryHealth.withValues(alpha: 0.2),
+                        color: DSColors.success.withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),
@@ -214,20 +213,20 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                           children: [
                             const Icon(
                               Icons.tips_and_updates_outlined,
-                              color: DSFortuneColors.categoryHealth,
+                              color: DSColors.success,
                               size: 16,
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: DSSpacing.xs + 2),
                             Text(
                               '이렇게 활용하세요!',
                               style: context.labelMedium.copyWith(
-                                color: DSFortuneColors.categoryHealth,
+                                color: DSColors.success,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: DSSpacing.sm),
                         Text(
                           widget.tips!,
                           style: context.bodySmall.copyWith(
@@ -258,7 +257,7 @@ class _SajuConceptCardState extends State<SajuConceptCard>
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: DSSpacing.xs),
                 AnimatedRotation(
                   turns: _isExpanded ? 0.5 : 0,
                   duration: const Duration(milliseconds: 300),
@@ -297,8 +296,27 @@ void showCharacterExplanationSheet({
 }) {
   final colors = context.colors;
 
-  // 오행별 색상
-  final elementColor = DSFortuneColors.getElementColor(element);
+  // 오행별 색상 - DSColors로 매핑
+  Color elementColor;
+  switch (element) {
+    case '木':
+      elementColor = DSColors.success;
+      break;
+    case '火':
+      elementColor = DSColors.error;
+      break;
+    case '土':
+      elementColor = DSColors.warning;
+      break;
+    case '金':
+      elementColor = DSColors.surface;
+      break;
+    case '水':
+      elementColor = DSColors.info;
+      break;
+    default:
+      elementColor = DSColors.accentSecondary;
+  }
 
   showModalBottomSheet(
     context: context,
@@ -379,7 +397,7 @@ void showCharacterExplanationSheet({
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: DSSpacing.xs),
                           Row(
                             children: [
                               // 오행 배지
@@ -485,7 +503,7 @@ void showCharacterExplanationSheet({
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         meaning,
                         style: context.bodyMedium.copyWith(
@@ -523,7 +541,7 @@ void showCharacterExplanationSheet({
                     title: '현대인의 모습으로 보면',
                     content: realLife,
                     icon: Icons.lightbulb_outline,
-                    color: DSFortuneColors.categoryFamily,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -535,7 +553,7 @@ void showCharacterExplanationSheet({
                     title: '연애 & 인간관계',
                     content: love,
                     icon: Icons.favorite_outline,
-                    color: DSFortuneColors.categoryLove,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -547,7 +565,7 @@ void showCharacterExplanationSheet({
                     title: '직업 & 재물운',
                     content: career,
                     icon: Icons.work_outline,
-                    color: DSFortuneColors.categoryLotto,
+                    color: DSColors.warning,
                   ),
                 ],
 
@@ -559,7 +577,7 @@ void showCharacterExplanationSheet({
                     title: '건강 포인트',
                     content: health,
                     icon: Icons.health_and_safety_outlined,
-                    color: DSFortuneColors.categoryHealth,
+                    color: DSColors.success,
                   ),
                 ],
 
@@ -571,7 +589,7 @@ void showCharacterExplanationSheet({
                     title: '이렇게 활용하세요!',
                     content: tips,
                     icon: Icons.tips_and_updates_outlined,
-                    color: DSFortuneColors.categoryLuckyItems,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -583,7 +601,7 @@ void showCharacterExplanationSheet({
                     title: '궁합 & 상성',
                     content: compatibility,
                     icon: Icons.people_outline,
-                    color: DSFortuneColors.categoryFaceReading,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -618,7 +636,32 @@ void showOhangExplanationSheet({
 }) {
   final colors = context.colors;
 
-  final elementColor = DSFortuneColors.getElementColor(element);
+  // 오행별 색상 - DSColors로 매핑
+  Color elementColor;
+  switch (element) {
+    case '목':
+    case '木':
+      elementColor = DSColors.success;
+      break;
+    case '화':
+    case '火':
+      elementColor = DSColors.error;
+      break;
+    case '토':
+    case '土':
+      elementColor = DSColors.warning;
+      break;
+    case '금':
+    case '金':
+      elementColor = DSColors.surface;
+      break;
+    case '수':
+    case '水':
+      elementColor = DSColors.info;
+      break;
+    default:
+      elementColor = DSColors.accentSecondary;
+  }
 
   showModalBottomSheet(
     context: context,
@@ -696,7 +739,7 @@ void showOhangExplanationSheet({
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: DSSpacing.xs),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: DSSpacing.sm,
@@ -766,7 +809,7 @@ void showOhangExplanationSheet({
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         meaning,
                         style: context.bodyMedium.copyWith(
@@ -804,7 +847,7 @@ void showOhangExplanationSheet({
                     title: '현대인 유형으로 보면',
                     content: realLife,
                     icon: Icons.lightbulb_outline,
-                    color: DSFortuneColors.categoryFamily,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -816,7 +859,7 @@ void showOhangExplanationSheet({
                     title: '연애 스타일',
                     content: loveStyle,
                     icon: Icons.favorite_outline,
-                    color: DSFortuneColors.categoryLove,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -828,7 +871,7 @@ void showOhangExplanationSheet({
                     title: '일하는 스타일',
                     content: workStyle,
                     icon: Icons.work_outline,
-                    color: DSFortuneColors.categoryLotto,
+                    color: DSColors.warning,
                   ),
                 ],
 
@@ -840,7 +883,7 @@ void showOhangExplanationSheet({
                     title: '스트레스 받으면?',
                     content: stressSign,
                     icon: Icons.warning_amber_outlined,
-                    color: DSFortuneColors.categoryNewYear,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -852,7 +895,7 @@ void showOhangExplanationSheet({
                     title: '에너지 충전법',
                     content: rechargeWay,
                     icon: Icons.battery_charging_full_outlined,
-                    color: DSFortuneColors.categoryHealth,
+                    color: DSColors.success,
                   ),
                 ],
 
@@ -914,7 +957,7 @@ Widget _buildExpandedSection({
         Row(
           children: [
             Icon(icon, size: 16, color: color),
-            const SizedBox(width: 6),
+            const SizedBox(width: DSSpacing.xs + 2),
             Text(
               title,
               style: context.labelMedium.copyWith(
@@ -924,7 +967,7 @@ Widget _buildExpandedSection({
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         Text(
           content,
           style: context.bodyMedium.copyWith(
@@ -1031,7 +1074,7 @@ void showTwelveStageExplanationSheet({
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: DSSpacing.xs),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: DSSpacing.sm,
@@ -1078,7 +1121,7 @@ void showTwelveStageExplanationSheet({
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         meaning,
                         style: context.bodyMedium.copyWith(
@@ -1146,7 +1189,7 @@ void showTwelveStageExplanationSheet({
                     title: '현대인의 에너지로 보면',
                     content: realLife,
                     icon: Icons.lightbulb_outline,
-                    color: DSFortuneColors.categoryFamily,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -1158,7 +1201,7 @@ void showTwelveStageExplanationSheet({
                     title: '이 시기가 오면',
                     content: when,
                     icon: Icons.schedule_outlined,
-                    color: DSFortuneColors.categoryLuckyItems,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -1170,7 +1213,7 @@ void showTwelveStageExplanationSheet({
                     title: '직장 & 사업운',
                     content: career,
                     icon: Icons.work_outline,
-                    color: DSFortuneColors.categoryLotto,
+                    color: DSColors.warning,
                   ),
                 ],
 
@@ -1182,7 +1225,7 @@ void showTwelveStageExplanationSheet({
                     title: '연애 & 결혼운',
                     content: love,
                     icon: Icons.favorite_outline,
-                    color: DSFortuneColors.categoryLove,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -1194,7 +1237,7 @@ void showTwelveStageExplanationSheet({
                     title: '이 시기를 잘 보내려면',
                     content: tips,
                     icon: Icons.tips_and_updates_outlined,
-                    color: DSFortuneColors.categoryHealth,
+                    color: DSColors.success,
                   ),
                 ],
 
@@ -1206,7 +1249,7 @@ void showTwelveStageExplanationSheet({
                     title: '주의할 점',
                     content: warning,
                     icon: Icons.warning_amber_outlined,
-                    color: DSFortuneColors.categoryNewYear,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -1326,7 +1369,7 @@ void showSinsalExplanationSheet({
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: DSSpacing.xs),
                           Row(
                             children: [
                               Container(
@@ -1347,7 +1390,7 @@ void showSinsalExplanationSheet({
                                       size: 12,
                                       color: Colors.white,
                                     ),
-                                    const SizedBox(width: 4),
+                                    const SizedBox(width: DSSpacing.xs),
                                     Text(
                                       type,
                                       style: context.labelSmall.copyWith(
@@ -1396,7 +1439,7 @@ void showSinsalExplanationSheet({
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         meaning,
                         style: context.bodyMedium.copyWith(
@@ -1434,7 +1477,7 @@ void showSinsalExplanationSheet({
                     title: '현대 사회에서 나타나는 모습',
                     content: realLife,
                     icon: Icons.lightbulb_outline,
-                    color: DSFortuneColors.categoryFamily,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -1446,7 +1489,7 @@ void showSinsalExplanationSheet({
                     title: '좋은 점 & 활용법',
                     content: goodSide,
                     icon: Icons.thumb_up_outlined,
-                    color: DSFortuneColors.categoryHealth,
+                    color: DSColors.success,
                   ),
                 ],
 
@@ -1458,7 +1501,7 @@ void showSinsalExplanationSheet({
                     title: '주의할 점',
                     content: badSide,
                     icon: Icons.warning_amber_outlined,
-                    color: DSFortuneColors.categoryNewYear,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -1470,7 +1513,7 @@ void showSinsalExplanationSheet({
                     title: '직업 & 재물운',
                     content: career,
                     icon: Icons.work_outline,
-                    color: DSFortuneColors.categoryLotto,
+                    color: DSColors.warning,
                   ),
                 ],
 
@@ -1482,7 +1525,7 @@ void showSinsalExplanationSheet({
                     title: '연애 & 인간관계',
                     content: love,
                     icon: Icons.favorite_outline,
-                    color: DSFortuneColors.categoryLove,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -1494,7 +1537,7 @@ void showSinsalExplanationSheet({
                     title: '이렇게 활용하세요!',
                     content: tips,
                     icon: Icons.tips_and_updates_outlined,
-                    color: DSFortuneColors.categoryLuckyItems,
+                    color: DSColors.accentSecondary,
                   ),
                 ],
 
@@ -1619,7 +1662,7 @@ void showHapchungExplanationSheet({
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: DSSpacing.xs),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: DSSpacing.sm,
@@ -1637,7 +1680,7 @@ void showHapchungExplanationSheet({
                                   size: 12,
                                   color: Colors.white,
                                 ),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: DSSpacing.xs),
                                 Text(
                                   '합충형파해',
                                   style: context.labelSmall.copyWith(
@@ -1677,7 +1720,7 @@ void showHapchungExplanationSheet({
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         meaning,
                         style: context.bodyMedium.copyWith(
@@ -1744,10 +1787,10 @@ void showHapchungExplanationSheet({
                     width: double.infinity,
                     padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: DSFortuneColors.categoryFamily.withValues(alpha: 0.08),
+                      color: DSColors.accentSecondary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                       border: Border.all(
-                        color: DSFortuneColors.categoryFamily.withValues(alpha: 0.2),
+                        color: DSColors.accentSecondary.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Column(
@@ -1758,13 +1801,13 @@ void showHapchungExplanationSheet({
                             const Icon(
                               Icons.lightbulb_outline,
                               size: 18,
-                              color: DSFortuneColors.categoryFamily,
+                              color: DSColors.accentSecondary,
                             ),
                             const SizedBox(width: DSSpacing.xs),
                             Text(
                               '실생활에서는?',
                               style: context.labelMedium.copyWith(
-                                color: DSFortuneColors.categoryFamily,
+                                color: DSColors.accentSecondary,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -1790,10 +1833,10 @@ void showHapchungExplanationSheet({
                     width: double.infinity,
                     padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: DSFortuneColors.categoryHealth.withValues(alpha: 0.08),
+                      color: DSColors.success.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                       border: Border.all(
-                        color: DSFortuneColors.categoryHealth.withValues(alpha: 0.2),
+                        color: DSColors.success.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Column(
@@ -1804,13 +1847,13 @@ void showHapchungExplanationSheet({
                             const Icon(
                               Icons.tips_and_updates_outlined,
                               size: 18,
-                              color: DSFortuneColors.categoryHealth,
+                              color: DSColors.success,
                             ),
                             const SizedBox(width: DSSpacing.xs),
                             Text(
                               '이럴 때 이렇게!',
                               style: context.labelMedium.copyWith(
-                                color: DSFortuneColors.categoryHealth,
+                                color: DSColors.success,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),

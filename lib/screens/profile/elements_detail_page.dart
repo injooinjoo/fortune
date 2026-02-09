@@ -73,15 +73,15 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
   Color _getElementColor(String element) {
     switch (element) {
       case '木 (木)':
-        return DSFortuneColors.elementWood;
+        return DSColors.success; // Wood - green
       case '火 (火)':
-        return DSFortuneColors.elementFire;
+        return DSColors.error; // Fire - red
       case '土 (土)':
-        return DSFortuneColors.elementEarth;
+        return DSColors.warning; // Earth - yellow/gold
       case '金 (金)':
-        return DSFortuneColors.elementMetal;
+        return DSColors.textSecondaryDark; // Metal - gray/silver
       case '水 (水)':
-        return DSFortuneColors.elementWater;
+        return DSColors.info; // Water - blue
       default:
         return DSColors.textDisabledDark;
     }
@@ -247,7 +247,7 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
             ),
           ),
         ),
-        body: Center(
+        body: const Center(
           child: CircularProgressIndicator(
             color: DSColors.accentDark,
           ),
@@ -368,7 +368,7 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.info_outline,
                         color: DSColors.accentDark,
                         size: 20,

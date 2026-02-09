@@ -59,7 +59,6 @@ Discovery 보고서 없이 feature-fortune 실행 시:
    - 운세 이름 (한글/영문)
    - 토큰 소비 레벨 (Simple/Medium/Complex/Premium)
    - 필수 입력 필드
-   - 블러 섹션 4개
 
 2️⃣ fortune-specialist 협업
    - 도메인 결정 검토
@@ -114,16 +113,6 @@ Discovery 보고서 없이 feature-fortune 실행 시:
 - 기타 (직접 입력)
 ```
 
-### 4. 블러 섹션
-```
-프리미엄이 아닌 사용자에게 블러 처리할 섹션 4개:
-1. advice (조언)
-2. future_outlook (미래 전망)
-3. luck_items (행운 아이템)
-4. warnings (주의사항)
-5. 기타 (직접 입력)
-```
-
 ---
 
 ## 템플릿 변수
@@ -137,7 +126,6 @@ Discovery 보고서 없이 feature-fortune 실행 시:
 | `{{typeName}}` | 한글 이름 | `펫 궁합` |
 | `{{tokenCost}}` | 토큰 비용 | `2` |
 | `{{inputFields}}` | 입력 필드 목록 | `birthDate, petType` |
-| `{{blurredSections}}` | 블러 섹션 | `advice, future_outlook` |
 
 ---
 

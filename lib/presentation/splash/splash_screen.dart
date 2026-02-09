@@ -26,12 +26,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.isDark;
-
     return Scaffold(
-      backgroundColor: isDark
-          ? DSFortuneColors.hanjiDark  // 다크 모드 한지 배경
-          : DSFortuneColors.hanjiCream, // 크림색 한지 배경
+      backgroundColor: context.colors.background, // ChatGPT style background
       body: Center(
         child: Text(
           '知',
@@ -39,9 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
             fontFamily: 'ZenSerif',
             fontSize: 120,
             fontWeight: FontWeight.w400,
-            color: isDark
-                ? DSFortuneColors.hanjiCream
-                : DSFortuneColors.inkBlack,
+            color: context.colors.textPrimary,
           ),
         )
             .animate()

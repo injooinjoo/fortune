@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
-import 'ads/interstitial_ad_helper.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/services/personality_dna_service.dart';
 import '../../core/models/personality_dna_model.dart';
@@ -737,16 +736,7 @@ class _PersonalityDNABottomSheetState
     });
 
     try {
-      // 광고 표시 및 완료 대기
-      await InterstitialAdHelper.showInterstitialAdWithCallback(
-        ref,
-        onAdCompleted: () async {
-          await _processPersonalityDNA();
-        },
-        onAdFailed: () async {
-          await _processPersonalityDNA();
-        },
-      );
+      await _processPersonalityDNA();
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -783,8 +773,8 @@ class _PersonalityDNABottomSheetState
           _isLoading = false;
         });
 
-        // 프리미엄 상태 확인
-        final isPremium = ref.read(isPremiumProvider);
+        // 구독 상태 확인
+        final isSubscriber = ref.read(isSubscriptionActiveProvider);
 
         // BottomSheet 닫기
         Navigator.of(context).pop();
@@ -794,7 +784,7 @@ class _PersonalityDNABottomSheetState
           MaterialPageRoute(
             builder: (context) => PersonalityDnaResultPage(
               dna: personalityDNA,
-              isPremium: isPremium,
+              isPremium: isSubscriber,
             ),
           ),
         );

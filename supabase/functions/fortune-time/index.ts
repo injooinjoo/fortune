@@ -35,8 +35,6 @@
  * - luckyElements: object - 행운 요소 (색상, 숫자, 방향, 아이템)
  * - timeStrategy: object - 시간대별 전략 (오전/오후/저녁)
  * - traditionalElements: object - 전통 요소 (오행, 일진, 12시진)
- * - isBlurred: boolean - 블러 상태
- * - blurredSections: string[] - 블러된 섹션
  *
  * @example
  * // Response
@@ -275,12 +273,6 @@ ${calendarSection}
 
   const overallScore = fortuneData.overallScore || 75
 
-  // Blur 로직
-  const isBlurred = !isPremium
-  const blurredSections = isBlurred
-    ? ['luckyElements', 'cautionTimes', 'calendarAdvice', 'bestDate', 'worstDate']
-    : []
-
   // 응답 구성
   const fortune = {
     fortuneType: 'time_multiple',
@@ -309,11 +301,7 @@ ${calendarSection}
       eventsPerDate: eventsPerDateParam,
       totalEvents: totalEvents,
       generatedAt: new Date().toISOString()
-    },
-
-    // 블러 상태
-    isBlurred,
-    blurredSections
+    }
   }
 
   // Percentile 계산
@@ -739,12 +727,6 @@ ${hasEvents ? `
       return titles[period] || `${dateDisplayStr} 인사이트`
     }
 
-    // ✅ Blur 로직 적용 (경계대상 패턴 기반)
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['cautionActivities', 'cautionPeople', 'cautionDirections', 'luckyElements', 'timeStrategy', 'traditionalElements', 'bestTime', 'worstTime']
-      : []
-
     // ✅ 운세 데이터 구성 (경계대상 패턴 적용)
     const fortune = {
       // 표준화된 필드명: score, content, summary, advice
@@ -846,11 +828,7 @@ ${hasEvents ? `
       calendarAdvice: fortuneData.calendarAdvice || [],
       dayTheme: fortuneData.dayTheme || '',
       specialMessage: fortuneData.specialMessage || '',
-      calendarEvents: eventsForDate,
-
-      // ✅ 블러 상태 정보
-      isBlurred,
-      blurredSections
+      calendarEvents: eventsForDate
     }
 
     // ✅ Percentile 계산 추가

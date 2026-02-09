@@ -1,5 +1,5 @@
-/// 사주팔자 해설 데이터 클래스
-/// 천간, 지지, 탭별 개념 설명을 제공합니다.
+// 사주팔자 해설 데이터 클래스
+// 천간, 지지, 탭별 개념 설명을 제공합니다.
 class SajuExplanations {
   /// 탭별 개념 설명
   static const Map<String, Map<String, String>> tabConcepts = {

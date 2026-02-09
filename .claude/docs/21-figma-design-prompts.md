@@ -74,7 +74,7 @@ STYLE DETAILS:
 ## 2. 신년 운세 (New Year Fortune 2026)
 
 **테마**: 봉황과 용의 도약
-**배경**: 황금빛 그라데이션 + 전통 문양
+**배경**: 황금빛 그��데이션 + 전통 문양
 **일러스트 스타일**: 민화풍 길상 동물
 
 ```
@@ -871,7 +871,7 @@ LAYOUT:
    - Golden glow effects
 
 2. WEALTH SCORE
-   - "82점" inside traditional money pouch (복주머니)
+   - "82점" inside traditional money pouch (토큰 아이콘)
    - Gold thread embroidery effect
    - "재물이 모이는 운세" message
 
@@ -918,7 +918,7 @@ STYLE DETAILS:
 | MBTI | 컬러풀 캐릭터 | 타입별 고유색 | 16캐릭터 |
 | 이사/풍수 | 전통 나침반 | 우드/옥색 | 패철, 방위 |
 | 건강 | 동의보감 웰니스 | 민트/그린 | 인체 다이어그램 |
-| 재물 | 복 문양 | 골드/레드 | 엽전, 복주머니 |
+| 재물 | 복 문양 | 골드/레드 | 엽전, 전통 문양 |
 
 ---
 

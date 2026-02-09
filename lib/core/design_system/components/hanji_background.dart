@@ -39,7 +39,7 @@ class HanjiBackground extends StatelessWidget {
     super.key,
     required this.child,
     this.showTexture = false,
-    this.textureOpacity = 0.05,
+    this.textureOpacity = 0.03,
     this.backgroundColor,
   });
 
@@ -52,7 +52,7 @@ class HanjiBackground extends StatelessWidget {
     return HanjiBackground(
       key: key,
       showTexture: true,
-      textureOpacity: 0.03,
+      textureOpacity: 0.015,
       backgroundColor: backgroundColor,
       child: child,
     );
@@ -67,7 +67,7 @@ class HanjiBackground extends StatelessWidget {
     return HanjiBackground(
       key: key,
       showTexture: true,
-      textureOpacity: 0.08,
+      textureOpacity: 0.04,
       backgroundColor: backgroundColor,
       child: child,
     );
@@ -163,7 +163,7 @@ class _HanjiPatternPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Create very subtle fiber-like pattern
     final paint = Paint()
-      ..color = baseColor.withValues(alpha: 0.02)
+      ..color = baseColor.withValues(alpha: 0.01)
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
 
@@ -184,7 +184,7 @@ class _HanjiPatternPainter extends CustomPainter {
       canvas.drawLine(
         Offset(x, offset),
         Offset(x + 0.1, size.height - offset),
-        paint..color = baseColor.withValues(alpha: 0.015),
+        paint..color = baseColor.withValues(alpha: 0.008),
       );
     }
   }
@@ -303,7 +303,7 @@ class HanjiContainer extends StatelessWidget {
                 children: [
                   _HanjiTexture(
                     brightness: Theme.of(context).brightness,
-                    opacity: 0.04,
+                    opacity: 0.02,
                   ),
                   child,
                 ],

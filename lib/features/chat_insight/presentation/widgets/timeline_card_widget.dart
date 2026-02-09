@@ -32,7 +32,7 @@ class _TimelineCardWidgetState extends State<TimelineCardWidget> {
           // 헤더
           Row(
             children: [
-              Icon(Icons.timeline, color: colors.accent, size: 20),
+              Icon(Icons.timeline, color: colors.textSecondary, size: 20),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '감정 변화',
@@ -56,7 +56,7 @@ class _TimelineCardWidgetState extends State<TimelineCardWidget> {
                   painter: _SparklinePainter(
                     points: points,
                     selectedIndex: _selectedIndex,
-                    lineColor: colors.accent,
+                    lineColor: colors.textTertiary,
                     negativeColor: colors.error,
                     dotColor: colors.textPrimary,
                   ),
@@ -86,7 +86,7 @@ class _TimelineCardWidgetState extends State<TimelineCardWidget> {
             ...widget.timeline.spikes.map((spike) => _buildEvent(
                   context,
                   icon: Icons.arrow_upward,
-                  color: colors.accent,
+                  color: colors.textSecondary,
                   event: spike,
                 )),
           ],

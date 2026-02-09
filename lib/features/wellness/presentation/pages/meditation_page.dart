@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/meditation_sound_service.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/meditation_session.dart';
 import '../providers/wellness_providers.dart';
 import '../widgets/breathing_timer_widget.dart';
@@ -155,11 +154,11 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
                 duration: const Duration(milliseconds: 200),
                 child: IgnorePointer(
                   ignoring: timerState.isRunning,
-                  child: Column(
+                  child: const Column(
                     children: [
-                      const BreathingPatternSelector(),
-                      const SizedBox(height: 24),
-                      const MeditationDurationSelector(),
+                      BreathingPatternSelector(),
+                      SizedBox(height: 24),
+                      MeditationDurationSelector(),
                     ],
                   ),
                 ),
@@ -208,12 +207,12 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.lightbulb_outline_rounded,
                 color: DSColors.accent,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '호흡 명상 팁',
                 style: context.bodyLarge.copyWith(

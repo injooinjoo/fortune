@@ -13,7 +13,7 @@ Fortune App의 인사이트 시스템은 **72% API 비용 절감**을 위한 최
 | 인사이트 Edge Functions | 40개 |
 | 유틸리티 Functions | 22개 |
 | 인사이트 카테고리 | 13개 |
-| 프리미엄 전용 | 8개 |
+| 토큰 전용 | 8개 |
 | 무료 전용 | 1개 (게임 강화운세) |
 
 ---
@@ -40,10 +40,7 @@ Fortune App의 인사이트 시스템은 **72% API 비용 절감**을 위한 최
 
 5️⃣ 결과 페이지 표시 (분기)
     ├─ 프리미엄 사용자? → YES → 전체 결과 즉시 표시
-    └─ 일반 사용자? → NO ↓
-
-6️⃣ 블러 처리 결과 표시
-    └─ 4개 섹션 블러 (조언, 미래전망, 행운아이템, 주의사항)
+    └─ 일반 사용자? → NO → 프리미엄 유도 표시
 ```
 
 ---
@@ -282,71 +279,28 @@ conditions = {
 
 ---
 
-## 프리미엄 & 광고 시스템
+## 구독 시스템
 
-### 프리미엄 vs 일반 사용자
+### 구독자 vs 일반 사용자
 
-| 구분 | 프리미엄 | 일반 |
+| 구분 | 구독자 | 일반 |
 |------|---------|------|
-| 결과 표시 | 즉시 전체 공개 | 블러 처리 |
-| 광고 시청 | 불필요 | 필수 (5초) |
-| 블러 섹션 | 없음 | 4개 섹션 |
+| 토큰 보너스 | 월 50개 | 없음 |
 
-### 프리미엄 확인 방법
+**핵심**: 구독 = 토큰 정기구매. 구독자도 운세 이용 시 토큰 소비 필수.
+
+### 구독 상태 확인 방법
 
 ```dart
-// 1. 프리미엄 상태 확인
+// 구독 상태 확인
 final tokenState = ref.read(tokenProvider);
 final premiumOverride = await DebugPremiumService.getOverrideValue();
-final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
-
-// 2. UnifiedFortuneService 호출 시 전달
-final fortuneResult = await fortuneService.getFortune(
-  fortuneType: 'daily_calendar',
-  inputConditions: inputConditions,
-  conditions: conditions,
-  isPremium: isPremium,
-);
-```
-
-### 블러 처리 시스템
-
-```dart
-// FortuneResult에 블러 적용
-if (!isPremium) {
-  fortuneResult.applyBlur([
-    'advice',           // 조언
-    'future_outlook',   // 미래 전망
-    'luck_items',       // 행운 아이템
-    'warnings',         // 주의사항
-  ]);
-}
-```
-
-### 광고 시청 & 블러 해제
-
-```dart
-Future<void> _showAdAndUnblur() async {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => AdLoadingDialog(
-      duration: Duration(seconds: 5),
-    ),
-  );
-
-  await Future.delayed(Duration(seconds: 5));
-  Navigator.of(context).pop();
-
-  setState(() {
-    _fortuneResult.removeBlur();
-  });
-}
+final isSubscribed = premiumOverride ?? tokenState.hasUnlimitedAccess;
 ```
 
 ---
 
-## 수익화 모델 (복주머니/블러)
+## 수익화 모델 (토큰)
 
 > **상세 정책은 [22-business-model.md](22-business-model.md) 참조**
 
@@ -355,10 +309,9 @@ Future<void> _showAdAndUnblur() async {
 | 모델 | 운세 수 | 특징 |
 |------|--------|------|
 | 🆓 **무료** | 5개 | 제한 없이 무료 |
-| 🔒 **블러** | 22개 | 광고로 해제 (무제한) |
-| 🧧 **복주머니** | 9개 | 광고 대체 불가 |
+| 🪙 **토큰** | 31개 | 토큰 소비 |
 
-### 복주머니 운세 (9개)
+### 토큰 운세 (9개)
 - newYear (5개), traditional (5개), naming (7개)
 - babyNickname (5개), yearlyEncounter (3개), celebrity (5개)
 - lotto (3개), exam (3개), ootdEvaluation (3개)
@@ -366,7 +319,7 @@ Future<void> _showAdAndUnblur() async {
 ### 토큰 소비 코드
 
 ```dart
-// 복주머니 소비
+// 토큰 소비
 final tokenNotifier = ref.read(tokenProvider.notifier);
 await tokenNotifier.consumeTokens(
   amount: getTokenCost(fortuneType),

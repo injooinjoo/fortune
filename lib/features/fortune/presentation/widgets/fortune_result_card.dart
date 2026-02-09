@@ -8,7 +8,6 @@ import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import 'fortune_card.dart';
@@ -109,6 +108,7 @@ class FortuneResultCard extends ConsumerWidget {
   }
   
   Widget _buildHeader(BuildContext context, bool isDark) {
+    final colors = context.colors;
     final score = fortune.overallScore ?? 70;
     final heroImage = FortuneCardImages.getHeroImage(fortune.type, score);
     final mascotImage = FortuneCardImages.getMascotImage(fortune.type, score);
@@ -136,7 +136,7 @@ class FortuneResultCard extends ConsumerWidget {
                 path: heroImage,
                 fit: BoxFit.cover,
                 errorWidget: Container(
-                  color: isDark ? DSColors.surfaceDark : DSColors.surface,
+                  color: colors.surface,
                 ),
               ),
               Container(
@@ -145,8 +145,8 @@ class FortuneResultCard extends ConsumerWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withValues(alpha: 0.15),
-                      Colors.black.withValues(alpha: 0.65),
+                      colors.background.withValues(alpha: 0.15),
+                      colors.background.withValues(alpha: 0.65),
                     ],
                   ),
                 ),
@@ -159,7 +159,7 @@ class FortuneResultCard extends ConsumerWidget {
                   contentType: fortune.type,
                   shareTitle: fortuneTitle,
                   shareContent: fortune.content,
-                  iconColor: Colors.white,
+                  iconColor: colors.textPrimary,
                   iconSize: 20,
                 ),
               ),
@@ -173,11 +173,11 @@ class FortuneResultCard extends ConsumerWidget {
                     Text(
                       fortuneTitle,
                       style: context.headingMedium.copyWith(
-                        color: Colors.white,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w700,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withValues(alpha: 0.45),
+                            color: colors.background.withValues(alpha: 0.45),
                             blurRadius: 8,
                           ),
                         ],
@@ -188,7 +188,7 @@ class FortuneResultCard extends ConsumerWidget {
                       Text(
                         caption,
                         style: context.bodySmall.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: colors.textPrimary.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -226,22 +226,23 @@ class FortuneResultCard extends ConsumerWidget {
   }
 
   Widget _buildHeroPill(BuildContext context, String text) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.sm,
         vertical: 6,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
+        color: colors.surface.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(DSRadius.full),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.4),
+          color: colors.surface.withValues(alpha: 0.4),
         ),
       ),
       child: Text(
         text,
         style: context.labelSmall.copyWith(
-          color: Colors.white,
+          color: colors.textPrimary,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -249,16 +250,17 @@ class FortuneResultCard extends ConsumerWidget {
   }
 
   Widget _buildHeroSummary(BuildContext context, String text) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.sm,
         vertical: 6,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.16),
+        color: colors.surface.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(DSRadius.full),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
+          color: colors.surface.withValues(alpha: 0.3),
         ),
       ),
       child: Text(
@@ -266,7 +268,7 @@ class FortuneResultCard extends ConsumerWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: context.labelSmall.copyWith(
-          color: Colors.white.withValues(alpha: 0.95),
+          color: colors.textPrimary.withValues(alpha: 0.95),
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -277,7 +279,7 @@ class FortuneResultCard extends ConsumerWidget {
   /// 동양화 디자인: 붉은 인장 안에 점수 표시
   Widget _buildScoreSection(BuildContext context, bool isDark) {
     final score = fortune.overallScore ?? 0;
-    final meokColor = ObangseokColors.getMeok(context);
+    final meokColor = context.colors.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -324,7 +326,7 @@ class FortuneResultCard extends ConsumerWidget {
   /// 메인 본문 섹션 - 동양화 스타일
   /// 배경 박스 제거, 먹색 텍스트로 통일
   Widget _buildMainContent(BuildContext context, bool isDark) {
-    final meokColor = ObangseokColors.getMeok(context);
+    final meokColor = context.colors.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -396,7 +398,7 @@ class FortuneResultCard extends ConsumerWidget {
   /// 개별 색상 제거, 먹색으로 통일
   Widget _buildLuckyItemsSection(BuildContext context, bool isDark) {
     final luckyItems = fortune.luckyItems!;
-    final meokColor = ObangseokColors.getMeok(context);
+    final meokColor = context.colors.textPrimary;
     final items = <_LuckyItemData>[];
 
     // 색상
@@ -545,25 +547,25 @@ class FortuneResultCard extends ConsumerWidget {
   Color? _getColorFromName(String colorName) {
     final normalized = colorName.toLowerCase().trim();
     const colorMap = {
-      '파란색': DSFortuneColors.categoryFamily,
-      '파랑': DSFortuneColors.categoryFamily,
-      '빨간색': DSFortuneColors.categoryNewYear,
-      '빨강': DSFortuneColors.categoryNewYear,
-      '노란색': DSFortuneColors.categoryLotto,
-      '노랑': DSFortuneColors.categoryLotto,
-      '초록색': Color(0xFF22C55E),
-      '초록': Color(0xFF22C55E),
-      '보라색': DSFortuneColors.categoryLuckyItems,
-      '보라': DSFortuneColors.categoryLuckyItems,
-      '분홍색': DSFortuneColors.categoryLove,
-      '분홍': DSFortuneColors.categoryLove,
+      '파란색': DSColors.info,
+      '파랑': DSColors.info,
+      '빨간색': DSColors.error,
+      '빨강': DSColors.error,
+      '노란색': DSColors.warning,
+      '노랑': DSColors.warning,
+      '초록색': DSColors.success,
+      '초록': DSColors.success,
+      '보라색': DSColors.accentSecondary,
+      '보라': DSColors.accentSecondary,
+      '분홍색': DSColors.accentSecondary,
+      '분홍': DSColors.accentSecondary,
       '주황색': Color(0xFFF97316),
       '주황': Color(0xFFF97316),
       '흰색': Color(0xFFF5F5F5),
       '흰': Color(0xFFF5F5F5),
       '검정색': Color(0xFF1F2937),
       '검정': Color(0xFF1F2937),
-      '회색': DSFortuneColors.categoryExLover,
+      '회색': DSColors.textSecondary,
       '갈색': Color(0xFF92400E),
     };
     return colorMap[normalized];

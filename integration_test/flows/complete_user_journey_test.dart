@@ -1,8 +1,7 @@
-/// Complete User Journey - Integration Test
-/// 전체 사용자 여정 E2E 테스트
-/// 앱 시작부터 주요 기능 사용까지 전체 플로우
+// Complete User Journey - Integration Test
+// 전체 사용자 여정 E2E 테스트
+// 앱 시작부터 주요 기능 사용까지 전체 플로우
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -359,13 +358,8 @@ void main() {
       // 2. 홈 화면까지 시간 측정
       // 3. 3초 이내 확인
 
-      final startTime = DateTime.now();
-
       // app.main();
       // await tester.pumpAndSettle();
-
-      final endTime = DateTime.now();
-      final duration = endTime.difference(startTime);
 
       // expect(duration.inSeconds, lessThan(3));
       expect(true, isTrue);

@@ -3,9 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 하루 회고 결과 카드
 ///
@@ -27,14 +25,14 @@ class ChatDailyReviewCard extends ConsumerWidget {
     required this.date,
   });
 
-  // 동양화 스타일 - 한지 느낌 배경 (ObangseokColors 사용)
-  static const _creamLight = ObangseokColors.misaek;
-  static const _creamDark = ObangseokColors.misaekWarm;
+  // 디자인 색상 → DSColors 기반 (ChatGPT monochrome style)
+  static const _creamLight = DSColors.backgroundSecondary;
+  static const _creamDark = DSColors.background;
   // 다크모드 배경
-  static const _darkBg1 = ObangseokColors.meokLight;
-  static const _darkBg2 = ObangseokColors.meok;
-  // 액센트 색상 - 회고 민트
-  static const _mintAccent = DSFortuneColors.categoryDailyReview;
+  static const _darkBg1 = DSColors.background;
+  static const _darkBg2 = DSColors.backgroundSecondary;
+  // 액센트 색상 - semantic colors
+  static const _mintAccent = DSColors.success;
   static const _tealAccent = Color(0xFF20C997);
 
   @override
@@ -72,7 +70,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
         child: Stack(
           children: [
             // 배경 장식
-            ..._buildBackgroundDecorations(),
+            ..._buildBackgroundDecorations(context),
 
             // 메인 콘텐츠
             Padding(
@@ -124,7 +122,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
     );
   }
 
-  List<Widget> _buildBackgroundDecorations() {
+  List<Widget> _buildBackgroundDecorations(BuildContext context) {
     final decorations = <Widget>[];
 
     // 우측 상단 달 장식
@@ -149,8 +147,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
         bottom: 60,
         child: Text(
           '⭐',
-          style: TextStyle(
-            fontSize: 14,
+          style: context.typography.bodyMedium.copyWith(
             color: Colors.amber.withValues(alpha: 0.5),
           ),
         )
@@ -169,7 +166,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
   Widget _buildHeader(BuildContext context) {
     final isDark = context.isDark;
     final formattedDate = DateFormat('M월 d일 (E)', 'ko').format(date);
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Row(
       children: [
@@ -178,7 +175,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
           '📝',
           style: TextStyle(fontSize: 24),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: DSSpacing.sm),
 
         // 날짜 + 타이틀
         Expanded(
@@ -192,11 +189,10 @@ class ChatDailyReviewCard extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: DSSpacing.xxs),
               Text(
                 formattedDate,
-                style: TextStyle(
-                  fontSize: 10,
+                style: context.typography.labelTiny.copyWith(
                   color: textColor.withValues(alpha: 0.5),
                   letterSpacing: 1.0,
                 ),
@@ -218,7 +214,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
             color: isDark ? _mintAccent : _tealAccent,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: DSSpacing.sm),
         // 좋아요 + 공유 버튼
         FortuneActionButtons(
           contentId: 'daily_review_${date.millisecondsSinceEpoch}',
@@ -254,8 +250,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
             '🌿',
-            style: TextStyle(
-              fontSize: 12,
+            style: context.typography.labelSmall.copyWith(
               color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
@@ -280,7 +275,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
 
   Widget _buildHighlightSection(BuildContext context) {
     final isDark = context.isDark;
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -304,7 +299,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
           Row(
             children: [
               const Text('✨', style: TextStyle(fontSize: 18)),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '오늘의 하이라이트',
                 style: context.bodyMedium.copyWith(
@@ -329,7 +324,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
 
   Widget _buildLearningSection(BuildContext context) {
     final isDark = context.isDark;
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -346,7 +341,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
           Row(
             children: [
               const Text('💡', style: TextStyle(fontSize: 18)),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '오늘 배운 점',
                 style: context.bodyMedium.copyWith(
@@ -371,7 +366,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
 
   Widget _buildTomorrowSection(BuildContext context) {
     final isDark = context.isDark;
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -405,7 +400,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
                 Text(
                   tomorrow,
                   style: context.bodyMedium.copyWith(

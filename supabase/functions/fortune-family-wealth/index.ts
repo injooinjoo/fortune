@@ -28,8 +28,6 @@
  * - savingStrategies: object - 저축 전략
  * - warnings: string[] - 주의사항
  * - advice: string - 종합 조언
- * - isBlurred: boolean - 블러 상태
- * - blurredSections: string[] - 블러된 섹션 목록
  *
  * @example
  * // Request
@@ -194,17 +192,9 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabaseClient, 'family-wealth', personalizedResult.overallScore || personalizedResult.score || 75)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // Blur 로직 적용
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['wealthCategories', 'monthlyTrend', 'familySynergy', 'monthlyFlow', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
-        : []
-
       const finalResult = {
         ...resultWithPercentile,
         userId,
-        isBlurred,
-        blurredSections,
         created_at: new Date().toISOString(),
       }
 
@@ -369,12 +359,6 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
 
     const fortuneData = JSON.parse(response.content)
 
-    // Blur 로직 적용
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['wealthCategories', 'monthlyTrend', 'familySynergy', 'monthlyFlow', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
-      : []
-
     const result = {
       // ✅ 표준화된 필드명: score, content, summary, advice
       fortuneType: 'family-wealth',
@@ -428,9 +412,7 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
         special_question: special_question || null
       },
 
-      created_at: new Date().toISOString(),
-      isBlurred,
-      blurredSections
+      created_at: new Date().toISOString()
     }
 
     // Percentile 계산

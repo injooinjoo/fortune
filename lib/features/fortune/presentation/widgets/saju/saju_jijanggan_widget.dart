@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/design_system/tokens/ds_saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/ji_jang_gan_data.dart';
@@ -66,7 +65,7 @@ class SajuJijangganWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: DSSpacing.xs),
             Text(
               '支藏干',
               style: context.labelSmall.copyWith(
@@ -149,7 +148,7 @@ class SajuJijangganWidget extends StatelessWidget {
                             fontSize: 10, // 예외: 초소형 사주 칼럼 헤더
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: DSSpacing.xxs),
                         _buildBranchCell(context, branchData, isDay, isDark),
                       ],
                     ),
@@ -314,7 +313,7 @@ class SajuJijangganWidget extends StatelessWidget {
                     color: color,
                   ),
                 ),
-                const SizedBox(width: 2),
+                const SizedBox(width: DSSpacing.xxs),
                 Text(
                   '${stem.ratio}%',
                   style: TextStyle(

@@ -1,6 +1,6 @@
-/// 운동 운세 도메인 모델
-///
-/// 12가지 운동 종목별 전문 가이드를 위한 모델 정의
+// 운동 운세 도메인 모델
+//
+// 12가지 운동 종목별 전문 가이드를 위한 모델 정의
 
 // ============================================================================
 // 운동 목표
@@ -682,8 +682,6 @@ class ExerciseFortuneResult {
   final String? exerciseKeyword;
 
   // 메타데이터
-  final bool isBlurred;
-  final List<String> blurredSections;
   final int? percentile;
   final DateTime timestamp;
 
@@ -706,8 +704,6 @@ class ExerciseFortuneResult {
     this.injuryPrevention,
     this.nutritionTip,
     this.exerciseKeyword,
-    this.isBlurred = false,
-    this.blurredSections = const [],
     this.percentile,
     required this.timestamp,
   });
@@ -766,8 +762,6 @@ class ExerciseFortuneResult {
           ? NutritionTip.fromJson(json['nutritionTip'] as Map<String, dynamic>)
           : null,
       exerciseKeyword: json['exerciseKeyword'] as String?,
-      isBlurred: json['isBlurred'] as bool? ?? false,
-      blurredSections: (json['blurredSections'] as List<dynamic>?)?.cast<String>() ?? [],
       percentile: json['percentile'] as int?,
       timestamp: json['timestamp'] != null
           ? DateTime.parse(json['timestamp'] as String)
@@ -775,8 +769,4 @@ class ExerciseFortuneResult {
     );
   }
 
-  /// 특정 섹션이 블러 처리되었는지 확인
-  bool isSectionBlurred(String section) {
-    return isBlurred && blurredSections.contains(section);
-  }
 }

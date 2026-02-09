@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 /// 미소 챌린지 카드
 /// "미소 짓는 관상 만들기 챌린지" - 놀이형 콘텐츠
@@ -142,7 +141,7 @@ class SmileChallengeCard extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                const Icon(
                   Icons.check_circle,
                   color: DSColors.success,
                   size: 14,
@@ -206,7 +205,7 @@ class SmileChallengeCard extends StatelessWidget {
                         : DSColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: DSSpacing.xxs),
                 Text(
                   smileMessage,
                   style: context.bodyMedium.copyWith(
@@ -357,7 +356,7 @@ class SmileChallengeCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: DSSpacing.md - 2),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [DSColors.success, DSColors.accent],
             ),
             borderRadius: BorderRadius.circular(DSRadius.md),
@@ -365,7 +364,7 @@ class SmileChallengeCard extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.share,
                 color: Colors.white,
                 size: 18,
@@ -399,9 +398,9 @@ class SmileChallengeCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               '😊',
-              style: const TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 18),
             ),
             const SizedBox(width: DSSpacing.sm),
             Text(

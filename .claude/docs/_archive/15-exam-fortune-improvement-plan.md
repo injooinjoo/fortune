@@ -82,7 +82,7 @@ interface ExamFortuneData {
   overall_fortune: string;          // 종합 운세 요약
   exam_keyword: string;             // "합격", "노력필요", "대박"
 
-  // === 합격 분석 (프리미엄) ===
+  // === 합격 분석 (구독) ===
   passAnalysis: {
     probability: number;            // 합격 확률 (%)
     rating: string;                 // "매우 높음" | "높음" | "보통" | "노력 필요"
@@ -90,7 +90,7 @@ interface ExamFortuneData {
     comparisonToAverage: string;    // 평균 대비 위치
   };
 
-  // === 역량 육각형 (프리미엄) ===
+  // === 역량 육각형 (구독) ===
   hexagonScores: {
     concentration: number;          // 집중력
     memoryRetention: number;        // 암기력
@@ -100,7 +100,7 @@ interface ExamFortuneData {
     examStrategy: number;           // 시험 전략
   };
 
-  // === D-Day 맞춤 계획 (프리미엄) ===
+  // === D-Day 맞춤 계획 (구독) ===
   studyPlan: {
     daysRemaining: number;          // D-Day 까지 남은 일수
     phase: string;                  // "초반집중" | "중반심화" | "막판스퍼트" | "마무리정리"
@@ -113,7 +113,7 @@ interface ExamFortuneData {
     }>;
   };
 
-  // === 과목별 전략 (프리미엄) ===
+  // === 과목별 전략 (구독) ===
   subjectStrategy: Array<{
     subject: string;                // "국어", "수학", "영어"
     priority: number;               // 우선순위 (1-5)
@@ -124,7 +124,7 @@ interface ExamFortuneData {
     expectedImprovement: string;    // 예상 향상도
   }>;
 
-  // === 시험 당일 전략 (프리미엄) ===
+  // === 시험 당일 전략 (구독) ===
   examDayStrategy: {
     morningRoutine: string[];       // 아침 루틴
     checklist: string[];            // 체크리스트
@@ -136,7 +136,7 @@ interface ExamFortuneData {
     emergencyTips: string[];        // 긴급 상황 대처
   };
 
-  // === 약점 보완 (프리미엄) ===
+  // === 약점 보완 (구독) ===
   weaknessAnalysis: {
     identifiedWeaknesses: string[]; // 파악된 약점
     rootCause: string;              // 근본 원인
@@ -144,7 +144,7 @@ interface ExamFortuneData {
     practiceExercises: string[];    // 연습 문제 유형
   };
 
-  // === 스트레스 관리 (프리미엄) ===
+  // === 스트레스 관리 (구독) ===
   mentalWellness: {
     stressLevel: string;            // 예상 스트레스 레벨
     copingStrategies: string[];     // 대처 전략
@@ -152,7 +152,7 @@ interface ExamFortuneData {
     motivationalMessage: string;    // 동기부여 메시지
   };
 
-  // === 행운 아이템 (프리미엄) ===
+  // === 행운 아이템 (구독) ===
   luckyItems: {
     color: string;                  // 행운의 색상
     number: number;                 // 행운의 숫자
@@ -162,7 +162,7 @@ interface ExamFortuneData {
     music: string;                  // 추천 음악/BGM
   };
 
-  // === 성공 예언 (프리미엄) ===
+  // === 성공 예언 (구독) ===
   successPrediction: {
     bestDays: string[];             // 시험운이 좋은 날
     peakPerformanceTime: string;    // 최고 컨디션 시간
@@ -189,7 +189,7 @@ interface ExamFortuneData {
 │  │    "합격이 보입니다!"           │  │
 │  └───────────────────────────────┘  │
 ├─────────────────────────────────────┤
-│  📊 역량 분석 (육각형 차트)          │  │ ← 프리미엄
+│  📊 역량 분석 (육각형 차트)          │  │ ← 구독
 │  ┌───────────────────────────────┐  │
 │  │      집중력 85                 │  │
 │  │   암기력      문제해결          │  │
@@ -198,7 +198,7 @@ interface ExamFortuneData {
 │  │      시험전략 78               │  │
 │  └───────────────────────────────┘  │
 ├─────────────────────────────────────┤
-│  📅 D-Day 학습 계획                  │  │ ← 프리미엄
+│  📅 D-Day 학습 계획                  │  │ ← 구독
 │  ┌───────────────────────────────┐  │
 │  │ [타임라인 UI]                  │  │
 │  │ 1주차: 기본 개념 정리           │  │
@@ -207,7 +207,7 @@ interface ExamFortuneData {
 │  │ 4주차: 실전 모의고사           │  │
 │  └───────────────────────────────┘  │
 ├─────────────────────────────────────┤
-│  📚 과목별 전략                      │  │ ← 프리미엄
+│  📚 과목별 전략                      │  │ ← 구독
 │  ┌───────────────────────────────┐  │
 │  │ 국어 ⭐⭐⭐⭐ (우선순위 높음)     │  │
 │  │ - 비문학 독해력 강화            │  │
@@ -218,7 +218,7 @@ interface ExamFortuneData {
 │  │ - 추천: 수학의 정석             │  │
 │  └───────────────────────────────┘  │
 ├─────────────────────────────────────┤
-│  🗓️ 시험 당일 체크리스트             │  │ ← 프리미엄
+│  🗓️ 시험 당일 체크리스트             │  │ ← 구독
 │  ┌───────────────────────────────┐  │
 │  │ ☐ 수험표 챙기기                │  │
 │  │ ☐ 아침 6시 기상                │  │
@@ -227,7 +227,7 @@ interface ExamFortuneData {
 │  │ ☐ 시험장 30분 전 도착          │  │
 │  └───────────────────────────────┘  │
 ├─────────────────────────────────────┤
-│  💪 멘탈 관리                        │  │ ← 프리미엄
+│  💪 멘탈 관리                        │  │ ← 구독
 │  ┌───────────────────────────────┐  │
 │  │ "당신의 노력은 배신하지 않습니다"│  │
 │  │                                │  │
@@ -235,7 +235,7 @@ interface ExamFortuneData {
 │  │ 대처법: 심호흡, 5분 명상        │  │
 │  └───────────────────────────────┘  │
 ├─────────────────────────────────────┤
-│  🍀 행운 아이템                      │  │ ← 프리미엄
+│  🍀 행운 아이템                      │  │ ← 구독
 │  ┌───────────────────────────────┐  │
 │  │ 🎨 파란색  🔢 7  🧭 동쪽        │  │
 │  │ 📝 새 샤프펜슬  🍫 초콜릿       │  │

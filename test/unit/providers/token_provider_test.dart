@@ -72,12 +72,12 @@ void main() {
       expect(newState.balance!.totalTokens, 15);
     });
 
-    test('hasUnlimitedAccess가 올바르게 동작해야 함', () {
-      // 무제한 접근 없음
+    test('hasUnlimitedTokens가 올바르게 동작해야 함', () {
+      // 프로필 없으면 무제한 토큰 없음
       const state1 = TokenState();
-      expect(state1.hasUnlimitedAccess, false);
+      expect(state1.hasUnlimitedTokens, false);
 
-      // balance에 무제한 접근 있음
+      // 테스트 계정이 아니면 무제한 토큰 없음
       final balance = createBalance(
         remainingTokens: 0,
         usedTokens: 0,
@@ -85,7 +85,7 @@ void main() {
         hasUnlimitedAccess: true,
       );
       final state2 = state1.copyWith(balance: balance);
-      expect(state2.hasUnlimitedAccess, true);
+      expect(state2.hasUnlimitedTokens, false); // userProfile이 필요함
     });
 
     test('canConsumeTokens가 올바르게 동작해야 함', () {

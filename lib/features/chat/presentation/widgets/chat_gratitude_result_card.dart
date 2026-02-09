@@ -3,9 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 감사일기 결과 카드 (일기장 스타일)
 ///
@@ -28,15 +26,15 @@ class ChatGratitudeResultCard extends ConsumerWidget {
     required this.date,
   });
 
-  // 동양화 스타일 - 한지 느낌 배경 (ObangseokColors 사용)
-  static const _creamLight = ObangseokColors.misaek;
-  static const _creamDark = ObangseokColors.misaekWarm;
+  // 디자인 색상 → DSColors 기반 (ChatGPT monochrome style)
+  static const _creamLight = DSColors.backgroundSecondary;
+  static const _creamDark = DSColors.background;
   // 다크모드 배경
-  static const _darkBg1 = ObangseokColors.meokLight;
-  static const _darkBg2 = ObangseokColors.meok;
-  // 액센트 색상 - 톤다운 오방색
-  static const _pinkAccent = ObangseokColors.jeokMuted;
-  static const _goldAccent = ObangseokColors.hwang;
+  static const _darkBg1 = DSColors.background;
+  static const _darkBg2 = DSColors.backgroundSecondary;
+  // 액센트 색상 - semantic colors
+  static const _pinkAccent = DSColors.error;
+  static const _goldAccent = DSColors.warning;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -179,8 +177,9 @@ class ChatGratitudeResultCard extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context, bool isDark) {
+    final typography = context.typography;
     final formattedDate = DateFormat('M월 d일').format(date);
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
 
     return Row(
       children: [
@@ -204,11 +203,10 @@ class ChatGratitudeResultCard extends ConsumerWidget {
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: DSSpacing.xxs),
               Text(
                 'Gratitude Journal',
-                style: TextStyle(
-                  fontSize: 10,
+                style: typography.labelTiny.copyWith(
                   color: textColor.withValues(alpha: 0.5),
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.w300,
@@ -228,7 +226,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
           child: Icon(
             Icons.auto_stories_rounded,
             size: 20,
-            color: isDark ? _pinkAccent : ObangseokColors.hwangMuted,
+            color: isDark ? _pinkAccent : DSColors.warning,
           ),
         ),
         const SizedBox(width: 8),
@@ -240,13 +238,14 @@ class ChatGratitudeResultCard extends ConsumerWidget {
           shareTitle: '${DateFormat('M월 d일').format(date)}의 감사일기',
           shareContent: '$gratitude1, $gratitude2, $gratitude3',
           iconSize: 18,
-          iconColor: isDark ? _pinkAccent : ObangseokColors.hwangMuted,
+          iconColor: isDark ? _pinkAccent : DSColors.warning,
         ),
       ],
     );
   }
 
   Widget _buildDivider(BuildContext context) {
+    final typography = context.typography;
     final isDark = context.isDark;
     return Row(
       children: [
@@ -268,8 +267,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
             '🍃',
-            style: TextStyle(
-              fontSize: 12,
+            style: typography.bodySmall.copyWith(
               color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
@@ -298,7 +296,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
     String text,
     bool isDark,
   ) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,10 +310,10 @@ class ChatGratitudeResultCard extends ConsumerWidget {
             color: _pinkAccent.withValues(alpha: isDark ? 0.2 : 0.15),
             shape: BoxShape.circle,
           ),
-          child: Center(
+          child: const Center(
             child: Text(
               '💛',
-              style: const TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 12),
             ),
           ),
         ),
@@ -347,7 +345,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
   }
 
   Widget _buildClosingMessage(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -380,7 +378,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   '작은 것에 감사하는 습관이 행복을 키워줘요 💛',
                   style: context.bodySmall.copyWith(

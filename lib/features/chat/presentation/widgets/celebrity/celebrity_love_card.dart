@@ -149,8 +149,8 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            DSFortuneColors.categoryLove.withValues(alpha: 0.15), // 핑크 계열
-            DSFortuneColors.categoryLove.withValues(alpha: 0.1),
+            DSColors.error.withValues(alpha: 0.15), // 핑크 계열
+            DSColors.error.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -164,9 +164,9 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                 height: 56,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: DSFortuneColors.categoryLove.withValues(alpha: 0.2),
+                  color: DSColors.error.withValues(alpha: 0.2),
                   border: Border.all(
-                    color: DSFortuneColors.categoryLove.withValues(alpha: 0.4),
+                    color: DSColors.error.withValues(alpha: 0.4),
                     width: 2,
                   ),
                 ),
@@ -229,7 +229,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [DSFortuneColors.categoryLove, DSFortuneColors.categoryLove],
+                colors: [DSColors.error, DSColors.error],
               ),
               borderRadius: BorderRadius.circular(DSRadius.full),
             ),
@@ -262,10 +262,10 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: DSFortuneColors.categoryLove.withValues(alpha: 0.05),
+          color: DSColors.error.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: DSFortuneColors.categoryLove.withValues(alpha: 0.1),
+            color: DSColors.error.withValues(alpha: 0.1),
           ),
         ),
         child: Text(
@@ -300,7 +300,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
               Text(
                 '${score.toInt()}점',
                 style: typography.labelMedium.copyWith(
-                  color: DSFortuneColors.categoryLove,
+                  color: DSColors.error,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -319,7 +319,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryGratitude.withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -366,7 +366,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [DSFortuneColors.categoryCelebrity, DSFortuneColors.categoryCompatibility],
+                colors: [DSColors.warning, DSColors.error],
               ),
               borderRadius: BorderRadius.circular(DSRadius.sm),
             ),
@@ -431,16 +431,16 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
               vertical: DSSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.1),
+              color: DSColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DSRadius.sm),
               border: Border.all(
-                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.2),
+                color: DSColors.success.withValues(alpha: 0.2),
               ),
             ),
             child: Text(
               data['chemistry_type'] ?? '',
               style: typography.labelSmall.copyWith(
-                color: DSFortuneColors.categoryLuckyItems,
+                color: DSColors.success,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -460,8 +460,8 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.05),
-                    DSFortuneColors.categoryLove.withValues(alpha: 0.05),
+                    DSColors.success.withValues(alpha: 0.05),
+                    DSColors.error.withValues(alpha: 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -500,7 +500,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                   context,
                   '나',
                   data['user_level'] ?? '',
-                  DSFortuneColors.categoryFamily,
+                  DSColors.info,
                 ),
               ),
               const SizedBox(width: DSSpacing.sm),
@@ -509,7 +509,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                   context,
                   widget.celebrityName ?? '상대',
                   data['celebrity_level'] ?? '',
-                  DSFortuneColors.categoryLove,
+                  DSColors.error,
                 ),
               ),
             ],
@@ -519,7 +519,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryMoney.withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -593,10 +593,10 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
           Container(
             padding: const EdgeInsets.all(DSSpacing.sm),
             decoration: BoxDecoration(
-              color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.05),
+              color: DSColors.accentSecondary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(DSRadius.sm),
               border: Border.all(
-                color: DSFortuneColors.categoryPersonalityDna.withValues(alpha: 0.1),
+                color: DSColors.accentSecondary.withValues(alpha: 0.1),
               ),
             ),
             child: Column(
@@ -605,7 +605,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                 Text(
                   '🗓️ 3년 후',
                   style: typography.labelSmall.copyWith(
-                    color: DSFortuneColors.categoryPersonalityDna,
+                    color: DSColors.accentSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -683,8 +683,8 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.2),
-                  DSFortuneColors.resultGoodFortune.withValues(alpha: 0.1),
+                  DSColors.warning.withValues(alpha: 0.2),
+                  DSColors.success.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -697,7 +697,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                 Text(
                   '결혼 궁합 ${score.toInt()}점',
                   style: typography.headingSmall.copyWith(
-                    color: DSFortuneColors.fortuneGold,
+                    color: DSColors.warning,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -748,7 +748,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                   child: Text(
                     data['advice'],
                     style: typography.labelSmall.copyWith(
-                      color: DSFortuneColors.categoryLove,
+                      color: DSColors.error,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -802,7 +802,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
     return Container(
       height: 8,
       decoration: BoxDecoration(
-        color: DSFortuneColors.categoryLove.withValues(alpha: 0.1),
+        color: DSColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: FractionallySizedBox(
@@ -811,7 +811,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
         child: Container(
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [DSFortuneColors.categoryLove, DSFortuneColors.categoryLove],
+              colors: [DSColors.error, DSColors.error],
             ),
             borderRadius: BorderRadius.circular(4),
           ),
@@ -822,7 +822,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
 
   Widget _buildDefaultAvatar() {
     return Container(
-      color: DSFortuneColors.categoryLove.withValues(alpha: 0.3),
+      color: DSColors.error.withValues(alpha: 0.3),
       child: const Center(
         child: Icon(
           Icons.person,

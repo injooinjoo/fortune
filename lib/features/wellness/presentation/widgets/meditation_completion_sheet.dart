@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/meditation_history.dart';
 import '../providers/wellness_providers.dart';
 import 'mind_gem_widget.dart';

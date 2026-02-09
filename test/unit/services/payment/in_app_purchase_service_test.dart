@@ -1,8 +1,7 @@
-/// In-App Purchase Service - Unit Test
-/// 인앱 결제 서비스 유닛 테스트
+// In-App Purchase Service - Unit Test
+// 인앱 결제 서비스 유닛 테스트
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks/mock_payment_services.dart';
 

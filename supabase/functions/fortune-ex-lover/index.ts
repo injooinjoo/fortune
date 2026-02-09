@@ -555,15 +555,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabase, 'ex-lover', personalizedResult.score || 50)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // 블러 상태 적용
-      if (!isPremium) {
-        resultWithPercentile.isBlurred = true
-        resultWithPercentile.blurredSections = ['hidden_thoughts', 'reunion_strategy', 'chat_analysis']
-      } else {
-        resultWithPercentile.isBlurred = false
-        resultWithPercentile.blurredSections = []
-      }
-
       return new Response(JSON.stringify({
         success: true,
         data: resultWithPercentile,
@@ -872,16 +863,6 @@ serve(async (req) => {
 
       const parsedResponse = JSON.parse(response.content)
 
-      // ✅ v2 Blur 로직 (목표별 차등 적용)
-      const isBlurred = !isPremium
-      // 무료: hardTruth.headline + reunionAssessment.score + closingMessage 만 공개
-      // 프리미엄: 전체 공개
-      const blurredSections = isBlurred
-        ? ['hardTruth.diagnosis', 'hardTruth.realityCheck', 'hardTruth.mostImportantAdvice',
-           'reunionAssessment.keyFactors', 'reunionAssessment.timing', 'reunionAssessment.approach', 'reunionAssessment.neverDo',
-           'emotionalPrescription', 'theirPerspective', 'strategicAdvice', 'newBeginning', 'milestones']
-        : []
-
       // 재회 가능성 점수 추출 (이미지 프롬프트용)
       const reunionScore = parsedResponse.reunionAssessment?.score ?? Math.min(50, reunionCap)
 
@@ -1008,9 +989,7 @@ serve(async (req) => {
         },
         comfort_message: parsedResponse.closingMessage?.empathy || '지금의 아픔은 반드시 지나갑니다.',
 
-        timestamp: new Date().toISOString(),
-        isBlurred,
-        blurredSections
+        timestamp: new Date().toISOString()
       }
 
       await supabase.from('fortune_cache').insert({

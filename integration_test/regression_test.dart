@@ -1,22 +1,22 @@
-/// Regression Integration Test (Category C3)
-/// 회귀 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/regression_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 10개:
-/// - REG-001: 홈 화면 핵심 UI 렌더링
-/// - REG-002: 운세 목록 38개 운세 접근
-/// - REG-003: 프로필 정보 표시
-/// - REG-004: 설정 항목 표시
-/// - REG-005: 결제 플로우
-/// - REG-006: 타로 카드 선택
-/// - REG-007: 궁합 입력 폼
-/// - REG-008: 히스토리 운세 기록
-/// - REG-009: 공유 기능
-/// - REG-010: 다크모드 테마 전환
+// Regression Integration Test (Category C3)
+// 회귀 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/regression_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 10개:
+// - REG-001: 홈 화면 핵심 UI 렌더링
+// - REG-002: 운세 목록 38개 운세 접근
+// - REG-003: 프로필 정보 표시
+// - REG-004: 설정 항목 표시
+// - REG-005: 결제 플로우
+// - REG-006: 타로 카드 선택
+// - REG-007: 궁합 입력 폼
+// - REG-008: 히스토리 운세 기록
+// - REG-009: 공유 기능
+// - REG-010: 다크모드 테마 전환
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -118,8 +118,6 @@ void main() {
       // 카드나 리스트 아이템 수 확인
       final cards = find.byType(Card);
       final listTiles = find.byType(ListTile);
-      final inkWells = find.byType(InkWell);
-
       final totalItems = cards.evaluate().length +
           listTiles.evaluate().length;
 

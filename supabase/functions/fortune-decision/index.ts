@@ -72,8 +72,6 @@ interface DecisionResponse {
     confidenceFactors?: string[]
     nextSteps?: string[]
     timestamp: string
-    isBlurred: boolean
-    blurredSections: string[]
     decisionReceiptId?: string
   }
   error?: string
@@ -324,10 +322,6 @@ ${optionsText}
       }
     }
 
-    // Blur 로직 적용
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred ? ['options', 'recommendation', 'nextSteps'] : []
-
     // 결정 기록 저장 (saveReceipt=true인 경우)
     let decisionReceiptId: string | undefined
     if (saveReceipt && userId) {
@@ -370,8 +364,6 @@ ${optionsText}
       confidenceFactors: parsedResponse.confidenceFactors || [],
       nextSteps: parsedResponse.nextSteps || [],
       timestamp: new Date().toISOString(),
-      isBlurred,
-      blurredSections,
       ...(decisionReceiptId && { decisionReceiptId })
     }
 

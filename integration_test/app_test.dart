@@ -1,10 +1,10 @@
-/// Fortune App - Integration Test (E2E)
-/// 전체 앱 플로우를 테스트하는 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/app_test.dart
-/// ```
+// Fortune App - Integration Test (E2E)
+// 전체 앱 플로우를 테스트하는 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/app_test.dart
+// ```
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

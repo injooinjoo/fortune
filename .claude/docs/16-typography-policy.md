@@ -160,7 +160,7 @@ Text('숫자', style: context.numberLarge)
 Text(
   '제목',
   style: context.heading2.copyWith(
-    color: ObangseokColors.inju,
+    color: DSColors.error, // accent red
   ),
 )
 

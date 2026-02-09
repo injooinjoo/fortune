@@ -1,18 +1,18 @@
-/// Screen Size Integration Test (Category C4)
-/// 스크린 사이즈 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/screen_size_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 6개:
-/// - SCR-001: iPhone SE (375x667)
-/// - SCR-002: iPhone 15 (393x852)
-/// - SCR-003: iPhone 15 Pro Max (430x932)
-/// - SCR-004: iPad Mini (768x1024)
-/// - SCR-005: iPad Pro (1024x1366)
-/// - SCR-006: Android Small (360x640)
+// Screen Size Integration Test (Category C4)
+// 스크린 사이즈 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/screen_size_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 6개:
+// - SCR-001: iPhone SE (375x667)
+// - SCR-002: iPhone 15 (393x852)
+// - SCR-003: iPhone 15 Pro Max (430x932)
+// - SCR-004: iPad Mini (768x1024)
+// - SCR-005: iPad Pro (1024x1366)
+// - SCR-006: Android Small (360x640)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

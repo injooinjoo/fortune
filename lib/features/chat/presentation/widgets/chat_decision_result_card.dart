@@ -3,9 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 결정 분석 결과 카드
 ///
@@ -27,14 +25,14 @@ class ChatDecisionResultCard extends ConsumerWidget {
     required this.date,
   });
 
-  // 동양화 스타일 - 한지 느낌 배경 (ObangseokColors 사용)
-  static const _creamLight = ObangseokColors.misaek;
-  static const _creamDark = ObangseokColors.misaekWarm;
+  // 디자인 색상 → DSColors 기반 (ChatGPT monochrome style)
+  static const _creamLight = DSColors.backgroundSecondary;
+  static const _creamDark = DSColors.background;
   // 다크모드 배경
-  static const _darkBg1 = ObangseokColors.meokLight;
-  static const _darkBg2 = ObangseokColors.meok;
-  // 액센트 색상 - 결정 보라
-  static const _purpleAccent = DSFortuneColors.categoryDecision;
+  static const _darkBg1 = DSColors.background;
+  static const _darkBg2 = DSColors.backgroundSecondary;
+  // 액센트 색상 - semantic colors
+  static const _purpleAccent = DSColors.accentSecondary;
   static const _blueAccent = Color(0xFF4A90E2);
 
   @override
@@ -113,7 +111,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
                     );
                   }),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: DSSpacing.sm),
 
                   // AI 추천
                   _buildRecommendation(context)
@@ -169,9 +167,10 @@ class ChatDecisionResultCard extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final typography = context.typography;
     final isDark = context.isDark;
     final formattedDate = DateFormat('M월 d일 HH:mm').format(date);
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
 
     return Row(
       children: [
@@ -180,7 +179,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
           '🤔',
           style: TextStyle(fontSize: 24),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: DSSpacing.sm),
 
         // 날짜 + 타이틀
         Expanded(
@@ -194,11 +193,10 @@ class ChatDecisionResultCard extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: DSSpacing.xxs),
               Text(
                 formattedDate,
-                style: TextStyle(
-                  fontSize: 10,
+                style: typography.labelTiny.copyWith(
                   color: textColor.withValues(alpha: 0.5),
                   letterSpacing: 1.0,
                 ),
@@ -220,7 +218,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
             color: isDark ? _purpleAccent : _blueAccent,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: DSSpacing.sm),
         // 좋아요 + 공유 버튼
         FortuneActionButtons(
           contentId: 'decision_${date.millisecondsSinceEpoch}',
@@ -236,6 +234,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
   }
 
   Widget _buildDivider(BuildContext context) {
+    final typography = context.typography;
     return Row(
       children: [
         Expanded(
@@ -256,8 +255,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
             '🔍',
-            style: TextStyle(
-              fontSize: 12,
+            style: typography.bodySmall.copyWith(
               color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
@@ -282,7 +280,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
 
   Widget _buildQuestionSection(BuildContext context) {
     final isDark = context.isDark;
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -327,8 +325,9 @@ class ChatDecisionResultCard extends ConsumerWidget {
   }
 
   Widget _buildOptionCard(BuildContext context, int index, Map<String, dynamic> option) {
+    final typography = context.typography;
     final isDark = context.isDark;
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
     final optionName = option['option'] ?? '선택지 $index';
     final pros = (option['pros'] as List?)?.cast<String>() ?? [];
     final cons = (option['cons'] as List?)?.cast<String>() ?? [];
@@ -363,8 +362,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
                 ),
                 child: Text(
                   '선택 $index',
-                  style: TextStyle(
-                    fontSize: 11,
+                  style: typography.labelTiny.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : _purpleAccent,
                   ),
@@ -409,7 +407,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: DSSpacing.sm),
           ],
 
           // 단점
@@ -444,7 +442,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
 
   Widget _buildRecommendation(BuildContext context) {
     final isDark = context.isDark;
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(16),

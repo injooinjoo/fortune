@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/tokens/ds_spacing.dart';
 import 'package:fortune/core/design_system/tokens/ds_radius.dart';
-import 'package:fortune/core/design_system/tokens/ds_fortune_colors.dart';
+import 'package:fortune/core/design_system/tokens/ds_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/infographic_container.dart';
 import 'package:fortune/features/fortune/presentation/widgets/infographic/lucky_item_row.dart';
@@ -141,7 +141,7 @@ class LuckyItemsGridTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withOpacity(0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Row(
@@ -216,11 +216,11 @@ class LotteryGridTemplate extends StatelessWidget {
   final bool isShareMode;
 
   Color _getBallColor(int number) {
-    if (number <= 10) return DSFortuneColors.categoryLotto; // 노랑
-    if (number <= 20) return DSFortuneColors.categoryCareer; // 파랑
-    if (number <= 30) return DSFortuneColors.elementFire; // 빨강
-    if (number <= 40) return DSFortuneColors.inkWashLight; // 회색
-    return DSFortuneColors.categoryHealth; // 초록
+    if (number <= 10) return DSColors.warning; // 노랑
+    if (number <= 20) return DSColors.info; // 파랑
+    if (number <= 30) return DSColors.error; // 빨강
+    if (number <= 40) return DSColors.textTertiary; // 회색
+    return DSColors.success; // 초록
   }
 
   @override
@@ -239,7 +239,7 @@ class LotteryGridTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withOpacity(0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
         borderRadius: DSRadius.lgBorder,
       ),
       child: Column(
@@ -289,7 +289,7 @@ class LotteryGridTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.accent.withOpacity(0.1),
+        color: context.colors.accent.withValues(alpha:0.1),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Row(
@@ -335,14 +335,14 @@ class _LottoBall extends StatelessWidget {
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            color.withOpacity(0.8),
+            color.withValues(alpha:0.8),
             color,
           ],
           center: const Alignment(-0.3, -0.3),
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.4),
+            color: color.withValues(alpha:0.4),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -404,7 +404,7 @@ class NamingGridTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withOpacity(0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
         borderRadius: DSRadius.smBorder,
       ),
       child: Row(
@@ -488,12 +488,12 @@ class _NameCard extends StatelessWidget {
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: isHighlighted
-            ? context.colors.accent.withOpacity(0.1)
-            : context.colors.surfaceSecondary.withOpacity(0.5),
+            ? context.colors.accent.withValues(alpha:0.1)
+            : context.colors.surfaceSecondary.withValues(alpha:0.5),
         borderRadius: DSRadius.mdBorder,
         border: isHighlighted
             ? Border.all(
-                color: context.colors.accent.withOpacity(0.3),
+                color: context.colors.accent.withValues(alpha:0.3),
                 width: 2,
               )
             : null,
@@ -507,7 +507,7 @@ class _NameCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: isHighlighted
                   ? context.colors.accent
-                  : context.colors.textTertiary.withOpacity(0.3),
+                  : context.colors.textTertiary.withValues(alpha:0.3),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -619,7 +619,7 @@ class GridItem extends StatelessWidget {
           color: backgroundColor ?? context.colors.surface,
           borderRadius: DSRadius.mdBorder,
           border: Border.all(
-            color: context.colors.border.withOpacity(0.3),
+            color: context.colors.border.withValues(alpha:0.3),
             width: 1,
           ),
         ),

@@ -9,7 +9,6 @@ import '../../core/design_system/design_system.dart';
 import 'user_profile_notifier.dart' as profile_notifier;
 import '../../features/fortune/domain/entities/fortune_category.dart';
 import 'providers.dart';
-import 'auth_provider.dart';
 
 /// State notifier for managing fortune recommendations
 class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<FortuneCardScore>>> {
@@ -231,15 +230,15 @@ final topFortuneRecommendationsProvider = Provider.family<List<FortuneCardScore>
 /// Provider to convert FortuneCardScore to FortuneCategory
 final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, FortuneCardScore>(
   (ref, score) {
-    // Map category to gradient colors (using DSFortuneColors tokens)
+    // Map category to gradient colors (using DSColors tokens - ChatGPT monochrome style)
     final categoryGradients = {
-      'love': [DSFortuneColors.categoryLove, DSFortuneColors.categoryBlindDate],
-      'career': [DSFortuneColors.categoryFamily, DSFortuneColors.categoryCareer],
-      'money': [DSFortuneColors.categoryLotto, const Color(0xFFD97706)], // 고유 색상: gradient end
-      'health': [DSFortuneColors.categoryHealth, const Color(0xFF059669)], // 고유 색상: gradient end
-      'traditional': [DSFortuneColors.categoryTraditional, DSFortuneColors.categorySportsGame],
-      'lifestyle': [DSFortuneColors.categoryFaceReading, DSFortuneColors.categoryBiorhythm],
-      'interactive': [DSFortuneColors.categoryTarot, DSFortuneColors.categoryDaily],
+      'love': [DSColors.accentSecondary, DSColors.accentSecondary],
+      'career': [DSColors.accentSecondary, DSColors.accentSecondary],
+      'money': [DSColors.warning, const Color(0xFFD97706)], // 고유 색상: gradient end
+      'health': [DSColors.success, const Color(0xFF059669)], // 고유 색상: gradient end
+      'traditional': [DSColors.accentSecondary, DSColors.accentSecondary],
+      'lifestyle': [DSColors.accentSecondary, DSColors.accentSecondary],
+      'interactive': [DSColors.accentSecondary, DSColors.accentSecondary],
       'petFamily': null};
 
     // Map category to icons
@@ -254,7 +253,7 @@ final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, Fortu
       'petFamily': null};
 
     final gradients = categoryGradients[score.category] ??
-        [DSFortuneColors.categoryDaily, DSFortuneColors.categoryExam];
+        [DSColors.accentSecondary, DSColors.accentSecondary];
     
     final icon = categoryIcons[score.category] ?? Icons.star_rounded;
 

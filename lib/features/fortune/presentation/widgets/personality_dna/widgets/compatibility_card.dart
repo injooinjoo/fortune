@@ -7,7 +7,7 @@ class CompatibilityCard extends StatelessWidget {
   final Compatibility compatibility;
 
   // 테마 색상 상수
-  static const Color _compatibilityColor = DSFortuneColors.mysticalPurpleMuted;
+  static const Color _compatibilityColor = DSColors.accentSecondary;
 
   const CompatibilityCard({super.key, required this.compatibility});
 
@@ -58,7 +58,7 @@ class CompatibilityCard extends StatelessWidget {
                   '💕',
                   '연인',
                   compatibility.lover,
-                  DSFortuneColors.categoryCompatibility,
+                  DSColors.accentSecondary,
                 ),
               ),
               const SizedBox(width: DSSpacing.sm),

@@ -7,7 +7,7 @@ class CelebrityCard extends StatelessWidget {
   final Celebrity celebrity;
 
   // 테마 색상 상수
-  static const Color _goldColor = DSFortuneColors.fortuneGoldMuted;
+  static const Color _goldColor = DSColors.warning;
   static const Color _orangeColor = Color(0xFFFFA500); // 고유 색상 - 그라데이션 오렌지
 
   const CelebrityCard({super.key, required this.celebrity});

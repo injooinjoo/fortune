@@ -1,4 +1,4 @@
-/// Fortune explanation data for different fortune types
+// Fortune explanation data for different fortune types
 class FortuneExplanations {
   static const Map<String, Map<String, dynamic>> explanations = {
     'daily': {

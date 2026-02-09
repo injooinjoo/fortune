@@ -27,13 +27,13 @@ class MedicalDocumentUploadSection extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              DSFortuneColors.categoryHealth.withValues(alpha: 0.08),
+              DSColors.success.withValues(alpha: 0.08),
               const Color(0xFF3B82F6).withValues(alpha: 0.08), // 고유 색상 - 장식용 그라데이션 블루
             ],
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: DSFortuneColors.categoryHealth.withValues(alpha: 0.3),
+            color: DSColors.success.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -43,7 +43,7 @@ class MedicalDocumentUploadSection extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: DSFortuneColors.categoryHealth.withValues(alpha: 0.15),
+                color: DSColors.success.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -72,7 +72,7 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: DSFortuneColors.categoryHealth,
+                          color: DSColors.success,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(

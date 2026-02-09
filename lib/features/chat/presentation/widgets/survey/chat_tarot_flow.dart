@@ -268,8 +268,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  colors.accentSecondary.withValues(alpha: 0.15),
-                  colors.accent.withValues(alpha: 0.1),
+                  colors.textPrimary.withValues(alpha: 0.1),
+                  colors.textPrimary.withValues(alpha: 0.06),
                 ],
               ),
               borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -332,7 +332,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                           errorBuilder: (context, error, stackTrace) {
                             // 이미지 로드 실패 시 폴백
                             return Container(
-                              color: colors.accentSecondary,
+                              color: colors.textSecondary,
                               child: Icon(
                                 Icons.auto_awesome,
                                 color: colors.surface.withValues(alpha: 0.6),
@@ -402,8 +402,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                colors.accentSecondary.withValues(alpha: 0.15),
-                colors.accent.withValues(alpha: 0.1),
+                colors.textPrimary.withValues(alpha: 0.1),
+                colors.textPrimary.withValues(alpha: 0.06),
               ],
             ),
             borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -436,7 +436,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                     Text(
                       '${selectedCount + 1}번째 카드: $nextPositionName',
                       style: typography.labelMedium.copyWith(
-                        color: colors.accentSecondary,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -463,13 +463,13 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                 vertical: DSSpacing.xxs,
               ),
               decoration: BoxDecoration(
-                color: colors.accentSecondary.withValues(alpha: 0.1),
+                color: colors.textPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Text(
                 '$selectedCount / $requiredCards',
                 style: typography.labelSmall.copyWith(
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -586,8 +586,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
               child: ElevatedButton(
                 onPressed: _completeSelection,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.accentSecondary,
-                  foregroundColor: colors.surface,
+                  backgroundColor: colors.ctaBackground,
+                  foregroundColor: colors.ctaForeground,
                   padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
                 ),
                 child: Row(
@@ -627,7 +627,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
           Text(
             card.positionName,
             style: typography.labelSmall.copyWith(
-              color: colors.accentSecondary,
+              color: colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -641,12 +641,12 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
-                color: colors.accentSecondary,
+                color: colors.textPrimary,
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: colors.accentSecondary.withValues(alpha: 0.3),
+                  color: colors.textPrimary.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -661,7 +661,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      color: colors.accentSecondary,
+                      color: colors.textSecondary,
                       child: Center(
                         child: Text(
                           card.cardNameKr,
@@ -762,14 +762,14 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
                       color: isSelected
-                          ? colors.accentSecondary
+                          ? colors.textPrimary
                           : colors.textPrimary.withValues(alpha: 0.15),
                       width: isSelected ? 2 : 1,
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: isSelected
-                            ? colors.accentSecondary.withValues(alpha: 0.4)
+                            ? colors.textPrimary.withValues(alpha: 0.3)
                             : colors.textPrimary.withValues(alpha: 0.08),
                         blurRadius: isSelected ? 10 : 3,
                         offset: const Offset(0, 2),
@@ -794,7 +794,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                         Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(3),
-                            color: colors.accentSecondary.withValues(alpha: 0.3),
+                            color: colors.textPrimary.withValues(alpha: 0.2),
                           ),
                         ),
 
@@ -814,7 +814,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                               child: Text(
                                 '$selectionOrder',
                                 style: typography.labelSmall.copyWith(
-                                  color: colors.accentSecondary,
+                                  color: colors.textPrimary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 8,
                                 ),
@@ -960,13 +960,13 @@ class _SpreadCard extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: colors.accentSecondary.withValues(alpha: 0.15),
+                            color: colors.textPrimary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(DSRadius.xs),
                           ),
                           child: Text(
                             '${spread.cardCount}장',
                             style: typography.labelSmall.copyWith(
-                              color: colors.accentSecondary,
+                              color: colors.textPrimary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

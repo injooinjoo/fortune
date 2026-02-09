@@ -94,7 +94,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         width: widget.width,
         height: widget.height,
         transform: Matrix4.identity()
-          ..scale(widget.isHovered ? 1.05 : 1.0, widget.isHovered ? 1.05 : 1.0),
+          ..scaleByDouble(widget.isHovered ? 1.05 : 1.0, widget.isHovered ? 1.05 : 1.0, 1.0, 1.0),
         child: AnimatedBuilder(
           animation: _flipAnimation,
           builder: (context, child) {
@@ -267,7 +267,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                         size: widget.width * 0.5,
                         color: widget.deck.primaryColor,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: DSSpacing.md),
                       Text(
                         'Card ${widget.cardIndex + 1}',
                         style: TextStyle(

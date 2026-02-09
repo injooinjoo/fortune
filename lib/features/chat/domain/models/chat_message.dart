@@ -93,12 +93,6 @@ class ChatMessage {
   final String? text;
   final DateTime timestamp;
 
-  /// 블러 처리 여부
-  final bool isBlurred;
-
-  /// 블러 처리된 섹션 키 목록
-  final List<String> blurredSections;
-
   /// 운세 결과용: 운세 유형
   final String? fortuneType;
 
@@ -214,8 +208,6 @@ class ChatMessage {
     required this.type,
     this.text,
     required this.timestamp,
-    this.isBlurred = false,
-    this.blurredSections = const [],
     this.fortuneType,
     this.sectionKey,
     this.chipIds,
@@ -260,8 +252,6 @@ class ChatMessage {
     ChatMessageType? type,
     String? text,
     DateTime? timestamp,
-    bool? isBlurred,
-    List<String>? blurredSections,
     String? fortuneType,
     String? sectionKey,
     List<String>? chipIds,
@@ -305,8 +295,6 @@ class ChatMessage {
       type: type ?? this.type,
       text: text ?? this.text,
       timestamp: timestamp ?? this.timestamp,
-      isBlurred: isBlurred ?? this.isBlurred,
-      blurredSections: blurredSections ?? this.blurredSections,
       fortuneType: fortuneType ?? this.fortuneType,
       sectionKey: sectionKey ?? this.sectionKey,
       chipIds: chipIds ?? this.chipIds,
@@ -346,4 +334,29 @@ class ChatMessage {
       chatInsight: chatInsight ?? this.chatInsight,
     );
   }
+
+  /// 로컬 저장 가능 여부 (user, ai, system 메시지만 저장)
+  /// Fortune, MatchInsight 등 복잡한 객체는 세션 내에서만 유효
+  bool get isPersistable =>
+      type == ChatMessageType.user ||
+      type == ChatMessageType.ai ||
+      type == ChatMessageType.system;
+
+  /// JSON 직렬화 (로컬 저장용)
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'type': type.name,
+        'text': text,
+        'timestamp': timestamp.toIso8601String(),
+        'chipIds': chipIds,
+      };
+
+  /// JSON 역직렬화 (로컬 로드용)
+  factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
+        id: json['id'] as String,
+        type: ChatMessageType.values.byName(json['type'] as String),
+        text: json['text'] as String?,
+        timestamp: DateTime.parse(json['timestamp'] as String),
+        chipIds: (json['chipIds'] as List<dynamic>?)?.cast<String>(),
+      );
 }

@@ -104,7 +104,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: DSFortuneColors.categoryHealth.withValues(alpha: 0.1),
+            color: DSColors.success.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(
@@ -173,12 +173,12 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? DSFortuneColors.categoryHealth.withValues(alpha: 0.1)
+                        ? DSColors.success.withValues(alpha: 0.1)
                         : context.colors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isSelected
-                          ? DSFortuneColors.categoryHealth
+                          ? DSColors.success
                           : context.colors.divider,
                       width: isSelected ? 1.5 : 1,
                     ),
@@ -189,7 +189,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
                     style: context.bodySmall.copyWith(
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                       color: isSelected
-                          ? DSFortuneColors.categoryHealth
+                          ? DSColors.success
                           : context.colors.textSecondary,
                     ),
                   ),
@@ -301,17 +301,17 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: DSFortuneColors.categoryHealth.withValues(alpha: 0.08),
+        color: DSColors.success.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: DSFortuneColors.categoryHealth.withValues(alpha: 0.3),
+          color: DSColors.success.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
           Icon(
             _mimeType.contains('pdf') ? Icons.picture_as_pdf_rounded : Icons.image_rounded,
-            color: DSFortuneColors.categoryHealth,
+            color: DSColors.success,
             size: 32,
           ),
           const SizedBox(width: 12),

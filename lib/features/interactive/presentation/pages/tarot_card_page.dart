@@ -297,7 +297,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       if (!hasEnoughTokens) {
         Toast.show(
           context,
-          message: '복주머니가 부족합니다',
+          message: '토큰가 부족합니다',
           type: ToastType.error);
         stateNotifier.setLoading(false);
         return;

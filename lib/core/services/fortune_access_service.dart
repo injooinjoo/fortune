@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/fortune_result.dart';
@@ -29,12 +28,6 @@ class FortuneAccessResult {
   /// 획득할 토큰 수 (무료 운세)
   final int willEarnTokens;
 
-  /// 블러 처리 필요 여부
-  final bool isBlurred;
-
-  /// 블러 처리할 섹션 목록
-  final List<String> blurredSections;
-
   /// 결과 소스 (캐시/cohort/api)
   final String source;
 
@@ -48,8 +41,6 @@ class FortuneAccessResult {
     this.cachedResult,
     required this.requiredTokens,
     required this.willEarnTokens,
-    required this.isBlurred,
-    required this.blurredSections,
     required this.source,
     this.denyReason,
   });
@@ -61,8 +52,6 @@ class FortuneAccessResult {
         hasCached: false,
         requiredTokens: 0,
         willEarnTokens: 0,
-        isBlurred: false,
-        blurredSections: [],
         source: 'premium',
       );
 
@@ -78,8 +67,6 @@ class FortuneAccessResult {
         cachedResult: cached,
         requiredTokens: 0,
         willEarnTokens: 0,
-        isBlurred: !isPremium,
-        blurredSections: [],
         source: 'personal_cache',
       );
 
@@ -94,8 +81,6 @@ class FortuneAccessResult {
         hasCached: false,
         requiredTokens: required,
         willEarnTokens: 0,
-        isBlurred: true,
-        blurredSections: [],
         source: 'denied',
         denyReason: '토큰 부족: 필요 $required, 보유 $available',
       );
@@ -103,16 +88,13 @@ class FortuneAccessResult {
 
 /// 운세 접근 통합 체크 서비스
 ///
-/// 9단계 통합 플로우:
+/// 6단계 통합 플로우:
 /// 1. 프리미엄 체크 (최우선)
 /// 2. 개인 캐시 확인 (오늘 이미 조회?)
 /// 3. Cohort Pool 조회 (90% API 절감)
 /// 4. DB 풀 조회 (72% API 절감)
 /// 5. 토큰 비용 확인 및 차감
-/// 6. API 호출
-/// 7. 블러 상태 결정
-/// 8. 광고 표시 여부
-/// 9. 결과 반환 + 블러 해제 옵션
+/// 6. API 호출 & 결과 반환
 class FortuneAccessService {
   final SupabaseClient _supabase;
   final FortuneOptimizationService _optimizationService;
@@ -121,7 +103,6 @@ class FortuneAccessService {
   final Ref? _ref;
 
   // 상수
-  static const double cohortPoolAdProbability = 0.3; // Cohort Pool 30% 광고 확률
   static const int minCohortPoolSize = 25; // Cohort Pool 최소 크기
 
   FortuneAccessService({
@@ -140,22 +121,20 @@ class FortuneAccessService {
   /// [userId] 사용자 ID
   /// [fortuneType] 운세 타입 (예: 'daily', 'love', 'tarot')
   /// [conditions] 운세 조건 객체
-  /// [isPremium] 프리미엄 여부 (Provider에서 주입)
   /// [tokenBalance] 토큰 잔액 (Provider에서 주입)
-  /// [hasUnlimitedAccess] 무제한 접근 여부
+  /// [hasUnlimitedTokens] 테스트 계정 무제한 토큰 여부
   Future<FortuneAccessResult> checkAccess({
     required String userId,
     required String fortuneType,
     required FortuneConditions conditions,
-    required bool isPremium,
     required int tokenBalance,
-    required bool hasUnlimitedAccess,
+    bool hasUnlimitedTokens = false,
   }) async {
     Logger.info('[FortuneAccess] 🎯 접근 체크 시작: $fortuneType (user: $userId)');
 
-    // ===== STEP 1: 프리미엄 체크 =====
-    if (isPremium || hasUnlimitedAccess) {
-      Logger.info('[FortuneAccess] ✅ STEP 1: 프리미엄 사용자 - 모든 제한 우회');
+    // ===== STEP 1: 테스트 계정 체크 =====
+    if (hasUnlimitedTokens) {
+      Logger.info('[FortuneAccess] ✅ STEP 1: 테스트 계정 - 토큰 제한 우회');
       return FortuneAccessResult.premium();
     }
 
@@ -197,28 +176,23 @@ class FortuneAccessService {
     // ===== 접근 허용 =====
     Logger.info('[FortuneAccess] ✅ 접근 허용 - API 호출 또는 Pool 사용 가능');
 
-    final blurredSections = _getBlurredSectionsForType(fortuneType);
-
     return FortuneAccessResult(
       canAccess: true,
       isPremium: false,
       hasCached: false,
       requiredTokens: requiredTokens,
       willEarnTokens: willEarnTokens,
-      isBlurred: true, // 비프리미엄은 블러 처리
-      blurredSections: blurredSections,
       source: 'pending', // 아직 소스 미정
     );
   }
 
-  /// 운세 조회 실행 (9단계 통합 플로우)
+  /// 운세 조회 실행 (6단계 통합 플로우)
   ///
   /// [userId] 사용자 ID
   /// [fortuneType] 운세 타입
   /// [conditions] 운세 조건 객체
   /// [inputConditions] API 호출용 입력 데이터
   /// [isPremium] 프리미엄 여부
-  /// [onShowAd] 광고 표시 콜백
   /// [onAPICall] API 호출 콜백
   Future<FortuneResult> execute({
     required String userId,
@@ -226,7 +200,6 @@ class FortuneAccessService {
     required FortuneConditions conditions,
     required Map<String, dynamic> inputConditions,
     required bool isPremium,
-    required Future<void> Function() onShowAd,
     required Future<Map<String, dynamic>> Function(Map<String, dynamic>) onAPICall,
   }) async {
     final conditionsHash = conditions.generateHash();
@@ -244,11 +217,6 @@ class FortuneAccessService {
 
     if (cached != null) {
       Logger.info('[FortuneAccess] ✅ STEP 2: 개인 캐시 사용');
-      // 50% 확률로 광고 표시
-      if (Random().nextDouble() < 0.5) {
-        Logger.debug('[FortuneAccess] 📺 캐시 히트 광고 표시');
-        await onShowAd();
-      }
       return _convertCachedToFortuneResult(
         cached: cached,
         isPremium: isPremium,
@@ -265,11 +233,6 @@ class FortuneAccessService {
 
     if (cohortResult != null) {
       Logger.info('[FortuneAccess] ✅ STEP 3: Cohort Pool 히트');
-      // 30% 확률로 광고 표시
-      if (Random().nextDouble() < cohortPoolAdProbability) {
-        Logger.debug('[FortuneAccess] 📺 Cohort Pool 광고 표시');
-        await onShowAd();
-      }
       // 개인 캐시에 저장
       await _saveToPersonalCache(
         userId: userId,
@@ -290,7 +253,6 @@ class FortuneAccessService {
       userId: userId,
       fortuneType: fortuneType,
       conditions: conditions,
-      onShowAd: onShowAd,
       onAPICall: onAPICall,
     );
 
@@ -374,17 +336,6 @@ class FortuneAccessService {
         input: inputConditions,
       );
 
-      if (result != null) {
-        // 블러 상태 적용 (비프리미엄)
-        if (!isPremium) {
-          final blurredSections = _getBlurredSectionsForType(fortuneType);
-          return result.copyWith(
-            isBlurred: true,
-            blurredSections: blurredSections,
-          );
-        }
-      }
-
       return result;
     } catch (e) {
       Logger.warning('[FortuneAccess] ⚠️ Cohort Pool 조회 실패: $e');
@@ -441,7 +392,7 @@ class FortuneAccessService {
     final title =
         cached.resultData['title'] as String? ?? _getDefaultTitle(fortuneType);
 
-    var result = FortuneResult.fromJson({
+    final result = FortuneResult.fromJson({
       'id': cached.id,
       'type': cached.fortuneType,
       'data': cached.resultData,
@@ -450,15 +401,6 @@ class FortuneAccessService {
       'summary': cached.resultData['summary'],
       'created_at': cached.createdAt.toIso8601String(),
     });
-
-    // 비프리미엄은 블러 처리
-    if (!isPremium) {
-      final blurredSections = _getBlurredSectionsForType(fortuneType);
-      result = result.copyWith(
-        isBlurred: true,
-        blurredSections: blurredSections,
-      );
-    }
 
     return result;
   }
@@ -489,95 +431,5 @@ class FortuneAccessService {
       'baby-nickname': '태명 이야기',
     };
     return titles[fortuneType] ?? '분석 결과';
-  }
-
-  /// 운세 타입별 블러 처리할 섹션 정의
-  List<String> _getBlurredSectionsForType(String fortuneType) {
-    switch (fortuneType.toLowerCase()) {
-      case 'tarot':
-        return ['interpretation', 'advice', 'future_outlook'];
-      case 'daily':
-      case 'daily_calendar':
-      case 'time_based':
-        return ['advice', 'ai_tips', 'caution'];
-      case 'mbti':
-        return ['personality_insights', 'today_advice', 'lucky_color'];
-      case 'compatibility':
-        return ['compatibility_score', 'relationship_advice', 'future_prediction'];
-      case 'love':
-        return ['compatibilityInsights', 'predictions', 'actionPlan', 'warningArea'];
-      case 'talent':
-        return ['top3_talents', 'career_roadmap', 'growth_timeline'];
-      case 'moving':
-        return ['direction_analysis', 'moving_advice', 'auspicious_dates'];
-      case 'career':
-      case 'career_future':
-      case 'career_seeker':
-      case 'career_change':
-      case 'startup_career':
-        return ['career_path', 'success_factors', 'growth_advice'];
-      case 'career_coaching':
-      case 'career-coaching':
-        return [
-          'predictions',
-          'skillAnalysis',
-          'actionPlan',
-          'strengthsAssessment',
-          'improvementAreas',
-        ];
-      case 'health':
-        return ['health_advice', 'precautions', 'wellness_tips'];
-      case 'exercise':
-        return ['todayRoutine', 'weeklyPlan', 'injuryPrevention'];
-      case 'family-health':
-      case 'family-wealth':
-      case 'family-children':
-      case 'family-relationship':
-      case 'family-change':
-        return [
-          'wealthCategories',
-          'monthlyTrend',
-          'familyAdvice',
-          'recommendations',
-          'warnings'
-        ];
-      case 'exam':
-      case 'lucky_exam':
-        return ['study_tips', 'success_probability', 'recommended_subjects'];
-      case 'personality_dna':
-      case 'personality-dna':
-        return ['loveStyle', 'workStyle', 'dailyMatching', 'compatibility'];
-      case 'lucky_items':
-        return [
-          'lotto',
-          'shopping',
-          'game',
-          'food',
-          'travel',
-          'health',
-          'fashion',
-          'lifestyle',
-          'today_color'
-        ];
-      case 'face-reading':
-        return [
-          'detailed_analysis',
-          'personality',
-          'special_features',
-          'advice',
-          'wealth_fortune',
-          'love_fortune',
-          'career_fortune',
-          'health_fortune',
-        ];
-      case 'baby-nickname':
-      case 'baby_nickname':
-      case 'babyNickname':
-        return ['todayMission', 'dreamInterpretation'];
-      case 'dream':
-        return ['detailed_analysis', 'future_prediction', 'lucky_actions'];
-      default:
-        return ['advice', 'details', 'recommendations'];
-    }
   }
 }

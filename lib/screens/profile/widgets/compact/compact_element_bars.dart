@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/tokens/ds_saju_colors.dart';
 
 /// 압축된 오행 바 차트
 ///

@@ -22,13 +22,8 @@ class AppConstants {
   static const Duration longAnimationDuration = Duration(milliseconds: 500);
 
   // Feature Flags
-  static const bool enableAds = true;
   static const bool enableAnalytics = true;
   static const bool enableCrashReporting = true;
-
-  // Ad Configuration
-  static const int adFrequency = 3; // Show ad every 3 fortune readings
-  static const Duration adCooldown = Duration(minutes: 5);
 
   // Fortune Types
   static const List<String> fortuneTypes = [

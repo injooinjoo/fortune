@@ -1882,22 +1882,6 @@ async function savePastLifeResult(
   return data.id
 }
 
-/**
- * 블러 처리 적용
- * FREE: summary, status, score
- * BLUR: chapters, advice, portrait (full quality)
- */
-function applyBlurring(fortune: any, isPremium: boolean): any {
-  if (isPremium) {
-    return { ...fortune, isBlurred: false, blurredSections: [] }
-  }
-
-  return {
-    ...fortune,
-    isBlurred: true,
-    blurredSections: ['chapters', 'advice', 'portrait_full'],
-  }
-}
 
 serve(async (req) => {
   // CORS 처리
@@ -2090,9 +2074,6 @@ serve(async (req) => {
       timestamp: new Date().toISOString(),
     }
 
-    // 블러 처리
-    const processedFortune = applyBlurring(fortune, isPremium)
-
     // 사용량 로깅 - 올바른 패턴 (fortune-tarot 참조)
     UsageLogger.log({
       userId,
@@ -2116,7 +2097,7 @@ serve(async (req) => {
     console.log(`🎉 [PastLife] V2 완료! 총 소요시간: ${Date.now() - startTime}ms`)
 
     return new Response(
-      JSON.stringify({ fortune: processedFortune }),
+      JSON.stringify({ fortune: fortune }),
       {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },

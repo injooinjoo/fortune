@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../core/design_system/tokens/ds_saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/stem_branch_relations.dart';
@@ -105,7 +103,7 @@ class SajuHapchungWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: DSSpacing.xs),
             Text(
               '合沖刑破害',
               style: context.labelSmall.copyWith(
@@ -186,7 +184,7 @@ class SajuHapchungWidget extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(width: 2),
+                    const SizedBox(width: DSSpacing.xxs),
                     Container(
                       width: 16,
                       height: 16,
@@ -270,7 +268,7 @@ class SajuHapchungWidget extends StatelessWidget {
               color: color,
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             hanja,
             style: context.labelSmall.copyWith(
@@ -362,7 +360,7 @@ class SajuHapchungWidget extends StatelessWidget {
                             color: color,
                           ),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: DSSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 4,
@@ -429,7 +427,7 @@ class SajuHapchungWidget extends StatelessWidget {
                           isDark: isDark,
                         ),
                       ),
-                      const SizedBox(width: 2),
+                      const SizedBox(width: DSSpacing.xxs),
                       Text(
                         relation.resultWuxing!,
                         style: context.labelMedium.copyWith(

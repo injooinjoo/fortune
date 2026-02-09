@@ -50,7 +50,7 @@ class PrivacyShield extends StatelessWidget {
     return ClipRect(
       child: ImageFiltered(
         imageFilter: ColorFilter.mode(
-          context.colors.surface.withOpacity(0.8),
+          context.colors.surface.withValues(alpha:0.8),
           BlendMode.srcOver,
         ),
         child: child,
@@ -95,7 +95,7 @@ class PrivacyShield extends StatelessWidget {
   Widget _buildRedact(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: context.colors.textPrimary.withOpacity(0.8),
+        color: context.colors.textPrimary.withValues(alpha:0.8),
         borderRadius: DSRadius.smBorder,
       ),
     );
@@ -234,7 +234,7 @@ class PrivacyImage extends StatelessWidget {
           color: context.colors.surfaceSecondary,
           borderRadius: borderRadius ?? DSRadius.mdBorder,
           border: Border.all(
-            color: context.colors.border.withOpacity(0.3),
+            color: context.colors.border.withValues(alpha:0.3),
             width: 1,
           ),
         ),

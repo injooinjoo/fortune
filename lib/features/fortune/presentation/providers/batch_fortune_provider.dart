@@ -111,7 +111,7 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
       final profileAsync = await _ref.read(userProfileProvider.future);
       final userProfile = profileAsync != null
           ? {
-              'name': profileAsync.name ?? '',
+              'name': profileAsync.name,
               'birth_date': profileAsync.birthDate?.toIso8601String() ?? '',
               'gender': profileAsync.gender.value,
               'mbti': profileAsync.mbtiType
@@ -150,7 +150,7 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
       final profileAsync = await _ref.read(userProfileProvider.future);
       final userProfile = profileAsync != null
           ? {
-              'name': profileAsync.name ?? '',
+              'name': profileAsync.name,
               'birth_date': profileAsync.birthDate?.toIso8601String() ?? '',
               'gender': profileAsync.gender.value,
               'mbti': profileAsync.mbtiType
@@ -188,7 +188,7 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
       final profileAsync = await _ref.read(userProfileProvider.future);
       final userProfile = profileAsync != null
           ? {
-              'name': profileAsync.name ?? '',
+              'name': profileAsync.name,
               'birth_date': profileAsync.birthDate?.toIso8601String() ?? '',
               'gender': profileAsync.gender.value,
               'mbti': profileAsync.mbtiType

@@ -218,14 +218,9 @@ serve(async (req) => {
       .maybeSingle()
 
     if (cachedResult) {
-      const cachedFortune = { ...cachedResult.result }
-      if (isPremium && cachedFortune.isBlurred) {
-        cachedFortune.isBlurred = false
-        cachedFortune.blurredSections = []
-      }
       return new Response(
         JSON.stringify({
-          fortune: cachedFortune,
+          fortune: cachedResult.result,
           cached: true,
           tokensUsed: 0
         }),
@@ -263,12 +258,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabaseClient, 'wealth', personalizedResult.overallScore || personalizedResult.score || 70)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // 블러 로직
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['goalAdvice', 'cashflowInsight', 'concernResolution', 'investmentInsights', 'monthlyFlow', 'actionItems']
-        : []
-
       const finalResult = {
         ...resultWithPercentile,
         elementAnalysis: {
@@ -278,8 +267,6 @@ serve(async (req) => {
         userId,
         userName,
         surveyData: { goal, concern, income, expense, risk, interests, urgency },
-        isBlurred,
-        blurredSections,
         created_at: new Date().toISOString(),
       }
 
@@ -489,12 +476,6 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       sajuData?.dayMaster || ''
     )
 
-    // 블러 로직
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['goalAdvice', 'cashflowInsight', 'concernResolution', 'investmentInsights', 'monthlyFlow', 'actionItems']
-      : []
-
     const result = {
       // 표준화된 필드
       fortuneType: 'wealth',
@@ -555,8 +536,6 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
         urgency,
       },
       created_at: new Date().toISOString(),
-      isBlurred,
-      blurredSections,
     }
 
     // Percentile 계산

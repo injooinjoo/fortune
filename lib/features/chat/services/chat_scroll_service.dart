@@ -85,6 +85,7 @@ class ChatScrollService {
 
     Future.delayed(ChatScrollConstants.layoutDelay, () {
       if (!isMounted() || !scrollController.hasClients) return;
+      if (!cardContext.mounted) return;
 
       try {
         // 카드 위젯의 RenderObject 찾기
@@ -95,8 +96,9 @@ class ChatScrollService {
         final scrollableState = Scrollable.maybeOf(cardContext);
         if (scrollableState == null) return;
 
+        if (!scrollableState.context.mounted) return;
         final scrollableRenderObject =
-            scrollableState.context.findRenderObject();
+            scrollableState.context.findRenderObject(); // ignore: use_build_context_synchronously
         if (scrollableRenderObject is! RenderBox) return;
 
         // 카드의 위치 계산 (스크롤 뷰 기준)

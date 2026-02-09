@@ -430,12 +430,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabase, 'health', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // Blur 처리
-      resultWithPercentile.isBlurred = !isPremium
-      resultWithPercentile.blurredSections = !isPremium
-        ? ['recommendations', 'cautions', 'element_advice', 'personalized_feedback']
-        : []
-
       return new Response(JSON.stringify({ success: true, data: resultWithPercentile }), {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -783,12 +777,6 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
 
       const parsedResponse = JSON.parse(response.content)
 
-      // ✅ 항상 전체 데이터 반환 (Flutter에서 블러 처리)
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['body_part_advice', 'cautions', 'recommended_activities', 'diet_advice', 'exercise_advice', 'health_keyword']
-        : []
-
       // ✅ 표준화된 필드명 사용
       const overallHealthText = parsedResponse.전반적인건강운 || parsedResponse.overall_health || '건강하십니다.'
 
@@ -848,10 +836,8 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
         recommended_activities: parsedResponse.추천활동 || parsedResponse.recommended_activities || [], // 블러 대상
         diet_advice: parsedResponse.식습관조언 || parsedResponse.diet_advice, // 블러 대상
         exercise_advice: parsedResponse.운동조언 || parsedResponse.exercise_advice, // 블러 대상
-        health_keyword: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강', // 블러 대상
+        health_keyword: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강',
         timestamp: new Date().toISOString(),
-        isBlurred, // ✅ 블러 상태
-        blurredSections, // ✅ 블러된 섹션 목록
         hasHealthAppData, // ✅ 건강앱 데이터 사용 여부
         healthAppDataSummary: hasHealthAppData ? {
           steps: health_app_data!.today_steps,

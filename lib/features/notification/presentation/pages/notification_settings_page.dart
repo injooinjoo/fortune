@@ -208,8 +208,8 @@ class _NotificationSettingsPageState
           _buildCategoryItem(
             context,
             icon: Icons.toll,
-            title: '복주머니 알림',
-            subtitle: '복주머니가 부족할 때 알려드립니다',
+            title: '토큰 알림',
+            subtitle: '토큰가 부족할 때 알려드립니다',
             value: _settings.tokenAlert,
             onChanged: (value) {
               setState(() {

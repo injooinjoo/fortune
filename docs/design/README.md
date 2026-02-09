@@ -2,176 +2,169 @@
 
 ## 개요
 
-Fortune App의 디자인 시스템은 **한국 전통 미학 (Korean Traditional Aesthetics)**을 기반으로 합니다.
+Fortune App의 디자인 시스템은 **ChatGPT/Claude 스타일의 모던 AI 채팅 인터페이스**를 기반으로 합니다.
 
-> **핵심 정체성**: 한지와 수묵화의 질감, 오방색의 색상 체계, 서예와 명조의 타이포그래피로 전통의 아름다움을 현대적으로 재해석합니다.
-
----
-
-## 문서 계층 구조
-
-### Tier 1: 핵심 디자인 시스템 (PRIMARY)
-
-| 문서 | 설명 | 우선순위 |
-|------|------|----------|
-| **[DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md)** | 한국 전통 미학 기반 통합 디자인 시스템 | **최우선** |
-
-모든 UI 구현은 이 문서를 기준으로 합니다.
+> **핵심 정체성**: 미니멀하고 중립적인 모노크롬 디자인, 콘텐츠 중심 레이아웃, iOS 시스템 컬러 활용
 
 ---
 
-### Tier 2: 도메인 가이드
+## ⚠️ 디자인 시스템 마이그레이션 (2026-02)
 
-| 문서 | 설명 | 주요 내용 |
-|------|------|----------|
-| [KOREAN_TALISMAN_DESIGN_GUIDE.md](./KOREAN_TALISMAN_DESIGN_GUIDE.md) | 부적/민화 디자인 가이드 | 민화 에셋, 전통 문양 |
-| [TALISMAN_GENERATION_INTEGRATION.md](./TALISMAN_GENERATION_INTEGRATION.md) | 부적 생성 시스템 연동 | AI 부적 생성, 통합 가이드 |
-| [UI_UX_MASTER_POLICY.md](./UI_UX_MASTER_POLICY.md) | UI/UX 마스터 정책 | 인터랙션, 접근성 |
-| [BLUR_SYSTEM_GUIDE.md](./BLUR_SYSTEM_GUIDE.md) | 블러 시스템 가이드 | 프리미엄 콘텐츠 처리 |
+**중요**: 디자인 시스템이 ChatGPT 스타일로 전면 통일되었습니다.
 
----
+### 변경 사항
 
-### Tier 3: 기술 참조 문서
+| 항목 | 이전 (한국 전통 미학) | 현재 (ChatGPT 스타일) |
+|------|---------------------|---------------------|
+| 색상 시스템 | 오방색, DSFortuneColors, DSLuckColors | **DSColors only** |
+| 배경 | 한지 질감 | 순수 단색 배경 |
+| 카드 | HanjiCard (한지 텍스처) | DSCard (클린 카드) |
+| 타이포그래피 | 서예/명조 스타일 | 시스템 폰트 기반 |
 
-| 문서 | 설명 | 참조 시점 |
-|------|------|----------|
-| [FONT_SYSTEM_GUIDE.md](./FONT_SYSTEM_GUIDE.md) | 통합 폰트 시스템 | 폰트 설정 시 |
-| [WIDGET_ARCHITECTURE_DESIGN.md](./WIDGET_ARCHITECTURE_DESIGN.md) | 위젯 아키텍처 | 위젯 설계 시 |
-| [FORTUNE_INPUT_ACCORDION_STANDARD.md](./FORTUNE_INPUT_ACCORDION_STANDARD.md) | 입력 아코디언 표준 | 입력 폼 구현 시 |
+### 삭제된 색상 시스템
 
----
+다음 파일들이 삭제되었습니다:
+- `ds_fortune_colors.dart` → DSColors 사용
+- `ds_obangseok_colors.dart` → DSColors 사용
+- `ds_luck_colors.dart` → DSColors 사용
+- `ds_love_colors.dart` → DSColors 사용
+- `ds_biorhythm_colors.dart` → DSColors 사용
+- `fortune_colors.dart` → DSColors 사용
 
-### Tier 4: 보조 참조 (SECONDARY)
+### 유지된 색상 시스템
 
-| 문서 | 설명 | 주의사항 |
-|------|------|----------|
-| [TOSS_DESIGN_SYSTEM.md](./TOSS_DESIGN_SYSTEM.md) | Toss 디자인 시스템 참조 | **보조 참조만** |
-
-> **중요**: Toss Design System은 보조 참조로만 사용합니다. 한국 전통 미학과 충돌 시 전통 미학이 우선입니다.
-
----
-
-### 마이그레이션 문서
-
-| 문서 | 설명 | 상태 |
-|------|------|------|
-| [TYPOGRAPHY_MIGRATION_GUIDE.md](./TYPOGRAPHY_MIGRATION_GUIDE.md) | 타이포그래피 마이그레이션 | 참조용 |
-
-> **Note**: 폰트 관련 문서들(FONT_MIGRATION_GUIDE, FONT_MIGRATION_PLAN, UNIFIED_FONT_SYSTEM)은 [FONT_SYSTEM_GUIDE.md](./FONT_SYSTEM_GUIDE.md)로 통합되었습니다.
+- **DSColors** - 기본 색상 시스템 (ChatGPT 스타일)
+- **DSSajuColors** - 사주 오행 데이터 시각화용 (semantic coloring)
 
 ---
 
 ## 핵심 디자인 원칙
 
-### 4대 디자인 기둥
+### ChatGPT 스타일 4대 원칙
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    한국 전통 미학                              │
+│                    ChatGPT Style Design                      │
 ├──────────────┬──────────────┬──────────────┬───────────────┤
-│    질감       │     색상      │   타이포그래피  │     공간      │
-│   Texture    │    Color     │  Typography  │    Space     │
+│    색상       │     레이아웃   │   타이포그래피  │     상호작용    │
+│    Color     │    Layout    │  Typography  │  Interaction  │
 ├──────────────┼──────────────┼──────────────┼───────────────┤
-│  한지 + 먹     │    오방색     │ 서예 + 명조    │   여백의 미    │
-│ Hanji + Ink  │  Five Colors │ Calligraphy  │  Empty Space │
+│  모노크롬     │   콘텐츠 중심   │   시스템 폰트   │   미니멀 피드백  │
+│  Monochrome  │Content-First │ System Font  │Minimal Feedback│
 └──────────────┴──────────────┴──────────────┴───────────────┘
 ```
 
-### 핵심 색상 (오방색)
+### 핵심 색상
 
-| 오행 | 색상 | Hex | 용도 |
-|------|------|-----|------|
-| 목(木) | 청 (Cheong) | `#1E3A5F` | 지혜, 성장 |
-| 화(火) | 적 (Jeok) | `#B91C1C` | 열정, 사랑 |
-| 토(土) | 황 (Hwang) | `#B8860B` | 풍요, 재물 |
-| 금(金) | 백 (Baek) | `#F5F5DC` | 순수, 건강 |
-| 수(水) | 흑 (Heuk) | `#1C1C1C` | 신비, 운명 |
+| 용도 | Light Mode | Dark Mode | DSColors |
+|------|-----------|-----------|----------|
+| 배경 | #FFFFFF | #000000 | `background` / `backgroundDark` |
+| 표면 | #F5F5F5 | #1C1C1E | `surface` / `surfaceDark` |
+| 텍스트 | #000000 | #FFFFFF | `textPrimary` / `textPrimaryDark` |
+| 강조 | #007AFF | #0A84FF | `accent` / `accentDark` |
+| 성공 | #34C759 | #30D158 | `success` |
+| 경고 | #FF9500 | #FF9F0A | `warning` |
+| 오류 | #FF3B30 | #FF453A | `error` |
 
-**특수 색상**: 인주(#DC2626), 먹(#1A1A1A), 미색(#F7F3E9)
+---
 
-### 핵심 컴포넌트
+## 문서 계층 구조
 
-| 컴포넌트 | 용도 | 위치 |
-|----------|------|------|
-| `HanjiCard` | 한지 질감 카드 | `lib/core/design_system/components/traditional/` |
-| `SealStamp` | 낙관 (도장) | `lib/core/design_system/components/traditional/` |
-| `ObangseokColors` | 오방색 시스템 | `lib/core/theme/obangseok_colors.dart` |
+### Tier 1: 핵심 디자인 시스템
+
+| 문서 | 설명 |
+|------|------|
+| **[.claude/docs/03-ui-design-system.md](../../.claude/docs/03-ui-design-system.md)** | ChatGPT 스타일 통합 디자인 시스템 (**최우선**) |
+
+### Tier 2: 도메인 가이드
+
+| 문서 | 설명 | 상태 |
+|------|------|------|
+| [BLUR_SYSTEM_GUIDE.md](./BLUR_SYSTEM_GUIDE.md) | 블러 시스템 가이드 | 활성 |
+| [UI_UX_MASTER_POLICY.md](./UI_UX_MASTER_POLICY.md) | UI/UX 마스터 정책 | 활성 |
+| [WIDGET_ARCHITECTURE_DESIGN.md](./WIDGET_ARCHITECTURE_DESIGN.md) | 위젯 아키텍처 | 활성 |
+| [FORTUNE_INPUT_ACCORDION_STANDARD.md](./FORTUNE_INPUT_ACCORDION_STANDARD.md) | 입력 아코디언 표준 | 활성 |
+
+### 아카이브 (Deprecated)
+
+다음 문서들은 더 이상 사용되지 않습니다:
+
+| 문서 | 이유 |
+|------|------|
+| ~~DESIGN_SYSTEM.md~~ | 한국 전통 미학 → ChatGPT 스타일로 변경 |
+| ~~TOSS_DESIGN_SYSTEM.md~~ | Toss 디자인 → ChatGPT 스타일로 변경 |
+| ~~KOREAN_TALISMAN_DESIGN_GUIDE.md~~ | 부적/민화 → 단순 이미지로 변경 |
+| ~~FONT_SYSTEM_GUIDE.md~~ | 서예 폰트 → 시스템 폰트로 변경 |
 
 ---
 
 ## 빠른 시작
 
-### 1. 한지 카드 사용
+### 1. 색상 사용
 
 ```dart
-import 'package:fortune/core/design_system/components/traditional/hanji_card.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
-HanjiCard(
-  style: HanjiCardStyle.scroll,  // 두루마리 스타일
-  colorScheme: HanjiColorScheme.fortune,
-  showSealStamp: true,
+// Context extensions (권장)
+Container(color: context.colors.surface)
+Text('제목', style: TextStyle(color: context.colors.textPrimary))
+
+// 직접 사용
+Container(color: DSColors.surface)
+Container(color: DSColors.surfaceDark)  // 다크모드
+```
+
+### 2. 타이포그래피
+
+```dart
+// Context extensions (권장)
+Text('제목', style: context.heading1)
+Text('본문', style: context.body1)
+Text('캡션', style: context.caption)
+```
+
+### 3. 카드 사용
+
+```dart
+import 'package:fortune/core/design_system/design_system.dart';
+
+DSCard.elevated(
   child: YourContent(),
 )
 ```
 
-### 2. 오방색 사용
+### 4. 버튼 사용
 
 ```dart
-import 'package:fortune/core/theme/obangseok_colors.dart';
-
-// 도메인별 색상
-final loveColor = ObangseokColors.getDomainColor('love');  // 적색
-
-// 테마 인식 색상
-final background = ObangseokColors.getHanjiBackground(context);
-```
-
-### 3. 전통 타이포그래피
-
-```dart
-// 전통 제목 스타일
-Text('사주팔자', style: context.heading1.copyWith(
-  fontFamily: 'GowunBatang',
-  fontWeight: FontWeight.w700,
-))
+DSButton.primary(
+  text: '확인',
+  onPressed: () {},
+)
 ```
 
 ---
 
-## 문서 간 관계
+## 색상 매핑 참조
 
-```
-DESIGN_SYSTEM.md (최상위 통합 문서)
-    │
-    ├── KOREAN_TALISMAN_DESIGN_GUIDE.md (민화/부적)
-    │       └── assets/images/minhwa/ (30+ 에셋)
-    │
-    ├── UI_UX_MASTER_POLICY.md (인터랙션/접근성)
-    │
-    ├── FONT_SYSTEM_GUIDE.md (폰트)
-    │       └── GowunBatang, NotoSansKR
-    │
-    └── TOSS_DESIGN_SYSTEM.md (보조 참조)
-            └── 한국 전통 미학 우선
-```
+### iOS 시스템 컬러 → DSColors
 
----
+| iOS System Color | DSColors |
+|------------------|----------|
+| systemBlue | `accent` |
+| systemGreen | `success` |
+| systemOrange | `warning` |
+| systemRed | `error` |
+| systemPurple | `accentSecondary` |
 
-## 관련 구현 파일
+### Semantic Colors
 
-| 파일 | 설명 |
-|------|------|
-| `lib/core/theme/obangseok_colors.dart` | 오방색 색상 시스템 |
-| `lib/core/design_system/components/traditional/hanji_card.dart` | HanjiCard 컴포넌트 |
-| `lib/core/design_system/tokens/ds_colors.dart` | 색상 토큰 |
-| `assets/images/minhwa/` | 민화 에셋 (30+ PNG) |
-
----
-
-## 아카이브
-
-완료된 작업 또는 히스토리 참조용 문서는 `_archive/` 폴더에 보관됩니다:
-- `LUCKY_POUCH_IMAGE_PROMPTS.md` - 복주머니 이미지 생성 프롬프트 (생성 완료)
+| 용도 | DSColors |
+|------|----------|
+| 행운/성공 | `success` (green) |
+| 경고/주의 | `warning` (amber) |
+| 위험/오류 | `error` (red) |
+| 정보/링크 | `info` (blue) |
+| 보조 강조 | `accentSecondary` (purple) |
 
 ---
 
@@ -179,8 +172,6 @@ DESIGN_SYSTEM.md (최상위 통합 문서)
 
 | 날짜 | 변경 내용 |
 |------|----------|
-| 2025-12 | TALISMAN_GENERATION_INTEGRATION 문서 연결 |
-| 2025-12 | LUCKY_POUCH_IMAGE_PROMPTS → _archive/ 이동 |
-| 2024-12 | 한국 전통 미학 기반 디자인 시스템 v2.0 도입 |
-| 2024-12 | Toss Design System → 보조 참조로 변경 |
-| 2024-12 | HanjiCard, ObangseokColors 문서화 완료 |
+| 2026-02 | ChatGPT 스타일로 전면 마이그레이션 |
+| 2026-02 | 레거시 색상 시스템 삭제 (DSFortuneColors, DSObangseokColors 등) |
+| 2026-02 | 문서 구조 간소화 |

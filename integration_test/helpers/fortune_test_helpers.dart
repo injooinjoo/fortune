@@ -1,12 +1,12 @@
-/// Fortune Test Helpers for Integration Tests
-/// 운세 기능 테스트 전용 유틸리티
-///
-/// 사용법:
-/// ```dart
-/// await FortuneTestHelpers.generateDailyFortune(tester);
-/// await FortuneTestHelpers.selectTarotCards(tester, 3);
-/// await FortuneTestHelpers.verifyFortuneResult(tester);
-/// ```
+// Fortune Test Helpers for Integration Tests
+// 운세 기능 테스트 전용 유틸리티
+//
+// 사용법:
+// ```dart
+// await FortuneTestHelpers.generateDailyFortune(tester);
+// await FortuneTestHelpers.selectTarotCards(tester, 3);
+// await FortuneTestHelpers.verifyFortuneResult(tester);
+// ```
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -356,10 +356,7 @@ class FortuneTestHelpers {
     int day = 15,
   }) async {
     // DatePicker나 숫자 입력 필드 찾기
-    final dateButton = find.byType(InkWell);
     final yearField = find.textContaining('년');
-    final monthField = find.textContaining('월');
-    final dayField = find.textContaining('일');
 
     // 년/월/일 버튼이 있으면 탭
     if (yearField.evaluate().isNotEmpty) {

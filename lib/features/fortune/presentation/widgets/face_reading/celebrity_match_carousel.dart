@@ -6,14 +6,10 @@ import '../../../../../core/design_system/design_system.dart';
 /// 닮은꼴 연예인 스와이프 캐러셀
 class CelebrityMatchCarousel extends StatefulWidget {
   final List<Map<String, dynamic>> celebrities;
-  final bool isBlurred;
-  final VoidCallback? onUnlockRequested;
 
   const CelebrityMatchCarousel({
     super.key,
     required this.celebrities,
-    this.isBlurred = false,
-    this.onUnlockRequested,
   });
 
   @override
@@ -97,7 +93,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                     size: 26,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: DSSpacing.sm + 4),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +107,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: DSSpacing.xxs),
                       Text(
                         '스와이프하여 더 보기',
                         style: context.labelSmall.copyWith(
@@ -157,7 +153,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 페이지 도트 인디케이터
           Center(
@@ -233,7 +229,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                   // 캐릭터 이미지 또는 이니셜 아바타
                   _buildAvatar(name, characterImageUrl, accentColor),
 
-                  const SizedBox(width: 16),
+                  const SizedBox(width: DSSpacing.md),
 
                   // 정보
                   Expanded(
@@ -251,7 +247,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: DSSpacing.xs),
 
                         // 타입 배지
                         Container(
@@ -282,7 +278,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                                 size: 16,
                                 color: DSColors.warning,
                               ),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: DSSpacing.xs),
                               Text(
                                 '유사도 $similarityScore%',
                                 style: context.bodyMedium.copyWith(
@@ -292,7 +288,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: DSSpacing.sm),
                         ],
 
                         // 닮은 부위 태그
@@ -327,7 +323,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
 
                         // 이유
                         if (reason.isNotEmpty) ...[
-                          const SizedBox(height: 8),
+                          const SizedBox(height: DSSpacing.sm),
                           Text(
                             reason,
                             style: context.bodySmall.copyWith(
@@ -357,7 +353,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: index == 0
-                        ? [DSFortuneColors.fortuneGoldMuted, const Color(0xFFFFA500)]
+                        ? [DSColors.warning, const Color(0xFFFFA500)]
                         : index == 1
                             ? [const Color(0xFFC0C0C0), const Color(0xFF808080)]
                             : [const Color(0xFFCD7F32), const Color(0xFF8B4513)],

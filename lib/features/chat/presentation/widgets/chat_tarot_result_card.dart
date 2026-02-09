@@ -2,16 +2,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/simple_blur_overlay.dart';
-import '../../../../services/ad_service.dart';
-import '../../../../core/services/fortune_haptic_service.dart';
-import '../../../../core/utils/fortune_completion_helper.dart';
-import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/tarot_info_header.dart';
 import '../../../../core/constants/tarot/tarot_position_meanings.dart';
-import '../../../../presentation/providers/token_provider.dart';
 
 /// 채팅용 타로 결과 리치 카드
 ///
@@ -36,10 +30,7 @@ class ChatTarotResultCard extends ConsumerStatefulWidget {
 
 class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     with TickerProviderStateMixin {
-  bool _isBlurred = false;
-  List<String> _blurredSections = [];
   bool _isDetailExpanded = true;  // 기본값: 열린 상태
-  bool _hasInitializedBlur = false;
 
   // 타이핑 섹션 관리
   int _currentTypingSection = 0;
@@ -82,48 +73,6 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // ref는 didChangeDependencies에서 안전하게 접근 가능
-    if (!_hasInitializedBlur) {
-      _hasInitializedBlur = true;
-      _initBlurState();
-    }
-  }
-
-  void _initBlurState() {
-    final tokenState = ref.read(tokenProvider);
-    // 프리미엄 사용자(무제한 또는 토큰 보유)는 절대 블러 안 함
-    final isPremium = tokenState.hasUnlimitedAccess ||
-        (tokenState.balance?.remainingTokens ?? 0) > 0;
-
-    // 프리미엄이면 무조건 블러 해제
-    if (isPremium) {
-      _isBlurred = false;
-      _blurredSections = [];
-    } else {
-      _isBlurred = widget.data['isBlurred'] as bool? ?? true;
-      _blurredSections =
-          (widget.data['blurredSections'] as List?)?.cast<String>() ??
-              ['advice', 'detailedInterpretations'];
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant ChatTarotResultCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
-    final oldBlurred = oldWidget.data['isBlurred'] as bool? ?? true;
-    final newBlurred = widget.data['isBlurred'] as bool? ?? true;
-    if (oldBlurred != newBlurred && !newBlurred) {
-      setState(() {
-        _isBlurred = false;
-        _blurredSections = [];
-      });
-    }
-  }
-
   /// 안전하게 setState 호출 (빌드 중 호출 방지)
   void _safeSetState(VoidCallback fn) {
     if (!mounted) return;
@@ -161,7 +110,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      child: DSCard.hanji(
+      child: DSCard.flat(
         padding: EdgeInsets.zero,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +266,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: DSFortuneColors.fortuneGold.withValues(alpha: 0.3),
+                        color: DSColors.warning.withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 2,
                         offset: const Offset(0, 8),
@@ -364,7 +313,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
                 size: 14,
                 color: colors.textTertiary,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 isFlipped ? '탭하여 카드 보기' : '탭하여 해석 보기',
                 style: typography.labelSmall.copyWith(
@@ -470,7 +419,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     String interpretation,
     bool isReversed,
   ) {
-    final goldColor = DSFortuneColors.getGold(context.isDark);
+    final goldColor = DSColors.warning;
 
     return Stack(
       fit: StackFit.expand,
@@ -659,61 +608,58 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     return Container(
       margin: const EdgeInsets.fromLTRB(
           DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
-      child: SimpleBlurOverlay(
-        isBlurred: _isBlurred && _blurredSections.contains('detailedInterpretations'),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 헤더 (접기/펼치기)
-            InkWell(
-              onTap: () {
-                DSHaptics.light();
-                setState(() {
-                  _isDetailExpanded = !_isDetailExpanded;
-                });
-              },
-              borderRadius: BorderRadius.circular(DSRadius.sm),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.style,
-                      size: 18,
-                      color: colors.accentSecondary,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더 (접기/펼치기)
+          InkWell(
+            onTap: () {
+              DSHaptics.light();
+              setState(() {
+                _isDetailExpanded = !_isDetailExpanded;
+              });
+            },
+            borderRadius: BorderRadius.circular(DSRadius.sm),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.style,
+                    size: 18,
+                    color: colors.accentSecondary,
+                  ),
+                  const SizedBox(width: DSSpacing.xs),
+                  Text(
+                    '카드별 상세 해석',
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(width: DSSpacing.xs),
-                    Text(
-                      '카드별 상세 해석',
-                      style: typography.bodyMedium.copyWith(
-                        color: colors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Spacer(),
-                    Icon(
-                      _isDetailExpanded
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      size: 20,
-                      color: colors.textSecondary,
-                    ),
-                  ],
-                ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    _isDetailExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    size: 20,
+                    color: colors.textSecondary,
+                  ),
+                ],
               ),
             ),
+          ),
 
-            // 상세 내용
-            AnimatedCrossFade(
-              duration: const Duration(milliseconds: 300),
-              crossFadeState: _isDetailExpanded
-                  ? CrossFadeState.showSecond
-                  : CrossFadeState.showFirst,
-              firstChild: const SizedBox.shrink(),
-              secondChild: _buildDetailedInterpretations(colors, typography),
-            ),
-          ],
-        ),
+          // 상세 내용
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 300),
+            crossFadeState: _isDetailExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox.shrink(),
+            secondChild: _buildDetailedInterpretations(colors, typography),
+          ),
+        ],
       ),
     );
   }
@@ -796,7 +742,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
                     ),
                   ),
                   if (isReversed) ...[
-                    const SizedBox(width: 4),
+                    const SizedBox(width: DSSpacing.xs),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 4, vertical: 1),
@@ -837,58 +783,55 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     return Container(
       margin: const EdgeInsets.fromLTRB(
           DSSpacing.md, DSSpacing.md, DSSpacing.md, 0),
-      child: SimpleBlurOverlay(
-        isBlurred: _isBlurred && _blurredSections.contains('advice'),
-        child: Container(
-          padding: const EdgeInsets.all(DSSpacing.sm),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                colors.accentSecondary.withValues(alpha: 0.1),
-                colors.accent.withValues(alpha: 0.05),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(DSRadius.sm),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.lightbulb_outline,
-                    size: 18,
-                    color: colors.accentSecondary,
-                  ),
-                  const SizedBox(width: DSSpacing.xs),
-                  Text(
-                    '조언',
-                    style: typography.bodyMedium.copyWith(
-                      color: colors.textPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: DSSpacing.sm),
-              _currentTypingSection >= 1
-                  ? GptStyleTypingText(
-                      text: advice,
-                      style: typography.bodySmall.copyWith(
-                        color: colors.textSecondary,
-                        height: 1.6,
-                      ),
-                      onComplete: () {},
-                    )
-                  : Text(
-                      advice,
-                      style: typography.bodySmall.copyWith(
-                        color: colors.textSecondary,
-                        height: 1.6,
-                      ),
-                    ),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.sm),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              colors.accentSecondary.withValues(alpha: 0.1),
+              colors.accent.withValues(alpha: 0.05),
             ],
           ),
+          borderRadius: BorderRadius.circular(DSRadius.sm),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  size: 18,
+                  color: colors.accentSecondary,
+                ),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '조언',
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            _currentTypingSection >= 1
+                ? GptStyleTypingText(
+                    text: advice,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.6,
+                    ),
+                    onComplete: () {},
+                  )
+                : Text(
+                    advice,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.6,
+                    ),
+                  ),
+          ],
         ),
       ),
     );

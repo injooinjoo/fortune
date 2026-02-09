@@ -326,15 +326,11 @@ serve(async (req: Request) => {
           calculatePercentile(personalized.energyLevel || 70)
         )
 
-        // 블러 처리 적용
-        const blurredResult = applyBlurring(resultWithPercentile, isPremium)
-        console.log(`🔐 [Tarot] Cohort 블러 처리 - isPremium: ${isPremium}, isBlurred: ${blurredResult.isBlurred}`)
-
         return new Response(
           JSON.stringify({
             success: true,
             data: {
-              ...blurredResult,
+              ...resultWithPercentile,
               timestamp: new Date().toISOString(),
             },
             cohortHit: true,
@@ -454,13 +450,9 @@ serve(async (req: Request) => {
       timestamp: new Date().toISOString(),
     }
 
-    // 블러 처리 적용 (프리미엄 사용자는 전체 열람 가능)
-    const blurredData = applyBlurring(baseData, isPremium)
-    console.log(`🔐 [Tarot] LLM 블러 처리 - isPremium: ${isPremium}, isBlurred: ${blurredData.isBlurred}`)
-
     const response = {
       success: true,
-      data: blurredData,
+      data: baseData,
     }
 
     // 사용량 로깅 - llmResult는 LLMResponse 타입
@@ -498,19 +490,3 @@ serve(async (req: Request) => {
   }
 })
 
-/**
- * 블러 처리 적용
- * FREE: cardName, briefMeaning
- * BLUR: detailedInterpretation, advice, futureOutlook
- */
-function applyBlurring(fortune: any, isPremium: boolean): any {
-  if (isPremium) {
-    return { ...fortune, isBlurred: false, blurredSections: [] }
-  }
-
-  return {
-    ...fortune,
-    isBlurred: true,
-    blurredSections: ['detailedInterpretation', 'advice', 'futureOutlook'],
-  }
-}

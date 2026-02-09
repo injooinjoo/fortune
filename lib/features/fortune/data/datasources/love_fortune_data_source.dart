@@ -18,8 +18,6 @@ class LoveFortuneDataSource {
   /// [isPremium]: 프리미엄 사용자 여부
   ///
   /// Returns: FortuneResult 객체
-  /// - isPremium=true: 블러 없음
-  /// - isPremium=false: 4개 섹션 블러 처리
   Future<FortuneResult> getLoveFortune({
     required String userId,
     required LoveFortuneConditions conditions,
@@ -56,8 +54,6 @@ class LoveFortuneDataSource {
       final data = responseData['data'] as Map<String, dynamic>;
 
       Logger.info('[LoveFortuneDataSource] API 응답 성공');
-      Logger.info('   - isBlurred: ${data['isBlurred']}');
-      Logger.info('   - blurredSections: ${data['blurredSections']}');
       Logger.info('   - loveScore: ${data['loveScore']}');
 
       // FortuneResult 객체 생성
@@ -73,8 +69,6 @@ class LoveFortuneDataSource {
           'loveScore': data['loveScore'] ?? 70,
           'relationshipStatus': data['personalInfo']?['relationshipStatus'] ?? '',
         },
-        isBlurred: data['isBlurred'] ?? false,
-        blurredSections: List<String>.from(data['blurredSections'] ?? []),
       );
     } catch (e, stackTrace) {
       Logger.error('[LoveFortuneDataSource] API 호출 실패', e, stackTrace);

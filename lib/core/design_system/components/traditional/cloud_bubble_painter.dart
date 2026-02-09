@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../tokens/ds_fortune_colors.dart';
+import '../../tokens/ds_colors.dart';
 
 /// Cloud bubble shape types
 enum CloudBubbleType {
@@ -38,70 +38,59 @@ class CloudBubblePainter extends CustomPainter {
     final bgColor = backgroundColor ?? _getDefaultBackgroundColor();
     final brdColor = borderColor ?? _getDefaultBorderColor();
 
+    // Skip all drawing when both background and border are transparent
+    // (ChatGPT style: AI messages have no bubble)
+    if (bgColor == Colors.transparent && brdColor == Colors.transparent) {
+      return;
+    }
+
     final w = size.width;
     final h = size.height;
 
-    const radius = 2.0;
-    const borderGap = 4.0;
+    const radius = 12.0;
 
-    // 1. Subtle shadow
-    if (showInkBleed) {
-      final shadowRect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(1, 1, w - 2, h - 2),
+    // 1. Background fill (skip if transparent)
+    if (bgColor != Colors.transparent) {
+      final bgRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, w, h),
         const Radius.circular(radius),
       );
       canvas.drawRRect(
-        shadowRect,
+        bgRect,
         Paint()
-          ..color = brdColor.withValues(alpha: 0.12)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+          ..color = bgColor
+          ..style = PaintingStyle.fill,
       );
     }
 
-    // 2. Background fill
-    final bgRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, w, h),
-      const Radius.circular(radius),
-    );
-    canvas.drawRRect(
-      bgRect,
-      Paint()
-        ..color = bgColor
-        ..style = PaintingStyle.fill,
-    );
-
-    // 3. Outer border
-    canvas.drawRRect(
-      bgRect,
-      Paint()
-        ..color = brdColor
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = borderWidth,
-    );
-
-    // 4. Inner border (double border effect)
-    final innerRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(borderGap, borderGap, w - borderGap * 2, h - borderGap * 2),
-      const Radius.circular(radius),
-    );
-    canvas.drawRRect(
-      innerRect,
-      Paint()
-        ..color = brdColor.withValues(alpha: 0.6)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = borderWidth * 0.8,
-    );
+    // 2. Border (skip if transparent)
+    if (brdColor != Colors.transparent) {
+      final bgRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, w, h),
+        const Radius.circular(radius),
+      );
+      canvas.drawRRect(
+        bgRect,
+        Paint()
+          ..color = brdColor
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = borderWidth,
+      );
+    }
   }
 
   Color _getDefaultBackgroundColor() {
+    final brightness = isDark ? Brightness.dark : Brightness.light;
     if (bubbleType == CloudBubbleType.user) {
-      return DSFortuneColors.getUserBubbleBackground(isDark);
+      return DSColors.getUserBubble(brightness);
     }
-    return DSFortuneColors.getAiBubbleBackground(isDark);
+    // AI messages: transparent (ChatGPT style)
+    return Colors.transparent;
   }
 
   Color _getDefaultBorderColor() {
-    return DSFortuneColors.getBubbleBorder(isDark);
+    final brightness = isDark ? Brightness.dark : Brightness.light;
+    return DSColors.getBorder(brightness);
   }
 
   @override

@@ -194,7 +194,7 @@ class _SmartLuckyItemIcon extends StatefulWidget {
 }
 
 class _SmartLuckyItemIconState extends State<_SmartLuckyItemIcon> {
-  bool _useRemote = false;
+  final bool _useRemote = false;
 
   @override
   Widget build(BuildContext context) {
@@ -243,8 +243,9 @@ class _SmartLuckyItemIconState extends State<_SmartLuckyItemIcon> {
   IconData _getFallbackIcon() {
     final k = widget.type.toLowerCase();
     if (k.contains('color') || k.contains('색')) return Icons.palette_rounded;
-    if (k.contains('direction') || k.contains('방향'))
+    if (k.contains('direction') || k.contains('방향')) {
       return Icons.explore_rounded;
+    }
     if (k.contains('number') || k.contains('숫자')) return Icons.pin_rounded;
     if (k.contains('food') || k.contains('음식')) return Icons.restaurant_rounded;
     if (k.contains('place') || k.contains('장소')) return Icons.place_rounded;

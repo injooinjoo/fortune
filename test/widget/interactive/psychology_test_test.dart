@@ -1,5 +1,5 @@
-/// Psychology Test - Widget Test
-/// 심리 테스트 UI 테스트
+// Psychology Test - Widget Test
+// 심리 테스트 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -473,19 +473,19 @@ class _MockPsychologyTestScreen extends StatelessWidget {
       );
     }
 
-    return SafeArea(
+    return const SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               '심리 테스트',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
-            const Text('재미있는 심리 테스트로 나를 알아보세요'),
-            const SizedBox(height: 24),
+            SizedBox(height: 8),
+            Text('재미있는 심리 테스트로 나를 알아보세요'),
+            SizedBox(height: 24),
             _TestCard(
               title: '연애 심리 테스트',
               description: '10가지 질문으로 알아보는 나의 연애 스타일',
@@ -538,7 +538,7 @@ class _TestCard extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(Icons.psychology, color: color),
@@ -583,13 +583,12 @@ class _AnswerOption extends StatelessWidget {
   final String label;
   final String text;
   final VoidCallback onTap;
-  final bool isSelected;
+  final bool isSelected = false;
 
   const _AnswerOption({
     required this.label,
     required this.text,
     required this.onTap,
-    this.isSelected = false,
   });
 
   @override

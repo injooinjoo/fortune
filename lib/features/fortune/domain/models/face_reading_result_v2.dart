@@ -97,10 +97,6 @@ class FaceReadingResultV2 with _$FaceReadingResultV2 {
     // === Apple Watch 데이터 ===
     WatchFaceReadingData? watchData,
 
-    // === 블러 처리 ===
-    @Default(false) bool isBlurred,
-    @Default([]) List<String> blurredSections,
-
     // === 공유용 데이터 ===
     ShareableContent? shareableContent,
   }) = _FaceReadingResultV2;

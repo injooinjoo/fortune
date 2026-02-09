@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../../design_system/design_system.dart';
-import '../../../theme/typography_unified.dart';
 import '../theme_chips.dart';
 
 /// OOTD 평가 인포그래픽 헤더

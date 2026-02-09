@@ -32,7 +32,7 @@ class _PatternCardWidgetState extends State<PatternCardWidget> {
           // 헤더
           Row(
             children: [
-              Icon(Icons.pattern, color: colors.accent, size: 20),
+              Icon(Icons.pattern, color: colors.textSecondary, size: 20),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '대화 패턴',
@@ -65,7 +65,7 @@ class _PatternCardWidgetState extends State<PatternCardWidget> {
                     borderRadius: BorderRadius.circular(DSRadius.sm),
                     border: isExpanded
                         ? Border.all(
-                            color: colors.accent.withValues(alpha: 0.3))
+                            color: colors.border)
                         : null,
                   ),
                   child: Column(
@@ -80,14 +80,14 @@ class _PatternCardWidgetState extends State<PatternCardWidget> {
                               vertical: DSSpacing.xxs,
                             ),
                             decoration: BoxDecoration(
-                              color: colors.accent.withValues(alpha: 0.15),
+                              color: colors.backgroundTertiary,
                               borderRadius:
                                   BorderRadius.circular(DSRadius.full),
                             ),
                             child: Text(
                               item.tag,
                               style: typography.labelSmall.copyWith(
-                                color: colors.accent,
+                                color: colors.textSecondary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/twelve_stage_calculator.dart';
@@ -72,7 +71,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
           color: DSColors.accent,
           size: 20,
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: DSSpacing.xs + 2),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +85,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: DSSpacing.xs),
                   Text(
                     '十二運星',
                     style: context.labelSmall.copyWith(
@@ -302,7 +301,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: DSSpacing.xxs),
           // 강도 표시 (세련된 도트 스타일)
           _buildStrengthBadge(stage.strength, color),
         ],
@@ -349,17 +348,17 @@ class SajuTwelveStagesWidget extends StatelessWidget {
 
     switch (strengthLevel) {
       case '신강':
-        levelColor = DSFortuneColors.categoryHealth; // 에메랄드 그린
+        levelColor = DSColors.success; // 에메랄드 그린
         levelDescription = '일간의 기운이 강합니다. 능동적이고 독립적인 성향을 가집니다.';
         levelIcon = Icons.trending_up;
         break;
       case '신약':
-        levelColor = DSFortuneColors.categoryCompatibility; // 로즈 핑크
+        levelColor = DSColors.accentSecondary; // 로즈 핑크
         levelDescription = '일간의 기운이 약합니다. 협력과 지원을 통해 성장합니다.';
         levelIcon = Icons.trending_down;
         break;
       default:
-        levelColor = DSFortuneColors.categoryLotto; // 앰버
+        levelColor = DSColors.warning; // 앰버
         levelDescription = '일간의 기운이 균형을 이룹니다. 상황에 따라 유연하게 대처합니다.';
         levelIcon = Icons.trending_flat;
     }
@@ -408,7 +407,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: DSSpacing.sm + 2),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -423,7 +422,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                         color: levelColor,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: DSSpacing.xs),
                     Text(
                       strengthLevel == '신강'
                           ? '身強'
@@ -438,7 +437,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: DSSpacing.xxs),
                 Text(
                   levelDescription,
                   style: context.labelTiny.copyWith(
@@ -473,7 +472,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
             color: isDark ? DSColors.textSecondary : DSColors.textPrimary,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: DSSpacing.xs + 2),
         // 그리드 형태로 2x2 배치
         LayoutBuilder(
           builder: (context, constraints) {
@@ -535,7 +534,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: DSSpacing.xs + 2),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -552,7 +551,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                                           : DSColors.textPrimary,
                                     ),
                                   ),
-                                  const SizedBox(width: 2),
+                                  const SizedBox(width: DSSpacing.xxs),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 3,
@@ -571,7 +570,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 2),
+                                  const SizedBox(width: DSSpacing.xxs),
                                   Icon(
                                     Icons.touch_app,
                                     size: 10,

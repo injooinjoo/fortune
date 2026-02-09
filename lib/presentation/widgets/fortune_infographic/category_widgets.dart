@@ -411,7 +411,7 @@ class CategoryWidgets {
                     height: 32,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [DSFortuneColors.categoryPersonalityDna, DSFortuneColors.categoryMbti],
+                        colors: [DSColors.accentSecondary, DSColors.accentSecondary],
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -474,7 +474,7 @@ class CategoryWidgets {
                         height: 4,
                         margin: const EdgeInsets.only(top: 6, right: 8),
                         decoration: const BoxDecoration(
-                          color: DSFortuneColors.categoryPersonalityDna,
+                          color: DSColors.accentSecondary,
                           shape: BoxShape.circle,
                         ),
                       ),

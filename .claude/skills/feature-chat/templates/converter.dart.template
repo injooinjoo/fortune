@@ -19,30 +19,7 @@ class {{typePascal}}Converter {
         warnings: result.warnings,
         luckItems: result.luckItems?.toJson(),
         percentile: result.percentile,
-        isBlurred: result.isBlurred,
-        blurredSections: result.blurredSections,
       ),
     ];
-  }
-
-  /// 블러 해제된 결과로 업데이트
-  static ChatMessage updateWithUnblurred(
-    ChatMessage original,
-    {{typePascal}}Result unblurredResult,
-  ) {
-    return original.copyWith(
-      isBlurred: false,
-      blurredSections: [],
-      data: {
-        ...original.data,
-        'sections': unblurredResult.sections.map((s) => {
-          'title': s.title,
-          'content': s.content,
-          'score': s.score,
-        }).toList(),
-        'advice': unblurredResult.advice,
-        'warnings': unblurredResult.warnings,
-      },
-    );
   }
 }

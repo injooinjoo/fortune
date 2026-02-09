@@ -156,8 +156,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.isDark;
-
     final colors = context.colors;
 
     return Scaffold(
@@ -176,12 +174,14 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             );
           },
-          child: Image.asset(
-            isDark
-                ? 'assets/images/zpzg_logo_dark.png'
-                : 'assets/images/zpzg_logo_light.png',
-            width: 180,
-            height: 180,
+          child: Text(
+            '知',
+            style: TextStyle(
+              fontSize: 120,
+              fontWeight: FontWeight.w300,
+              color: colors.textPrimary,
+              height: 1.0,
+            ),
           ),
         ),
       ),

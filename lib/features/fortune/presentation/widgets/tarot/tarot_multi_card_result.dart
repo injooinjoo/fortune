@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/widgets/gpt_style_typing_text.dart';
-import '../../../../../core/widgets/simple_blur_overlay.dart';
-import '../../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import 'tarot_card_detail_modal.dart';
 
 class TarotMultiCardResult extends ConsumerStatefulWidget {
@@ -27,9 +25,9 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
 
-  // 동양화 스타일 - 테마 색상 (ObangseokColors 사용)
-  static Color _getPrimaryColor(BuildContext context) => ObangseokColors.getMeok(context);
-  static Color _getSecondaryColor(BuildContext context) => ObangseokColors.cheongMuted;
+  // 동양화 스타일 - 테마 색상 (DSColors 사용)
+  static Color _getPrimaryColor(BuildContext context) => context.colors.textPrimary;
+  static Color _getSecondaryColor(BuildContext context) => DSColors.info;
 
   // GPT 스타일 타이핑 효과 섹션 관리
   int _currentTypingSection = 0;
@@ -537,9 +535,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
 
           // 해석 텍스트
           if (interpretation.isNotEmpty)
-            SimpleBlurOverlay(
-              isBlurred: widget.result.isBlurred && widget.result.blurredSections.contains('card_${index + 1}'),
-              child: Builder(builder: (context) {
+            Builder(builder: (context) {
                 final colors = context.colors;
                 final typography = context.typography;
                 return Container(
@@ -561,7 +557,6 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                   ),
                 );
               }),
-            ),
 
           // 구분선
           if (index < widget.result.cards.length - 1)
@@ -816,14 +811,9 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
       ),
     );
 
-    // ✅ SimpleBlurOverlay로 마이그레이션 완료
-    return SimpleBlurOverlay(
-      isBlurred: widget.result.isBlurred && widget.result.blurredSections.contains('overall_interpretation'),
-      child: container,
-    );
+    return container;
   }
 
-  // ✅ _buildBlurWrapper 제거됨 - SimpleBlurOverlay 사용
 
   Widget _buildIndividualInterpretations(bool isDark) {
     if (widget.result.spreadType == TarotSpreadType.single) {
@@ -904,11 +894,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
             ),
           );
 
-          // ✅ 2번째(card_2), 3번째(card_3) 카드는 블러 처리
-          return SimpleBlurOverlay(
-            isBlurred: widget.result.isBlurred && widget.result.blurredSections.contains('card_${index + 1}'),
-            child: container,
-          );
+          return container;
         }),
       ],
     );

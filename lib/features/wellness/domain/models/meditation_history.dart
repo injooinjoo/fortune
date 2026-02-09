@@ -1,4 +1,4 @@
-/// 명상 히스토리 엔트리
+// 명상 히스토리 엔트리
 class MeditationHistoryEntry {
   final String id;
   final DateTime date;

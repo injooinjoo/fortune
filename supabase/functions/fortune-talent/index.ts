@@ -24,8 +24,6 @@
  * - roadmap: object - 성장 로드맵
  * - challenges: object[] - 도전 과제 분석
  * - advice: string - 종합 조언
- * - isBlurred: boolean - 블러 상태
- * - blurredSections: string[] - 블러된 섹션 목록
  *
  * @example
  * // Request
@@ -136,16 +134,8 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabaseClient, 'talent', personalizedResult.overallScore || 75)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // Blur 로직 적용
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['description', 'roadmap', 'skillRecommendations', 'mentalModel']
-        : []
-
       const finalResult = {
-        ...resultWithPercentile,
-        isBlurred,
-        blurredSections,
+        ...resultWithPercentile
       }
 
       console.log('✅ [Talent] Returning cohort result')
@@ -391,12 +381,6 @@ ${resumeText.slice(0, 3000)}${resumeText.length > 3000 ? '...(이하 생략)' : 
 
     const fortuneData = JSON.parse(response.content)
 
-    // ✅ Blur 로직 적용: 실제 데이터는 항상 반환, isBlurred만 설정
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['top3_talents', 'career_roadmap', 'growth_timeline']
-      : []
-
     // ✅ 모든 데이터를 실제 LLM 분석 결과로 반환 (프리미엄 플레이스홀더 제거)
     const result = {
       // ✅ 표준화된 필드명: score, content, summary, advice
@@ -448,9 +432,7 @@ ${resumeText.slice(0, 3000)}${resumeText.length > 3000 ? '...(이하 생략)' : 
         timeAvailable,
         challenges,
         hasResume // ✅ 이력서 포함 여부
-      },
-      isBlurred, // ✅ 블러 상태 (true면 클라이언트가 블러 처리)
-      blurredSections // ✅ 블러된 섹션 목록
+      }
     }
 
     // ✅ 퍼센타일 계산 (오늘 운세를 본 사람들 중 상위 몇 %)

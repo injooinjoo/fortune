@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 /// OOTD 사진 입력 위젯 (촬영 가이드 포함)
 ///
@@ -109,7 +108,7 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
                   label: '카메라',
                   onTap: _isLoading ? null : _pickFromCamera,
                   isLoading: _isLoading,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(width: DSSpacing.sm),
@@ -119,7 +118,7 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
                   label: '갤러리',
                   onTap: _isLoading ? null : _pickFromGallery,
                   isLoading: _isLoading,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -141,7 +140,7 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
             : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: colors.accentSecondary.withValues(alpha: 0.2),
+          color: colors.border,
         ),
       ),
       child: Column(

@@ -9,7 +9,7 @@ class DailyFortuneCard extends StatelessWidget {
   final DailyFortune dailyFortune;
 
   // 테마 색상 상수
-  static const Color _primaryColor = DSFortuneColors.mysticalPurpleMuted;
+  static const Color _primaryColor = DSColors.accentSecondary;
   static const Color _successColor = Color(0xFF2ECC71); // 고유 색상 - 추천 활동 초록색
   static const Color _warningColor = Color(0xFFE74C3C); // 고유 색상 - 주의사항 빨간색
 
@@ -35,7 +35,7 @@ class DailyFortuneCard extends StatelessWidget {
                   isDark,
                   '럭키 컬러',
                   dailyFortune.luckyColor,
-                  DSFortuneColors.celebrityActor,
+                  DSColors.accentSecondary,
                   iconPath: FortuneCardImages.getLuckyColorIcon(
                       dailyFortune.luckyColor),
                 ),
@@ -47,7 +47,7 @@ class DailyFortuneCard extends StatelessWidget {
                   isDark,
                   '럭키 넘버',
                   dailyFortune.luckyNumber.toString(),
-                  DSFortuneColors.celebrityAthlete,
+                  DSColors.success,
                   iconPath: FortuneCardImages.getLuckyNumberIcon(
                       dailyFortune.luckyNumber),
                 ),

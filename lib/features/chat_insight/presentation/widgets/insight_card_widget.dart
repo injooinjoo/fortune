@@ -35,7 +35,7 @@ class _InsightCardWidgetState extends State<InsightCardWidget> {
           // 헤더
           Row(
             children: [
-              Icon(Icons.insights, color: colors.accent, size: 20),
+              Icon(Icons.insights, color: colors.textSecondary, size: 20),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '관계 인사이트',
@@ -79,7 +79,7 @@ class _InsightCardWidgetState extends State<InsightCardWidget> {
                 padding: const EdgeInsets.only(top: DSSpacing.xs),
                 child: Text(
                   _isExpanded ? '접기' : '더 보기',
-                  style: typography.bodySmall.copyWith(color: colors.accent),
+                  style: typography.bodySmall.copyWith(color: colors.accentSecondary),
                 ),
               ),
             ),
@@ -118,7 +118,7 @@ class _InsightCardWidgetState extends State<InsightCardWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Icon(Icons.check_circle_outline,
-                          color: colors.accent, size: 16),
+                          color: colors.success, size: 16),
                       const SizedBox(width: DSSpacing.xs),
                       Expanded(
                         child: Text(

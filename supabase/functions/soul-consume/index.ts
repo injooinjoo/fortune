@@ -151,7 +151,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({
           code: 'INSUFFICIENT_TOKENS',
-          message: '복주머니가 부족합니다',
+          message: '토큰이 부족합니다',
           required: cost,
           available: currentBalance
         }),

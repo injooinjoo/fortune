@@ -57,8 +57,6 @@ interface YearlyEncounterResponse {
     targetGender: string
     createdAt: string
   }
-  isBlurred: boolean
-  blurredSections: string[]
   error?: string
 }
 
@@ -702,17 +700,9 @@ serve(async (req) => {
     // 7. Save to database
     await saveYearlyEncounterRecord(request.userId, resultData)
 
-    // 8. Determine blur sections (non-premium users see blurred results)
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['encounterSpot', 'fateSignal', 'personality', 'compatibilityDescription']
-      : []
-
     const response: YearlyEncounterResponse = {
       success: true,
       data: resultData,
-      isBlurred,
-      blurredSections,
     }
 
     return new Response(JSON.stringify(response), {
@@ -724,8 +714,6 @@ serve(async (req) => {
       JSON.stringify({
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        isBlurred: true,
-        blurredSections: [],
       }),
       {
         status: 500,

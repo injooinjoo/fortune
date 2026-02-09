@@ -1,10 +1,52 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../theme/ds_extensions.dart';
-import '../../tokens/ds_fortune_colors.dart';
-import '../../tokens/ds_love_colors.dart';
-import '../../tokens/ds_luck_colors.dart';
+import '../../tokens/ds_colors.dart';
 import '../../../theme/font_config.dart';
+
+/// Legacy color helpers for seal stamp (ChatGPT style migration)
+/// Maps old DSLuckColors/DSLoveColors to DSColors equivalents
+class _SealColors {
+  // Gold colors
+  static Color getGold(bool isDark) => isDark ? const Color(0xFFFFD700) : DSColors.warning;
+
+  // Level colors based on score (fortune grade)
+  static String getLevelHanja(int score) {
+    if (score >= 90) return '大吉';
+    if (score >= 75) return '吉';
+    if (score >= 60) return '小吉';
+    if (score >= 45) return '平';
+    if (score >= 30) return '小凶';
+    return '凶';
+  }
+
+  static Color getLevelColor(int score) {
+    if (score >= 90) return DSColors.success;
+    if (score >= 75) return DSColors.info;
+    if (score >= 60) return DSColors.accentSecondary;
+    if (score >= 45) return DSColors.warning;
+    return DSColors.error;
+  }
+
+  // Love/compatibility colors
+  static const Color rougePink = Color(0xFFE91E63);
+
+  static String getCompatibilityHanja(int score) {
+    if (score >= 90) return '天生';
+    if (score >= 75) return '良緣';
+    if (score >= 60) return '相合';
+    if (score >= 45) return '普通';
+    return '克';
+  }
+
+  static Color getCompatibilityColor(int score) {
+    if (score >= 90) return DSColors.success;
+    if (score >= 75) return DSColors.info;
+    if (score >= 60) return DSColors.accentSecondary;
+    if (score >= 45) return DSColors.warning;
+    return DSColors.error;
+  }
+}
 
 /// Seal stamp shape styles
 enum SealStampShape {
@@ -207,19 +249,20 @@ class _SealStampWidgetState extends State<SealStampWidget>
   Color _getColor(bool isDark) {
     if (widget.customColor != null) return widget.customColor!;
 
+    final brightness = isDark ? Brightness.dark : Brightness.light;
     switch (widget.colorScheme) {
       case SealStampColorScheme.vermilion:
-        return DSFortuneColors.sealVermilion;
+        return DSColors.error; // sealVermilion -> error (red)
       case SealStampColorScheme.gold:
-        return DSLuckColors.getGold(isDark);
+        return _SealColors.getGold(isDark);
       case SealStampColorScheme.blue:
-        return DSFortuneColors.sealBlue;
+        return DSColors.getAccentSecondary(brightness); // sealBlue -> accentSecondary
       case SealStampColorScheme.black:
-        return DSFortuneColors.inkBlack;
+        return DSColors.getTextPrimary(brightness); // inkBlack -> textPrimary
       case SealStampColorScheme.love:
-        return DSLoveColors.rougePink;
+        return _SealColors.rougePink;
       case SealStampColorScheme.custom:
-        return widget.customColor ?? DSFortuneColors.sealVermilion;
+        return widget.customColor ?? DSColors.error; // sealVermilion -> error
     }
   }
 
@@ -552,8 +595,8 @@ class FortuneLevelSeal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hanja = DSLuckColors.getLevelHanja(score);
-    final color = DSLuckColors.getLevelColor(score);
+    final hanja = _SealColors.getLevelHanja(score);
+    final color = _SealColors.getLevelColor(score);
 
     return SealStampWidget(
       text: hanja,
@@ -585,8 +628,8 @@ class CompatibilitySeal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hanja = DSLoveColors.getCompatibilityHanja(score);
-    final color = DSLoveColors.getCompatibilityColor(score);
+    final hanja = _SealColors.getCompatibilityHanja(score);
+    final color = _SealColors.getCompatibilityColor(score);
 
     return SealStampWidget(
       text: hanja,
@@ -619,7 +662,7 @@ class ElementSeal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hanja = _getHanja();
-    final color = DSFortuneColors.getElementColor(element);
+    final color = DSColors.accentSecondary; // element colors -> accentSecondary
 
     return SealStampWidget(
       text: hanja,

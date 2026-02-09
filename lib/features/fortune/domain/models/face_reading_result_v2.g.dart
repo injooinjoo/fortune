@@ -88,11 +88,6 @@ _$FaceReadingResultV2Impl _$$FaceReadingResultV2ImplFromJson(
           ? null
           : WatchFaceReadingData.fromJson(
               json['watchData'] as Map<String, dynamic>),
-      isBlurred: json['isBlurred'] as bool? ?? false,
-      blurredSections: (json['blurredSections'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
       shareableContent: json['shareableContent'] == null
           ? null
           : ShareableContent.fromJson(
@@ -123,8 +118,6 @@ Map<String, dynamic> _$$FaceReadingResultV2ImplToJson(
       'luckyFeatureEnhancement': instance.luckyFeatureEnhancement,
       'leadershipAnalysis': instance.leadershipAnalysis,
       'watchData': instance.watchData,
-      'isBlurred': instance.isBlurred,
-      'blurredSections': instance.blurredSections,
       'shareableContent': instance.shareableContent,
     };
 

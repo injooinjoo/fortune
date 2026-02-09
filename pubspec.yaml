@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+48
+version: 1.0.0+49
 
 environment:
   sdk: ">=3.5.3 <4.0.0"
@@ -125,15 +125,9 @@ dependencies:
   # image_gallery_saver: ^2.0.3  # AGP 8.x compatibility issue
   path_provider: ^2.1.5
 
-  # Face Detection: MediaPipe Face Mesh (468 landmarks, iOS + Android)
-  mediapipe_face_mesh: ^1.2.4  # iOS 시뮬레이터 미지원 - 실제 기기만
 
   # Payment
   pay: ^2.0.0
-
-  # Ads
-  google_mobile_ads: ^6.0.0
-  app_tracking_transparency: ^2.0.6 # iOS ATT (App Tracking Transparency)
 
   # Charts & Visualizations
   percent_indicator: ^4.2.3
@@ -369,6 +363,20 @@ flutter:
     - assets/images/fortune_cards/
     - assets/images/health/
     - assets/images/mbti/
+    - assets/images/character/
+    - assets/images/character/_base/
+    - assets/images/character/avatars/
+    - assets/images/character/gallery/
+    - assets/images/character/gallery/luts/
+    - assets/images/character/gallery/jung_tae_yoon/
+    - assets/images/character/gallery/seo_yoonjae/
+    - assets/images/character/gallery/kang_harin/
+    - assets/images/character/gallery/jayden_angel/
+    - assets/images/character/gallery/ciel_butler/
+    - assets/images/character/gallery/lee_doyoon/
+    - assets/images/character/gallery/han_seojun/
+    - assets/images/character/gallery/baek_hyunwoo/
+    - assets/images/character/gallery/min_junhyuk/
     - assets/fonts/
     # Korean Traditional Assets
     - assets/images/minhwa/

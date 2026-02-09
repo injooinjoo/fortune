@@ -1,5 +1,5 @@
-/// Infographic Asset Paths
-/// 인포그래픽 에셋 경로 상수
+// Infographic Asset Paths
+// 인포그래픽 에셋 경로 상수
 class InfographicAssets {
   InfographicAssets._();
 

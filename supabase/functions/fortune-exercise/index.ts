@@ -490,12 +490,6 @@ ${injuryHistory.length > 0 && injuryHistory[0] !== 'none' ? `- ${getInjuryLabel(
 
       const parsedResponse = JSON.parse(response.content)
 
-      // 블러 처리 (프리미엄 전용)
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['todayRoutine', 'weeklyPlan', 'injuryPrevention']
-        : []
-
       // 점수 계산 (입력 기반)
       const fitnessScore = fitnessLevel * 8 // 8-40
       const frequencyScore = Math.min(weeklyFrequency, 5) * 6 // 6-30
@@ -552,9 +546,7 @@ ${injuryHistory.length > 0 && injuryHistory[0] !== 'none' ? `- ${getInjuryLabel(
         exerciseKeyword: parsedResponse.exerciseKeyword,
 
         // 메타데이터
-        timestamp: new Date().toISOString(),
-        isBlurred,
-        blurredSections
+        timestamp: new Date().toISOString()
       }
 
       // 캐시 저장

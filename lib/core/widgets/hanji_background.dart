@@ -30,7 +30,7 @@ class HanjiBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.isDark;
     final colors = context.colors;
-    final defaultOpacity = isDark ? 0.04 : 0.08;
+    final defaultOpacity = isDark ? 0.02 : 0.04;
     final effectiveOpacity = opacity ?? defaultOpacity;
     final bgColor = backgroundColor ?? colors.background;
 
@@ -112,7 +112,7 @@ class HanjiScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.isDark;
     final colors = context.colors;
-    final defaultOpacity = isDark ? 0.04 : 0.08;
+    final defaultOpacity = isDark ? 0.02 : 0.04;
     final effectiveOpacity = textureOpacity ?? defaultOpacity;
     final bgColor = colors.background;
 

@@ -469,7 +469,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
     } else if (isSelected) {
       textColor = Colors.white;
     } else if (isToday) {
-      textColor = colors.accentSecondary;
+      textColor = colors.textPrimary;
     } else if (date.weekday == DateTime.sunday) {
       textColor = Colors.red.shade300;
     } else if (date.weekday == DateTime.saturday) {
@@ -484,13 +484,13 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: isSelected
-              ? colors.accentSecondary
+              ? colors.textPrimary
               : isToday
-                  ? colors.accentSecondary.withValues(alpha: 0.1)
+                  ? colors.textPrimary.withValues(alpha: 0.1)
                   : Colors.transparent,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: isToday && !isSelected
-              ? Border.all(color: colors.accentSecondary, width: 1)
+              ? Border.all(color: colors.textPrimary, width: 1)
               : null,
         ),
         child: Stack(
@@ -514,7 +514,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(color: colors.accentSecondary, width: 1),
+                    border: Border.all(color: colors.textPrimary, width: 1),
                   ),
                   child: Center(
                     child: Text(
@@ -522,7 +522,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                       style: TextStyle(
                         fontSize: 8,
                         fontWeight: FontWeight.bold,
-                        color: colors.accentSecondary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -544,10 +544,10 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
       return Container(
         padding: const EdgeInsets.all(DSSpacing.sm),
         decoration: BoxDecoration(
-          color: colors.accentSecondary.withValues(alpha: 0.1),
+          color: colors.textPrimary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: colors.accentSecondary.withValues(alpha: 0.3),
+            color: colors.textPrimary.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -557,14 +557,14 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
               children: [
                 Icon(
                   Icons.date_range,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   size: 18,
                 ),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '${_selectedDates.length}일 선택됨',
                   style: typography.labelMedium.copyWith(
-                    color: colors.accentSecondary,
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -581,13 +581,13 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: colors.accentSecondary.withValues(alpha: 0.2),
+                    color: colors.textPrimary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(DSRadius.sm),
                   ),
                   child: Text(
                     '${date.month}/${date.day}',
                     style: typography.labelSmall.copyWith(
-                      color: colors.accentSecondary,
+                      color: colors.textPrimary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -605,24 +605,24 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: colors.accentSecondary.withValues(alpha: 0.1),
+        color: colors.textPrimary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: colors.accentSecondary.withValues(alpha: 0.3),
+          color: colors.textPrimary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
           Icon(
             Icons.calendar_today,
-            color: colors.accentSecondary,
+            color: colors.textSecondary,
             size: 18,
           ),
           const SizedBox(width: DSSpacing.xs),
           Text(
             DateFormat('yyyy년 M월 d일 EEEE', 'ko_KR').format(_selectedDate!),
             style: typography.labelMedium.copyWith(
-              color: colors.accentSecondary,
+              color: colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -647,7 +647,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                 height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(width: DSSpacing.sm),
@@ -672,7 +672,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
         children: [
           Row(
             children: [
-              Icon(Icons.event_note, color: colors.accentSecondary, size: 18),
+              Icon(Icons.event_note, color: colors.textSecondary, size: 18),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 totalEvents == 0
@@ -680,7 +680,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                     : '선택한 날짜들의 일정 ($totalEvents개)',
                 style: typography.labelMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -752,7 +752,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
       children: [
         Row(
           children: [
-            Icon(Icons.event_note, color: colors.accentSecondary, size: 18),
+            Icon(Icons.event_note, color: colors.textSecondary, size: 18),
             const SizedBox(width: DSSpacing.xs),
             Text(
               _deviceEvents.isEmpty
@@ -760,7 +760,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                   : '내 캘린더 일정 (${_deviceEvents.length})',
               style: typography.labelMedium.copyWith(
                 fontWeight: FontWeight.bold,
-                color: colors.accentSecondary,
+                color: colors.textPrimary,
               ),
             ),
           ],
@@ -825,11 +825,11 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
           padding: const EdgeInsets.all(DSSpacing.sm),
           decoration: BoxDecoration(
             color: isSelected
-                ? colors.accentSecondary.withValues(alpha: 0.1)
+                ? colors.textPrimary.withValues(alpha: 0.1)
                 : colors.surface,
             borderRadius: BorderRadius.circular(DSRadius.md),
             border: Border.all(
-              color: isSelected ? colors.accentSecondary : colors.border,
+              color: isSelected ? colors.textPrimary : colors.border,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -837,7 +837,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
             children: [
               Icon(
                 isSelected ? Icons.check_circle : Icons.circle_outlined,
-                color: isSelected ? colors.accentSecondary : colors.textTertiary,
+                color: isSelected ? colors.textPrimary : colors.textTertiary,
                 size: 20,
               ),
               const SizedBox(width: DSSpacing.sm),
@@ -923,7 +923,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
         buttonText = widget.showEventsAfterSelection
             ? (totalEvents == 0
                 ? '$dateStr 운세 보기'
-                : '$dateStr + ${totalEvents}개 일정 운세 보기')
+                : '$dateStr + $totalEvents개 일정 운세 보기')
             : '$dateStr 선택';
       } else {
         final sortedDates = _selectedDates.toList()..sort();
@@ -932,7 +932,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
         buttonText = widget.showEventsAfterSelection
             ? (totalEvents == 0
                 ? '$firstDate ~ $lastDate ($count일) 운세 보기'
-                : '$firstDate ~ $lastDate + ${totalEvents}개 일정 운세 보기')
+                : '$firstDate ~ $lastDate + $totalEvents개 일정 운세 보기')
             : '$count일 선택됨';
       }
     } else {
@@ -952,8 +952,8 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
       child: ElevatedButton(
         onPressed: _confirmSelection,
         style: ElevatedButton.styleFrom(
-          backgroundColor: colors.accentSecondary,
-          foregroundColor: Colors.white,
+          backgroundColor: colors.ctaBackground,
+          foregroundColor: colors.ctaForeground,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DSRadius.md),
@@ -962,7 +962,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
         child: Text(
           buttonText,
           style: typography.labelMedium.copyWith(
-            color: Colors.white,
+            color: colors.ctaForeground,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -1023,12 +1023,12 @@ class _QuickOptionChip extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: isSelected
-                ? colors.accentSecondary.withValues(alpha: 0.2)
+                ? colors.textPrimary.withValues(alpha: 0.2)
                 : (isDark ? colors.backgroundSecondary : colors.surface),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
               color: isSelected
-                  ? colors.accentSecondary
+                  ? colors.textPrimary
                   : colors.textPrimary.withValues(alpha: 0.2),
               width: isSelected ? 1.5 : 1,
             ),
@@ -1041,9 +1041,7 @@ class _QuickOptionChip extends StatelessWidget {
               Text(
                 option.label,
                 style: typography.labelMedium.copyWith(
-                  color: isSelected
-                      ? colors.accentSecondary
-                      : colors.textPrimary,
+                  color: colors.textPrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -1052,7 +1050,7 @@ class _QuickOptionChip extends StatelessWidget {
                 Icon(
                   Icons.check,
                   size: 14,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                 ),
               ],
             ],

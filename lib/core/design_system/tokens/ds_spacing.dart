@@ -1,12 +1,12 @@
-/// ChatGPT-inspired spacing system
-///
-/// Based on 4px base unit with semantic naming
-///
-/// Usage:
-/// ```dart
-/// Padding(padding: EdgeInsets.all(DSSpacing.md))
-/// SizedBox(height: DSSpacing.lg)
-/// ```
+// ChatGPT-inspired spacing system
+//
+// Based on 4px base unit with semantic naming
+//
+// Usage:
+// ```dart
+// Padding(padding: EdgeInsets.all(DSSpacing.md))
+// SizedBox(height: DSSpacing.lg)
+// ```
 class DSSpacing {
   DSSpacing._();
 

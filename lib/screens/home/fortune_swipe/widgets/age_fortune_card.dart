@@ -44,7 +44,7 @@ class AgeFortuneCard extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.15),
+                    DSColors.accentSecondary.withValues(alpha: 0.15),
                     const Color(0xFFA78BFA).withValues(alpha: 0.1), // 고유 색상: 밝은 보라
                   ],
                 ),
@@ -91,12 +91,12 @@ class AgeFortuneCard extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.3),
+              color: DSColors.accentSecondary.withValues(alpha: 0.3),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: context.isDark ? 0.2 : 0.1),
+                color: DSColors.accentSecondary.withValues(alpha: context.isDark ? 0.2 : 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -111,7 +111,7 @@ class AgeFortuneCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: DSFortuneColors.categoryLuckyItems,
+                      color: DSColors.accentSecondary,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -127,17 +127,17 @@ class AgeFortuneCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFDAA520).withValues(alpha: 0.2), // 오방색: 토(土)
+                        color: DSColors.warning.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: const Color(0xFFDAA520).withValues(alpha: 0.5), // 오방색: 토(土)
+                          color: DSColors.warning.withValues(alpha: 0.5),
                           width: 1,
                         ),
                       ),
                       child: Text(
                         '$zodiacAnimal띠',
                         style: context.labelSmall.copyWith(
-                          color: const Color(0xFFDAA520), // 오방색: 토(土)
+                          color: DSColors.warning,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -188,7 +188,7 @@ class AgeFortuneCard extends StatelessWidget {
               Icon(
                 Icons.lightbulb_outline,
                 size: 18,
-                color: DSFortuneColors.categoryLuckyItems.withValues(alpha: 0.8),
+                color: DSColors.accentSecondary.withValues(alpha: 0.8),
               ),
               const SizedBox(width: 10),
               Expanded(

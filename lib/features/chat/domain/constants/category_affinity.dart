@@ -1,6 +1,6 @@
-/// 카테고리 연관성 맵
-/// Key: 현재 운세의 카테고리
-/// Value: 연관 카테고리 (우선순위 순서)
+// 카테고리 연관성 맵
+// Key: 현재 운세의 카테고리
+// Value: 연관 카테고리 (우선순위 순서)
 const Map<String, List<String>> categoryAffinity = {
   // 연애/관계 클러스터
   'love': ['love', 'traditional', 'interactive', 'lifestyle'],

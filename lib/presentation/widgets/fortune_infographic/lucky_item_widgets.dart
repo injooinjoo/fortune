@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/design_system/design_system.dart';
-import '../../../core/design_system/tokens/ds_luck_colors.dart';
 import 'helpers.dart';
 
 /// Lucky item display widgets for fortune infographic
@@ -108,16 +107,16 @@ class LuckyItemWidgets {
         final tags = <Map<String, dynamic>>[];
 
         if (luckyColor != null) {
-          tags.add({'icon': Icons.palette, 'label': '색상', 'value': luckyColor, 'color': DSLuckColors.categoryColor});
+          tags.add({'icon': Icons.palette, 'label': '색상', 'value': luckyColor, 'color': DSColors.accentSecondary});
         }
         if (luckyFood != null) {
-          tags.add({'icon': Icons.restaurant, 'label': '음식', 'value': luckyFood, 'color': DSLuckColors.categoryFood});
+          tags.add({'icon': Icons.restaurant, 'label': '음식', 'value': luckyFood, 'color': DSColors.warning});
         }
         if (luckyNumbers != null && luckyNumbers.isNotEmpty) {
-          tags.add({'icon': Icons.numbers, 'label': '숫자', 'value': luckyNumbers.join(', '), 'color': DSLuckColors.categoryNumber});
+          tags.add({'icon': Icons.numbers, 'label': '숫자', 'value': luckyNumbers.join(', '), 'color': DSColors.success});
         }
         if (luckyDirection != null) {
-          tags.add({'icon': Icons.explore, 'label': '방향', 'value': luckyDirection, 'color': DSLuckColors.categoryDirection});
+          tags.add({'icon': Icons.explore, 'label': '방향', 'value': luckyDirection, 'color': DSColors.info});
         }
 
         if (tags.isEmpty) {

@@ -77,7 +77,6 @@ lib/features/chat/                      # 46개 파일
 │       ├── chat_message_list.dart      # 메시지 리스트
 │       ├── fortune_chip_grid.dart      # 추천 칩 그리드
 │       ├── chat_welcome_view.dart      # 환영 화면
-│       ├── chat_blur_overlay.dart      # 블러 오버레이
 │       ├── guest_login_banner.dart     # 게스트 로그인 배너
 │       ├── profile_bottom_sheet.dart   # 프로필 바텀시트
 │       ├── month_highlight_detail_bottom_sheet.dart  # 월별 하이라이트
@@ -134,10 +133,6 @@ class ChatMessage {
   final String? text;
   final FortuneResult? fortuneResult;
   final DateTime timestamp;
-
-  // 블러 처리
-  final bool isBlurred;
-  final List<String> blurredSections;
 
   // 인사이트 결과용
   final String? fortuneType;
@@ -232,18 +227,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     }
   }
 
-  // 블러 해제
-  void unblurMessage(String messageId) {
-    final updated = state.messages.map((m) {
-      if (m.id == messageId) {
-        return m.copyWith(isBlurred: false);
-      }
-      return m;
-    }).toList();
-
-    state = state.copyWith(messages: updated);
-  }
-
   // 대화 초기화
   void clearConversation() {
     state = const ChatState();
@@ -262,8 +245,8 @@ final chatMessagesProvider =
 
 ### 변환 규칙
 
-1. **요약 메시지**: 항상 공개 (점수, 제목)
-2. **상세 섹션**: 개별 메시지로 분리, 블러 적용
+1. **요약 메시지**: 점수, 제목 표시
+2. **상세 섹션**: 개별 메시지로 분리
 3. **후속 추천**: 마지막에 추천 칩 표시
 
 ### FortuneResultConverter (인사이트 결과 변환)
@@ -273,30 +256,25 @@ class FortuneResultConverter {
   static List<ChatMessage> convert(FortuneResult result) {
     final messages = <ChatMessage>[];
 
-    // 1. 요약 메시지 (공개)
+    // 1. 요약 메시지
     messages.add(ChatMessage(
       id: uuid.v4(),
       type: ChatMessageType.fortuneResult,
       sectionKey: 'summary',
       text: _buildSummaryText(result),
       fortuneType: result.type,
-      isBlurred: false,
       timestamp: DateTime.now(),
     ));
 
     // 2. 상세 섹션들
     final sections = _getSections(result);
     for (final section in sections) {
-      final isBlurred = result.isBlurred &&
-                       result.blurredSections.contains(section.key);
-
       messages.add(ChatMessage(
         id: uuid.v4(),
         type: ChatMessageType.fortuneResult,
         sectionKey: section.key,
         text: section.content,
         fortuneType: result.type,
-        isBlurred: isBlurred,
         timestamp: DateTime.now(),
       ));
     }
@@ -319,16 +297,16 @@ class FortuneResultConverter {
           _Section('ticker', result.data['ticker']),
           _Section('content', result.data['content']),
           _Section('luckyItems', result.data['luckyItems']),
-          _Section('timing', result.data['timing']),      // 블러
-          _Section('outlook', result.data['outlook']),    // 블러
-          _Section('risks', result.data['risks']),        // 블러
-          _Section('advice', result.data['advice']),      // 블러
+          _Section('timing', result.data['timing']),
+          _Section('outlook', result.data['outlook']),
+          _Section('risks', result.data['risks']),
+          _Section('advice', result.data['advice']),
         ];
       case 'tarot':
         return [
           _Section('cards', result.data['cards']),
           _Section('interpretation', result.data['interpretation']),
-          _Section('advice', result.data['advice']),      // 블러
+          _Section('advice', result.data['advice']),
         ];
       // ... 다른 운세 타입
       default:
@@ -468,13 +446,10 @@ const List<RecommendationChip> defaultChips = [
 |                                  |
 | AI: +------------------------+   |
 |     | 상세 조언              |   |
-|     | [블러 처리됨]           |   |
-|     | [잠금 해제]            |   |
+|     | 조언 내용이 표시됩니다   |   |
 |     +------------------------+   |
 |                                  |
 |     [궁합 보기] [내일 인사이트]    |
-+----------------------------------+
-|        [광고 보고 잠금 해제]        |
 +----------------------------------+
 |  [메시지 입력...]         [전송]   |
 +----------------------------------+
@@ -530,38 +505,6 @@ String? analyzeIntent(String message) {
 
 ---
 
-## 블러/프리미엄 처리
-
-### 채팅 내 블러
-
-```dart
-class ChatFortuneSection extends ConsumerWidget {
-  final ChatMessage message;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      decoration: _bubbleDecoration(context),
-      child: UnifiedBlurWrapper(
-        isBlurred: message.isBlurred,
-        sectionKey: message.sectionKey ?? 'content',
-        fortuneType: message.fortuneType,
-        onUnlock: () => _handleUnlock(ref),
-        child: _buildContent(context),
-      ),
-    );
-  }
-
-  void _handleUnlock(WidgetRef ref) {
-    // 광고 시청 후 블러 해제
-    ref.read(chatMessagesProvider.notifier)
-       .unblurMessage(message.id);
-  }
-}
-```
-
----
-
 ## 관련 파일 참조
 
 | 파일 | 용도 |
@@ -579,5 +522,4 @@ class ChatFortuneSection extends ConsumerWidget {
 |------|------|------|
 | `@riverpod` 어노테이션 | 프로젝트 표준 | `StateNotifier` |
 | 하드코딩 추천 칩 | 동적 큐레이션 필요 | `curateChips()` 사용 |
-| `ImageFilter.blur` 직접 | 일관성 | `UnifiedBlurWrapper` |
 | 채팅에서 직접 페이지 이동 | 채팅 흐름 유지 | 결과를 채팅으로 표시 |

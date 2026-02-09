@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 import '../../../../shared/widgets/smart_image.dart';
 
 /// 채팅용 커리어 운세 결과 카드
@@ -18,14 +16,10 @@ import '../../../../shared/widgets/smart_image.dart';
 /// - luckyPeriods[], cautionPeriods[], careerKeywords[]
 class ChatCareerResultCard extends ConsumerWidget {
   final Fortune fortune;
-  final bool isBlurred;
-  final List<String> blurredSections;
 
   const ChatCareerResultCard({
     super.key,
     required this.fortune,
-    this.isBlurred = false,
-    this.blurredSections = const [],
   });
 
   @override
@@ -39,7 +33,7 @@ class ChatCareerResultCard extends ConsumerWidget {
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      child: DSCard.hanji(
+      child: DSCard.flat(
         padding: EdgeInsets.zero,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -83,6 +77,7 @@ class ChatCareerResultCard extends ConsumerWidget {
   }
 
   Widget _buildImageHeader(BuildContext context) {
+    final colors = context.colors;
     final typography = context.typography;
     final score = fortune.overallScore ?? 75;
     final heroImage = FortuneCardImages.getHeroImage('career', score);
@@ -109,8 +104,8 @@ class ChatCareerResultCard extends ConsumerWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  ObangseokColors.cheongMuted.withValues(alpha: 0.15),
-                  Colors.black.withValues(alpha: 0.65),
+                  DSColors.info.withValues(alpha: 0.15),
+                  colors.background.withValues(alpha: 0.65),
                 ],
               ),
             ),
@@ -123,21 +118,21 @@ class ChatCareerResultCard extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: ObangseokColors.cheongMuted.withValues(alpha: 0.2),
+                color: DSColors.info.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(DSRadius.full),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: colors.border,
                 ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text('💼', style: TextStyle(fontSize: 14)),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: DSSpacing.xs),
                   Text(
                     'CAREER',
                     style: typography.labelSmall.copyWith(
-                      color: Colors.white,
+                      color: colors.textPrimary,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.2,
                     ),
@@ -157,7 +152,7 @@ class ChatCareerResultCard extends ConsumerWidget {
               fortuneType: 'career',
               shareTitle: '커리어 운세',
               shareContent: fortune.content,
-              iconColor: Colors.white,
+              iconColor: colors.textPrimary,
               iconSize: 20,
             ),
           ),
@@ -178,11 +173,11 @@ class ChatCareerResultCard extends ConsumerWidget {
                       Text(
                         '커리어 운세',
                         style: typography.headingSmall.copyWith(
-                          color: Colors.white,
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.bold,
                           shadows: [
                             Shadow(
-                              color: Colors.black.withValues(alpha: 0.5),
+                              color: colors.background.withValues(alpha: 0.5),
                               blurRadius: 8,
                             ),
                           ],
@@ -191,7 +186,7 @@ class ChatCareerResultCard extends ConsumerWidget {
                       Text(
                         '직업 · 이직 · 승진',
                         style: typography.labelMedium.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: colors.textPrimary.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -204,10 +199,10 @@ class ChatCareerResultCard extends ConsumerWidget {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: colors.surface.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(DSRadius.md),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.4),
+                      color: colors.surface.withValues(alpha: 0.4),
                     ),
                   ),
                   child: Row(
@@ -216,14 +211,14 @@ class ChatCareerResultCard extends ConsumerWidget {
                       Text(
                         '$score',
                         style: typography.headingSmall.copyWith(
-                          color: Colors.white,
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         '점',
                         style: typography.labelSmall.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: colors.textPrimary.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -289,108 +284,105 @@ class ChatCareerResultCard extends ConsumerWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    return SimpleBlurOverlay(
-      isBlurred: isBlurred || blurredSections.contains('predictions'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.md,
-          vertical: DSSpacing.sm,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Text('🔮', style: TextStyle(fontSize: 24)),
-                const SizedBox(width: DSSpacing.sm),
-                Text(
-                  '커리어 예측',
-                  style: typography.labelLarge.copyWith(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🔮', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '커리어 예측',
+                style: typography.labelLarge.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
                 ),
-              ],
-            ),
-            const SizedBox(height: DSSpacing.sm),
-            ...predictions.take(2).map((prediction) {
-              final pred = prediction as Map<String, dynamic>;
-              final timeframe = pred['timeframe'] as String? ?? '';
-              final probability = pred['probability'] as int? ?? 0;
-              final milestones = pred['keyMilestones'] as List? ?? [];
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...predictions.take(2).map((prediction) {
+            final pred = prediction as Map<String, dynamic>;
+            final timeframe = pred['timeframe'] as String? ?? '';
+            final probability = pred['probability'] as int? ?? 0;
+            final milestones = pred['keyMilestones'] as List? ?? [];
 
-              return Container(
-                margin: const EdgeInsets.only(bottom: DSSpacing.sm),
-                padding: const EdgeInsets.all(DSSpacing.sm),
-                decoration: BoxDecoration(
-                  color: colors.textPrimary.withValues(alpha: 0.03),
-                  borderRadius: BorderRadius.circular(DSRadius.md),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          timeframe,
-                          style: typography.labelMedium.copyWith(
-                            color: colors.textPrimary,
+            return Container(
+              margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+              padding: const EdgeInsets.all(DSSpacing.sm),
+              decoration: BoxDecoration(
+                color: colors.textPrimary.withValues(alpha: 0.03),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        timeframe,
+                        style: typography.labelMedium.copyWith(
+                          color: colors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getProbabilityColor(probability)
+                              .withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(DSRadius.sm),
+                        ),
+                        child: Text(
+                          '$probability% 확률',
+                          style: typography.labelSmall.copyWith(
+                            color: _getProbabilityColor(probability),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _getProbabilityColor(probability)
-                                .withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(DSRadius.sm),
-                          ),
-                          child: Text(
-                            '$probability% 확률',
-                            style: typography.labelSmall.copyWith(
-                              color: _getProbabilityColor(probability),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (milestones.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      ...milestones.take(2).map((m) => Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '•',
-                                  style: typography.bodySmall.copyWith(
-                                    color: colors.accentSecondary,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    m.toString(),
-                                    style: typography.bodySmall.copyWith(
-                                      color: colors.textSecondary,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
+                      ),
                     ],
+                  ),
+                  if (milestones.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    ...milestones.take(2).map((m) => Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '•',
+                                style: typography.bodySmall.copyWith(
+                                  color: colors.accentSecondary,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  m.toString(),
+                                  style: typography.bodySmall.copyWith(
+                                    color: colors.textSecondary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
                   ],
-                ),
-              );
-            }),
-          ],
-        ),
+                ],
+              ),
+            );
+          }),
+        ],
       ),
     );
   }
@@ -399,70 +391,67 @@ class ChatCareerResultCard extends ConsumerWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    return SimpleBlurOverlay(
-      isBlurred: isBlurred || blurredSections.contains('skillAnalysis'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.md,
-          vertical: DSSpacing.sm,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Text('📚', style: TextStyle(fontSize: 24)),
-                const SizedBox(width: DSSpacing.sm),
-                Text(
-                  '스킬 분석',
-                  style: typography.labelLarge.copyWith(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('📚', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '스킬 분석',
+                style: typography.labelLarge.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
                 ),
-              ],
-            ),
-            const SizedBox(height: DSSpacing.sm),
-            ...skillAnalysis.take(3).map((skill) {
-              final s = skill as Map<String, dynamic>;
-              final skillName = s['skill'] as String? ?? '';
-              final currentLevel = s['currentLevel'] as int? ?? 5;
-              final targetLevel = s['targetLevel'] as int? ?? 8;
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...skillAnalysis.take(3).map((skill) {
+            final s = skill as Map<String, dynamic>;
+            final skillName = s['skill'] as String? ?? '';
+            final currentLevel = s['currentLevel'] as int? ?? 5;
+            final targetLevel = s['targetLevel'] as int? ?? 8;
 
-              return Container(
-                margin: const EdgeInsets.only(bottom: DSSpacing.xs),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 80,
-                      child: Text(
-                        skillName,
-                        style: typography.labelSmall.copyWith(
-                          color: colors.textPrimary,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _SkillProgressBar(
-                        currentLevel: currentLevel,
-                        targetLevel: targetLevel,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Lv.$currentLevel→$targetLevel',
+            return Container(
+              margin: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 80,
+                    child: Text(
+                      skillName,
                       style: typography.labelSmall.copyWith(
-                        color: colors.textSecondary,
+                        color: colors.textPrimary,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                ),
-              );
-            }),
-          ],
-        ),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: _SkillProgressBar(
+                      currentLevel: currentLevel,
+                      targetLevel: targetLevel,
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.sm),
+                  Text(
+                    'Lv.$currentLevel→$targetLevel',
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
       ),
     );
   }
@@ -477,95 +466,90 @@ class ChatCareerResultCard extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return SimpleBlurOverlay(
-      isBlurred: isBlurred || blurredSections.contains('strengthsAssessment'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.md,
-          vertical: DSSpacing.sm,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (strengths.isNotEmpty) ...[
-              Row(
-                children: [
-                  const Text('💪', style: TextStyle(fontSize: 16)),
-                  const SizedBox(width: DSSpacing.xs),
-                  Text(
-                    '강점',
-                    style: typography.labelMedium.copyWith(
-                      color: ObangseokColors.cheongMuted,
-                      fontWeight: FontWeight.w600,
-                    ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (strengths.isNotEmpty) ...[
+            Row(
+              children: [
+                const Text('💪', style: TextStyle(fontSize: 16)),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '강점',
+                  style: typography.labelMedium.copyWith(
+                    color: DSColors.info,
+                    fontWeight: FontWeight.w600,
                   ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: strengths
-                    .take(3)
-                    .map((s) => Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color:
-                                ObangseokColors.cheongMuted.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(DSRadius.sm),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.xs),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: strengths
+                  .take(3)
+                  .map((s) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: DSColors.info.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(DSRadius.sm),
+                        ),
+                        child: Text(
+                          s.toString(),
+                          style: typography.labelSmall.copyWith(
+                            color: DSColors.info,
                           ),
-                          child: Text(
-                            s.toString(),
-                            style: typography.labelSmall.copyWith(
-                              color: ObangseokColors.cheongMuted,
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              ),
-              const SizedBox(height: DSSpacing.sm),
-            ],
-            if (improvements.isNotEmpty) ...[
-              Row(
-                children: [
-                  const Text('🔧', style: TextStyle(fontSize: 16)),
-                  const SizedBox(width: DSSpacing.xs),
-                  Text(
-                    '개선점',
-                    style: typography.labelMedium.copyWith(
-                      color: ObangseokColors.hwangMuted,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: improvements
-                    .take(3)
-                    .map((i) => Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color:
-                                ObangseokColors.hwangMuted.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(DSRadius.sm),
-                          ),
-                          child: Text(
-                            i.toString(),
-                            style: typography.labelSmall.copyWith(
-                              color: ObangseokColors.hwangMuted,
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              ),
-            ],
+                        ),
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: DSSpacing.sm),
           ],
-        ),
+          if (improvements.isNotEmpty) ...[
+            Row(
+              children: [
+                const Text('🔧', style: TextStyle(fontSize: 16)),
+                const SizedBox(width: DSSpacing.xs),
+                Text(
+                  '개선점',
+                  style: typography.labelMedium.copyWith(
+                    color: DSColors.warning,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.xs),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: improvements
+                  .take(3)
+                  .map((i) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: DSColors.warning.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(DSRadius.sm),
+                        ),
+                        child: Text(
+                          i.toString(),
+                          style: typography.labelSmall.copyWith(
+                            color: DSColors.warning,
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -579,50 +563,47 @@ class ChatCareerResultCard extends ConsumerWidget {
     final shortTerm = actionPlan['shortTerm'] as List? ?? [];
     final longTerm = actionPlan['longTerm'] as List? ?? [];
 
-    return SimpleBlurOverlay(
-      isBlurred: isBlurred || blurredSections.contains('actionPlan'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.md,
-          vertical: DSSpacing.sm,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Text('🎯', style: TextStyle(fontSize: 24)),
-                const SizedBox(width: DSSpacing.sm),
-                Text(
-                  '액션 플랜',
-                  style: typography.labelLarge.copyWith(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🎯', style: TextStyle(fontSize: 24)),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                '액션 플랜',
+                style: typography.labelLarge.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
                 ),
-              ],
-            ),
-            const SizedBox(height: DSSpacing.sm),
-            if (immediate.isNotEmpty)
-              _ActionPlanItem(
-                label: '즉시',
-                items: immediate.take(2).cast<String>().toList(),
-                color: ObangseokColors.cheongMuted,
               ),
-            if (shortTerm.isNotEmpty)
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          if (immediate.isNotEmpty)
+            _ActionPlanItem(
+              label: '즉시',
+              items: immediate.take(2).cast<String>().toList(),
+              color: DSColors.info,
+            ),
+          if (shortTerm.isNotEmpty)
               _ActionPlanItem(
                 label: '단기',
                 items: shortTerm.take(2).cast<String>().toList(),
-                color: ObangseokColors.cheong,
+                color: DSColors.info,
               ),
             if (longTerm.isNotEmpty)
-              _ActionPlanItem(
-                label: '장기',
-                items: longTerm.take(2).cast<String>().toList(),
-                color: ObangseokColors.cheongDark,
-              ),
-          ],
-        ),
+            _ActionPlanItem(
+              label: '장기',
+              items: longTerm.take(2).cast<String>().toList(),
+              color: DSColors.info,
+            ),
+        ],
       ),
     );
   }
@@ -659,7 +640,7 @@ class ChatCareerResultCard extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: DSSpacing.xs),
             Text(
               luckyPeriods.take(2).join(', '),
               style: typography.bodySmall.copyWith(
@@ -682,7 +663,7 @@ class ChatCareerResultCard extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: DSSpacing.xs),
             Text(
               cautionPeriods.take(2).join(', '),
               style: typography.bodySmall.copyWith(
@@ -733,10 +714,10 @@ class ChatCareerResultCard extends ConsumerWidget {
 
   Color _getProbabilityColor(int prob) {
     // 동양화 스타일 - 톤다운 오방색
-    if (prob >= 75) return ObangseokColors.cheongMuted;
-    if (prob >= 50) return ObangseokColors.cheong;
-    if (prob >= 25) return ObangseokColors.hwangMuted;
-    return ObangseokColors.jeokMuted;
+    if (prob >= 75) return DSColors.info;
+    if (prob >= 50) return DSColors.info;
+    if (prob >= 25) return DSColors.warning;
+    return DSColors.error;
   }
 }
 
@@ -771,7 +752,7 @@ class _SkillProgressBar extends StatelessWidget {
               widthFactor: targetProgress,
               child: Container(
                 decoration: BoxDecoration(
-                  color: ObangseokColors.cheong.withValues(alpha: 0.3),
+                  color: DSColors.info.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -781,7 +762,7 @@ class _SkillProgressBar extends StatelessWidget {
               widthFactor: currentProgress,
               child: Container(
                 decoration: BoxDecoration(
-                  color: ObangseokColors.cheongMuted,
+                  color: DSColors.info,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -831,7 +812,7 @@ class _ActionPlanItem extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
               items.join(', '),

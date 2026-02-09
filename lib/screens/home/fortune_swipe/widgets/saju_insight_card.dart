@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/utils/hanja_utils.dart';
-import '../../../../core/design_system/tokens/ds_saju_colors.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// 🔮 사주 인사이트 카드
 class SajuInsightCard extends StatelessWidget {
@@ -60,7 +58,7 @@ class SajuInsightCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: context.isDark ? DSColors.surface : DSFortuneColors.hanjiCream,
+            color: context.isDark ? DSColors.surface : DSColors.backgroundSecondaryDark,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -73,7 +71,7 @@ class SajuInsightCard extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: context.isDark
                         ? [DSColors.surfaceSecondary, DSColors.surface] // 고유 색상(dark gradient start)
-                        : [DSFortuneColors.hanjiCream, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
+                        : [DSColors.backgroundSecondaryDark, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -108,8 +106,8 @@ class SajuInsightCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                context.isDark ? ObangseokColors.cheongMuted : ObangseokColors.cheong,
-                context.isDark ? ObangseokColors.cheongDark : ObangseokColors.cheongMuted,
+                context.isDark ? DSColors.info.withValues(alpha: 0.7) : DSColors.info,
+                context.isDark ? DSColors.info.withValues(alpha: 0.5) : DSColors.info.withValues(alpha: 0.7),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -131,14 +129,14 @@ class SajuInsightCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: context.colors.surface.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   FortuneTextCleaner.clean(sajuData['insight']?.toString() ??
                   '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.'),
                   style: context.labelLarge.copyWith(
-                    color: Colors.white,
+                    color: context.colors.textPrimary,
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -182,14 +180,14 @@ class _SajuPillar extends StatelessWidget {
             Text(
               hanjaLabel,
               style: context.labelMedium.copyWith(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: context.colors.textPrimary.withValues(alpha: 0.9),
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               koreanLabel,
               style: context.labelTiny.copyWith(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: context.colors.textPrimary.withValues(alpha: 0.6),
                 fontSize: 9, // 예외: 초소형 텍스트
               ),
             ),
@@ -200,7 +198,7 @@ class _SajuPillar extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: context.colors.surface.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: elementColor.withValues(alpha: 0.5),
@@ -225,7 +223,7 @@ class _SajuPillar extends StatelessWidget {
               Text(
                 value,
                 style: context.labelTiny.copyWith(
-                  color: Colors.white.withValues(alpha: 0.8),
+                  color: context.colors.textPrimary.withValues(alpha: 0.8),
                   fontWeight: FontWeight.w500,
                 ),
               ),

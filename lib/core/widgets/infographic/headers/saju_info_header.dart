@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../design_system/design_system.dart';
-import '../../../theme/typography_unified.dart';
 
 /// 사주 결과 인포그래픽 헤더
 ///

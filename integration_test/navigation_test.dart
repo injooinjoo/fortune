@@ -1,22 +1,22 @@
-/// Navigation Integration Test (Category B1)
-/// 네비게이션 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/navigation_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 10개:
-/// - NAV-001: 바텀 네비 홈 탭
-/// - NAV-002: 바텀 네비 운세 탭
-/// - NAV-003: 바텀 네비 트렌드 탭
-/// - NAV-004: 바텀 네비 프리미엄 탭
-/// - NAV-005: 바텀 네비 프로필 탭
-/// - NAV-006: 딥링크 운세 페이지
-/// - NAV-007: 딥링크 타로 페이지
-/// - NAV-008: 뒤로가기 스택 네비게이션
-/// - NAV-009: 홈 버튼으로 홈 복귀
-/// - NAV-010: iOS 스와이프 뒤로가기
+// Navigation Integration Test (Category B1)
+// 네비게이션 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/navigation_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 10개:
+// - NAV-001: 바텀 네비 홈 탭
+// - NAV-002: 바텀 네비 운세 탭
+// - NAV-003: 바텀 네비 트렌드 탭
+// - NAV-004: 바텀 네비 프리미엄 탭
+// - NAV-005: 바텀 네비 프로필 탭
+// - NAV-006: 딥링크 운세 페이지
+// - NAV-007: 딥링크 타로 페이지
+// - NAV-008: 뒤로가기 스택 네비게이션
+// - NAV-009: 홈 버튼으로 홈 복귀
+// - NAV-010: iOS 스와이프 뒤로가기
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

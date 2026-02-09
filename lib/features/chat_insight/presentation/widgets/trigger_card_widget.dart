@@ -25,7 +25,7 @@ class TriggerCardWidget extends StatelessWidget {
           // 헤더
           Row(
             children: [
-              Icon(Icons.format_quote, color: colors.accent, size: 20),
+              Icon(Icons.format_quote, color: colors.textSecondary, size: 20),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '주요 대화',
@@ -55,7 +55,7 @@ class TriggerCardWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(DSRadius.sm),
                           border: Border(
                             left: BorderSide(
-                              color: colors.accent.withValues(alpha: 0.6),
+                              color: colors.textTertiary,
                               width: 2,
                             ),
                           ),

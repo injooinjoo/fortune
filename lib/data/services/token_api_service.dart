@@ -92,7 +92,7 @@ class TokenApiService {
       if (e.response?.statusCode == 400 && 
           e.response?.data['code'] == 'INSUFFICIENT_TOKENS') {
         throw InsufficientTokensException(
-          e.response?.data['message'] ?? '복주머니가 부족합니다'
+          e.response?.data['message'] ?? '토큰가 부족합니다'
         );
       }
       throw _handleDioError(e);
@@ -264,14 +264,14 @@ class TokenApiService {
       if (e.response?.statusCode == 400 &&
           e.response?.data['code'] == 'ALREADY_CLAIMED') {
         throw AlreadyClaimedException(
-          e.response?.data['message'] ?? '이미 오늘의 무료 복주머니를 받으셨습니다'
+          e.response?.data['message'] ?? '이미 오늘의 무료 토큰를 받으셨습니다'
         );
       }
       throw _handleDioError(e);
     }
   }
 
-  // 광고 시청 후 토큰 보상 (영혼 획득으로 변경)
+  // 토큰 획득 (출석 체크, 공유 등)
   Future<TokenBalance> rewardTokensForAdView({
     required String userId,
     required String fortuneType,

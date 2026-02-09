@@ -1,15 +1,13 @@
-/// 전생 스토리 챕터 모델
+// 전생 스토리 챕터 모델
 class PastLifeChapter {
   final String title;
   final String content;
   final String emoji;
-  final bool isBlurred;
 
   const PastLifeChapter({
     required this.title,
     required this.content,
     required this.emoji,
-    this.isBlurred = false,
   });
 
   factory PastLifeChapter.fromJson(Map<String, dynamic> json) {
@@ -17,7 +15,6 @@ class PastLifeChapter {
       title: json['title'] ?? '',
       content: json['content'] ?? '',
       emoji: json['emoji'] ?? '📜',
-      isBlurred: json['isBlurred'] ?? false,
     );
   }
 
@@ -25,20 +22,17 @@ class PastLifeChapter {
         'title': title,
         'content': content,
         'emoji': emoji,
-        'isBlurred': isBlurred,
       };
 
   PastLifeChapter copyWith({
     String? title,
     String? content,
     String? emoji,
-    bool? isBlurred,
   }) {
     return PastLifeChapter(
       title: title ?? this.title,
       content: content ?? this.content,
       emoji: emoji ?? this.emoji,
-      isBlurred: isBlurred ?? this.isBlurred,
     );
   }
 }
@@ -83,12 +77,6 @@ class PastLifeResult {
   /// 생성 시간
   final DateTime createdAt;
 
-  /// 블러 상태 (프리미엄 미구매 시 true)
-  final bool isBlurred;
-
-  /// 블러 처리된 섹션 목록
-  final List<String> blurredSections;
-
   /// V2: 시나리오 ID
   final String scenarioId;
 
@@ -117,8 +105,6 @@ class PastLifeResult {
     required this.advice,
     required this.score,
     required this.createdAt,
-    this.isBlurred = false,
-    this.blurredSections = const [],
     this.scenarioId = '',
     this.scenarioCategory = '',
     this.scenarioTrait = '',
@@ -159,10 +145,6 @@ class PastLifeResult {
           : json['created_at'] != null
               ? DateTime.parse(json['created_at'])
               : DateTime.now(),
-      isBlurred: json['isBlurred'] ?? false,
-      blurredSections: json['blurredSections'] != null
-          ? List<String>.from(json['blurredSections'])
-          : [],
       scenarioId: json['scenarioId'] ?? json['scenario_id'] ?? '',
       scenarioCategory: json['scenarioCategory'] ?? json['scenario_category'] ?? '',
       scenarioTrait: json['scenarioTrait'] ?? json['scenario_trait'] ?? '',
@@ -185,8 +167,6 @@ class PastLifeResult {
         'advice': advice,
         'score': score,
         'createdAt': createdAt.toIso8601String(),
-        'isBlurred': isBlurred,
-        'blurredSections': blurredSections,
         'scenarioId': scenarioId,
         'scenarioCategory': scenarioCategory,
         'scenarioTrait': scenarioTrait,
@@ -208,8 +188,6 @@ class PastLifeResult {
     String? advice,
     int? score,
     DateTime? createdAt,
-    bool? isBlurred,
-    List<String>? blurredSections,
     String? scenarioId,
     String? scenarioCategory,
     String? scenarioTrait,
@@ -229,8 +207,6 @@ class PastLifeResult {
       advice: advice ?? this.advice,
       score: score ?? this.score,
       createdAt: createdAt ?? this.createdAt,
-      isBlurred: isBlurred ?? this.isBlurred,
-      blurredSections: blurredSections ?? this.blurredSections,
       scenarioId: scenarioId ?? this.scenarioId,
       scenarioCategory: scenarioCategory ?? this.scenarioCategory,
       scenarioTrait: scenarioTrait ?? this.scenarioTrait,

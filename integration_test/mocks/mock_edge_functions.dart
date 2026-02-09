@@ -1,12 +1,12 @@
-/// Mock Edge Functions for Integration Tests
-/// Edge Function Mock - 실제 API 호출 없이 운세 기능 테스트
-///
-/// 사용법:
-/// ```dart
-/// final mockApi = MockEdgeFunctions();
-/// mockApi.setNextResponse(MockApiResponse.success(mockDailyFortune));
-/// final result = await mockApi.callFunction('fortune-daily', {...});
-/// ```
+// Mock Edge Functions for Integration Tests
+// Edge Function Mock - 실제 API 호출 없이 운세 기능 테스트
+//
+// 사용법:
+// ```dart
+// final mockApi = MockEdgeFunctions();
+// mockApi.setNextResponse(MockApiResponse.success(mockDailyFortune));
+// final result = await mockApi.callFunction('fortune-daily', {...});
+// ```
 
 import 'dart:async';
 import 'dart:math';
@@ -293,7 +293,7 @@ class MockEdgeFunctions {
       'love_score': 40 + _random.nextInt(60),
       'friendship_score': 40 + _random.nextInt(60),
       'work_score': 40 + _random.nextInt(60),
-      'summary': '두 분의 궁합은 ${score}%입니다.',
+      'summary': '두 분의 궁합은 $score%입니다.',
       'strengths': ['서로를 이해하는 능력', '의사소통'],
       'challenges': ['가끔의 의견 충돌'],
       'advice': '서로의 차이를 존중하세요.',

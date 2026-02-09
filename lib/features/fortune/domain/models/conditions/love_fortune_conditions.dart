@@ -80,7 +80,7 @@ class LoveFortuneConditions extends FortuneConditions {
     );
   }
 
-  /// Map<String, dynamic>에서 생성 (기존 입력 데이터 호환)
+  /// `Map<String, dynamic>`에서 생성 (기존 입력 데이터 호환)
   ///
   /// love_fortune_main_page의 _loveFortuneData를 변환할 때 사용
   factory LoveFortuneConditions.fromInputData(Map<String, dynamic> data) {

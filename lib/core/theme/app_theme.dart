@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_theme_extensions.dart';
-import '../design_system/tokens/ds_obangseok_colors.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 
 class AppTheme {
@@ -57,8 +56,8 @@ class AppTheme {
           surface: Color(0xFFF3F4F6),
           // background is deprecated, use surface instead
         ),
-        // 한지 배경색 (미색) - 오방색 디자인 철학 적용
-        scaffoldBackgroundColor: ObangseokColors.misaek,
+        // ChatGPT 스타일 배경색 (라이트모드: 화이트)
+        scaffoldBackgroundColor: DSColors.backgroundDark,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -147,8 +146,8 @@ class AppTheme {
           surface: DSColors.textPrimaryDark,
           // background is deprecated, use surface instead
         ),
-        // 다크모드 한지 배경색 (흑색) - 오방색 디자인 철학 적용
-        scaffoldBackgroundColor: ObangseokColors.heukLight,
+        // ChatGPT 스타일 다크모드 배경색 (다크모드: 블랙)
+        scaffoldBackgroundColor: DSColors.background,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,

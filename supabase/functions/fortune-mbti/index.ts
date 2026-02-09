@@ -73,8 +73,6 @@ interface MbtiFortuneResponse {
     challenges: string[];
     mbtiDescription: string;
     timestamp: string;
-    isBlurred?: boolean;
-    blurredSections?: string[];
   };
   error?: string;
 }
@@ -562,16 +560,7 @@ serve(async (req) => {
 
     console.log(`[MBTI-v2] Category: ${category}, Insight: ${categoryInsight.title}`)
 
-    // ==================== 6. 블러 처리 ====================
-    const isBlurred = !isPremium
-    // 점수만 무료, 텍스트는 프리미엄
-    const blurredSections = isBlurred
-      ? ['dimensions.fortune', 'dimensions.tip', 'loveFortune', 'careerFortune', 'moneyFortune', 'healthFortune', 'advice', 'compatibility', 'cognitiveStrengths', 'challenges', 'categoryInsight.content', 'categoryInsight.tips']
-      : []
-
-    console.log(`[MBTI-v2] isPremium: ${isPremium}, isBlurred: ${isBlurred}`)
-
-    // ==================== 7. 응답 구성 ====================
+    // ==================== 6. 응답 구성 ====================
     const result = {
       // ✅ 표준화된 필드명: score, content, summary, advice
       fortuneType: 'mbti',
@@ -603,9 +592,7 @@ serve(async (req) => {
       cognitiveStrengths: mbtiCharacteristics.cognitiveStrengths,
       challenges: mbtiCharacteristics.challenges,
       mbtiDescription: mbtiCharacteristics.description,
-      timestamp: new Date().toISOString(),
-      isBlurred,
-      blurredSections,
+      timestamp: new Date().toISOString()
     }
 
     console.log(`[MBTI-v2] ✅ ${upperMbti} 결과 생성 완료 - 점수: ${overallScore}`)

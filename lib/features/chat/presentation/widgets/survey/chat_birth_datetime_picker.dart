@@ -231,8 +231,8 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
               child: ElevatedButton(
                 onPressed: _onConfirm,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.accentSecondary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colors.ctaBackground,
+                  foregroundColor: colors.ctaForeground,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(DSRadius.md),
@@ -241,7 +241,7 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
                 child: Text(
                   _buildConfirmText(),
                   style: typography.labelMedium.copyWith(
-                    color: Colors.white,
+                    color: colors.ctaForeground,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -407,7 +407,7 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
       decoration: BoxDecoration(
         border: Border.symmetric(
           horizontal: BorderSide(
-            color: colors.accentSecondary.withValues(alpha: 0.3),
+            color: colors.textPrimary.withValues(alpha: 0.2),
             width: 1,
           ),
         ),

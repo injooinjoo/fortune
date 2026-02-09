@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../core/design_system/tokens/ds_saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/ji_jang_gan_data.dart';
@@ -85,7 +83,7 @@ class SajuPillarTablePro extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: DSSpacing.xs),
             Text(
               '四柱命式',
               style: context.labelSmall.copyWith(
@@ -481,7 +479,7 @@ class SajuPillarTablePro extends StatelessWidget {
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: DSSpacing.xxs),
         // 오행 태그
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
@@ -544,7 +542,7 @@ class SajuPillarTablePro extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: DSSpacing.xxs),
             // 오행 태그
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
@@ -725,7 +723,7 @@ class SajuPillarTablePro extends StatelessWidget {
                         : DSColors.textSecondary,
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: DSSpacing.xs + 2),
                 Text(
                   '$stemName($stemHanja)',
                   style: context.bodyMedium.copyWith(
@@ -733,7 +731,7 @@ class SajuPillarTablePro extends StatelessWidget {
                     color: color,
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: DSSpacing.xs + 2),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 6,

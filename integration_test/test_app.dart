@@ -1,10 +1,10 @@
-/// Test App Bootstrap
-/// Integration Test를 위한 앱 초기화 모듈
-///
-/// 주요 기능:
-/// - 테스트 모드 환경 변수 로드
-/// - Mock provider overrides 적용
-/// - Firebase/Social SDK 초기화 스킵
+// Test App Bootstrap
+// Integration Test를 위한 앱 초기화 모듈
+//
+// 주요 기능:
+// - 테스트 모드 환경 변수 로드
+// - Mock provider overrides 적용
+// - Firebase/Social SDK 초기화 스킵
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
@@ -35,7 +35,7 @@ Future<void> initializeTestApp({
 
   // Load test environment
   try {
-    await dotenv.dotenv.load(fileName: ".env.test");
+    await dotenv.dotenv.load(fileName: '.env.test');
     debugPrint('🧪 [TEST] Test environment loaded');
   } catch (e) {
     debugPrint('🧪 [TEST] Failed to load .env.test, using defaults: $e');

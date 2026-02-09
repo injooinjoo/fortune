@@ -31,7 +31,7 @@ class _RelationContextCardState extends State<RelationContextCard> {
           // 헤더
           Row(
             children: [
-              Icon(Icons.tune, color: colors.accent, size: 20),
+              Icon(Icons.tune, color: colors.textSecondary, size: 20),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '관계 설정',
@@ -58,15 +58,15 @@ class _RelationContextCardState extends State<RelationContextCard> {
                 onSelected: (_) =>
                     setState(() => _relationType = type),
                 selectedColor:
-                    colors.accent.withValues(alpha: 0.2),
+                    colors.ctaBackground.withValues(alpha: 0.15),
                 backgroundColor: colors.surface,
                 labelStyle: typography.labelSmall.copyWith(
                   color:
-                      isSelected ? colors.accent : colors.textSecondary,
+                      isSelected ? colors.textPrimary : colors.textSecondary,
                 ),
                 side: BorderSide(
                   color: isSelected
-                      ? colors.accent
+                      ? colors.ctaBackground
                       : colors.textTertiary.withValues(alpha: 0.3),
                 ),
               );
@@ -89,15 +89,15 @@ class _RelationContextCardState extends State<RelationContextCard> {
                 onSelected: (_) =>
                     setState(() => _dateRange = range),
                 selectedColor:
-                    colors.accent.withValues(alpha: 0.2),
+                    colors.ctaBackground.withValues(alpha: 0.15),
                 backgroundColor: colors.surface,
                 labelStyle: typography.labelSmall.copyWith(
                   color:
-                      isSelected ? colors.accent : colors.textSecondary,
+                      isSelected ? colors.textPrimary : colors.textSecondary,
                 ),
                 side: BorderSide(
                   color: isSelected
-                      ? colors.accent
+                      ? colors.ctaBackground
                       : colors.textTertiary.withValues(alpha: 0.3),
                 ),
               );
@@ -120,15 +120,15 @@ class _RelationContextCardState extends State<RelationContextCard> {
                 onSelected: (_) =>
                     setState(() => _intensity = intensity),
                 selectedColor:
-                    colors.accent.withValues(alpha: 0.2),
+                    colors.ctaBackground.withValues(alpha: 0.15),
                 backgroundColor: colors.surface,
                 labelStyle: typography.labelSmall.copyWith(
                   color:
-                      isSelected ? colors.accent : colors.textSecondary,
+                      isSelected ? colors.textPrimary : colors.textSecondary,
                 ),
                 side: BorderSide(
                   color: isSelected
-                      ? colors.accent
+                      ? colors.ctaBackground
                       : colors.textTertiary.withValues(alpha: 0.3),
                 ),
               );

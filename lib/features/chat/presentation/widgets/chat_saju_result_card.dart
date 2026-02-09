@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-// ignore: unused_import
-import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/widgets/simple_blur_overlay.dart';
-import '../../../../services/ad_service.dart';
-import '../../../../core/services/fortune_haptic_service.dart';
-import '../../../../core/utils/fortune_completion_helper.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/saju_info_header.dart';
 import '../../../fortune/presentation/widgets/saju/saju_widgets.dart';
@@ -25,15 +19,11 @@ import '../../../fortune/presentation/widgets/saju_element_chart.dart';
 class ChatSajuResultCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> sajuData;
   final Map<String, dynamic>? fortuneResult;
-  final bool isBlurred;
-  final List<String> blurredSections;
 
   const ChatSajuResultCard({
     super.key,
     required this.sajuData,
     this.fortuneResult,
-    this.isBlurred = false,
-    this.blurredSections = const [],
   });
 
   @override
@@ -44,9 +34,6 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
     with TickerProviderStateMixin {
   // 애니메이션 컨트롤러 (오행 차트용)
   late AnimationController _animationController;
-
-  // 광고 시청으로 블러 해제 상태
-  bool _isUnblurred = false;
 
   // 섹션별 확장 상태
   final Map<String, bool> _expandedSections = {
@@ -78,12 +65,6 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
   @override
   void didUpdateWidget(covariant ChatSajuResultCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
-    if (oldWidget.isBlurred != widget.isBlurred && !widget.isBlurred) {
-      setState(() {
-        _isUnblurred = true;
-      });
-    }
   }
 
   /// 오행 균형 데이터 추출
@@ -317,8 +298,6 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
   }) {
     final colors = context.colors;
     final isExpanded = _expandedSections[key] ?? false;
-    final isBlurred =
-        widget.isBlurred || widget.blurredSections.contains(key);
 
     return Column(
       children: [
@@ -379,12 +358,9 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
         // 섹션 내용
         AnimatedCrossFade(
           firstChild: const SizedBox.shrink(),
-          secondChild: SimpleBlurOverlay(
-            isBlurred: isBlurred && !_isUnblurred,
-            child: Padding(
-              padding: const EdgeInsets.all(DSSpacing.sm),
-              child: child,
-            ),
+          secondChild: Padding(
+            padding: const EdgeInsets.all(DSSpacing.sm),
+            child: child,
           ),
           crossFadeState:
               isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,

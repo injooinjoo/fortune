@@ -135,15 +135,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabaseClient, 'avoid-people', personalizedResult.overallScore || 70)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // 블러 상태 적용
-      if (!isPremium) {
-        resultWithPercentile.isBlurred = true
-        resultWithPercentile.blurredSections = ['avoid_surnames', 'detailed_advice', 'timing_analysis']
-      } else {
-        resultWithPercentile.isBlurred = false
-        resultWithPercentile.blurredSections = []
-      }
-
       return new Response(
         JSON.stringify({
           success: true,
@@ -440,28 +431,6 @@ ${environment === '모임' ? '- 모임: 술자리 주의, 충동적 약속 경�
     console.log(`[AvoidPeople]   ⏰ 경계시간: ${fortuneData.cautionTimes?.length || 0}개`)
     console.log(`[AvoidPeople]   🧭 경계방향: ${fortuneData.cautionDirections?.length || 0}개`)
 
-    // ✅ Blur 로직 적용 (실제 데이터 저장, UnifiedBlurWrapper가 블러 처리)
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? [
-          'cautionPeople',
-          'cautionObjects',
-          'cautionColors',
-          'cautionNumbers',
-          'cautionAnimals',
-          'cautionPlaces',
-          'cautionTimes',
-          'cautionDirections',
-          'luckyElements',
-          'timeStrategy',
-          'dailyAdvice'
-        ]
-      : []
-
-    console.log(`[AvoidPeople] 💎 Premium 상태: ${isPremium ? '프리미엄' : '일반'}`)
-    console.log(`[AvoidPeople] 🔒 Blur 적용: ${isBlurred ? 'YES' : 'NO'}`)
-    console.log(`[AvoidPeople] 🔒 Blurred Sections: ${blurredSections.join(', ')}`)
-
     const result = {
       // ✅ 표준화된 필드명: score, content, summary, advice
       fortuneType: 'avoid-people',
@@ -500,9 +469,7 @@ ${environment === '모임' ? '- 모임: 술자리 주의, 충동적 약속 경�
       },
       dailyAdvice: fortuneData.dailyAdvice || '오늘 하루 경계대상에 주의하세요.',
 
-      timestamp: new Date().toISOString(),
-      isBlurred,
-      blurredSections
+      timestamp: new Date().toISOString()
     }
 
     console.log(`[AvoidPeople] ✅ 최종 결과 구조화 완료 (8개 카테고리 + 행운요소)`)

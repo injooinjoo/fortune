@@ -115,22 +115,22 @@ class _CelebrityCardItem extends StatelessWidget {
     required this.compatibility,
   });
 
-  /// 전통 오방색 기반 궁합 색상 - 변경 금지
+  /// 궁합 색상
   Color get _compatibilityColor {
-    if (compatibility >= 80) return const Color(0xFF2E8B57); // 오방색: 목(木) - 최상
-    if (compatibility >= 60) return const Color(0xFFDAA520); // 오방색: 토(土) - 양호
-    if (compatibility >= 40) return const Color(0xFF1E3A5F); // 오방색: 수(水) - 보통
-    return const Color(0xFFDC143C); // 오방색: 화(火) - 주의
+    if (compatibility >= 80) return DSColors.success; // 최상
+    if (compatibility >= 60) return DSColors.warning; // 양호
+    if (compatibility >= 40) return DSColors.info; // 보통
+    return DSColors.error; // 주의
   }
 
-  /// 이름 첫 글자로 아바타 배경색 결정 (전통 오방색) - 변경 금지
+  /// 이름 첫 글자로 아바타 배경색 결정
   Color get _avatarColor {
-    final colors = [
-      const Color(0xFF2E8B57), // 오방색: 목(木) - 청록
-      const Color(0xFFDC143C), // 오방색: 화(火) - 진홍
-      const Color(0xFFDAA520), // 오방색: 토(土) - 금황
-      const Color(0xFFC0A062), // 오방색: 금(金) - 금색
-      const Color(0xFF1E3A5F), // 오방색: 수(水) - 남색
+    const colors = [
+      DSColors.success, // 청록
+      DSColors.error, // 진홍
+      DSColors.warning, // 금황
+      DSColors.accentSecondary, // 금색
+      DSColors.info, // 남색
     ];
     return colors[name.hashCode.abs() % colors.length];
   }

@@ -1,5 +1,5 @@
-/// Signup Screen - Widget Test
-/// 회원가입 화면 UI 테스트
+// Signup Screen - Widget Test
+// 회원가입 화면 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

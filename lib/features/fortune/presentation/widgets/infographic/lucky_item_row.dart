@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/tokens/ds_spacing.dart';
 import 'package:fortune/core/design_system/tokens/ds_radius.dart';
-import 'package:fortune/core/design_system/tokens/ds_luck_colors.dart';
+import 'package:fortune/core/design_system/tokens/ds_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
 
 /// 행운 아이템 행 위젯
@@ -72,23 +72,23 @@ class _LuckyItemChip extends StatelessWidget {
   Color _getTypeColor(LuckyItemType type) {
     switch (type) {
       case LuckyItemType.color:
-        return DSLuckColors.categoryColor; // 색상 (보라)
+        return DSColors.accentSecondary; // 색상 (보라)
       case LuckyItemType.food:
-        return DSLuckColors.categoryFood; // 음식 (주황)
+        return DSColors.warning; // 음식 (주황)
       case LuckyItemType.number:
-        return DSLuckColors.categoryNumber; // 숫자 (금색)
+        return DSColors.success; // 숫자 (금색)
       case LuckyItemType.direction:
-        return DSLuckColors.categoryDirection; // 방향 (녹색)
+        return DSColors.info; // 방향 (녹색)
       case LuckyItemType.time:
-        return DSLuckColors.wealthLuck; // 시간 (금색)
+        return DSColors.warning; // 시간 (금색)
       case LuckyItemType.item:
-        return DSLuckColors.categoryFashion; // 아이템 (분홍)
+        return DSColors.info; // 아이템 (분홍)
       case LuckyItemType.place:
-        return DSLuckColors.categoryTravel; // 장소 (청색)
+        return DSColors.accentSecondary; // 장소 (청색)
       case LuckyItemType.animal:
-        return DSLuckColors.loveLuck; // 동물 (분홍)
+        return DSColors.error; // 동물 (분홍)
       case LuckyItemType.custom:
-        return DSLuckColors.fortuneGold; // 커스텀 (금색)
+        return DSColors.warning; // 커스텀 (금색)
     }
   }
 
@@ -191,7 +191,7 @@ class _ColorChip extends StatelessWidget {
         color: color,
         shape: BoxShape.circle,
         border: Border.all(
-          color: DSLuckColors.categoryColor.withValues(alpha: 0.3),
+          color: DSColors.accentSecondary.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -459,23 +459,23 @@ class _LuckyItemCard extends StatelessWidget {
   Color _getTypeColor(LuckyItemType type) {
     switch (type) {
       case LuckyItemType.color:
-        return DSLuckColors.categoryColor; // 색상 (보라)
+        return DSColors.accentSecondary; // 색상 (보라)
       case LuckyItemType.food:
-        return DSLuckColors.categoryFood; // 음식 (주황)
+        return DSColors.warning; // 음식 (주황)
       case LuckyItemType.number:
-        return DSLuckColors.categoryNumber; // 숫자 (금색)
+        return DSColors.success; // 숫자 (금색)
       case LuckyItemType.direction:
-        return DSLuckColors.categoryDirection; // 방향 (녹색)
+        return DSColors.info; // 방향 (녹색)
       case LuckyItemType.time:
-        return DSLuckColors.wealthLuck; // 시간 (금색)
+        return DSColors.warning; // 시간 (금색)
       case LuckyItemType.item:
-        return DSLuckColors.categoryFashion; // 아이템 (분홍)
+        return DSColors.info; // 아이템 (분홍)
       case LuckyItemType.place:
-        return DSLuckColors.categoryTravel; // 장소 (청색)
+        return DSColors.accentSecondary; // 장소 (청색)
       case LuckyItemType.animal:
-        return DSLuckColors.loveLuck; // 동물 (분홍)
+        return DSColors.error; // 동물 (분홍)
       case LuckyItemType.custom:
-        return DSLuckColors.fortuneGold; // 커스텀 (금색)
+        return DSColors.warning; // 커스텀 (금색)
     }
   }
 

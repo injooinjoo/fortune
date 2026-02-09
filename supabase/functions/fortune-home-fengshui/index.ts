@@ -276,12 +276,6 @@ ${address} 지역의 지형적 특성과 ${homeType || '일반 주거'}의 구�
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
 
-      // Blur 로직 적용
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['baesan_imsu', 'yangtaek_analysis', 'interior_layout', 'energy_flow', 'defects_and_solutions', 'lucky_elements', 'seasonal_advice']
-        : []
-
       // 응답 데이터 구조화
       fortuneData = {
         // ✅ 표준화된 필드명: score, content, summary, advice
@@ -369,8 +363,6 @@ ${address} 지역의 지형적 특성과 ${homeType || '일반 주거'}의 구�
         },
 
         timestamp: new Date().toISOString(),
-        isBlurred,
-        blurredSections,
         llm_provider: response.provider,
         llm_model: response.model,
         llm_latency: response.latency

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../design_system.dart';
-import '../../tokens/ds_fortune_colors.dart';
 
 /// Traditional vintage banner-style chat bubble widget
 ///
@@ -120,9 +119,9 @@ class CloudBubble extends StatelessWidget {
       ),
     );
 
-    // Add corner decorations if asset provided
-    if (cornerAsset != null) {
-      final brdColor = borderColor ?? DSFortuneColors.getBubbleBorder(isDark);
+    // Add corner decorations if asset provided and border is visible
+    final brdColor = borderColor ?? DSColors.getBorder(isDark ? Brightness.dark : Brightness.light);
+    if (cornerAsset != null && brdColor != Colors.transparent) {
 
       bubble = Stack(
         clipBehavior: Clip.none,

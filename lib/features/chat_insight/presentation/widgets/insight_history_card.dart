@@ -42,7 +42,7 @@ class InsightHistoryCard extends StatelessWidget {
                       vertical: DSSpacing.xxs,
                     ),
                     decoration: BoxDecoration(
-                      color: colors.accent.withValues(alpha: 0.1),
+                      color: colors.backgroundTertiary,
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                     ),
                     child: Row(
@@ -51,13 +51,13 @@ class InsightHistoryCard extends StatelessWidget {
                         Icon(
                           _relationIcon(meta.relationType),
                           size: 14,
-                          color: colors.accent,
+                          color: colors.textSecondary,
                         ),
                         const SizedBox(width: DSSpacing.xxs),
                         Text(
                           _relationLabel(meta.relationType),
                           style: typography.labelSmall.copyWith(
-                            color: colors.accent,
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -169,7 +169,7 @@ class _MiniPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = value >= 70
-        ? colors.accent
+        ? colors.success
         : value >= 40
             ? colors.accentSecondary
             : colors.error;

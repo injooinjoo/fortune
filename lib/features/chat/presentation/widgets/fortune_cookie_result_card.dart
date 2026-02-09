@@ -4,8 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../domain/entities/fortune.dart';
 
 /// 포춘쿠키 결과 인라인 카드 (프리미엄 버전)
@@ -47,7 +45,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
   // 골드 액센트 색상 (프리미엄 디자인)
   Color get _goldenAccent {
     final isDark = context.isDark;
-    return isDark ? ObangseokColors.hwangLight : ObangseokColors.hwang;
+    return isDark ? DSColors.warning : DSColors.warning;
   }
 
   // 실제 행운 색상 (행운 컬러 칩에 사용)
@@ -56,7 +54,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
       final hex = _luckyColorHex.replaceFirst('#', '');
       return Color(int.parse('FF$hex', radix: 16));
     } catch (e) {
-      return ObangseokColors.hwang;
+      return DSColors.warning;
     }
   }
 
@@ -85,12 +83,12 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
           end: Alignment.bottomRight,
           colors: isDark
               ? [
-                  ObangseokColors.meok,
-                  ObangseokColors.meokLight,
+                  DSColors.background,
+                  DSColors.backgroundSecondary,
                 ]
               : [
-                  ObangseokColors.misaek,
-                  ObangseokColors.misaekDark,
+                  DSColors.backgroundSecondary,
+                  DSColors.background,
                 ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -217,7 +215,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
                 Text(
                   '$_cookieTypeName 쿠키',
                   style: context.heading4.copyWith(
-                    color: isDark ? Colors.white : ObangseokColors.hwangDark,
+                    color: isDark ? Colors.white : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -243,7 +241,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
         const SizedBox(width: 8),
         // 좋아요 + 공유 버튼
         FortuneActionButtons(
-          contentId: widget.fortune.id ?? 'cookie_${DateTime.now().millisecondsSinceEpoch}',
+          contentId: widget.fortune.id,
           contentType: 'cookie',
           fortuneType: 'fortuneCookie',
           shareTitle: '$_cookieTypeName 포춘쿠키',
@@ -334,7 +332,7 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
           Text(
             _message,
             style: context.bodyLarge.copyWith(
-              color: isDark ? Colors.white : ObangseokColors.hwangDark,
+              color: isDark ? Colors.white : DSColors.textPrimary,
               height: 1.7,
               fontWeight: FontWeight.w500,
             ),

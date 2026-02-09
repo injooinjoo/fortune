@@ -78,9 +78,9 @@ class _HelpPageState extends ConsumerState<HelpPage> {
               children: [
                 _buildFAQItem(
                   context,
-                  question: '복주머니는 어떻게 사용하나요?',
+                  question: '토큰는 어떻게 사용하나요?',
                   answer:
-                      '복주머니는 인사이트를 확인할 때 사용됩니다. 일반 인사이트는 1개, 프리미엄 인사이트는 2-3개가 소모됩니다. 매일 무료로 3개의 복주머니를 받을 수 있으며, 추가로 필요한 경우 복주머니를 구매하실 수 있습니다.',
+                      '토큰는 인사이트를 확인할 때 사용됩니다. 무료 인사이트 5종은 토큰 없이 이용 가능하며, 그 외 인사이트는 3~7개의 토큰이 소모됩니다. 매일 출석 체크로 2개의 토큰를 받을 수 있습니다.',
                 ),
                 _buildFAQItem(
                   context,
@@ -90,9 +90,9 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                 ),
                 _buildFAQItem(
                   context,
-                  question: '프리미엄 구독의 혜택은 무엇인가요?',
+                  question: '구독의 혜택은 무엇인가요?',
                   answer:
-                      '프리미엄 구독 시 모든 인사이트를 무제한으로 확인할 수 있으며, 광고 없이 서비스를 이용할 수 있습니다. 또한 프리미엄 전용 콘텐츠와 특별한 기능들을 이용하실 수 있습니다.',
+                      '구독 시 매월 50개의 토큰이 자동으로 충전됩니다. 구독자도 인사이트 이용 시 토큰이 소모되며, 토큰이 부족할 경우 추가 구매가 가능합니다.',
                 ),
                 _buildFAQItem(
                   context,
@@ -150,7 +150,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
               children: [
                 _buildTipItem(
                   context,
-                  '매일 접속하면 무료 복주머니를 받을 수 있어요!',
+                  '매일 접속하면 무료 토큰를 받을 수 있어요!',
                   Icons.toll,
                 ),
                 _buildTipItem(

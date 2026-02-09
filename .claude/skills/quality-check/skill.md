@@ -49,8 +49,7 @@ dart format --set-exit-if-changed .
 |------|----------|
 | 색상 | 하드코딩 Color() 금지 |
 | 폰트 | 하드코딩 fontSize 금지 |
-| 타이포 | TossDesignSystem.heading 금지 (deprecated) |
-| 블러 | ImageFilter.blur 금지 |
+| 타이포 | 하드코딩 TextStyle 금지 → context.heading1 사용 |
 | 아이콘 | Icons.arrow_back 금지 |
 
 ### 5. 앱스토어 규정
@@ -75,9 +74,6 @@ grep -rn "Color(0x" lib/ --include="*.dart"
 
 # 디자인 - 하드코딩 fontSize
 grep -rn "fontSize:" lib/ --include="*.dart"
-
-# 디자인 - 블러 직접 구현
-grep -rn "ImageFilter.blur" lib/
 
 # 앱스토어 - 금지어
 grep -rn "'운세'" lib/ --include="*.dart"
@@ -115,7 +111,6 @@ grep -rn "'운세'" lib/ --include="*.dart"
    - 하드코딩 fontSize: ❌ 2개 발견
      • lib/features/fortune/widgets/card.dart:42
      • lib/features/chat/widgets/message.dart:15
-   - 블러 패턴: ✅
    - 아이콘: ✅
 
 ✅ 앱스토어 규정

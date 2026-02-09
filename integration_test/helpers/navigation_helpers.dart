@@ -1,12 +1,12 @@
-/// Navigation Helpers for Integration Tests
-/// GoRouter 기반 네비게이션 테스트 유틸리티
-///
-/// 사용법:
-/// ```dart
-/// await NavigationHelpers.goToHome(tester);
-/// await NavigationHelpers.goToFortuneList(tester);
-/// await NavigationHelpers.tapBottomNavTab(tester, NavTab.fortune);
-/// ```
+// Navigation Helpers for Integration Tests
+// GoRouter 기반 네비게이션 테스트 유틸리티
+//
+// 사용법:
+// ```dart
+// await NavigationHelpers.goToHome(tester);
+// await NavigationHelpers.goToFortuneList(tester);
+// await NavigationHelpers.tapBottomNavTab(tester, NavTab.fortune);
+// ```
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

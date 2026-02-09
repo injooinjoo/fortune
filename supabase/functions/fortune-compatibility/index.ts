@@ -278,12 +278,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabase, 'compatibility', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // Blur 처리 (Premium 여부)
-      resultWithPercentile.isBlurred = !isPremium
-      resultWithPercentile.blurredSections = !isPremium
-        ? ['detailed_scores', 'analysis', 'advice']
-        : []
-
       return new Response(JSON.stringify({ success: true, data: resultWithPercentile }), {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -413,14 +407,6 @@ serve(async (req) => {
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
 
-      // ✅ Premium 여부에 따라 Blur 처리
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['detailed_scores', 'analysis', 'advice']  // Flutter UI의 sectionKey와 일치
-        : []
-
-      console.log(`[Compatibility] 🔐 Blur 처리 - isPremium: ${isPremium}, isBlurred: ${isBlurred}, blurredSections: ${blurredSections.length}개`)
-
       // 조언 데이터 처리 (List → String 변환)
       const adviceData = parsedResponse.조언 || parsedResponse.advice || ['서로 배려', '대화 자주', '함께 시간']
       const adviceString = Array.isArray(adviceData)
@@ -505,8 +491,6 @@ serve(async (req) => {
           message: seasonCompat
         },
         timestamp: new Date().toISOString(),
-        isBlurred, // ✅ Blur 상태
-        blurredSections, // ✅ Blur 처리된 섹션 목록
       }
 
       console.log(`[Compatibility] ✅ 응답 데이터 구조화 완료`)
@@ -526,7 +510,6 @@ serve(async (req) => {
       console.log(`[Compatibility]     - 운명수: ${fortuneData.destiny_number.number}`)
       console.log(`[Compatibility]     - 나이차: ${fortuneData.age_difference.years}살`)
       console.log(`[Compatibility]     - 계절: ${fortuneData.season.person1} × ${fortuneData.season.person2}`)
-      console.log(`[Compatibility]   🔐 Blur: ${isBlurred}, Sections: ${blurredSections.length}개`)
 
       // 결과 캐싱
       await supabase

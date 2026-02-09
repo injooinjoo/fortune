@@ -1611,12 +1611,6 @@ serve(async (req) => {
     }
 
     // 운세 내용 생성 (동적)
-    // ✅ 서버는 항상 실제 데이터 생성, 블러는 클라이언트에서만 처리
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['categories', 'personalActions', 'sajuInsight', 'fortuneSummary', 'lucky_outfit', 'celebrities_same_day', 'celebrities_similar_saju', 'lucky_numbers', 'age_fortune', 'daily_predictions', 'ai_insight', 'ai_tips', 'advice', 'caution', 'special_tip']
-      : []
-
     const dynamicSummary = generateDynamicSummary()
     const dynamicAdvice = generateDynamicAdvice()
 
@@ -1669,8 +1663,6 @@ serve(async (req) => {
       ai_insight: generateAIInsight(),
       ai_tips: generateAITips(),
       share_count: generateShareCount(),
-      isBlurred, // ✅ 블러 상태 (클라이언트 UI 참고용)
-      blurredSections, // ✅ 블러된 섹션 목록 (클라이언트 UI 참고용)
 
       // 🔥 갓생 지수 스타일 콘텐츠 (MZ 트렌드)
       godlife: {

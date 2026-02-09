@@ -1,5 +1,5 @@
-/// 각 칩의 fortuneType을 카테고리에 매핑
-/// recommendation_chip.dart의 30개 defaultChips 기준
+// 각 칩의 fortuneType을 카테고리에 매핑
+// recommendation_chip.dart의 30개 defaultChips 기준
 const Map<String, String> chipToCategoryMap = {
   // ============ lifestyle (일상/시간 기반) ============
   'daily': 'lifestyle',

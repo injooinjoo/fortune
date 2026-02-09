@@ -334,15 +334,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabaseClient, 'blind-date', personalizedResult.score || 70)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // 블러 상태 적용
-      if (!isPremium) {
-        resultWithPercentile.isBlurred = true
-        resultWithPercentile.blurredSections = ['conversation_tips', 'hidden_signals', 'success_strategy']
-      } else {
-        resultWithPercentile.isBlurred = false
-        resultWithPercentile.blurredSections = []
-      }
-
       return new Response(
         JSON.stringify({ success: true, data: resultWithPercentile, cohortHit: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
@@ -555,12 +546,6 @@ ${photoAnalysisText}${chatAnalysisText}
         };
       }
 
-      // ✅ Blur 로직 적용
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['successPrediction', 'firstImpressionTips', 'conversationTopics', 'outfitAdvice', 'locationAdvice', 'dosList', 'dontsList', 'finalMessage']
-        : []
-
       const result = {
         // ✅ 표준화된 필드명: score, content, summary, advice
         score: fortuneData.score || fortuneData.overallScore || 75,
@@ -591,8 +576,6 @@ ${photoAnalysisText}${chatAnalysisText}
         hasPhotoAnalysis: !!photoAnalysisResult || !!photoAnalysis,
         hasChatAnalysis: !!chatAnalysisResult,
         timestamp: new Date().toISOString(),
-        isBlurred, // ✅ 블러 상태
-        blurredSections, // ✅ 블러된 섹션 목록
         // Instagram 관련 정보
         instagramUsername: instagramUsername || null,
         instagramFetched, // Instagram에서 이미지 가져왔는지

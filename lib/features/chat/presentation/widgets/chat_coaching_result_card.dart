@@ -3,9 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/design_system/tokens/ds_obangseok_colors.dart';
 
 /// AI 코칭 결과 카드
 ///
@@ -28,15 +26,15 @@ class ChatCoachingResultCard extends ConsumerWidget {
     required this.date,
   });
 
-  // 동양화 스타일 - 한지 느낌 배경 (ObangseokColors 사용)
-  static const _creamLight = ObangseokColors.misaek;
-  static const _creamDark = ObangseokColors.misaekWarm;
+  // 디자인 색상 → DSColors 기반 (ChatGPT monochrome style)
+  static const _creamLight = DSColors.backgroundSecondary;
+  static const _creamDark = DSColors.background;
   // 다크모드 배경
-  static const _darkBg1 = ObangseokColors.meokLight;
-  static const _darkBg2 = ObangseokColors.meok;
-  // 액센트 색상 - 코칭 핑크
-  static const _pinkAccent = DSFortuneColors.categoryCoaching;
-  static const _purpleAccent = DSFortuneColors.categoryDecision;
+  static const _darkBg1 = DSColors.background;
+  static const _darkBg2 = DSColors.backgroundSecondary;
+  // 액센트 색상 - semantic colors
+  static const _pinkAccent = DSColors.error;
+  static const _purpleAccent = DSColors.accentSecondary;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,7 +71,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
         child: Stack(
           children: [
             // 배경 장식
-            ..._buildBackgroundDecorations(isDark),
+            ..._buildBackgroundDecorations(context, isDark),
 
             // 메인 콘텐츠
             Padding(
@@ -130,7 +128,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
     );
   }
 
-  List<Widget> _buildBackgroundDecorations(bool isDark) {
+  List<Widget> _buildBackgroundDecorations(BuildContext context, bool isDark) {
     final decorations = <Widget>[];
 
     // 우측 상단 별 장식
@@ -158,8 +156,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
         bottom: 60,
         child: Text(
           '🌱',
-          style: TextStyle(
-            fontSize: 16,
+          style: context.typography.bodyLarge.copyWith(
             color: Colors.green.withValues(alpha: 0.5),
           ),
         )
@@ -174,7 +171,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context, bool isDark) {
     final formattedDate = DateFormat('M월 d일 HH:mm').format(date);
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Row(
       children: [
@@ -183,7 +180,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
           '🧠',
           style: TextStyle(fontSize: 24),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: DSSpacing.sm),
 
         // 날짜 + 타이틀
         Expanded(
@@ -197,11 +194,10 @@ class ChatCoachingResultCard extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: DSSpacing.xxs),
               Text(
                 formattedDate,
-                style: TextStyle(
-                  fontSize: 10,
+                style: context.typography.labelTiny.copyWith(
                   color: textColor.withValues(alpha: 0.5),
                   letterSpacing: 1.0,
                 ),
@@ -223,7 +219,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
             color: isDark ? _pinkAccent : _purpleAccent,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: DSSpacing.sm),
         // 좋아요 + 공유 버튼
         FortuneActionButtons(
           contentId: 'coaching_${date.millisecondsSinceEpoch}',
@@ -259,8 +255,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
             '✨',
-            style: TextStyle(
-              fontSize: 12,
+            style: context.typography.labelSmall.copyWith(
               color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
@@ -284,7 +279,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
   }
 
   Widget _buildSituationSection(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -299,7 +294,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('💭', style: TextStyle(fontSize: 16)),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +306,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   situation,
                   style: context.bodyMedium.copyWith(
@@ -329,7 +324,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
   }
 
   Widget _buildAdviceSection(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -353,7 +348,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
           Row(
             children: [
               const Text('💝', style: TextStyle(fontSize: 18)),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '코칭 어드바이스',
                 style: context.bodyMedium.copyWith(
@@ -377,7 +372,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
   }
 
   Widget _buildActionItems(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,7 +380,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
         Row(
           children: [
             const Text('🎯', style: TextStyle(fontSize: 16)),
-            const SizedBox(width: 8),
+            const SizedBox(width: DSSpacing.sm),
             Text(
               '실천 액션 아이템',
               style: context.bodyMedium.copyWith(
@@ -409,7 +404,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
   }
 
   Widget _buildActionItem(BuildContext context, int index, String text, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -426,8 +421,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
             child: Center(
               child: Text(
                 '$index',
-                style: TextStyle(
-                  fontSize: 12,
+                style: context.typography.labelSmall.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDark ? _pinkAccent : _purpleAccent,
                 ),
@@ -457,7 +451,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
   }
 
   Widget _buildClosingMessage(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : ObangseokColors.hwangDark;
+    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -490,7 +484,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   '작은 실천이 큰 변화를 만들어요. 당신은 할 수 있어요! 💪',
                   style: context.bodySmall.copyWith(

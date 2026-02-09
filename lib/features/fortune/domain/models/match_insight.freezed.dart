@@ -31,8 +31,6 @@ mixin _$MatchInsight {
   TeamAnalysis get opponentAnalysis => throw _privateConstructorUsedError;
   FortuneElements get fortuneElements => throw _privateConstructorUsedError;
   String get cautionMessage => throw _privateConstructorUsedError;
-  bool get isBlurred => throw _privateConstructorUsedError;
-  List<String> get blurredSections => throw _privateConstructorUsedError;
   DateTime get timestamp => throw _privateConstructorUsedError;
   int? get percentile => throw _privateConstructorUsedError; // 경기 정보
   SportType get sport => throw _privateConstructorUsedError;
@@ -69,8 +67,6 @@ abstract class $MatchInsightCopyWith<$Res> {
       TeamAnalysis opponentAnalysis,
       FortuneElements fortuneElements,
       String cautionMessage,
-      bool isBlurred,
-      List<String> blurredSections,
       DateTime timestamp,
       int? percentile,
       SportType sport,
@@ -111,8 +107,6 @@ class _$MatchInsightCopyWithImpl<$Res, $Val extends MatchInsight>
     Object? opponentAnalysis = null,
     Object? fortuneElements = null,
     Object? cautionMessage = null,
-    Object? isBlurred = null,
-    Object? blurredSections = null,
     Object? timestamp = null,
     Object? percentile = freezed,
     Object? sport = null,
@@ -166,14 +160,6 @@ class _$MatchInsightCopyWithImpl<$Res, $Val extends MatchInsight>
           ? _value.cautionMessage
           : cautionMessage // ignore: cast_nullable_to_non_nullable
               as String,
-      isBlurred: null == isBlurred
-          ? _value.isBlurred
-          : isBlurred // ignore: cast_nullable_to_non_nullable
-              as bool,
-      blurredSections: null == blurredSections
-          ? _value.blurredSections
-          : blurredSections // ignore: cast_nullable_to_non_nullable
-              as List<String>,
       timestamp: null == timestamp
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
@@ -266,8 +252,6 @@ abstract class _$$MatchInsightImplCopyWith<$Res>
       TeamAnalysis opponentAnalysis,
       FortuneElements fortuneElements,
       String cautionMessage,
-      bool isBlurred,
-      List<String> blurredSections,
       DateTime timestamp,
       int? percentile,
       SportType sport,
@@ -310,8 +294,6 @@ class __$$MatchInsightImplCopyWithImpl<$Res>
     Object? opponentAnalysis = null,
     Object? fortuneElements = null,
     Object? cautionMessage = null,
-    Object? isBlurred = null,
-    Object? blurredSections = null,
     Object? timestamp = null,
     Object? percentile = freezed,
     Object? sport = null,
@@ -365,14 +347,6 @@ class __$$MatchInsightImplCopyWithImpl<$Res>
           ? _value.cautionMessage
           : cautionMessage // ignore: cast_nullable_to_non_nullable
               as String,
-      isBlurred: null == isBlurred
-          ? _value.isBlurred
-          : isBlurred // ignore: cast_nullable_to_non_nullable
-              as bool,
-      blurredSections: null == blurredSections
-          ? _value._blurredSections
-          : blurredSections // ignore: cast_nullable_to_non_nullable
-              as List<String>,
       timestamp: null == timestamp
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
@@ -420,16 +394,13 @@ class _$MatchInsightImpl implements _MatchInsight {
       required this.opponentAnalysis,
       required this.fortuneElements,
       required this.cautionMessage,
-      this.isBlurred = false,
-      final List<String> blurredSections = const [],
       required this.timestamp,
       this.percentile,
       required this.sport,
       required this.homeTeam,
       required this.awayTeam,
       required this.gameDate,
-      this.favoriteTeam})
-      : _blurredSections = blurredSections;
+      this.favoriteTeam});
 
   factory _$MatchInsightImpl.fromJson(Map<String, dynamic> json) =>
       _$$MatchInsightImplFromJson(json);
@@ -458,18 +429,6 @@ class _$MatchInsightImpl implements _MatchInsight {
   @override
   final String cautionMessage;
   @override
-  @JsonKey()
-  final bool isBlurred;
-  final List<String> _blurredSections;
-  @override
-  @JsonKey()
-  List<String> get blurredSections {
-    if (_blurredSections is EqualUnmodifiableListView) return _blurredSections;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_blurredSections);
-  }
-
-  @override
   final DateTime timestamp;
   @override
   final int? percentile;
@@ -487,7 +446,7 @@ class _$MatchInsightImpl implements _MatchInsight {
 
   @override
   String toString() {
-    return 'MatchInsight(id: $id, fortuneType: $fortuneType, score: $score, content: $content, summary: $summary, advice: $advice, prediction: $prediction, favoriteTeamAnalysis: $favoriteTeamAnalysis, opponentAnalysis: $opponentAnalysis, fortuneElements: $fortuneElements, cautionMessage: $cautionMessage, isBlurred: $isBlurred, blurredSections: $blurredSections, timestamp: $timestamp, percentile: $percentile, sport: $sport, homeTeam: $homeTeam, awayTeam: $awayTeam, gameDate: $gameDate, favoriteTeam: $favoriteTeam)';
+    return 'MatchInsight(id: $id, fortuneType: $fortuneType, score: $score, content: $content, summary: $summary, advice: $advice, prediction: $prediction, favoriteTeamAnalysis: $favoriteTeamAnalysis, opponentAnalysis: $opponentAnalysis, fortuneElements: $fortuneElements, cautionMessage: $cautionMessage, timestamp: $timestamp, percentile: $percentile, sport: $sport, homeTeam: $homeTeam, awayTeam: $awayTeam, gameDate: $gameDate, favoriteTeam: $favoriteTeam)';
   }
 
   @override
@@ -512,10 +471,6 @@ class _$MatchInsightImpl implements _MatchInsight {
                 other.fortuneElements == fortuneElements) &&
             (identical(other.cautionMessage, cautionMessage) ||
                 other.cautionMessage == cautionMessage) &&
-            (identical(other.isBlurred, isBlurred) ||
-                other.isBlurred == isBlurred) &&
-            const DeepCollectionEquality()
-                .equals(other._blurredSections, _blurredSections) &&
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
             (identical(other.percentile, percentile) ||
@@ -533,29 +488,26 @@ class _$MatchInsightImpl implements _MatchInsight {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        fortuneType,
-        score,
-        content,
-        summary,
-        advice,
-        prediction,
-        favoriteTeamAnalysis,
-        opponentAnalysis,
-        fortuneElements,
-        cautionMessage,
-        isBlurred,
-        const DeepCollectionEquality().hash(_blurredSections),
-        timestamp,
-        percentile,
-        sport,
-        homeTeam,
-        awayTeam,
-        gameDate,
-        favoriteTeam
-      ]);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      fortuneType,
+      score,
+      content,
+      summary,
+      advice,
+      prediction,
+      favoriteTeamAnalysis,
+      opponentAnalysis,
+      fortuneElements,
+      cautionMessage,
+      timestamp,
+      percentile,
+      sport,
+      homeTeam,
+      awayTeam,
+      gameDate,
+      favoriteTeam);
 
   /// Create a copy of MatchInsight
   /// with the given fields replaced by the non-null parameter values.
@@ -586,8 +538,6 @@ abstract class _MatchInsight implements MatchInsight {
       required final TeamAnalysis opponentAnalysis,
       required final FortuneElements fortuneElements,
       required final String cautionMessage,
-      final bool isBlurred,
-      final List<String> blurredSections,
       required final DateTime timestamp,
       final int? percentile,
       required final SportType sport,
@@ -621,10 +571,6 @@ abstract class _MatchInsight implements MatchInsight {
   FortuneElements get fortuneElements;
   @override
   String get cautionMessage;
-  @override
-  bool get isBlurred;
-  @override
-  List<String> get blurredSections;
   @override
   DateTime get timestamp;
   @override

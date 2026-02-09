@@ -3,13 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
-import '../../../../core/widgets/simple_blur_overlay.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
-import '../../../../core/utils/fortune_completion_helper.dart';
-import '../../../../core/utils/subscription_snackbar.dart';
-import '../../../../presentation/providers/subscription_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';
-import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../../fortune/domain/models/yearly_encounter_result.dart';
 
@@ -36,23 +30,15 @@ class ChatYearlyEncounterResultCard extends ConsumerStatefulWidget {
 
 class _ChatYearlyEncounterResultCardState
     extends ConsumerState<ChatYearlyEncounterResultCard> {
-  bool _isBlurred = false;
-  List<String> _blurredSections = [];
-
-  // 디자인 색상 → DSFortuneColors 기반
-  static const _beigeLight = DSFortuneColors.hanjiCream;
-  static const _beigeDark = Color(0xFFEDE5D8);
-  static const _goldLight = DSFortuneColors.fortuneGoldLight;
-  static const _brownTitle = Color(0xFF8B6914);
-  static const _pinkAccent = Color(0xFFE8B4B8);
-  static const _purpleGradientStart = Color(0xFFD8BFD8);
-  static const _purpleGradientEnd = Color(0xFFDDA0DD);
+  // 디자인 색상 → DSColors 기반 (ChatGPT monochrome style)
+  static const _beigeLight = DSColors.backgroundSecondary;
+  static const _beigeDark = DSColors.background;
+  static const _goldLight = DSColors.warning;
+  static const _brownTitle = DSColors.textPrimary;
 
   @override
   void initState() {
     super.initState();
-    _isBlurred = widget.result.isBlurred;
-    _blurredSections = List<String>.from(widget.result.blurredSections);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -61,20 +47,9 @@ class _ChatYearlyEncounterResultCardState
     });
   }
 
-  @override
-  void didUpdateWidget(covariant ChatYearlyEncounterResultCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Provider에서 블러 상태가 변경되면 로컬 상태도 동기화
-    if (oldWidget.result.isBlurred != widget.result.isBlurred && !widget.result.isBlurred) {
-      setState(() {
-        _isBlurred = false;
-        _blurredSections = [];
-      });
-    }
-  }
-
   /// 이미지 풀스크린 확대 보기
   void _showFullScreenImage(BuildContext context) {
+    final colors = context.colors;
     DSHaptics.light();
 
     showDialog(
@@ -108,9 +83,9 @@ class _ChatYearlyEncounterResultCardState
                       color: DSColors.background.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.close,
-                      color: Colors.white,
+                      color: colors.textPrimary,
                       size: 24,
                     ),
                   ),
@@ -125,8 +100,6 @@ class _ChatYearlyEncounterResultCardState
 
   @override
   Widget build(BuildContext context) {
-    final isPremium = ref.watch(isPremiumProvider);
-
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(
@@ -170,11 +143,6 @@ class _ChatYearlyEncounterResultCardState
                   .animate()
                   .fadeIn(duration: 500.ms, delay: 300.ms),
 
-              // 5. 비주얼 궁합 점수 배지
-              _buildCompatibilityBadge()
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 400.ms),
-
               const SizedBox(height: 16),
             ],
           ),
@@ -211,12 +179,13 @@ class _ChatYearlyEncounterResultCardState
 
   /// 타이틀: "2026 향라의 인연은?"
   Widget _buildTitle() {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(16, 20, 16, 8),
+    final typography = context.typography;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
       child: Text(
         '2026 올해의 인연은?',
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: typography.headingSmall.copyWith(
           fontSize: 22,
           fontWeight: FontWeight.w700,
           color: _brownTitle,
@@ -271,19 +240,15 @@ class _ChatYearlyEncounterResultCardState
                 children: [
                   // 1. AI 생성 이미지 (원형, 프레임 안쪽에 맞춤)
                   ClipOval(
-                    child: SimpleBlurOverlay(
-                      isBlurred:
-                          _isBlurred && _blurredSections.contains('image'),
-                      child: widget.result.imageUrl.isNotEmpty
-                          ? SmartImage(
-                              path: widget.result.imageUrl,
-                              width: 190,
-                              height: 190,
-                              fit: BoxFit.cover,
-                              errorWidget: _buildDefaultImage(),
-                            )
-                          : _buildDefaultImage(),
-                    ),
+                    child: widget.result.imageUrl.isNotEmpty
+                        ? SmartImage(
+                            path: widget.result.imageUrl,
+                            width: 190,
+                            height: 190,
+                            fit: BoxFit.cover,
+                            errorWidget: _buildDefaultImage(),
+                          )
+                        : _buildDefaultImage(),
                   ),
                   // 2. PNG 프레임 (위에 올라감, 얼굴 원형에 맞춤)
                   IgnorePointer(
@@ -323,7 +288,7 @@ class _ChatYearlyEncounterResultCardState
                 width: 3,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: DSFortuneColors.categoryPastLife.withValues(alpha: 0.6),
+                  color: DSColors.accentSecondary.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -358,7 +323,7 @@ class _ChatYearlyEncounterResultCardState
   /// 구름 문양 장식
   Widget _buildCloudDecoration() {
     return Opacity(
-      opacity: 0.3,
+      opacity: 0.15,
       child: CustomPaint(
         size: const Size(60, 40),
         painter: _TraditionalCloudPainter(),
@@ -368,6 +333,7 @@ class _ChatYearlyEncounterResultCardState
 
   /// 2열 그리드: 외모 해시태그 + 첫만남 장소
   Widget _buildInfoGrid() {
+    final typography = context.typography;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: IntrinsicHeight(
@@ -379,19 +345,18 @@ class _ChatYearlyEncounterResultCardState
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: DSFortuneColors.hanjiWarm.withValues(alpha: 0.5),
+                  color: DSColors.backgroundSecondary.withValues(alpha: 0.5),
                   border: Border.all(
-                      color: DSFortuneColors.inkBlack.withValues(alpha: 0.2), width: 1),
+                      color: DSColors.textPrimary.withValues(alpha: 0.2), width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       '외모',
-                      style: TextStyle(
-                        fontSize: 13,
+                      style: typography.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: DSFortuneColors.inkBlack,
+                        color: DSColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -400,9 +365,8 @@ class _ChatYearlyEncounterResultCardState
                         padding: const EdgeInsets.only(bottom: 2),
                         child: Text(
                           tag,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: DSFortuneColors.inkBlack,
+                          style: typography.labelSmall.copyWith(
+                            color: DSColors.textPrimary,
                             height: 1.4,
                           ),
                         ),
@@ -417,39 +381,36 @@ class _ChatYearlyEncounterResultCardState
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: DSFortuneColors.hanjiWarm.withValues(alpha: 0.5),
+                  color: DSColors.backgroundSecondary.withValues(alpha: 0.5),
                   border: Border.all(
-                      color: DSFortuneColors.inkBlack.withValues(alpha: 0.2), width: 1),
+                      color: DSColors.textPrimary.withValues(alpha: 0.2), width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       '첫만남장소와 시간',
-                      style: TextStyle(
-                        fontSize: 13,
+                      style: typography.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: DSFortuneColors.inkBlack,
+                        color: DSColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 6),
                     // 짧은 제목
                     Text(
                       widget.result.encounterSpotTitle,
-                      style: const TextStyle(
-                        fontSize: 13,
+                      style: typography.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: _brownTitle,
                         height: 1.3,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: DSSpacing.xs),
                     // 상세 스토리
                     Text(
                       widget.result.encounterSpotStory,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: DSFortuneColors.inkBlack.withValues(alpha: 0.8),
+                      style: typography.labelTiny.copyWith(
+                        color: DSColors.textPrimary.withValues(alpha: 0.8),
                         height: 1.5,
                       ),
                     ),
@@ -465,138 +426,87 @@ class _ChatYearlyEncounterResultCardState
 
   /// 인연의 시그널 + 성격/특징 박스
   Widget _buildSignalAndPersonalityBox() {
-    final isBlurredSignal = _blurredSections.contains('signal');
-    final isBlurredPersonality = _blurredSections.contains('personality');
+    final colors = context.colors;
+    final typography = context.typography;
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: DSFortuneColors.hanjiWarm.withValues(alpha: 0.5),
+        color: DSColors.backgroundSecondary.withValues(alpha: 0.5),
         border:
-            Border.all(color: DSFortuneColors.inkBlack.withValues(alpha: 0.2), width: 1),
+            Border.all(color: DSColors.textPrimary.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 인연의 시그널
-          SimpleBlurOverlay(
-            isBlurred: _isBlurred && isBlurredSignal,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '인연의시그널',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '인연의시그널',
+                style: typography.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colors.textSecondary,
                 ),
-                const SizedBox(height: 6),
-                // 짧은 제목
-                Text(
-                  widget.result.fateSignalTitle,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: _brownTitle,
-                    height: 1.3,
-                  ),
+              ),
+              const SizedBox(height: 6),
+              // 짧은 제목
+              Text(
+                widget.result.fateSignalTitle,
+                style: typography.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: _brownTitle,
+                  height: 1.3,
                 ),
-                const SizedBox(height: 4),
-                // 상세 스토리
-                Text(
-                  widget.result.fateSignalStory,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: DSFortuneColors.inkBlack.withValues(alpha: 0.85),
-                    height: 1.6,
-                  ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+              // 상세 스토리
+              Text(
+                widget.result.fateSignalStory,
+                style: typography.labelSmall.copyWith(
+                  color: DSColors.textPrimary.withValues(alpha: 0.85),
+                  height: 1.6,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 16),
 
           // 성격/특징
-          SimpleBlurOverlay(
-            isBlurred: _isBlurred && isBlurredPersonality,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '이 사람의 성격/특징',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '이 사람의 성격/특징',
+                style: typography.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colors.textSecondary,
                 ),
-                const SizedBox(height: 6),
-                // 짧은 제목
-                Text(
-                  widget.result.personalityTitle,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: _brownTitle,
-                    height: 1.3,
-                  ),
+              ),
+              const SizedBox(height: 6),
+              // 짧은 제목
+              Text(
+                widget.result.personalityTitle,
+                style: typography.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: _brownTitle,
+                  height: 1.3,
                 ),
-                const SizedBox(height: 4),
-                // 상세 스토리
-                Text(
-                  widget.result.personalityStory,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: DSFortuneColors.inkBlack.withValues(alpha: 0.85),
-                    height: 1.6,
-                  ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+              // 상세 스토리
+              Text(
+                widget.result.personalityStory,
+                style: typography.labelSmall.copyWith(
+                  color: DSColors.textPrimary.withValues(alpha: 0.85),
+                  height: 1.6,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-
-  /// 비주얼 궁합 점수 배지
-  Widget _buildCompatibilityBadge() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [_purpleGradientStart, _purpleGradientEnd],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: _purpleGradientEnd.withValues(alpha: 0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('✦', style: TextStyle(fontSize: 12, color: Colors.white)),
-          const SizedBox(width: 8),
-          Text(
-            '내 얼굴과의 비주얼 합계: ${widget.result.compatibilityScore}',
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 8),
-          const Text('✦', style: TextStyle(fontSize: 12, color: Colors.white)),
         ],
       ),
     );
@@ -620,7 +530,7 @@ class _TraditionalCloudPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = DSFortuneColors.fortuneGoldMuted
+      ..color = DSColors.warning
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
@@ -659,7 +569,7 @@ class _CloudPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = DSFortuneColors.fortuneGoldMuted.withValues(alpha: 0.08)
+      ..color = DSColors.warning.withValues(alpha: 0.04)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 

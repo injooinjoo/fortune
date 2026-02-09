@@ -47,7 +47,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         Text(
           '마음을 가라앉히고 질문에 집중해주세요',
           style: context.typography.labelLarge.copyWith(
@@ -63,7 +63,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
           transcribingText: '듣고 있어요...',
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: DSSpacing.lg),
 
         // Tip
         Container(

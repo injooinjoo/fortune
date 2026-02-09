@@ -839,7 +839,7 @@ class CelebritySajuService {
 
     // 시간대 일치: +5점
     final userTime = userFortune.bestTime;
-    final celebTime = celebLucky['time'] as String?;
+    final celebTime = celebLucky['time'];
     if (userTime != null && celebTime != null &&
         (userTime.contains(celebTime) || celebTime.contains(userTime))) {
       similarity += 5;

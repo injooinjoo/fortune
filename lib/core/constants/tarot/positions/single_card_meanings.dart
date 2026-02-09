@@ -1,7 +1,7 @@
-/// Single Card Spread Meanings
-/// 78장 타로 카드의 싱글 카드 스프레드 해석
-/// 1개 위치: general (일반 해석)
-/// 정방향(upright)과 역방향(reversed) 모두 포함
+// Single Card Spread Meanings
+// 78장 타로 카드의 싱글 카드 스프레드 해석
+// 1개 위치: general (일반 해석)
+// 정방향(upright)과 역방향(reversed) 모두 포함
 
 class SingleCardMeanings {
   static const Map<int, Map<String, Map<String, String>>> meanings = {

@@ -1,20 +1,63 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/models/personality_dna_model.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../../core/utils/logger.dart';
 import '../../../../domain/entities/fortune.dart';
+import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../fortune/domain/models/match_insight.dart';
 import '../../../fortune/domain/models/past_life_result.dart';
 import '../../../fortune/domain/models/yearly_encounter_result.dart';
+import '../../../chat_insight/data/models/chat_insight_result.dart';
 import '../../domain/models/chat_message.dart';
 import '../../domain/models/chat_state.dart';
 
 const _uuid = Uuid();
 
-/// 채팅 메시지 StateNotifier
+/// 채팅 메시지 StateNotifier (로컬 저장 지원)
 class ChatMessagesNotifier extends StateNotifier<ChatState> {
-  ChatMessagesNotifier() : super(const ChatState());
+  final SharedPreferences _prefs;
+  static const _storageKey = 'chat_messages_v1';
+  static const _maxStoredMessages = 100;
+
+  ChatMessagesNotifier(this._prefs) : super(const ChatState()) {
+    _loadMessages();
+  }
+
+  /// 로컬에 저장된 메시지 로드
+  Future<void> _loadMessages() async {
+    try {
+      final stored = _prefs.getString(_storageKey);
+      if (stored != null) {
+        final list = jsonDecode(stored) as List;
+        final messages = list
+            .map((j) => ChatMessage.fromJson(j as Map<String, dynamic>))
+            .toList();
+        state = state.copyWith(messages: messages);
+      }
+    } catch (e) {
+      debugPrint('채팅 히스토리 로드 실패: $e');
+    }
+  }
+
+  /// 메시지를 로컬에 저장
+  Future<void> _saveMessages() async {
+    try {
+      final persistable = state.messages
+          .where((m) => m.isPersistable)
+          .toList();
+      // 최근 N개만 저장
+      final toSave = persistable.length > _maxStoredMessages
+          ? persistable.sublist(persistable.length - _maxStoredMessages)
+          : persistable;
+      final json = toSave.map((m) => m.toJson()).toList();
+      await _prefs.setString(_storageKey, jsonEncode(json));
+    } catch (e) {
+      debugPrint('채팅 히스토리 저장 실패: $e');
+    }
+  }
 
   /// 사용자 메시지 추가
   void addUserMessage(String text) {
@@ -27,6 +70,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     state = state.copyWith(
       messages: [...state.messages, message],
     );
+    _saveMessages();
   }
 
   /// AI 메시지 추가
@@ -41,6 +85,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       messages: [...state.messages, message],
       isTyping: false,
     );
+    _saveMessages();
   }
 
   /// 운세 결과 메시지 추가
@@ -49,8 +94,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     required String text,
     required String fortuneType,
     String? sectionKey,
-    bool isBlurred = false,
-    List<String> blurredSections = const [],
     Fortune? fortune,
     DateTime? selectedDate,
     MatchInsight? matchInsight,
@@ -60,13 +103,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   }) {
     // 결과 표시 시 강한 햅틱 피드백
     HapticUtils.heavyImpact();
-
-    // 블러 상태 로깅
-    Logger.info(
-      '🔒 [ChatMessagesNotifier] addFortuneResultMessage - '
-      'type=$fortuneType, isBlurred=$isBlurred, '
-      'sections=$blurredSections',
-    );
 
     // 기존 대화 지우기 (자석 기능 대체)
     if (clearFirst) {
@@ -80,8 +116,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       timestamp: DateTime.now(),
       fortuneType: fortuneType,
       sectionKey: sectionKey,
-      isBlurred: isBlurred,
-      blurredSections: blurredSections,
       fortune: fortune,
       selectedDate: selectedDate,
       matchInsight: matchInsight,
@@ -100,8 +134,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     String? text,
     required Map<String, dynamic> sajuData,
     Map<String, dynamic>? sajuFortuneResult,
-    bool isBlurred = false,
-    List<String> blurredSections = const [],
     bool clearFirst = true,
   }) {
     // 결과 표시 시 강한 햅틱 피드백
@@ -119,8 +151,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       timestamp: DateTime.now(),
       sajuData: sajuData,
       sajuFortuneResult: sajuFortuneResult,
-      isBlurred: isBlurred,
-      blurredSections: blurredSections,
     );
     state = state.copyWith(
       messages: [...state.messages, message],
@@ -132,7 +162,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   /// [clearFirst] true이면 기존 대화를 지우고 결과만 표시 (기본값: true)
   void addPersonalityDnaResult({
     required PersonalityDNA dna,
-    bool isBlurred = false,
     bool clearFirst = true,
   }) {
     // 결과 표시 시 강한 햅틱 피드백
@@ -148,7 +177,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       type: ChatMessageType.personalityDnaResult,
       timestamp: DateTime.now(),
       personalityDna: dna,
-      isBlurred: isBlurred,
     );
     state = state.copyWith(
       messages: [...state.messages, message],
@@ -162,7 +190,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     required String imageUrl,
     required String categoryName,
     required String shortDescription,
-    bool isBlurred = false,
     bool clearFirst = true,
   }) {
     // 결과 표시 시 강한 햅틱 피드백
@@ -180,7 +207,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
       talismanImageUrl: imageUrl,
       talismanCategoryName: categoryName,
       talismanShortDescription: shortDescription,
-      isBlurred: isBlurred,
     );
     state = state.copyWith(
       messages: [...state.messages, message],
@@ -339,6 +365,21 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     );
   }
 
+  /// 카톡 대화 분석 결과 메시지 추가
+  void addChatInsightResult({required ChatInsightResult chatInsight}) {
+    final message = ChatMessage(
+      id: _uuid.v4(),
+      type: ChatMessageType.chatInsightResult,
+      text: '대화 분석 결과',
+      timestamp: DateTime.now(),
+      chatInsight: chatInsight,
+    );
+    state = state.copyWith(
+      messages: [...state.messages, message],
+      isTyping: false,
+    );
+  }
+
   /// 시스템 메시지 추가 (추천 칩)
   /// [showAllChips] true면 모든 기본 칩 표시 (전체운세보기 등)
   void addSystemMessage({List<String>? chipIds, bool showAllChips = false}) {
@@ -351,6 +392,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     state = state.copyWith(
       messages: [...state.messages, message],
     );
+    _saveMessages();
   }
 
   /// 타이핑 인디케이터 표시
@@ -373,32 +415,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     state = state.copyWith(currentFortuneType: fortuneType);
   }
 
-  /// 특정 메시지 블러 해제
-  void unblurMessage(String messageId) {
-    final updated = state.messages.map((m) {
-      if (m.id == messageId) {
-        return m.copyWith(isBlurred: false);
-      }
-      return m;
-    }).toList();
-
-    state = state.copyWith(messages: updated);
-  }
-
-  /// 모든 메시지 블러 해제
-  void unblurAllMessages() {
-    Logger.info('🔓 [ChatMessagesNotifier] unblurAllMessages() 시작 - 메시지 수: ${state.messages.length}');
-    final updated = state.messages.map((m) {
-      if (m.isBlurred) {
-        Logger.info('🔓 [ChatMessagesNotifier] 블러 해제: ${m.type} (id: ${m.id})');
-      }
-      return m.copyWith(isBlurred: false);
-    }).toList();
-
-    state = state.copyWith(messages: updated);
-    Logger.info('🔓 [ChatMessagesNotifier] unblurAllMessages() 완료');
-  }
-
   /// 에러 설정
   void setError(String? error) {
     state = state.copyWith(error: error);
@@ -407,11 +423,15 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   /// 대화 초기화
   void clearConversation() {
     state = const ChatState();
+    _prefs.remove(_storageKey);
   }
 }
 
 /// 채팅 메시지 Provider
 final chatMessagesProvider =
     StateNotifierProvider<ChatMessagesNotifier, ChatState>(
-  (ref) => ChatMessagesNotifier(),
+  (ref) {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return ChatMessagesNotifier(prefs);
+  },
 );

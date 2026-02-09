@@ -366,7 +366,7 @@ class MiniScoreCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = backgroundColor ?? _getScoreColor(context).withOpacity(0.15);
+    final bgColor = backgroundColor ?? _getScoreColor(context).withValues(alpha:0.15);
     final fgColor = textColor ?? _getScoreColor(context);
 
     return Container(

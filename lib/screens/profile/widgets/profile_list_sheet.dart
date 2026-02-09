@@ -313,15 +313,15 @@ class _ProfileListTile extends StatelessWidget {
         height: 44,
         decoration: BoxDecoration(
           color: isSelected
-              ? colors.accentSecondary
-              : colors.accentSecondary.withValues(alpha: 0.15),
+              ? colors.textPrimary
+              : colors.textPrimary.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Center(
           child: Text(
             initial,
             style: context.typography.headingSmall.copyWith(
-              color: isSelected ? Colors.white : colors.accentSecondary,
+              color: isSelected ? Colors.white : colors.textPrimary,
             ),
           ),
         ),
@@ -339,7 +339,7 @@ class _ProfileListTile extends StatelessWidget {
             context.typography.bodySmall.copyWith(color: colors.textSecondary),
       ),
       trailing: isSelected
-          ? Icon(Icons.check_circle, color: colors.accentSecondary)
+          ? Icon(Icons.check_circle, color: colors.textPrimary)
           : null,
       onTap: onTap,
       onLongPress: onLongPress,

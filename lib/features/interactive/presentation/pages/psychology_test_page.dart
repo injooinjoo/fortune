@@ -7,7 +7,6 @@ import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 // Import domain models
 import '../../domain/models/psychology_test_models.dart';
@@ -181,7 +180,7 @@ class _TestInputView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           // Title
           Text(
             '당신의 심리 유형을 분석해드립니다',
@@ -204,7 +203,7 @@ class _TestInputView extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DSSpacing.md),
                   TextField(
                     controller: nameController,
                     style: context.labelMedium,
@@ -219,7 +218,7 @@ class _TestInputView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DSSpacing.md),
                   KoreanDatePicker(
                     selectedDate: selectedBirthDate,
                     onDateChanged: onBirthDateChanged,
@@ -227,7 +226,7 @@ class _TestInputView extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
             SizedBox(
               width: double.infinity,
               child: GlassButton(
@@ -269,14 +268,14 @@ class _TestInputView extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: DSSpacing.sm),
             Text(
               '${currentQuestionIndex + 1} / ${psychologyQuestions.length}',
               style: context.bodySmall.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
             // Current Question
             GlassContainer(
               padding: const EdgeInsets.all(20),
@@ -289,7 +288,7 @@ class _TestInputView extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: DSSpacing.lg),
                   ...psychologyQuestions[currentQuestionIndex].options.map((option) {
                     final isSelected = answers[psychologyQuestions[currentQuestionIndex].id] == option.value;
                     return Padding(
@@ -363,7 +362,7 @@ class _TestInputView extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
             // Navigation buttons
             Row(
               children: [
@@ -377,7 +376,7 @@ class _TestInputView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.arrow_back_ios, size: 20 * fontScale),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: DSSpacing.sm),
                             Text(
                               '이전',
                               style: context.labelMedium,
@@ -400,7 +399,7 @@ class _TestInputView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.auto_awesome, size: 20 * fontScale),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: DSSpacing.sm),
                             Text(
                               '결과 보기',
                               style: context.labelMedium.copyWith(
@@ -457,7 +456,7 @@ class _TestResultView extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const LoadingIndicator(size: 60),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
             Text(
               '심리를 분석하고 있습니다...',
               style: context.heading3),
@@ -472,14 +471,14 @@ class _TestResultView extends ConsumerWidget {
                 Icons.error_outline,
                 size: 64,
                 color: theme.colorScheme.error),
-              const SizedBox(height: 16),
+              const SizedBox(height: DSSpacing.md),
               Text(
-                error.toString().contains('복주머니')
-                    ? '복주머니가 부족합니다'
+                error.toString().contains('토큰')
+                    ? '토큰가 부족합니다'
                     : '심리 분석 중 오류가 발생했습니다',
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center),
-              const SizedBox(height: 24),
+              const SizedBox(height: DSSpacing.lg),
               GlassButton(
                 onPressed: onReset,
                 child: const Padding(
@@ -510,7 +509,7 @@ class _TestResultView extends ConsumerWidget {
                           '${input.name}님의 심리 테스트 결과',
                           style: context.heading3,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: DSSpacing.md),
                         Text(
                           '${result.overallLuck}점',
                           style: context.displayLarge.copyWith(
@@ -518,7 +517,7 @@ class _TestResultView extends ConsumerWidget {
                             color: _getLuckColor(result.overallLuck),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: DSSpacing.sm),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
@@ -536,7 +535,7 @@ class _TestResultView extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DSSpacing.md),
                   // Result Type & Summary
                   GlassContainer(
                     padding: const EdgeInsets.all(20),
@@ -546,7 +545,7 @@ class _TestResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.category_outlined, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: DSSpacing.sm),
                             Text(
                               '결과 유형',
                               style: context.heading3.copyWith(
@@ -577,13 +576,13 @@ class _TestResultView extends ConsumerWidget {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: DSSpacing.md),
                         Text(
                           '결과 요약',
                           style: context.labelMedium.copyWith(
                             fontWeight: FontWeight.bold,
                           )),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: DSSpacing.sm),
                         Text(
                           result.resultSummary,
                           style: context.labelMedium.copyWith(
@@ -592,7 +591,7 @@ class _TestResultView extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DSSpacing.md),
                   // Result Details
                   GlassContainer(
                     padding: const EdgeInsets.all(20),
@@ -602,7 +601,7 @@ class _TestResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.description_outlined, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: DSSpacing.sm),
                             Text(
                               '상세 분석',
                               style: context.heading3.copyWith(
@@ -610,7 +609,7 @@ class _TestResultView extends ConsumerWidget {
                               )),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: DSSpacing.md),
                         Text(
                           result.resultDetails,
                           style: context.labelMedium.copyWith(
@@ -619,7 +618,7 @@ class _TestResultView extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DSSpacing.md),
                   // Advice & Lucky Elements
                   GlassContainer(
                     padding: const EdgeInsets.all(20),
@@ -629,7 +628,7 @@ class _TestResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.lightbulb_outline, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: DSSpacing.sm),
                             Text(
                               '조언',
                               style: context.heading3.copyWith(
@@ -637,7 +636,7 @@ class _TestResultView extends ConsumerWidget {
                               )),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: DSSpacing.md),
                         Text(
                           result.advice,
                           style: context.labelMedium.copyWith(
@@ -648,7 +647,7 @@ class _TestResultView extends ConsumerWidget {
                           Row(
                             children: [
                               Icon(Icons.star_outline, color: theme.colorScheme.secondary),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: DSSpacing.sm),
                               Text(
                                 '행운 요소',
                                 style: context.labelMedium.copyWith(
@@ -695,7 +694,7 @@ class _TestResultView extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.refresh, size: 20 * fontScale),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: DSSpacing.sm),
                             Text(
                               '다시 테스트하기',
                               style: context.heading3.copyWith(

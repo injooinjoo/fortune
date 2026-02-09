@@ -372,9 +372,7 @@ serve(async (req) => {
       fortuneType: 'health-document',
       data: {
         ...analysisResult,
-        timestamp: new Date().toISOString(),
-        isBlurred: false,
-        blurredSections: []
+        timestamp: new Date().toISOString()
       },
       meta: {
         provider: response.provider,

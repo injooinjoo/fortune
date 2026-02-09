@@ -75,12 +75,12 @@ class _SurveyChip extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: isSelected
-                ? colors.accentSecondary.withValues(alpha: 0.2)
+                ? colors.textPrimary.withValues(alpha: 0.1)
                 : (isDark ? colors.backgroundSecondary : colors.surface),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
               color: isSelected
-                  ? colors.accentSecondary
+                  ? colors.textPrimary
                   : colors.textPrimary.withValues(alpha: 0.2),
               width: isSelected ? 1.5 : 1,
             ),
@@ -96,7 +96,7 @@ class _SurveyChip extends StatelessWidget {
                   option.icon,
                   size: 16,
                   color: isSelected
-                      ? colors.accentSecondary
+                      ? colors.textPrimary
                       : colors.textSecondary,
                 ),
                 const SizedBox(width: DSSpacing.xs),
@@ -104,9 +104,7 @@ class _SurveyChip extends StatelessWidget {
               Text(
                 option.label,
                 style: typography.labelMedium.copyWith(
-                  color: isSelected
-                      ? colors.accentSecondary
-                      : colors.textPrimary,
+                  color: colors.textPrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -115,7 +113,7 @@ class _SurveyChip extends StatelessWidget {
                 Icon(
                   Icons.check,
                   size: 14,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                 ),
               ],
             ],

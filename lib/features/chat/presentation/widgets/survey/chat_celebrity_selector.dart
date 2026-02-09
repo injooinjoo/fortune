@@ -256,21 +256,21 @@ class _CelebrityCard extends StatelessWidget {
   Color _getTypeColor() {
     switch (celebrity.celebrityType) {
       case CelebrityType.actor:
-        return DSFortuneColors.celebrityActor;
+        return DSColors.accentSecondary;
       case CelebrityType.soloSinger:
-        return DSFortuneColors.celebritySoloSinger;
+        return DSColors.error;
       case CelebrityType.idolMember:
-        return DSFortuneColors.celebrityIdolMember;
+        return DSColors.info;
       case CelebrityType.athlete:
-        return DSFortuneColors.celebrityAthlete;
+        return DSColors.success;
       case CelebrityType.streamer:
-        return DSFortuneColors.celebrityStreamer;
+        return DSColors.warning;
       case CelebrityType.proGamer:
-        return DSFortuneColors.celebrityProGamer;
+        return DSColors.info;
       case CelebrityType.politician:
-        return DSFortuneColors.celebrityPolitician;
+        return DSColors.textPrimary;
       case CelebrityType.business:
-        return DSFortuneColors.celebrityBusiness;
+        return DSColors.warning;
     }
   }
 

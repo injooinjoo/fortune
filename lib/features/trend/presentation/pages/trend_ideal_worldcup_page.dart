@@ -205,7 +205,7 @@ class _TrendIdealWorldcupPageState
                 child: Text(
                   'VS',
                   style: context.labelLarge.copyWith(
-                    color: Colors.white,
+                    color: context.colors.ctaForeground,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -262,7 +262,7 @@ class _TrendIdealWorldcupPageState
                       end: isTop ? Alignment.bottomCenter : Alignment.topCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withValues(alpha: 0.7),
+                        context.colors.background.withValues(alpha: 0.7),
                       ],
                     ),
                   ),
@@ -277,11 +277,11 @@ class _TrendIdealWorldcupPageState
                 child: Text(
                   candidate.name,
                   style: context.headingSmall.copyWith(
-                    color: Colors.white,
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w700,
                     shadows: [
                       Shadow(
-                        color: Colors.black.withValues(alpha: 0.5),
+                        color: context.colors.background.withValues(alpha: 0.5),
                         blurRadius: 4,
                       ),
                     ],
@@ -440,7 +440,7 @@ class _TrendIdealWorldcupPageState
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
-                                    Colors.black.withValues(alpha: 0.7),
+                                    context.colors.background.withValues(alpha: 0.7),
                                   ],
                                 ),
                               ),
@@ -453,7 +453,7 @@ class _TrendIdealWorldcupPageState
                             child: Text(
                               winner.name,
                               style: context.headingMedium.copyWith(
-                                color: Colors.white,
+                                color: context.colors.textPrimary,
                                 fontWeight: FontWeight.w700,
                               ),
                               textAlign: TextAlign.center,
@@ -502,7 +502,7 @@ class _TrendIdealWorldcupPageState
                         child: Text(
                           '다시 하기',
                           style: context.bodyMedium.copyWith(
-                            color: Colors.white,
+                            color: context.colors.ctaForeground,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -627,7 +627,7 @@ class _TrendIdealWorldcupPageState
         child: Text(
           '$rank',
           style: context.labelSmall.copyWith(
-            color: Colors.white,
+            color: context.colors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),

@@ -77,7 +77,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
     return Container(
       width: AppSpacing.spacing1 * 100.0,
       decoration: BoxDecoration(
-        color: DSFortuneColors.hanjiWarm,
+        color: DSColors.backgroundSecondary,
         borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
           color: const Color(0xFF8D6E63), // 고유 색상 - 전통 한지 테두리

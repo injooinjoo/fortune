@@ -1,24 +1,24 @@
-/// Error Handling Integration Test (Category B3)
-/// 에러 처리 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/error_handling_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 12개:
-/// - ERR-001: 네트워크 에러 메시지 표시
-/// - ERR-002: 서버 에러 (500) 처리
-/// - ERR-003: 요청 타임아웃 처리
-/// - ERR-004: 인증 만료 (401) 처리
-/// - ERR-005: 권한 없음 (403) 처리
-/// - ERR-006: 데이터 없음 (404) 처리
-/// - ERR-007: 잘못된 입력 유효성 검증
-/// - ERR-008: 결제 실패 처리
-/// - ERR-009: 파일 업로드 실패 처리
-/// - ERR-010: API 형식 오류 파싱 에러
-/// - ERR-011: 재시도 로직 동작
-/// - ERR-012: 에러 리포팅 시스템 확인
+// Error Handling Integration Test (Category B3)
+// 에러 처리 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/error_handling_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 12개:
+// - ERR-001: 네트워크 에러 메시지 표시
+// - ERR-002: 서버 에러 (500) 처리
+// - ERR-003: 요청 타임아웃 처리
+// - ERR-004: 인증 만료 (401) 처리
+// - ERR-005: 권한 없음 (403) 처리
+// - ERR-006: 데이터 없음 (404) 처리
+// - ERR-007: 잘못된 입력 유효성 검증
+// - ERR-008: 결제 실패 처리
+// - ERR-009: 파일 업로드 실패 처리
+// - ERR-010: API 형식 오류 파싱 에러
+// - ERR-011: 재시도 로직 동작
+// - ERR-012: 에러 리포팅 시스템 확인
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

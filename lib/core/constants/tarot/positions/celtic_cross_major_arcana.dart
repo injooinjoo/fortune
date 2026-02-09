@@ -1,5 +1,5 @@
-/// Celtic Cross 스프레드 - Major Arcana (22장) 해석
-/// 각 카드별 10개 위치 × 정방향/역방향
+// Celtic Cross 스프레드 - Major Arcana (22장) 해석
+// 각 카드별 10개 위치 × 정방향/역방향
 
 class CelticCrossMajorArcana {
   /// 위치 키 설명:

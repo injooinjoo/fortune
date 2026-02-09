@@ -26,6 +26,7 @@ class FortuneHeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final heroImage = FortuneCardImages.getHeroImage(fortuneType, score);
     final mascotImage = FortuneCardImages.getMascotImage(fortuneType, score);
     final scoreColor = _getScoreColor(score);
@@ -40,11 +41,11 @@ class FortuneHeroSection extends StatelessWidget {
         icon: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: colors.background.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.arrow_back_ios_new,
-              color: Colors.white, size: 20),
+          child: Icon(Icons.arrow_back_ios_new,
+              color: colors.textPrimary, size: 20),
         ),
         onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
       ),
@@ -83,9 +84,9 @@ class FortuneHeroSection extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withValues(alpha: 0.1),
-                    Colors.black.withValues(alpha: 0.4),
-                    Colors.black.withValues(alpha: 0.8),
+                    colors.background.withValues(alpha: 0.1),
+                    colors.background.withValues(alpha: 0.4),
+                    colors.background.withValues(alpha: 0.8),
                   ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
@@ -136,7 +137,7 @@ class FortuneHeroSection extends StatelessWidget {
                                     Text(
                                       '$score',
                                       style: context.displaySmall.copyWith(
-                                        color: Colors.white,
+                                        color: colors.textPrimary,
                                         fontWeight: FontWeight.bold,
                                         height: 1.0,
                                       ),
@@ -145,7 +146,7 @@ class FortuneHeroSection extends StatelessWidget {
                                       '점',
                                       style: context.bodySmall.copyWith(
                                         color:
-                                            Colors.white.withValues(alpha: 0.8),
+                                            colors.textPrimary.withValues(alpha: 0.8),
                                       ),
                                     ),
                                   ],
@@ -153,7 +154,7 @@ class FortuneHeroSection extends StatelessWidget {
                                 circularStrokeCap: CircularStrokeCap.round,
                                 progressColor: scoreColor,
                                 backgroundColor:
-                                    Colors.white.withValues(alpha: 0.2),
+                                    colors.textPrimary.withValues(alpha: 0.2),
                               ),
                               const SizedBox(height: 6),
                               _ScoreBadge(score: score),
@@ -169,7 +170,7 @@ class FortuneHeroSection extends StatelessWidget {
                       summary,
                       textAlign: TextAlign.center,
                       style: context.heading1.copyWith(
-                        color: Colors.white,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.5,
                       ),
@@ -261,17 +262,18 @@ class _HashtagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.15),
+        color: colors.textPrimary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        border: Border.all(color: colors.textPrimary.withValues(alpha: 0.2)),
       ),
       child: Text(
         '#$label',
         style: context.bodySmall.copyWith(
-          color: Colors.white,
+          color: colors.textPrimary,
           fontWeight: FontWeight.w500,
         ),
       ),

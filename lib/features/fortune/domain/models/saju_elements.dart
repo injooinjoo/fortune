@@ -1,8 +1,8 @@
-/// 오행(五行) 모델 및 시각화 위젯
-///
-/// 오행: 목(木), 화(火), 토(土), 금(金), 수(水)
-/// - 사주에서 추출된 오행 분포를 모델링
-/// - 오각형 차트로 시각화
+// 오행(五行) 모델 및 시각화 위젯
+//
+// 오행: 목(木), 화(火), 토(土), 금(金), 수(水)
+// - 사주에서 추출된 오행 분포를 모델링
+// - 오각형 차트로 시각화
 library;
 
 import 'package:flutter/material.dart';
@@ -11,11 +11,11 @@ import 'dart:math' as math;
 
 /// 오행 타입
 enum WuxingType {
-  wood('목', '木', DSFortuneColors.elementWood, '성장', '봄', '동쪽'),
-  fire('화', '火', DSFortuneColors.elementFire, '열정', '여름', '남쪽'),
-  earth('토', '土', DSFortuneColors.elementEarth, '안정', '환절기', '중앙'),
-  metal('금', '金', DSFortuneColors.elementMetal, '결단', '가을', '서쪽'),
-  water('수', '水', DSFortuneColors.elementWater, '지혜', '겨울', '북쪽');
+  wood('목', '木', DSColors.success, '성장', '봄', '동쪽'),
+  fire('화', '火', DSColors.error, '열정', '여름', '남쪽'),
+  earth('토', '土', DSColors.warning, '안정', '환절기', '중앙'),
+  metal('금', '金', DSColors.surface, '결단', '가을', '서쪽'),
+  water('수', '水', DSColors.info, '지혜', '겨울', '북쪽');
 
   final String korean;
   final String chinese;

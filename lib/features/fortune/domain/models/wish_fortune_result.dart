@@ -1,4 +1,4 @@
-/// 소원 빌기 결과 데이터 모델 (용 테마 + 게이미피케이션)
+// 소원 빌기 결과 데이터 모델 (용 테마 + 게이미피케이션)
 class WishFortuneResult {
   // 기존 필드
   final String empathyMessage;    // 공감 메시지 (300자)

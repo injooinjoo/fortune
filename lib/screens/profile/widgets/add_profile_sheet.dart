@@ -144,7 +144,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
 
               // 타이틀 + 닫기 버튼
               Row(
@@ -165,18 +165,18 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: DSSpacing.sm),
               Text(
                 widget.subtitle ?? '가족이나 친구의 운세를 확인할 수 있어요',
                 style: context.typography.bodyMedium.copyWith(
                   color: colors.textSecondary,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: DSSpacing.lg),
 
               // 이름 입력
               _buildSectionTitle('이름'),
-              const SizedBox(height: 8),
+              const SizedBox(height: DSSpacing.sm),
               TextField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -210,25 +210,25 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                 ),
                 onChanged: (_) => setState(() {}),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
 
               // 관계 선택 (칩 스타일)
               _buildSectionTitle('관계'),
               const SizedBox(height: 12),
               _buildRelationshipChips(colors),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
 
               // 가족 세부 관계 선택 (관계가 '가족'일 때만 표시)
               if (_relationship == 'family') ...[
                 _buildSectionTitle('가족 구성원'),
                 const SizedBox(height: 12),
                 _buildFamilyRelationChips(colors),
-                const SizedBox(height: 20),
+                const SizedBox(height: DSSpacing.lg),
               ],
 
               // 생년월일 선택
               _buildSectionTitle('생년월일'),
-              const SizedBox(height: 8),
+              const SizedBox(height: DSSpacing.sm),
               NumericDateInput(
                 selectedDate: _birthDate,
                 onDateChanged: (date) {
@@ -240,7 +240,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                 // maxDate 미지정 → 2100년까지 허용 (출산 예정일 등)
                 showAge: true,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: DSSpacing.sm),
 
               // 음력 체크박스
               GestureDetector(
@@ -259,7 +259,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: DSSpacing.sm),
                     Text(
                       '음력',
                       style: context.typography.bodyMedium.copyWith(
@@ -269,11 +269,11 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
 
               // 태어난 시간 (선택)
               _buildSectionTitle('태어난 시간 (선택)'),
-              const SizedBox(height: 8),
+              const SizedBox(height: DSSpacing.sm),
               GestureDetector(
                 onTap: _selectBirthTime,
                 child: Container(
@@ -306,25 +306,25 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
 
               // 성별 선택 (칩 스타일)
               _buildSectionTitle('성별'),
               const SizedBox(height: 12),
               _buildGenderChips(colors),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
 
               // MBTI 선택 (선택)
               _buildSectionTitle('MBTI (선택)'),
               const SizedBox(height: 12),
               _buildMbtiGrid(colors),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
 
               // 혈액형 선택 (선택)
               _buildSectionTitle('혈액형 (선택)'),
               const SizedBox(height: 12),
               _buildBloodTypeChips(colors),
-              const SizedBox(height: 32),
+              const SizedBox(height: DSSpacing.xl),
 
               // 저장 버튼
               SizedBox(
@@ -433,7 +433,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           },
           colors: colors,
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: DSSpacing.sm),
         _buildSelectionChip(
           label: '♀ 여성',
           isSelected: _gender == 'female',
@@ -468,7 +468,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
             );
           }).toList(),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         TextButton(
           onPressed: () {
             HapticFeedback.lightImpact();
@@ -506,7 +506,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
             );
           }).toList(),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         Align(
           alignment: Alignment.centerLeft,
           child: TextButton(
@@ -549,12 +549,12 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           ),
           decoration: BoxDecoration(
             color: isSelected
-                ? colors.accentSecondary.withValues(alpha: 0.2)
+                ? colors.textPrimary.withValues(alpha: 0.1)
                 : (isDark ? colors.backgroundSecondary : colors.surface),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
               color: isSelected
-                  ? colors.accentSecondary
+                  ? colors.textPrimary
                   : colors.textPrimary.withValues(alpha: 0.2),
               width: isSelected ? 1.5 : 1,
             ),
@@ -566,17 +566,17 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                 label,
                 style: context.typography.bodyMedium.copyWith(
                   color: isSelected
-                      ? colors.accentSecondary
+                      ? colors.textPrimary
                       : colors.textPrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
               if (isSelected) ...[
-                const SizedBox(width: 4),
+                const SizedBox(width: DSSpacing.xs),
                 Icon(
                   Icons.check,
                   size: 14,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                 ),
               ],
             ],

@@ -28,8 +28,6 @@
  * - bondingActivities: string[] - 유대감 강화 활동
  * - warnings: string[] - 주의사항
  * - advice: string - 종합 조언
- * - isBlurred: boolean - 블러 상태
- * - blurredSections: string[] - 블러된 섹션 목록
  *
  * @example
  * // Request
@@ -193,20 +191,10 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabaseClient, 'family-relationship', (personalized as any).overallScore || 75)
       const resultWithPercentile = addPercentileToResult(personalized, percentileData)
 
-      // 블러 설정
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['relationshipCategories', 'communicationAdvice', 'familySynergy', 'monthlyFlow', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
-        : []
-
       return new Response(
         JSON.stringify({
           success: true,
-          data: {
-            ...resultWithPercentile,
-            isBlurred,
-            blurredSections,
-          },
+          data: resultWithPercentile,
           cohortHit: true,
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
@@ -350,12 +338,6 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
 
     const fortuneData = JSON.parse(response.content)
 
-    // Blur 로직 적용
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['relationshipCategories', 'communicationAdvice', 'familySynergy', 'monthlyFlow', 'familyAdvice', 'recommendations', 'warnings', 'specialAnswer']
-      : []
-
     const result = {
       // ✅ 표준화된 필드명: score, content, summary, advice
       fortuneType: 'family-relationship',
@@ -409,9 +391,7 @@ ${special_question ? '특별 질문에 대한 답변도 specialAnswer에 포함�
         special_question: special_question || null
       },
 
-      created_at: new Date().toISOString(),
-      isBlurred,
-      blurredSections
+      created_at: new Date().toISOString()
     }
 
     // Percentile 계산

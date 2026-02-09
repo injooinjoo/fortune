@@ -1,20 +1,20 @@
-/// User Journey Integration Test (Category B2)
-/// 사용자 여정 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/flows/user_journey_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 8개:
-/// - JOUR-001: 신규 사용자 여정 (랜딩 → 온보딩 → 홈 → 첫 운세)
-/// - JOUR-002: 일일 사용자 여정 (앱 실행 → 오늘의 운세 → 공유)
-/// - JOUR-003: 구매 사용자 여정 (운세 요청 → 토큰 부족 → 구매 → 운세)
-/// - JOUR-004: 탐색 여정 (홈 → 운세 목록 → 상세 → 뒤로)
-/// - JOUR-005: 설정 변경 여정 (프로필 → 설정 → 변경 → 저장)
-/// - JOUR-006: 히스토리 여정 (운세 기록 → 상세 확인)
-/// - JOUR-007: 구독 여정 (프리미엄 → 구독 옵션 → 혜택 확인)
-/// - JOUR-008: 공유 여정 (운세 결과 → 공유 옵션)
+// User Journey Integration Test (Category B2)
+// 사용자 여정 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/flows/user_journey_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 8개:
+// - JOUR-001: 신규 사용자 여정 (랜딩 → 온보딩 → 홈 → 첫 운세)
+// - JOUR-002: 일일 사용자 여정 (앱 실행 → 오늘의 운세 → 공유)
+// - JOUR-003: 구매 사용자 여정 (운세 요청 → 토큰 부족 → 구매 → 운세)
+// - JOUR-004: 탐색 여정 (홈 → 운세 목록 → 상세 → 뒤로)
+// - JOUR-005: 설정 변경 여정 (프로필 → 설정 → 변경 → 저장)
+// - JOUR-006: 히스토리 여정 (운세 기록 → 상세 확인)
+// - JOUR-007: 구독 여정 (프리미엄 → 구독 옵션 → 혜택 확인)
+// - JOUR-008: 공유 여정 (운세 결과 → 공유 옵션)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import '../providers/providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import 'package:fortune/core/theme/app_animations.dart';
@@ -119,14 +118,8 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
     setState(() {
       _isLoadingFortune = true;
     });
-    
-    final isPremium = ref.read(hasUnlimitedAccessProvider);
-    
+
     try {
-      if (!isPremium) {
-        await _showDirectAd();
-      }
-      
       if (mounted) {
         setState(() {
           _isLoadingFortune = false;
@@ -158,17 +151,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           _isLoadingFortune = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('광고 로딩 중 오류가 발생했습니다'))
+          const SnackBar(content: Text('데이터 로딩 중 오류가 발생했습니다'))
         );
       }
     }
   }
   
-  Future<void> _showDirectAd() async {
-    await Future.delayed(const Duration(seconds: 3));
-  }
-
   Widget _buildCalendarCell(BuildContext context, DateTime day, DateTime focusedDay) {
+    final typography = context.typography;
     final theme = Theme.of(context);
     final isSelected = isSameDay(day, _selectedDay);
     final isToday = isSameDay(day, DateTime.now());
@@ -208,7 +198,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           Center(
             child: Text(
               '${day.day}',
-              style: TextStyle(
+              style: typography.bodyMedium.copyWith(
                 color: textColor,
                 fontWeight: isSelected || isToday ? FontWeight.bold : FontWeight.normal,
               ),
@@ -503,6 +493,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
   }
 
   Widget _buildCalendar(ThemeData theme) {
+    final typography = context.typography;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       elevation: 2,
@@ -533,8 +524,8 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           onPageChanged: _onPageChanged,
           calendarStyle: CalendarStyle(
             outsideDaysVisible: false,
-            weekendTextStyle: const TextStyle(color: DSColors.error),
-            holidayTextStyle: const TextStyle(color: DSColors.error),
+            weekendTextStyle: typography.bodyMedium.copyWith(color: DSColors.error),
+            holidayTextStyle: typography.bodyMedium.copyWith(color: DSColors.error),
             selectedDecoration: const BoxDecoration(
               color: AppTheme.primaryColor,
               shape: BoxShape.circle,
@@ -567,8 +558,8 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
             titleTextFormatter: (date, locale) => DateFormat('yyyy년 M월', 'ko_KR').format(date),
           ),
           daysOfWeekStyle: DaysOfWeekStyle(
-            weekdayStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha:0.7)),
-            weekendStyle: TextStyle(color: DSColors.error.withValues(alpha:0.7)),
+            weekdayStyle: typography.bodySmall.copyWith(color: theme.colorScheme.onSurface.withValues(alpha:0.7)),
+            weekendStyle: typography.bodySmall.copyWith(color: DSColors.error.withValues(alpha:0.7)),
           ),
           daysOfWeekHeight: 40,
           locale: 'ko_KR',

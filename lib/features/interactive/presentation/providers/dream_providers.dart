@@ -112,7 +112,7 @@ class DreamInterpretationNotifier extends StateNotifier<AsyncValue<DreamAnalysis
 
       if (!hasEnoughTokens) {
         state = AsyncValue.error(
-          Exception('복주머니가 부족합니다'),
+          Exception('토큰가 부족합니다'),
           StackTrace.current,
         );
         return;

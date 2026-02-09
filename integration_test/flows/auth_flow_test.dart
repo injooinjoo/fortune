@@ -1,22 +1,22 @@
-/// Authentication Flow Integration Test (Category A2)
-/// 인증 플로우 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/flows/auth_flow_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 10개:
-/// - AUTH-001: 테스트 모드 자동 로그인
-/// - AUTH-002: 온보딩 UI 요소 확인
-/// - AUTH-003: 소셜 로그인 버튼 표시
-/// - AUTH-004: 로그아웃 UI 확인
-/// - AUTH-005: 프로필 페이지 렌더링
-/// - AUTH-006: 프로필 수정 UI 접근
-/// - AUTH-007: 인증 상태에 따른 UI 분기
-/// - AUTH-008: 계정 삭제 옵션 확인
-/// - AUTH-009: 전화번호 인증 UI 확인
-/// - AUTH-010: 다중 인증 상태 전환 안정성
+// Authentication Flow Integration Test (Category A2)
+// 인증 플로우 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/flows/auth_flow_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 10개:
+// - AUTH-001: 테스트 모드 자동 로그인
+// - AUTH-002: 온보딩 UI 요소 확인
+// - AUTH-003: 소셜 로그인 버튼 표시
+// - AUTH-004: 로그아웃 UI 확인
+// - AUTH-005: 프로필 페이지 렌더링
+// - AUTH-006: 프로필 수정 UI 접근
+// - AUTH-007: 인증 상태에 따른 UI 분기
+// - AUTH-008: 계정 삭제 옵션 확인
+// - AUTH-009: 전화번호 인증 UI 확인
+// - AUTH-010: 다중 인증 상태 전환 안정성
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

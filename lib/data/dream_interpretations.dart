@@ -1,5 +1,5 @@
-/// 하드코딩된 꿈 해몽 데이터
-/// 롤링 칩에서 선택 시 API 호출 없이 바로 결과 표시
+// 하드코딩된 꿈 해몽 데이터
+// 롤링 칩에서 선택 시 API 호출 없이 바로 결과 표시
 class DreamInterpretations {
   DreamInterpretations._();
 

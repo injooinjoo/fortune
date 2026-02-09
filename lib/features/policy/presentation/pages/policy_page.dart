@@ -60,6 +60,7 @@ class PolicyPage extends ConsumerWidget {
     required String subtitle,
     required Color color,
     required VoidCallback onTap}) {
+    final colors = context.colors;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
@@ -95,12 +96,12 @@ class PolicyPage extends ConsumerWidget {
                     title,
                     style: context.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+                      color: colors.textPrimary)),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: context.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: colors.textPrimary.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -108,7 +109,7 @@ class PolicyPage extends ConsumerWidget {
             ),
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: Colors.white.withValues(alpha: 0.5),
+              color: colors.textPrimary.withValues(alpha: 0.5),
               size: 20,
             ),
           ],
@@ -118,32 +119,33 @@ class PolicyPage extends ConsumerWidget {
   }
 
   Widget _buildInfoSection(BuildContext context) {
+    final colors = context.colors;
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.white.withValues(alpha: 0.1),
-          Colors.white.withValues(alpha: 0.05)]),
+          colors.surface.withValues(alpha: 0.1),
+          colors.surface.withValues(alpha: 0.05)]),
       borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Colors.white.withValues(alpha: 0.6),
+            color: colors.textPrimary.withValues(alpha: 0.6),
             size: 32),
           const SizedBox(height: 12),
           Text(
             'Fortune은 이용자의 개인정보를 소중히 여기며,\n'
             '관련 법령에 따라 안전하게 관리하고 있습니다.',
             style: context.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: colors.textPrimary.withValues(alpha: 0.8),
               height: 1.5),
             textAlign: TextAlign.center),
           const SizedBox(height: 16),
           Text(
             '문의사항이 있으시면 고객지원 페이지를 이용해주세요.',
             style: context.labelMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.6)),
+              color: colors.textPrimary.withValues(alpha: 0.6)),
             textAlign: TextAlign.center,
           ),
         ],

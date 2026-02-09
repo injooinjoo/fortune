@@ -9,17 +9,13 @@ import '../../core/components/app_dialog.dart';
 import '../../core/services/performance_cache_service.dart';
 import '../../core/utils/secure_storage.dart';
 import '../../services/storage_service.dart';
-import '../../presentation/providers/theme_provider.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/theme/typography_unified.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../presentation/providers/providers.dart';
 import '../../data/models/user_profile.dart';
-import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/services/debug_premium_service.dart';
 import '../../core/services/fortune_haptic_service.dart';
-import '../../presentation/providers/token_provider.dart';
 import '../../core/providers/user_settings_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
@@ -589,7 +585,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
 
-          // 프리미엄 & 복주머니 통합 카드
+          // 프리미엄 & 토큰 통합 카드
           const PremiumMembershipCard(),
 
           // 탐구 활동 섹션
@@ -669,7 +665,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
 
-          // 복주머니 획득 안내
+          // 토큰 획득 안내
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: DSSpacing.pageHorizontal + 4,
@@ -685,7 +681,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    '오늘의 운세 10개 이상 보면 복주머니 1개를 받아요!',
+                    '오늘의 운세 10개 이상 보면 토큰 1개를 받아요!',
                     style: context.bodySmall.copyWith(
                       color: context.colors.textTertiary,
                       fontSize: 12,
@@ -1059,12 +1055,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     final tokenState = ref.watch(tokenProvider);
                     final premiumOverride = overrideSnapshot.data;
                     final isPremium =
-                        premiumOverride ?? tokenState.hasUnlimitedAccess;
+                        premiumOverride ?? tokenState.hasUnlimitedTokens;
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 24),
+                        const SizedBox(height: DSSpacing.lg),
                         const SectionHeader(title: '개발자 도구'),
                         Container(
                           margin: const EdgeInsets.symmetric(
@@ -1088,7 +1084,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             children: [
                               SettingsListTile(
                                 icon: Icons.bug_report_outlined,
-                                title: '무제한 복주머니',
+                                title: '무제한 토큰',
                                 trailing: Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 4),
@@ -1153,7 +1149,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
 
           // 버전 정보
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Center(
             child: Text(
               'Fortune v1.0.0',
@@ -1255,7 +1251,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 ✨ Fortune의 특별한 점:
 🎯 매일 업데이트되는 오늘의 운세
 💝 다양한 운세 테마 (사주, 타로, 별자리 등)
-🎁 친구 초대 시 무료 복주머니 지급!
+🎁 친구 초대 시 무료 토큰 지급!
 
 지금 바로 Fortune을 다운로드하고 운세를 확인해보세요!
 

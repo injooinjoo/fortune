@@ -85,7 +85,7 @@ class _PrivacyBottomSheetState extends State<PrivacyBottomSheet> {
               // 헤더
               Row(
                 children: [
-                  Icon(Icons.shield_outlined, color: colors.accent, size: 24),
+                  Icon(Icons.shield_outlined, color: colors.textSecondary, size: 24),
                   const SizedBox(width: DSSpacing.sm),
                   Text(
                     '프라이버시 설정',
@@ -225,7 +225,7 @@ class _PrivacyBottomSheetState extends State<PrivacyBottomSheet> {
             Switch(
               value: value,
               onChanged: onChanged,
-              activeThumbColor: colors.accent,
+              activeThumbColor: colors.success,
             ),
           ],
         ),

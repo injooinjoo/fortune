@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/home/home_screen.dart';
-import '../features/chat/presentation/pages/chat_home_page.dart';
-import '../features/face_ai/presentation/pages/face_ai_home_screen.dart';
-import '../features/face_ai/presentation/pages/face_ai_camera_page.dart';
+import '../features/character/presentation/pages/swipe_home_shell.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/profile_edit_page.dart';
 import '../screens/profile/account_deletion_page.dart';
@@ -47,14 +45,12 @@ import '../features/admin/pages/celebrity_crawling_page.dart';
 import '../features/more/presentation/pages/fortune_tab_page.dart';
 import '../features/more/presentation/pages/more_page.dart';
 
-// Import chat insight
-import '../features/chat_insight/presentation/pages/chat_insight_screen.dart';
-
 // Import route groups
 import 'routes/auth_routes.dart';
 import 'routes/interactive_routes.dart';
 import 'routes/trend_routes.dart';
 import 'routes/wellness_routes.dart';
+import 'character_routes.dart';
 
 import '../core/utils/page_transitions.dart';
 import '../core/utils/route_observer_logger.dart';
@@ -86,30 +82,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      // Face AI Camera (outside shell - full screen camera with Face Mesh)
-      GoRoute(
-        path: '/face-ai/camera',
-        name: 'face-ai-camera',
-        builder: (context, state) => const FaceAiCameraPage(),
-      ),
-
-      // Face AI Home (Chat에서 진입)
-      GoRoute(
-        path: '/fortune/face-ai',
-        name: 'fortune-face-ai',
-        builder: (context, state) => const FaceAiHomeScreen(),
-      ),
-
-      // Chat Insight (카톡 대화 분석 - outside shell)
-      GoRoute(
-        path: '/chat-insight',
-        name: 'chat-insight',
-        pageBuilder: (context, state) => PageTransitions.slideTransition(
-          context,
-          state,
-          const ChatInsightScreen(),
-        ),
-      ),
 
       // 4-Tab StatefulShellRoute: 홈 / 운세 / 기록 / 더보기
       StatefulShellRoute.indexedStack(
@@ -126,7 +98,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 pageBuilder: (context, state) => PageTransitions.tabTransition(
                   context,
                   state,
-                  const ChatHomePage(),
+                  const SwipeHomeShell(),
                 ),
               ),
               // Home route (레거시 호환 - ChatHomePage로 리다이렉트)
@@ -330,6 +302,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       // Wellness routes (outside shell - for focused wellness experience)
       ...wellnessRoutes,
+
+      // Character profile routes (outside shell)
+      ...characterRoutes,
 
       // Fortune history detail route (outside shell)
       GoRoute(

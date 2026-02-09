@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 /// 미션 진행률 위젯
 /// 진행률을 재미있게 표시합니다 (자기계발 느낌 ❌)
@@ -69,7 +68,7 @@ class MissionProgressWidget extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   _getMissionSubtitle(),
                   style: context.labelSmall.copyWith(
@@ -78,14 +77,14 @@ class MissionProgressWidget extends StatelessWidget {
                         : DSColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
 
                 // 진행 바
                 _buildProgressBar(context),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: DSSpacing.sm + 4),
 
           // 보상
           _buildReward(context),
@@ -120,7 +119,7 @@ class MissionProgressWidget extends StatelessWidget {
               bottom: 2,
               child: Container(
                 padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: DSColors.success,
                   shape: BoxShape.circle,
                 ),
@@ -158,7 +157,7 @@ class MissionProgressWidget extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: DSSpacing.sm),
             Text(
               '$currentCount/$targetCount',
               style: context.labelSmall.copyWith(
@@ -191,11 +190,11 @@ class MissionProgressWidget extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          const Text(
             '💎',
-            style: const TextStyle(fontSize: 14),
+            style: TextStyle(fontSize: 14),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             '+$reward',
             style: context.labelSmall.copyWith(
@@ -339,7 +338,7 @@ class MissionListCard extends StatelessWidget {
                   style: TextStyle(fontSize: 20),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: DSSpacing.sm + 4),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,7 +380,7 @@ class MissionListCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text('💎', style: TextStyle(fontSize: 14)),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: DSSpacing.xs),
                     Text(
                       '${_getTotalReward()}',
                       style: context.labelMedium.copyWith(
@@ -394,7 +393,7 @@ class MissionListCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 미션 목록
           ...missions.map((mission) => Padding(

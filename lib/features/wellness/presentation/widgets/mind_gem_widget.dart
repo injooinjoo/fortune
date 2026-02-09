@@ -181,13 +181,13 @@ class _MindGemPainter extends CustomPainter {
     // 원석
     final gemPath = _createGemPath(center, radius * 0.45);
     final gemPaint = Paint()
-      ..shader = LinearGradient(
+      ..shader = const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          const Color(0xFFA5D6A7),
-          const Color(0xFF66BB6A),
-          const Color(0xFF43A047),
+          Color(0xFFA5D6A7),
+          Color(0xFF66BB6A),
+          Color(0xFF43A047),
         ],
       ).createShader(gemPath.getBounds());
     canvas.drawPath(gemPath, gemPaint);
@@ -211,13 +211,13 @@ class _MindGemPainter extends CustomPainter {
     // 원석
     final gemPath = _createGemPath(center, radius * 0.55);
     final gemPaint = Paint()
-      ..shader = LinearGradient(
+      ..shader = const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          const Color(0xFF80DEEA),
-          const Color(0xFF26C6DA),
-          const Color(0xFF00ACC1),
+          Color(0xFF80DEEA),
+          Color(0xFF26C6DA),
+          Color(0xFF00ACC1),
         ],
       ).createShader(gemPath.getBounds());
     canvas.drawPath(gemPath, gemPaint);
@@ -243,13 +243,13 @@ class _MindGemPainter extends CustomPainter {
     // 원석
     final gemPath = _createGemPath(center, radius * 0.65);
     final gemPaint = Paint()
-      ..shader = LinearGradient(
+      ..shader = const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          const Color(0xFFE1BEE7),
-          const Color(0xFFBA68C8),
-          const Color(0xFF9C27B0),
+          Color(0xFFE1BEE7),
+          Color(0xFFBA68C8),
+          Color(0xFF9C27B0),
         ],
       ).createShader(gemPath.getBounds());
     canvas.drawPath(gemPath, gemPaint);
@@ -279,14 +279,14 @@ class _MindGemPainter extends CustomPainter {
     // 보석
     final gemPath = _createGemPath(center, radius * 0.7);
     final gemPaint = Paint()
-      ..shader = LinearGradient(
+      ..shader = const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          const Color(0xFFFFF9C4),
-          const Color(0xFFFFD54F),
-          const Color(0xFFFFB300),
-          const Color(0xFFFF8F00),
+          Color(0xFFFFF9C4),
+          Color(0xFFFFD54F),
+          Color(0xFFFFB300),
+          Color(0xFFFF8F00),
         ],
       ).createShader(gemPath.getBounds());
     canvas.drawPath(gemPath, gemPaint);
@@ -495,7 +495,7 @@ class GemLevelInfo extends StatelessWidget {
             ),
           )
         else
-          Text(
+          const Text(
             '최고 단계 달성!',
             style: TextStyle(
               fontSize: 14,

@@ -1,5 +1,5 @@
-/// Firebase Analytics 이벤트 상수
-/// A/B 테스트에서 추적할 모든 이벤트 정의
+// Firebase Analytics 이벤트 상수
+// A/B 테스트에서 추적할 모든 이벤트 정의
 class ABTestEvents {
   // Private constructor to prevent instantiation
   ABTestEvents._();

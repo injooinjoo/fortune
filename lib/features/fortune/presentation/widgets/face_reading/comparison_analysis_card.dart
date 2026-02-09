@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../domain/models/face_reading_history_entry.dart';
 
 /// 두 날짜 비교 분석 카드
@@ -55,11 +54,11 @@ class ComparisonAnalysisCard extends StatelessWidget {
 
           // 컨디션 변화
           _buildConditionChange(context),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 감정 변화
           _buildEmotionChange(context),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 카테고리별 변화
           _buildScoreChanges(context),
@@ -82,7 +81,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
             color: DSColors.accentSecondary.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.compare_arrows,
             color: DSColors.accentSecondary,
             size: 22,
@@ -152,8 +151,8 @@ class ComparisonAnalysisCard extends StatelessWidget {
             false,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
           child: Icon(
             Icons.arrow_forward,
             color: DSColors.accent,
@@ -202,7 +201,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
             ),
           ),
           if (score != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: DSSpacing.sm),
             Text(
               '$score점',
               style: context.heading4.copyWith(
@@ -417,7 +416,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
             fontSize: 10,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: DSSpacing.xs),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -470,7 +469,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
               fontSize: 11,
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: DSSpacing.xs),
           if (isPositive)
             Icon(Icons.arrow_upward, color: color, size: 12)
           else if (isNegative)
@@ -507,9 +506,9 @@ class ComparisonAnalysisCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text(
+          const Text(
             '💫',
-            style: const TextStyle(fontSize: 24),
+            style: TextStyle(fontSize: 24),
           ),
           const SizedBox(width: 12),
           Expanded(
