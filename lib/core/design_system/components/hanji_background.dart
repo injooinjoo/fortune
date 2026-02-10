@@ -115,8 +115,8 @@ class _HanjiTexture extends StatelessWidget {
     // Try to load hanji texture asset
     // Falls back to subtle color pattern if asset not available
     final texturePath = brightness == Brightness.dark
-        ? 'assets/textures/hanji_dark.png'
-        : 'assets/textures/hanji_light.png';
+        ? 'assets/textures/hanji_dark.webp'
+        : 'assets/textures/hanji_light.webp';
 
     return Opacity(
       opacity: opacity,

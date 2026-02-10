@@ -23,7 +23,8 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   static const _maxStoredMessages = 100;
 
   ChatMessagesNotifier(this._prefs) : super(const ChatState()) {
-    _loadMessages();
+    // 앱 시작 시 이전 대화 로드 비활성화 - 빈 상태로 시작
+    // _loadMessages();
   }
 
   /// 로컬에 저장된 메시지 로드

@@ -16,8 +16,8 @@ class _LandingHanjiTexture extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.isDark;
     final texturePath = isDark
-        ? 'assets/textures/hanji_dark.png'
-        : 'assets/textures/hanji_light.png';
+        ? 'assets/textures/hanji_dark.webp'
+        : 'assets/textures/hanji_light.webp';
 
     return Positioned.fill(
       child: Opacity(

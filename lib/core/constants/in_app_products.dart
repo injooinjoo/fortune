@@ -6,11 +6,11 @@ class InAppProducts {
   static const String points1200 = 'com.beyond.fortune.points1200';
   static const String points3000 = 'com.beyond.fortune.points3000';
 
-  // Subscription Products (일일 1000P 한도)
-  static const String monthlySubscription =
-      'com.beyond.fortune.subscription.monthly';
-  static const String yearlySubscription =
-      'com.beyond.fortune.subscription.yearly';
+  // Subscription Products (Pro / Max)
+  static const String proSubscription =
+      'com.beyond.fortune.subscription.monthly'; // Pro 월간 구독
+  static const String maxSubscription =
+      'com.beyond.fortune.subscription.max'; // Max 월간 구독 (신규)
 
   // Non-Consumable Products (평생 소유)
   static const String premiumSajuLifetime =
@@ -58,23 +58,23 @@ class InAppProducts {
       bonusPoints: 1000,
       isSubscription: false,
     ),
-    monthlySubscription: ProductInfo(
-      id: monthlySubscription,
-      title: '월간 구독',
-      description: '매월 50개 토큰 자동 충전',
-      price: 1500,
-      points: 50, // 월간 토큰
+    proSubscription: ProductInfo(
+      id: proSubscription,
+      title: 'Pro 구독',
+      description: '매월 30,000개 토큰 자동 충전',
+      price: 4500,
+      points: 30000, // 월간 토큰
       isSubscription: true,
-      subscriptionPeriod: 'monthly',
+      subscriptionPeriod: 'pro',
     ),
-    yearlySubscription: ProductInfo(
-      id: yearlySubscription,
-      title: '연간 구독',
-      description: '매월 50개 토큰 (17% 할인)',
-      price: 15000,
-      points: 600, // 연간 토큰 (50 x 12)
+    maxSubscription: ProductInfo(
+      id: maxSubscription,
+      title: 'Max 구독',
+      description: '매월 100,000개 토큰 자동 충전',
+      price: 12900,
+      points: 100000, // 월간 토큰
       isSubscription: true,
-      subscriptionPeriod: 'yearly',
+      subscriptionPeriod: 'max',
     ),
     premiumSajuLifetime: ProductInfo(
       id: premiumSajuLifetime,
@@ -97,8 +97,8 @@ class InAppProducts {
 
   // Get all subscription product IDs
   static List<String> get subscriptionIds => [
-    monthlySubscription,
-    yearlySubscription,
+    proSubscription,
+    maxSubscription,
   ];
 
   // Get all non-consumable product IDs (평생 소유)
@@ -164,21 +164,18 @@ class ProductInfo {
     return price / points;
   }
 
-  /// 월간 기준 가격 (연간 구독 시 할인율 계산용)
-  int get monthlyEquivalentPrice {
-    if (subscriptionPeriod == 'yearly') {
-      return (price / 12).round();
-    }
-    return price;
-  }
+  /// 월간 가격 반환
+  int get monthlyEquivalentPrice => price;
 
-  /// 할인율 계산 (연간 구독 기준)
-  int get discountPercent {
-    if (subscriptionPeriod == 'yearly') {
-      // 월간 가격 * 12 대비 할인율
-      const monthlyPrice = 4900;
-      final yearlyEquivalent = monthlyPrice * 12; // 58,800원
-      return (((yearlyEquivalent - price) / yearlyEquivalent) * 100).round();
+  /// Pro 대비 Max 절약률 (Max 구독 시)
+  int get savingsPercent {
+    if (subscriptionPeriod == 'max') {
+      // Pro 가격 대비 토큰당 가격 절약률
+      const proPrice = 4500;
+      const proTokens = 30000;
+      final proPricePerToken = proPrice / proTokens;
+      final maxPricePerToken = price / points;
+      return (((proPricePerToken - maxPricePerToken) / proPricePerToken) * 100).round();
     }
     return 0;
   }

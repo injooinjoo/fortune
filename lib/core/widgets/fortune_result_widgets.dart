@@ -91,9 +91,9 @@ class FortuneResultWidgets {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.help_outline,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                       size: 20,
                     ),
                     onPressed: () {

@@ -2,15 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/constants/fortune_metadata.dart';
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/widgets/unified_voice_text_field.dart';
+import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
+import '../../domain/models/character_chat_state.dart';
 import '../../domain/models/character_choice.dart';
 import '../providers/character_chat_provider.dart';
+import '../providers/character_chat_survey_provider.dart';
 import '../widgets/character_intro_card.dart';
 import '../widgets/character_message_bubble.dart';
 import '../widgets/character_choice_widget.dart';
 import '../widgets/wave_typing_indicator.dart';
+// 설문 관련 imports
+import '../../../chat/domain/models/fortune_survey_config.dart';
+import '../../../chat/domain/configs/survey_configs.dart';
+import '../../../chat/presentation/widgets/survey/chat_survey_chips.dart';
+import '../../../chat/presentation/widgets/survey/chat_birth_datetime_picker.dart';
+import '../../../chat/presentation/widgets/survey/chat_survey_slider.dart';
 
 /// 1:1 캐릭터 롤플레이 채팅 패널
 class CharacterChatPanel extends ConsumerStatefulWidget {
@@ -40,12 +51,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // 기존 대화 불러오기
+    // 기존 대화 불러오기 + 읽음 처리
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _cachedNotifier =
           ref.read(characterChatProvider(widget.character.id).notifier);
       _cachedNotifier?.initConversation();
+      _cachedNotifier?.clearUnreadCount();  // 채팅방 진입 시 읽음 처리
     });
   }
 
@@ -80,15 +92,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     }
   }
 
-  void _sendMessage() {
-    final text = _textController.text.trim();
-    if (text.isEmpty) return;
-
-    ref.read(characterChatProvider(widget.character.id).notifier).sendMessage(text);
-    _textController.clear();
-    _scrollToBottom();
-  }
-
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients) {
@@ -110,6 +113,25 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   @override
   Widget build(BuildContext context) {
     final chatState = ref.watch(characterChatProvider(widget.character.id));
+    final surveyState = ref.watch(characterChatSurveyProvider(widget.character.id));
+
+    // 🪙 토큰 부족 에러 감지
+    ref.listen<CharacterChatState>(
+      characterChatProvider(widget.character.id),
+      (previous, next) {
+        if (next.error == 'INSUFFICIENT_TOKENS') {
+          // 에러 클리어
+          ref.read(characterChatProvider(widget.character.id).notifier).clearError();
+
+          // 토큰 부족 모달 표시
+          TokenInsufficientModal.show(
+            context: context,
+            requiredTokens: 1,
+            fortuneType: 'character-chat',
+          );
+        }
+      },
+    );
 
     return PopScope(
       canPop: true,
@@ -127,6 +149,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               // 헤더
               _buildHeader(context),
               const Divider(height: 1),
+              // 운세 전문가 칩 바 (운세 전문가일 때만)
+              if (widget.character.isFortuneExpert &&
+                  widget.character.specialties.isNotEmpty)
+                _buildFortuneChipBar(chatState),
               // 채팅 영역
               Expanded(
                 child: chatState.isLoading
@@ -138,8 +164,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                             onStartConversation: _startConversation,
                           ),
               ),
-              // 입력 영역 (대화 시작 후에만)
-              if (chatState.hasConversation) _buildInputArea(chatState),
+              // 설문 UI (설문 진행 중일 때)
+              if (surveyState.isActive) _buildSurveyInput(surveyState),
+              // 입력 영역 (대화 시작 후에만, 설문 중이 아닐 때)
+              if (chatState.hasConversation && !surveyState.isActive) _buildInputArea(chatState),
             ],
           ),
         ),
@@ -228,6 +256,216 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     context.push('/character/${widget.character.id}', extra: widget.character);
   }
 
+  /// 운세 전문가 칩 바 (전문 분야 운세 칩들)
+  Widget _buildFortuneChipBar(dynamic chatState) {
+    // 밝은 색상이면 더 어둡게 조정하여 흰 배경에서 가독성 확보
+    Color chipColor = widget.character.accentColor;
+    if (chipColor.computeLuminance() > 0.4) {
+      final hsl = HSLColor.fromColor(chipColor);
+      chipColor = hsl.withLightness((hsl.lightness * 0.65).clamp(0.25, 0.45)).toColor();
+    }
+
+    return Container(
+      height: 50,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[200]!),
+        ),
+      ),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: widget.character.specialties.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final specialty = widget.character.specialties[index];
+          final fortuneType = FortuneType.fromKey(specialty);
+          final displayName = fortuneType?.displayName ?? specialty;
+
+          return GestureDetector(
+            onTap: chatState.isProcessing
+                ? null
+                : () => _handleFortuneChipTap(specialty, displayName),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: chipColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: chipColor.withValues(alpha: 0.4),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.auto_awesome,
+                    size: 14,
+                    color: chipColor,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    displayName,
+                    style: context.labelMedium.copyWith(
+                      color: chipColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// 운세 칩 탭 핸들러 - 설문이 있으면 설문 시작, 없으면 바로 요청
+  void _handleFortuneChipTap(String fortuneType, String displayName) {
+    HapticFeedback.lightImpact();
+
+    // fortuneType을 FortuneSurveyType으로 매핑
+    final surveyType = _mapFortuneTypeToSurveyType(fortuneType);
+    final config = surveyType != null ? surveyConfigs[surveyType] : null;
+
+    // 설문이 있고 단계가 있으면 설문 시작
+    if (surveyType != null && config != null && config.steps.isNotEmpty) {
+      // 캐릭터 메시지로 설문 시작 안내
+      final chatNotifier = ref.read(characterChatProvider(widget.character.id).notifier);
+      chatNotifier.addCharacterMessage(
+        '$displayName을 봐드릴게요! 몇 가지만 알려주시면 더 정확하게 봐드릴 수 있어요 ✨',
+      );
+
+      // 설문 시작
+      ref.read(characterChatSurveyProvider(widget.character.id).notifier)
+          .startSurvey(surveyType, fortuneTypeStr: fortuneType);
+
+      // 첫 질문을 캐릭터 메시지로 표시
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
+        final surveyState = ref.read(characterChatSurveyProvider(widget.character.id));
+        if (surveyState.isActive && surveyState.activeProgress != null) {
+          final firstQuestion = surveyState.activeProgress!.currentStep.question;
+          chatNotifier.addCharacterMessage(firstQuestion);
+        }
+        _scrollToBottom();
+      });
+    } else {
+      // 설문 없이 바로 요청
+      final requestMessage = '$displayName에 대해 알려주세요';
+      ref.read(characterChatProvider(widget.character.id).notifier)
+          .sendFortuneRequest(fortuneType, requestMessage);
+    }
+    _scrollToBottom();
+  }
+
+  /// fortuneType 문자열을 FortuneSurveyType으로 매핑
+  FortuneSurveyType? _mapFortuneTypeToSurveyType(String fortuneType) {
+    const mapping = {
+      'daily': FortuneSurveyType.daily,
+      'career': FortuneSurveyType.career,
+      'love': FortuneSurveyType.love,
+      'talent': FortuneSurveyType.talent,
+      'tarot': FortuneSurveyType.tarot,
+      'mbti': FortuneSurveyType.mbti,
+      'newYear': FortuneSurveyType.newYear,
+      'daily_calendar': FortuneSurveyType.dailyCalendar,
+      'traditional': FortuneSurveyType.traditional,
+      'faceReading': FortuneSurveyType.faceReading,
+      'talisman': FortuneSurveyType.talisman,
+      'personalityDna': FortuneSurveyType.personalityDna,
+      'biorhythm': FortuneSurveyType.biorhythm,
+      'compatibility': FortuneSurveyType.compatibility,
+      'avoidPeople': FortuneSurveyType.avoidPeople,
+      'exLover': FortuneSurveyType.exLover,
+      'blindDate': FortuneSurveyType.blindDate,
+      'money': FortuneSurveyType.money,
+      'luckyItems': FortuneSurveyType.luckyItems,
+      'lotto': FortuneSurveyType.lotto,
+      'wish': FortuneSurveyType.wish,
+      'fortuneCookie': FortuneSurveyType.fortuneCookie,
+      'health': FortuneSurveyType.health,
+      'exercise': FortuneSurveyType.exercise,
+      'sportsGame': FortuneSurveyType.sportsGame,
+      'dream': FortuneSurveyType.dream,
+      'celebrity': FortuneSurveyType.celebrity,
+      'pastLife': FortuneSurveyType.pastLife,
+      'gameEnhance': FortuneSurveyType.gameEnhance,
+      'pet': FortuneSurveyType.pet,
+      'family': FortuneSurveyType.family,
+      'naming': FortuneSurveyType.naming,
+      'babyNickname': FortuneSurveyType.babyNickname,
+      'ootdEvaluation': FortuneSurveyType.ootdEvaluation,
+      'exam': FortuneSurveyType.exam,
+      'moving': FortuneSurveyType.moving,
+      'gratitude': FortuneSurveyType.gratitude,
+      'yearlyEncounter': FortuneSurveyType.yearlyEncounter,
+    };
+    return mapping[fortuneType];
+  }
+
+  /// 설문 답변 처리
+  void _handleSurveyAnswer(dynamic answer) {
+    final surveyNotifier = ref.read(characterChatSurveyProvider(widget.character.id).notifier);
+    final chatNotifier = ref.read(characterChatProvider(widget.character.id).notifier);
+
+    // 답변을 사용자 메시지로 표시
+    String answerText;
+    if (answer is List) {
+      answerText = answer.join(', ');
+    } else if (answer is Map) {
+      answerText = answer.values.join(', ');
+    } else {
+      answerText = answer.toString();
+    }
+    chatNotifier.addUserMessage(answerText);
+
+    // 답변 처리
+    surveyNotifier.answerCurrentStep(answer);
+
+    // 다음 단계 확인
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      final surveyState = ref.read(characterChatSurveyProvider(widget.character.id));
+
+      if (surveyState.isCompleted) {
+        // 설문 완료 - 운세 요청
+        _handleSurveyComplete(surveyState);
+      } else if (surveyState.isActive && surveyState.activeProgress != null) {
+        // 다음 질문
+        final nextQuestion = surveyState.activeProgress!.currentStep.question;
+        chatNotifier.addCharacterMessage(nextQuestion);
+        _scrollToBottom();
+      }
+    });
+  }
+
+  /// 설문 완료 처리
+  void _handleSurveyComplete(CharacterChatSurveyState surveyState) {
+    final chatNotifier = ref.read(characterChatProvider(widget.character.id).notifier);
+    final surveyNotifier = ref.read(characterChatSurveyProvider(widget.character.id).notifier);
+
+    // 완료 메시지
+    chatNotifier.addCharacterMessage('좋아요! 이제 분석해드릴게요 🔮');
+
+    // 설문 데이터로 운세 요청
+    final fortuneType = surveyState.fortuneTypeString ?? 'daily';
+    final answers = surveyState.completedData ?? {};
+
+    // 설문 초기화
+    surveyNotifier.clearCompleted();
+
+    // 운세 요청 (설문 답변 포함)
+    final displayName = FortuneType.fromKey(fortuneType)?.displayName ?? fortuneType;
+    final requestMessage = '$displayName 결과를 알려주세요';
+
+    ref.read(characterChatProvider(widget.character.id).notifier)
+        .sendFortuneRequestWithAnswers(fortuneType, requestMessage, answers);
+    _scrollToBottom();
+  }
+
   Widget _buildChatList(dynamic chatState) {
     return ListView.builder(
       controller: _scrollController,
@@ -280,12 +518,17 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           CircleAvatar(
             radius: 16,
             backgroundColor: widget.character.accentColor,
-            child: Text(
-              widget.character.initial,
-              style: context.labelMedium.copyWith(
-                color: Colors.white,
-              ),
-            ),
+            backgroundImage: widget.character.avatarAsset.isNotEmpty
+                ? AssetImage(widget.character.avatarAsset)
+                : null,
+            child: widget.character.avatarAsset.isEmpty
+                ? Text(
+                    widget.character.initial,
+                    style: context.labelMedium.copyWith(
+                      color: Colors.white,
+                    ),
+                  )
+                : null,
           ),
           const SizedBox(width: 8),
           Container(
@@ -305,58 +548,243 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
   }
 
-  Widget _buildInputArea(dynamic chatState) {
+  /// 설문 입력 UI 빌드
+  Widget _buildSurveyInput(CharacterChatSurveyState surveyState) {
+    if (!surveyState.isActive || surveyState.activeProgress == null) {
+      return const SizedBox.shrink();
+    }
+
+    final progress = surveyState.activeProgress!;
+    final step = progress.currentStep;
+    final surveyNotifier = ref.read(characterChatSurveyProvider(widget.character.id).notifier);
+    final options = surveyNotifier.getCurrentStepOptions();
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(
           top: BorderSide(color: Colors.grey[200]!),
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: TextField(
-                controller: _textController,
-                focusNode: _focusNode,
-                decoration: InputDecoration(
-                  hintText: '메시지를 입력하세요...',
-                  hintStyle: context.bodyMedium.copyWith(
-                    color: Colors.grey[400],
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
+          // 진행률 표시
+          Padding(
+            padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+            child: Row(
+              children: [
+                Text(
+                  '${progress.currentStepIndex + 1}/${progress.config.totalSteps}',
+                  style: context.labelSmall.copyWith(color: Colors.grey[600]),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: LinearProgressIndicator(
+                    value: progress.progress,
+                    backgroundColor: Colors.grey[200],
+                    valueColor: AlwaysStoppedAnimation(widget.character.accentColor),
                   ),
                 ),
-                style: context.bodyMedium,
-                maxLines: 4,
-                minLines: 1,
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => _sendMessage(),
+                // 스킵 버튼 (선택적 단계만)
+                if (!step.isRequired)
+                  TextButton(
+                    onPressed: () {
+                      surveyNotifier.skipCurrentStep();
+                      _checkSurveyCompletion();
+                    },
+                    child: Text(
+                      '건너뛰기',
+                      style: context.labelSmall.copyWith(color: Colors.grey[500]),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          // 입력 타입별 위젯
+          _buildSurveyInputWidget(step, options),
+        ],
+      ),
+    );
+  }
+
+  /// 입력 타입별 설문 위젯 빌드
+  Widget _buildSurveyInputWidget(SurveyStep step, List<SurveyOption> options) {
+    switch (step.inputType) {
+      case SurveyInputType.chips:
+        return ChatSurveyChips(
+          options: options,
+          onSelect: (option) => _handleSurveyAnswer(option.id),
+        );
+
+      case SurveyInputType.multiSelect:
+        return _buildMultiSelectChips(options);
+
+      case SurveyInputType.slider:
+        return ChatSurveySlider(
+          minValue: step.minValue ?? 1,
+          maxValue: step.maxValue ?? 10,
+          initialValue: ((step.minValue ?? 1) + (step.maxValue ?? 10)) / 2,
+          unit: step.unit,
+          onValueChanged: (value) {}, // 실시간 변경은 무시
+          onSubmit: (value) => _handleSurveyAnswer(value.toInt()),
+        );
+
+      case SurveyInputType.birthDateTime:
+        return ChatBirthDatetimePicker(
+          onSelected: (result) {
+            _handleSurveyAnswer({
+              'year': result.year,
+              'month': result.month,
+              'day': result.day,
+              'hour': result.hour,
+              'minute': result.minute,
+              'isUnknown': result.isUnknown,
+            });
+          },
+        );
+
+      case SurveyInputType.text:
+      case SurveyInputType.textWithSkip:
+        return _buildTextInput(step);
+
+      default:
+        // 기타 복잡한 입력은 chips로 대체하거나 스킵
+        if (options.isNotEmpty) {
+          return ChatSurveyChips(
+            options: options,
+            onSelect: (option) => _handleSurveyAnswer(option.id),
+          );
+        }
+        return _buildTextInput(step);
+    }
+  }
+
+  /// 다중 선택 칩 위젯
+  Widget _buildMultiSelectChips(List<SurveyOption> options) {
+    final selectedIds = <String>{};
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ChatSurveyChips(
+              options: options,
+              onSelect: (option) {
+                setState(() {
+                  if (selectedIds.contains(option.id)) {
+                    selectedIds.remove(option.id);
+                  } else {
+                    selectedIds.add(option.id);
+                  }
+                });
+              },
+              allowMultiple: true,
+              selectedIds: selectedIds,
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            if (selectedIds.isNotEmpty)
+              ElevatedButton(
+                onPressed: () => _handleSurveyAnswer(selectedIds.toList()),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: widget.character.accentColor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text('선택 완료'),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// 텍스트 입력 위젯
+  Widget _buildTextInput(SurveyStep step) {
+    final textController = TextEditingController();
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: textController,
+            decoration: InputDecoration(
+              hintText: '입력해주세요...',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(24),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
               ),
             ),
+            onSubmitted: (text) {
+              if (text.isNotEmpty) {
+                _handleSurveyAnswer(text);
+              }
+            },
           ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: chatState.isProcessing ? null : _sendMessage,
-            child: Icon(
-              Icons.send_rounded,
-              size: 28,
-              color: chatState.isProcessing
-                  ? Colors.grey[300]
-                  : widget.character.accentColor,
-            ),
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          onPressed: () {
+            if (textController.text.isNotEmpty) {
+              _handleSurveyAnswer(textController.text);
+            }
+          },
+          icon: Icon(Icons.send, color: widget.character.accentColor),
+        ),
+        if (step.inputType == SurveyInputType.textWithSkip)
+          TextButton(
+            onPressed: () {
+              ref.read(characterChatSurveyProvider(widget.character.id).notifier)
+                  .skipCurrentStep();
+              _checkSurveyCompletion();
+            },
+            child: const Text('없음'),
           ),
-        ],
+      ],
+    );
+  }
+
+  /// 설문 완료 여부 확인 (스킵 후)
+  void _checkSurveyCompletion() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (!mounted) return;
+      final surveyState = ref.read(characterChatSurveyProvider(widget.character.id));
+      final chatNotifier = ref.read(characterChatProvider(widget.character.id).notifier);
+
+      if (surveyState.isCompleted) {
+        _handleSurveyComplete(surveyState);
+      } else if (surveyState.isActive && surveyState.activeProgress != null) {
+        // 다음 질문 표시
+        final nextQuestion = surveyState.activeProgress!.currentStep.question;
+        chatNotifier.addCharacterMessage(nextQuestion);
+        _scrollToBottom();
+      }
+    });
+  }
+
+  Widget _buildInputArea(dynamic chatState) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+      ),
+      child: UnifiedVoiceTextField(
+        controller: _textController,
+        hintText: '메시지를 입력하세요...',
+        enabled: !chatState.isProcessing,
+        onSubmit: (text) {
+          if (text.isNotEmpty) {
+            ref.read(characterChatProvider(widget.character.id).notifier).sendMessage(text);
+            _scrollToBottom();
+          }
+        },
       ),
     );
   }

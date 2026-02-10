@@ -3,10 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../domain/models/ai_character.dart';
+import '../../domain/models/character_chat_message.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
-import '../providers/sorted_characters_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
 
 /// DM 목록 패널 (인스타그램 DM 스타일)
@@ -24,8 +25,9 @@ class CharacterListPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 정렬된 캐릭터 목록 사용 (타이핑 > 새 메시지 > 최근 대화 순)
-    final characters = ref.watch(sortedCharactersProvider);
+    // 현재 탭에 맞는 캐릭터 목록 사용
+    final currentTab = ref.watch(characterListTabProvider);
+    final characters = ref.watch(currentTabCharactersProvider);
 
     return GestureDetector(
       onHorizontalDragEnd: isOverlay
@@ -43,7 +45,14 @@ class CharacterListPanel extends ConsumerWidget {
           child: Column(
             children: [
               // 헤더
-              _buildHeader(context),
+              _buildHeader(context, ref),
+              // 탭 바
+              _CharacterTabBar(
+                currentTab: currentTab,
+                onTabChanged: (tab) {
+                  ref.read(characterListTabProvider.notifier).state = tab;
+                },
+              ),
               const Divider(height: 1),
               // 캐릭터 목록
               Expanded(
@@ -65,7 +74,10 @@ class CharacterListPanel extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref) {
+    final userProfile = ref.watch(userProfileNotifierProvider).valueOrNull;
+    final profileImageUrl = userProfile?.profileImageUrl;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -85,9 +97,36 @@ class CharacterListPanel extends ConsumerWidget {
                 ),
           ),
           const Spacer(),
+          // 새 메시지 버튼
           IconButton(
-            icon: const Icon(Icons.edit_square, size: 24),
+            icon: Icon(
+              Icons.edit_outlined,
+              size: 24,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
             onPressed: () => _showNewMessageSheet(context),
+          ),
+          const SizedBox(width: 4),
+          // 프로필 이미지 (설정으로 이동)
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              context.push('/profile');
+            },
+            child: CircleAvatar(
+              radius: 16,
+              backgroundColor: Colors.grey[300],
+              backgroundImage: profileImageUrl != null && profileImageUrl.isNotEmpty
+                  ? NetworkImage(profileImageUrl)
+                  : null,
+              child: profileImageUrl == null || profileImageUrl.isEmpty
+                  ? Icon(
+                      Icons.person,
+                      size: 18,
+                      color: Colors.grey[600],
+                    )
+                  : null,
+            ),
           ),
         ],
       ),
@@ -106,8 +145,104 @@ class CharacterListPanel extends ConsumerWidget {
   }
 }
 
-/// 캐릭터 목록 아이템 (인스타그램 DM 스타일 + 롱프레스 액션)
-class _CharacterListItem extends ConsumerWidget {
+/// 캐릭터 목록 탭 바 (운세상담 / 스토리)
+class _CharacterTabBar extends StatelessWidget {
+  final CharacterListTab currentTab;
+  final void Function(CharacterListTab) onTabChanged;
+
+  const _CharacterTabBar({
+    required this.currentTab,
+    required this.onTabChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          _TabButton(
+            label: '스토리',
+            icon: Icons.favorite_outline,
+            isSelected: currentTab == CharacterListTab.story,
+            onTap: () => onTabChanged(CharacterListTab.story),
+            isDark: isDark,
+          ),
+          // TODO: 운세상담 탭 임시 숨김
+          // const SizedBox(width: 8),
+          // _TabButton(
+          //   label: '운세상담',
+          //   icon: Icons.auto_awesome,
+          //   isSelected: currentTab == CharacterListTab.fortune,
+          //   onTap: () => onTabChanged(CharacterListTab.fortune),
+          //   isDark: isDark,
+          // ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TabButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final bool isDark;
+
+  const _TabButton({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? Colors.white : Colors.black)
+              : (isDark ? Colors.grey[800] : Colors.grey[200]),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected
+                  ? (isDark ? Colors.black : Colors.white)
+                  : (isDark ? Colors.grey[400] : Colors.grey[600]),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? (isDark ? Colors.black : Colors.white)
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 캐릭터 목록 아이템 (인스타그램 DM 스타일 + iOS 스타일 스와이프 액션 버튼)
+class _CharacterListItem extends ConsumerStatefulWidget {
   final AiCharacter character;
   final VoidCallback onTap;
 
@@ -116,12 +251,43 @@ class _CharacterListItem extends ConsumerWidget {
     required this.onTap,
   });
 
-  void _onDelete(BuildContext context, WidgetRef ref) {
+  @override
+  ConsumerState<_CharacterListItem> createState() => _CharacterListItemState();
+}
+
+class _CharacterListItemState extends ConsumerState<_CharacterListItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _slideAnimation;
+  bool _isActionRevealed = false;
+  static const double _actionButtonsWidth = 160.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _slideAnimation = Tween<double>(
+      begin: 0,
+      end: _actionButtonsWidth,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onDelete(BuildContext context) {
+    _closeActions();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('대화 삭제'),
-        content: Text('${character.name}와의 대화를 삭제할까요?'),
+        title: const Text('대화 나가기'),
+        content: Text('${widget.character.name}와의 대화를 나갈까요?\n대화 내역이 삭제됩니다.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -130,199 +296,347 @@ class _CharacterListItem extends ConsumerWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              ref.read(characterChatProvider(character.id).notifier).clearConversation();
+              ref.read(characterChatProvider(widget.character.id).notifier).clearConversation();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('삭제'),
+            child: const Text('나가기'),
           ),
         ],
       ),
     );
   }
 
-  void _showActions(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.notifications_off_outlined),
-              title: const Text('알림 끄기'),
-              onTap: () => Navigator.pop(ctx),
-            ),
-            ListTile(
-              leading: const Icon(Icons.archive_outlined),
-              title: const Text('보관'),
-              onTap: () => Navigator.pop(ctx),
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: const Text('삭제', style: TextStyle(color: Colors.red)),
-              onTap: () {
-                Navigator.pop(ctx);
-                _onDelete(context, ref);
-              },
-            ),
-          ],
-        ),
+  void _onToggleMute(BuildContext context) {
+    _closeActions();
+    HapticFeedback.lightImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${widget.character.name}의 알림이 꺼졌습니다'),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
       ),
     );
   }
 
+  void _openActions() {
+    if (!_isActionRevealed) {
+      _controller.forward();
+      setState(() => _isActionRevealed = true);
+    }
+  }
+
+  void _closeActions() {
+    if (_isActionRevealed) {
+      _controller.reverse();
+      setState(() => _isActionRevealed = false);
+    }
+  }
+
+  void _handleDragUpdate(DragUpdateDetails details) {
+    if (details.delta.dx < -5 && !_isActionRevealed) {
+      _openActions();
+    } else if (details.delta.dx > 5 && _isActionRevealed) {
+      _closeActions();
+    }
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final chatState = ref.watch(characterChatProvider(character.id));
+  Widget build(BuildContext context) {
+    final chatState = ref.watch(characterChatProvider(widget.character.id));
     final hasConversation = chatState.hasConversation;
     final isTyping = chatState.isCharacterTyping;
     final unreadCount = chatState.unreadCount;
 
+    // 마지막 메시지가 캐릭터인지 확인 (내가 보낸 게 마지막이면 뱃지 안 보임)
+    final isLastMessageFromCharacter = chatState.messages.isNotEmpty &&
+        chatState.messages.last.type == CharacterChatMessageType.character;
+    final showUnreadBadge = unreadCount > 0 && isLastMessageFromCharacter;
+
     return GestureDetector(
-      onTap: onTap,
-      onLongPress: () => _showActions(context, ref),
-      child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
+      onHorizontalDragUpdate: _handleDragUpdate,
+      onHorizontalDragEnd: (_) {},
+      onTap: () {
+        if (_isActionRevealed) {
+          _closeActions();
+        } else {
+          widget.onTap();
+        }
+      },
+      child: SizedBox(
+        height: 100,
+        child: Stack(
           children: [
-            // 아바타 + 타이핑 인디케이터 (탭하면 프로필 페이지로 이동)
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                context.push('/character/${character.id}', extra: character);
-              },
-              child: Stack(
+            // 액션 버튼들 (배경에 고정)
+            Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: _actionButtonsWidth,
+              child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: character.accentColor,
-                    backgroundImage: character.avatarAsset.isNotEmpty
-                        ? AssetImage(character.avatarAsset)
-                        : null,
-                    child: character.avatarAsset.isEmpty
-                        ? Text(
-                            character.initial,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        : null,
-                  ),
-                  if (isTyping)
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
+                  // 알림 끄기 버튼
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _onToggleMute(context),
                       child: Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey[200]!, width: 1),
-                        ),
-                        child: const Center(
-                          child: MiniTypingIndicator(),
+                        color: Colors.grey[500],
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.notifications_off_outlined, color: Colors.white, size: 22),
+                            SizedBox(height: 4),
+                            Text(
+                              '알림끄기',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
+                  ),
+                  // 나가기 버튼
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _onDelete(context),
+                      child: Container(
+                        color: Colors.red,
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.exit_to_app, color: Colors.white, size: 22),
+                            SizedBox(height: 4),
+                            Text(
+                              '나가기',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(width: 12),
-            // 이름 + 태그 + 마지막 메시지
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          character.name,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: unreadCount > 0 ? FontWeight.bold : FontWeight.w600,
-                              ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (!hasConversation) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: character.accentColor,
-                            borderRadius: BorderRadius.circular(4),
+            // 메인 콘텐츠 (슬라이드)
+            AnimatedBuilder(
+              animation: _slideAnimation,
+              builder: (context, child) => Transform.translate(
+                offset: Offset(-_slideAnimation.value, 0),
+                child: child,
+              ),
+              child: Container(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    // 아바타 (탭하면 프로필)
+                    GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        context.push('/character/${widget.character.id}', extra: widget.character);
+                      },
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          CircleAvatar(
+                            radius: 28,
+                            backgroundColor: widget.character.accentColor,
+                            backgroundImage: widget.character.avatarAsset.isNotEmpty
+                                ? AssetImage(widget.character.avatarAsset)
+                                : null,
+                            child: widget.character.avatarAsset.isEmpty
+                                ? Text(
+                                    widget.character.initial,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : null,
                           ),
-                          child: Text(
-                            '새 대화',
-                            style: context.labelTiny.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                          // 타이핑 인디케이터
+                          if (isTyping)
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.grey[200]!, width: 1),
+                                ),
+                                child: const Center(child: MiniTypingIndicator()),
+                              ),
+                            ),
+                          // 읽지 않은 메시지 빨간 점 (캐릭터가 마지막에 보낸 경우에만)
+                          if (!isTyping && showUnreadBadge)
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              child: Container(
+                                width: 14,
+                                height: 14,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          // 운세 전문가 배지
+                          if (widget.character.isFortuneExpert)
+                            Positioned(
+                              left: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 18,
+                                height: 18,
+                                decoration: BoxDecoration(
+                                  color: widget.character.accentColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Icon(Icons.auto_awesome, size: 10, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // 이름 + 태그 + 마지막 메시지
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  widget.character.name,
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: showUnreadBadge ? FontWeight.bold : FontWeight.w600,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              // 운세 전문가 카테고리 배지
+                              if (widget.character.isFortuneExpert && widget.character.specialtyCategory != null) ...[
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: widget.character.accentColor.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: widget.character.accentColor.withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    widget.character.specialtyCategory!,
+                                    style: context.labelTiny.copyWith(
+                                      color: widget.character.accentColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              if (!hasConversation) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: widget.character.accentColor,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    '새 대화',
+                                    style: context.labelTiny.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            widget.character.tags.take(3).map((t) => '#$t').join(' '),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            isTyping
+                                ? '입력 중...'
+                                : (hasConversation ? chatState.lastMessagePreview : widget.character.shortDescription),
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: isTyping ? widget.character.accentColor : Colors.grey[600],
+                                  fontWeight: isTyping ? FontWeight.w500 : FontWeight.normal,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // 타임스탬프 + 읽지 않은 메시지 배지
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (hasConversation && chatState.lastMessageTime != null)
+                          Text(
+                            _formatTimestamp(chatState.lastMessageTime!),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: showUnreadBadge ? Colors.red : Colors.grey,
+                                  fontWeight: showUnreadBadge ? FontWeight.w600 : FontWeight.normal,
+                                ),
+                          ),
+                        if (showUnreadBadge) ...[
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              unreadCount > 99 ? '99+' : '$unreadCount',
+                              style: context.labelSmall.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ],
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    character.tags.take(3).map((t) => '#$t').join(' '),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
-                        ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    isTyping
-                        ? '입력 중...'
-                        : (hasConversation ? chatState.lastMessagePreview : character.shortDescription),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: isTyping ? character.accentColor : Colors.grey[600],
-                          fontWeight: isTyping ? FontWeight.w500 : FontWeight.normal,
-                        ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            // 오른쪽: 타임스탬프 또는 읽지 않은 메시지 배지
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (hasConversation && chatState.lastMessageTime != null)
-                  Text(
-                    _formatTimestamp(chatState.lastMessageTime!),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: unreadCount > 0 ? character.accentColor : Colors.grey,
-                          fontWeight: unreadCount > 0 ? FontWeight.w600 : FontWeight.normal,
-                        ),
-                  ),
-                if (unreadCount > 0) ...[
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: character.accentColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      unreadCount > 99 ? '99+' : '$unreadCount',
-                      style: context.labelSmall.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
             ),
           ],
         ),
@@ -446,14 +760,19 @@ class _NewMessageSheet extends ConsumerWidget {
                     leading: CircleAvatar(
                       radius: 24,
                       backgroundColor: character.accentColor,
-                      child: Text(
-                        character.initial,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      backgroundImage: character.avatarAsset.isNotEmpty
+                          ? AssetImage(character.avatarAsset)
+                          : null,
+                      child: character.avatarAsset.isEmpty
+                          ? Text(
+                              character.initial,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          : null,
                     ),
                     title: Text(
                       character.name,

@@ -104,7 +104,7 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
                   borderRadius: BorderRadius.circular(DSRadius.xl + 6),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: DSColors.background.withValues(alpha: 0.1),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -278,13 +278,13 @@ class _DreamBubble extends StatelessWidget {
             spreadRadius: 2,
           ),
           BoxShadow(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: DSColors.accent.withValues(alpha: 0.2),
             blurRadius: 10,
             offset: const Offset(-5, -5),
           ),
         ],
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
+          color: DSColors.accent.withValues(alpha: 0.3),
           width: 1.5,
         ),
       ),
@@ -302,12 +302,12 @@ class _DreamBubble extends StatelessWidget {
               child: Text(
                 topic.title.replaceAll(' 꿈', ''),
                 style: typography.bodySmall.copyWith(
-                  color: Colors.white,
+                  color: DSColors.accent,
                   fontWeight: FontWeight.w600,
                   fontSize: size * 0.12,
                   shadows: [
                     Shadow(
-                      color: Colors.black.withValues(alpha: 0.3),
+                      color: DSColors.background.withValues(alpha: 0.3),
                       blurRadius: 3,
                     ),
                   ],

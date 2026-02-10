@@ -190,31 +190,32 @@ class _TypingIndicatorState extends State<_TypingIndicator>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.isDark;
+    final colors = context.colors;
 
-    return Container(
-      alignment: Alignment.centerLeft,
+    // 심플 회색 타원형 버블 (GPT 스타일)
+    return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: DSSpacing.sm,
+        vertical: DSSpacing.xxs,
         horizontal: DSSpacing.md,
       ),
-      child: CloudBubble(
-        type: CloudBubbleType.ai,
-        showInkBleed: true,
-        cornerAsset: 'assets/images/chat/corner_motif.svg',
-        cornerSize: 16,
-        padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.lg,
-          vertical: DSSpacing.md,
-        ),
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Text(
-            _messages[_currentIndex],
-            style: context.bodySmall.copyWith(
-              color: isDark
-                  ? DSColors.textSecondaryDark
-                  : DSColors.textSecondary,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.md,
+            vertical: DSSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: colors.backgroundSecondary,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: Text(
+              _messages[_currentIndex],
+              style: context.bodySmall.copyWith(
+                color: colors.textSecondary,
+              ),
             ),
           ),
         ),

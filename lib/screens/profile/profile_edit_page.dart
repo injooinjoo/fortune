@@ -12,7 +12,6 @@ import '../../shared/components/app_header.dart';
 import '../../shared/components/progressive_date_input.dart';
 import '../../presentation/widgets/profile_image_picker.dart';
 import '../../presentation/providers/user_profile_notifier.dart';
-import '../onboarding/widgets/birth_date_preview.dart';
 import '../../core/utils/logger.dart';
 import '../../core/design_system/design_system.dart';
 
@@ -33,10 +32,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   User? _currentUser;
 
   // Design System Color Helpers
-  Color get _textColor => context.colors.textPrimary;
-  Color get _secondaryTextColor => context.colors.textSecondary;
   Color get _backgroundColor => context.colors.backgroundSecondary;
-  Color get _cardColor => context.colors.surface;
 
   // Parse time from birth time string like "축시 (01:00 - 03:00)"
   TimeOfDay? _parseTimeFromBirthTime(String birthTime) {
@@ -321,20 +317,20 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: DSSpacing.md),
+                const SizedBox(height: DSSpacing.lg),
 
                 _buildSectionCard(
                   title: '기본 정보',
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      _buildFieldLabel('이름'),
                       TextField(
                         controller: _nameController,
-                        style: context.bodyMedium.copyWith(
-                          color: _textColor,
+                        style: context.typography.bodyMedium.copyWith(
+                          color: context.colors.textPrimary,
                         ),
                         decoration: _buildInputDecoration(
-                          labelText: '이름',
                           hintText: '홍길동',
                         ),
                       ),
@@ -369,37 +365,26 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                         },
                       ),
                       if (_birthDate != null) ...[
-                        const SizedBox(height: DSSpacing.md),
-                        BirthDatePreview(
-                          birthYear: _birthDate!.year.toString(),
-                          birthMonth: _birthDate!.month.toString(),
-                          birthDay: _birthDate!.day.toString(),
-                          birthTimePeriod: _birthTime,
-                        ),
+                        const SizedBox(height: DSSpacing.sm),
+                        _buildZodiacInfo(),
                       ],
                     ],
                   ),
                 ),
-                const SizedBox(height: DSSpacing.md),
+                const SizedBox(height: DSSpacing.lg),
                 _buildSectionCard(
                   title: '성격 정보',
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        'MBTI 성격 유형',
-                        style: context.labelLarge.copyWith(
-                          color: _textColor,
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.sm),
+                      _buildFieldLabel('MBTI 성격 유형'),
                       Text(
                         'MBTI를 모르시나요? 온라인 테스트를 통해 확인해보세요.',
-                        style: context.bodySmall.copyWith(
-                          color: _secondaryTextColor,
+                        style: context.typography.labelSmall.copyWith(
+                          color: context.colors.textTertiary,
                         ),
                       ),
-                      const SizedBox(height: DSSpacing.md),
+                      const SizedBox(height: DSSpacing.iconTextGap),
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -427,14 +412,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           );
                         },
                       ),
-                      const SizedBox(height: DSSpacing.lg),
-                      Text(
-                        '혈액형',
-                        style: context.labelLarge.copyWith(
-                          color: _textColor,
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.md),
+                      const SizedBox(height: DSSpacing.sectionHeaderTop),
+                      _buildFieldLabel('혈액형'),
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -462,18 +441,14 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           );
                         },
                       ),
-                      const SizedBox(height: DSSpacing.lg),
-                      Text(
-                        '성별',
-                        style: context.labelLarge.copyWith(
-                          color: _textColor,
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.md),
+                      const SizedBox(height: DSSpacing.sectionHeaderTop),
+                      _buildFieldLabel('성별'),
                       Row(
                         children: [
                           ...Gender.values.map((gender) {
                             final isSelected = _gender == gender;
+                            final colors = context.colors;
+                            final typography = context.typography;
 
                             return Expanded(
                               child: Padding(
@@ -487,7 +462,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                         .selection();
                                     setState(() => _gender = gender);
                                   },
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(DSRadius.smd),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: DSSpacing.md),
@@ -497,22 +472,21 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                       children: [
                                         Icon(
                                           gender.icon,
-                                          size: 32,
+                                          size: 28,
                                           color: isSelected
-                                              ? context.colors.ctaForeground
-                                              : _textColor,
+                                              ? colors.ctaForeground
+                                              : colors.textPrimary,
                                         ),
                                         const SizedBox(height: DSSpacing.sm),
                                         Text(
                                           gender.label,
-                                          style:
-                                              context.bodySmall.copyWith(
+                                          style: typography.labelMedium.copyWith(
                                             color: isSelected
-                                                ? context.colors.ctaForeground
-                                                : _textColor,
+                                                ? colors.ctaForeground
+                                                : colors.textPrimary,
                                             fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
+                                                ? FontWeight.w600
+                                                : FontWeight.w500,
                                           ),
                                         ),
                                       ],
@@ -585,49 +559,91 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
 
   static const List<String> _bloodTypes = ['A', 'B', 'O', 'AB'];
 
+  Widget _buildZodiacInfo() {
+    if (_birthDate == null) return const SizedBox.shrink();
+
+    final isoDate = _birthDate!.toIso8601String().split('T')[0];
+    final zodiacSign = FortuneDateUtils.getZodiacSign(isoDate);
+    final chineseZodiac = FortuneDateUtils.getChineseZodiac(isoDate);
+    final typography = context.typography;
+    final colors = context.colors;
+
+    return Text(
+      '$chineseZodiac · $zodiacSign',
+      style: typography.labelSmall.copyWith(
+        color: colors.textTertiary,
+      ),
+    );
+  }
+
+  Widget _buildFieldLabel(String label, {bool required = false}) {
+    final typography = context.typography;
+    final colors = context.colors;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: typography.labelSmall.copyWith(
+              color: colors.textSecondary,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
+            ),
+          ),
+          if (required)
+            Text(
+              ' *',
+              style: typography.labelSmall.copyWith(
+                color: colors.error,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   InputDecoration _buildInputDecoration({
-    required String labelText,
     String? hintText,
   }) {
+    final typography = context.typography;
+    final colors = context.colors;
+
     return InputDecoration(
-      labelText: labelText,
       hintText: hintText,
-      labelStyle: context.bodySmall.copyWith(
-        color: _secondaryTextColor,
-      ),
-      hintStyle: context.bodySmall.copyWith(
-        color: _secondaryTextColor,
+      hintStyle: typography.bodyMedium.copyWith(
+        color: colors.textTertiary,
       ),
       filled: true,
-      fillColor: context.colors.background,
+      fillColor: colors.surfaceSecondary,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.inputVertical,
+      ),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(DSRadius.sm),
-        borderSide: BorderSide(
-          color: context.colors.border,
-        ),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        borderSide: BorderSide(color: colors.border),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(DSRadius.sm),
-        borderSide: BorderSide(
-          color: context.colors.border,
-        ),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        borderSide: BorderSide(color: colors.border),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(DSRadius.sm),
-        borderSide: BorderSide(
-          color: context.colors.accent,
-        ),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        borderSide: BorderSide(color: colors.accent),
       ),
     );
   }
 
   BoxDecoration _buildSelectionDecoration(bool isSelected) {
+    final colors = context.colors;
     return BoxDecoration(
-      color: isSelected ? context.colors.accent : _cardColor,
+      color: isSelected ? colors.accent : colors.surfaceSecondary,
       border: Border.all(
-        color: isSelected ? context.colors.accent : context.colors.border,
+        color: isSelected ? colors.accent : colors.border,
       ),
-      borderRadius: BorderRadius.circular(DSRadius.sm),
+      borderRadius: BorderRadius.circular(DSRadius.smd),
     );
   }
 
@@ -636,17 +652,20 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
+    final typography = context.typography;
+    final colors = context.colors;
+
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(DSRadius.sm),
+      borderRadius: BorderRadius.circular(DSRadius.smd),
       child: Container(
         decoration: _buildSelectionDecoration(isSelected),
         child: Center(
           child: Text(
             label,
-            style: context.bodySmall.copyWith(
-              color: isSelected ? context.colors.ctaForeground : _textColor,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            style: typography.labelMedium.copyWith(
+              color: isSelected ? colors.ctaForeground : colors.textPrimary,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),
           ),
         ),
@@ -659,31 +678,31 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     String? description,
     required Widget child,
   }) {
+    final typography = context.typography;
+    final colors = context.colors;
+
     return Container(
-      padding: const EdgeInsets.all(DSSpacing.lg),
+      padding: const EdgeInsets.all(DSSpacing.cardPaddingLarge),
       decoration: BoxDecoration(
-        color: _cardColor,
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: context.colors.border,
-          width: 1,
-        ),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.card),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: context.heading4.copyWith(
-              color: _textColor,
+            style: typography.headingSmall.copyWith(
+              color: colors.textPrimary,
             ),
           ),
           if (description != null) ...[
             const SizedBox(height: DSSpacing.xs),
             Text(
               description,
-              style: context.bodySmall.copyWith(
-                color: _secondaryTextColor,
+              style: typography.labelSmall.copyWith(
+                color: colors.textTertiary,
               ),
             ),
           ],

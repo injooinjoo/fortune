@@ -286,7 +286,7 @@ class SajuInfoHeader extends StatelessWidget {
                         ? Text(
                             e.key,
                             style: context.labelSmall.copyWith(
-                              color: Colors.white,
+                              color: DSColors.accent,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),

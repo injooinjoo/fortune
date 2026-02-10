@@ -1,20 +1,15 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/cache/cache_service.dart';
-import '../../core/components/app_dialog.dart';
-import '../../core/services/performance_cache_service.dart';
-import '../../core/utils/secure_storage.dart';
 import '../../services/storage_service.dart';
 import '../../core/design_system/design_system.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../presentation/providers/providers.dart';
-import '../../data/models/user_profile.dart';
-import '../../core/services/debug_premium_service.dart';
+import '../../presentation/widgets/social_login_bottom_sheet.dart';
+import './providers/character_stats_provider.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import '../../core/providers/user_settings_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
@@ -73,10 +68,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Color _getSectionBackgroundColor(BuildContext context) {
     return context.colors.surface;
   }
-
-  // 테스트 계정 확인
-  String? get _userEmail => supabase.auth.currentUser?.email;
-  bool get _isTestAccount => DebugPremiumService.isTestAccount(_userEmail);
 
   // 로그아웃 처리
   Future<void> _handleLogout() async {
@@ -151,114 +142,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   // _buildListItem replaced by SettingsListTile component
 
-  /// 테스터 전용: 초기화 확인 다이얼로그 표시
-  Future<void> _showResetConfirmationDialog(BuildContext context) async {
-    ref.read(fortuneHapticServiceProvider).warning();
-
-    final confirmed = await AppDialog.showConfirmation(
-      context: context,
-      title: '정말 초기화하시겠습니까?',
-      message: '모든 데이터가 삭제되며,\n온보딩부터 다시 시작합니다.\n\n이 작업은 되돌릴 수 없습니다.',
-      confirmText: '초기화',
-      cancelText: '취소',
-      isDanger: true,
-    );
-
-    if (confirmed == true && context.mounted) {
-      await _performFullReset(context);
-    }
-  }
-
-  /// 테스터 전용: 모든 데이터 초기화 후 온보딩으로 이동
-  Future<void> _performFullReset(BuildContext context) async {
-    // ⚠️ 핵심 전략:
-    // 1. 로딩 다이얼로그 사용하지 않음 (Navigator.pop이 GoRouter와 충돌)
-    // 2. 먼저 온보딩으로 이동
-    // 3. 이동 후 백그라운드에서 정리 작업 수행
-
-    debugPrint('🚀 초기화 시작 - 채팅으로 이동');
-
-    // 1. 먼저 채팅으로 이동! (Chat-First: 온보딩은 채팅 내에서 처리)
-    if (context.mounted) {
-      context.go('/chat');
-    }
-
-    // 2. 약간의 지연 후 정리 작업 수행 (네비게이션이 완전히 완료된 후)
-    Future.delayed(const Duration(milliseconds: 500), () async {
-      await _performCleanup();
-    });
-  }
-
-  /// 백그라운드에서 정리 작업 수행 (네비게이션 완료 후)
-  Future<void> _performCleanup() async {
-    try {
-      debugPrint('🧹 정리 작업 시작...');
-
-      // 1. Supabase 로그아웃
-      try {
-        await supabase.auth.signOut();
-        debugPrint('  ✓ Supabase 로그아웃');
-      } catch (e) {
-        debugPrint('  ✗ SignOut error: $e');
-      }
-
-      // 2. Secure Storage 삭제
-      try {
-        await SecureStorage.deleteAll();
-        debugPrint('  ✓ SecureStorage 삭제');
-      } catch (e) {
-        debugPrint('  ✗ SecureStorage error: $e');
-      }
-
-      // 3. SharedPreferences 삭제
-      try {
-        await _storageService.clearAll();
-        debugPrint('  ✓ SharedPreferences 삭제');
-      } catch (e) {
-        debugPrint('  ✗ Storage error: $e');
-      }
-
-      // 4. Hive Cache 삭제
-      try {
-        final cacheService = CacheService();
-        await cacheService.clearAllCache();
-        debugPrint('  ✓ Hive Cache 삭제');
-      } catch (e) {
-        debugPrint('  ✗ Cache error: $e');
-      }
-
-      // 5. Performance Cache 삭제
-      try {
-        final performanceCacheService = PerformanceCacheService();
-        await performanceCacheService.clearAll();
-        debugPrint('  ✓ Performance Cache 삭제');
-      } catch (e) {
-        debugPrint('  ✗ Performance cache error: $e');
-      }
-
-      // 6. Widget data 삭제
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.remove('unified_fortune_widget_data');
-        debugPrint('  ✓ Widget data 삭제');
-      } catch (e) {
-        debugPrint('  ✗ Widget data error: $e');
-      }
-
-      // 7. Debug Premium Override 해제
-      try {
-        await DebugPremiumService.setOverride(null);
-        debugPrint('  ✓ Debug Premium 해제');
-      } catch (e) {
-        debugPrint('  ✗ Debug premium error: $e');
-      }
-
-      debugPrint('✅ 모든 정리 작업 완료');
-    } catch (e) {
-      debugPrint('❌ Cleanup error: $e');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -270,7 +153,46 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
     _scrollController.addListener(_onScroll);
 
-    _loadUserData();
+    // 비로그인 상태면 로그인 바텀시트 표시
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showLoginBottomSheet();
+      });
+    } else {
+      _loadUserData();
+    }
+  }
+
+  /// 비로그인 시 로그인 바텀시트 표시
+  Future<void> _showLoginBottomSheet() async {
+    if (!mounted) return;
+
+    await SocialLoginBottomSheet.show(
+      context,
+      ref: ref,
+      onGoogleLogin: () async {
+        Navigator.pop(context);
+        await ref.read(socialAuthProvider.notifier).signInWithGoogle();
+        if (mounted && supabase.auth.currentUser != null) {
+          _loadUserData();
+        }
+      },
+      onAppleLogin: () async {
+        Navigator.pop(context);
+        await ref.read(socialAuthProvider.notifier).signInWithApple();
+        if (mounted && supabase.auth.currentUser != null) {
+          _loadUserData();
+        }
+      },
+      onKakaoLogin: () {},
+      onNaverLogin: () {},
+    );
+
+    // 바텀시트 닫히고 아직 비로그인이면 이전 페이지로
+    if (mounted && supabase.auth.currentUser == null) {
+      context.pop();
+    }
   }
 
   @override
@@ -588,6 +510,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // 프리미엄 & 토큰 통합 카드
           const PremiumMembershipCard(),
 
+          // AI 캐릭터 & 채팅 섹션
+          _buildCharacterSection(context),
+
           // 탐구 활동 섹션
           const SectionHeader(title: '탐구 활동'),
           Container(
@@ -692,9 +617,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
 
-          // 정보 섹션
+          // 내 정보 섹션 (통합, 접을 수 있음)
           if (userProfile != null || localProfile != null) ...[
-            const SectionHeader(title: '정보'),
+            const SectionHeader(title: '내 정보'),
             Container(
               margin: const EdgeInsets.symmetric(
                   horizontal: DSSpacing.pageHorizontal),
@@ -706,121 +631,140 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   width: 1,
                 ),
               ),
-              child: Column(
-                children: [
-                  SettingsListTile(
-                    icon: Icons.cake_outlined,
-                    title: '생년월일',
-                    trailing: Text(
-                      _formatBirthDate(
-                          (userProfile ?? localProfile)?['birth_date']),
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
-                      ),
-                    ),
-                    onTap: _navigateToProfileEdit,
+              child: Theme(
+                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  initiallyExpanded: false,
+                  tilePadding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.md,
+                    vertical: DSSpacing.xs,
                   ),
-                  SettingsListTile(
-                    icon: Icons.access_time_outlined,
-                    title: '출생시간',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['birth_time'] ?? '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
-                      ),
-                    ),
-                    onTap: _navigateToProfileEdit,
+                  leading: Icon(
+                    Icons.auto_awesome,
+                    color: context.colors.textSecondary,
+                    size: 22,
                   ),
-                  SettingsListTile(
-                    icon: Icons.pets_outlined,
-                    title: '띠',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['chinese_zodiac'] ?? '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
-                      ),
+                  title: Text(
+                    '생년월일 및 사주 정보',
+                    style: context.bodyMedium.copyWith(
+                      color: _getTextColor(context),
                     ),
                   ),
-                  SettingsListTile(
-                    icon: Icons.stars_outlined,
-                    title: '별자리',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['zodiac_sign'] ?? '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
-                      ),
+                  subtitle: Text(
+                    _formatBirthDateShort(),
+                    style: context.bodySmall.copyWith(
+                      color: _getSecondaryTextColor(context),
                     ),
                   ),
-                  SettingsListTile(
-                    icon: Icons.water_drop_outlined,
-                    title: '혈액형',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['blood_type'] != null
-                          ? '${(userProfile ?? localProfile)!['blood_type']}형'
-                          : '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
+                  children: [
+                    // 생년월일
+                    SettingsListTile(
+                      icon: Icons.cake_outlined,
+                      title: '생년월일',
+                      trailing: Text(
+                        _formatBirthDate(
+                            (userProfile ?? localProfile)?['birth_date']),
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                      onTap: _navigateToProfileEdit,
+                    ),
+                    // 출생시간
+                    SettingsListTile(
+                      icon: Icons.access_time_outlined,
+                      title: '출생시간',
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['birth_time'] ?? '미입력',
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                      onTap: _navigateToProfileEdit,
+                    ),
+                    // 띠
+                    SettingsListTile(
+                      icon: Icons.pets_outlined,
+                      title: '띠',
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['chinese_zodiac'] ?? '미입력',
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
                       ),
                     ),
-                    onTap: _navigateToProfileEdit,
-                  ),
-                  SettingsListTile(
-                    icon: Icons.psychology_outlined,
-                    title: 'MBTI',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['mbti']?.toUpperCase() ??
-                          '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
+                    // 별자리
+                    SettingsListTile(
+                      icon: Icons.stars_outlined,
+                      title: '별자리',
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['zodiac_sign'] ?? '미입력',
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
                       ),
                     ),
-                    onTap: _navigateToProfileEdit,
-                    isLast: true,
-                  ),
-                ],
-              ),
-            ),
-          ],
-
-          // 사주 & 분석 섹션
-          if (userProfile != null || localProfile != null) ...[
-            const SectionHeader(title: '사주 & 분석'),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                  horizontal: DSSpacing.pageHorizontal),
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(
-                  color: context.colors.border,
-                  width: 1,
+                    // 혈액형
+                    SettingsListTile(
+                      icon: Icons.water_drop_outlined,
+                      title: '혈액형',
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['blood_type'] != null
+                            ? '${(userProfile ?? localProfile)!['blood_type']}형'
+                            : '미입력',
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                      onTap: _navigateToProfileEdit,
+                    ),
+                    // MBTI
+                    SettingsListTile(
+                      icon: Icons.psychology_outlined,
+                      title: 'MBTI',
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['mbti']?.toUpperCase() ??
+                            '미입력',
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                      onTap: _navigateToProfileEdit,
+                    ),
+                    // 구분선
+                    Divider(
+                      height: 1,
+                      color: context.colors.border,
+                      indent: DSSpacing.md,
+                      endIndent: DSSpacing.md,
+                    ),
+                    const SizedBox(height: DSSpacing.xs),
+                    // 사주 종합
+                    SettingsListTile(
+                      icon: Icons.auto_awesome,
+                      title: '사주 종합',
+                      subtitle: '한 장의 인포그래픽으로 보기',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () {
+                        context.push('/profile/saju-summary');
+                      },
+                    ),
+                    // 인사이트 기록
+                    SettingsListTile(
+                      icon: Icons.history,
+                      title: '인사이트 기록',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () => context.push('/profile/history'),
+                      isLast: true,
+                    ),
+                  ],
                 ),
-              ),
-              child: Column(
-                children: [
-                  SettingsListTile(
-                    icon: Icons.auto_awesome,
-                    title: '사주 종합',
-                    subtitle: '한 장의 인포그래픽으로 보기',
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: _getSecondaryTextColor(context),
-                    ),
-                    onTap: () {
-                      context.push('/profile/saju-summary');
-                    },
-                  ),
-                  SettingsListTile(
-                    icon: Icons.history,
-                    title: '인사이트 기록',
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: _getSecondaryTextColor(context),
-                    ),
-                    onTap: () => context.push('/profile/history'),
-                    isLast: true,
-                  ),
-                ],
               ),
             ),
           ],
@@ -1041,113 +985,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
 
-          // 개발자 도구 (테스트 계정에서만 표시)
-          FutureBuilder<UserProfile?>(
-            future: ref.watch(userProfileProvider.future),
-            builder: (context, snapshot) {
-              final profile = snapshot.data;
-              if ((kDebugMode || _isTestAccount) &&
-                  profile != null &&
-                  profile.isTestAccount) {
-                return FutureBuilder<bool?>(
-                  future: DebugPremiumService.getOverrideValue(),
-                  builder: (context, overrideSnapshot) {
-                    final tokenState = ref.watch(tokenProvider);
-                    final premiumOverride = overrideSnapshot.data;
-                    final isPremium =
-                        premiumOverride ?? tokenState.hasUnlimitedTokens;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: DSSpacing.lg),
-                        const SectionHeader(title: '개발자 도구'),
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: DSSpacing.pageHorizontal),
-                          decoration: BoxDecoration(
-                            color: context.colors.surface,
-                            borderRadius: BorderRadius.circular(DSRadius.md),
-                            border: Border.all(
-                              color: context.colors.border,
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              SettingsListTile(
-                                icon: Icons.bug_report_outlined,
-                                title: '무제한 토큰',
-                                trailing: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: context.colors.success
-                                        .withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    '활성화',
-                                    style: context.labelSmall.copyWith(
-                                      color: context.colors.success,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SettingsListTile(
-                                icon: Icons.star_outline,
-                                title: '프리미엄 기능',
-                                trailing: Switch(
-                                  value: isPremium,
-                                  onChanged: (value) async {
-                                    await DebugPremiumService.togglePremium();
-                                    setState(() {});
-                                  },
-                                  activeThumbColor: context.colors.accent,
-                                ),
-                              ),
-                              SettingsListTile(
-                                icon: Icons.refresh_outlined,
-                                title: '초기화 및 온보딩 재시작',
-                                subtitle: '모든 데이터 삭제 후 처음부터',
-                                trailing: Icon(
-                                  Icons.chevron_right,
-                                  color: context.colors.textSecondary,
-                                ),
-                                onTap: () =>
-                                    _showResetConfirmationDialog(context),
-                              ),
-                              SettingsListTile(
-                                icon: Icons.cloud_download_outlined,
-                                title: '유명인 정보 크롤링',
-                                trailing: Icon(
-                                  Icons.chevron_right,
-                                  color: _getSecondaryTextColor(context),
-                                ),
-                                onTap: () =>
-                                    context.push('/admin/celebrity-crawling'),
-                                isLast: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-
           // 버전 정보
           const SizedBox(height: DSSpacing.md),
           Center(
@@ -1179,6 +1016,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(
+            Icons.close,
+            color: context.colors.textPrimary,
+          ),
+          onPressed: () => context.pop(),
+        ),
         title: Text(
           '내 프로필',
           style: context.heading2.copyWith(
@@ -1205,6 +1049,119 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  // AI 캐릭터 & 채팅 섹션 빌더
+  Widget _buildCharacterSection(BuildContext context) {
+    final stats = ref.watch(characterStatsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHeader(title: 'AI 캐릭터 & 채팅'),
+        Container(
+          margin: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.pageHorizontal),
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.md),
+            border: Border.all(
+              color: context.colors.border,
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              // 대표 캐릭터 (가장 높은 호감도)
+              if (stats.topCharacter != null)
+                SettingsListTile(
+                  leading: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: stats.topCharacter!.accentColor,
+                    backgroundImage: stats.topCharacter!.avatarAsset.isNotEmpty
+                        ? AssetImage(stats.topCharacter!.avatarAsset)
+                        : null,
+                    child: stats.topCharacter!.avatarAsset.isEmpty
+                        ? Text(
+                            stats.topCharacter!.name.isNotEmpty
+                                ? stats.topCharacter!.name[0]
+                                : '?',
+                            style: context.bodyMedium.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : null,
+                  ),
+                  title: stats.topCharacter!.name,
+                  subtitle: '${stats.topPhaseName} · ${stats.topLoveEmoji} ${stats.topAffinityPercent}%',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () {
+                    ref.read(fortuneHapticServiceProvider).buttonTap();
+                    context.push('/character/${stats.topCharacter!.id}', extra: stats.topCharacter);
+                  },
+                )
+              else
+                SettingsListTile(
+                  icon: Icons.favorite_outline,
+                  title: '캐릭터와 대화 시작하기',
+                  subtitle: '새로운 캐릭터를 만나보세요',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () {
+                    ref.read(fortuneHapticServiceProvider).buttonTap();
+                    context.go('/chat');
+                  },
+                ),
+
+              // 총 대화 수
+              SettingsListTile(
+                icon: Icons.chat_bubble_outline,
+                title: '총 대화 수',
+                trailing: Text(
+                  '${stats.totalMessages}회',
+                  style: context.bodyMedium.copyWith(
+                    color: _getSecondaryTextColor(context),
+                  ),
+                ),
+              ),
+
+              // 활성 캐릭터 수
+              SettingsListTile(
+                icon: Icons.people_outline,
+                title: '활성 캐릭터',
+                trailing: Text(
+                  '${stats.totalConversations}명',
+                  style: context.bodyMedium.copyWith(
+                    color: _getSecondaryTextColor(context),
+                  ),
+                ),
+              ),
+
+              // 캐릭터 목록 바로가기
+              SettingsListTile(
+                icon: Icons.grid_view_outlined,
+                title: '모든 캐릭터 보기',
+                trailing: Icon(
+                  Icons.chevron_right,
+                  color: _getSecondaryTextColor(context),
+                ),
+                onTap: () {
+                  ref.read(fortuneHapticServiceProvider).buttonTap();
+                  context.go('/chat');
+                },
+                isLast: true,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   // Helper Methods
   String _formatBirthDate(String? birthDate) {
     if (birthDate == null || birthDate.isEmpty) return '미입력';
@@ -1212,6 +1169,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     try {
       final date = DateTime.parse(birthDate);
       return '${date.year}년 ${date.month}월 ${date.day}일';
+    } catch (e) {
+      return '미입력';
+    }
+  }
+
+  /// 간략한 생년월일 포맷 (YYYY.MM.DD)
+  String _formatBirthDateShort() {
+    final profile = userProfile ?? localProfile;
+    final birthDate = profile?['birth_date'] as String?;
+    if (birthDate == null || birthDate.isEmpty) return '미입력';
+
+    try {
+      final date = DateTime.parse(birthDate);
+      return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
     } catch (e) {
       return '미입력';
     }

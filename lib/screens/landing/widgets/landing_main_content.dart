@@ -21,8 +21,8 @@ class LandingMainContent extends StatelessWidget {
           // App Logo
           Image.asset(
             context.isDark
-                ? 'assets/images/zpzg_logo_dark.png'
-                : 'assets/images/zpzg_logo_light.png',
+                ? 'assets/images/zpzg_logo_dark.webp'
+                : 'assets/images/zpzg_logo_light.webp',
             width: 120,
             height: 120,
           ).animate().fadeIn(duration: 800.ms).scale(

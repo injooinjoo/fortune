@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:fortune/core/design_system/design_system.dart';
 
 class TarotDeckFanWidget extends StatefulWidget {
   final int cardCount;
@@ -177,7 +178,7 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
         border: Border.all(
           color: isHovered
               ? Theme.of(context).colorScheme.secondary
-              : Colors.white.withValues(alpha: 0.3),
+              : context.colors.accent.withValues(alpha: 0.3),
           width: isHovered ? 3 : 2)),
       child: Stack(
         children: [
@@ -185,16 +186,16 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
           Positioned.fill(
             child: CustomPaint(
               painter: MandalaPainter(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: context.colors.accent.withValues(alpha: 0.1),
                 isAnimated: isHovered)),
           ),
-          
+
           // Center symbol
           Center(
             child: Icon(
               Icons.auto_awesome,
               size: 40,
-              color: Colors.white.withValues(alpha: isHovered ? 0.9 : 0.7)),
+              color: context.colors.accent.withValues(alpha: isHovered ? 0.9 : 0.7)),
           ),
         ],
       ),

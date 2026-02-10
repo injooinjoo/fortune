@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/fortune_metadata.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/ai_character.dart';
 import '../providers/character_chat_provider.dart';
@@ -56,7 +57,7 @@ class CharacterProfileSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? DSColors.backgroundDark : Colors.white;
+    final bgColor = isDark ? DSColors.backgroundDark : DSColors.backgroundDark;
     final sectionBgColor = isDark ? DSColors.surfaceDark : Colors.grey[100];
 
     return Container(
@@ -149,6 +150,11 @@ class CharacterProfileSheet extends ConsumerWidget {
                     content: character.personality.trim(),
                     bgColor: sectionBgColor,
                   ),
+                  // 전문 분야 (운세 전문가인 경우)
+                  if (character.isFortuneExpert && character.specialties.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _buildSpecialtiesSection(context, sectionBgColor),
+                  ],
                   // NPC 프로필 (있는 경우)
                   if (character.npcProfiles != null &&
                       character.npcProfiles!.isNotEmpty) ...[
@@ -311,6 +317,79 @@ class CharacterProfileSheet extends ConsumerWidget {
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   height: 1.6,
                 ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpecialtiesSection(BuildContext context, Color bgColor) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                size: 20,
+                color: character.accentColor,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '전문 분야',
+                style: context.bodyMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: character.accentColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: character.specialties.map((specialty) {
+              final fortuneType = FortuneType.fromKey(specialty);
+              final displayName = fortuneType?.displayName ?? specialty;
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: character.accentColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: character.accentColor.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.stars,
+                      size: 14,
+                      color: character.accentColor,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      displayName,
+                      style: context.bodySmall.copyWith(
+                        color: character.accentColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),

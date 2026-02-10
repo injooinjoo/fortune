@@ -255,7 +255,7 @@ class _ChatYearlyEncounterResultCardState
                     child: Transform.scale(
                       scale: 1.85, // 프레임만 85% 확대
                       child: Image.asset(
-                        'assets/images/fortune/yearly_encounter_frame.png',
+                        'assets/images/fortune/yearly_encounter_frame.webp',
                         width: 520,
                         height: 250,
                         fit: BoxFit.contain,

@@ -5,8 +5,12 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../domain/models/ai_character.dart';
 import '../../data/default_characters.dart';
+import '../../data/fortune_characters.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
+
+/// 모든 캐릭터 목록 (스토리 + 운세)
+final _allCharacters = [...defaultCharacters, ...fortuneCharacters];
 
 /// 인스타그램 스타일 캐릭터 프로필 페이지
 class CharacterProfilePage extends ConsumerStatefulWidget {
@@ -33,11 +37,11 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // extra로 전달받은 캐릭터 또는 ID로 찾기
+    // extra로 전달받은 캐릭터 또는 ID로 찾기 (스토리 + 운세 캐릭터 모두 검색)
     _character = widget.character ??
-        defaultCharacters.firstWhere(
+        _allCharacters.firstWhere(
           (c) => c.id == widget.characterId,
-          orElse: () => defaultCharacters.first,
+          orElse: () => _allCharacters.first,
         );
   }
 
@@ -50,7 +54,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? DSColors.backgroundDark : Colors.white;
+    final bgColor = isDark ? DSColors.backgroundDark : DSColors.backgroundDark;
     final chatState = ref.watch(characterChatProvider(_character.id));
     final affinity = chatState.affinity;
     final messageCount = chatState.messages.length;

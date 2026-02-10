@@ -119,7 +119,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       // 월간 구독 제외, 토큰(소모성) 상품만 필터링
       final filteredProducts = _purchaseService.products.where((product) {
         // 월간 구독 제외
-        if (product.id == InAppProducts.monthlySubscription) return false;
+        if (product.id == InAppProducts.proSubscription) return false;
         // 소모성 상품만 포함
         return InAppProducts.consumableIds.contains(product.id);
       }).toList();

@@ -290,15 +290,15 @@ class _PersonalityDnaChatCardState
         children: [
           _buildInfoChip(context, colors, typography, 'MBTI', dna.mbti,
               iconPath:
-                  'assets/images/fortune/mbti/characters/mbti_${dna.mbti.toLowerCase()}.png'),
+                  'assets/images/fortune/mbti/characters/mbti_${dna.mbti.toLowerCase()}.webp'),
           _buildInfoChip(
               context, colors, typography, '혈액형', '${dna.bloodType}형',
-              iconPath: 'assets/images/fortune/items/lucky/lucky_heart.png'),
+              iconPath: 'assets/images/fortune/items/lucky/lucky_heart.webp'),
           _buildInfoChip(context, colors, typography, '별자리', dna.zodiac,
-              iconPath: 'assets/images/fortune/items/lucky/lucky_star.png'),
+              iconPath: 'assets/images/fortune/items/lucky/lucky_star.webp'),
           _buildInfoChip(context, colors, typography, '띠', dna.zodiacAnimal,
               iconPath:
-                  'assets/images/fortune/zodiac/zodiac_${_getZodiacKey(dna.zodiacAnimal)}.png'),
+                  'assets/images/fortune/zodiac/zodiac_${_getZodiacKey(dna.zodiacAnimal)}.webp'),
         ],
       ),
     );

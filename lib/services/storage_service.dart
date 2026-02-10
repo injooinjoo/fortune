@@ -17,6 +17,7 @@ class StorageService {
   static const String _fortuneGaugeKey = 'fortune_gauge_progress';
   static const String _activeProfileTypeKey = 'active_profile_type';
   static const String _activeSecondaryProfileIdKey = 'active_secondary_profile_id';
+  static const String _characterOnboardingKey = 'character_onboarding_completed';
 
   static const _uuid = Uuid();
 
@@ -461,5 +462,17 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_fortuneGaugeKey);
     debugPrint('[StorageService] Fortune gauge data cleared');
+  }
+
+  // Character onboarding management
+  Future<bool> isCharacterOnboardingCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_characterOnboardingKey) ?? false;
+  }
+
+  Future<void> setCharacterOnboardingCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_characterOnboardingKey, true);
+    debugPrint('[StorageService] Character onboarding completed');
   }
 }

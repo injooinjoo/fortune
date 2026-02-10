@@ -330,7 +330,7 @@ import NaverThirdPartyLogin
     instance?.serviceUrlScheme = "naverQMEfy6U82j8nKG3HSE8y"
     instance?.consumerKey = "QMEfy6U82j8nKG3HSE8y"
     instance?.consumerSecret = "Hu5KdO9DxK"
-    instance?.appName = "Fortune"
+    instance?.appName = "ZPZG"
     
     // Check if already logged in
     if let accessToken = instance?.accessToken, !accessToken.isEmpty {

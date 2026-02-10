@@ -61,13 +61,11 @@
 			</dict>
 		</array>
 		<key>CFBundleVersion</key>
-		<string>42</string>
+		<string>49</string>
 		<key>FirebaseAutomaticScreenReportingEnabled</key>
 		<false/>
 		<key>FirebaseDataCollectionDefaultEnabled</key>
 		<false/>
-		<key>GADApplicationIdentifier</key>
-		<string>ca-app-pub-2803643717997352~5970615545</string>
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 		<key>KAKAO_APP_KEY</key>

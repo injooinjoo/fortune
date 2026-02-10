@@ -83,9 +83,9 @@ class AssetPackConfig {
       displayName: '코어 자산',
       tier: AssetTier.bundled,
       localPaths: [
-        'assets/images/zpzg_logo.png',
-        'assets/images/zpzg_logo_light.png',
-        'assets/images/zpzg_logo_dark.png',
+        'assets/images/zpzg_logo.webp',
+        'assets/images/zpzg_logo_light.webp',
+        'assets/images/zpzg_logo_dark.webp',
         'assets/fonts/',
         'assets/sounds/',
       ],

@@ -47,9 +47,9 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
             true,
             plan: _selectedPlan,
             expiresAt: _calculateExpirationDate(_selectedPlan),
-            productId: _selectedPlan == 'monthly'
-                ? InAppProducts.monthlySubscription
-                : InAppProducts.yearlySubscription,
+            productId: _selectedPlan == 'pro'
+                ? InAppProducts.proSubscription
+                : InAppProducts.maxSubscription,
           );
           if (!mounted) return;
           Toast.show(context, message: message, type: ToastType.success);
@@ -86,12 +86,10 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     );
   }
 
-  /// 만료일 계산
+  /// 만료일 계산 (Pro/Max 모두 월간 구독)
   DateTime _calculateExpirationDate(String plan) {
     final now = DateTime.now();
-    return plan == 'yearly'
-        ? now.add(const Duration(days: 365))
-        : now.add(const Duration(days: 30));
+    return now.add(const Duration(days: 30)); // Pro, Max 모두 월간
   }
 
   @override
@@ -206,25 +204,26 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
               const SizedBox(height: DSSpacing.md),
 
-              // Monthly Plan
+              // Pro Plan
               _buildPlanCard(
-                id: 'monthly',
-                title: '월간 구독',
-                price: '₩2,200',
+                id: 'pro',
+                title: 'Pro 구독',
+                price: '₩4,500',
                 period: '/ 월',
                 badge: null,
+                subtitle: '매월 30,000 토큰',
               ),
 
               const SizedBox(height: DSSpacing.md),
 
-              // Yearly Plan
+              // Max Plan
               _buildPlanCard(
-                id: 'yearly',
-                title: '연간 구독',
-                price: '₩19,000',
-                period: '/ 년',
-                badge: '28% 절약',
-                originalPrice: '₩26,400',
+                id: 'max',
+                title: 'Max 구독',
+                price: '₩12,900',
+                period: '/ 월',
+                badge: '인기',
+                subtitle: '매월 100,000 토큰',
               ),
 
               const SizedBox(height: DSSpacing.xl),
@@ -268,7 +267,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   _buildFeatureItem(
                     icon: Icons.all_inclusive,
                     title: '월간 토큰',
-                    subtitle: '매월 50개 토큰 지급',
+                    subtitle: 'Pro: 30,000개 / Max: 100,000개 매월 지급',
                   ),
                   _buildFeatureItem(
                     icon: Icons.star,
@@ -353,9 +352,9 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   ? '처리 중...'
                   : _selectedPlan == 'free'
                       ? '무료 플랜 사용 중'
-                      : _selectedPlan == 'monthly'
-                          ? '월간 구독 시작하기 - ₩2,200/월'
-                          : '연간 구독 시작하기 - ₩19,000/년',
+                      : _selectedPlan == 'pro'
+                          ? 'Pro 구독 시작하기 - ₩4,500/월'
+                          : 'Max 구독 시작하기 - ₩12,900/월',
               onPressed: _selectedPlan == 'free' || _isLoading ? null : _startSubscription,
               isEnabled: _selectedPlan != 'free' && !_isLoading,
             ),
@@ -377,6 +376,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     required String period,
     String? badge,
     String? originalPrice,
+    String? subtitle,
   }) {
     final colors = context.colors;
     final isSelected = _selectedPlan == id;
@@ -492,6 +492,15 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                       ],
                     ],
                   ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: context.labelSmall.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -759,10 +768,10 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     if (_isLoading) return;
 
     String productId;
-    if (_selectedPlan == 'monthly') {
-      productId = InAppProducts.monthlySubscription;
-    } else if (_selectedPlan == 'yearly') {
-      productId = InAppProducts.yearlySubscription;
+    if (_selectedPlan == 'pro') {
+      productId = InAppProducts.proSubscription;
+    } else if (_selectedPlan == 'max') {
+      productId = InAppProducts.maxSubscription;
     } else {
       return; // free plan selected
     }
@@ -815,14 +824,19 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                 ),
                 const SizedBox(height: DSSpacing.lg),
                 Text(
-                  '구독 취소 및 관리는 Apple ID 설정에서 가능합니다:\n\n'
+                  '📱 iOS (iPhone/iPad)\n'
                   '1. 설정 앱 열기\n'
                   '2. 상단의 [내 이름] 탭\n'
                   '3. [구독] 선택\n'
-                  '4. Fortune 앱 선택\n'
+                  '4. ZPZG 앱 선택\n'
                   '5. [구독 취소] 또는 플랜 변경\n\n'
-                  '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.\n'
-                  '• 무료 체험 기간 중 취소하면 체험 기간 종료와 함께 구독이 해지됩니다.',
+                  '🤖 Android\n'
+                  '1. Google Play 스토어 앱 열기\n'
+                  '2. 프로필 아이콘 탭\n'
+                  '3. [결제 및 구독] 선택\n'
+                  '4. [구독] 선택\n'
+                  '5. ZPZG 앱 선택 → [구독 취소]\n\n'
+                  '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.',
                   style: context.bodySmall.copyWith(
                     color: colors.textSecondary,
                     height: 1.6,

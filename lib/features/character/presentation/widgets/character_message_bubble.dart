@@ -37,8 +37,9 @@ class CharacterMessageBubble extends StatelessWidget {
     }
   }
 
-  /// 유저 메시지 (오른쪽) - 읽음 표시 포함
+  /// 유저 메시지 (오른쪽) - GPT 스타일
   Widget _buildUserBubble(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -53,7 +54,7 @@ class CharacterMessageBubble extends StatelessWidget {
               child: Text(
                 '1',
                 style: context.labelSmall.copyWith(
-                  color: Colors.grey[500],
+                  color: colors.textTertiary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -62,18 +63,26 @@ class CharacterMessageBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: character.accentColor,
+                color: colors.userBubble,
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(18),
-                  topRight: Radius.circular(18),
-                  bottomLeft: Radius.circular(18),
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(4),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Text(
                 message.text,
                 style: context.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: colors.textPrimary,
+                  height: 1.5,
                 ),
               ),
             ),
@@ -83,8 +92,9 @@ class CharacterMessageBubble extends StatelessWidget {
     );
   }
 
-  /// 캐릭터 메시지 (왼쪽 + 아바타) - 아바타 탭 시 프로필 페이지로 이동
+  /// 캐릭터 메시지 (왼쪽 + 아바타) - 그림자로 구분되는 떠다니는 버블
   Widget _buildCharacterBubble(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -105,25 +115,32 @@ class CharacterMessageBubble extends StatelessWidget {
                   ? Text(
                       character.initial,
                       style: context.labelMedium.copyWith(
-                        color: Colors.white,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     )
                   : null,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: colors.surface,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(4),
-                  topRight: Radius.circular(18),
-                  bottomLeft: Radius.circular(18),
-                  bottomRight: Radius.circular(18),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: _buildFormattedText(context, message.text),
             ),
@@ -134,21 +151,29 @@ class CharacterMessageBubble extends StatelessWidget {
     );
   }
 
-  /// 시스템 메시지 (중앙)
+  /// 시스템 메시지 (중앙) - GPT 스타일
   Widget _buildSystemBubble(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: colors.backgroundSecondary,
             borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 6,
+                offset: const Offset(0, 1),
+              ),
+            ],
           ),
           child: Text(
             message.text,
             style: context.bodySmall.copyWith(
-              color: Colors.grey[700],
+              color: colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -157,15 +182,16 @@ class CharacterMessageBubble extends StatelessWidget {
     );
   }
 
-  /// 나레이션 메시지 (중앙 + 이탤릭)
+  /// 나레이션 메시지 (중앙 + 이탤릭) - GPT 스타일
   Widget _buildNarrationBubble(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
       child: Center(
         child: Text(
           message.text,
           style: context.bodySmall.copyWith(
-            color: Colors.grey[600],
+            color: colors.textTertiary,
             fontStyle: FontStyle.italic,
             height: 1.5,
           ),
@@ -175,8 +201,9 @@ class CharacterMessageBubble extends StatelessWidget {
     );
   }
 
-  /// 포맷된 텍스트 (별표로 감싼 부분은 이탤릭)
+  /// 포맷된 텍스트 (별표로 감싼 부분은 이탤릭) - GPT 스타일
   Widget _buildFormattedText(BuildContext context, String text) {
+    final colors = context.colors;
     // 별표로 감싼 부분을 이탤릭으로 표시
     final parts = <InlineSpan>[];
     final regex = RegExp(r'\*([^*]+)\*');
@@ -187,7 +214,10 @@ class CharacterMessageBubble extends StatelessWidget {
       if (match.start > lastEnd) {
         parts.add(TextSpan(
           text: text.substring(lastEnd, match.start),
-          style: context.bodyMedium,
+          style: context.bodyMedium.copyWith(
+            color: colors.textPrimary,
+            height: 1.5,
+          ),
         ));
       }
       // 이탤릭 텍스트
@@ -195,7 +225,8 @@ class CharacterMessageBubble extends StatelessWidget {
         text: match.group(1),
         style: context.bodyMedium.copyWith(
           fontStyle: FontStyle.italic,
-          color: Colors.grey,
+          color: colors.textSecondary,
+          height: 1.5,
         ),
       ));
       lastEnd = match.end;
@@ -205,17 +236,26 @@ class CharacterMessageBubble extends StatelessWidget {
     if (lastEnd < text.length) {
       parts.add(TextSpan(
         text: text.substring(lastEnd),
-        style: context.bodyMedium,
+        style: context.bodyMedium.copyWith(
+          color: colors.textPrimary,
+          height: 1.5,
+        ),
       ));
     }
 
     if (parts.isEmpty) {
-      return Text(text, style: context.bodyMedium);
+      return Text(
+        text,
+        style: context.bodyMedium.copyWith(
+          color: colors.textPrimary,
+          height: 1.5,
+        ),
+      );
     }
 
     return RichText(
       text: TextSpan(
-        style: TextStyle(color: Colors.grey[800]),
+        style: TextStyle(color: colors.textPrimary),
         children: parts,
       ),
     );

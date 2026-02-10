@@ -4,15 +4,11 @@
 <dict>
 	<!-- 앱이 사용자 추적에 사용되는 데이터에 연결되는지 여부 -->
 	<key>NSPrivacyTracking</key>
-	<true/>
+	<false/>
 
 	<!-- 추적에 사용되는 인터넷 도메인 목록 -->
 	<key>NSPrivacyTrackingDomains</key>
 	<array>
-		<!-- Google AdMob 광고 추적 -->
-		<string>googleads.g.doubleclick.net</string>
-		<string>www.googleadservices.com</string>
-		<string>pagead2.googlesyndication.com</string>
 		<!-- Firebase Analytics -->
 		<string>app-measurement.com</string>
 		<string>firebase-settings.crashlytics.com</string>
@@ -71,32 +67,17 @@
 	<!-- 앱에서 수집하는 데이터 유형 -->
 	<key>NSPrivacyCollectedDataTypes</key>
 	<array>
-		<!-- 광고 데이터 (Google AdMob) -->
-		<dict>
-			<key>NSPrivacyCollectedDataType</key>
-			<string>NSPrivacyCollectedDataTypeAdvertisingData</string>
-			<key>NSPrivacyCollectedDataTypeLinked</key>
-			<true/>
-			<key>NSPrivacyCollectedDataTypeTracking</key>
-			<true/>
-			<key>NSPrivacyCollectedDataTypePurposes</key>
-			<array>
-				<string>NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising</string>
-			</array>
-		</dict>
-
-		<!-- 기기 ID (Firebase Analytics, AdMob) -->
+		<!-- 기기 ID (Firebase Analytics) -->
 		<dict>
 			<key>NSPrivacyCollectedDataType</key>
 			<string>NSPrivacyCollectedDataTypeDeviceID</string>
 			<key>NSPrivacyCollectedDataTypeLinked</key>
 			<false/>
 			<key>NSPrivacyCollectedDataTypeTracking</key>
-			<true/>
+			<false/>
 			<key>NSPrivacyCollectedDataTypePurposes</key>
 			<array>
 				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
-				<string>NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising</string>
 			</array>
 		</dict>
 

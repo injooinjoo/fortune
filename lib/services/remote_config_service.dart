@@ -351,7 +351,7 @@ class RemoteConfigService {
 
   /// 에셋 경로를 CDN URL로 변환
   /// CDN 비활성화 시 원본 경로 반환
-  /// 예: assets/icons/fortune/daily.png → https://cdn.../fortune/daily.png
+  /// 예: assets/icons/fortune/daily.webp → https://cdn.../fortune/daily.webp
   String resolveImagePath(String assetPath) {
     if (!useImageCdn()) return assetPath;
 

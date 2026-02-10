@@ -32,7 +32,7 @@ class BasicInfoCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(
-                  'assets/images/fortune/mbti/characters/mbti_${dna.mbti.toLowerCase()}.png',
+                  'assets/images/fortune/mbti/characters/mbti_${dna.mbti.toLowerCase()}.webp',
                   width: 56,
                   height: 56,
                   fit: BoxFit.contain,
@@ -79,12 +79,12 @@ class BasicInfoCard extends StatelessWidget {
                   child: _buildInfoItem(
                       context, isDark, '혈액형', '${dna.bloodType}형',
                       iconPath:
-                          'assets/images/fortune/items/lucky/lucky_heart.png')),
+                          'assets/images/fortune/items/lucky/lucky_heart.webp')),
               const SizedBox(width: DSSpacing.sm),
               Expanded(
                   child: _buildInfoItem(context, isDark, '별자리', dna.zodiac,
                       iconPath:
-                          'assets/images/fortune/items/lucky/lucky_star.png')),
+                          'assets/images/fortune/items/lucky/lucky_star.webp')),
               const SizedBox(width: DSSpacing.sm),
               Expanded(
                   child: _buildInfoItem(

@@ -87,9 +87,9 @@ class SoulRates {
     'network': 10,
     'network-report': 15,
 
-    // === 채팅/롤플레이 (4 토큰 per message) ===
-    'free-chat': 4,
-    'character-chat': 4,
+    // === 채팅/롤플레이 (1 토큰 per message) ===
+    'free-chat': 1,
+    'character-chat': 1,
 
     // === 울트라 프리미엄 (20-50 토큰) ===
     'startup': 30,

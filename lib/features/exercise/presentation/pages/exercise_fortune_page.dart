@@ -632,9 +632,9 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
               children: [
                 Text(
                   '${result.sportType.emoji} ${result.sportType.nameKo}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white70,
+                    color: DSColors.accent.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: DSSpacing.xs),
@@ -643,14 +643,14 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: DSColors.accent,
                   ),
                 ),
                 const SizedBox(height: DSSpacing.sm),
                 if (result.percentile != null)
                   Text(
                     '상위 ${result.percentile}%',
-                    style: context.bodySmall.copyWith(color: Colors.white70),
+                    style: context.bodySmall.copyWith(color: DSColors.accent.withValues(alpha: 0.7)),
                   ),
               ],
             ),
@@ -659,7 +659,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
             width: 70,
             height: 70,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha:0.2),
+              color: DSColors.accent.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -668,7 +668,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: DSColors.accent,
                 ),
               ),
             ),
@@ -1055,7 +1055,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
             child: Center(
               child: Text(
                 '${exercise.order}',
-                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                style: const TextStyle(color: DSColors.accent, fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -1177,7 +1177,7 @@ class _ExerciseFortunePageState extends ConsumerState<ExerciseFortunePage>
             child: Center(
               child: Text(
                 '${pose.order}',
-                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                style: const TextStyle(color: DSColors.accent, fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ),

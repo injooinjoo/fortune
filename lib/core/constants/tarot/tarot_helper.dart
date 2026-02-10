@@ -46,7 +46,7 @@ class TarotHelper {
   }
 
   static String getCardImagePath(int cardId) {
-    return 'assets/images/tarot/card_$cardId.png';
+    return 'assets/images/tarot/card_$cardId.webp';
   }
 
   static Color getElementColor(String element) {

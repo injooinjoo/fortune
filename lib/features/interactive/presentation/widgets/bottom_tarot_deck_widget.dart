@@ -214,7 +214,7 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
             spreadRadius: 5),
         ] : [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: DSColors.background.withValues(alpha: 0.3),
             blurRadius: 5,
             offset: const Offset(0, 3)),
         ],
@@ -252,8 +252,8 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: isCenter
-                      ? Colors.white.withValues(alpha: 0.5)
-                      : Colors.white.withValues(alpha: 0.2),
+                      ? DSColors.accent.withValues(alpha: 0.5)
+                      : DSColors.accent.withValues(alpha: 0.2),
                   width: isCenter ? 2 : 1),
               ),
             ),
@@ -279,7 +279,7 @@ class TarotCardBackPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     
     // Draw stars pattern
-    paint.color = Colors.white.withValues(alpha: isHighlighted ? 0.4 : 0.2);
+    paint.color = DSColors.accent.withValues(alpha: isHighlighted ? 0.4 : 0.2);
     
     // Center star
     _drawStar(canvas, center, size.width * 0.15, paint);

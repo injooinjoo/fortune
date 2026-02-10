@@ -201,19 +201,19 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
     switch (choice.type) {
       case ChoiceType.positive:
         buttonColor = widget.character.accentColor;
-        textColor = Colors.white;
+        textColor = DSColors.accent;
       case ChoiceType.negative:
         buttonColor = isDark ? DSColors.surfaceDark : Colors.grey[200]!;
         textColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
       case ChoiceType.bold:
         buttonColor = Colors.red[400]!;
-        textColor = Colors.white;
+        textColor = DSColors.accent;
       case ChoiceType.shy:
         buttonColor = Colors.pink[100]!;
         textColor = Colors.pink[800]!;
       case ChoiceType.neutral:
-        buttonColor = isDark ? DSColors.surfaceDark : Colors.white;
-        textColor = isDark ? Colors.white : Colors.black87;
+        buttonColor = isDark ? DSColors.surfaceDark : DSColors.accent;
+        textColor = isDark ? DSColors.accent : DSColors.textPrimaryDark;
     }
 
     return AnimatedOpacity(

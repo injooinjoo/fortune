@@ -24,3 +24,18 @@ plugins {
 }
 
 include ":app"
+
+// Fix for packages missing namespace (AGP 8.0+ compatibility)
+gradle.beforeProject { project ->
+    project.afterEvaluate {
+        if (project.hasProperty('android') && project.android.namespace == null) {
+            def manifest = file("${project.projectDir}/src/main/AndroidManifest.xml")
+            if (manifest.exists()) {
+                def packageValue = new XmlSlurper().parse(manifest).@package.text()
+                if (packageValue) {
+                    project.android.namespace = packageValue
+                }
+            }
+        }
+    }
+}

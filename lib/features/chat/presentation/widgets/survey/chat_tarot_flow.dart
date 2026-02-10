@@ -302,11 +302,11 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
               children: List.generate(5, (index) {
                 // 실제 카드 이미지 사용 (0-4번 카드)
                 final cardImages = [
-                  'assets/images/tarot/decks/${widget.deckId}/major/00_fool.jpg',
-                  'assets/images/tarot/decks/${widget.deckId}/major/01_magician.jpg',
-                  'assets/images/tarot/decks/${widget.deckId}/major/02_high_priestess.jpg',
-                  'assets/images/tarot/decks/${widget.deckId}/major/03_empress.jpg',
-                  'assets/images/tarot/decks/${widget.deckId}/major/04_emperor.jpg',
+                  'assets/images/tarot/decks/${widget.deckId}/major/00_fool.webp',
+                  'assets/images/tarot/decks/${widget.deckId}/major/01_magician.webp',
+                  'assets/images/tarot/decks/${widget.deckId}/major/02_high_priestess.webp',
+                  'assets/images/tarot/decks/${widget.deckId}/major/03_empress.webp',
+                  'assets/images/tarot/decks/${widget.deckId}/major/04_emperor.webp',
                 ];
                 final offset = (index - 2) * 12.0;
                 final rotation = (index - 2) * 0.1;
@@ -782,7 +782,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(3),
                         child: Image.asset(
-                          'assets/images/fortune/tarot/tarot_card_back.png',
+                          'assets/images/fortune/tarot/tarot_card_back.webp',
                           fit: BoxFit.cover,
                           width: cardWidth,
                           height: cardHeight,
@@ -934,7 +934,7 @@ class _SpreadCard extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(2),
                             child: Image.asset(
-                              'assets/images/fortune/tarot/tarot_card_back.png',
+                              'assets/images/fortune/tarot/tarot_card_back.webp',
                               fit: BoxFit.cover,
                             ),
                           ),

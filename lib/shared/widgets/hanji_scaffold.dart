@@ -49,7 +49,7 @@ class HanjiScaffold extends StatelessWidget {
             child: Opacity(
               opacity: 0.6, // 질감을 은은하게 조절
               child: Image.asset(
-                'assets/textures/hanji_light.png',
+                'assets/textures/hanji_light.webp',
                 repeat: ImageRepeat.repeat, // 타일링 적용
                 errorBuilder: (context, error, stackTrace) {
                   // 이미지가 없는 경우 빈 컨테이너 반환

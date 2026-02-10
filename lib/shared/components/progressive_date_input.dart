@@ -214,9 +214,10 @@ class _ProgressiveDateInputState extends State<ProgressiveDateInput> {
             padding: const EdgeInsets.only(bottom: DSSpacing.sm),
             child: Text(
               widget.label!,
-              style: typography.labelLarge.copyWith(
+              style: typography.labelSmall.copyWith(
                 fontWeight: FontWeight.w600,
-                color: colors.textPrimary,
+                color: colors.textSecondary,
+                letterSpacing: 0.3,
               ),
             ),
           ),
@@ -475,9 +476,10 @@ class _ProgressiveTimeInputState extends State<ProgressiveTimeInput> {
             padding: const EdgeInsets.only(bottom: DSSpacing.sm),
             child: Text(
               widget.label!,
-              style: typography.labelLarge.copyWith(
+              style: typography.labelSmall.copyWith(
                 fontWeight: FontWeight.w600,
-                color: colors.textPrimary,
+                color: colors.textSecondary,
+                letterSpacing: 0.3,
               ),
             ),
           ),

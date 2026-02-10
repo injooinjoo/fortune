@@ -357,6 +357,50 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
             ),
           ),
 
+          // 의료 면책 조항
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.colors.surfaceSecondary.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: context.colors.border.withOpacity(0.3),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: context.colors.textSecondary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '안내',
+                        style: context.labelSmall.copyWith(
+                          color: context.colors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '이 콘텐츠는 오락 목적으로 제공되며, 의료 조언이 아닙니다. 건강 문제가 있으시면 전문 의료인과 상담하세요.',
+                    style: context.bodySmall.copyWith(
+                      color: context.colors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           const SizedBox(height: 40),
         ],
       ),

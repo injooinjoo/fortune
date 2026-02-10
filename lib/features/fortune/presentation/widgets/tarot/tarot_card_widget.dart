@@ -161,7 +161,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         ClipRRect(
           borderRadius: BorderRadius.circular(DSRadius.md),
           child: Image.asset(
-            'assets/images/fortune/tarot/tarot_card_back.png',
+            'assets/images/fortune/tarot/tarot_card_back.webp',
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               // 폴백: 기존 그라데이션 디자인

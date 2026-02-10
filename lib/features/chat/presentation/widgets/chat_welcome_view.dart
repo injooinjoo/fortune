@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/recommendation_chip.dart';
-import 'fortune_chip_grid.dart';
+// TODO: 운세칩 임시 숨김
+// import 'fortune_chip_grid.dart';
 
 /// 채팅 환영 화면 (메시지가 없을 때)
 class ChatWelcomeView extends StatelessWidget {
@@ -49,7 +50,7 @@ class ChatWelcomeView extends StatelessWidget {
 
             // 환영 텍스트
             Text(
-              "How's your day?",
+              '오늘 하루 어떠셨어요?',
               style: typography.headingSmall.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
@@ -59,19 +60,18 @@ class ChatWelcomeView extends StatelessWidget {
             const SizedBox(height: DSSpacing.xs),
 
             Text(
-              '인사이트, 타로, 꿈해몽 등\n다양한 서비스를 채팅으로 이용해보세요',
+              '무슨 이야기든 들을 준비가 됐어요\n고민이든 일상이든 편하게 말씀해주세요',
               style: typography.bodyLarge.copyWith(
                 color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: DSSpacing.md),
-
-            // 추천 칩 그리드 (시작 시 3개만 표시)
-            FortuneChipGrid(
-              chips: initialChips,
-              onChipTap: onChipTap,
-            ),
+            // TODO: 운세칩 임시 숨김 - 필요시 아래 주석 해제
+            // const SizedBox(height: DSSpacing.md),
+            // FortuneChipGrid(
+            //   chips: initialChips,
+            //   onChipTap: onChipTap,
+            // ),
           ],
         ),
       ),

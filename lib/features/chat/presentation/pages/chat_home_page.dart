@@ -146,47 +146,47 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   String? _todaysTarotDeck;
 
   static const Map<FortuneSurveyType, String> _fortuneBackgroundAssets = {
-    FortuneSurveyType.daily: 'assets/images/chat/backgrounds/bg_daily.png',
-    FortuneSurveyType.newYear: 'assets/images/chat/backgrounds/bg_daily.png',
+    FortuneSurveyType.daily: 'assets/images/chat/backgrounds/bg_daily.webp',
+    FortuneSurveyType.newYear: 'assets/images/chat/backgrounds/bg_daily.webp',
     FortuneSurveyType.dailyCalendar:
-        'assets/images/chat/backgrounds/bg_time.png',
-    FortuneSurveyType.love: 'assets/images/chat/backgrounds/bg_love.png',
+        'assets/images/chat/backgrounds/bg_time.webp',
+    FortuneSurveyType.love: 'assets/images/chat/backgrounds/bg_love.webp',
     FortuneSurveyType.yearlyEncounter:
-        'assets/images/chat/backgrounds/bg_love.png',
+        'assets/images/chat/backgrounds/bg_love.webp',
     FortuneSurveyType.avoidPeople:
-        'assets/images/chat/backgrounds/bg_avoid_people.png',
-    FortuneSurveyType.exam: 'assets/images/chat/backgrounds/bg_exam.png',
-    FortuneSurveyType.career: 'assets/images/chat/backgrounds/bg_career.png',
-    FortuneSurveyType.money: 'assets/images/chat/backgrounds/bg_money.png',
+        'assets/images/chat/backgrounds/bg_avoid_people.webp',
+    FortuneSurveyType.exam: 'assets/images/chat/backgrounds/bg_exam.webp',
+    FortuneSurveyType.career: 'assets/images/chat/backgrounds/bg_career.webp',
+    FortuneSurveyType.money: 'assets/images/chat/backgrounds/bg_money.webp',
     FortuneSurveyType.luckyItems:
-        'assets/images/chat/backgrounds/bg_lucky_items.png',
-    FortuneSurveyType.lotto: 'assets/images/chat/backgrounds/bg_lotto.png',
-    FortuneSurveyType.tarot: 'assets/images/chat/backgrounds/bg_tarot.png',
+        'assets/images/chat/backgrounds/bg_lucky_items.webp',
+    FortuneSurveyType.lotto: 'assets/images/chat/backgrounds/bg_lotto.webp',
+    FortuneSurveyType.tarot: 'assets/images/chat/backgrounds/bg_tarot.webp',
     FortuneSurveyType.traditional:
-        'assets/images/chat/backgrounds/bg_traditional.png',
+        'assets/images/chat/backgrounds/bg_traditional.webp',
     FortuneSurveyType.faceReading:
-        'assets/images/chat/backgrounds/bg_face_reading.png',
+        'assets/images/chat/backgrounds/bg_face_reading.webp',
     FortuneSurveyType.talisman:
-        'assets/images/chat/backgrounds/bg_talisman.png',
+        'assets/images/chat/backgrounds/bg_talisman.webp',
     FortuneSurveyType.biorhythm:
-        'assets/images/chat/backgrounds/bg_biorhythm.png',
+        'assets/images/chat/backgrounds/bg_biorhythm.webp',
     FortuneSurveyType.sportsGame:
-        'assets/images/chat/backgrounds/bg_sports_game.png',
-    FortuneSurveyType.dream: 'assets/images/chat/backgrounds/bg_dream.png',
-    FortuneSurveyType.wish: 'assets/images/chat/backgrounds/bg_wish.png',
+        'assets/images/chat/backgrounds/bg_sports_game.webp',
+    FortuneSurveyType.dream: 'assets/images/chat/backgrounds/bg_dream.webp',
+    FortuneSurveyType.wish: 'assets/images/chat/backgrounds/bg_wish.webp',
     FortuneSurveyType.fortuneCookie:
-        'assets/images/chat/backgrounds/bg_fortune_cookie.png',
+        'assets/images/chat/backgrounds/bg_fortune_cookie.webp',
     FortuneSurveyType.compatibility:
-        'assets/images/chat/backgrounds/bg_compatibility.png',
-    FortuneSurveyType.pet: 'assets/images/chat/backgrounds/bg_pet.png',
-    FortuneSurveyType.family: 'assets/images/chat/backgrounds/bg_family.png',
-    FortuneSurveyType.health: 'assets/images/chat/backgrounds/bg_health.png',
-    FortuneSurveyType.talent: 'assets/images/chat/backgrounds/bg_talent.png',
+        'assets/images/chat/backgrounds/bg_compatibility.webp',
+    FortuneSurveyType.pet: 'assets/images/chat/backgrounds/bg_pet.webp',
+    FortuneSurveyType.family: 'assets/images/chat/backgrounds/bg_family.webp',
+    FortuneSurveyType.health: 'assets/images/chat/backgrounds/bg_health.webp',
+    FortuneSurveyType.talent: 'assets/images/chat/backgrounds/bg_talent.webp',
   };
 
   String? _chatBackgroundAsset;
   static const String _defaultChatBackgroundAsset =
-      'assets/images/chat/backgrounds/bg_chat_default.png';
+      'assets/images/chat/backgrounds/bg_chat_default.webp';
 
   @override
   void initState() {
@@ -369,6 +369,70 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// 토큰 잔액 표시 위젯
+  Widget _buildTokenBalanceIndicator() {
+    final tokenState = ref.watch(tokenProvider);
+    final remaining = tokenState.balance?.remainingTokens ?? 0;
+    final hasUnlimited = tokenState.balance?.hasUnlimitedAccess ?? false;
+
+    // 무제한 사용자는 표시 안함
+    if (hasUnlimited) return const SizedBox.shrink();
+
+    final colors = context.colors;
+    final typography = context.typography;
+    final isLow = remaining <= 10;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.lg,
+        vertical: DSSpacing.xs,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          GestureDetector(
+            onTap: () => context.push('/token-purchase'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.sm,
+                vertical: DSSpacing.xxs,
+              ),
+              decoration: BoxDecoration(
+                color: isLow
+                    ? colors.warning.withValues(alpha: 0.15)
+                    : colors.surface.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+                border: Border.all(
+                  color: isLow
+                      ? colors.warning.withValues(alpha: 0.3)
+                      : colors.divider,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.auto_awesome,
+                    size: 14,
+                    color: isLow ? colors.warning : colors.accent,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '$remaining',
+                    style: typography.labelSmall.copyWith(
+                      color: isLow ? colors.warning : colors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -741,7 +805,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 숨쉬기: 웰니스 페이지로 직접 이동
     if (chip.fortuneType == 'breathing') {
       _setChatBackgroundAsset(
-        'assets/images/chat/backgrounds/bg_breathing.png',
+        'assets/images/chat/backgrounds/bg_breathing.webp',
       );
       if (!mounted) return;
       context.push('/wellness/meditation');
@@ -5121,6 +5185,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                 isLoading: _isLoadingRecommendations,
                               ),
 
+                            // 토큰 잔액 표시 (무제한 아닐 때만)
+                            _buildTokenBalanceIndicator(),
+
                             // 텍스트 입력란 (선택형 설문/온보딩 시 슬라이드 아웃)
                             IgnorePointer(
                               ignoring: shouldHideInput,
@@ -5227,7 +5294,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                   const SizedBox(height: DSSpacing.xl),
                                   CookieShardBreakWidget(
                                     imagePath:
-                                        'assets/images/fortune_cards/fortune_cookie_fortune.png',
+                                        'assets/images/fortune_cards/fortune_cookie_fortune.webp',
                                     size: 220,
                                     accentColor: DSColors.accentSecondary,
                                     onBreakComplete: _onCookieAnimationComplete,

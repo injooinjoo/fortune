@@ -426,7 +426,7 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
       children: [
         // 카드 뒷면 이미지 배경
         Image.asset(
-          'assets/images/fortune/tarot/tarot_card_back_eye.png',
+          'assets/images/fortune/tarot/tarot_card_back_eye.webp',
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             // 폴백: 기존 네이비 배경

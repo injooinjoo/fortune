@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/chat_message.dart';
 import 'chat_career_result_card.dart';
@@ -27,7 +28,7 @@ import '../../../chat_insight/presentation/widgets/trigger_card_widget.dart';
 import '../../../chat_insight/presentation/widgets/guidance_card_widget.dart';
 
 /// 채팅 메시지 버블
-class ChatMessageBubble extends StatelessWidget {
+class ChatMessageBubble extends ConsumerWidget {
   final ChatMessage message;
 
   /// 운세 결과 카드 렌더링 완료 시 호출되는 콜백
@@ -42,7 +43,7 @@ class ChatMessageBubble extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final typography = context.typography;
     final isUser = message.type == ChatMessageType.user;
@@ -436,25 +437,25 @@ class ChatMessageBubble extends StatelessWidget {
       );
     }
 
-    // 일반 텍스트 메시지 (구름 모양 말풍선)
-    return Container(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+    // 심플 회색 타원형 말풍선 (아바타 없음)
+    return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: DSSpacing.xs,
+        vertical: DSSpacing.xxs,
         horizontal: DSSpacing.md,
       ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        child: CloudBubble(
-          type: isUser ? CloudBubbleType.user : CloudBubbleType.ai,
-          showInkBleed: false, // ChatGPT style: no ink bleed effect
-          cornerAsset: 'assets/images/chat/corner_motif.svg',
-          cornerSize: 16,
+      child: Align(
+        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.75,
+          ),
           padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.lg,
-            vertical: DSSpacing.md,
+            horizontal: DSSpacing.md,
+            vertical: DSSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: isUser ? colors.userBubble : colors.backgroundSecondary,
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             message.text ?? '',
@@ -466,4 +467,5 @@ class ChatMessageBubble extends StatelessWidget {
       ),
     );
   }
+
 }

@@ -24,7 +24,7 @@ class ChatMatchInsightCard extends ConsumerStatefulWidget {
 class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
   MatchInsight get insight => widget.insight;
   static const String _sportsHeroImage =
-      'assets/images/chat/backgrounds/bg_sports_game.png';
+      'assets/images/chat/backgrounds/bg_sports_game.webp';
 
   @override
   Widget build(BuildContext context) {

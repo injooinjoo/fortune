@@ -80,8 +80,10 @@ class TokenState {
 
   /// 현재 사용 가능한 토큰
   int get currentTokens {
-    if (hasUnlimitedTokens) return 999999;
-    return balance?.remainingTokens ?? 0;
+    // TODO: 스크린샷용 임시 값 - 나중에 원복 필요
+    return 127;
+    // if (hasUnlimitedTokens) return 999999;
+    // return balance?.remainingTokens ?? 0;
   }
 
   /// 전체 잔액

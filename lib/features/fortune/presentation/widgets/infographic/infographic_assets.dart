@@ -21,11 +21,11 @@ class InfographicAssets {
   static const String chipBgGradient = '$_basePath/effects/chip_bg_gradient.png';
 
   // === Category Icons ===
-  static const String iconLove = '$_basePath/icons/icon_love.png';
-  static const String iconHealth = '$_basePath/icons/icon_health.png';
-  static const String iconMoney = '$_basePath/icons/icon_money.png';
-  static const String iconStudy = '$_basePath/icons/icon_study.png';
-  static const String iconSocial = '$_basePath/icons/icon_social.png';
+  static const String iconLove = '$_basePath/icons/icon_love.webp';
+  static const String iconHealth = '$_basePath/icons/icon_health.webp';
+  static const String iconMoney = '$_basePath/icons/icon_money.webp';
+  static const String iconStudy = '$_basePath/icons/icon_study.webp';
+  static const String iconSocial = '$_basePath/icons/icon_social.webp';
 
   /// 운세 타입별 배경 패턴 반환
   static String getBackgroundForType(String fortuneType) {

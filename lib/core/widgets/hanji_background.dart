@@ -50,7 +50,7 @@ class HanjiBackground extends StatelessWidget {
             child: Opacity(
               opacity: effectiveOpacity,
               child: Image.asset(
-                'assets/images/hanji_texture.png',
+                'assets/images/hanji_texture.webp',
                 fit: BoxFit.cover,
                 repeat: ImageRepeat.repeat,
                 color: isDark ? Colors.white : null,
@@ -127,7 +127,7 @@ class HanjiScaffold extends StatelessWidget {
                   child: Opacity(
                     opacity: effectiveOpacity,
                     child: Image.asset(
-                      'assets/images/hanji_texture.png',
+                      'assets/images/hanji_texture.webp',
                       fit: BoxFit.cover,
                       repeat: ImageRepeat.repeat,
                       color: isDark ? Colors.white : null,

@@ -37,11 +37,23 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
         case "cancelNotification":
             cancelNotification(call: call, result: result)
         case "updateDynamicIsland":
-            updateDynamicIsland(call: call, result: result)
+            if #available(iOS 16.2, *) {
+                updateDynamicIsland(call: call, result: result)
+            } else {
+                result(FlutterError(code: "UNAVAILABLE", message: "iOS 16.2+ required", details: nil))
+            }
         case "startLiveActivity":
-            startLiveActivity(call: call, result: result)
+            if #available(iOS 16.2, *) {
+                startLiveActivity(call: call, result: result)
+            } else {
+                result(FlutterError(code: "UNAVAILABLE", message: "iOS 16.2+ required", details: nil))
+            }
         case "endLiveActivity":
-            endLiveActivity(call: call, result: result)
+            if #available(iOS 16.2, *) {
+                endLiveActivity(call: call, result: result)
+            } else {
+                result(FlutterError(code: "UNAVAILABLE", message: "iOS 16.2+ required", details: nil))
+            }
         case "addSiriShortcut":
             addSiriShortcut(call: call, result: result)
         case "startScreenshotDetection":
@@ -402,6 +414,7 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
 }
 
 // MARK: - FlutterStreamHandler
+@available(iOS 16.1, *)
 extension NativePlatformPlugin: FlutterStreamHandler {
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
@@ -418,26 +431,17 @@ extension NativePlatformPlugin: FlutterStreamHandler {
 @available(iOS 16.2, *)
 struct FortuneActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        var fortuneData: [String: Any]
-        
-        enum CodingKeys: String, CodingKey {
-            case fortuneData
-        }
-        
+        var fortuneDataJson: String  // JSON string for Hashable compliance
+
         init(fortuneData: [String: Any]) {
-            self.fortuneData = fortuneData
-        }
-        
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            fortuneData = [:]
-        }
-        
-        func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            // Encode fortuneData as needed
+            if let jsonData = try? JSONSerialization.data(withJSONObject: fortuneData),
+               let jsonString = String(data: jsonData, encoding: .utf8) {
+                self.fortuneDataJson = jsonString
+            } else {
+                self.fortuneDataJson = "{}"
+            }
         }
     }
-    
+
     var fortuneType: String
 }

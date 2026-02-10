@@ -648,11 +648,11 @@ class _UnifiedButtonState extends State<UnifiedButton> {
                   ? BoxDecoration(
                       image: DecorationImage(
                         image: const AssetImage(
-                            'assets/images/ui/btn_brush_frame.png'),
+                            'assets/images/ui/btn_brush_frame.webp'),
                         fit: BoxFit.fill,
                         colorFilter: !effectiveEnabled
                             ? ColorFilter.mode(
-                                Colors.white.withValues(alpha: 0.5),
+                                DSColors.accent.withValues(alpha: 0.5),
                                 BlendMode.dstIn,
                               )
                             : null,
@@ -720,8 +720,8 @@ class _UnifiedButtonState extends State<UnifiedButton> {
         return _ButtonConfig(
           backgroundColor:
               enabled ? DSColors.error : DSColors.error.withValues(alpha: 0.5),
-          splashColor: Colors.white.withValues(alpha: 0.1),
-          highlightColor: Colors.white.withValues(alpha: 0.05),
+          splashColor: DSColors.accent.withValues(alpha: 0.1),
+          highlightColor: DSColors.accent.withValues(alpha: 0.05),
           border: null,
         );
     }
@@ -837,7 +837,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
       case UnifiedButtonStyle.text:
         return colors.accent;
       case UnifiedButtonStyle.danger:
-        return Colors.white;
+        return DSColors.accent;
     }
   }
 

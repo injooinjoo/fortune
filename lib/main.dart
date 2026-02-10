@@ -9,6 +9,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'l10n/app_localizations.dart';
+
 import 'core/utils/logger.dart';
 import 'firebase_options_secure.dart';
 import 'routes/route_config.dart';
@@ -25,6 +27,8 @@ import 'core/providers/user_settings_provider.dart';
 import 'core/services/fortune_haptic_service.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'services/deep_link_service.dart';
+import 'presentation/providers/app_providers.dart';
+import 'features/character/data/services/character_chat_local_service.dart';
 
 void main() async {
   debugPrint('🚀 [STARTUP] App main() started');
@@ -62,6 +66,11 @@ void main() async {
     await Hive.initFlutter();
     debugPrint('🚀 [STARTUP] Hive initialized successfully');
     Logger.info('Hive initialized successfully');
+
+    // Initialize Character Chat Local Storage (카카오톡 스타일)
+    debugPrint('🚀 [STARTUP] Initializing Character Chat Local Storage...');
+    await CharacterChatLocalService.initialize();
+    debugPrint('🚀 [STARTUP] Character Chat Local Storage initialized');
   } catch (e) {
     debugPrint('❌ [STARTUP] Hive initialization failed: $e');
     Logger.error('Hive initialization failed', e);
@@ -226,9 +235,15 @@ void main() async {
   }
 
   debugPrint('🚀 [STARTUP] All initializations complete, starting app...');
+
+  // Initialize provider overrides (SharedPreferences, etc.)
+  final providerOverrides = await initializeProviders();
+  debugPrint('🚀 [STARTUP] Provider overrides initialized');
+
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ProviderScope(
+      overrides: providerOverrides,
+      child: const MyApp(),
     ),
   );
   debugPrint('🚀 [STARTUP] App started successfully');
@@ -256,6 +271,9 @@ class MyApp extends ConsumerWidget {
       darkTheme: DSTheme.dark(fontScale: userSettings.fontScale),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
+      // Localization
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,
       // 🎯 디바이스 시스템 폰트 크기 설정 반영 (접근성)
       // 레이아웃 깨짐 방지를 위해 0.8 ~ 1.5 범위로 제한

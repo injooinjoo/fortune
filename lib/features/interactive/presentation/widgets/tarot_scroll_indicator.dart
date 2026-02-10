@@ -77,15 +77,15 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.6),
+                    color: DSColors.background.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.3),
+                      color: DSColors.accent.withValues(alpha: 0.3),
                       width: 1)),
                   child: Text(
                     widget.text,
                     style: context.bodySmall.copyWith(
-                      color: Colors.white,
+                      color: DSColors.accent,
                       fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -129,7 +129,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
               child: CustomPaint(
                 size: const Size(30, 30),
                 painter: ArrowPainter(
-                  color: Colors.white,
+                  color: DSColors.accent,
                   strokeWidth: 3,
                 ),
               ),
@@ -227,7 +227,7 @@ class _TarotScrollHintState extends State<TarotScrollHint>
                 width: 60,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: DSColors.accent.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(2),
                   boxShadow: [
                     BoxShadow(
