@@ -25,6 +25,7 @@ import 'core/utils/route_observer_logger.dart';
 import 'core/services/error_reporter_service.dart';
 import 'core/providers/user_settings_provider.dart';
 import 'core/services/fortune_haptic_service.dart';
+import 'core/services/chat_sync_service.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'services/deep_link_service.dart';
 import 'presentation/providers/app_providers.dart';
@@ -71,6 +72,11 @@ void main() async {
     debugPrint('🚀 [STARTUP] Initializing Character Chat Local Storage...');
     await CharacterChatLocalService.initialize();
     debugPrint('🚀 [STARTUP] Character Chat Local Storage initialized');
+
+    // Initialize Chat Sync Service (오프라인 큐 + 자동 동기화)
+    debugPrint('🚀 [STARTUP] Initializing Chat Sync Service...');
+    await ChatSyncService.instance.initialize();
+    debugPrint('🚀 [STARTUP] Chat Sync Service initialized');
   } catch (e) {
     debugPrint('❌ [STARTUP] Hive initialization failed: $e');
     Logger.error('Hive initialization failed', e);

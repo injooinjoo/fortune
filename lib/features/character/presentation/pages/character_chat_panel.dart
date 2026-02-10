@@ -115,20 +115,38 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final chatState = ref.watch(characterChatProvider(widget.character.id));
     final surveyState = ref.watch(characterChatSurveyProvider(widget.character.id));
 
-    // 🪙 토큰 부족 에러 감지
+    // 🪙 토큰 부족 및 일반 에러 감지
     ref.listen<CharacterChatState>(
       characterChatProvider(widget.character.id),
       (previous, next) {
-        if (next.error == 'INSUFFICIENT_TOKENS') {
-          // 에러 클리어
-          ref.read(characterChatProvider(widget.character.id).notifier).clearError();
+        if (next.error != null && next.error != previous?.error) {
+          if (next.error == 'INSUFFICIENT_TOKENS') {
+            // 에러 클리어
+            ref.read(characterChatProvider(widget.character.id).notifier).clearError();
 
-          // 토큰 부족 모달 표시
-          TokenInsufficientModal.show(
-            context: context,
-            requiredTokens: 1,
-            fortuneType: 'character-chat',
-          );
+            // 토큰 부족 모달 표시
+            TokenInsufficientModal.show(
+              context: context,
+              requiredTokens: 1,
+              fortuneType: 'character-chat',
+            );
+          } else {
+            // 일반 에러 - SnackBar로 표시
+            ref.read(characterChatProvider(widget.character.id).notifier).clearError();
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('오류가 발생했어요. 다시 시도해주세요.'),
+                backgroundColor: Colors.red[400],
+                behavior: SnackBarBehavior.floating,
+                action: SnackBarAction(
+                  label: '확인',
+                  textColor: Colors.white,
+                  onPressed: () {},
+                ),
+              ),
+            );
+          }
         }
       },
     );

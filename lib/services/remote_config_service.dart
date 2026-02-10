@@ -131,7 +131,7 @@ class RemoteConfigService {
       // 보너스 토큰,
       dailyFreeTokensKey: 1,
       referralBonusTokensKey: 10,
-      newUserBonusTokensKey: 5,
+      newUserBonusTokensKey: 30, // 첫 설치 시 30토큰 지급
 
       // 운세 카테고리 (빈 배열 = 기본값 사용)
       fortuneCategoriesKey: '[]',
@@ -279,9 +279,9 @@ class RemoteConfigService {
     return _remoteConfig.getInt(referralBonusTokensKey);
   }
   
-  /// 신규 사용자 보너스 토큰 개수
+  /// 신규 사용자 보너스 토큰 개수 (첫 설치 시 30토큰)
   int getNewUserBonusTokens() {
-    if (!_isInitialized) return 5;
+    if (!_isInitialized) return 30;
     return _remoteConfig.getInt(newUserBonusTokensKey);
   }
   

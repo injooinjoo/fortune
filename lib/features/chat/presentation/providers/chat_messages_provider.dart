@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/models/personality_dna_model.dart';
+import '../../../../core/services/chat_sync_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
@@ -43,7 +44,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     }
   }
 
-  /// 메시지를 로컬에 저장
+  /// 메시지를 로컬에 저장 + DB 동기화 큐에 추가
   Future<void> _saveMessages() async {
     try {
       final persistable = state.messages
@@ -54,7 +55,16 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
           ? persistable.sublist(persistable.length - _maxStoredMessages)
           : persistable;
       final json = toSave.map((m) => m.toJson()).toList();
+
+      // 1. 로컬 저장 (즉시)
       await _prefs.setString(_storageKey, jsonEncode(json));
+
+      // 2. DB 동기화 큐에 추가 (debounced)
+      ChatSyncService.instance.queueForSync(
+        chatId: 'general',
+        chatType: 'general',
+        messages: json,
+      );
     } catch (e) {
       debugPrint('채팅 히스토리 저장 실패: $e');
     }

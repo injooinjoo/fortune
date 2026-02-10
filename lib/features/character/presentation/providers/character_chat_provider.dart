@@ -10,6 +10,7 @@ import '../../data/services/character_chat_local_service.dart';
 import '../../data/services/follow_up_scheduler.dart';
 import '../../data/default_characters.dart';
 import '../../data/fortune_characters.dart';
+import '../../../../core/services/chat_sync_service.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/constants/soul_rates.dart';
 
@@ -69,6 +70,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
     // 사용자가 응답했으므로 Follow-up 타이머 취소
     _followUpScheduler.cancelFollowUp(_characterId);
+
+    // DB 동기화 큐에 추가 (debounced)
+    _queueForSync();
   }
 
   /// 캐릭터 메시지 추가
@@ -84,6 +88,20 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
     // 캐릭터 응답 후 Follow-up 스케줄 시작
     _startFollowUpSchedule();
+
+    // DB 동기화 큐에 추가 (debounced)
+    _queueForSync();
+  }
+
+  /// DB 동기화 큐에 메시지 추가 (debounced)
+  void _queueForSync() {
+    if (state.messages.isEmpty) return;
+
+    ChatSyncService.instance.queueForSync(
+      chatId: _characterId,
+      chatType: 'character',
+      messages: state.messages.map((m) => m.toJson()).toList(),
+    );
   }
 
   /// Follow-up 스케줄 시작
