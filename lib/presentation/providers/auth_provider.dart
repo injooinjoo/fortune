@@ -7,6 +7,7 @@ import '../../services/user_statistics_service.dart';
 import '../../services/storage_service.dart';
 import '../../services/widget_service.dart';
 import '../../services/widget_data_service.dart';
+import '../../features/character/data/services/character_chat_service.dart';
 
 // Supabase client provider
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -194,6 +195,37 @@ class AuthService {
     }
   }
 }
+
+/// 채팅 데이터 복원 프로바이더
+/// 로그인/세션 복구 시 서버에서 모든 캐릭터 대화를 불러와 로컬에 저장
+final chatRestorationProvider = Provider<void>((ref) {
+  ref.listen<AsyncValue<AuthState?>>(authStateProvider, (previous, next) {
+    next.whenData((authState) async {
+      if (authState == null) return;
+
+      final userId = authState.session?.user.id;
+      if (userId == null) return;
+
+      // 로그인/세션 복구 시에만 대화 복원
+      if (authState.event == AuthChangeEvent.signedIn ||
+          authState.event == AuthChangeEvent.initialSession) {
+        try {
+          Logger.info('[ChatRestoration] 대화 복원 시작...');
+          final chatService = CharacterChatService();
+          final restoredConversations = await chatService.loadAllConversations();
+
+          if (restoredConversations.isNotEmpty) {
+            Logger.info('[ChatRestoration] ${restoredConversations.length}개 캐릭터 대화 복원 완료');
+          } else {
+            Logger.info('[ChatRestoration] 복원할 대화 없음');
+          }
+        } catch (e) {
+          Logger.warning('[ChatRestoration] 대화 복원 실패 (비치명적): $e');
+        }
+      }
+    });
+  });
+});
 
 /// 위젯 데이터 준비 프로바이더
 /// auth 상태 변경 시 자동으로 위젯 데이터 준비

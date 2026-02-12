@@ -7,12 +7,17 @@ import '../../domain/models/response_delay_config.dart';
 import '../../domain/models/ai_character.dart';
 import '../../data/services/character_chat_service.dart';
 import '../../data/services/character_chat_local_service.dart';
+import '../../data/services/character_affinity_service.dart';
+import '../../data/services/character_message_notification_service.dart';
 import '../../data/services/follow_up_scheduler.dart';
 import '../../data/default_characters.dart';
 import '../../data/fortune_characters.dart';
 import '../../../../core/services/chat_sync_service.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../core/constants/soul_rates.dart';
+import '../../../../services/app_icon_badge_service.dart';
+import 'active_chat_provider.dart';
 
 /// 캐릭터별 채팅 상태 Provider (family)
 final characterChatProvider = StateNotifierProvider.family<
@@ -30,6 +35,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   final CharacterChatService _service = CharacterChatService();
   final FollowUpScheduler _followUpScheduler = FollowUpScheduler();
   final CharacterChatLocalService _localService = CharacterChatLocalService();
+  final CharacterAffinityService _affinityService = CharacterAffinityService();
 
   /// 현재 캐릭터 정보 캐시
   AiCharacter? _cachedCharacter;
@@ -47,7 +53,16 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       // 대화가 있으면 메시지를 미리 로드 (캐릭터 리스트에서 미리보기용)
       final messages = await _localService.loadConversation(_characterId);
       if (messages.isNotEmpty && mounted) {
-        state = state.copyWith(messages: messages);
+        // 마지막으로 읽은 시간 이후의 캐릭터 메시지 수 계산
+        final lastReadTime = await _localService.getLastReadTimestamp(_characterId);
+        int unread = 0;
+        if (lastReadTime != null) {
+          unread = messages.where((m) =>
+            m.type == CharacterChatMessageType.character &&
+            m.timestamp.isAfter(lastReadTime)
+          ).length;
+        }
+        state = state.copyWith(messages: messages, unreadCount: unread);
       }
     }
   }
@@ -58,6 +73,43 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       (c) => c.id == _characterId,
     );
     return _cachedCharacter!;
+  }
+
+  /// 유저 프로필 정보를 API용 Map으로 변환
+  Map<String, dynamic>? _getUserProfileMap() {
+    try {
+      final profileAsync = _ref.read(userProfileProvider);
+      return profileAsync.maybeWhen(
+        data: (profile) {
+          if (profile == null) return null;
+
+          // 나이 계산 (birthDate로부터)
+          int? age;
+          if (profile.birthDate != null) {
+            final now = DateTime.now();
+            age = now.year - profile.birthDate!.year;
+            if (now.month < profile.birthDate!.month ||
+                (now.month == profile.birthDate!.month &&
+                    now.day < profile.birthDate!.day)) {
+              age--;
+            }
+          }
+
+          return {
+            if (profile.name.isNotEmpty) 'name': profile.name,
+            if (age != null) 'age': age,
+            'gender': profile.gender.value, // Gender enum의 value
+            if (profile.mbti != null) 'mbti': profile.mbti,
+            if (profile.bloodType != null) 'bloodType': profile.bloodType,
+            if (profile.zodiacSign != null) 'zodiacSign': profile.zodiacSign,
+            if (profile.chineseZodiac != null) 'zodiacAnimal': profile.chineseZodiac,
+          };
+        },
+        orElse: () => null,
+      );
+    } catch (_) {
+      return null;
+    }
   }
 
   /// 유저 메시지 추가
@@ -76,8 +128,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   /// 캐릭터 메시지 추가
-  void addCharacterMessage(String text) {
-    final message = CharacterChatMessage.character(text, _characterId);
+  void addCharacterMessage(String text, {int? affinityChange}) {
+    final message = CharacterChatMessage.character(
+      text,
+      _characterId,
+      affinityChange: affinityChange,
+    );
     state = state.copyWith(
       messages: [...state.messages, message],
       isTyping: false,
@@ -86,6 +142,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       unreadCount: state.unreadCount + 1,  // 읽지 않은 메시지 증가
     );
 
+    // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
+    _triggerNotificationIfNeeded(text);
+
     // 캐릭터 응답 후 Follow-up 스케줄 시작
     _startFollowUpSchedule();
 
@@ -93,10 +152,66 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     _queueForSync();
   }
 
-  /// DB 동기화 큐에 메시지 추가 (debounced)
+  /// Proactive 메시지 추가 (점심 사진 등 시간대 기반 자발적 메시지)
+  ///
+  /// [message] CharacterChatMessage - 이미 생성된 proactive 메시지
+  void addProactiveMessage(CharacterChatMessage message) {
+    state = state.copyWith(
+      messages: [...state.messages, message],
+      isTyping: false,
+      isProcessing: false,
+      isCharacterTyping: false,
+      unreadCount: state.unreadCount + 1,
+    );
+
+    // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
+    _triggerNotificationIfNeeded(message.text);
+
+    // DB 동기화 큐에 추가
+    _queueForSync();
+  }
+
+  /// 카카오톡 스타일 알림 트리거 (채팅방에 없을 때만)
+  void _triggerNotificationIfNeeded(String messageText) {
+    // 현재 열려있는 채팅방 확인
+    final activeChatId = _ref.read(activeCharacterChatProvider);
+
+    // 이 캐릭터의 채팅방에 있으면 알림 안함 (카카오톡 동작)
+    if (activeChatId == _characterId) return;
+
+    // 푸시 알림 + 진동
+    CharacterMessageNotificationService().notifyNewMessage(
+      characterId: _characterId,
+      characterName: _character.name,
+      messagePreview: messageText,
+    );
+
+    // 앱 아이콘 배지 업데이트 (전체 unread 합산)
+    _updateTotalUnreadBadge();
+  }
+
+  /// 앱 아이콘 배지 숫자 업데이트 (전체 캐릭터 unread 합산)
+  void _updateTotalUnreadBadge() {
+    int total = 0;
+    for (final char in _allCharacters) {
+      try {
+        final chatState = _ref.read(characterChatProvider(char.id));
+        total += chatState.unreadCount;
+      } catch (_) {
+        // Provider 없는 경우 무시
+      }
+    }
+    AppIconBadgeService.updateBadgeCount(total);
+  }
+
+  /// DB 동기화 큐에 메시지 추가 (debounced) + 로컬 즉시 저장
   void _queueForSync() {
     if (state.messages.isEmpty) return;
 
+    // ⚡ 로컬에 즉시 저장 (앱 강제종료 대비)
+    _localService.saveConversation(_characterId, state.messages);
+
+    // 서버 동기화 (debounced 3초)
     ChatSyncService.instance.queueForSync(
       chatId: _characterId,
       chatType: 'character',
@@ -172,6 +287,11 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         userMessage: '[사용자 응답 대기 중]',
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
+        emoticonStyle: _character.behaviorPattern.emoticonStyleString,
+        characterName: _character.name,
+        characterTraits: _character.personality,
+        clientTimestamp: DateTime.now().toIso8601String(),
+        userProfile: _getUserProfileMap(),
       );
 
       // 타이핑 딜레이
@@ -195,6 +315,65 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   /// Follow-up 스케줄 취소
   void cancelFollowUp() {
     _followUpScheduler.cancelFollowUp(_characterId);
+  }
+
+  /// 대기 중인 유저 메시지에 대한 AI 응답 생성 (앱 재시작 시)
+  Future<void> _generatePendingResponse() async {
+    if (state.messages.isEmpty) return;
+
+    final lastMessage = state.messages.last;
+    // 마지막이 유저 메시지가 아니면 무시
+    if (lastMessage.type != CharacterChatMessageType.user) return;
+
+    // 이미 처리 중이면 무시
+    if (state.isTyping || state.isProcessing) return;
+
+    setTyping(true);
+
+    try {
+      // 메시지 히스토리 준비 (마지막 유저 메시지 제외)
+      final messagesWithoutLast = state.messages.length > 1
+          ? state.messages.sublist(0, state.messages.length - 1)
+          : <CharacterChatMessage>[];
+      final recentMessages = messagesWithoutLast.length > 20
+          ? messagesWithoutLast.sublist(messagesWithoutLast.length - 20)
+          : messagesWithoutLast;
+      final history = recentMessages
+          .map((m) => {'role': m.role, 'content': m.text})
+          .toList();
+
+      // 이모티콘 빈도 지시문 추가
+      final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
+      final enhancedPrompt = '${_character.systemPrompt}\n\n$emojiInstruction';
+
+      // API 호출
+      final response = await _service.sendMessage(
+        characterId: _characterId,
+        systemPrompt: enhancedPrompt,
+        messages: history,
+        userMessage: lastMessage.text,
+        oocInstructions: _character.oocInstructions,
+        emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
+        emoticonStyle: _character.behaviorPattern.emoticonStyleString,
+        characterName: _character.name,
+        characterTraits: _character.personality,
+        clientTimestamp: DateTime.now().toIso8601String(),
+        userProfile: _getUserProfileMap(),
+      );
+
+      // 타이핑 딜레이
+      final emotion = ResponseDelayConfig.parseEmotion(response.emotionTag);
+      final typingDelay = ResponseDelayConfig.calculateTypingDelay(
+        emotion: emotion,
+        responseLength: response.response.length,
+      );
+      await Future.delayed(Duration(milliseconds: typingDelay));
+
+      // 캐릭터 응답 추가
+      addCharacterMessage(response.response);
+    } catch (e) {
+      setError(e.toString());
+    }
   }
 
   /// 시스템 메시지 추가
@@ -231,6 +410,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   /// 읽지 않은 메시지 수 초기화 (채팅방 진입 시)
   void clearUnreadCount() {
     state = state.copyWith(unreadCount: 0);
+    // 마지막으로 읽은 시간 저장 (앱 재시작 후에도 유지)
+    _localService.saveLastReadTimestamp(_characterId);
   }
 
   /// 읽지 않은 메시지 수 증가 (캐릭터 메시지 도착 시, 채팅방 밖에서)
@@ -262,10 +443,45 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     state = CharacterChatState(characterId: _characterId);
   }
 
-  /// 호감도 업데이트
+  /// 호감도 업데이트 (기존 호환용)
   void updateAffinity(AffinityEvent event) {
-    final newAffinity = state.affinity.addPoints(event.points);
+    updateAffinityWithPoints(event.points, event.interactionType);
+  }
+
+  /// 호감도 업데이트 (동적 포인트 지원)
+  void updateAffinityWithPoints(int points, [AffinityInteractionType interactionType = AffinityInteractionType.neutral]) {
+    final previousPhase = state.affinity.phase;
+    final newAffinity = state.affinity.addPointsWithTracking(
+      points,
+      interactionType: interactionType,
+    );
     state = state.copyWith(affinity: newAffinity);
+
+    // 단계 전환 감지
+    if (newAffinity.phase != previousPhase && newAffinity.phase.index > previousPhase.index) {
+      _onPhaseTransition(previousPhase, newAffinity.phase);
+    }
+
+    // 백그라운드에서 저장 (debounced)
+    _affinityService.saveAffinity(_characterId, newAffinity, syncToServer: true);
+  }
+
+  /// 단계 전환 시 호출
+  void _onPhaseTransition(AffinityPhase previousPhase, AffinityPhase newPhase) {
+    final transition = PhaseTransitionResult(
+      previousPhase: previousPhase,
+      newPhase: newPhase,
+    );
+
+    // 축하 메시지를 시스템 메시지로 추가
+    if (transition.isUpgrade && transition.celebrationMessage.isNotEmpty) {
+      final systemMessage = CharacterChatMessage.system(
+        '🎉 ${transition.celebrationMessage}\n✨ ${transition.unlockDescription}',
+      );
+      state = state.copyWith(
+        messages: [...state.messages, systemMessage],
+      );
+    }
   }
 
   /// 호감도 직접 설정 (불러오기용)
@@ -330,6 +546,11 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         userMessage: text,
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
+        emoticonStyle: _character.behaviorPattern.emoticonStyleString,
+        characterName: _character.name,
+        characterTraits: _character.personality,
+        clientTimestamp: DateTime.now().toIso8601String(),
+        userProfile: _getUserProfileMap(),
       );
 
       // 5단계: 감정 기반 타이핑 딜레이 (클라이언트 측)
@@ -340,11 +561,19 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       );
       await Future.delayed(Duration(milliseconds: typingDelay));
 
-      // 6단계: 캐릭터 응답 추가
-      addCharacterMessage(response.response);
+      // 호감도 포인트 계산 (애니메이션용)
+      final affinityPoints = response.affinityDelta.points;
 
-      // 호감도 자동 증가 (일반 대화)
-      updateAffinity(AffinityEvent.normalChat);
+      // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
+      addCharacterMessage(response.response, affinityChange: affinityPoints);
+
+      // 호감도 동적 업데이트 (AI 평가 기반)
+      final interactionType = response.affinityDelta.isPositive
+          ? AffinityInteractionType.positive
+          : response.affinityDelta.isNegative
+              ? AffinityInteractionType.negative
+              : AffinityInteractionType.neutral;
+      updateAffinityWithPoints(affinityPoints, interactionType);
     } catch (e) {
       setError(e.toString());
     }
@@ -426,6 +655,11 @@ $emojiInstruction
         userMessage: requestMessage,
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
+        emoticonStyle: _character.behaviorPattern.emoticonStyleString,
+        characterName: _character.name,
+        characterTraits: _character.personality,
+        clientTimestamp: DateTime.now().toIso8601String(),
+        userProfile: _getUserProfileMap(),
       );
 
       // 5단계: 감정 기반 타이핑 딜레이
@@ -436,11 +670,19 @@ $emojiInstruction
       );
       await Future.delayed(Duration(milliseconds: typingDelay));
 
-      // 6단계: 캐릭터 응답 추가
-      addCharacterMessage(response.response);
+      // 호감도 포인트 계산 (애니메이션용)
+      final affinityPoints = response.affinityDelta.points;
 
-      // 호감도 증가 (운세 상담)
-      updateAffinity(AffinityEvent.normalChat);
+      // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
+      addCharacterMessage(response.response, affinityChange: affinityPoints);
+
+      // 호감도 동적 업데이트 (AI 평가 기반)
+      final interactionType = response.affinityDelta.isPositive
+          ? AffinityInteractionType.positive
+          : response.affinityDelta.isNegative
+              ? AffinityInteractionType.negative
+              : AffinityInteractionType.neutral;
+      updateAffinityWithPoints(affinityPoints, interactionType);
     } catch (e) {
       setError(e.toString());
     }
@@ -521,6 +763,11 @@ $emojiInstruction
         userMessage: requestMessage,
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
+        emoticonStyle: _character.behaviorPattern.emoticonStyleString,
+        characterName: _character.name,
+        characterTraits: _character.personality,
+        clientTimestamp: DateTime.now().toIso8601String(),
+        userProfile: _getUserProfileMap(),
       );
 
       // 5단계: 감정 기반 타이핑 딜레이
@@ -531,11 +778,19 @@ $emojiInstruction
       );
       await Future.delayed(Duration(milliseconds: typingDelay));
 
-      // 6단계: 캐릭터 응답 추가
-      addCharacterMessage(response.response);
+      // 호감도 포인트 계산 (애니메이션용)
+      final affinityPoints = response.affinityDelta.points;
 
-      // 호감도 증가 (운세 상담)
-      updateAffinity(AffinityEvent.normalChat);
+      // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
+      addCharacterMessage(response.response, affinityChange: affinityPoints);
+
+      // 호감도 동적 업데이트 (AI 평가 기반)
+      final interactionType = response.affinityDelta.isPositive
+          ? AffinityInteractionType.positive
+          : response.affinityDelta.isNegative
+              ? AffinityInteractionType.negative
+              : AffinityInteractionType.neutral;
+      updateAffinityWithPoints(affinityPoints, interactionType);
     } catch (e) {
       setError(e.toString());
     }
@@ -578,6 +833,10 @@ $emojiInstruction
     state = state.copyWith(isLoading: true);
 
     try {
+      // 호감도 로드 (로컬 우선, 서버 폴백)
+      final affinity = await _affinityService.loadAffinity(_characterId);
+      state = state.copyWith(affinity: affinity);
+
       final messages = await _service.loadConversation(_characterId);
 
       if (messages.isNotEmpty) {
@@ -587,8 +846,14 @@ $emojiInstruction
           isLoading: false,
           isInitialized: true,
         );
-        // 기존 대화가 있으면 Follow-up 스케줄 시작
-        _startFollowUpSchedule();
+
+        // 마지막 메시지가 유저면 → AI 응답 생성 (앱 재시작 시 무시 방지)
+        if (messages.last.type == CharacterChatMessageType.user) {
+          _generatePendingResponse();
+        } else {
+          // 캐릭터 메시지면 Follow-up 스케줄 시작
+          _startFollowUpSchedule();
+        }
       } else {
         // 없으면 캐릭터 첫 메시지로 시작
         state = state.copyWith(
@@ -613,6 +878,9 @@ $emojiInstruction
 
   /// 대화 스레드 저장 (화면 이탈 시 호출)
   Future<bool> saveOnExit() async {
+    // 호감도 저장 (항상)
+    await _affinityService.saveAffinity(_characterId, state.affinity);
+
     // 메시지가 없으면 저장 안 함
     if (state.messages.isEmpty) return true;
 
@@ -701,6 +969,11 @@ $emojiInstruction
         userMessage: '(사용자가 "${choice.text}"를 선택함)',
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
+        emoticonStyle: _character.behaviorPattern.emoticonStyleString,
+        characterName: _character.name,
+        characterTraits: _character.personality,
+        clientTimestamp: DateTime.now().toIso8601String(),
+        userProfile: _getUserProfileMap(),
       );
 
       // 감정 기반 타이핑 딜레이

@@ -124,6 +124,26 @@ class CharacterChatLocalService {
     return DateTime.tryParse(timeString);
   }
 
+  /// 마지막으로 읽은 시간 저장 (읽지 않음 표시용)
+  Future<void> saveLastReadTimestamp(String characterId) async {
+    if (!isInitialized) return;
+
+    await _metadataBox!.put(
+      '${characterId}_lastRead',
+      DateTime.now().toIso8601String(),
+    );
+  }
+
+  /// 마지막으로 읽은 시간 조회
+  Future<DateTime?> getLastReadTimestamp(String characterId) async {
+    if (!isInitialized) return null;
+
+    final timeString = _metadataBox!.get('${characterId}_lastRead');
+    if (timeString == null) return null;
+
+    return DateTime.tryParse(timeString);
+  }
+
   /// 모든 캐릭터 ID 목록 조회
   Future<List<String>> getAllCharacterIds() async {
     if (!isInitialized) {

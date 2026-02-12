@@ -27,6 +27,8 @@ class CharacterChatMessage {
   final ChoiceSet? choiceSet;
   final MessageStatus status;  // 전송/읽음 상태
   final DateTime? readAt;      // 읽음 시간
+  final int? affinityChange;   // 호감도 변경값 (게이미피케이션용)
+  final String? imageAsset;    // 이미지 에셋 경로 (점심 사진 등)
 
   CharacterChatMessage({
     String? id,
@@ -37,6 +39,8 @@ class CharacterChatMessage {
     this.choiceSet,
     this.status = MessageStatus.read,  // 기본값: 읽음 (캐릭터 메시지용)
     this.readAt,
+    this.affinityChange,
+    this.imageAsset,
   })  : id = id ?? const Uuid().v4(),
         timestamp = timestamp ?? DateTime.now();
 
@@ -50,11 +54,34 @@ class CharacterChatMessage {
   }
 
   /// 캐릭터 메시지 생성
-  factory CharacterChatMessage.character(String text, String characterId) {
+  factory CharacterChatMessage.character(
+    String text,
+    String characterId, {
+    int? affinityChange,
+    String? imageAsset,
+  }) {
     return CharacterChatMessage(
       type: CharacterChatMessageType.character,
       text: text,
       characterId: characterId,
+      affinityChange: affinityChange,
+      imageAsset: imageAsset,
+    );
+  }
+
+  /// 이미지 포함 캐릭터 메시지 생성 (점심 사진 등 proactive 메시지용)
+  factory CharacterChatMessage.characterWithImage(
+    String text,
+    String characterId, {
+    required String imageAsset,
+    int? affinityChange,
+  }) {
+    return CharacterChatMessage(
+      type: CharacterChatMessageType.character,
+      text: text,
+      characterId: characterId,
+      imageAsset: imageAsset,
+      affinityChange: affinityChange,
     );
   }
 
@@ -100,6 +127,9 @@ class CharacterChatMessage {
   /// 선택지 메시지 여부
   bool get isChoice => type == CharacterChatMessageType.choice;
 
+  /// 이미지 메시지 여부
+  bool get hasImage => imageAsset != null && imageAsset!.isNotEmpty;
+
   CharacterChatMessage copyWith({
     String? id,
     CharacterChatMessageType? type,
@@ -109,6 +139,8 @@ class CharacterChatMessage {
     ChoiceSet? choiceSet,
     MessageStatus? status,
     DateTime? readAt,
+    int? affinityChange,
+    String? imageAsset,
   }) {
     return CharacterChatMessage(
       id: id ?? this.id,
@@ -119,6 +151,8 @@ class CharacterChatMessage {
       choiceSet: choiceSet ?? this.choiceSet,
       status: status ?? this.status,
       readAt: readAt ?? this.readAt,
+      affinityChange: affinityChange ?? this.affinityChange,
+      imageAsset: imageAsset ?? this.imageAsset,
     );
   }
 
@@ -133,6 +167,8 @@ class CharacterChatMessage {
       if (characterId != null) 'characterId': characterId,
       if (choiceSet != null) 'choiceSet': choiceSet!.toJson(),
       if (readAt != null) 'readAt': readAt!.toIso8601String(),
+      if (affinityChange != null) 'affinityChange': affinityChange,
+      if (imageAsset != null) 'imageAsset': imageAsset,
     };
   }
 
@@ -159,6 +195,8 @@ class CharacterChatMessage {
       readAt: json['readAt'] != null
           ? DateTime.tryParse(json['readAt'] as String)
           : null,
+      affinityChange: json['affinityChange'] as int?,
+      imageAsset: json['imageAsset'] as String?,
     );
   }
 }

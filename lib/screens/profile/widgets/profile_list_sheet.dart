@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/design_system/design_system.dart';
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../presentation/providers/active_profile_provider.dart';
 import '../../../presentation/providers/providers.dart';
 import '../../../presentation/providers/secondary_profiles_provider.dart';
@@ -199,7 +200,7 @@ class ProfileListSheet extends ConsumerWidget {
                 color: colors.textPrimary,
               ),
               title: Text(
-                '수정',
+                context.l10n.edit,
                 style: context.typography.bodyLarge.copyWith(
                   color: colors.textPrimary,
                 ),
@@ -215,7 +216,7 @@ class ProfileListSheet extends ConsumerWidget {
                 color: colors.error,
               ),
               title: Text(
-                '삭제',
+                context.l10n.delete,
                 style: context.typography.bodyLarge.copyWith(
                   color: colors.error,
                 ),
@@ -251,12 +252,12 @@ class ProfileListSheet extends ConsumerWidget {
         backgroundColor: colors.background,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          '프로필 삭제',
+          context.l10n.deleteProfile,
           style: context.typography.headingMedium
               .copyWith(color: colors.textPrimary),
         ),
         content: Text(
-          '이 프로필을 삭제하시겠습니까?\n삭제된 프로필은 복구할 수 없습니다.',
+          context.l10n.deleteProfileConfirm,
           style: context.typography.bodyMedium
               .copyWith(color: colors.textSecondary),
         ),
@@ -264,7 +265,7 @@ class ProfileListSheet extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
-              '취소',
+              context.l10n.cancel,
               style: context.typography.buttonMedium.copyWith(
                 color: colors.textSecondary,
               ),
@@ -273,7 +274,7 @@ class ProfileListSheet extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              '삭제',
+              context.l10n.delete,
               style: context.typography.buttonMedium.copyWith(
                 color: colors.error,
               ),

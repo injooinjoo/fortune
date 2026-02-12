@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
+import '../../core/extensions/l10n_extension.dart';
 
 /// TOSS 스타일 Bottom Sheet
 class AppBottomSheet {
@@ -70,8 +71,8 @@ class AppBottomSheet {
     required BuildContext context,
     required String title,
     required String message,
-    String confirmText = '확인',
-    String cancelText = '취소',
+    String? confirmText,
+    String? cancelText,
     bool isDanger = false,
     bool showHandle = true,
     bool enableHaptic = true,
@@ -83,8 +84,8 @@ class AppBottomSheet {
       builder: (context) => _TossConfirmationBottomSheet(
         title: title,
         message: message,
-        confirmText: confirmText,
-        cancelText: cancelText,
+        confirmText: confirmText ?? context.l10n.confirm,
+        cancelText: cancelText ?? context.l10n.cancel,
         isDanger: isDanger,
       ),
     );

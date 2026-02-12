@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
 import '../providers/character_chat_provider.dart';
@@ -91,10 +93,12 @@ class CharacterListPanel extends ConsumerWidget {
             ),
           if (isOverlay) const SizedBox(width: 12),
           Text(
-            '메시지',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            context.l10n.messages,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0,
+            ),
           ),
           const Spacer(),
           // 새 메시지 버튼
@@ -145,7 +149,7 @@ class CharacterListPanel extends ConsumerWidget {
   }
 }
 
-/// 캐릭터 목록 탭 바 (운세상담 / 스토리)
+/// 캐릭터 목록 탭 바 (스토리 / 운세보기)
 class _CharacterTabBar extends StatelessWidget {
   final CharacterListTab currentTab;
   final void Function(CharacterListTab) onTabChanged;
@@ -164,21 +168,20 @@ class _CharacterTabBar extends StatelessWidget {
       child: Row(
         children: [
           _TabButton(
-            label: '스토리',
+            label: context.l10n.story,
             icon: Icons.favorite_outline,
             isSelected: currentTab == CharacterListTab.story,
             onTap: () => onTabChanged(CharacterListTab.story),
             isDark: isDark,
           ),
-          // TODO: 운세상담 탭 임시 숨김
-          // const SizedBox(width: 8),
-          // _TabButton(
-          //   label: '운세상담',
-          //   icon: Icons.auto_awesome,
-          //   isSelected: currentTab == CharacterListTab.fortune,
-          //   onTap: () => onTabChanged(CharacterListTab.fortune),
-          //   isDark: isDark,
-          // ),
+          const SizedBox(width: 8),
+          _TabButton(
+            label: context.l10n.viewFortune,
+            icon: Icons.auto_awesome,
+            isSelected: currentTab == CharacterListTab.fortune,
+            onTap: () => onTabChanged(CharacterListTab.fortune),
+            isDark: isDark,
+          ),
         ],
       ),
     );
@@ -286,12 +289,12 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('대화 나가기'),
-        content: Text('${widget.character.name}와의 대화를 나갈까요?\n대화 내역이 삭제됩니다.'),
+        title: Text(context.l10n.leaveConversation),
+        content: Text(context.l10n.leaveConversationConfirm(CharacterLocalizer.getName(context, widget.character.id))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('취소'),
+            child: Text(context.l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -299,7 +302,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
               ref.read(characterChatProvider(widget.character.id).notifier).clearConversation();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('나가기'),
+            child: Text(context.l10n.leave),
           ),
         ],
       ),
@@ -311,7 +314,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${widget.character.name}의 알림이 꺼졌습니다'),
+        content: Text(context.l10n.notificationOffMessage(CharacterLocalizer.getName(context, widget.character.id))),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
       ),
@@ -363,7 +366,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
         }
       },
       child: SizedBox(
-        height: 100,
+        height: 109,
         child: Stack(
           children: [
             // 액션 버튼들 (배경에 고정)
@@ -380,14 +383,14 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                       onTap: () => _onToggleMute(context),
                       child: Container(
                         color: Colors.grey[500],
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.notifications_off_outlined, color: Colors.white, size: 22),
-                            SizedBox(height: 4),
+                            const Icon(Icons.notifications_off_outlined, color: Colors.white, size: 22),
+                            const SizedBox(height: 4),
                             Text(
-                              '알림끄기',
-                              style: TextStyle(
+                              context.l10n.muteNotification,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
@@ -404,14 +407,14 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                       onTap: () => _onDelete(context),
                       child: Container(
                         color: Colors.red,
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.exit_to_app, color: Colors.white, size: 22),
-                            SizedBox(height: 4),
+                            const Icon(Icons.exit_to_app, color: Colors.white, size: 22),
+                            const SizedBox(height: 4),
                             Text(
-                              '나가기',
-                              style: TextStyle(
+                              context.l10n.leave,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
@@ -433,7 +436,15 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                 child: child,
               ),
               child: Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
+                      width: 1,
+                    ),
+                  ),
+                ),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
@@ -497,6 +508,25 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                 ),
                               ),
                             ),
+                          // 온라인 상태 표시 (최근 활동이 있는 캐릭터)
+                          // 읽지 않은 메시지가 있고 타이핑 중이 아닐 때 표시
+                          if (!isTyping && showUnreadBadge)
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 14,
+                                height: 14,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF4CAF50), // 초록색 (온라인)
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
                           // 운세 전문가 배지
                           if (widget.character.isFortuneExpert)
                             Positioned(
@@ -532,10 +562,12 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                             children: [
                               Flexible(
                                 child: Text(
-                                  widget.character.name,
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: showUnreadBadge ? FontWeight.bold : FontWeight.w600,
-                                      ),
+                                  CharacterLocalizer.getName(context, widget.character.id),
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: showUnreadBadge ? FontWeight.bold : FontWeight.w600,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                  ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -569,7 +601,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
-                                    '새 대화',
+                                    context.l10n.newConversation,
                                     style: context.labelTiny.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
@@ -581,20 +613,25 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            widget.character.tags.take(3).map((t) => '#$t').join(' '),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                            CharacterLocalizer.getTags(context, widget.character.id).take(3).map((t) => '#$t').join(' '),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             isTyping
-                                ? '입력 중...'
-                                : (hasConversation ? chatState.lastMessagePreview : widget.character.shortDescription),
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: isTyping ? widget.character.accentColor : Colors.grey[600],
-                                  fontWeight: isTyping ? FontWeight.w500 : FontWeight.normal,
-                                ),
+                                ? context.l10n.typing
+                                : (hasConversation ? chatState.lastMessagePreview : CharacterLocalizer.getShortDescription(context, widget.character.id)),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: isTyping ? FontWeight.w500 : FontWeight.w400,
+                              color: isTyping ? widget.character.accentColor : Colors.grey[600],
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -610,10 +647,11 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                         if (hasConversation && chatState.lastMessageTime != null)
                           Text(
                             _formatTimestamp(chatState.lastMessageTime!),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: showUnreadBadge ? Colors.red : Colors.grey,
-                                  fontWeight: showUnreadBadge ? FontWeight.w600 : FontWeight.normal,
-                                ),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: showUnreadBadge ? FontWeight.w600 : FontWeight.w400,
+                              color: showUnreadBadge ? Colors.red : Colors.grey,
+                            ),
                           ),
                         if (showUnreadBadge) ...[
                           const SizedBox(height: 4),
@@ -648,10 +686,10 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     final now = DateTime.now();
     final diff = now.difference(time);
 
-    if (diff.inMinutes < 1) return '방금';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}분 전';
-    if (diff.inHours < 24) return '${diff.inHours}시간 전';
-    if (diff.inDays < 7) return '${diff.inDays}일 전';
+    if (diff.inMinutes < 1) return context.l10n.justNow;
+    if (diff.inMinutes < 60) return context.l10n.minutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return context.l10n.hoursAgo(diff.inHours);
+    if (diff.inDays < 7) return context.l10n.daysAgo(diff.inDays);
     return '${time.month}/${time.day}';
   }
 }
@@ -700,7 +738,7 @@ class _NewMessageSheet extends ConsumerWidget {
                   ),
                   const SizedBox(width: 16),
                   Text(
-                    '새로운 메시지',
+                    context.l10n.newMessage,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -715,7 +753,7 @@ class _NewMessageSheet extends ConsumerWidget {
               child: Row(
                 children: [
                   Text(
-                    '받는 사람:',
+                    context.l10n.recipient,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.grey[600],
                         ),
@@ -724,7 +762,7 @@ class _NewMessageSheet extends ConsumerWidget {
                   Expanded(
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: '검색',
+                        hintText: context.l10n.search,
                         hintStyle: TextStyle(color: Colors.grey[400]),
                         border: InputBorder.none,
                         isDense: true,
@@ -742,7 +780,7 @@ class _NewMessageSheet extends ConsumerWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '추천',
+                  context.l10n.recommended,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -775,13 +813,13 @@ class _NewMessageSheet extends ConsumerWidget {
                           : null,
                     ),
                     title: Text(
-                      character.name,
+                      CharacterLocalizer.getName(context, character.id),
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
                     ),
                     subtitle: Text(
-                      character.shortDescription,
+                      CharacterLocalizer.getShortDescription(context, character.id),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey,
                           ),

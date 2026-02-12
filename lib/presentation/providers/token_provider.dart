@@ -330,6 +330,38 @@ class TokenNotifier extends StateNotifier<TokenState> {
     }
   }
 
+  /// 프로필 완성 보너스 청구
+  Future<Map<String, dynamic>> claimProfileCompletionBonus() async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final user = ref.read(userProvider).value;
+      if (user == null) {
+        throw const UnauthorizedException('로그인이 필요합니다');
+      }
+
+      final result = await _apiService.claimProfileCompletionBonus(userId: user.id);
+
+      if (result['bonusGranted'] == true && result['balance'] != null) {
+        state = state.copyWith(
+          balance: result['balance'] as TokenBalance,
+          isLoading: false,
+        );
+      } else {
+        state = state.copyWith(isLoading: false);
+      }
+
+      return result;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return {
+        'success': false,
+        'bonusGranted': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
   /// 잔액 새로고침
   Future<void> refreshBalance() async {
     try {

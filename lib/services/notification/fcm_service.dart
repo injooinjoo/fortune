@@ -184,14 +184,24 @@ class FCMService {
         '시스템 알림',
         description: '중요한 시스템 공지사항',
         importance: Importance.high);
-      
+
+      // 🆕 캐릭터 DM 채널 (카카오톡 스타일)
+      const characterDmChannel = AndroidNotificationChannel(
+        'character_dm',
+        '캐릭터 메시지',
+        description: '캐릭터로부터의 새 메시지 알림',
+        importance: Importance.high,
+        playSound: true,
+        enableVibration: true);
+
       final plugin = _localNotifications.resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>();
-      
+
       await plugin?.createNotificationChannel(dailyChannel);
       await plugin?.createNotificationChannel(tokenChannel);
       await plugin?.createNotificationChannel(promotionChannel);
       await plugin?.createNotificationChannel(systemChannel);
+      await plugin?.createNotificationChannel(characterDmChannel);
     }
   }
   
@@ -335,8 +345,19 @@ class FCMService {
   // 알림 탭 처리
   void _onNotificationTapped(NotificationResponse response) {
     if (response.payload != null) {
+      final payload = response.payload!;
+
+      // 🆕 캐릭터 채팅 알림 (character_chat:characterId 형식)
+      if (payload.startsWith('character_chat:')) {
+        final characterId = payload.split(':').last;
+        _navigateTo('/character/$characterId/chat');
+        Logger.info('캐릭터 채팅 알림 탭: $characterId');
+        return;
+      }
+
+      // 기존 JSON 페이로드 처리
       try {
-        final data = jsonDecode(response.payload!) as Map<String, dynamic>;
+        final data = jsonDecode(payload) as Map<String, dynamic>;
         _handleNotificationTap(data);
       } catch (e) {
         Logger.error('알림 페이로드 파싱 실패', e);

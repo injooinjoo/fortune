@@ -5,6 +5,10 @@
       "args": [
         "/Users/jacobmac/Desktop/Dev/figma-mcp/dist/talk_to_figma_mcp/server.js"
       ]
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://www.shadcn.io/api/mcp"]
     }
   }
 }

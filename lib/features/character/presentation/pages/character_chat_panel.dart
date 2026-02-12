@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/fortune_metadata.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../domain/models/ai_character.dart';
@@ -12,6 +13,7 @@ import '../../domain/models/character_chat_state.dart';
 import '../../domain/models/character_choice.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_chat_survey_provider.dart';
+import '../providers/active_chat_provider.dart';
 import '../widgets/character_intro_card.dart';
 import '../widgets/character_message_bubble.dart';
 import '../widgets/character_choice_widget.dart';
@@ -52,13 +54,31 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     // 기존 대화 불러오기 + 읽음 처리
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
+
+      // 🆕 현재 채팅방 진입 표시 (푸시 알림 억제용)
+      ref.read(activeCharacterChatProvider.notifier).state =
+          widget.character.id;
+
       _cachedNotifier =
           ref.read(characterChatProvider(widget.character.id).notifier);
-      _cachedNotifier?.initConversation();
+      await _cachedNotifier?.initConversation();
       _cachedNotifier?.clearUnreadCount();  // 채팅방 진입 시 읽음 처리
+      // 채팅방 진입 시 맨 아래로 스크롤
+      _scrollToBottomInstant();
     });
+  }
+
+  @override
+  void deactivate() {
+    // 🆕 채팅방 이탈 표시 (푸시 알림 활성화)
+    // Future.microtask로 지연하여 위젯 라이프사이클 충돌 방지
+    final notifier = ref.read(activeCharacterChatProvider.notifier);
+    Future.microtask(() {
+      notifier.state = null;
+    });
+    super.deactivate();
   }
 
   @override
@@ -104,6 +124,15 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     });
   }
 
+  /// 채팅방 진입 시 즉시 맨 아래로 스크롤 (애니메이션 없이)
+  void _scrollToBottomInstant() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+  }
+
   void _startConversation() {
     ref
         .read(characterChatProvider(widget.character.id).notifier)
@@ -136,17 +165,24 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: const Text('오류가 발생했어요. 다시 시도해주세요.'),
+                content: Text(context.l10n.errorOccurredRetry),
                 backgroundColor: Colors.red[400],
                 behavior: SnackBarBehavior.floating,
                 action: SnackBarAction(
-                  label: '확인',
+                  label: context.l10n.confirm,
                   textColor: Colors.white,
                   onPressed: () {},
                 ),
               ),
             );
           }
+        }
+
+        // 📜 새 메시지 추가 시 자동 스크롤 (다른 채팅앱처럼)
+        final prevCount = previous?.messages.length ?? 0;
+        final nextCount = next.messages.length;
+        if (nextCount > prevCount) {
+          _scrollToBottom();
         }
       },
     );
@@ -353,7 +389,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       // 캐릭터 메시지로 설문 시작 안내
       final chatNotifier = ref.read(characterChatProvider(widget.character.id).notifier);
       chatNotifier.addCharacterMessage(
-        '$displayName을 봐드릴게요! 몇 가지만 알려주시면 더 정확하게 봐드릴 수 있어요 ✨',
+        context.l10n.fortuneIntroMessage(displayName),
       );
 
       // 설문 시작
@@ -372,7 +408,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       });
     } else {
       // 설문 없이 바로 요청
-      final requestMessage = '$displayName에 대해 알려주세요';
+      final requestMessage = context.l10n.tellMeAbout(displayName);
       ref.read(characterChatProvider(widget.character.id).notifier)
           .sendFortuneRequest(fortuneType, requestMessage);
     }
@@ -466,7 +502,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final surveyNotifier = ref.read(characterChatSurveyProvider(widget.character.id).notifier);
 
     // 완료 메시지
-    chatNotifier.addCharacterMessage('좋아요! 이제 분석해드릴게요 🔮');
+    chatNotifier.addCharacterMessage(context.l10n.analyzingMessage);
 
     // 설문 데이터로 운세 요청
     final fortuneType = surveyState.fortuneTypeString ?? 'daily';
@@ -477,7 +513,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
     // 운세 요청 (설문 답변 포함)
     final displayName = FortuneType.fromKey(fortuneType)?.displayName ?? fortuneType;
-    final requestMessage = '$displayName 결과를 알려주세요';
+    final requestMessage = context.l10n.showResults(displayName);
 
     ref.read(characterChatProvider(widget.character.id).notifier)
         .sendFortuneRequestWithAnswers(fortuneType, requestMessage, answers);
@@ -613,7 +649,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                       _checkSurveyCompletion();
                     },
                     child: Text(
-                      '건너뛰기',
+                      context.l10n.skip,
                       style: context.labelSmall.copyWith(color: Colors.grey[500]),
                     ),
                   ),
@@ -713,7 +749,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: const Text('선택 완료'),
+                child: Text(context.l10n.selectionComplete),
               ),
           ],
         );
@@ -730,7 +766,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           child: TextField(
             controller: textController,
             decoration: InputDecoration(
-              hintText: '입력해주세요...',
+              hintText: context.l10n.pleaseEnter,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(24),
                 borderSide: BorderSide(color: Colors.grey[300]!),
@@ -763,7 +799,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                   .skipCurrentStep();
               _checkSurveyCompletion();
             },
-            child: const Text('없음'),
+            child: Text(context.l10n.none),
           ),
       ],
     );
@@ -795,8 +831,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       ),
       child: UnifiedVoiceTextField(
         controller: _textController,
-        hintText: '메시지를 입력하세요...',
-        enabled: !chatState.isProcessing,
+        hintText: context.l10n.enterMessage,
+        enabled: true,  // 연속 메시지 전송 허용 (카카오톡처럼)
         onSubmit: (text) {
           if (text.isNotEmpty) {
             ref.read(characterChatProvider(widget.character.id).notifier).sendMessage(text);

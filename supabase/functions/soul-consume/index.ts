@@ -99,6 +99,56 @@ serve(async (req) => {
 
     console.log(`👤 User: ${user.id}`)
 
+    // 0. 일일 무료 운세 체크 (daily 타입만)
+    if (fortuneType === 'daily') {
+      const today = new Date().toISOString().split('T')[0] // UTC 기준 날짜
+
+      // 오늘 무료 사용 여부 확인
+      const { data: usedToday } = await supabase
+        .from('daily_free_fortune')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('used_at', today)
+        .maybeSingle()
+
+      if (!usedToday) {
+        // 무료 사용 기록 삽입
+        const { error: insertError } = await supabase
+          .from('daily_free_fortune')
+          .insert({
+            user_id: user.id,
+            used_at: today,
+            fortune_type: 'daily'
+          })
+
+        if (!insertError) {
+          console.log(`🎁 Free daily fortune used for user ${user.id}`)
+
+          // 현재 잔액 조회 (응답용)
+          const { data: tokenData } = await supabase
+            .from('token_balance')
+            .select('balance, total_earned, total_spent')
+            .eq('user_id', user.id)
+            .single()
+
+          return new Response(
+            JSON.stringify({
+              balance: {
+                totalTokens: tokenData?.total_earned ?? 0,
+                usedTokens: tokenData?.total_spent ?? 0,
+                remainingTokens: tokenData?.balance ?? 0,
+                lastUpdated: new Date().toISOString(),
+                hasUnlimitedAccess: false
+              },
+              freeUsed: true,
+              message: '오늘의 무료 일일 운세를 사용했습니다.'
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+      }
+    }
+
     // 1. 활성 구독 확인 (무제한 이용권)
     const { data: subscription } = await supabase
       .from('subscriptions')

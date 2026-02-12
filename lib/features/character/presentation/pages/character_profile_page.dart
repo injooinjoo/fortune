@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../shared/widgets/smart_image.dart';
+import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
 import '../../data/default_characters.dart';
 import '../../data/fortune_characters.dart';
@@ -69,7 +71,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          _character.name,
+          CharacterLocalizer.getName(context, _character.id),
           style: context.heading4.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: false,
@@ -96,7 +98,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        _character.name,
+                        CharacterLocalizer.getName(context, _character.id),
                         style: context.heading4.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -107,7 +109,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                       child: Wrap(
                         spacing: 6,
                         runSpacing: 4,
-                        children: _character.tags.take(5).map((tag) {
+                        children: CharacterLocalizer.getTags(context, _character.id).take(5).map((tag) {
                           return Text(
                             '#$tag',
                             style: context.bodySmall.copyWith(
@@ -123,7 +125,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        _character.shortDescription,
+                        CharacterLocalizer.getShortDescription(context, _character.id),
                         style: context.bodyMedium.copyWith(
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
@@ -220,17 +222,17 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
               _buildStatColumn(
                 context,
                 count: '$messageCount',
-                label: '대화',
+                label: context.l10n.conversation,
               ),
               _buildStatColumn(
                 context,
                 count: '${affinity.lovePercent}%',
-                label: '호감도',
+                label: context.l10n.affinity,
               ),
               _buildStatColumn(
                 context,
-                count: affinity.phaseName,
-                label: '관계',
+                count: CharacterLocalizer.getAffinityPhaseName(context, affinity.phase),
+                label: context.l10n.relationship,
                 isText: true,
               ),
             ],
@@ -282,7 +284,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           Navigator.of(context).pop();
         },
         icon: const Icon(Icons.chat_bubble_outline, size: 18),
-        label: const Text('메시지 보내기'),
+        label: Text(context.l10n.sendMessage),
         style: ElevatedButton.styleFrom(
           backgroundColor: _character.accentColor,
           foregroundColor: Colors.white,
@@ -371,8 +373,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
         _buildSection(
           context: context,
           icon: Icons.auto_stories,
-          title: '세계관',
-          content: _character.worldview.trim(),
+          title: context.l10n.worldview,
+          content: CharacterLocalizer.getWorldview(context, _character.id).trim(),
           bgColor: sectionBgColor!,
         ),
         const SizedBox(height: 12),
@@ -380,8 +382,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
         _buildSection(
           context: context,
           icon: Icons.person,
-          title: '캐릭터',
-          content: _character.personality.trim(),
+          title: context.l10n.characterLabel,
+          content: CharacterLocalizer.getPersonality(context, _character.id).trim(),
           bgColor: sectionBgColor,
         ),
         // NPC 프로필
@@ -393,7 +395,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
         // 제작자 코멘트
         Center(
           child: Text(
-            '"${_character.creatorComment}"',
+            '"${CharacterLocalizer.getCreatorComment(context, _character.id)}"',
             style: context.bodySmall.copyWith(
               fontStyle: FontStyle.italic,
               color: Colors.grey[500],
@@ -470,7 +472,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
               ),
               const SizedBox(width: 8),
               Text(
-                '등장인물',
+                context.l10n.characterList,
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
                   color: _character.accentColor,
@@ -539,23 +541,23 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
     HapticFeedback.lightImpact();
     showModalBottomSheet(
       context: context,
-      builder: (context) => SafeArea(
+      builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.refresh),
-              title: const Text('대화 초기화'),
+              title: Text(context.l10n.resetConversation),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(ctx);
                 _showResetConfirmDialog(context);
               },
             ),
             ListTile(
               leading: const Icon(Icons.share),
-              title: const Text('프로필 공유'),
+              title: Text(context.l10n.shareProfile),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(ctx);
                 // TODO: 공유 기능
               },
             ),
@@ -568,29 +570,29 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   void _showResetConfirmDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('대화 초기화'),
+      builder: (ctx) => AlertDialog(
+        title: Text(context.l10n.resetConversation),
         content: Text(
-          '${_character.name}와의 대화 내용이 모두 삭제됩니다.\n정말 초기화하시겠습니까?',
+          context.l10n.resetConversationConfirm(CharacterLocalizer.getName(context, _character.id)),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(context.l10n.cancel),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(ctx);
               ref.read(characterChatProvider(_character.id).notifier).clearConversation();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${_character.name}와의 대화가 초기화되었습니다'),
+                  content: Text(context.l10n.conversationResetSuccess(CharacterLocalizer.getName(context, _character.id))),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('초기화'),
+            child: Text(context.l10n.reset),
           ),
         ],
       ),

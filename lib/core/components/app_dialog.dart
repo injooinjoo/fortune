@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
+import '../../core/extensions/l10n_extension.dart';
 
 /// TOSS 스타일 Dialog
 class AppDialog {
@@ -35,8 +36,8 @@ class AppDialog {
     required BuildContext context,
     required String title,
     required String message,
-    String confirmText = '확인',
-    String cancelText = '취소',
+    String? confirmText,
+    String? cancelText,
     bool isDanger = false,
     bool barrierDismissible = true,
     bool enableHaptic = true,
@@ -48,8 +49,8 @@ class AppDialog {
       child: _TossConfirmationDialog(
         title: title,
         message: message,
-        confirmText: confirmText,
-        cancelText: cancelText,
+        confirmText: confirmText ?? context.l10n.confirm,
+        cancelText: cancelText ?? context.l10n.cancel,
         isDanger: isDanger,
       ),
     );
@@ -60,7 +61,7 @@ class AppDialog {
     required BuildContext context,
     required String title,
     required String message,
-    String actionText = '확인',
+    String? actionText,
     bool enableHaptic = true,
   }) {
     return show<void>(
@@ -70,7 +71,7 @@ class AppDialog {
       child: _TossAlertDialog(
         title: title,
         message: message,
-        actionText: actionText,
+        actionText: actionText ?? context.l10n.confirm,
       ),
     );
   }
@@ -80,7 +81,7 @@ class AppDialog {
     required BuildContext context,
     required String title,
     String? message,
-    String actionText = '확인',
+    String? actionText,
     Duration? autoCloseDuration,
     bool enableHaptic = true,
   }) {
@@ -95,7 +96,7 @@ class AppDialog {
       child: _TossSuccessDialog(
         title: title,
         message: message,
-        actionText: actionText,
+        actionText: actionText ?? context.l10n.confirm,
       ),
     );
 
@@ -115,7 +116,7 @@ class AppDialog {
     required BuildContext context,
     required String title,
     required String message,
-    String actionText = '확인',
+    String? actionText,
     bool enableHaptic = true,
   }) {
     if (enableHaptic) {
@@ -129,7 +130,7 @@ class AppDialog {
       child: _TossErrorDialog(
         title: title,
         message: message,
-        actionText: actionText,
+        actionText: actionText ?? context.l10n.confirm,
       ),
     );
   }

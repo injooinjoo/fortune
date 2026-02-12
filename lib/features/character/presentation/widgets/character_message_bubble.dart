@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
+import 'affinity_change_indicator.dart';
 
 /// 캐릭터 채팅 메시지 버블 (4종)
 /// - user: 오른쪽 정렬
@@ -124,29 +125,93 @@ class CharacterMessageBubble extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(20),
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 이미지가 있으면 먼저 표시 (점심 사진 등)
+                if (message.hasImage)
+                  _buildImageBubble(context, colors),
+                // 텍스트 버블
+                if (message.text.isNotEmpty)
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: colors.surface,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(message.hasImage ? 20 : 4),
+                            topRight: const Radius.circular(20),
+                            bottomLeft: const Radius.circular(20),
+                            bottomRight: const Radius.circular(20),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: _buildFormattedText(context, message.text),
+                      ),
+                      // 호감도 변경 인디케이터 (버블 우측 상단)
+                      if (message.affinityChange != null && message.affinityChange != 0)
+                        Positioned(
+                          top: -8,
+                          right: -4,
+                          child: AffinityChangeIndicator(
+                            change: message.affinityChange!,
+                          ),
+                        ),
+                    ],
                   ),
-                ],
-              ),
-              child: _buildFormattedText(context, message.text),
+              ],
             ),
           ),
           const SizedBox(width: 48), // 오른쪽 여백
         ],
+      ),
+    );
+  }
+
+  /// 이미지 버블 (점심 사진 등 proactive 메시지용)
+  Widget _buildImageBubble(BuildContext context, DSColorScheme colors) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      constraints: const BoxConstraints(maxWidth: 220),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Image.asset(
+          message.imageAsset!,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            // 이미지 로드 실패 시 placeholder
+            return Container(
+              width: 200,
+              height: 150,
+              color: colors.backgroundSecondary,
+              child: Center(
+                child: Icon(
+                  Icons.restaurant,
+                  size: 48,
+                  color: colors.textTertiary,
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -24,7 +24,8 @@ class ChatSyncService {
   // Dependencies
   final SyncQueueLocalService _queueService = SyncQueueLocalService();
   final Connectivity _connectivity = Connectivity();
-  final SupabaseClient _supabase = Supabase.instance.client;
+  SupabaseClient? _supabaseClient;
+  SupabaseClient get _supabase => _supabaseClient ??= Supabase.instance.client;
   static const _uuid = Uuid();
 
   // State

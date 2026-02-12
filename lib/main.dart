@@ -24,12 +24,14 @@ import 'core/services/supabase_connection_service.dart';
 import 'core/utils/route_observer_logger.dart';
 import 'core/services/error_reporter_service.dart';
 import 'core/providers/user_settings_provider.dart';
+import 'core/providers/locale_provider.dart';
 import 'core/services/fortune_haptic_service.dart';
 import 'core/services/chat_sync_service.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'services/deep_link_service.dart';
 import 'presentation/providers/app_providers.dart';
 import 'features/character/data/services/character_chat_local_service.dart';
+import 'features/character/data/services/character_affinity_service.dart';
 
 void main() async {
   debugPrint('🚀 [STARTUP] App main() started');
@@ -58,8 +60,12 @@ void main() async {
   }
 
   debugPrint('🚀 [STARTUP] Initializing date formatting...');
-  await initializeDateFormatting('ko_KR', null);
-  debugPrint('🚀 [STARTUP] Date formatting initialized');
+  await Future.wait([
+    initializeDateFormatting('ko_KR', null),
+    initializeDateFormatting('en_US', null),
+    initializeDateFormatting('ja_JP', null),
+  ]);
+  debugPrint('🚀 [STARTUP] Date formatting initialized (ko, en, ja)');
 
   // Initialize Hive
   try {
@@ -73,10 +79,10 @@ void main() async {
     await CharacterChatLocalService.initialize();
     debugPrint('🚀 [STARTUP] Character Chat Local Storage initialized');
 
-    // Initialize Chat Sync Service (오프라인 큐 + 자동 동기화)
-    debugPrint('🚀 [STARTUP] Initializing Chat Sync Service...');
-    await ChatSyncService.instance.initialize();
-    debugPrint('🚀 [STARTUP] Chat Sync Service initialized');
+    // Initialize Character Affinity Service (호감도 영속성)
+    debugPrint('🚀 [STARTUP] Initializing Character Affinity Service...');
+    await CharacterAffinityService.initialize();
+    debugPrint('🚀 [STARTUP] Character Affinity Service initialized');
   } catch (e) {
     debugPrint('❌ [STARTUP] Hive initialization failed: $e');
     Logger.error('Hive initialization failed', e);
@@ -117,6 +123,16 @@ void main() async {
     if (success) {
       debugPrint('🚀 [STARTUP] Supabase initialized successfully');
       Logger.info('Supabase initialized successfully');
+
+      // Initialize Chat Sync Service (Supabase 초기화 후에만 가능)
+      try {
+        debugPrint('🚀 [STARTUP] Initializing Chat Sync Service...');
+        await ChatSyncService.instance.initialize();
+        debugPrint('🚀 [STARTUP] Chat Sync Service initialized');
+      } catch (e) {
+        debugPrint('⚠️ [STARTUP] Chat Sync Service initialization failed: $e');
+        Logger.warning('Chat Sync Service initialization failed: $e');
+      }
     } else {
       debugPrint('⚠️ [STARTUP] Supabase connection failed, offline mode enabled');
       Logger.warning('Supabase connection failed (optional feature, using offline mode)');
@@ -264,9 +280,14 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
     // 🎯 사용자 폰트 설정을 앱 전체에 적용
     final userSettings = ref.watch(userSettingsProvider);
+    // 🌐 언어 설정
+    final locale = ref.watch(localeProvider);
 
     // 위젯 데이터 준비 프로바이더 활성화 (auth 상태 변경 시 자동 실행)
     ref.read(widgetDataPreparationProvider);
+
+    // 채팅 데이터 복원 프로바이더 활성화 (로그인 시 서버에서 대화 복원)
+    ref.read(chatRestorationProvider);
 
     // FontSizeSystem에 스케일 팩터 동기화 (TypographyUnified용)
     FontSizeSystem.setScaleFactor(userSettings.fontScale);
@@ -278,6 +299,7 @@ class MyApp extends ConsumerWidget {
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       // Localization
+      locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,

@@ -269,6 +269,11 @@ serve(async (req) => {
     console.log(`💰 추가할 토큰 수: ${tokensToAdd} (productId: ${productId})`)
     console.log(`💰 PRODUCT_TOKENS 매핑: ${JSON.stringify(PRODUCT_TOKENS)}`)
 
+    // 첫 구매 보너스 관련 변수 (응답에서도 사용)
+    let actualTokensToAdd = tokensToAdd
+    let bonusTokens = 0
+    let isFirstPurchase = false
+
     if (!userId) {
       console.log('⚠️ userId가 없어서 토큰 추가 건너뜀')
     }
@@ -283,6 +288,35 @@ serve(async (req) => {
       console.log('========================================')
       console.log('💰 토큰 추가 프로세스 시작')
       console.log('========================================')
+
+      console.log('🎁 [STEP 0] 첫 구매 보너스 확인...')
+      const { data: userProfile } = await supabase
+        .from('user_profiles')
+        .select('first_purchase_bonus_granted')
+        .eq('id', userId)
+        .single()
+
+      if (userProfile && !userProfile.first_purchase_bonus_granted) {
+        // 첫 구매: 50% 보너스 추가
+        bonusTokens = Math.floor(tokensToAdd * 0.5)
+        actualTokensToAdd = tokensToAdd + bonusTokens
+        isFirstPurchase = true
+        console.log(`🎁 첫 구매 보너스 적용! 기본 ${tokensToAdd} + 보너스 ${bonusTokens} = ${actualTokensToAdd}`)
+
+        // 첫 구매 플래그 업데이트
+        const { error: updateError } = await supabase
+          .from('user_profiles')
+          .update({ first_purchase_bonus_granted: true })
+          .eq('id', userId)
+
+        if (updateError) {
+          console.error('❌ 첫 구매 플래그 업데이트 실패:', updateError)
+        } else {
+          console.log('✅ 첫 구매 플래그 업데이트 완료')
+        }
+      } else {
+        console.log('📌 첫 구매 아님 - 보너스 없음')
+      }
 
       // 현재 잔액 조회 (token_balance - 단수!)
       console.log('📊 [STEP 1] 현재 잔액 조회 시작...')
@@ -300,21 +334,21 @@ serve(async (req) => {
 
       const oldBalance = currentBalance?.balance || 0
       const oldTotalEarned = currentBalance?.total_earned || 0
-      const newBalance = oldBalance + tokensToAdd
+      const newBalance = oldBalance + actualTokensToAdd
 
       console.log(`📊 계산:`)
       console.log(`   - 기존 balance: ${oldBalance}`)
       console.log(`   - 기존 total_earned: ${oldTotalEarned}`)
-      console.log(`   - 추가할 토큰: ${tokensToAdd}`)
+      console.log(`   - 추가할 토큰: ${actualTokensToAdd}${isFirstPurchase ? ` (기본 ${tokensToAdd} + 보너스 ${bonusTokens})` : ''}`)
       console.log(`   - 새 balance: ${newBalance}`)
-      console.log(`   - 새 total_earned: ${oldTotalEarned + tokensToAdd}`)
+      console.log(`   - 새 total_earned: ${oldTotalEarned + actualTokensToAdd}`)
 
       // 잔액 업데이트 (token_balance - 단수!)
       console.log('📊 [STEP 2] 잔액 업데이트 시작...')
       const upsertData = {
         user_id: userId,
         balance: newBalance,
-        total_earned: oldTotalEarned + tokensToAdd,
+        total_earned: oldTotalEarned + actualTokensToAdd,
         updated_at: new Date().toISOString()
       }
       console.log(`📊 UPSERT 데이터: ${JSON.stringify(upsertData, null, 2)}`)
@@ -336,12 +370,15 @@ serve(async (req) => {
 
         // 구매 이력 기록 (token_transactions 사용)
         console.log('📊 [STEP 3] 거래 이력 기록 시작...')
+        const purchaseDescription = isFirstPurchase
+          ? `토큰 ${tokensToAdd}개 구매 + 첫 구매 보너스 ${bonusTokens}개`
+          : `토큰 ${actualTokensToAdd}개 구매`
         const transactionData = {
           user_id: userId,
           transaction_type: 'purchase',
-          amount: tokensToAdd,
+          amount: actualTokensToAdd,
           balance_after: newBalance,
-          description: `토큰 ${tokensToAdd}개 구매`,
+          description: purchaseDescription,
           reference_type: 'in_app_purchase',
           reference_id: transactionId || orderId
         }
@@ -365,7 +402,13 @@ serve(async (req) => {
         product_id: productId,
         platform,
         purchase_id: transactionId || orderId,
-        metadata: { tokens_added: tokensToAdd, new_balance: newBalance }
+        metadata: {
+          tokens_added: actualTokensToAdd,
+          base_tokens: tokensToAdd,
+          bonus_tokens: bonusTokens,
+          is_first_purchase: isFirstPurchase,
+          new_balance: newBalance
+        }
       }
       console.log(`📊 INSERT 데이터: ${JSON.stringify(eventData, null, 2)}`)
 
@@ -380,12 +423,15 @@ serve(async (req) => {
       console.log('========================================')
     }
 
+    // 응답 데이터에 보너스 정보 포함
     const responseData = {
       valid: isValid,
       productId: verifiedProductId,
       platform,
       environment,
-      tokensAdded: isValid ? tokensToAdd : 0,
+      tokensAdded: isValid ? actualTokensToAdd : 0,
+      bonusTokens: bonusTokens,
+      isFirstPurchase: isFirstPurchase,
       verifiedAt: new Date().toISOString()
     }
     console.log('📤 응답 데이터:', JSON.stringify(responseData, null, 2))

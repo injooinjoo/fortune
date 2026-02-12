@@ -84,20 +84,32 @@ export class GeminiProvider implements ILLMProvider {
 
   private convertMessages(messages: LLMMessage[]) {
     // Gemini 형식으로 변환
-    // system 메시지는 첫 user 메시지에 병합
+    // system 메시지는 첫 user 메시지에 병합, 나머지 히스토리는 유지
     const systemMessage = messages.find((m) => m.role === 'system')
-    const userMessages = messages.filter((m) => m.role === 'user')
+    const nonSystemMessages = messages.filter((m) => m.role !== 'system')
 
-    if (systemMessage && userMessages.length > 0) {
-      const firstUserContent = userMessages[0].content
+    console.log('🔄 [Gemini] Converting messages...')
+    console.log('  Total messages:', messages.length)
+    console.log('  System message:', systemMessage ? 'yes' : 'no')
+    console.log('  Non-system messages:', nonSystemMessages.length)
+
+    const result: Array<{ role: string; parts: any[] }> = []
+
+    for (let i = 0; i < nonSystemMessages.length; i++) {
+      const msg = nonSystemMessages[i]
+      const content = msg.content
+      const isFirstUserMessage = i === 0 && msg.role === 'user' && systemMessage
 
       // ✅ content가 배열인 경우 (Vision API)
-      if (Array.isArray(firstUserContent)) {
-        const parts = firstUserContent.map((item: any) => {
+      if (Array.isArray(content)) {
+        const parts = content.map((item: any) => {
           if (item.type === 'text') {
-            return { text: `${systemMessage.content}\n\n${item.text}` }
+            // 첫 user 메시지면 system prompt 병합
+            const text = isFirstUserMessage
+              ? `${systemMessage!.content}\n\n${item.text}`
+              : item.text
+            return { text }
           } else if (item.type === 'image_url') {
-            // Gemini Vision API 형식: inline_data 사용
             const base64Data = item.image_url.url.replace(/^data:image\/\w+;base64,/, '')
             return {
               inline_data: {
@@ -109,60 +121,34 @@ export class GeminiProvider implements ILLMProvider {
           return item
         })
 
-        return [{
-          role: 'user',
+        result.push({
+          role: msg.role === 'assistant' ? 'model' : 'user',
           parts: parts
-        }]
-      }
+        })
+      } else {
+        // ✅ content가 문자열인 경우 (일반 텍스트)
+        // 첫 user 메시지면 system prompt 병합
+        const text = isFirstUserMessage
+          ? `${systemMessage!.content}\n\n${content}`
+          : content
 
-      // ✅ content가 문자열인 경우 (일반 텍스트)
-      console.log('🔄 [Gemini] Combining system and user messages...')
-      console.log('  System content length:', systemMessage.content.length)
-      console.log('  User content length:', firstUserContent.length)
-      const combinedContent = `${systemMessage.content}\n\n${firstUserContent}`
-      console.log('  Combined content length:', combinedContent.length)
-      return [
-        {
-          role: 'user',
-          parts: [{ text: combinedContent }],
-        },
-      ]
+        result.push({
+          role: msg.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text }],
+        })
+      }
     }
 
-    return messages
-      .filter((m) => m.role !== 'system')
-      .map((msg) => {
-        const content = msg.content
-
-        // ✅ content가 배열인 경우 (Vision API)
-        if (Array.isArray(content)) {
-          const parts = content.map((item: any) => {
-            if (item.type === 'text') {
-              return { text: item.text }
-            } else if (item.type === 'image_url') {
-              const base64Data = item.image_url.url.replace(/^data:image\/\w+;base64,/, '')
-              return {
-                inline_data: {
-                  mime_type: 'image/jpeg',
-                  data: base64Data
-                }
-              }
-            }
-            return item
-          })
-
-          return {
-            role: msg.role === 'assistant' ? 'model' : 'user',
-            parts: parts
-          }
-        }
-
-        // ✅ content가 문자열인 경우 (일반 텍스트)
-        return {
-          role: msg.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: content }],
-        }
+    // 시스템 메시지만 있고 다른 메시지가 없는 경우
+    if (result.length === 0 && systemMessage) {
+      result.push({
+        role: 'user',
+        parts: [{ text: systemMessage.content }],
       })
+    }
+
+    console.log('✅ [Gemini] Converted to', result.length, 'messages')
+    return result
   }
 
   private mapFinishReason(reason?: string): 'stop' | 'length' | 'error' {

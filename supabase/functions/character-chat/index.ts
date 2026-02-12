@@ -29,6 +29,16 @@ interface ChatMessage {
   content: string
 }
 
+interface UserProfileInfo {
+  name?: string         // 유저 이름
+  age?: number         // 나이
+  gender?: string      // 성별
+  mbti?: string        // MBTI
+  bloodType?: string   // 혈액형
+  zodiacSign?: string  // 별자리
+  zodiacAnimal?: string // 띠 (12간지)
+}
+
 interface CharacterChatRequest {
   characterId: string
   systemPrompt: string
@@ -38,6 +48,17 @@ interface CharacterChatRequest {
   userDescription?: string
   oocInstructions?: string
   emojiFrequency?: 'high' | 'moderate' | 'low' | 'none'  // 캐릭터별 이모티콘 빈도
+  emoticonStyle?: 'unicode' | 'kakao' | 'mixed'  // 이모티콘 스타일
+  characterName?: string    // 캐릭터 이름 (맥락용)
+  characterTraits?: string  // 캐릭터 특성 (말투, 호칭 등)
+  clientTimestamp?: string  // ISO 8601 형식 (시간 인식용)
+  userProfile?: UserProfileInfo  // 유저 프로필 정보 (개인화용)
+}
+
+interface AffinityDelta {
+  points: number      // -30 ~ +25
+  reason: string      // basic_chat, quality_engagement, emotional_support, personal_disclosure, disrespectful, conflict_detected, spam_detected
+  quality: string     // negative, neutral, positive, exceptional
 }
 
 interface CharacterChatResponse {
@@ -45,6 +66,7 @@ interface CharacterChatResponse {
   response: string
   emotionTag: string
   delaySec: number
+  affinityDelta: AffinityDelta  // 호감도 변화량
   meta: {
     provider: string
     model: string
@@ -114,15 +136,76 @@ function removeEmojis(text: string): string {
     .trim()
 }
 
-// 이모티콘 빈도 검증 및 후처리
-function validateEmojiUsage(text: string, emojiFrequency?: string): string {
-  // none 타입이면 이모티콘 제거
+// 이모티콘 빈도 및 스타일 검증/후처리
+function validateEmojiUsage(text: string, emojiFrequency?: string, emoticonStyle?: string): string {
+  // none 타입이면 모든 이모티콘 제거
   if (emojiFrequency === 'none') {
     return removeEmojis(text)
   }
 
-  // 다른 타입은 프롬프트에서 처리되므로 그대로 반환
+  // 카카오톡 스타일: 유니코드 이모지만 제거, 텍스트 이모티콘 유지
+  if (emoticonStyle === 'kakao') {
+    return removeUnicodeEmojisOnly(text)
+  }
+
+  // 유니코드 스타일: 텍스트 이모티콘만 제거
+  if (emoticonStyle === 'unicode') {
+    return removeKakaoEmoticons(text)
+  }
+
+  // mixed 또는 미지정: 둘 다 유지
   return text
+}
+
+// 호감도 평가 프롬프트 (사용자 메시지 평가용)
+const AFFINITY_EVALUATION_PROMPT = `
+[호감도 평가 - 내부 시스템용]
+사용자 메시지를 분석하여 응답 끝에 다음 JSON을 추가하세요:
+
+<affinity>{"points":숫자,"reason":"이유","quality":"품질"}</affinity>
+
+평가 기준:
+- basic_chat (3~8점): 일반적인 대화, 인사, 간단한 질문
+- quality_engagement (10~15점): 캐릭터에게 관심을 보이는 질문, 진심 어린 공감
+- emotional_support (15~20점): 위로, 격려, 캐릭터의 고민을 들어주는 대화
+- personal_disclosure (20~25점): 개인적인 이야기, 비밀 공유, 깊은 감정 표현
+- disrespectful (-10점): 무례한 언어, 캐릭터 무시, 약올리기
+- conflict_detected (-15~-30점): 싸움, 공격적 언어, 모욕
+- spam_detected (0점): 의미 없는 반복, 스팸, 테스트 메시지
+
+quality: negative(-점), neutral(0~5점), positive(6~15점), exceptional(16점+)
+`
+
+// 응답에서 호감도 평가 블록 추출
+function extractAffinityDelta(text: string): { cleanedText: string; affinityDelta: AffinityDelta } {
+  const defaultDelta: AffinityDelta = {
+    points: 5,
+    reason: 'basic_chat',
+    quality: 'neutral'
+  }
+
+  // <affinity>...</affinity> 블록 추출
+  const affinityMatch = text.match(/<affinity>\s*(\{.*?\})\s*<\/affinity>/s)
+
+  if (!affinityMatch) {
+    return { cleanedText: text, affinityDelta: defaultDelta }
+  }
+
+  // 블록 제거된 텍스트
+  const cleanedText = text.replace(/<affinity>.*?<\/affinity>/s, '').trim()
+
+  try {
+    const parsed = JSON.parse(affinityMatch[1])
+    const delta: AffinityDelta = {
+      points: Math.max(-30, Math.min(25, Number(parsed.points) || 5)),
+      reason: parsed.reason || 'basic_chat',
+      quality: parsed.quality || 'neutral'
+    }
+    return { cleanedText, affinityDelta: delta }
+  } catch {
+    console.warn('Failed to parse affinity block:', affinityMatch[1])
+    return { cleanedText, affinityDelta: defaultDelta }
+  }
 }
 
 // 응답 텍스트에서 감정 추출
@@ -150,34 +233,61 @@ function buildFullSystemPrompt(
   basePrompt: string,
   userName?: string,
   userDescription?: string,
-  oocInstructions?: string
+  oocInstructions?: string,
+  userProfile?: UserProfileInfo
 ): string {
-  // 대화 맥락 규칙을 맨 앞에 배치 (가장 중요)
-  const conversationRules = `[CRITICAL CONVERSATION RULES - 최우선 규칙]
-⚠️ 이 규칙을 위반하면 안 됩니다:
-
-1. 사용자의 마지막 메시지에 반드시 직접 반응하세요
-   - "안녕" → 인사에 반응 ("안녕, 어떻게 지냈어?" 등)
-   - "위장결혼" 언급 → 위장결혼에 대해 말하세요
-   - 질문 → 그 질문에 답하세요
-
-2. 사용자 메시지를 무시하고 혼자 다른 얘기하지 마세요
-   - ❌ 사용자: "안녕" → "아이고, 벌써 왔어? 오늘 날씨가..." (관련 없음)
-   - ✅ 사용자: "안녕" → "어, 왔구나. 뭐해?" (인사에 반응)
-
-3. 대화 맥락을 이어가세요. 이전 대화 히스토리를 참고하세요.
-
----
+  // 핵심 규칙만 간결하게 (경량 모델용)
+  const conversationRules = `[필수 규칙]
+1. 유저 메시지에 직접 답하세요
+2. 질문받으면 그 질문에 답하세요
+3. 대화 중간에 인사("왔네", "왔어?") 금지
+4. 이전 대화 맥락을 이어가세요
 
 `
 
   const parts: string[] = [conversationRules, basePrompt]
 
-  // 사용자 정보 추가
-  if (userName || userDescription) {
-    parts.push('\n\n[USER INFO]')
-    if (userName) parts.push(`- User's name: ${userName} (call them "Guest" unless they introduce themselves)`)
-    if (userDescription) parts.push(`- User description: ${userDescription}`)
+  // 사용자 프로필 정보 추가 (개인화용)
+  const hasProfile = userProfile && (userProfile.name || userProfile.age || userProfile.mbti || userProfile.zodiacSign)
+  if (userName || userDescription || hasProfile) {
+    parts.push('\n\n[USER INFO - 대화에 자연스럽게 활용]')
+
+    // 이름 (필수)
+    const displayName = userProfile?.name || userName
+    if (displayName) {
+      parts.push(`- 유저 이름: ${displayName}`)
+      parts.push(`  → 대화 중 이름을 자연스럽게 불러주세요 (예: "${displayName}아", "${displayName}야", "${displayName}씨")`)
+    }
+
+    // 나이 & 성별
+    if (userProfile?.age) {
+      parts.push(`- 나이: ${userProfile.age}세`)
+    }
+    if (userProfile?.gender) {
+      parts.push(`- 성별: ${userProfile.gender}`)
+    }
+
+    // 성격/운세 관련 (대화 소재로 활용)
+    if (userProfile?.mbti) {
+      parts.push(`- MBTI: ${userProfile.mbti}`)
+      parts.push(`  → 가끔 MBTI 관련 대화 소재로 활용 가능 (예: "${userProfile.mbti}답다", "그게 ${userProfile.mbti}의 특징이지")`)
+    }
+    if (userProfile?.zodiacSign) {
+      parts.push(`- 별자리: ${userProfile.zodiacSign}`)
+    }
+    if (userProfile?.zodiacAnimal) {
+      parts.push(`- 띠: ${userProfile.zodiacAnimal}`)
+    }
+    if (userProfile?.bloodType) {
+      parts.push(`- 혈액형: ${userProfile.bloodType}형`)
+    }
+
+    // 기타 설명
+    if (userDescription) {
+      parts.push(`- 추가 정보: ${userDescription}`)
+    }
+
+    parts.push('\n⚠️ 위 정보는 자연스러운 대화 흐름에서만 활용하세요. 매번 언급하거나 강제로 넣지 마세요.')
   }
 
   return parts.join('\n')
@@ -187,6 +297,60 @@ function buildFullSystemPrompt(
 function limitMessages(messages: ChatMessage[], limit: number = 20): ChatMessage[] {
   if (messages.length <= limit) return messages
   return messages.slice(-limit)
+}
+
+// 시간대별 컨텍스트 프롬프트 생성
+function buildTimeContextPrompt(clientTimestamp?: string): string {
+  if (!clientTimestamp) return ''
+
+  try {
+    const date = new Date(clientTimestamp)
+    const hour = date.getHours()
+
+    if (hour >= 0 && hour < 6) {  // 새벽
+      return `\n[현재 시간: 새벽 ${hour}시]
+- 늦은 시간에 연락이 왔습니다
+- 상황에 맞게 "이 시간에?", "자고 있는 거 아니었어?", "늦은 시간인데..." 등 자연스럽게 반응
+- 걱정하거나 달콤한 반응도 가능`
+    }
+    if (hour >= 6 && hour < 12) {  // 아침
+      return `\n[현재 시간: 아침 ${hour}시]
+- 아침 인사가 자연스럽습니다
+- "좋은 아침!", "일찍 일어났네", "아침밥은 먹었어?" 등`
+    }
+    if (hour >= 18 && hour < 22) {  // 저녁
+      return `\n[현재 시간: 저녁 ${hour}시]
+- 하루를 마무리하는 시간입니다
+- "오늘 하루 어땠어?", "저녁은 먹었어?", "피곤하지?" 등`
+    }
+    if (hour >= 22) {  // 밤
+      return `\n[현재 시간: 밤 ${hour}시]
+- 늦은 시간입니다
+- "아직 안 자?", "늦었는데 괜찮아?", "오늘 하루 고생했어" 등`
+    }
+    return ''  // 오후(12-18시)는 특별한 반응 불필요
+  } catch {
+    return ''
+  }
+}
+
+// 유니코드 이모지만 제거 (카카오톡 스타일용)
+function removeUnicodeEmojisOnly(text: string): string {
+  const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]|[\u{1FA70}-\u{1FAFF}]|[\u{231A}-\u{231B}]|[\u{23E9}-\u{23F3}]|[\u{23F8}-\u{23FA}]|[\u{25AA}-\u{25AB}]|[\u{25B6}]|[\u{25C0}]|[\u{25FB}-\u{25FE}]|[\u{2614}-\u{2615}]|[\u{2648}-\u{2653}]|[\u{267F}]|[\u{2693}]|[\u{26A1}]|[\u{26AA}-\u{26AB}]|[\u{26BD}-\u{26BE}]|[\u{26C4}-\u{26C5}]|[\u{26CE}]|[\u{26D4}]|[\u{26EA}]|[\u{26F2}-\u{26F3}]|[\u{26F5}]|[\u{26FA}]|[\u{26FD}]|[\u{2702}]|[\u{2705}]|[\u{2708}-\u{270D}]|[\u{270F}]|[\u{2712}]|[\u{2714}]|[\u{2716}]|[\u{271D}]|[\u{2721}]|[\u{2728}]|[\u{2733}-\u{2734}]|[\u{2744}]|[\u{2747}]|[\u{274C}]|[\u{274E}]|[\u{2753}-\u{2755}]|[\u{2757}]|[\u{2763}-\u{2764}]|[\u{2795}-\u{2797}]|[\u{27A1}]|[\u{27B0}]|[\u{27BF}]|[\u{2934}-\u{2935}]|[\u{2B05}-\u{2B07}]|[\u{2B1B}-\u{2B1C}]|[\u{2B50}]|[\u{2B55}]|[\u{3030}]|[\u{303D}]|[\u{3297}]|[\u{3299}]/gu
+
+  return text
+    .replace(emojiPattern, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
+
+// 카카오톡 스타일 이모티콘만 제거 (유니코드 스타일용)
+function removeKakaoEmoticons(text: string): string {
+  const kakaoPattern = /[ㅋㅎㅠㅜ]{2,}|[~^]{2,}|[:;]-?[)(\]\[DPOop]/g
+  return text
+    .replace(kakaoPattern, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
 }
 
 serve(async (req: Request) => {
@@ -206,6 +370,11 @@ serve(async (req: Request) => {
       userDescription,
       oocInstructions,
       emojiFrequency,
+      emoticonStyle,
+      characterName,
+      characterTraits,
+      clientTimestamp,
+      userProfile,
     }: CharacterChatRequest = await req.json()
 
     // 유효성 검사
@@ -225,30 +394,76 @@ serve(async (req: Request) => {
       systemPrompt,
       userName,
       userDescription,
-      oocInstructions
+      oocInstructions,
+      userProfile
     )
 
     // 메시지 히스토리 준비
     const limitedHistory = limitMessages(messages || [])
+    const charName = characterName || '캐릭터'
+
+    // 캐릭터 특성을 시스템 프롬프트에 추가
+    let traitsPrompt = ''
+    if (characterTraits) {
+      traitsPrompt = `
+
+[캐릭터 특성 - 반드시 유지]
+${characterTraits}
+말투와 호칭을 절대 변경하지 마세요.
+`
+    }
+
+    // 대화 맥락 요약 (시스템 프롬프트에 간단히 추가)
+    let conversationContext = ''
+    if (limitedHistory.length > 0) {
+      // 이미 진행 중인 대화라는 것을 명확히 알림
+      conversationContext = `
+
+[현재 대화 상태]
+⚠️ 이 대화는 이미 ${limitedHistory.length}개의 메시지가 오간 진행 중인 대화입니다.
+- 인사("왔네", "왔어?", "또 왔네" 등)를 하지 마세요
+- 유저의 마지막 메시지에 직접 답하세요
+`
+    }
+
+    // 유저 메시지 앞에 맥락 리마인더 추가 (모델이 바로 직전에 보게 됨)
+    let enhancedUserMessage = userMessage
+    if (limitedHistory.length >= 2) {
+      // 최근 2개 메시지만 리마인더로 추가
+      const lastTwo = limitedHistory.slice(-2)
+      const contextReminder = lastTwo
+        .map(m => `${m.role === 'user' ? '유저' : charName}: ${m.content.slice(0, 50)}${m.content.length > 50 ? '...' : ''}`)
+        .join(' → ')
+
+      enhancedUserMessage = `[이전 맥락: ${contextReminder}]
+유저의 현재 메시지: ${userMessage}
+
+위 맥락을 이어서, ${charName}로서 자연스럽게 응답하세요. 인사하지 마세요.`
+    }
+
+    // 시간 컨텍스트 생성
+    const timeContext = buildTimeContextPrompt(clientTimestamp)
+
     const chatMessages: ChatMessage[] = [
-      { role: 'system', content: fullSystemPrompt },
+      { role: 'system', content: fullSystemPrompt + traitsPrompt + timeContext + conversationContext + AFFINITY_EVALUATION_PROMPT },
       ...limitedHistory,
-      { role: 'user', content: userMessage },
+      { role: 'user', content: enhancedUserMessage },
     ]
 
     // LLM 호출 (free-chat 설정 사용, 높은 temperature)
     const llm = LLMFactory.createFromConfig('free-chat')
 
     const response = await llm.generate(chatMessages, {
-      temperature: 0.75, // 균형: 창의성 유지 + 맥락 일관성 향상
-      maxTokens: 2048,   // 긴 응답 허용
+      temperature: 0.6, // 맥락 일관성 우선 (0.75 → 0.6)
+      maxTokens: 2048,  // 긴 응답 허용
     })
 
     const latencyMs = Date.now() - startTime
 
-    // 후처리: OOC 블록 제거 → 이모티콘 검증
-    let responseText = removeOocBlock(response.content.trim())
-    responseText = validateEmojiUsage(responseText, emojiFrequency)
+    // 후처리: 호감도 평가 추출 → OOC 블록 제거 → 이모티콘 검증
+    const { cleanedText: textWithoutAffinity, affinityDelta } = extractAffinityDelta(response.content.trim())
+    let responseText = removeOocBlock(textWithoutAffinity)
+    responseText = validateEmojiUsage(responseText, emojiFrequency, emoticonStyle)
 
     // 감정 추출 및 딜레이 계산
     const { emotionTag, delaySec } = extractEmotion(responseText)
@@ -259,6 +474,7 @@ serve(async (req: Request) => {
         response: responseText,
         emotionTag,
         delaySec,
+        affinityDelta,
         meta: {
           provider: 'gemini',
           model: 'gemini-2.0-flash-lite',
@@ -277,6 +493,7 @@ serve(async (req: Request) => {
         response: '',
         emotionTag: '일상',
         delaySec: 0,
+        affinityDelta: { points: 0, reason: 'error', quality: 'neutral' },
         error: error instanceof Error ? error.message : 'Unknown error',
         meta: {
           provider: 'gemini',

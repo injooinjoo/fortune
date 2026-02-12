@@ -8,6 +8,7 @@ import '../../services/storage_service.dart';
 import '../../utils/date_utils.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/fortune_haptic_service.dart';
+import '../../presentation/providers/token_provider.dart';
 import 'steps/name_input_step.dart';
 import 'steps/birth_input_step.dart';
 
@@ -199,6 +200,26 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     }
   }
 
+  /// 프로필 완성 보너스 청구 (백그라운드)
+  void _claimProfileCompletionBonus() {
+    // unawaited - 백그라운드에서 실행
+    Future(() async {
+      try {
+        debugPrint('🎁 [백그라운드] 프로필 완성 보너스 청구 중...');
+        final result = await ref.read(tokenProvider.notifier).claimProfileCompletionBonus();
+
+        if (result['bonusGranted'] == true) {
+          debugPrint('🎁 프로필 완성 보너스 ${result['bonusAmount']}토큰 지급 완료!');
+        } else {
+          debugPrint('📌 프로필 완성 보너스: ${result['message']}');
+        }
+      } catch (e) {
+        debugPrint('❌ 프로필 완성 보너스 청구 오류: $e');
+        // 실패해도 온보딩 진행에는 영향 없음
+      }
+    });
+  }
+
   /// 백그라운드에서 사주 계산 (UI 블로킹 없음)
   void _calculateSajuInBackground({
     required String userId,
@@ -292,6 +313,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             'updated_at': DateTime.now().toIso8601String()
           });
           debugPrint('Supabase에 프로필 동기화 완료');
+
+          // 프로필 완성 보너스 청구 (백그라운드)
+          _claimProfileCompletionBonus();
 
           // 사주 계산은 백그라운드에서 처리 (UI 블로킹 제거)
           _calculateSajuInBackground(

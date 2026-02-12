@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
 
 /// 캐릭터 소개 카드 (첫 대화 시작 전)
@@ -36,7 +38,7 @@ class CharacterIntroCard extends StatelessWidget {
           const SizedBox(height: 16),
           // 이름
           Text(
-            character.name,
+            CharacterLocalizer.getName(context, character.id),
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -47,7 +49,7 @@ class CharacterIntroCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 4,
             alignment: WrapAlignment.center,
-            children: character.tags.map((tag) {
+            children: CharacterLocalizer.getTags(context, character.id).map((tag) {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
@@ -84,7 +86,7 @@ class CharacterIntroCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '세계관',
+                      context.l10n.worldview,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: character.accentColor,
@@ -94,7 +96,7 @@ class CharacterIntroCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  character.worldview.trim(),
+                  CharacterLocalizer.getWorldview(context, character.id).trim(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         height: 1.6,
                       ),
@@ -123,7 +125,7 @@ class CharacterIntroCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '캐릭터',
+                      context.l10n.characterLabel,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: character.accentColor,
@@ -133,7 +135,7 @@ class CharacterIntroCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  character.personality.trim(),
+                  CharacterLocalizer.getPersonality(context, character.id).trim(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         height: 1.6,
                       ),
@@ -144,7 +146,7 @@ class CharacterIntroCard extends StatelessWidget {
           const SizedBox(height: 16),
           // 제작자 코멘트
           Text(
-            '"${character.creatorComment}"',
+            '"${CharacterLocalizer.getCreatorComment(context, character.id)}"',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontStyle: FontStyle.italic,
                   color: Colors.grey[600],
@@ -166,7 +168,7 @@ class CharacterIntroCard extends StatelessWidget {
                 ),
               ),
               child: Text(
-                '대화 시작하기',
+                context.l10n.startConversation,
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

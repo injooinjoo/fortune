@@ -3,16 +3,51 @@ import '../../domain/models/character_chat_message.dart';
 import 'character_chat_local_service.dart';
 import '../../../../core/utils/logger.dart';
 
-/// 캐릭터 채팅 응답 모델 (감정 기반 딜레이 포함)
+/// 호감도 변화량 모델
+class AffinityDelta {
+  final int points;
+  final String reason;
+  final String quality;
+
+  const AffinityDelta({
+    required this.points,
+    required this.reason,
+    required this.quality,
+  });
+
+  factory AffinityDelta.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const AffinityDelta(
+        points: 5,
+        reason: 'basic_chat',
+        quality: 'neutral',
+      );
+    }
+    return AffinityDelta(
+      points: (json['points'] as num?)?.toInt() ?? 5,
+      reason: json['reason'] as String? ?? 'basic_chat',
+      quality: json['quality'] as String? ?? 'neutral',
+    );
+  }
+
+  /// 상호작용 타입
+  bool get isPositive => points > 0;
+  bool get isNegative => points < 0;
+  bool get isNeutral => points == 0;
+}
+
+/// 캐릭터 채팅 응답 모델 (감정 기반 딜레이 + 호감도 평가 포함)
 class CharacterChatResponse {
   final String response;
   final String emotionTag;
   final int delaySec;
+  final AffinityDelta affinityDelta;
 
   const CharacterChatResponse({
     required this.response,
     required this.emotionTag,
     required this.delaySec,
+    required this.affinityDelta,
   });
 
   factory CharacterChatResponse.fromJson(Map<String, dynamic> json) {
@@ -20,6 +55,7 @@ class CharacterChatResponse {
       response: json['response'] as String? ?? '응답을 받지 못했습니다.',
       emotionTag: json['emotionTag'] as String? ?? '일상',
       delaySec: json['delaySec'] as int? ?? 10,
+      affinityDelta: AffinityDelta.fromJson(json['affinityDelta'] as Map<String, dynamic>?),
     );
   }
 }
@@ -39,6 +75,11 @@ class CharacterChatService {
     String? userDescription,
     String? oocInstructions,
     String? emojiFrequency,  // 캐릭터별 이모티콘 빈도
+    String? emoticonStyle,   // 이모티콘 스타일 (unicode/kakao/mixed/ogq)
+    String? characterName,   // 캐릭터 이름 (맥락용)
+    String? characterTraits, // 캐릭터 특성 요약 (말투, 호칭 등)
+    String? clientTimestamp, // 현재 시간 (시간 인식용)
+    Map<String, dynamic>? userProfile, // 유저 프로필 정보 (개인화용)
   }) async {
     try {
       final response = await _supabase.functions.invoke(
@@ -52,6 +93,11 @@ class CharacterChatService {
           if (userDescription != null) 'userDescription': userDescription,
           if (oocInstructions != null) 'oocInstructions': oocInstructions,
           if (emojiFrequency != null) 'emojiFrequency': emojiFrequency,
+          if (emoticonStyle != null) 'emoticonStyle': emoticonStyle,
+          if (characterName != null) 'characterName': characterName,
+          if (characterTraits != null) 'characterTraits': characterTraits,
+          if (clientTimestamp != null) 'clientTimestamp': clientTimestamp,
+          if (userProfile != null) 'userProfile': userProfile,
         },
       );
 
@@ -163,5 +209,62 @@ class CharacterChatService {
     final localDeleted = await _localService.deleteConversation(characterId);
     // 서버 삭제는 별도 API가 필요하면 추가
     return localDeleted;
+  }
+
+  /// 모든 캐릭터 대화 일괄 불러오기 (로그인 후 복원용)
+  ///
+  /// 서버에서 모든 대화를 불러와 로컬에 저장합니다.
+  /// 반환: Map<characterId, List<CharacterChatMessage>>
+  Future<Map<String, List<CharacterChatMessage>>> loadAllConversations() async {
+    final result = <String, List<CharacterChatMessage>>{};
+
+    try {
+      // 인증 안 된 경우 빈 결과 반환
+      if (_supabase.auth.currentSession == null) {
+        Logger.info('loadAllConversations: 미인증 상태 - 스킵');
+        return result;
+      }
+
+      final response = await _supabase.functions.invoke(
+        'character-conversations-load-all',
+        body: {},
+      );
+
+      if (response.status != 200) {
+        Logger.warning('loadAllConversations 실패: ${response.status}');
+        return result;
+      }
+
+      final data = response.data as Map<String, dynamic>;
+      if (data['success'] != true) {
+        Logger.warning('loadAllConversations: success=false');
+        return result;
+      }
+
+      final conversations = data['conversations'] as Map<String, dynamic>? ?? {};
+
+      for (final entry in conversations.entries) {
+        final characterId = entry.key;
+        final convData = entry.value as Map<String, dynamic>;
+        final messagesList = convData['messages'] as List<dynamic>? ?? [];
+
+        if (messagesList.isNotEmpty) {
+          final messages = messagesList
+              .map((m) => CharacterChatMessage.fromJson(m as Map<String, dynamic>))
+              .toList();
+
+          result[characterId] = messages;
+
+          // 로컬에 저장
+          await _localService.saveConversation(characterId, messages);
+        }
+      }
+
+      Logger.info('loadAllConversations: ${result.length}개 캐릭터 대화 복원 완료');
+      return result;
+    } catch (e) {
+      Logger.warning('loadAllConversations 에러: $e');
+      return result;
+    }
   }
 }

@@ -69,6 +69,32 @@ class AppIconBadgeService extends ResilientService {
     );
   }
 
+  /// 숫자 배지 업데이트 (카카오톡 스타일)
+  ///
+  /// [count] 표시할 숫자 (0이면 배지 제거)
+  static Future<void> updateBadgeCount(int count) async {
+    await _instance._updateBadgeCountInternal(count);
+  }
+
+  Future<void> _updateBadgeCountInternal(int count) async {
+    await safeExecute(
+      () async {
+        final isSupported = await FlutterAppBadger.isAppBadgeSupported();
+        if (!isSupported) return;
+
+        if (count > 0) {
+          await FlutterAppBadger.updateBadgeCount(count);
+          Logger.info('앱 아이콘 배지 업데이트: $count');
+        } else {
+          await FlutterAppBadger.removeBadge();
+          Logger.info('앱 아이콘 배지 제거 (count=0)');
+        }
+      },
+      '배지 카운트 업데이트',
+      '배지 업데이트 실패',
+    );
+  }
+
   /// 배지 제거
   static Future<void> clearBadge() async {
     await _instance._clearBadgeInternal();

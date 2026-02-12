@@ -77,6 +77,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     with SingleTickerProviderStateMixin {
   late TextEditingController _textController;
   final SpeechRecognitionService _speechService = SpeechRecognitionService();
+  final FocusNode _focusNode = FocusNode(); // 키보드 유지용
 
   VoiceInputState _state = VoiceInputState.idle;
   bool _isSpeaking = false; // 실제 음성 인식 중인지 (partial result 수신)
@@ -127,6 +128,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
     _loadingController.dispose();
     _speechService.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -253,6 +255,9 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     // 초기화
     _textController.clear();
     setState(() => _state = VoiceInputState.idle);
+
+    // 연속 입력을 위해 포커스 유지 (키보드 유지)
+    _focusNode.requestFocus();
   }
 
   /// 권한 요청 다이얼로그
@@ -415,6 +420,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
       padding: const EdgeInsets.only(left: DSSpacing.lg, right: DSSpacing.sm),
       child: TextField(
         controller: _textController,
+        focusNode: _focusNode,
         enabled: widget.enabled,
         textAlignVertical: TextAlignVertical.center,
         style: typography.bodyMedium.copyWith(

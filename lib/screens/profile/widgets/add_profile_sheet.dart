@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design_system/design_system.dart';
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../presentation/providers/secondary_profiles_provider.dart';
 
@@ -349,7 +350,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                           ),
                         )
                       : Text(
-                          '저장',
+                          context.l10n.save,
                           style: context.typography.buttonLarge.copyWith(
                             color: Colors.white,
                           ),
