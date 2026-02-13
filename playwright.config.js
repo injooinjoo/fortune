@@ -95,19 +95,21 @@ module.exports = defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: process.env.CI ? {
-    // CI: 빌드된 정적 파일 서빙 (빠름)
-    command: 'npx serve build/web -l 3000',
-    url: 'http://localhost:3000',
-    reuseExistingServer: false,
-    timeout: 30 * 1000,
-  } : {
-    // Local: Flutter 개발 서버 (핫 리로드)
-    command: 'flutter run -d chrome --web-port=3000',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-    timeout: 120 * 1000,
-  },
+  webServer: process.env.PLAYWRIGHT_SKIP_WEBSERVER === 'true' ? undefined : (
+    process.env.CI ? {
+      // CI: 빌드된 정적 파일 서빙 (빠름)
+      command: 'npx serve build/web -l 3000',
+      url: 'http://localhost:3000',
+      reuseExistingServer: true,  // CI에서 이미 실행 중인 서버 재사용
+      timeout: 30 * 1000,
+    } : {
+      // Local: Flutter 개발 서버 (핫 리로드)
+      command: 'flutter run -d chrome --web-port=3000',
+      url: 'http://localhost:3000',
+      reuseExistingServer: true,
+      timeout: 120 * 1000,
+    }
+  ),
 
   /* Global setup */
   globalSetup: require.resolve('./playwright/global-setup.js'),

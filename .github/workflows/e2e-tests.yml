@@ -67,14 +67,27 @@ jobs:
 
       - name: Run Smoke Tests
         run: |
-          # Playwright webServer 설정이 자동으로 서버를 시작함
-          # CLI는 cwd 기준 경로를 사용
-          npx playwright test ./playwright/tests/smoke.spec.js \
+          # 수동으로 서버 시작 (Playwright webServer 대신)
+          npx serve build/web -l 3000 &
+          SERVER_PID=$!
+
+          # 서버 준비 대기
+          echo "Waiting for server to be ready..."
+          npx wait-on http://localhost:3000 --timeout 60000
+
+          # 스모크 테스트 실행 (grep으로 필터)
+          npx playwright test --grep "Smoke" \
             --project=chromium \
-            --reporter=html,json,github
+            --reporter=html,json,github || TEST_RESULT=$?
+
+          # 서버 종료
+          kill $SERVER_PID 2>/dev/null || true
+
+          exit ${TEST_RESULT:-0}
         env:
           CI: true
           BASE_URL: http://localhost:3000
+          PLAYWRIGHT_SKIP_WEBSERVER: "true"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
