@@ -27,12 +27,16 @@ void main() {
       app.main();
       await tester.pumpAndSettle(const Duration(seconds: 5));
 
-      // 랜딩 페이지의 "시작하기" 버튼 또는 "Fortune" 텍스트 확인
+      // 랜딩 페이지의 "시작하기" 버튼 또는 앱 이름 텍스트 확인
+      // 앱 이름이 Fortune에서 ZPZG로 변경됨
       final startButton = find.text('시작하기');
+      final zpzgText = find.text('ZPZG');
       final fortuneText = find.text('Fortune');
 
       expect(
-        startButton.evaluate().isNotEmpty || fortuneText.evaluate().isNotEmpty,
+        startButton.evaluate().isNotEmpty ||
+        zpzgText.evaluate().isNotEmpty ||
+        fortuneText.evaluate().isNotEmpty,
         isTrue,
         reason: '랜딩 페이지가 표시되어야 합니다',
       );
