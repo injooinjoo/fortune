@@ -74,8 +74,12 @@ jobs:
           echo "Waiting for server..."
           npx wait-on http://localhost:3000 --timeout 60000
 
-          # 전체 테스트 실행 (smoke.spec.js만)
-          npx playwright test smoke \
+          # 디버그: 테스트 파일 목록 확인
+          echo "=== Test files in playwright/tests ==="
+          ls -la playwright/tests/
+
+          # 모든 테스트 실행 (testDir에서 자동 발견)
+          npx playwright test \
             --project=chromium \
             --reporter=html,json,github || TEST_RESULT=$?
 
