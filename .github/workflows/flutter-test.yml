@@ -15,6 +15,7 @@ on:
       - 'test/**'
       - 'pubspec.yaml'
       - '.github/workflows/flutter-test.yml'
+  workflow_dispatch:
 
 jobs:
   test:
@@ -219,16 +220,22 @@ jobs:
       with:
         flutter-version: '3.38.0'
         channel: 'stable'
-    
+
+    - name: Setup build environment
+      run: |
+        cp .env.test .env
+        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
+        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
+
     - name: Get dependencies
       run: flutter pub get
-    
+
     - name: Run integration tests
       run: |
         # Start iOS simulator
         xcrun simctl list devices
         xcrun simctl boot "iPhone 16" || true
-        
+
         # Run integration tests
         flutter test integration_test/app_test.dart
     
@@ -264,10 +271,16 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-    
+
+    - name: Setup build environment
+      run: |
+        cp .env.test .env
+        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
+        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
+
     - name: Get dependencies
       run: flutter pub get
-    
+
     - name: Build Web
       if: matrix.platform == 'web'
       run: flutter build web --release

@@ -208,10 +208,16 @@ jobs:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
-    
+
+    - name: Setup build environment
+      run: |
+        cp .env.test .env
+        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
+        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
+
     - name: Get dependencies
       run: flutter pub get
-    
+
     - name: Build web
       run: flutter build web --release
 
@@ -248,10 +254,16 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: ${{ env.JAVA_VERSION }}
-    
+
+    - name: Setup build environment
+      run: |
+        cp .env.test .env
+        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
+        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
+
     - name: Get dependencies
       run: flutter pub get
-    
+
     - name: Build APK
       run: flutter build apk --release --split-per-abi
     
@@ -282,10 +294,16 @@ jobs:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
-    
+
+    - name: Setup build environment
+      run: |
+        cp .env.test .env
+        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
+        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
+
     - name: Get dependencies
       run: flutter pub get
-    
+
     - name: Build iOS (no signing)
       run: flutter build ios --release --no-codesign
     
