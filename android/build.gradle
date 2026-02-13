@@ -19,19 +19,6 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
-
-    // Fix for flutter_app_badger lStar attribute error
-    // Force AndroidX Core to a version that includes lStar attribute (API 31+)
-    afterEvaluate { project ->
-        if (project.hasProperty('android')) {
-            project.android {
-                if (namespace == null) {
-                    namespace project.group
-                }
-                compileSdkVersion 34
-            }
-        }
-    }
 }
 
 tasks.register("clean", Delete) {
