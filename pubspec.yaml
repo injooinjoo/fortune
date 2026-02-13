@@ -189,10 +189,8 @@ dependencies:
   home_widget: ^0.8.0 # Updated to fix Swift concurrency warnings
   workmanager: ^0.8.0 # Updated to fix deprecated APIs
   flutter_widgetkit: ^1.0.3 # iOS WidgetKit support
-  flutter_app_badger: ^1.5.0 # App icon badge for iOS/Android
+  # flutter_app_badger: ^1.5.0 # REMOVED - discontinued, causes lStar Android build error
 
-  # Health Data Integration
-  health: ^13.1.4 # Apple Health / Google Fit 연동
   flutter_dynamic_icon_plus: ^1.2.0 # Dynamic app icons
   app_links: ^6.3.2 # Deep linking for widgets
   device_info_plus: ^11.1.0 # Device information

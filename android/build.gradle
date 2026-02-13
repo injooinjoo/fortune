@@ -25,15 +25,6 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
-// Force compileSdk for all Android library plugins (fixes flutter_app_badger lStar issue)
-gradle.projectsEvaluated {
-    rootProject.subprojects { subproject ->
-        if (subproject.plugins.hasPlugin('com.android.library')) {
-            subproject.android.compileSdkVersion = 34
-        }
-    }
-}
-
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
