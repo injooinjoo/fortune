@@ -4,10 +4,17 @@
 
 set -e
 
-# JIRA 인증 정보
-JIRA_EMAIL="injooinjoo@gmail.com"
-JIRA_TOKEN="ATATT3xFfGF0e3diiy0TFqT7AyCmZDVHQ5o_7ysG2ioH9bu0uIf6Ai1n0mGLgSIvtzGXzNqAxchMeCR3hyH1WTb1b7zqpz6vVbDwXfn1i9N28V3etR2bMZVRGm3xsxL9vRi89EU9z2uzH3XoRwBRVAW5yWUo1AS3PGaETYHJPEPtFqh8ft82RRE=CAF65568"
-JIRA_URL="https://beyond-app.atlassian.net"
+# JIRA 인증 정보 (환경변수에서 로드)
+JIRA_EMAIL="${JIRA_EMAIL:-}"
+JIRA_TOKEN="${JIRA_API_TOKEN:-}"
+JIRA_URL="${JIRA_URL:-https://beyond-app.atlassian.net}"
+
+# 환경변수 검증
+if [ -z "$JIRA_EMAIL" ] || [ -z "$JIRA_TOKEN" ]; then
+    echo "❌ 오류: JIRA 환경변수가 설정되지 않았습니다."
+    echo "   export JIRA_EMAIL='your-email' JIRA_API_TOKEN='your-token'"
+    exit 1
+fi
 EPIC_KEY="KAN-104"
 
 AUTH_HEADER="Authorization: Basic $(echo -n "$JIRA_EMAIL:$JIRA_TOKEN" | base64)"

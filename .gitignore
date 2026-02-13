@@ -113,3 +113,27 @@ ios/build/
 # Claude local settings
 .claude/settings.local.json
 java_pid*.hprof
+
+# ========================================
+# Security - API Keys & Credentials
+# ========================================
+
+# Environment variable files
+.env*
+!.env.example
+secrets.json
+credentials.json
+*.credentials
+*.secret
+
+# API tokens and keys (catch patterns)
+*_token.txt
+*_key.txt
+api_key*
+*-credentials.json
+
+# Shell scripts with potential secrets (local only)
+scripts/*.local.sh
+
+# Python credential files
+*_secrets.py

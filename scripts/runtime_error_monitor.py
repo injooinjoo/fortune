@@ -18,11 +18,18 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
-# JIRA 설정
-JIRA_URL = "https://beyond-app.atlassian.net"
-JIRA_EMAIL = "injooinjoo@gmail.com"
-JIRA_TOKEN = "ATATT3xFfGF0e3diiy0TFqT7AyCmZDVHQ5o_7ysG2ioH9bu0uIf6Ai1n0mGLgSIvtzGXzNqAxchMeCR3hyH1WTb1b7zqpz6vVbDwXfn1i9N28V3etR2bMZVRGm3xsxL9vRi89EU9z2uzH3XoRwBRVAW5yWUo1AS3PGaETYHJPEPtFqh8ft82RRE=CAF65568"
-JIRA_PROJECT_KEY = "KAN"
+# JIRA 설정 (환경변수에서 로드)
+JIRA_URL = os.getenv("JIRA_URL", "https://beyond-app.atlassian.net")
+JIRA_EMAIL = os.getenv("JIRA_EMAIL", "")
+JIRA_TOKEN = os.getenv("JIRA_API_TOKEN", "")
+JIRA_PROJECT_KEY = os.getenv("JIRA_PROJECT_KEY", "KAN")
+
+# 환경변수 검증
+if not JIRA_EMAIL or not JIRA_TOKEN:
+    print("❌ 오류: JIRA 환경변수가 설정되지 않았습니다.")
+    print("   export JIRA_EMAIL='your-email'")
+    print("   export JIRA_API_TOKEN='your-token'")
+    sys.exit(1)
 
 # 에러 로그 파일 경로
 ERROR_LOG_PATH = "/tmp/fortune_runtime_errors.json"
